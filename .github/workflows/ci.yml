@@ -55,6 +55,9 @@ jobs:
               print("no .task-board directory"); sys.exit(1)
           n = 0
           for dirpath, dirnames, filenames in os.walk(root):
+              # .resources/ holds resource payloads keyed by element id, not board elements
+              if ".resources" in dirnames:
+                  dirnames.remove(".resources")
               base = os.path.basename(dirpath)
               if base.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
                   n += 1
