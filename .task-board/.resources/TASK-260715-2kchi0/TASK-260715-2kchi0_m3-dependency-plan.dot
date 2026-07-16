@@ -1,0 +1,29 @@
+digraph M3 {
+  rankdir=LR;
+  node [shape=box];
+  F [label=M0_M1_M2_gates];
+  L [label=SSH_lane_pool];
+  W [label=Windows_rekey_memory];
+  P [label=Path_reconnect];
+  Q [label=QUIC_and_route_modes];
+  N [label=NAT64_sleep_captive];
+  B [label=Untuned_baseline];
+  T [label=Evidence_led_tuning];
+  A [label=Locked_M3_acceptance];
+  F -> L;
+  F -> W;
+  L -> W;
+  W -> P;
+  L -> P;
+  P -> Q;
+  L -> Q;
+  Q -> N;
+  P -> N;
+  N -> B;
+  L -> B;
+  W -> B;
+  P -> B;
+  Q -> B;
+  B -> T;
+  T -> A;
+}

@@ -1,0 +1,10 @@
+# Mandatory host trust and authentication recovery experience
+
+## Description
+Expose mandatory SSH host verification and public-key authentication as explicit, comprehensible user journeys on iOS and macOS. First use requires an informed trust decision; a changed host key stops safe connection and requires a separate inspected replacement action.
+
+## Scope
+In scope: canonical host identity records, SHA-256 fingerprints, algorithms, provenance, first-seen and last-seen metadata, first-use trust request, explicit approval, changed-key high-severity blocking state, inspected replacement or cancellation, revocation, passphrase access, authentication and Keychain error remediation, session-level multi-lane identity consistency, privacy-safe error copy, accessibility, and UI/security tests. Out of scope: silent host acceptance, StrictHostKeyChecking=no behavior, password-only authentication, agent forwarding, SSH engine implementation, general profile editing, packet forwarding, and automatic trust replacement.
+
+## Acceptance Criteria
+1. Authentication cannot succeed before an approved host identity is matched or the user explicitly approves a first-use fingerprint showing the complete SHA-256 value and algorithm. 2. A changed, revoked, or inconsistent lane identity stops connection before user authentication, presents a high-severity non-dismissive explanation, and cannot reconnect or auto-accept until the user inspects and explicitly replaces trust. 3. Approved records retain canonical host, algorithm, fingerprint, provenance, and first/last-seen timestamps without storing secrets. 4. Passphrase, missing-key, inaccessible-Keychain, rejected-key, and unsupported-algorithm failures map to distinct privacy-safe remediation with no credential echo. 5. Every SSH lane in one session is evaluated against the same approved identity generation and an identity disagreement produces one terminal session error. 6. Unit, integration, and iOS/macOS UI tests cover first use, cancel, repeat connection, changed key, replacement, revocation, auth rejection, protected keys, lane mismatch, accessibility, and screenshot review.

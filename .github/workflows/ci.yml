@@ -1,0 +1,66 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: board + spec validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate workflow YAML
+        run: |
+          python3 - <<'PY'
+          import glob, sys, yaml
+          bad = False
+          for f in glob.glob(".github/workflows/*.yml"):
+              try:
+                  yaml.safe_load(open(f))
+                  print(f"ok   {f}")
+              except Exception as e:
+                  print(f"FAIL {f}: {e}"); bad = True
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: Check spec presence
+        run: |
+          missing=0
+          for f in architecture decisions platform-distribution product \
+                   routing-dns-lifecycle security-privacy ssh-transport \
+                   relay-protocol packet-plane threat-model validation delivery; do
+            if [ ! -f ".spec/$f.md" ]; then echo "MISSING .spec/$f.md"; missing=1; fi
+          done
+          [ "$missing" = 0 ] && echo "all required specs present"
+          exit $missing
+
+      - name: Check board structure
+        run: |
+          python3 - <<'PY'
+          import os, sys
+          root = ".task-board"
+          bad = False
+          if not os.path.isdir(root):
+              print("no .task-board directory"); sys.exit(1)
+          n = 0
+          for dirpath, dirnames, filenames in os.walk(root):
+              base = os.path.basename(dirpath)
+              if base.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
+                  n += 1
+                  for req in ("README.md", "progress.md"):
+                      if req not in filenames:
+                          print(f"FAIL {dirpath}: missing {req}"); bad = True
+          print(f"checked {n} board elements")
+          sys.exit(1 if bad or n == 0 else 0)
+          PY

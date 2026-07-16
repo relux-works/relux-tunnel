@@ -1,0 +1,28 @@
+@startuml
+title M3 extension memory pressure states
+state Normal
+state Soft
+state Pressure
+state Critical
+[*] --> Normal
+Normal --> Soft : soft entry
+Soft --> Normal : recovery hysteresis
+Soft --> Pressure : pressure entry
+Pressure --> Soft : pressure recovery
+Pressure --> Critical : critical entry
+Critical --> Pressure : critical recovery
+Normal : full admitted configuration
+Soft : suppress optional lanes
+Soft : close idle channels and shrink caches
+Soft : cap new windows
+Pressure : withhold window adjustments
+Pressure : reduce HEV session and cache limits
+Pressure : refuse new nonessential flows
+Critical : release old transport before replacement
+Critical : stop explicitly when recovery cannot fit
+note right of Normal
+Every transition uses current ledger bytes,
+physical footprint, one uncached advisory
+available-memory sample, and a generation.
+end note
+@enduml

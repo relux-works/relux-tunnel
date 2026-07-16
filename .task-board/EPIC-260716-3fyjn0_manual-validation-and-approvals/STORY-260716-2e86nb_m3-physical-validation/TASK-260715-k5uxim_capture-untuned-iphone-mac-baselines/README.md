@@ -1,0 +1,10 @@
+# Capture the untuned physical iPhone and Mac reference baselines
+
+## Description
+Run the full pre-tuning protocol on named physical iPhone and Mac devices with the provisional HEV configuration and current M3 implementation across MTUs, lane counts, windows, workloads, impairments, lifecycle, and resource conditions.
+
+## Scope
+In scope: named baseline and constrained-memory iPhone plus named Mac where available; supported OS and toolchain; MTU 1500, 4096, and 8500; effective socket buffers; adaptive batch baseline; HEV task stack 24576, TCP buffer 4096, max sessions 1200, UDP over TCP; one, two, and four lanes; 32 KiB, 64 KiB, and capped BDP windows; rekey thresholds; all traffic shapes and concurrency stages allowed by budget; loss and latency; route and QUIC modes; reconnect, NAT64, sleep or wake, captive evidence references; memory, CPU, energy, packet, syscall, latency, throughput, drops, and cleanup. Out of scope: accepting tuned values, changing parameters mid-row, HEV fork, public-user traffic, or waiving failed safety rows.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped baseline manifest contains every protocol metadata and configuration field, raw artifact reference, sample result, exclusion reason, and pass or red safety outcome for iPhone and Mac. 2. Required MTU, lane, window, workload, impairment, and concurrency combinations execute or are explicitly excluded by the predeclared budget or platform rule with evidence. 3. Nominal unsaturated rows preserve byte and DNS correctness with no ordinary drop or fallback, while induced pressure records bounded reason-specific drops, refusal, and ordered actions. 4. Reports include physical footprint and peak, advisory available memory, sessions, windows, queues, reconnect overlap, CPU, energy, packets, syscalls, throughput, TTFB, DNS latency, rekeys, errors, descriptors, and cleanup. 5. The baseline makes no tuning recommendation without comparison and identifies bottleneck hypotheses, noise, red safety rows, unavailable rows, and follow-up owners without overwriting raw evidence.

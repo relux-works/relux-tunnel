@@ -1,0 +1,10 @@
+# Provision an isolated App Review SSH test environment
+
+## Description
+Provide a reproducible, least-privilege SSH exit fixture for App Review that exercises host verification, authentication, relay upload or compatible mode, TCP, DNS, UDP where supported, diagnostics, and degraded behavior without exposing production infrastructure or credentials.
+
+## Scope
+In scope: dedicated host or reproducible setup, supported OS and OpenSSH, isolated account, public-key authentication, approved host-key fingerprints, no agent forwarding, bounded disk, process, channel, bandwidth and destination controls consistent with product testing, relay directory permissions, logging limited to operational security without traffic payloads, credential delivery through approved review fields, rotation, expiry, abuse monitoring, health checks, teardown, synthetic destinations, and owner runbook. Out of scope: shared production exit credentials, server scanning, public marketplace, inbound unsolicited relay, collecting reviewer traffic content, hardcoded app secrets, and indefinite access.
+
+## Acceptance Criteria
+1. The fixture is isolated from production, uses a dedicated minimum-privilege account and keys, exposes only required SSH access, and records approved host-key algorithms and SHA-256 fingerprints. 2. Review can complete documented full and degraded tests with bounded resources, while no credential grants shell or infrastructure privileges beyond the required relay and test behavior. 3. Credentials and fingerprints are delivered only through approved secure review mechanisms, never committed, logged, placed in provider configuration, or attached to public board resources. 4. Health, expiration, rotation, compromise, abuse, rate-limit, relay install, disk full, noexec or read-only simulation where needed, and teardown procedures have named owners and alerts. 5. A safe rehearsal from a clean external device follows the same instructions, succeeds without production state, and verifies that logs and monitoring contain no packet payload, DNS name, destination, passphrase, or private key.

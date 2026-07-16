@@ -1,0 +1,51 @@
+@startuml
+!theme plain
+title Mandatory Host Trust Before Authentication
+
+actor User
+participant "Containing App" as App
+database "Versioned Profile Store" as Profiles
+participant "Packet Tunnel Provider" as Provider
+participant "Host Identity Policy" as Policy
+database "Shared Keychain" as Keychain
+participant "User-owned SSH Host" as Host
+
+User -> App : Connect selected profile
+App -> Provider : Start(profileID, generation)
+Provider -> Profiles : Load immutable non-secret snapshot
+Provider -> Host : Open transport and receive server host key
+Provider -> Policy : Evaluate canonical host and key evidence
+
+alt First use: no approved identity
+  Policy --> Provider : trustRequired(full SHA-256, algorithm, generation)
+  Provider --> App : Versioned bounded trust evidence
+  Provider -> Provider : Stop safely before credential lookup
+  App -> User : Show complete fingerprint and explicit actions
+  alt User explicitly trusts
+    User -> App : Approve reviewed identity
+    App -> Profiles : Atomically publish generation + 1
+    User -> App : Explicit retry
+    App -> Provider : Start(new generation)
+  else User cancels
+    User -> App : Cancel
+    App -> App : Keep profile untrusted and disconnected
+  end
+else Approved identity matches
+  Policy --> Provider : approved(identity generation)
+  Provider -> Keychain : Resolve opaque key/passphrase reference
+  Keychain --> Provider : Bounded secret material
+  Provider -> Host : Public-key authentication
+  Host --> Provider : Authenticated session or typed rejection
+else Changed, revoked, or lane-inconsistent identity
+  Policy --> Provider : terminal identity mismatch
+  Provider --> App : High-severity changed-key evidence
+  Provider -> Provider : Stop before Keychain and authentication
+  App -> User : Inspect old/new fingerprints; replace or cancel
+end
+
+note over Provider,Keychain
+  The extension never waits indefinitely for foreground UI.
+  Approval is durable; retry is a fresh explicit generation.
+end note
+
+@enduml

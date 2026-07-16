@@ -1,0 +1,10 @@
+# Implement the generation-safe reconnect and retry coordinator
+
+## Description
+Implement the serialized state-machine owner that reacts to normalized recovery events, invalidates failed generations, reserves replacement memory, runs cached or fresh endpoint attempts with bounded jittered retry, and cancels or hands off terminal outcomes exactly once.
+
+## Scope
+In scope: transition reducer and side-effect executor; current generation; event priority; failed lane and relay association invalidation; old transport disposition; replacement reservation; cached and fresh endpoint service; injected clock and jitter; bounded exponential backoff; stable reset; terminal and transient error classes; one attempt and timer; user stop; profile change; duplicate or stale events; metrics. Out of scope: building network settings, publishing final capabilities, implementing endpoint connection internals, route-mode selection, relay-only reprobe, silently retaining failed flows, or unbounded retry configuration.
+
+## Acceptance Criteria
+1. For every current recovery trigger the coordinator creates at most one replacement generation, attempt, timer, reservation, and ordered side-effect sequence and rejects stale or illegal events. 2. Existing failed-lane assignments and relay associations are invalidated before replacement admission, and old and new transport state never exceed the explicit memory reservation. 3. Transient path errors use bounded injected jitter and cap, reset only after documented stable operation, while terminal trust, auth, profile, and credential outcomes stop retry and publish one finite reason. 4. Stop, profile replacement, critical memory, path churn, late success, timer firing, settings failure handback, and simultaneous failures produce deterministic cancellation and one cleanup path. 5. Exhaustive reducer and fake-effect tests cover every transition and retry boundary and reconcile generations, attempts, timers, reservations, sessions, lanes, associations, and emitted reasons.

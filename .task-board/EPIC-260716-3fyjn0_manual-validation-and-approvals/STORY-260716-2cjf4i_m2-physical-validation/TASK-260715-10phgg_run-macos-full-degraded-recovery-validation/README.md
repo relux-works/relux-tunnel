@@ -1,0 +1,10 @@
+# Verify Mac full, degraded, failed, and relay-restoration behavior
+
+## Description
+Run the M2 capability acceptance matrix on a named physical Mac, proving truthful modes, TCP continuity where safe, tunnel-owned DNS fallback, explicit UDP rejection, mandatory failure on safe-DNS loss, clean relay restoration, no ordinary leak, and bounded resources.
+
+## Scope
+In scope: supported physical Apple-silicon Mac and macOS; stable Ethernet or Wi-Fi starting path; controlled authenticated SSH host; supported and unsupported relay fixture; full startup; install or handshake failure; relay process or lane loss; controlled TCP flow; general UDP probes; UDP and TCP DNS clients; safe-DNS failure; reprobe recovery; provider stop; physical and exit captures; snapshots; memory and counters; redacted evidence. Out of scope: path transitions, sleep or wake, NAT64 transition, captive recovery, includeAllNetworks, final QUIC policy, notarization, production traffic, legacy app behavior, and unsupported Intel client hardware.
+
+## Acceptance Criteria
+1. Evidence records Mac, macOS and Xcode, source and dependency revisions, profile generation, relay asset and protocol identity, reason fixture, resolver and exit fixture, network type, timestamps, duration, snapshots, memory, queues, associations, drops, and authorized captures. 2. Full startup advertises UDP only after relay validation; forced relay-unavailable startup advertises degraded only after controlled TCP and safe DNS work. 3. Runtime relay loss invalidates general UDP, keeps eligible TCP and safe DNS, reports the exact reason, and physical capture shows zero ordinary UDP or DNS fallback; safe-DNS loss moves to failed. 4. Relay repair and reprobe restore full only after a fresh identity and handshake, and subsequent IPv4 or IPv6 UDP succeeds through new exit-host associations without old-generation delivery. 5. Repeated full, degraded, failed, restore, and stop rows stay within the memory budget, clean routes and resources, and attach a TASK-ID-scoped redacted reproducible evidence bundle.

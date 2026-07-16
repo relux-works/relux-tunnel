@@ -1,0 +1,10 @@
+# Record the degraded safe-DNS fallback policy
+
+## Description
+Translate the approved M1 exit-resolver decision into an exact M2 degraded-mode upstream selection and health contract, using the existing SSH DNS-over-TCP implementation by default or a separately approved tunneled DoH path without physical fallback.
+
+## Scope
+In scope: consume TASK-260715-1tnjlu and resulting resolver schema; DNS-over-TCP direct-tcpip baseline; conditions for configured tunneled DoH if the approved policy includes it; resolver endpoint and identity; address-family order; transport priority; timeout and retry; connection pooling input; TC behavior; cache generation; health readiness; fail-safe outcome; profile migration; test fixtures; privacy and UI implications. Out of scope: selecting an unapproved public resolver, physical DNS, remote shell resolver discovery without a separate security design, fake DNS, implementing transports, final profile UI, and silently changing the M1 resolver contract.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped decision references the approved M1 resolver policy and states exact degraded resolver fields, defaults, transport, endpoint or URL identity, ports, address-family behavior, timeouts, retries, and cache invalidation. 2. DNS-over-TCP through authenticated SSH is the deterministic baseline unless the approved policy explicitly selects a certificate-validated tunneled DoH alternative and its trust inputs. 3. Startup and runtime readiness rules prove degraded mode is not usable until one safe upstream is ready and that upstream failure cannot trigger physical resolver, exit-host guesswork, or unapproved vendor fallback. 4. The decision covers client UDP and TCP DNS, TC or oversized responses, DNSSEC transparency, cancellation, profile change, relay restoration, diagnostics, and zero query-name logging. 5. Downstream integration, state, leak-test, documentation, profile, and UI tasks are listed by concrete ID; any unresolved accountable resolver choice remains on the existing M1 decision instead of being guessed here.

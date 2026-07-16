@@ -1,0 +1,10 @@
+# Implement bounded relay reprobe and full-mode restoration
+
+## Description
+While the authenticated base SSH transport remains healthy, retry only the relay bootstrap and session path with bounded cancellable backoff and restore UDP capability after a completely validated new generation, without overlapping large old and new state.
+
+## Scope
+In scope: eligibility from capability reason; immediate or scheduled first attempt; capped exponential backoff and jitter; stable-success reset; one in-flight probe; same authenticated transport precondition; reuse or reinstall path; fresh protocol, identity, features, and limits validation; association registry replacement; snapshot ordering; memory overlap ceiling; cancellation on stop, SSH loss, profile change, or M3 ownership event; metrics. Out of scope: resolving or reconnecting SSH host, path-interface selection, route exclusion rebuild, lane pools, retrying host-key or authentication failure, preserving UDP associations across sessions, and user-configurable infinite retry.
+
+## Acceptance Criteria
+1. Only relay-recoverable reasons schedule reprobe and at most one attempt, timer, bootstrap state, exec channel, and prospective relay generation exist at a time. 2. Backoff is bounded and jittered from an injected source, resets after documented stable full operation, and cancels promptly on stop, base transport loss, profile change, or transition handed to M3. 3. A new session becomes full only after verified asset, process launch, protocol and identity handshake, supported features, safe effective limits, and health readiness all succeed for the current generation. 4. Old association, queue, timer, process, and channel state is released before or within the explicit overlap budget and no numeric association ID or late callback crosses generations. 5. Fake-clock and fault tests cover repeated failures, recovery at every attempt, cancellation, stale timer, base-path loss, profile change, memory pressure, stable reset, and exact snapshot sequence degraded to full.

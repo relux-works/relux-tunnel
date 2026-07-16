@@ -1,0 +1,10 @@
+# Tune reconnect, memory-watermark, overlap, retry, and energy parameters
+
+## Description
+Use physical path, lifecycle, pressure, and baseline evidence to select reconnect backoff and stable reset, event coalescing, memory watermarks and hysteresis, old-new overlap reservation, sampling cadence, timeout, and energy parameters without weakening route, DNS, or failure safety.
+
+## Scope
+In scope: transient path and server loss; Wi-Fi and cellular changes; endpoint replacement; sleep and wake; captive rows; retry initial, multiplier, cap, jitter, and stable reset; path-event coalescing; endpoint and settings timeouts; soft, pressure, critical, and recovery watermarks; action timeouts; reconnect overlap; memory sampling; CPU wakeups and energy; outage time; false retry; footprint and cleanup; named-device before and after evidence. Out of scope: infinite retry, retrying terminal trust or auth errors, changing platform exceptions, loosening exact route or DNS gates, device destabilization, or tuning packet and lane parameters owned separately.
+
+## Acceptance Criteria
+1. Candidate retry, timeout, coalescing, watermark, reservation, and sampling configurations execute against recorded transient, terminal, churn, sleep, captive, pressure, and stop rows with controlled variables. 2. Accepted reconnect values reduce or bound outage and wasted attempts while preserving terminal-error behavior, prompt user stop, exact current routes, safe DNS, and one current generation. 3. Accepted pressure and overlap values keep footprint and peak within measured device ceilings, apply actions in order, avoid reliance on jetsam, and stop explicitly when recovery cannot fit. 4. Accepted cadence and backoff reduce or preserve CPU wakeups and energy without missing material path or pressure changes or delaying fast failure beyond contract bounds. 5. A TASK-ID-scoped decision records tested and rejected values, device or OS variance, final defaults and bounds, regression thresholds, safety evidence, and raw references.

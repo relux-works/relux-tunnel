@@ -1,0 +1,36 @@
+@startuml
+title M3 reconnect and reasserting lifecycle
+state Disconnected
+state Connecting
+state ConnectedFull
+state ConnectedDegraded
+state Reasserting
+state Failed
+state Disconnecting
+[*] --> Disconnected
+Disconnected --> Connecting : user or system start
+Connecting --> ConnectedFull : SSH, safe DNS, packet, relay ready
+Connecting --> ConnectedDegraded : SSH, safe DNS, packet ready
+Connecting --> Failed : mandatory or terminal failure
+ConnectedFull --> Reasserting : path, SSH, lane A, or lifecycle loss
+ConnectedDegraded --> Reasserting : path, SSH, or lifecycle change
+Reasserting --> ConnectedFull : current full readiness restored
+Reasserting --> ConnectedDegraded : current TCP and safe DNS restored
+Reasserting --> Failed : terminal cause or bounded retry exhausted
+ConnectedFull --> Disconnecting : stop
+ConnectedDegraded --> Disconnecting : stop
+Reasserting --> Disconnecting : stop
+Failed --> Connecting : explicit eligible retry
+Failed --> Disconnecting : stop
+Disconnecting --> Disconnected : settings and resources released
+note right of Reasserting
+Invalidate old lane and relay generations.
+Reserve bounded replacement memory.
+Try cached endpoints, then required-interface
+resolution and connect. Capture actual endpoint,
+replace exact exclusion and settings, restore
+lane A, safe DNS, packet and TCP, relay, then
+optional lanes. Clear reasserting only when
+the advertised mode is usable.
+end note
+@enduml

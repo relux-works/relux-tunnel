@@ -1,0 +1,32 @@
+digraph GeneratedTargetDependencyPlan {
+  graph [
+    label=<Generated Apple target dependency direction>
+    labelloc=t
+    rankdir=LR
+    nodesep=0.5
+    ranksep=0.8
+  ]
+  node [shape=box style=rounded]
+
+  Legacy [label=<Existing ReluxProxy<BR/>SwiftPM menu-bar product<BR/><I>preserved until explicit migration</I>> style=<rounded,dashed>]
+
+  MacHost [label=<ReluxProxyMac<BR/>containing app>]
+  MacProvider [label=<ReluxProxyMacTunnel<BR/>thin NE adapter>]
+  IOSHost [label=<ReluxProxyIOS<BR/>containing app>]
+  IOSProvider [label=<ReluxProxyIOSTunnel<BR/>thin NE adapter>]
+  Core [label=<ReluxTunnelCore<BR/>shared packet, SSH, relay,<BR/>lifecycle, memory contracts>]
+  Harness [label=<ReluxTunnelHarness<BR/>macOS CLI experiments>]
+  Native [label=<Pinned extension-safe<BR/>native dependency seams>]
+  Relay [label=<relux-relay and protocol tests<BR/>portable artifact shell>]
+
+  MacHost -> MacProvider [label=<embeds and manages>]
+  IOSHost -> IOSProvider [label=<embeds and manages>]
+  MacProvider -> Core [label=<adapts provider lifecycle>]
+  IOSProvider -> Core [label=<adapts provider lifecycle>]
+  Harness -> Core [label=<runs the same core contracts>]
+  Core -> Native [label=<consumes through typed adapters>]
+  MacProvider -> Relay [label=<later bundles versioned artifact> style=dashed]
+  IOSProvider -> Relay [label=<later bundles versioned artifact> style=dashed]
+
+  Legacy -> MacHost [label=<coexists; no silent replacement> style=dashed arrowhead=none]
+}

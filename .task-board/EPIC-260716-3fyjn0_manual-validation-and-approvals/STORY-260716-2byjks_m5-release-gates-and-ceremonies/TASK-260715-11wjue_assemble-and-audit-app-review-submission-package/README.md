@@ -1,0 +1,10 @@
+# Assemble and audit the App Review submission package
+
+## Description
+Assemble the exact binary selection, review notes, entitlement purpose, data-flow evidence, regional and privacy declarations, test instructions and credentials, metadata, screenshots, URLs, contact, and known limitations into one versioned submission package.
+
+## Scope
+In scope: App Store Connect app and build IDs, candidate evidence digests, review notes, Network Extension purpose, Gate A0 and P0 references, VPN data flow, user-owned SSH explanation, full and degraded modes, system exclusions, privacy and support, regional availability, isolated fixture, secure credential fields, instructions, metadata, screenshots, export answers, contact, attachments, package schema, access control, redaction, independent audit, and expiration. Out of scope: changing the binary, inventing legal answers, including private keys in ordinary artifacts, omitting known limitations, submitting before all gates, and relying on memory rather than retained values.
+
+## Acceptance Criteria
+1. The package identifies the exact accepted App Store Connect build, source, versions, relay manifest, entitlement report, privacy and legal revisions, storefronts, fixture revision, instructions, metadata, screenshots, and public URLs. 2. Review notes explicitly explain the Network Extension purpose, SSH exit ownership, host trust, relay and degraded behavior, system exclusions, diagnostics, support data, and any non-obvious first-run or permission step. 3. Credentials are referenced only through approved secure fields, scoped and expiring, and the package itself passes secret, personal-data, link, version, and completeness scans. 4. An independent reviewer executes the instructions on the exact candidate, compares every claim and screenshot to behavior, and records corrections or acceptance. 5. Missing gate, stale build, expired fixture, broken URL, inconsistent policy, unsupported claim, secret leakage, wrong storefront, or unreviewed warning prevents submission.

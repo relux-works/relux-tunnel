@@ -1,0 +1,10 @@
+# Run the physical Mac IPv6, sleep, captive, and lifecycle matrix
+
+## Description
+Execute every supported Mac row from the recorded matrix on named physical hardware, covering native and available NAT64 or IPv6-only environments, interface changes, sleep and wake, captive negotiation, route modes, host-app termination, provider stops, and repeated lifecycle.
+
+## Scope
+In scope: named Apple-silicon Mac and supported macOS or toolchain; Wi-Fi and Ethernet where available; IPv4, IPv6, dual-stack, and controlled NAT64 or IPv6-only fixture when available; compatible and fail-closed modes; full and degraded capability; sleep and wake; captive fixture; host-app kill; cancel during start; stop reasons; repeated loops; TCP, DNS, UDP, and QUIC probes; authorized captures; memory, energy, routes, counters, cleanup. Out of scope: unsupported Intel claims, unauthorized public networks, production traffic, forcing unavailable cellular behavior, absolute kill-switch claims, or waiving red rows.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped evidence bundle records hardware, macOS and toolchain, revisions, profile, interface and family, route mode, fixture, event timeline, traffic, routes, snapshots, counters, footprint, energy, captures, and raw references for every row. 2. Supported address-family rows use the actual endpoint and exact current exclusion and keep ordinary DNS and application traffic on the exit path or fail explicitly. 3. Interface, sleep or wake, captive, and mode transitions restore current full or degraded capability without recursive routes, stale associations, physical ordinary fallback, or deadlock. 4. Host-app termination does not stop a healthy provider, while cancellation, stop reasons, and repeated loops return routes, sessions, channels, tasks, timers, sockets, and descriptors to baseline. 5. NAT64, interface, API, or captive rows unavailable on the test hardware are recorded unavailable rather than passed, and any macOS behavior change carries reproduction evidence and an owner.

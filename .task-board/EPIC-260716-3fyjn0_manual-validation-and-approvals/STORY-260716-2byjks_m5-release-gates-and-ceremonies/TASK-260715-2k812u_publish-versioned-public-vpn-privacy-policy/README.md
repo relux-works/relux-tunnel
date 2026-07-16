@@ -1,0 +1,10 @@
+# Publish the versioned public VPN privacy policy
+
+## Description
+Convert the approved in-app privacy and retention copy into a publicly accessible, versioned policy that accurately describes the VPN data flow, observer boundaries, zero-telemetry baseline, profiles, diagnostics, support data, retention, deletion, contact, and regional scope.
+
+## Scope
+In scope: approved copy revision, public HTTPS URL, version and effective date, Relux Works legal identity and contact, user-controlled SSH host, access-network and exit-host visibility, Relux Works absence from baseline data path, no sale, use, or disclosure of VPN traffic data, zero analytics and traffic telemetry, profile and Keychain boundaries at a high level, diagnostics and support export, retention and deletion, children or age statements if required, regional availability, policy change process, accessibility, localization policy, and uptime checks. Out of scope: inventing legal terms, exposing implementation secrets, enabling telemetry, user tracking, marketing claims, and publishing before accountable approval.
+
+## Acceptance Criteria
+1. The public policy uses the approved product, privacy or legal, and security copy revision and every claim traces to current implemented behavior and evidence. 2. It explicitly covers processed data, where traffic exits, access-network and exit-host observation, user ownership of SSH infrastructure, Relux Works data-path role, system exclusions, degraded mode, diagnostics, support data, retention, deletion, and zero baseline telemetry. 3. The stable HTTPS URL is reachable without authentication from App Review and supported regions, has valid transport security, responsive accessible content, version and effective date, and durable prior-version retention per policy. 4. In-app disclosure, App Privacy labels, support materials, review notes, and public policy are checked for semantic and version parity. 5. Broken URL, unapproved edit, stale behavior, contradictory retention, hidden tracking, inaccessible content, or missing regional condition blocks submission.

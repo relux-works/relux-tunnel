@@ -1,0 +1,26 @@
+digraph M0GateDependency {
+  graph [
+    label=<M0 viability and foundation — execution gates>
+    labelloc=t
+    rankdir=LR
+    nodesep=0.55
+    ranksep=0.85
+  ]
+  node [shape=box style=rounded]
+
+  subgraph cluster_gate_evidence {
+    label=<Phase 1 — external viability evidence>
+    GateA0 [label=<STORY-260715-2itwz7<BR/><B>Gate A0 intended-use viability</B>>]
+    GateP0 [label=<STORY-260715-2xnj3v<BR/><B>Gate P0 capabilities and devices</B>>]
+  }
+
+  Project [label=<STORY-260715-l2i2oo<BR/><B>Generated project foundation</B>>]
+  Bridge [label=<STORY-260715-jnpbyz<BR/><B>Packet bridge and HEV spike</B>>]
+  SSH [label=<STORY-260715-lkshfz<BR/><B>SSH engine comparison</B>>]
+
+  GateA0 -> Project [label=<authoritative architecture disposition>]
+  GateP0 -> Project [label=<signed host/provider proof on iPhone and Mac>]
+  Project -> Bridge [label=<shared core, native seam, and harness>]
+  Project -> SSH [label=<Apple targets, native seam, and harness>]
+  Bridge -> SSH [label=<measured HEV and packet memory budget<BR/>before comparative SSH scale gate>]
+}

@@ -1,0 +1,27 @@
+@startuml
+title M3 new-flow lane assignment
+start
+:Receive current-generation channel request;
+if (Memory and server admission available?) then (yes)
+  if (Control or latency-sensitive DNS?) then (yes)
+    :Filter control-eligible capacity;
+  else (no)
+    if (Likely bulk at open?) then (yes)
+      :Filter optional bulk then general capacity;
+    else (ordinary)
+      :Filter general capacity;
+    endif
+  endif
+  :Exclude failed, closing, rekeying, stale, and pressure-blocked lanes;
+  :Order by writable credit, queued bytes, RTT health, and open channels;
+  if (Eligible lane exists?) then (yes)
+    :Pin flow to selected lane until close;
+    :Record aggregate assignment;
+  else (no)
+    :Return bounded typed admission failure;
+  endif
+else (no)
+  :Return bounded pressure or capacity failure;
+endif
+stop
+@enduml

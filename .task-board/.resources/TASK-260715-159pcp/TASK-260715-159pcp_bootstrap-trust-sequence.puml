@@ -1,0 +1,39 @@
+@startuml
+!theme plain
+title Secure relay bootstrap and session promotion
+
+participant "Tunnel coordinator" as Coordinator
+participant "Authenticated SSH transport" as SSH
+participant "Bundled asset manifest" as Manifest
+participant "Remote fixed shell operations" as Shell
+participant "relux-relay" as Relay
+participant "Capability state" as Capability
+
+Coordinator -> Manifest : validate local asset size and SHA-256
+Coordinator -> SSH : fixed uname probe
+SSH -> Shell : uname -s and uname -m
+Shell --> SSH : bounded normalized candidates
+SSH --> Coordinator : exact platform tuple
+Coordinator -> Manifest : select one trusted asset
+Coordinator -> SSH : create private random temporary path
+Coordinator -> SSH : stream exact binary bytes with bounded writes
+Coordinator -> SSH : verify size and SHA-256
+alt approved hash utility exists
+  SSH -> Shell : fixed sha256sum or shasum operation
+  Shell --> SSH : one strict digest record
+else no approved hash utility
+  SSH -> Shell : bounded binary readback
+  Shell --> SSH : exact file bytes
+  SSH --> Coordinator : client computes SHA-256
+end
+Coordinator -> SSH : chmod 0700 and atomic versioned rename
+Coordinator -> SSH : exec exact verified path --stdio --protocol 1
+SSH -> Relay : launch with separate stdin, stdout, stderr
+Relay --> Coordinator : protocol hello plus build identity and limits
+alt all evidence matches
+  Coordinator -> Capability : publish relay-ready evidence
+else any mismatch or timeout
+  Coordinator -> SSH : close channel and clean owned temporary state
+  Coordinator -> Capability : publish finite degraded reason
+end
+@enduml

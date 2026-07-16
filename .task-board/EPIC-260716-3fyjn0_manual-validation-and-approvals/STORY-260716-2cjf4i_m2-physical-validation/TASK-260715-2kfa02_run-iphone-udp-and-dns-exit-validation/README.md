@@ -1,0 +1,10 @@
+# Verify iPhone IPv4, IPv6, UDP, DNS, and exit-host behavior
+
+## Description
+Run the M2 full-mode acceptance matrix on a named physical iPhone, proving representative IPv4 and IPv6 UDP plus tunnel-owned DNS exit through the selected SSH host with bounded resources, no ordinary physical fallback, and repeatable cleanup.
+
+## Scope
+In scope: supported physical iPhone and iOS; development-signed provider; controlled SSH exit; controlled IPv4 and IPv6 UDP echo or application fixtures; domain-destination fixture; approved resolver; UDP and TCP DNS clients; external capture at authorized access and exit points; stable Wi-Fi and cellular starting paths; association and drop counters; memory; relay process evidence; repeated start and stop; redaction. Out of scope: Wi-Fi or cellular transition, NAT64 transition, captive recovery, degraded-mode transitions, final QUIC product policy, TestFlight, App Review, production traffic, and unsupported applications.
+
+## Acceptance Criteria
+1. Evidence records device, iOS and Xcode, source and dependency revisions, relay asset and protocol identity, profile generation, network type, resolver and exit fixtures, limits, MTU, timestamps, duration, memory, associations, queues, drops, and authorized capture points. 2. Representative IPv4 and IPv6 UDP request and response payload hashes match through the selected SSH host and exit capture confirms the relay host opened the destination sockets. 3. Domain-destination UDP and tunnel-owned DNS succeed through relay UDP, TC or forced fallback uses SSH DNS-over-TCP, and access capture observes zero ordinary DNS sent to physical resolvers. 4. Oversize, association limit, queue pressure, relay process loss, and user stop produce bounded declared outcomes with no application UDP sent directly on the physical interface. 5. Repeated runs return provider, HEV, adapter, channel, association, remote socket, timer, buffer, route, and DNS state to baseline and attach a TASK-ID-scoped redacted evidence bundle.

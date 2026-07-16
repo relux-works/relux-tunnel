@@ -1,0 +1,10 @@
+# Implement unified bounded resource and performance instrumentation
+
+## Description
+Implement one low-overhead privacy-safe metrics schema and collection pipeline that reconciles packet, HEV, SSH, lane, channel, window, rekey, DNS, relay, route, reconnect, memory, CPU, energy, error, and cleanup evidence for harness and physical runs.
+
+## Scope
+In scope: packets, bytes, batches, drops by reason, malformed frames, maximum datagram, socket effective buffers, HEV sessions and caches, lanes, channels, windows and adjustments, queued bytes, rekeys, RTT and health age, DNS counts and latency, relay associations and queues, route and reconnect generation, footprint, peak, available-memory sample, CPU, energy hooks, packet and syscall rate, TTFB and throughput markers, descriptor and task counts; bounded aggregation; snapshot and export format; test clock; redaction. Out of scope: packet payloads, DNS names, destinations, full local addresses, per-user analytics, high-cardinality labels, permanent telemetry upload, Instruments replacement, or final thresholds.
+
+## Acceptance Criteria
+1. A versioned schema gives every required metric a unit, type, owner, aggregation, reset and overflow rule, generation, sampling cadence, validity, and privacy classification. 2. Collection has fixed memory, time, cardinality, and export-size ceilings and coalesces or drops excess samples with observable aggregate counters rather than blocking packet or SSH work. 3. Cross-layer identifiers reconcile one run and generation without exposing destinations, queries, payloads, credentials, remote-controlled text, or stable user tracking. 4. Snapshots and run exports include configuration, counts, distributions or bounded histograms, errors, and cleanup baselines and handle unavailable platform metrics explicitly. 5. Unit, overhead, concurrency, rollover, schema-compatibility, redaction, and repeated-run tests prove metric reconciliation and quantify collector CPU, memory, allocation, and output cost.

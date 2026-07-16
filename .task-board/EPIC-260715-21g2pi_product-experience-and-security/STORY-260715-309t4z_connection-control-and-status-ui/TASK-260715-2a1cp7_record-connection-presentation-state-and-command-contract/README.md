@@ -1,0 +1,10 @@
+# Record the connection presentation-state and command contract
+
+## Description
+Produce the binding M4 mapping from NETunnelProviderSession status, versioned provider lifecycle/capability snapshots, current profile generation, and last safe failure into the required user-visible states and allowed actions. Preserve system/provider authority and define deterministic stale and race behavior.
+
+## Scope
+In scope: disconnected, connecting, connected/full, connected/degraded, reasserting, disconnecting, failed, invalid/configuration/permission states, snapshot freshness, generation matching, capability predicates, finite reasons/remediation, connect/disconnect/retry controls, profile selection and switching, app relaunch/termination, QUIC and route policy settings, system indicator wording, accessibility values, privacy-safe errors, and test vectors. Out of scope: implementing NETunnelProviderManager, redefining M2/M3 state machines, packet forwarding, UI layout, and release operations.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped truth table maps every Network Extension status plus current/missing/stale/mismatched provider snapshot to exactly one presentation state, capability label, accessibility value, and allowed command set. 2. Connected/full requires current-generation TCP, leak-safe DNS, UDP, and required address-family readiness; connected/degraded requires safe TCP and DNS and names UDP absence; mandatory safety loss is failed or reasserting per the accepted runtime contract. 3. Connect, disconnect, cancel-start, retry, profile switch, policy edit, app relaunch, duplicate command, and out-of-order notification sequences have deterministic idempotent or explicitly rejected outcomes. 4. The system VPN indicator and provider session remain authoritative when the containing app is suspended/terminated; the UI never synthesizes success from cached app state. 5. Finite reason/copy mappings and exact downstream tests are defined for permission, configuration, reachability, trust, auth, tunnel, relay, DNS, route, policy, timeout, and unknown failures.

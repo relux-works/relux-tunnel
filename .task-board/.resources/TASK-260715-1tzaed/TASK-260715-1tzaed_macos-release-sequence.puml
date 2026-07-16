@@ -1,0 +1,30 @@
+@startuml
+!theme plain
+title TASK-260715-1tzaed — macOS signed distribution sequence
+
+participant "Release orchestrator" as Orchestrator
+participant "Archive builder" as Builder
+participant "Bundle/entitlement inspector" as Inspector
+participant "Protected signer" as Signer
+participant "DMG packager" as Packager
+participant "Apple notary service" as Notary
+participant "Private GitHub release" as GitHub
+participant "Clean supported Mac" as Mac
+
+Orchestrator -> Builder : immutable source + versions + accepted relay staging digest
+Builder --> Orchestrator : unsigned archive + inventory + hashes
+Orchestrator -> Inspector : verify host/extension topology and pre-sign inputs
+Inspector --> Orchestrator : exact matrix pass
+Orchestrator -> Signer : sign nested code inside-out\nminimum entitlements + hardened runtime
+Signer -> Inspector : signed application
+Inspector --> Orchestrator : strict signatures + actual entitlements pass
+Orchestrator -> Packager : signed application digest
+Packager --> Orchestrator : versioned and stable-name DMG bytes + checksums
+Orchestrator -> Notary : submit exact candidate digest
+Notary --> Orchestrator : accepted request + log
+Orchestrator -> Packager : staple and verify ticket
+Packager -> Mac : quarantined Gatekeeper/install smoke
+Mac --> Orchestrator : install/upgrade/extension/rollback evidence
+Orchestrator -> GitHub : publish immutable versioned asset\nthen verified stable authenticated asset
+GitHub --> Orchestrator : remote sizes, hashes, release IDs
+@enduml

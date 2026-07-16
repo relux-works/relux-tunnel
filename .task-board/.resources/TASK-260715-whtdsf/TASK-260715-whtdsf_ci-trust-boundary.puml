@@ -1,0 +1,43 @@
+@startuml
+!theme plain
+title TASK-260715-whtdsf — CI trust boundary
+
+actor "Fork / untrusted PR" as Fork
+actor "Trusted maintainer" as Maintainer
+queue "Protected tag or approved dispatch" as Trigger
+
+rectangle "Credential-free CI" as PRCI {
+  component "Board/spec + generator drift" as Docs
+  component "Core/protocol + Apple compile + relay smoke" as Tests
+  component "Secret/license/SBOM policy" as Scans
+}
+
+rectangle "Protected release orchestration" as Release {
+  component "Immutable candidate manifest" as Manifest
+  component "Serialized promotion" as Promote
+}
+
+node "macOS GitHub Environment" as MacEnv
+node "iOS App Store Environment" as IOSEnv
+node "Relay staging / provenance" as RelayEnv
+artifact "Redacted evidence bundle" as Evidence
+
+Fork --> PRCI : read-only token\nno production secrets
+Maintainer --> PRCI : same required gates
+PRCI --> Evidence : results + digests
+Trigger --> Manifest : approved immutable commit
+Evidence --> Manifest : all blocking checks pass
+Manifest --> Promote
+Promote --> MacEnv : scoped Developer ID/notary/GitHub credentials
+Promote --> IOSEnv : scoped Apple Distribution/App Store credentials
+Promote --> RelayEnv : verified staged bytes only
+MacEnv --> Evidence
+IOSEnv --> Evidence
+RelayEnv --> Evidence
+
+note bottom of PRCI
+No protected environment, signing material,
+publication token, or privileged runner is
+reachable from pull-request code.
+end note
+@enduml

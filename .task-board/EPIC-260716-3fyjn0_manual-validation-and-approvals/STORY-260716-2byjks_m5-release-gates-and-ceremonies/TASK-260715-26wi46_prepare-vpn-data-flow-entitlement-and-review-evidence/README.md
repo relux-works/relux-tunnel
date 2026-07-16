@@ -1,0 +1,10 @@
+# Prepare VPN data-flow, entitlement-purpose, and behavior evidence for App Review
+
+## Description
+Create the focused technical evidence that explains how the containing app, packet-tunnel extension, local packet and socket bridge, SSH lanes, user-owned exit host, relay, DNS, destinations, diagnostics, and system exclusions behave in full, degraded, and failure modes.
+
+## Scope
+In scope: C4 or focused component view and runtime sequence, host and extension roles, NETunnelProviderManager, packet flow, HEV or selected stack boundary, SSH host verification and authentication, direct-tcpip, relay upload and handshake, UDP and DNS, route and endpoint exclusions, Apple system exclusions, full and degraded predicates, fail-closed limitations, observer boundaries, no Relux data path, entitlement purpose, logs and support data, build and evidence revision, and reviewer-oriented prose. Out of scope: euphemizing TN3120 concerns, claiming anonymity, exposing source secrets, changing architecture, sharing production credentials, and replacing Gate A0 evidence.
+
+## Acceptance Criteria
+1. Diagrams and prose accurately show every trust boundary and where original packets, TCP, DNS, UDP, SSH metadata, post-SSH destinations, diagnostics, and support exports are processed or observable. 2. The Network Extension packet-tunnel purpose and user benefit match the Gate A0 disposition and exact archived entitlements without omitting local TCP termination or relay behavior. 3. Full, degraded, reasserting, failed, compatible, and platform-scoped fail-closed modes name capabilities, system exclusions, leaks prevented, and limitations without absolute unsupported claims. 4. Every statement links to current source commit, protocol and relay manifest, M4 UI disclosure, routing and leak evidence, diagnostics tests, and iOS distribution candidate. 5. Product, architecture, security, privacy, and App Review owners review the evidence and any discrepancy blocks submission until behavior or approved claims are reconciled.

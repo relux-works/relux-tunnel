@@ -1,0 +1,10 @@
+# Approve VPN privacy, retention, and support copy
+
+## Description
+Draft and obtain accountable product/privacy/legal approval for the copy shown before first VPN enablement and in settings/support surfaces. Reconcile every statement with implemented architecture and explicitly defer regional licensing/storefront decisions to the release gate.
+
+## Scope
+In scope: self-hosted SSH model, data processed on device/provider, user-controlled exit, exit-host administrator visibility, Relux Works absence from baseline data path, no sale/use/disclosure of VPN traffic data, zero analytics/traffic telemetry baseline, SSH endpoint metadata visible to access networks, system traffic Apple excludes, compatible/fail-closed limitations, diagnostic categories, support-export initiation, local/support retention and deletion, future opt-in telemetry boundary, copy ownership/versioning, required review roles, and handoff to M5. Out of scope: legal advice by the implementer, regional licensing decision, public policy deployment, App Store submission, marketing claims, and implementation.
+
+## Acceptance Criteria
+1. A versioned TASK-ID-scoped copy deck contains exact short and expanded text for pre-enable disclosure, onboarding, settings, diagnostics, export preview, deletion, compatible/fail-closed limits, and support help. 2. Each statement traces to a current architecture/security behavior and avoids anonymity, hosted exit, universal fail-closed, inspection, or telemetry claims the product cannot prove. 3. Retention/deletion text distinguishes device profiles/keys, local diagnostics, user-created exports, and any user-submitted support data with responsible owner and duration. 4. Product, privacy/legal, security, and App Review owners record approval or the task remains the explicit blocking decision with exact disputed text/options; regional availability remains an M5 gate. 5. Approved copy keys, version, review date, downstream task IDs, and update trigger are recorded without personal data or credentials.

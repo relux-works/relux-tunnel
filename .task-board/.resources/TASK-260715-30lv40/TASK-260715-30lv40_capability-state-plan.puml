@@ -1,0 +1,42 @@
+@startuml
+!theme plain
+title M2 capability state and relay-only recovery
+
+[*] --> Connecting
+Connecting --> ConnectedFull : base TCP plus safe DNS plus validated relay
+Connecting --> ConnectedDegraded : base TCP plus safe DNS, relay unavailable
+Connecting --> Failed : mandatory TCP or safe DNS unavailable
+
+ConnectedFull --> ConnectedDegraded : bootstrap, framing, health, process, or relay-lane failure
+ConnectedFull --> Failed : mandatory base path or safe DNS failure
+ConnectedDegraded --> RelayReprobe : recoverable relay reason and healthy base SSH
+RelayReprobe --> ConnectedFull : fresh asset, identity, handshake, features, limits, health
+RelayReprobe --> ConnectedDegraded : bounded attempt fails, retry remains eligible
+RelayReprobe --> Failed : mandatory base path or safe DNS fails
+ConnectedDegraded --> Failed : safe DNS or TCP becomes unusable
+
+Connecting --> Stopping : provider stop
+ConnectedFull --> Stopping : provider stop
+ConnectedDegraded --> Stopping : provider stop
+RelayReprobe --> Stopping : provider stop
+Failed --> Stopping : provider stop
+Stopping --> [*]
+
+note right of ConnectedFull
+TCP: usable
+Safe DNS: usable
+General UDP: relay only
+end note
+
+note right of ConnectedDegraded
+TCP: usable
+Safe DNS: tunneled fallback only
+General UDP: explicitly rejected
+No physical fallback
+end note
+
+note bottom of RelayReprobe
+M2 owns relay-only reprobe on the healthy authenticated base transport.
+M3 owns path, host, route, lane-pool, sleep, NAT64, and captive reconnect.
+end note
+@enduml

@@ -1,0 +1,17 @@
+Date: 2026-07-15
+Scope: EPIC-260715-2mqgvm planning diagram validation
+
+Commands attempted:
+  dot -Tsvg diagrams/EPIC-260715-2mqgvm_gate-dependency.dot -o /dev/null
+  dot -Tsvg diagrams/TASK-260715-32umrc_target-dependency-plan.dot -o /dev/null
+
+Result: both commands exited 134 before parsing input.
+
+Runtime failure:
+  Graphviz /opt/homebrew/Cellar/graphviz/14.0.4/bin/dot cannot load
+  /opt/homebrew/opt/libtool/lib/libltdl.7.dylib because the library is absent.
+
+Disposition:
+  DOT sources remain attached as reviewable diagrams-as-code. No rendered-image
+  validation is claimed. Repairing the workstation Homebrew installation is
+  outside this planning-only board decomposition.

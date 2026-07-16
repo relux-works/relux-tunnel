@@ -1,0 +1,10 @@
+# Verify iPhone IPv4, IPv6, routing, external-IP, and DNS leak behavior
+
+## Description
+Run the M1 routing and leak matrix on a named physical iPhone with a configured authenticated SSH profile. Capture supported IPv4, IPv6, and dual-stack application TCP, UDP and TCP DNS client behavior, external address observations, SSH endpoint exclusion, UI-process termination continuity, resolver failures, and no ordinary physical DNS fallback.
+
+## Scope
+In scope: supported physical iPhone and iOS, Wi-Fi and cellular only as stable starting paths rather than transition testing, controlled exit host and resolver, representative browser and TCP apps, DNS test app or commands available on device, packet capture at access and exit networks where authorized, system VPN state, host-app termination, repeated runs, memory and drop counters, and redacted evidence. Out of scope: Wi-Fi to cellular transition, NAT64 transition resilience, captive portal recovery, general UDP, QUIC, fail-closed mode, TestFlight, App Review, and collecting unrelated personal traffic.
+
+## Acceptance Criteria
+1. Evidence records device class, iOS and Xcode, source and dependency revisions, profile generation, exit and resolver fixture identity, route mode, MTU, network type, timestamp, duration, counters, and authorized capture points. 2. Representative application TCP works for supported IPv4 and IPv6 paths and external observations match the selected SSH exit host rather than the access network. 3. Client UDP and TCP DNS resolve through the tunnel, exit-side observation matches the approved resolver policy, and access-side capture shows zero ordinary queries to physical DNS after settings apply. 4. The SSH transport remains reachable outside its own tunnel, no route loop occurs, and host-app termination does not interrupt active forwarding. 5. Resolver and SSH failure rows return bounded explicit failure or stop safe forwarding without physical DNS fallback, and a TASK-ID-scoped redacted bundle supports repetition.

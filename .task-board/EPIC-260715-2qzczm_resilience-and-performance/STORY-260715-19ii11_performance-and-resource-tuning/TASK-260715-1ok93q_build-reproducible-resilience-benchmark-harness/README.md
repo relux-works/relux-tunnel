@@ -1,0 +1,10 @@
+# Build the reproducible resilience benchmark and failure-injection harness
+
+## Description
+Build the controlled harness that drives the recorded traffic shapes, concurrency stages, network loss and latency, socket and receiver pressure, lane failures, rekey, relay loss, DNS faults, path and lifecycle events, and collects one reproducible evidence bundle.
+
+## Scope
+In scope: local or controlled remote TCP, DNS, UDP, QUIC, and SSH fixtures; short, bulk, idle, burst, mixed, upload, download, and bidirectional traffic; byte hashes; 100, 250, 500, and configuration-limit stages; MTUs; one, two, and four lanes; window profiles; deterministic clock and seeds where possible; network condition adapter; receiver stall and bounded buffers; failure triggers; start and stop loops; metrics export; authorized capture hooks; cleanup checks. Out of scope: production-user traffic, unbounded public load, device-specific UI automation beyond harness triggers, physical-only OS behavior claims, changing product code to fit the harness, or automatic parameter optimization.
+
+## Acceptance Criteria
+1. Each protocol workload can be launched from a recorded configuration and produces start, steady-state, fault, recovery, stop, integrity, metric, and raw-artifact events with a reproducible run ID and seed. 2. Loss, latency, receiver stall, socket pressure, lane or relay failure, rekey, DNS error, path hint, sleep or wake simulation, cancellation, and stop triggers are bounded, reversible, and report actual applied conditions. 3. The harness validates request and response hashes or protocol semantics and reconciles intended flows, packets, channels, associations, DNS transactions, errors, drops, and cleanup. 4. Concurrency and output are limited by configuration and memory budget, failed setup cannot leave shaping or fixtures active, and a user stop cancels promptly. 5. Automated self-tests cover every workload and trigger, missing tools, fixture failure, timeout, partial artifacts, seed replay, redaction, and repeated cleanup on supported host environments.

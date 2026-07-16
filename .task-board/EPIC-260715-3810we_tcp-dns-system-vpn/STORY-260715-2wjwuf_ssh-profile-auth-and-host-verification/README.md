@@ -1,0 +1,10 @@
+# SSH profile authentication and host-key enforcement
+
+## Description
+Turn one versioned non-secret SSH profile snapshot and opaque Keychain credential reference into an authenticated in-process SSH session inside ReluxTunnelCore. Enforce canonical validation, mandatory pre-authentication host-key policy, approved public-key authentication, actual endpoint capture, and privacy-safe failures before the final provider-context acceptance owned by the lifecycle story.
+
+## Scope
+In scope: extension-readable profile snapshots, opaque Keychain references, least-privilege credential retrieval, approved host identity records, first-use evidence and trust-required outcome, changed-key rejection, Ed25519 and the M0-approved fallback key type, one baseline SSH session, pre-route endpoint resolution and capture, cancellation, redacted diagnostics, unit tests, and controlled integration fixtures. Out of scope: key import or generation UI, user trust UI, password auth, agent forwarding, ProxyJump, interactive shell, SFTP, multi-lane scheduling, engine selection, and physical provider acceptance owned by STORY-260715-eto58m.
+
+## Acceptance Criteria
+1. Invalid or stale profiles and inaccessible credential references fail before routes or packet forwarding. 2. Raw host-key evidence is evaluated before user authentication, approved fingerprints connect, first use returns trust-required, and changed keys fail without retry or destination channels. 3. Private keys and passphrases remain in the Data Protection Keychain access group and never enter App Group data, providerConfiguration, logs, diagnostics, or board artifacts. 4. The selected M0 adapter authenticates Ed25519 and the approved fallback against controlled fixtures while cancellation and failure paths return resources to baseline. 5. The session bootstrap returns the verified identity and actual IPv4 or IPv6 endpoint through a provider-ready boundary, with final physical iPhone and Mac verification delegated to TASK-260715-3f4rhy.

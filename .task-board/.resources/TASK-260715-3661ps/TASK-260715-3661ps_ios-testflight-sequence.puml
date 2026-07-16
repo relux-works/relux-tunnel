@@ -1,0 +1,33 @@
+@startuml
+!theme plain
+title TASK-260715-3661ps — iOS archive and TestFlight sequence
+
+participant "Release orchestrator" as Orchestrator
+participant "Version allocator" as Version
+participant "Protected archive builder" as Builder
+participant "Bundle/profile inspector" as Inspector
+participant "App Store Connect" as ASC
+participant "Physical iPhone" as Device
+participant "Release operations" as Ops
+
+Orchestrator -> Version : approved tag + immutable candidate
+Version -> ASC : query existing builds
+ASC --> Version : monotonic build state
+Version --> Orchestrator : marketing version + reserved build number
+Orchestrator -> Builder : exact source, locks, relay staging, versions
+Builder --> Orchestrator : signed xcarchive/export + hashes
+Orchestrator -> Inspector : profiles, entitlements, topology, privacy manifests, symbols
+Inspector --> Orchestrator : technical preflight pass
+Orchestrator -> ASC : upload exact candidate
+ASC --> Orchestrator : processed build ID
+Orchestrator -> ASC : assign approved TestFlight group
+ASC -> Device : install unchanged processed build
+Device --> Orchestrator : entitlement/lifecycle/accessibility evidence
+Orchestrator -> Inspector : server + local binary preflight
+Inspector --> Ops : accepted build ID + provenance + technical compliance evidence
+
+note over Builder,ASC
+No rebuild, resign, profile substitution,
+or resource change may inherit TestFlight evidence.
+end note
+@enduml

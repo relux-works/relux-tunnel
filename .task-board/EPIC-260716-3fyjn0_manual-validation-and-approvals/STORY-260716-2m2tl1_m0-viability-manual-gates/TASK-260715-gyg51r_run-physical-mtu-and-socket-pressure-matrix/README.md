@@ -1,0 +1,10 @@
+# Run the physical MTU and socket-pressure matrix
+
+## Description
+Measure packet correctness and performance for MTUs 1500, 4096, and 8500 across physical iPhone and macOS environments under nominal, constrained-buffer, receiver-stall, and mixed traffic. Produce the evidence for an M0 MTU and socket-buffer baseline.
+
+## Scope
+In scope: physical baseline iPhone and Apple-silicon Mac; IPv4, native IPv6 where available, dual stack, and recorded NAT64 substitute or gap; short web-like flows, large upload and download, DNS-sized packets, datagram bursts, and mixed bidirectional load; requested and effective socket buffers; packet, byte, batch, drop, latency, CPU, energy, syscall, fragmentation, and maximum-datagram metrics. Out of scope: SSH transport, remote relay correctness, production routing, unsupported performance extrapolation, and tuning outside fixed memory ceilings.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped result matrix records device, OS, source and dependency revisions, exact config, duration, traffic generator, address family, MTU, requested and effective buffers, and raw artifact locations for every run. 2. All three MTUs run on both platforms under nominal and induced pressure; any unavailable IPv6 or NAT64 row is a named blocker or separately approved gap. 3. Nominal runs show no ordinary unexplained loss, while constrained and stalled runs show only bounded reason-specific drops and recover without task or descriptor growth. 4. Reports include latency, throughput, CPU, energy where available, packet and syscall rates, fragmentation observations, effective limits, and maximum datagram size. 5. The analysis recommends an MTU and buffer range from measured tradeoffs and does not accept 8500 solely because it is the upstream default.

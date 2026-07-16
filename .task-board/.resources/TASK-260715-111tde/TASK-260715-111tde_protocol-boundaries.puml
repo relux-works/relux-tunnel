@@ -1,0 +1,34 @@
+@startuml
+!theme plain
+title Relay protocol ownership and runtime boundaries
+
+artifact "Protocol v1 schema" as Schema
+component "Generated Swift constants" as SwiftGen
+component "Generated relay constants" as RelayGen
+
+package "Apple packet tunnel extension" {
+  [HEV UDP-in-TCP] as HEV
+  [Swift relay protocol client] as Client
+  [Capability controller] as Capability
+}
+
+node "Authenticated user SSH host" {
+  [relux-relay --stdio] as Relay
+  [Bounded UDP association sockets] as Sockets
+}
+
+Schema --> SwiftGen : deterministic generation
+Schema --> RelayGen : deterministic generation
+SwiftGen --> Client
+RelayGen --> Relay
+HEV --> Client : bounded inner datagrams
+Client <--> Relay : handshake and framed protocol v1\nover authenticated SSH exec stdio
+Relay --> Sockets : rootless UDP send and receive
+Client --> Capability : build, features, limits, health, failure
+note bottom of Relay
+No root
+No daemon
+No public listener
+stdout is framed bytes only
+end note
+@enduml

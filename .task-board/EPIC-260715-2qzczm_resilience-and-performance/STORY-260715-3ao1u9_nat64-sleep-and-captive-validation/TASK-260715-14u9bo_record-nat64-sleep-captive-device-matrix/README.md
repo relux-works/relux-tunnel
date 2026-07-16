@@ -1,0 +1,10 @@
+# Record the NAT64, sleep, captive, and lifecycle device matrix
+
+## Description
+Produce the executable evidence plan for named iPhone and Mac configurations across IPv4, IPv6, dual-stack, IPv6-only NAT64, interface changes, sleep and wake, captive networks, route modes, app termination, provider stops, and repeated lifecycle.
+
+## Scope
+In scope: minimum supported and current OS rows; named baseline and constrained-memory devices; iPhone Wi-Fi and cellular; Mac Wi-Fi and Ethernet where supported; address-family and NAT64 fixtures; compatible and fail-closed modes; full and degraded capability; sleep duration classes; captive negotiation; app termination; cancellation during start; stop reasons; start and stop loops; traffic fixtures; authorized access and exit captures; required metrics, metadata, evidence naming, pass or red rules, and API-change detection. Out of scope: executing tests, implementation, unsupported device promises, public captive networks without authorization, production traffic, or converting unavailable rows into passes.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped matrix names each device, OS and toolchain, interface, family, NAT64 fixture, route mode, capability, event, traffic shape, duration, expected state, route, DNS, leak, memory, and cleanup outcome. 2. The plan includes IPv6-only start, IPv4 to NAT64 and reverse where feasible, synthesized endpoint change, Wi-Fi and cellular, sleep and wake, captive negotiation, UI termination, stop during start, repeated loops, and provider stop reasons. 3. Every row names controlled SSH, DNS, TCP, UDP, QUIC, captive, and capture fixtures plus raw artifact, timestamp, revision, configuration, counter, memory, and redaction fields. 4. Pass criteria distinguish product behavior from Apple system exceptions, platform-unavailable rows, unsupported test infrastructure, and genuine regressions without claiming an absolute kill switch. 5. The matrix maps each row to the exact implementation, automated test, physical task, route disclosure, and final tuning consumer and identifies OS behavior changes that create follow-up work.

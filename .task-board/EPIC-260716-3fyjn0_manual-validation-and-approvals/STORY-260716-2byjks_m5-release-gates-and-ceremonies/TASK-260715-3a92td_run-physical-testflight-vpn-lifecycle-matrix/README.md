@@ -1,0 +1,10 @@
+# Run the physical iPhone TestFlight VPN lifecycle matrix
+
+## Description
+Install the exact processed TestFlight candidate on named physical iPhones and validate entitlement, permission, lifecycle, routing-capability presentation, diagnostics, memory, accessibility, network changes, and uninstall behavior.
+
+## Scope
+In scope: supported current and minimum iOS rows on available named devices, TestFlight install, first launch, disclosure acknowledgement, profile setup with synthetic review-safe SSH credentials, VPN permission, provider start and stop, full and degraded modes, host app termination, reasserting, Wi-Fi and cellular change, sleep and wake, memory warning or measurement, diagnostics and export smoke, VoiceOver and text scaling critical path, update from prior TestFlight build where applicable, expiry or unavailable state, and uninstall. Out of scope: production traffic, simulator substitution, exhaustive M0-M3 performance, App Review submission, regional licensing, and hidden debug entitlements.
+
+## Acceptance Criteria
+1. Each named device installs the remote TestFlight build identified by App Store Connect build ID and independently verifies displayed version, bundle identity, extension entitlement operation, and relay build identity. 2. First-run privacy, profile, host-trust, VPN permission, connect, full or degraded capability, disconnect, app termination, relaunch, sleep or wake, and network-change paths match approved behavior and system VPN state. 3. Logs and diagnostics remain redacted, bounded, and useful; memory and lifecycle evidence records device, OS, duration, available-memory samples, peak footprint, errors, and cleanup. 4. Critical VoiceOver, Dynamic Type, permission denial, extension failure, TestFlight update, expired or withdrawn build, and uninstall rows have deterministic accessible outcomes. 5. A TASK-ID-scoped result links xcresults or test records, screenshots, device and OS inventory, build ID and digest, SSH fixture identity without secrets, pass or fail per row, anomalies, and blockers.

@@ -1,0 +1,28 @@
+@startuml
+title M3 destination UDP 443 policy
+start
+:Classify tunnel DNS before general UDP;
+if (Destination is UDP 443?) then (yes)
+  if (Policy is Block UDP 443?) then (yes)
+    :Return bounded local unreachable or equivalent;
+  else (no)
+    if (Current generation has validated relay UDP?) then (yes)
+      if (Policy is Allow QUIC?) then (yes)
+        :Admit through current relay association path;
+      else (Auto)
+        :Read current bounded lane loss and latency evidence;
+        if (Evidence predicts acceptable QUIC?) then (yes)
+          :Admit through current relay association path;
+        else (no)
+          :Return bounded local unreachable or equivalent;
+        endif
+      endif
+    else (no)
+      :Return bounded local unreachable or equivalent;
+    endif
+  endif
+else (no)
+  :Preserve existing DNS or unrelated UDP policy;
+endif
+stop
+@enduml

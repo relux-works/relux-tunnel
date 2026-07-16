@@ -1,0 +1,10 @@
+# Record the M3 performance measurement and evidence protocol
+
+## Description
+Produce the binding reproducibility contract for M3 workloads, impairments, warmup, duration, sampling, statistical comparison, metadata, raw artifact references, privacy, pass or red rules, and regression thresholds before tuning begins.
+
+## Scope
+In scope: named iPhone and Mac baselines; OS, toolchain, source and dependency revisions; profile and server config; MTU, HEV, lane, window, rekey, QUIC, route, reconnect, and memory parameters; web-like, bulk, idle, DNS, UDP burst, mixed, and concurrency workloads; loss and latency; lifecycle and failure rows; warmup, steady state, repetitions, outliers, confidence or practical-effect rule; throughput, TTFB, DNS latency, RTT, CPU, energy, memory, packet and syscall rate, queues, drops, cleanup; raw evidence manifest and redaction. Out of scope: running benchmarks, choosing results in advance, public-user traffic, unmeasured tuning, marketing claims, or hiding red rows.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped protocol defines exact workload generators, payload integrity checks, impairment profiles, concurrency stages, durations, warmup, cooldown, repetitions, random seeds, and environment controls for every metric family. 2. Every row records device, OS, toolchain, revisions, server, algorithms, profile, route and QUIC policy, all parameter values, traffic shape, counters, timestamps, raw artifact references, and privacy classification. 3. Statistical and practical-effect rules define baseline comparison, noise handling, sample exclusion, regression, material improvement, and pass or red outcomes without post-hoc threshold changes. 4. Safety gates for byte correctness, zero ordinary DNS fallback, route loops, bounded queues, memory ceilings, failure behavior, and cleanup cannot be traded away for throughput or energy. 5. The protocol defines how unavailable device or network rows, failed runs, Instruments traces, capture authorization, redaction, and accepted configuration or regression updates are preserved and reviewed.

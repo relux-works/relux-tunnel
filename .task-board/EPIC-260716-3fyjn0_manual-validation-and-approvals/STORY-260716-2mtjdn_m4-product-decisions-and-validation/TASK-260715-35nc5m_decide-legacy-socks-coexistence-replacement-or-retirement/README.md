@@ -1,0 +1,10 @@
+# Decide legacy SOCKS coexistence, replacement, or retirement
+
+## Description
+Close the current product/architecture gap for the shipped macOS SwiftPM menu-bar SOCKS app before any migration code or user messaging is written. Compare coexistence as a separate legacy product, replacement by the system VPN, and deliberate retirement, then record one accountable decision and rollback boundary.
+
+## Scope
+In scope: current host/account/local-port defaults, use of system ssh and user ~/.ssh/config, ProxyJump inheritance, manual SOCKS clients, bundle/product/storage identity, menu-bar behavior, SwiftPM tests, DMG/stable asset, signing/notarization history, support horizon, coexistence naming, upgrade detection, profile conversion limits, user messaging, data deletion, rollback/downgrade, release channels, ownership, and M4/M5 handoffs. Out of scope: implementation, modifying current source/specs/releases, assuming OpenSSH config can map to baseline profiles, and silently discarding release history.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped decision compares coexist, replace, and retire for user impact, security, engineering/release cost, App Sandbox/Network Extension constraints, defaults/data compatibility, rollback, and support burden. 2. The selected option explicitly states whether and how host/account/port defaults convert, how unrepresentable ~/.ssh/config/ProxyJump/key behavior is detected and messaged, and whether the local SOCKS port remains. 3. Product/bundle/storage identifiers, release asset/history ownership, migration version, idempotency, downgrade/rollback, deletion, telemetry-free measurement, and support window are defined. 4. Accountable product, architecture, support, and release owners record approval; otherwise this task remains the exact blocking decision with options/tradeoffs and a recommendation, not a guessed implementation. 5. Concrete downstream implementation, onboarding, test, and M5 release tasks plus preserved legacy invariants are listed without editing source/specification files.

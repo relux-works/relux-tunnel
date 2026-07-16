@@ -1,0 +1,10 @@
+# Implement atomic SSH endpoint exclusion and settings replacement
+
+## Description
+Implement the provider-safe settings transaction that derives an exact host-route exclusion from the newly authenticated actual endpoint, builds current route-mode and DNS settings, applies them as one reconnect generation, and rolls back or fails without a recursive route or broad bypass.
+
+## Scope
+In scope: actual IPv4 or IPv6 endpoint input; host prefix derivation; old and new endpoint comparison; compatible or fail-closed settings builder interface; tunnel addresses, MTU, default included routes, exact exclusions, tunnel-owned DNS; apply completion; generation check; failure rollback; packet-read gate; privacy-safe summaries; both Apple providers. Out of scope: resolving endpoints, choosing route mode, ordinary physical DNS, subnet exclusions, private utun APIs, packet-plane implementation, or claiming Apple automatic exclusion without tests.
+
+## Acceptance Criteria
+1. Only an authenticated current actual endpoint can produce one IPv4 /32 or IPv6 /128 exclusion, and broad, absent, malformed, virtual-address-colliding, or stale endpoints fail before settings apply. 2. One settings transaction contains the selected current route mode, dual-stack tunnel routes, exact endpoint exclusion, accepted MTU, and tunnel-owned DNS with deterministic normalized output. 3. Packet reads, channel admission, and usable capability remain gated until current-generation apply succeeds, while failure leaves or restores a documented safe non-usable state with no false-connected snapshot. 4. Old endpoint exclusions are removed as the new current transaction takes ownership, and duplicate completion, settings timeout, cancellation, stop, and late callbacks cannot combine generations. 5. Golden, provider-fake, and fault tests cover v4, v6, synthesized endpoints, same or changed endpoints, both route modes, Apple automatic-exclusion instrumentation hooks, rollback, no broad routes, and privacy-safe summaries.

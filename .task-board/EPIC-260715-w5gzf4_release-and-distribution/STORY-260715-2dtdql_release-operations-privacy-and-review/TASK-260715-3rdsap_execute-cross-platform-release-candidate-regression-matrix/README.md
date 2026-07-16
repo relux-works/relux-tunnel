@@ -1,0 +1,10 @@
+# Execute the cross-platform release-candidate regression matrix
+
+## Description
+Run the final M4 release gate on the exact signed candidates and evidence across supported Apple systems, channel installs, VPN lifecycle, routing and leak safety, relay, privacy, accessibility, migration, diagnostics, and rollback.
+
+## Scope
+In scope: exact macOS DMG digest and App Store Connect iOS build ID, supported current and minimum Apple OS rows on named hardware, install and upgrade, host and extension signatures and entitlements, first run and disclosure, profile and host trust, full and degraded connection, TCP, DNS and UDP representative traffic, system exclusions, endpoint routing, network changes, sleep and wake, app termination, diagnostics and support export, accessibility, localization, migration or coexistence, uninstall, TestFlight withdrawal and macOS rollback evidence, resource metrics, and issue disposition. Out of scope: implementing fixes, simulator-only substitution for platform gates, production credentials or traffic, skipping unstable rows, and reusing earlier results from different bytes.
+
+## Acceptance Criteria
+1. Every row starts from the exact remote candidate identifier and records device, OS, source, dependency revisions, relay manifest, configuration, duration, traffic shape, network conditions, memory, channels, associations, drops, errors, and artifact digest. 2. Signatures, entitlements, notarization, TestFlight install, extension lifecycle, full or degraded predicates, routing and DNS safety, diagnostics redaction, privacy gates, accessibility, migration, uninstall, and rollback all pass their declared criteria. 3. External IPv4, IPv6 where supported, and DNS observations match the intended exit and only documented Apple or endpoint exceptions use the physical path. 4. Failures create linked bugs with reproducible evidence and block promotion; reruns use a new evidence revision and cannot erase failed history. 5. A TASK-ID-scoped matrix summary gives pass or fail by row, exact candidate, artifact links, screenshots and captures after redaction, anomalies, residual risks, and release blockers.

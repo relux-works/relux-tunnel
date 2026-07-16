@@ -1,0 +1,10 @@
+# Verify iPhone full, degraded, failed, and relay-restoration behavior
+
+## Description
+Run the M2 capability acceptance matrix on a named physical iPhone, proving truthful modes, TCP continuity where safe, tunnel-owned DNS fallback, explicit UDP rejection, mandatory failure on safe-DNS loss, clean relay restoration, no ordinary leak, and bounded resources.
+
+## Scope
+In scope: supported physical iPhone and iOS; stable Wi-Fi and cellular starting paths; controlled authenticated SSH host; supported and unsupported relay fixture; full startup; install or handshake failure; relay process or lane loss; controlled TCP flow; general UDP probes; UDP and TCP DNS clients; safe-DNS failure; reprobe recovery; user stop; access and exit captures; snapshots; memory and counters; redacted evidence. Out of scope: Wi-Fi or cellular transition, NAT64 transition, sleep or wake, captive recovery, includeAllNetworks, final QUIC policy, TestFlight, App Review, production traffic, and system-exception claims beyond Apple behavior.
+
+## Acceptance Criteria
+1. Evidence records device, iOS and Xcode, source and dependency revisions, profile generation, relay asset and protocol identity, reason fixture, resolver and exit fixture, network type, timestamps, duration, snapshots, memory, queues, associations, drops, and authorized captures. 2. Full startup advertises UDP only after relay validation; forced relay-unavailable startup advertises degraded only after controlled TCP and safe DNS work. 3. Runtime relay loss invalidates general UDP, keeps eligible TCP and safe DNS, reports the exact reason, and access capture shows zero ordinary UDP or DNS fallback; safe-DNS loss moves to failed. 4. Relay repair and reprobe restore full only after a fresh identity and handshake, and subsequent IPv4 or IPv6 UDP succeeds through new exit-host associations without old-generation delivery. 5. Repeated full, degraded, failed, restore, and stop rows stay within the memory budget, clean routes and resources, and attach a TASK-ID-scoped redacted reproducible evidence bundle.

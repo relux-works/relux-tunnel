@@ -1,0 +1,24 @@
+digraph M2 {
+  rankdir=LR;
+  graph [label="EPIC-260715-2lz67t M2 dependency plan", labelloc=t, fontsize=18];
+  node [shape=box, style="rounded,filled", fillcolor="#E8F1FB"];
+
+  Foundation [label="EPIC-260715-2mqgvm\nGate A0, target graph, HEV and SSH decisions", fillcolor="#F6E8C3"];
+  M1 [label="EPIC-260715-3810we\nAuthenticated SSH, TCP, tunnel DNS, runtime and physical baselines", fillcolor="#F6E8C3"];
+
+  Protocol [label="STORY-260715-18ncz1\nRelay protocol v1 and conformance"];
+  Build [label="STORY-260715-3pv7qc\nPortable assets and manifest"];
+  Bootstrap [label="STORY-260715-2etfkl\nSecure bootstrap and relay session"];
+  UDP [label="STORY-260715-1nsw9p\nBounded UDP and DNS over relay"];
+  Capability [label="STORY-260715-2ungml\nLeak-safe degraded capability"];
+
+  Foundation -> Protocol [label="approved target and relay-toolchain boundary"];
+  M1 -> Bootstrap [label="authenticated bidirectional SSH exec"];
+  M1 -> UDP [label="HEV UDP mode, tunnel DNS and physical baseline"];
+  M1 -> Capability [label="runtime snapshots, TCP and safe DNS"];
+
+  Protocol -> Build [label="conformed implementation"];
+  Build -> Bootstrap [label="trusted manifest and four assets"];
+  Bootstrap -> UDP [label="validated live framed session"];
+  UDP -> Capability [label="association invalidation and full-mode evidence"];
+}

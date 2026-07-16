@@ -1,0 +1,10 @@
+# Bounded UDP forwarding and association lifecycle
+
+## Description
+Connect HEV UDP-in-TCP datagrams to the authenticated relay session and real exit-host UDP sockets. Preserve association identity and source endpoints, support IPv4, IPv6, domains, and full-mode DNS, and keep all queues, sockets, timers, frames, and diagnostics within explicit limits.
+
+## Scope
+In scope: client association allocation and non-reuse; HEV frame translation; SSH exec-channel frame pump; relay association registry and rootless UDP sockets; IPv4, IPv6, and domain destinations; response source-address preservation; errors, idle expiry, and explicit close; maximum datagram, frame, association, queued-byte, and timer limits; DNS priority without protocol privilege; full-mode DNS over relay with existing TCP fallback semantics; counters; conformance, pressure, fuzz, soak, harness, and physical IPv4 or IPv6 validation. Out of scope: direct TCP implementation, remote asset installation, physical-interface UDP fallback, fake DNS, M3 lane scheduling or path migration, final QUIC product policy, and public relay listeners.
+
+## Acceptance Criteria
+1. Representative IPv4 and IPv6 UDP datagrams traverse HEV, the framed SSH relay session, and user-host sockets with byte integrity and responses carry the source endpoint observed by the relay. 2. Domain destinations and tunnel-owned DNS work through the relay, including DNS priority and existing TCP fallback semantics, without any physical resolver or UDP path. 3. Association creation, close, expiry, error, and permitted ID reuse are deterministic on client and relay and session loss invalidates all association state. 4. Negotiated caps bound frames, datagrams, associations, sockets, queued bytes, timers, and work per event-loop turn; saturation drops or rejects with reason-specific counters and never grows an unbounded retry buffer. 5. Automated and physical evidence covers nominal traffic, hostile frames and addresses, oversize, queue pressure, expiry, process loss, repeated cleanup, IPv4, IPv6, DNS, memory, and privacy-safe diagnostics.

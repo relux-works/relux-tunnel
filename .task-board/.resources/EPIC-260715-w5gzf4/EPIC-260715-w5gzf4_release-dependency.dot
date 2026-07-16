@@ -1,0 +1,19 @@
+digraph M5ReleasePlan {
+  graph [rankdir=LR, label="EPIC-260715-w5gzf4 — Release and distribution", labelloc=t, fontsize=18];
+  node [shape=box, style="rounded,filled", fillcolor="#E8F1FA", fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  upstream [label="M0/M1/M2/M4 prerequisites\nA0 + P0 + targets + routing + relay + product matrix", fillcolor="#FFF2CC"];
+  ci [label="Phase 1\nSTORY-260715-anxje6\nCI quality gates\n12 tasks"];
+  relay [label="Phase 2\nSTORY-260715-19mjyn\nRelay supply chain\n13 tasks"];
+  mac [label="Phase 3a\nSTORY-260715-c1qsc6\nmacOS signed distribution\n12 tasks"];
+  ios [label="Phase 3b\nSTORY-260715-243sh0\niOS TestFlight/App Store binary\n12 tasks"];
+  ops [label="Phase 4\nSTORY-260715-2dtdql\nRelease/privacy/review operations\n18 tasks", fillcolor="#D9EAD3"];
+
+  upstream -> ci;
+  ci -> relay;
+  relay -> mac;
+  relay -> ios;
+  mac -> ops;
+  ios -> ops;
+}

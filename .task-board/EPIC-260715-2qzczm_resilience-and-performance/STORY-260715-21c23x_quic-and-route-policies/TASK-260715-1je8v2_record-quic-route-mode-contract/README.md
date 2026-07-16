@@ -1,0 +1,10 @@
+# Record the QUIC and route-mode policy contract
+
+## Description
+Produce the binding traffic and settings contract for Allow QUIC, Block UDP/443, Auto, compatible routes, and platform-scoped fail-closed routes, including capability states, fast failure, exceptions, mode changes, diagnostics, and disclosures.
+
+## Scope
+In scope: destination UDP/443 identification; DNS and unrelated UDP precedence; full, degraded, reasserting, failed, and stopping outcomes; Allow relay requirement; Block local unreachable or equivalent; Auto lane-health input and untuned threshold schema; failure-latency bound definition; compatible dual-stack defaults; includeAllNetworks capability branch; exact SSH endpoint exclusion; Apple system and captive exceptions; settings lifecycle and rollback; traffic matrices; diagrams; privacy; M2 and reconnect seams. Out of scope: implementation, payload inspection, per-app rules, absolute kill-switch claims, selecting final Auto thresholds without evidence, changing relay protocol, fake DNS, or final UI copy.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped traffic table gives one outcome for new destination UDP/443, unrelated UDP, tunnel DNS, and eligible TCP in every policy, capability, route mode, and transition state. 2. Allow requires a current validated relay, Block and Auto rejection use one documented prompt local failure with a measurable upper latency bound, and no branch silently drops into an ordinary timeout or physical socket. 3. Auto defines versioned loss and latency inputs, missing or stale behavior, hysteresis shape, decision reason, configuration validation, and tuning ownership without hard-coding an unmeasured claim. 4. Compatible and fail-closed settings tables define supported platforms, includeAllNetworks behavior, exact endpoint exclusions, DNS ownership, mode changes, rollback, and documented system or captive exceptions without absolute claims. 5. Diagrams and disclosure mapping trace decisions to M1 settings, M2 capability and UDP seams, M3 lane health and reconnect, physical captures, diagnostics, privacy, and later UX.

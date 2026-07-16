@@ -1,0 +1,10 @@
+# Implement physical-interface endpoint retry and reconnect
+
+## Description
+Implement the reconnect endpoint service that tries verified cached IP candidates on the selected new physical path, performs fresh resolution or connect with requiredInterface when necessary, reuses approved host identity, and returns the actual connected endpoint and transport.
+
+## Scope
+In scope: canonical SSH hostname and port; approved host evidence and credential generation; cached IPv4, IPv6, and synthesized candidate order; per-attempt timeout; selected physical NWInterface input; NWParameters requiredInterface for fresh work; currentPath remoteEndpoint capture; host verification and authentication ordering; cancellation; typed transient and terminal results; aggregate timing and endpoint-family metrics. Out of scope: installing routes, opening the full lane pool, accepting a changed host key, physical DNS after tunnel settings for ordinary queries, broad address caching, retry backoff ownership, or final NAT64 transition policy.
+
+## Acceptance Criteria
+1. The service attempts only current approved cached candidates first and uses a connection constrained to the selected physical interface for fresh resolution or connect, with no dependency on the stale tunnel route. 2. Every successful connection repeats mandatory host verification before authentication acceptance and returns canonical profile generation, approved host identity, selected interface identity, and actual IPv4, IPv6, or synthesized remote endpoint. 3. Host-key mismatch, authentication rejection, invalid profile, and inaccessible credentials are typed terminal results, while path and bounded connect failures retain evidence needed for retry policy. 4. Attempt timeouts, cancellation, winner selection, losing attempts, late callbacks, and provider stop close all sockets, sessions, tasks, and secret containers deterministically. 5. Controlled resolver and SSH fixture tests cover cached hit, stale candidates, family fallback, required-interface fresh resolution, synthesized endpoint evidence, host change, auth failure, cancellation, and repeated cleanup.

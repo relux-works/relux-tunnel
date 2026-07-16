@@ -1,0 +1,12 @@
+.DS_Store
+.build/
+.swiftpm/
+dist/
+*.xcworkspace
+xcuserdata/
+.agents/
+.claude/
+.codex/
+.local/
+.temp/
+**/__pycache__/

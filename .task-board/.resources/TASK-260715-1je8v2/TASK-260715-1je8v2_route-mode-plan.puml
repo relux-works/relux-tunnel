@@ -1,0 +1,28 @@
+@startuml
+title M3 route-mode settings transaction
+start
+:Require authenticated actual SSH endpoint;
+:Require ready tunnel-owned safe DNS;
+if (Route mode is fail-closed?) then (yes)
+  if (includeAllNetworks supported?) then (yes)
+    :Build dual-stack defaults plus includeAllNetworks;
+    :Add only exact endpoint host exclusion;
+    :Expose documented Apple system exceptions;
+  else (no)
+    :Fail validation with unsupported-mode reason;
+    stop
+  endif
+else (compatible)
+  :Build dual-stack default included routes;
+  :Add only exact endpoint and approved system exclusions;
+endif
+:Attach tunnel DNS and accepted MTU;
+:Validate no collision, broad bypass, or stale generation;
+:Apply one settings transaction;
+if (Current apply succeeds?) then (yes)
+  :Permit packet reads and current capability publication;
+else (no)
+  :Rollback or publish explicit non-usable failure;
+endif
+stop
+@enduml

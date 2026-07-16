@@ -1,0 +1,10 @@
+# Conditionally implement the approved minimal HEV callback-ingress fork
+
+## Description
+Only if the Instruments gate explicitly approves a fork, implement the smallest upstream-trackable HEV callback-ingress change, preserve all packet and backpressure contracts, add regression coverage, and demonstrate the required physical before-and-after improvement. If the gate rejects a fork, close this task without code and link the decision.
+
+## Scope
+In scope after positive gate only: exact approved upstream commit; minimal callback ingress and egress seam; preserved IPv4 and IPv6 family semantics; bounded ownership and lifetime; EAGAIN or ENOBUFS, EMSGSIZE, cancellation, and cleanup behavior; existing socket-pair fallback or rollback as approved; licenses and notices; patch documentation; rebase strategy; unit, fuzz, integration, physical, and performance comparison. Out of scope: work before gate approval, private APIs, utun descriptor discovery, unrelated HEV changes, protocol or SOCKS behavior changes, speculative tuning, or accepting speed without correctness and memory gates.
+
+## Acceptance Criteria
+1. Work begins only with a positive TASK-260715-3mnqn8 decision naming the exact callback contract, upstream commit, expected material improvement, and required gates; a negative decision closes this task with no source change. 2. The patch is limited to the approved seam, retains upstream attribution and required notices, and documents patch series, ABI, ownership, lifetime, rollback, and rebase procedure. 3. IPv4 and IPv6 packet boundaries, family handling, MTU limits, bounded drops, batching budgets, cancellation, stop, and malformed-frame behavior match or strengthen the unmodified baseline. 4. Unit, fuzz, HEV integration, lifecycle, memory, and physical regressions pass with no task, descriptor, buffer, session, or footprint growth. 5. Named-device before-and-after evidence meets the approved practical improvement threshold for representative workloads and preserves route, DNS, latency, energy, and safety gates or the fork is rejected and rolled back.

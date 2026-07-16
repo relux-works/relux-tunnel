@@ -1,0 +1,10 @@
+# Run the physical iPhone NAT64, sleep, captive, and lifecycle matrix
+
+## Description
+Execute every supported iPhone row from the recorded matrix on named physical devices, including Wi-Fi, cellular, IPv6-only NAT64, family changes, sleep and wake, captive negotiation, route modes, app termination, provider stops, and lifecycle loops.
+
+## Scope
+In scope: baseline and constrained-memory iPhone where available; supported iOS and toolchain; controlled NAT64 or IPv6-only Wi-Fi; cellular and Wi-Fi transitions; native dual-stack baseline; compatible and fail-closed modes; full and degraded capability; short and long sleep; captive fixture; containing-app kill; cancel during start; provider stop reasons; repeated start and stop; TCP, DNS, UDP, and QUIC probes; authorized captures; memory, energy, route, counter, and cleanup evidence. Out of scope: unauthorized public captive networks, production traffic, unsupported device claims, absolute kill-switch claims, changing parameters during a row, or waiving red results.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped evidence bundle records device model, memory class, iOS and toolchain, revisions, profile and policy, interface and family, fixture, event timeline, traffic, routes, snapshots, retries, counters, footprint, peak, energy, captures, and raw references for every row. 2. IPv6-only and NAT64 rows connect through the actual synthesized endpoint, maintain exact current exclusion and safe DNS, and external v4 or v6 observations match the exit path without deadlock. 3. Sleep and wake, interface changes, captive entry or exit, and route modes restore only truthful current capability and access captures show zero ordinary DNS or application fallback beyond documented Apple system exceptions. 4. Containing-app termination leaves a healthy provider running, while cancellation, provider stop, and repeated loops clean resources and remove or invalidate settings as contracted. 5. Unavailable infrastructure or changed iOS behavior is explicitly red or unavailable with evidence and owner, and repeated supported rows stay within memory ceilings with no monotonic resource growth.

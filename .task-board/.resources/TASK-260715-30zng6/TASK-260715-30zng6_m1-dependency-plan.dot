@@ -1,0 +1,22 @@
+digraph M1 {
+  graph [label="M1 TCP and DNS execution dependencies", labelloc=t, rankdir=LR, fontsize=18];
+  node [shape=box, style="rounded,filled", fontname=Helvetica, fillcolor="#eef4ff"];
+  edge [fontname=Helvetica, fontsize=10];
+  m0 [label="Existing M0 handoffs\nA0 and P0, generated targets, packet decision, SSH selection", fillcolor="#eeeeee"];
+  resolver [label="TASK-260715-1tnjlu\nDecide exit-side DNS resolver policy", shape=diamond, fillcolor="#fff2cc"];
+  runtime [label="STORY-260715-1y04r0\nShared runtime and orchestration\n9 tasks"];
+  ssh [label="STORY-260715-2wjwuf\nProfile, Keychain, host verification, SSH bootstrap\n9 tasks"];
+  tcp [label="STORY-260715-2nqxa5\nPrivate SOCKS to direct-tcpip TCP\n11 tasks"];
+  dns [label="STORY-260715-2bfjhn\nCompatible dual-stack routes and leak-free DNS\n12 tasks"];
+  vpn [label="STORY-260715-eto58m\nManager, provider adapters, physical M1 acceptance\n13 tasks", fillcolor="#d9ead3"];
+  m0 -> runtime [label="consume accepted outputs, do not repeat gates"];
+  runtime -> ssh [label="versioned profile and runtime seams"];
+  ssh -> tcp [label="verified authenticated session"];
+  tcp -> dns [label="direct-tcpip for DNS TCP and application path"];
+  resolver -> dns [label="blocking product and architecture decision"];
+  runtime -> dns [label="safe startup coordinator"];
+  runtime -> vpn [label="thin provider composition"];
+  ssh -> vpn [label="physical provider auth evidence"];
+  tcp -> vpn [label="physical representative TCP evidence"];
+  dns -> vpn [label="physical routes, external IP, DNS leak evidence"];
+}

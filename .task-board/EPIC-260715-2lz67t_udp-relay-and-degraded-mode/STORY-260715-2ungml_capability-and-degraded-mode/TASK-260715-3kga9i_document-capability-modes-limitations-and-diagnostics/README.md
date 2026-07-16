@@ -1,0 +1,10 @@
+# Document capability modes, limitations, recovery, and diagnostics
+
+## Description
+Publish the technical and user-copy contract for full, degraded, failed, and relay-restoration behavior, including traffic tables, reason codes, DNS safety, UDP and QUIC limitations, snapshots, recovery, test evidence, privacy, and handoffs to M3 and product UX.
+
+## Scope
+In scope: mode and transition diagrams; traffic matrix for TCP, DNS, general UDP, and system exceptions; readiness predicates; finite reason catalog; relay build, feature, limit, and health summaries; safe-DNS policy; UDP rejection; retry and restoration; failed behavior; provider versus system session state; diagnostics and support redaction; automated, harness, iPhone, and Mac evidence; M3 and M4 ownership. Out of scope: final visual design, marketing claims, absolute kill-switch claims, M3 path reconnect procedures, includeAllNetworks implementation, privacy policy approval, analytics, and changing behavior while documenting it.
+
+## Acceptance Criteria
+1. Mode and transition diagrams match the implemented state contract and show exact readiness, cleanup, retry, full restoration, and failed boundaries. 2. A traffic table states what happens to new and existing TCP, UDP, DNS, and relevant QUIC-family traffic in every state and accurately discloses Apple system exceptions without a cryptographically absolute kill-switch claim. 3. The finite reason catalog maps each cause to mode, user-safe summary, operator diagnostics, retry eligibility, and remediation without destinations, queries, payloads, credentials, or remote-controlled strings. 4. Reproduction sections link state, fault, leak, harness, iPhone, and Mac evidence and list expected snapshots, captures, memory, counters, and cleanup results. 5. Concrete handoffs identify M3 lane, path, NAT64, sleep, captive, fail-closed, and QUIC work plus M4 status UI and privacy copy, and the document does not claim those later behaviors exist.

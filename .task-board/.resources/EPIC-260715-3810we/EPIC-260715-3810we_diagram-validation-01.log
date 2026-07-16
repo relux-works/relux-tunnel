@@ -1,0 +1,3 @@
+Command: task-board plan EPIC-260715-3810we --render --layout phases --format png
+Result: rendering unavailable in the current environment. Graphviz dot aborted because /opt/homebrew/opt/libtool/lib/libltdl.7.dylib is missing.
+Disposition: no PNG is claimed. The canonical plan and two readable diagrams-as-code are attached. This is a workstation toolchain anomaly, not a plan or product blocker.

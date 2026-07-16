@@ -1,0 +1,32 @@
+digraph ReleaseGate {
+  graph [rankdir=TB, label="TASK-260715-29r0k8 — Release gate dependency", labelloc=t, fontsize=18];
+  node [shape=box, style="rounded,filled", fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  ci [label="CI threat model accepted", fillcolor="#D9EAF7"];
+  relay [label="Relay staging + compliance audit accepted", fillcolor="#D9EAF7"];
+  mac [label="macOS distribution verdict accepted", fillcolor="#D9EAF7"];
+  ios [label="iOS distribution verdict accepted", fillcolor="#D9EAF7"];
+  legal [label="Current Apple + privacy + legal + regional approvals", fillcolor="#FFF2CC"];
+  review [label="Review fixture, instructions, metadata, package audit", fillcolor="#FFF2CC"];
+  rc [label="Exact-candidate regression matrix", fillcolor="#D9EAD3"];
+  claims [label="Behavior-to-claim audit", fillcolor="#D9EAD3"];
+  go [shape=diamond, label="Go / hold / reject", fillcolor="#FCE5CD"];
+  submit [label="Submit exact App Store Connect build", fillcolor="#D9EAD3"];
+  response [label="Review response / revalidation / resubmission", fillcolor="#D9EAD3"];
+  channels [label="Channel verification + rollback watch", fillcolor="#D9EAD3"];
+
+  ci -> relay;
+  relay -> mac;
+  relay -> ios;
+  mac -> rc;
+  ios -> rc;
+  legal -> claims;
+  review -> claims;
+  rc -> claims;
+  claims -> go;
+  go -> submit [label="go"];
+  go -> rc [label="hold/rework"];
+  submit -> response;
+  response -> channels;
+}

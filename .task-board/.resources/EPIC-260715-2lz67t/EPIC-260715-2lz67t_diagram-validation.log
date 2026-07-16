@@ -1,0 +1,7 @@
+Command:
+task-board plan EPIC-260715-2lz67t --render --format png --layout phases
+
+Result:
+FAILED before rendering.
+
+Graphviz dot aborted because /opt/homebrew/opt/libtool/lib/libltdl.7.dylib is missing from the workstation installation. The task-board dependency model validated successfully, the canonical plan was saved, and DOT plus PlantUML diagram sources were attached. No package installation or workstation mutation was performed.

@@ -1,0 +1,10 @@
+# Validate macOS clean install, upgrade, extension approval, and uninstall
+
+## Description
+Exercise the exact published candidate on clean supported Apple-silicon macOS systems through authenticated download, Gatekeeper launch, packet-tunnel approval, basic VPN lifecycle, legacy upgrade or coexistence, data handling, and uninstall.
+
+## Scope
+In scope: authenticated asset retrieval, checksum, quarantine, DMG mount and copy, first launch, system extension or Network Extension approval flow, profile creation, connect and disconnect smoke with synthetic credentials, containing-app relaunch, supported legacy version upgrade, approved migration or coexistence decision, defaults and history, rollback-compatible data, uninstall and residual files, accessibility of install guidance, and evidence capture. Out of scope: broad tunnel performance, production SSH credentials, unsupported Intel acceptance unless platform policy requires it, product feature implementation, and bypassing system approval.
+
+## Acceptance Criteria
+1. A clean named Apple-silicon Mac downloads the private asset with authentication, verifies its checksum, passes Gatekeeper from quarantine, installs by the documented path, and launches without build-machine state. 2. The host registers and starts only the embedded approved tunnel extension, surfaces system approval accurately, completes a synthetic connect or disconnect smoke, and survives host relaunch per product contract. 3. Upgrade from the supported legacy release follows the approved coexistence, migration, or retirement behavior for bundle identity, host and account defaults, local port history where applicable, profiles, user messaging, and rollback. 4. Uninstall removes declared application and extension state through supported mechanisms while preserving or deleting user data exactly as documented. 5. Denied approval, existing configuration, stale extension, interrupted copy, corrupted DMG, wrong checksum, migration failure, reinstall, and uninstall failure have reproducible safe outcomes and redacted evidence.

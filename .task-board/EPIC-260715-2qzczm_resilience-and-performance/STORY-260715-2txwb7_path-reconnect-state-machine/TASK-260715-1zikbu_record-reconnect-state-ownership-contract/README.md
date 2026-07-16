@@ -1,0 +1,10 @@
+# Record the reconnect state, generation, and ownership contract
+
+## Description
+Produce the binding reconnect state machine and event contract covering path, transport, relay, viability, sleep, route, DNS, retry, memory, capability, cancellation, and stale-generation ownership before implementation.
+
+## Scope
+In scope: disconnected, connecting, connected-full, connected-degraded, reasserting, failed, and disconnecting states; normalized events and priority; readiness predicates; current generation; resource ownership; cached and fresh endpoint decisions; actual endpoint evidence; settings generation; lane and relay invalidation; safe-DNS requirements; bounded retry; terminal errors; memory reservation; stop; diagnostics; state and sequence diagrams; M1, M2, memory, route, and lifecycle seams. Out of scope: implementation, final route-mode details, automatic trust changes, physical-device execution, final sleep or captive behavior, UI presentation, or infinite continuity claims.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped transition table defines every legal state and event pair, entry and exit action, resource owner, traffic and capability outcome, retry class, reason, generation rule, and cleanup. 2. The contract distinguishes path, viability, SSH, lane-A, relay-only, safe-DNS, settings, sleep or wake, user-stop, authentication, host-key, and profile events and assigns each to exactly one M2 or M3 recovery owner. 3. Cached endpoint attempts, required-interface fresh resolution or connect, actual remote endpoint capture, exact exclusion replacement, and settings application have an explicit leak-safe sequence and rollback. 4. It defines jitter and backoff inputs, stable reset, retry exhaustion, cancellation latency, old and new transport reservation, critical release, and stale callback rejection without magic constants. 5. Capability and reasserting diagrams prove full or degraded is published only after current mandatory resources are usable and logs contain no prohibited traffic or address detail.

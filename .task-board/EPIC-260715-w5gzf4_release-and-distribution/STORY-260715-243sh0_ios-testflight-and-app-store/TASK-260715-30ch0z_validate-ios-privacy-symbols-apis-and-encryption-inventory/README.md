@@ -1,0 +1,10 @@
+# Validate iOS privacy manifests, symbols, APIs, and encryption inventory
+
+## Description
+Verify the exact iOS candidate includes complete privacy-manifest and symbol artifacts, declares required-reason API usage where applicable, avoids prohibited private APIs, and emits the technical encryption inventory consumed by accountable export-compliance declarations.
+
+## Scope
+In scope: PrivacyInfo.xcprivacy files in app, extension, and dependencies; collected-data and tracking declarations against zero-telemetry behavior; required-reason API inventory and codes; binary symbol and dSYM policy; private API and restricted selector scan; SSH, relay and platform encryption inventory; architecture and SDK warnings; machine-readable technical handoff to release operations; and retained reports. Out of scope: final App Privacy labels, legal export classification or exemption decisions, uploading symbols to unapproved vendors, changing product behavior silently, and asserting no encryption when SSH or platform crypto is used.
+
+## Acceptance Criteria
+1. Every app, extension, SDK, and dependency privacy manifest is discovered, schema valid, reconciled, and technically consistent with implemented data collection, zero analytics, support export, and tracking behavior. 2. Every required-reason API use has a source trace and proposed approved declaration; undeclared use, prohibited private API, or unexpected tracking or telemetry symbol fails. 3. The archive includes all required dSYMs and symbol UUIDs match shipped Mach-O files; no production secret or user data appears in symbols or paths. 4. A versioned encryption inventory identifies SSH, relay, platform cryptography, algorithms or frameworks, purposes, binary locations, and technical evidence for the later legal export declaration. 5. Missing or conflicting manifest, invalid reason, new dependency, private API fixture, UUID mismatch, stripped required symbol, incomplete encryption inventory, and server-warning fixture fail preflight.

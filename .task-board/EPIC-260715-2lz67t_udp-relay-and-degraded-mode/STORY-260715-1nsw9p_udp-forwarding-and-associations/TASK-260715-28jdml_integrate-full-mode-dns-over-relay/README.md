@@ -1,0 +1,10 @@
+# Integrate full-mode DNS over the UDP relay
+
+## Description
+Connect the existing tunnel-owned DNS transaction layer to priority relay associations for full-mode UDP resolution, using the approved exit resolver and retaining the existing SSH DNS-over-TCP path for truncation and safe fallback.
+
+## Scope
+In scope: consume approved resolver policy and M1 DNS listener, cache, and TCP upstream; one or bounded DNS association policy; configured resolver IPv4 or IPv6 endpoint; UDP query and response correlation through existing transaction interface; EDNS and datagram cap; priority queue class; TC and client-TCP semantics; UDP timeout or relay failure handoff to TCP when policy permits; cancellation; no physical resolver; metrics without query names. Out of scope: choosing a new public resolver, implementing DNS parsing or cache anew, DoH unless selected by existing policy, recursive resolution, fake DNS, general UDP admission, physical-interface sockets, and logging questions or answers.
+
+## Acceptance Criteria
+1. In full mode client UDP and TCP DNS queries enter the existing tunnel-owned listener and eligible upstream UDP queries leave only through a relay association to the approved exit-side resolver. 2. Responses correlate through the existing transaction contract and preserve DNS semantics for IDs, size, EDNS, cache, negative answers, and client transport without cross-client delivery. 3. Truncated response, oversized relay datagram, UDP timeout, association error, and relay loss use the approved bounded SSH DNS-over-TCP retry or fallback when safe and never query a physical resolver. 4. DNS work receives configured latency priority but remains within association, query, byte, time, and retry ceilings and cannot starve health or session-close control. 5. Controlled resolver tests cover IPv4 and IPv6 resolver endpoints, UDP success, TC fallback, client TCP, cache hit and miss, timeout, relay failure, cancellation, query-name-free metrics, and zero physical sentinel observations.

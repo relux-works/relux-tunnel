@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+left to right direction
+hide empty description
+title User-visible VPN Connection State Contract
+
+state "Disconnected" as Disconnected
+state "Connecting" as Connecting
+state "Connected / Full" as Full
+state "Connected / Degraded" as Degraded
+state "Reasserting" as Reasserting
+state "Disconnecting" as Disconnecting
+state "Failed" as Failed
+
+[*] --> Disconnected
+
+Disconnected --> Connecting : explicit connect\neligible profile + disclosure
+Connecting --> Full : session connected\ncurrent generation has TCP + safe DNS + UDP
+Connecting --> Degraded : session connected\ncurrent generation has TCP + safe DNS, no UDP
+Connecting --> Failed : mandatory startup failure
+Connecting --> Disconnecting : explicit stop
+
+Full --> Degraded : relay/UDP lost\nbase TCP + safe DNS remain
+Degraded --> Full : validated relay generation restored
+
+Full --> Reasserting : path/transport/settings recovery
+Degraded --> Reasserting : mandatory base recovery begins
+Reasserting --> Full : current generation fully restored
+Reasserting --> Degraded : current generation safely degraded
+Reasserting --> Failed : bounded recovery ends unsafely
+
+Full --> Disconnecting : explicit stop
+Degraded --> Disconnecting : explicit stop
+Reasserting --> Disconnecting : explicit stop
+Failed --> Connecting : explicit retry
+Failed --> Disconnected : acknowledge / clear failed attempt
+Disconnecting --> Disconnected : system confirms stop
+
+note top of Full
+  Full requires a fresh provider capability snapshot.
+  Cached app state cannot create this state.
+end note
+
+note bottom of Degraded
+  Still connected: eligible TCP and leak-safe DNS continue.
+  General UDP is unavailable and must be named explicitly.
+end note
+
+note bottom of Failed
+  Reserved for a requirement without which
+  safe forwarding cannot continue.
+end note
+
+@enduml

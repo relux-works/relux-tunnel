@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+title Full-mode UDP and DNS data path
+
+participant "HEV UDP-in-TCP" as HEV
+participant "Client association registry" as Registry
+participant "SSH relay frame pump" as Pump
+participant "relux-relay association registry" as Relay
+participant "Exit-host UDP socket" as Socket
+participant "Destination or resolver" as Dest
+
+HEV -> Registry : validated IPv4, IPv6, or domain datagram
+Registry -> Registry : allocate or reuse active generation association ID
+Registry -> Pump : UDP_DATAGRAM within effective limits
+alt queue has capacity
+  Pump -> Relay : framed bytes over SSH exec stdio
+  Relay -> Socket : bounded association socket send
+  Socket -> Dest : UDP datagram from user host
+  Dest --> Socket : UDP response
+  Socket --> Relay : source endpoint plus bytes
+  Relay --> Pump : UDP_DATAGRAM response
+  Pump --> Registry : association-scoped response
+  Registry --> HEV : HEV frame with observed source endpoint
+else queue or resource limit reached
+  Pump --> Registry : typed drop or bounded error
+  Registry --> HEV : documented association-visible outcome
+end
+
+group DNS priority without protocol privilege
+  HEV -> Registry : tunnel-owned DNS query
+  Registry -> Pump : priority class within fixed ceilings
+  note right of Pump
+  Control remains highest priority.
+  DNS cannot bypass byte, time,
+  association, or retry ceilings.
+  end note
+end
+@enduml

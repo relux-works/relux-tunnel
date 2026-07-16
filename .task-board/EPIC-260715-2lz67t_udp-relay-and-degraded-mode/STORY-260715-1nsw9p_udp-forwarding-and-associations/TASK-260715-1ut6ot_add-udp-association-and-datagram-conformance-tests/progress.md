@@ -1,0 +1,37 @@
+## Status
+backlog
+
+## Assigned To
+(none)
+
+## Created
+2026-07-15T01:44:42Z
+
+## Last Update
+2026-07-15T01:58:45Z
+
+## Blocked By
+- TASK-260715-1loqwb
+- TASK-260715-3xpc6b
+- TASK-260715-3e30tx
+- TASK-260715-28jdml
+- TASK-260715-z37ay7
+
+## Blocks
+- TASK-260715-cqm7m5
+- TASK-260715-2kfa02
+- TASK-260715-2m7lwo
+- TASK-260715-2y78ah
+
+## Checklist
+- [ ] Cover every legal address message association close error and expiry case
+- [ ] Run composed HEV-to-exit UDP and DNS fixtures with byte integrity
+- [ ] Verify exact limit boundaries deterministic clocks and resource baselines
+
+## Notes
+
+## Precondition Resources
+(none)
+
+## Outcome Resources
+(none)

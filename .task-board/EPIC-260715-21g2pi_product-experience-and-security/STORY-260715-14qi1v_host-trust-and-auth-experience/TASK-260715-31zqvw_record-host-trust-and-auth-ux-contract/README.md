@@ -1,0 +1,10 @@
+# Record the host-trust and authentication UX contract
+
+## Description
+Produce the binding cross-process contract that turns M1 host-verification and authentication evidence into safe iOS/macOS user journeys. Define first-use, changed-key, revocation, passphrase, Keychain, auth rejection, cancellation, retry, and multi-lane outcomes without making the extension wait indefinitely for foreground UI.
+
+## Scope
+In scope: canonical host and connection identity, complete SHA-256 fingerprint and algorithm evidence, provenance and timestamps, trust-required and changed-key messages, profile generations, provider stop/fail behavior, app presentation eligibility, explicit approve/replace/cancel actions, retry ownership, auth/passphrase errors, duplicate prompts, app suspension/termination, stale evidence, lane consistency, copy severity, accessibility, diagnostics redaction, and test vectors. Out of scope: implementing SSH host-key policy, silent trust, password auth, key import, connection dashboard layout, and arbitrary server certificate systems.
+
+## Acceptance Criteria
+1. A TASK-ID-scoped sequence/state contract defines exactly how first-use evidence leaves the provider, how safe startup stops, how the app presents it, how approval publishes a new generation, and how only an explicit retry resumes connection. 2. Changed, revoked, or lane-inconsistent identity always fails before user authentication and has a distinct path that cannot share the first-use accept action. 3. Fingerprint, algorithm, canonical host, provenance, first/last-seen time, profile generation, and privacy-safe error fields are specified with size/version bounds and no secret fields. 4. App suspension, app termination, stale generations, duplicate callbacks, repeated connect, cancellation, and concurrent trust decisions have deterministic finite outcomes with no provider deadlock or auto-accept. 5. Copy and severity rules distinguish trust, authentication, Keychain, passphrase, reachability, negotiation, and cancellation and identify exact downstream tasks/tests.

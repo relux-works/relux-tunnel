@@ -1,0 +1,10 @@
+# Author reproducible App Review test instructions
+
+## Description
+Write concise step-by-step reviewer instructions for installing the submitted TestFlight or App Store build, creating or importing the isolated SSH profile, verifying the host key, acknowledging privacy, granting VPN permission, testing full and degraded behavior, viewing diagnostics, and cleaning up.
+
+## Scope
+In scope: exact build ID and version, supported device and OS, review account or profile fields, secure credential delivery references, hostname and fingerprint, expected host-trust UI, privacy disclosure, permission prompts, connect and disconnect, external IP or DNS evidence using safe destinations, UDP and degraded demonstration, system exclusions and limitations, diagnostics and support export, background and relaunch, error recovery, screenshots, time estimate, support contact, fixture health fallback, and teardown. Out of scope: asking reviewers to disable host verification, use production secrets, install development tooling, infer undocumented behavior, bypass system security, or rely on private company network access.
+
+## Acceptance Criteria
+1. A reviewer starting from a clean supported physical iPhone can complete the primary flow using only the submitted build, approved secure credentials, public policy and support URLs, and the instructions. 2. Every field, button, prompt, expected state, delay, system permission, full or degraded result, error recovery, and cleanup step matches the exact candidate and current screenshots. 3. Host-key verification is explicit, changed-key behavior is explained, and no step uses silent acceptance, agent forwarding, shell access, or production credentials. 4. Instructions accurately disclose the user-owned SSH model, exit-host visibility, system exclusions, compatible or fail-closed behavior, diagnostics boundaries, and no Relux-operated exit service. 5. An independent clean-device rehearsal records duration, build ID, fixture revision, screenshots, ambiguities, failure recovery, and corrections and the final instructions contain no secrets outside the approved secure credential fields.

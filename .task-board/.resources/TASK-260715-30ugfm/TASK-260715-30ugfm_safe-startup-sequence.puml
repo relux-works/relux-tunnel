@@ -1,0 +1,46 @@
+@startuml
+!theme plain
+title M1 leak-safe provider startup and mandatory-failure ordering
+actor "Containing app" as App
+participant "Packet-tunnel provider" as Provider
+participant "Profile and Keychain boundary" as Profile
+participant "SSH bootstrap" as SSH
+participant "Packet plane and private TCP adapter" as Packet
+participant "Tunnel DNS over SSH TCP" as DNS
+participant "Network Extension settings" as NE
+participant "Packet flow" as Flow
+
+App -> Provider: Start with opaque profile reference
+Provider -> Profile: Load non-secret snapshot and credential references
+Profile --> Provider: Validated generation
+Provider -> SSH: Resolve on physical path, connect, verify host, authenticate
+SSH --> Provider: Verified session plus actual endpoint
+Provider -> Packet: Prepare bridge, HEV, private SOCKS, TCP admission
+Packet --> Provider: Ready without packet reads
+Provider -> DNS: Prepare virtual UDP and TCP listener plus SSH DNS-over-TCP
+DNS --> Provider: Safe DNS ready, no physical fallback
+Provider -> NE: Apply IPv4 and IPv6 defaults, tunnel DNS, exact SSH host exclusion
+NE --> Provider: Settings applied
+Provider -> Flow: Start packet reads
+Flow --> Provider: Read loop active
+Provider --> App: Versioned TCP and safe-DNS capability snapshot
+
+note over Provider,Flow
+The provider owns all live state.
+App suspension or termination does not stop forwarding.
+end note
+
+alt Mandatory failure before settings apply
+  Provider -> DNS: Cancel if acquired
+  Provider -> Packet: Cancel and release if acquired
+  Provider -> SSH: Close session if acquired
+  Provider --> App: Failed with no tunnel routes installed
+else Mandatory failure after settings apply
+  Provider -> Flow: Stop reads and new flows
+  Provider -> DNS: Stop transactions without physical fallback
+  Provider -> Packet: Cancel flows and release packet plane
+  Provider -> SSH: Close session
+  Provider -> NE: Remove or invalidate tunnel settings through provider stop
+  Provider --> App: Capability revoked, then explicit failure
+end
+@enduml

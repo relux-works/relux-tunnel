@@ -1,0 +1,10 @@
+# Enforce degraded UDP rejection and zero-fallback policy
+
+## Description
+Apply explicit traffic policy while degraded: preserve eligible TCP, keep DNS on the selected safe tunnel transport, reject general UDP at the private HEV adapter boundary, expose the later QUIC policy seam, and prove no packet is opened on a physical interface.
+
+## Scope
+In scope: mode-gated UDP association admission; deterministic HEV or application-visible fast failure supported by the stack; close existing associations; DNS classification before general rejection; TCP capability unchanged when healthy; physical-socket factory prohibition; counters by broad reason; transition ordering; QUIC-family policy hook without final M3 behavior; provider stop and failed mode; unit and route-sentinel tests. Out of scope: synthesizing arbitrary ICMP if the stack contract does not support it, blocking system exceptions beyond Apple guarantees, final QUIC heuristics, fail-closed includeAllNetworks, path reconnect, per-application rules, analytics, and destination logging.
+
+## Acceptance Criteria
+1. In degraded mode tunnel DNS is admitted only to the safe DNS component, eligible TCP continues through M1, and every new general UDP association receives the documented bounded rejection without relay or physical socket creation. 2. Transition from full stops new UDP admission before capability publication and existing associations are closed or failed deterministically with no datagram accepted after invalidation. 3. Failed and stopping modes admit neither TCP, DNS, nor UDP through stale runtime generations and cannot report degraded merely because the system VPN session remains connected. 4. Factory and sentinel tests prove no degraded general UDP or ordinary DNS opens a physical-interface socket or reaches a physical resolver, including timeout and fallback branches. 5. Metrics expose only aggregate admitted, rejected, closed, DNS, and reason counts and test snapshots contain no destinations, queries, payloads, or per-app identifiers.
