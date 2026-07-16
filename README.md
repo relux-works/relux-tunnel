@@ -40,6 +40,8 @@ agent loop.
 - Board overview: `task-board q --format compact 'summary()'`
 - Plan a milestone: `task-board q 'plan(EPIC-… , mode=children)'`
 - Planning snapshots: [`.planning/`](.planning/)
+- **Spawn policy** (Claude-only, `claude-fable-5` / `claude-opus-4-8`, never
+  Codex): [`docs/spawn-policy.md`](docs/spawn-policy.md)
 
 ## Distribution
 
