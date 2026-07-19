@@ -17,8 +17,8 @@
 | ADR-013 | Gate | Obtain evidence that local TCP termination + remote `direct-tcpip` is acceptable under Apple's packet-tunnel intended-use guidance |
 | ADR-014 | Open | Select a minimal SwiftNIO SSH fork or libssh2 only after per-channel windows, rekey, compatibility, memory, and lifecycle tests |
 | ADR-015 | Open | Select the production MTU from physical-device tests of 1500, 4096, and 8500 |
-| ADR-016 | Open | Confirm exact deployment targets during the multi-target project migration |
-| ADR-017 | Open | Confirm whether Tuist remains the best project generator for the combined Swift/C/relay build |
+| ADR-016 | Accepted | Set new Apple targets to iOS 18.0 and macOS 15.0; preserve the legacy SwiftPM product at macOS 14.0; require minimum/current CI plus named physical baselines per TASK-260715-3r0993 |
+| ADR-017 | Accepted | Use Tuist 4.202.5 pinned exactly by repository-local Mise; generate with an explicit Xcode pin and deterministic graph/project comparison per TASK-260715-3r0993 |
 | ADR-018 | Accepted | Ship macOS in-app self-update via Sparkle 2.x with an EdDSA-signed appcast; every payload is an already-notarized Developer ID build; iOS updates stay with the App Store |
 
 ## Decision rationale

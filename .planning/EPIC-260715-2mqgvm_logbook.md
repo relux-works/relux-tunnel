@@ -47,3 +47,18 @@ and lacks a stapled notarization ticket. The published 1,775,722-byte DMGs hash 
 stapler and Gatekeeper validation, and have provenance evidence. Migration and
 regression work must use the signed tag plus published assets as the immutable
 baseline; local ignored output is diagnostic only.
+
+## 2026-07-20 — New Apple targets use Tuist 4.202.5, iOS 18, and macOS 15
+
+TASK-260715-3r0993 selected exact repository-local Mise pin `tuist = "4.202.5"`,
+new deployment targets iOS 18.0 and macOS 15.0, and explicit Xcode selection in
+CI. The shipped SwiftPM product remains a separate macOS 14.0 lane. The support
+floor is driven by executable test coverage, not the oldest compiling API:
+GitHub's macOS 14 runner entered deprecation on July 6 and becomes unsupported
+November 2, while maintained macOS 15 runners provide macOS 15 execution and
+iOS 18.6 simulators. Local physical baselines are iPhone 11/iOS 26.5 and an M3
+Max Mac/macOS 26.5; an iPhone 15/iOS 18.6.2 is the minimum-iOS physical lane but
+its developer disk image mount must be repaired under Gate P0 before support is
+claimed. GitHub is scheduled to change the macOS 26 runner default from Xcode
+26.5 to 26.6 on July 21, so workflows must select `/Applications/Xcode_26.5.app`
+until the upgrade matrix promotes a new pin.

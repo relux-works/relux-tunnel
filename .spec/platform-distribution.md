@@ -3,9 +3,10 @@
 ## Project shape
 
 The current SwiftPM executable is insufficient for embedded Network Extension
-targets and iOS distribution. The target project is a generated Xcode workspace,
-using the Relux Works Tuist convention unless the project migration task records
-a better supported choice.
+targets and iOS distribution. The target project is a generated Xcode workspace
+using Tuist 4.202.5, pinned exactly by repository-local Mise. Generation and CI
+select an exact Xcode version and apply the deterministic comparison policy in
+TASK-260715-3r0993; they do not consume an unversioned global Tuist installation.
 
 Planned targets:
 
@@ -38,14 +39,22 @@ be offered by an organization and imposes privacy and regional-law obligations.
 
 ## Minimum platform policy
 
-Exact deployment targets are selected during project migration from current
-API/support evidence. The baseline MUST support:
+New generated Apple targets use iOS 18.0 and macOS 15.0. The shipped legacy
+`ReluxProxy` SwiftPM product remains a separate macOS 14.0 compatibility lane
+until its migration/retirement decision says otherwise. The baseline MUST
+support:
 
 - a current iOS release on a physical iPhone used for memory/lifecycle gates;
 - a current macOS release on Apple silicon;
 - the oldest iOS/macOS versions for which all selected Network Extension,
   Network.framework, Swift concurrency, signing, and dependency requirements can
   be tested in CI.
+
+The dated evidence, named physical devices, minimum/current CI matrix, Xcode
+pins, and upgrade ownership are recorded in
+`.research/260720_task-260715-3r0993-project-generator-deployment-target-policy.md`.
+Any later dependency that requires a higher target blocks generation until this
+policy and ADR-016 are reviewed; it does not silently rewrite the manifest.
 
 No deployment target is lowered by adding private API or fragile compatibility
 shims.
