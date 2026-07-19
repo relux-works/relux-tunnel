@@ -94,3 +94,15 @@ profile persistence, Keychain, UI, concrete provider subclass, or future
 app-message snapshot semantics were implemented. The M0 provider message
 surface intentionally supports only a version query at protocol version 1;
 later message kinds require their owning lifecycle specification.
+
+## 2026-07-20 — Harness Unix sockets require a short temporary path
+
+TASK-260715-pmww4f (Add the ReluxTunnelHarness macOS CLI target) found that
+macOS's per-user temporary directory under `/var/folders` can exceed the
+`sockaddr_un.sun_path` limit after a UUID workspace and socket name are added.
+The standalone SwiftPM harness therefore creates collision-safe, task-owned
+workspaces under the short lexical `/tmp` path and still registers descriptor,
+socket-path, managed-task, file, and directory cleanup in LIFO order. Swift
+Testing exercises normal and signal-cancelled exits against the real Unix
+datagram endpoint. This is a harness resource-path constraint only; it does not
+select or alter the provider packet bridge endpoint design owned by ADR-003.

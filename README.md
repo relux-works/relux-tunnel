@@ -32,6 +32,39 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
   composition roots are mapped in
   [`docs/core-adapter-boundaries.md`](docs/core-adapter-boundaries.md).
 
+## macOS experiment harness
+
+`ReluxTunnelHarness` is a standalone SwiftPM command-line target for fast
+packet, SSH, relay, fault-injection, and metrics experiments without a Network
+Extension lifecycle or generated workspace. Its support module composes the
+same `ReluxTunnelCore` runtime contracts used by the providers.
+
+The initial stable subcommand is `smoke`. It accepts a versioned JSON document
+from a file or inline, exercises temporary-file, Unix-socket, and managed-task
+cleanup, then writes one sorted-key JSON result to standard output:
+
+```bash
+swift run ReluxTunnelHarness smoke --configuration ./smoke.json
+```
+
+```json
+{
+  "schemaVersion": 1,
+  "seed": 42,
+  "sourceRevision": "replace-with-git-revision",
+  "dependencyRevisions": {},
+  "profileReference": {"value": "smoke-profile", "privacy": "sensitive"},
+  "parameters": {
+    "mode": {"value": "noop", "privacy": "public"}
+  }
+}
+```
+
+Configuration values marked `sensitive` are emitted as `<redacted>`. The output
+records result and metric schema versions, source/dependency revisions, seed,
+redacted configuration, duration, platform, and metrics. `SIGINT` and `SIGTERM`
+cancel the active command and exit with codes 130 and 143 after cleanup.
+
 ## Planning and execution
 
 Work is tracked on a file-based board in [`.task-board/`](.task-board/), driven
@@ -69,8 +102,8 @@ orchestration) is built out under the M5 CI story.
 | Tool | Purpose | Command | Output |
 | --- | --- | --- | --- |
 | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
-| SwiftPM | Build and test the platform-neutral core plus compile-only provider adapters | `make validate-core` | `.build/`; task-scoped logs under `.temp/` |
-| Core boundary guard | Reject forbidden core imports and invalid adapter dependency direction | `make check-core-boundaries` | Terminal pass/fail report |
+| SwiftPM | Build/test the shared core, provider adapters, and standalone macOS harness | `make validate-core`; `swift run ReluxTunnelHarness smoke --configuration ./smoke.json` | `.build/`; task-scoped logs under `.temp/` |
+| Core boundary guard | Reject forbidden Core/harness imports and invalid adapter or harness dependency direction | `make check-core-boundaries` | Terminal pass/fail report |
 | Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
 | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
 | Legacy guard mutation tests | Prove accidental removal and identity/path migration fail closed | `make test-legacy-guard LEGACY_ROOT=/path/to/relux-proxy` | Disposable files under the system temporary directory; removed on exit |

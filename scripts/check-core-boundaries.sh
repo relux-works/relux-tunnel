@@ -10,6 +10,12 @@ if grep -R -n -E "^[[:space:]]*import[[:space:]]+($forbidden)([[:space:]]|$)" So
     exit 1
 fi
 
+if grep -R -n -E "^[[:space:]]*import[[:space:]]+($forbidden)([[:space:]]|$)" \
+    Sources/ReluxTunnelHarness Sources/ReluxTunnelHarnessSupport; then
+    echo "ReluxTunnelHarness imports a provider-only or UI framework" >&2
+    exit 1
+fi
+
 network_extension_imports=$(
     grep -R -l -E '^[[:space:]]*import[[:space:]]+NetworkExtension([[:space:]]|$)' Sources || true
 )
@@ -32,7 +38,10 @@ required = {
     "ReluxTunnelCore",
     "ReluxTunnelIOSAdapter",
     "ReluxTunnelMacOSAdapter",
+    "ReluxTunnelHarnessSupport",
+    "ReluxTunnelHarness",
     "ReluxTunnelCoreTests",
+    "ReluxTunnelHarnessTests",
 }
 missing = required - targets.keys()
 if missing:
@@ -53,6 +62,13 @@ def dependency_names(target):
 for adapter in ("ReluxTunnelIOSAdapter", "ReluxTunnelMacOSAdapter"):
     if dependency_names(targets[adapter]) != {"ReluxTunnelCore"}:
         raise SystemExit(f"{adapter} must depend only on ReluxTunnelCore")
+if dependency_names(targets["ReluxTunnelHarnessSupport"]) != {"ReluxTunnelCore"}:
+    raise SystemExit("ReluxTunnelHarnessSupport must depend only on ReluxTunnelCore")
+if dependency_names(targets["ReluxTunnelHarness"]) != {
+    "ReluxTunnelCore",
+    "ReluxTunnelHarnessSupport",
+}:
+    raise SystemExit("ReluxTunnelHarness must link ReluxTunnelCore and its support target")
 '
 
 echo "ReluxTunnelCore dependency and import boundaries are valid"
