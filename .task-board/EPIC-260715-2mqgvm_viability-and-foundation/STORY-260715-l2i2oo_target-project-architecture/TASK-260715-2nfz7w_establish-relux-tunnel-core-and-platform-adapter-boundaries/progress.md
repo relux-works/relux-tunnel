@@ -8,10 +8,12 @@ backlog
 2026-07-15T01:00:13Z
 
 ## Last Update
-2026-07-15T01:04:30Z
+2026-07-19T16:24:52Z
 
 ## Blocked By
-- TASK-260715-2btjwm
+- TASK-260715-1fv4z1
+- TASK-260715-3r0993
+- TASK-260715-14lk3y
 
 ## Blocks
 - TASK-260715-pmww4f
@@ -19,6 +21,9 @@ backlog
 - TASK-260715-3o0co4
 - TASK-260715-1af33i
 - TASK-260715-1ozsb6
+- TASK-260715-1g9cyt
+- TASK-260715-1ccx3l
+- TASK-260715-30zng6
 
 ## Checklist
 - [ ] Shared core and adapter dependency direction matches the ADR

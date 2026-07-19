@@ -8,13 +8,14 @@ backlog
 2026-07-15T01:00:11Z
 
 ## Last Update
-2026-07-15T01:04:26Z
+2026-07-19T16:24:51Z
 
 ## Blocked By
 - TASK-260715-1fv4z1
 
 ## Blocks
 - TASK-260715-32umrc
+- TASK-260715-2nfz7w
 
 ## Checklist
 - [ ] Generator choice and tool pin are evidence-backed

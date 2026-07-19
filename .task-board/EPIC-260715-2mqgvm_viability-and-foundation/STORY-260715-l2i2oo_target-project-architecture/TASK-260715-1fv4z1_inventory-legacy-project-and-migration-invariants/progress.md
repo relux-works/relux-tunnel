@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:00:10Z
 
 ## Last Update
-2026-07-15T02:46:59Z
+2026-07-19T16:24:51Z
 
 ## Blocked By
 - (none)
@@ -18,6 +18,8 @@ backlog
 - TASK-260715-3bdplx
 - TASK-260715-32umrc
 - TASK-260715-35nc5m
+- TASK-260715-14lk3y
+- TASK-260715-2nfz7w
 
 ## Checklist
 - [ ] Every existing build, test, default, packaging, and release path is inventoried

@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:00:12Z
 
 ## Last Update
-2026-07-15T01:04:27Z
+2026-07-19T16:24:51Z
 
 ## Blocked By
 - TASK-260715-32umrc
@@ -16,10 +16,6 @@ backlog
 ## Blocks
 - TASK-260715-uyju7n
 - TASK-260715-33oofa
-- TASK-260715-2nfz7w
-- TASK-260715-1g9cyt
-- TASK-260715-1ccx3l
-- TASK-260715-14lk3y
 
 ## Checklist
 - [ ] Clean generation is deterministic and uses the pinned tool
