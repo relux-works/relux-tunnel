@@ -28,6 +28,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
 - **Degraded mode**: TCP + safe DNS-over-TCP when the relay is unavailable.
 - **Full spec**: see [`.spec/`](.spec/) — start with `.spec/README.md`,
   `architecture.md`, `decisions.md` (ADR log), and `threat-model.md`.
+- **Shared package**: `ReluxTunnelCore` and its compile-only iOS/macOS provider
+  composition roots are mapped in
+  [`docs/core-adapter-boundaries.md`](docs/core-adapter-boundaries.md).
 
 ## Planning and execution
 
@@ -66,6 +69,9 @@ orchestration) is built out under the M5 CI story.
 | Tool | Purpose | Command | Output |
 | --- | --- | --- | --- |
 | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
+| SwiftPM | Build and test the platform-neutral core plus compile-only provider adapters | `make validate-core` | `.build/`; task-scoped logs under `.temp/` |
+| Core boundary guard | Reject forbidden core imports and invalid adapter dependency direction | `make check-core-boundaries` | Terminal pass/fail report |
+| Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
 | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
 | Legacy guard mutation tests | Prove accidental removal and identity/path migration fail closed | `make test-legacy-guard LEGACY_ROOT=/path/to/relux-proxy` | Disposable files under the system temporary directory; removed on exit |
 | Tuist via Mise | Generate the future Apple workspace at the repository-pinned version | `mise exec -- tuist generate` (after generator files land) | Generated Xcode workspace (gitignored) |

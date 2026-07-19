@@ -77,3 +77,20 @@ ad-hoc `make app`, universal slice inspection, `make dmg`, codesign verification
 and DMG checksum verification. No incompatibility or cross-repository ownership
 decision was required; any baseline update still requires the separate approved
 legacy migration or retirement record.
+
+## 2026-07-20 — Shared core now compiles without the gated workspace
+
+TASK-260715-2nfz7w established three SwiftPM products at the ADR-016 floors:
+pure `ReluxTunnelCore` plus the explicitly named iOS and macOS NetworkExtension
+adapter modules. Only the adapter modules import NetworkExtension, both thin
+composition roots delegate lifecycle and version routing to one shared core
+actor, and their protocol-based initializers run through the same Swift Testing
+contracts without generated targets or Gate P0 signing. The iOS adapter also
+passes a generic arm64 iOS 18 build with signing disabled. Packet, SSH, upload,
+internal SOCKS, lifecycle, clock, logging, metrics, cancellation, and memory
+pressure are interfaces only: numeric limits remain injected, the SSH engine
+remains ADR-014/TASK-260715-1gjxer work, and no route, DNS, relay framing,
+profile persistence, Keychain, UI, concrete provider subclass, or future
+app-message snapshot semantics were implemented. The M0 provider message
+surface intentionally supports only a version query at protocol version 1;
+later message kinds require their owning lifecycle specification.
