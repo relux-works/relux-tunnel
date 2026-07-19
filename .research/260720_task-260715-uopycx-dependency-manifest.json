@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "task_id": "TASK-260715-uopycx",
+  "title": "Pinned HEV and lwIP baseline",
+  "audited_at": "2026-07-20",
+  "baseline_policy": "Unmodified upstream commit graph; commit hashes, not tags, are authoritative.",
+  "root": {
+    "name": "hev-socks5-tunnel",
+    "upstream": "https://github.com/heiher/hev-socks5-tunnel",
+    "commit": "ad7600497931205105b08367bd1b450048157e40",
+    "commit_date": "2026-07-19T21:58:09+08:00",
+    "describe": "2.16.0-1-gad76004",
+    "git_tree": "98cd61e1aea6767f35518c88de159c4b4c846f12",
+    "git_archive_tar_sha256": "1d48d9b8a4dd5befc3460fda3ac4684149ace458c1630ca5f5692c9dc8dd154f",
+    "license": "MIT",
+    "license_path": "LICENSE",
+    "relationship": "root",
+    "inspected_paths": [
+      ".gitmodules",
+      "LICENSE",
+      "README.md",
+      "Makefile",
+      "build-apple.sh",
+      "build.mk",
+      "module.modulemap",
+      "conf/main.yml",
+      "src/hev-config.c",
+      "src/hev-config-const.h",
+      "src/hev-main.c",
+      "src/hev-main.h",
+      "src/hev-socks5-session-tcp.c",
+      "src/hev-socks5-session-udp.c",
+      "src/hev-socks5-tunnel.c",
+      "src/hev-tunnel-macos.h"
+    ]
+  },
+  "dependencies": [
+    {
+      "name": "hev-socks5-core",
+      "path": "src/core",
+      "upstream": "https://github.com/heiher/hev-socks5-core",
+      "commit": "c234519072ff5b928b90b304da9a666bcb440455",
+      "commit_date": "2026-07-19T21:55:18+08:00",
+      "describe": "1.6.3-2-gc234519",
+      "git_tree": "46149a6522eae90190aa25ab74d02ba1ad1b6891",
+      "git_archive_tar_sha256": "4b17bed847de4336adad9961c1a6943ab4a4df670da057a12c50a0d06c3b2438",
+      "license": "MIT",
+      "license_path": "src/core/LICENSE",
+      "relationship": "git submodule; sources are compiled into libhev-socks5-tunnel.a",
+      "inspected_paths": [
+        "src/core/LICENSE",
+        "src/core/README.md",
+        "src/core/src/hev-socks5-client.c",
+        "src/core/src/hev-socks5-client-udp.c",
+        "src/core/src/hev-socks5-misc.c",
+        "src/core/src/hev-socks5-proto.h",
+        "src/core/src/hev-socks5-udp.c"
+      ]
+    },
+    {
+      "name": "hev-task-system",
+      "path": "third-part/hev-task-system",
+      "upstream": "https://github.com/heiher/hev-task-system",
+      "commit": "b1afa0e21fb4ed5a69560e78e54baf0efdebe171",
+      "commit_date": "2026-05-23T20:12:31+08:00",
+      "describe": "5.10.2",
+      "git_tree": "11d10f36c5f0bbc8914c8af218f236c72bb71b25",
+      "git_archive_tar_sha256": "3e3ef1eaa15b151e48123e006a98ef9de134914488fb38bcc44626cd239ffe93",
+      "license": "MIT",
+      "license_path": "third-part/hev-task-system/LICENSE",
+      "relationship": "git submodule; built as a static archive and merged into the XCFramework archive",
+      "inspected_paths": [
+        "third-part/hev-task-system/LICENSE",
+        "third-part/hev-task-system/README.md",
+        "third-part/hev-task-system/Makefile",
+        "third-part/hev-task-system/configs.mk",
+        "third-part/hev-task-system/src/kern/aide/hev-task-aide.c",
+        "third-part/hev-task-system/src/kern/core/hev-task-system.c",
+        "third-part/hev-task-system/src/lib/dns/hev-task-dns-proxy.c",
+        "third-part/hev-task-system/src/mem/base/hev-memory-allocator.c",
+        "third-part/hev-task-system/src/mem/base/hev-memory-allocator.h"
+      ]
+    },
+    {
+      "name": "lwIP fork",
+      "path": "third-part/lwip",
+      "upstream": "https://github.com/heiher/lwip",
+      "commit": "2a11c14c7a32887af25a034e82ef18b0b12076ac",
+      "commit_date": "2026-07-15T23:11:28+08:00",
+      "describe": "2.2.1.7",
+      "git_tree": "1450f4eece9d65f96e2d8e3351181fccc311330c",
+      "git_archive_tar_sha256": "3a2252de07e42d3e5d31d8af97005eb73d7f0ed7725d029f0025c99ab5a0497f",
+      "license": "BSD-3-Clause-like lwIP license",
+      "license_path": "third-part/lwip/LICENSE",
+      "relationship": "git submodule of the HEV-maintained lwIP fork; built as a static archive and merged into the XCFramework archive",
+      "inspected_paths": [
+        "third-part/lwip/LICENSE",
+        "third-part/lwip/Makefile",
+        "third-part/lwip/src/ports/include/lwipopts.h"
+      ]
+    },
+    {
+      "name": "yaml",
+      "path": "third-part/yaml",
+      "upstream": "https://github.com/heiher/yaml",
+      "commit": "efa36117a8646d26d12b58e05bac472d7854a70d",
+      "commit_date": "2025-02-03T22:10:21+08:00",
+      "describe": "0.2.5.2",
+      "git_tree": "562968200a282ed6a7f7740fa7bf8aa41ae642d8",
+      "git_archive_tar_sha256": "b0f33a1062e687bef8f86d5e0690895e8e5f7f5fdeda285216a00bfcc5616334",
+      "license": "MIT",
+      "license_path": "third-part/yaml/License",
+      "relationship": "git submodule; direct build dependency used to parse configuration and merged into the XCFramework archive",
+      "inspected_paths": [
+        "third-part/yaml/License",
+        "third-part/yaml/Makefile"
+      ]
+    },
+    {
+      "name": "Wintun prebuilt/source bundle",
+      "path": "third-part/wintun",
+      "upstream": "https://www.wintun.net/",
+      "commit": null,
+      "git_tree": "8c9b8c3db926ef0bda0454a736eb812e4b7f7719",
+      "license": "Wintun prebuilt binaries license",
+      "license_path": "third-part/wintun/LICENSE.txt",
+      "relationship": "vendored root-tree content for Windows only; the Apple source branch compiles to no-symbol objects and the DLL is not merged into Apple products",
+      "shipped_in_apple_product": false,
+      "inspected_paths": [
+        "third-part/wintun/LICENSE.txt",
+        "third-part/wintun/README.md",
+        "third-part/wintun/bin/wintun.dll",
+        "third-part/wintun/include/wintun.h",
+        "src/hev-tunnel-windows.c",
+        "src/misc/hev-wintun.c"
+      ]
+    }
+  ],
+  "apple_build": {
+    "command": "./build-apple.sh",
+    "source_path": "build-apple.sh",
+    "result": "pass",
+    "toolchain": {
+      "xcode": "26.5 (17F42)",
+      "apple_clang": "21.0.0 (clang-2100.1.1.101)",
+      "host": "macOS 26.5 (25F71), arm64"
+    },
+    "common_flags": {
+      "compiler": "xcrun --sdk <sdk> --toolchain <sdk> clang",
+      "tunnel_makefile": "-O3 -pipe -Wall -Werror -DENABLE_LIBRARY",
+      "slice_cflags": "-arch <arch> -m<sdk>-version-min=<minimum>",
+      "slice_lflags": "-arch <arch> -m<sdk>-version-min=<minimum> -Wl,-Bsymbolic-functions",
+      "task_system_defaults": "ENABLE_STACK_OVERFLOW_DETECTION=1, ENABLE_MEMALLOC_SLICE=1, CONFIG_STACK_BACKEND=STACK_MMAP"
+    },
+    "slices": [
+      {"platform": "iOS", "sdk": "iphoneos", "minimum": "15.0", "architectures": ["arm64"]},
+      {"platform": "iOS Simulator", "sdk": "iphonesimulator", "minimum": "15.0", "architectures": ["x86_64", "arm64"]},
+      {"platform": "macOS", "sdk": "macosx", "minimum": "10.14", "architectures": ["x86_64", "arm64"]},
+      {"platform": "tvOS", "sdk": "appletvos", "minimum": "17.0", "architectures": ["arm64"]},
+      {"platform": "tvOS Simulator", "sdk": "appletvsimulator", "minimum": "17.0", "architectures": ["x86_64", "arm64"]}
+    ],
+    "output": "HevSocks5Tunnel.xcframework",
+    "archive_composition": [
+      "bin/libhev-socks5-tunnel.a (includes hev-socks5-core sources)",
+      "third-part/lwip/bin/liblwip.a",
+      "third-part/yaml/bin/libyaml.a",
+      "third-part/hev-task-system/bin/libhev-task-system.a"
+    ],
+    "public_headers": ["HevSocks5Tunnel/hev-main.h", "HevSocks5Tunnel/module.modulemap"],
+    "verification_log_sha256": "e6c19feb40f6ae9eff62e6f5ee26032cf364c9bbd7a47d2206a8b58685a31403",
+    "verification_log_size": 91172,
+    "output_sha256": {
+      "Info.plist": "88f560b61ba04108d2dd867ce3c21214729f3083aeadcab675dd1262b77db63a",
+      "ios-arm64/libhev-socks5-tunnel.a": "e5c4373c02e57ee6a37c4d8c481162c7af2effd085dbd4ddd3f0b63cc1dbdda4",
+      "ios-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "abe30a5970e994f936aae7c71cbcb2b858884e46703a61d9fd3e54db6238e7b5",
+      "macos-arm64_x86_64/libhev-socks5-tunnel.a": "113afe6eede3f803933f478d32b22eb1aac1b56febe714399a14bdfb83eb6d7a",
+      "tvos-arm64/libhev-socks5-tunnel.a": "521e762d6693f8fe3ced7b1ac5317203fe00e07c6083d5c48841cefc68c41983",
+      "tvos-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "b4db19ee65900141d2449977d1407dc34fd6f2f1a1f7e287214b890063157c53"
+    },
+    "hash_note": "Output hashes prove this audit build only. Source commit/tree/archive hashes are the reproducible dependency identity."
+  }
+}

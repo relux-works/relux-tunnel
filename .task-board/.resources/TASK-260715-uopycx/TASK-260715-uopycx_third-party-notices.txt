@@ -1,0 +1,131 @@
+TASK-260715-uopycx — HEV/lwIP notice audit and sample binary-distribution notices
+Audit date: 2026-07-20
+
+SCOPE AND RESULT
+
+This notice sample covers the exact Apple binary graph pinned by
+TASK-260715-uopycx:
+
+  * hev-socks5-tunnel ad7600497931205105b08367bd1b450048157e40
+  * hev-socks5-core c234519072ff5b928b90b304da9a666bcb440455
+  * hev-task-system b1afa0e21fb4ed5a69560e78e54baf0efdebe171
+  * HEV lwIP fork 2a11c14c7a32887af25a034e82ef18b0b12076ac
+  * HEV yaml fork efa36117a8646d26d12b58e05bac472d7854a70d
+
+The first, second, third, and fifth components carry identical MIT license text
+and the same "Copyright (c) 2022 hev" notice in their pinned license files. They
+are aggregated below without changing the notice or permission text. The lwIP
+license is reproduced separately and in full.
+
+The root source tree also vendors Wintun files under third-part/wintun. The
+Apple build does not merge the Windows DLL into HevSocks5Tunnel.xcframework,
+and the Windows-only C branches compile to no-symbol objects on Apple. Wintun is
+therefore not included in this Apple binary notice sample. If a Windows artifact
+is ever distributed, its pinned LICENSE.txt must be reviewed and included under
+that artifact's separate compliance scope.
+
+OBLIGATIONS AUDIT
+
+MIT components:
+
+  * Permission includes use, copy, modification, merge, publication,
+    distribution, sublicensing, and sale.
+  * The copyright notice and permission notice must be included in all copies
+    or substantial portions of the software.
+  * For the static Apple binary, preserve the notice and complete MIT text in
+    the app's third-party notices or other materials shipped with the binary.
+
+lwIP:
+
+  * Source redistribution must retain the copyright notice, conditions, and
+    disclaimer.
+  * Binary redistribution must reproduce the copyright notice, conditions, and
+    disclaimer in documentation and/or other materials supplied with the
+    distribution.
+  * The author's name must not be used to endorse or promote derived products
+    without specific prior written permission.
+
+No standalone NOTICE file exists in the pinned tunnel, core, task-system, lwIP,
+or yaml roots. The license files are the controlling notice sources inspected
+for this audit. This engineering audit is not legal advice; release compliance
+must still map this sample to the actual shipped SBOM and presentation location.
+
+SAMPLE NOTICE TEXT FOR THE APP/DISTRIBUTION
+
+-------------------------------------------------------------------------------
+HEV MIT components
+-------------------------------------------------------------------------------
+
+This product includes:
+
+  * hev-socks5-tunnel
+    https://github.com/heiher/hev-socks5-tunnel
+    revision ad7600497931205105b08367bd1b450048157e40
+
+  * hev-socks5-core
+    https://github.com/heiher/hev-socks5-core
+    revision c234519072ff5b928b90b304da9a666bcb440455
+
+  * hev-task-system
+    https://github.com/heiher/hev-task-system
+    revision b1afa0e21fb4ed5a69560e78e54baf0efdebe171
+
+  * yaml (HEV fork)
+    https://github.com/heiher/yaml
+    revision efa36117a8646d26d12b58e05bac472d7854a70d
+
+Copyright (c) 2022 hev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+lwIP (HEV fork)
+-------------------------------------------------------------------------------
+
+This product includes lwIP from the HEV fork:
+
+  https://github.com/heiher/lwip
+  revision 2a11c14c7a32887af25a034e82ef18b0b12076ac
+
+Copyright (c) 2001, 2002 Swedish Institute of Computer Science.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+3. The name of the author may not be used to endorse or promote products
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.
+
+END OF SAMPLE NOTICE TEXT
