@@ -8,11 +8,9 @@ backlog
 2026-07-15T01:16:07Z
 
 ## Last Update
-2026-07-19T16:24:52Z
+2026-07-19T21:17:17Z
 
 ## Blocked By
-- TASK-260715-2jatnd
-- TASK-260715-1gjxer
 - TASK-260715-2nfz7w
 
 ## Blocks

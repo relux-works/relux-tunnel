@@ -8,7 +8,7 @@ backlog
 2026-07-15T00:56:48Z
 
 ## Last Update
-2026-07-15T03:19:54Z
+2026-07-19T21:17:16Z
 
 ## Blocked By
 - TASK-260715-x4h9n1
@@ -20,7 +20,6 @@ backlog
 - TASK-260715-3661ps
 - TASK-260715-3cg87m
 - TASK-260715-26wi46
-- TASK-260715-111tde
 
 ## Checklist
 - [ ] The ADR has an explicit pass, fail, or pivot state with evidence

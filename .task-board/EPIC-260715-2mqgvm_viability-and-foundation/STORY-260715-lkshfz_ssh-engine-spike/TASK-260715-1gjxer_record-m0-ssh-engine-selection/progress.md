@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:17Z
 
 ## Last Update
-2026-07-15T03:19:56Z
+2026-07-19T21:17:17Z
 
 ## Blocked By
 - TASK-260715-3ikonq
@@ -20,9 +20,9 @@ backlog
 - TASK-260715-1pn983
 - TASK-260715-s3at1l
 - TASK-260715-2hhh7x
-- TASK-260715-30zng6
 - TASK-260715-2uipar
 - TASK-260715-159pcp
+- TASK-260715-12x6oq
 
 ## Checklist
 - [ ] Every mandatory gate maps to evidence for both candidates
