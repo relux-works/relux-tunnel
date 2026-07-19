@@ -7,7 +7,9 @@ your own machine.
 
 This repository is the home of the v2 product. The legacy menu-bar SOCKS app
 (v0.1.0) lives in [`relux-works/relux-proxy`](https://github.com/relux-works/relux-proxy)
-and remains buildable until the migration task explicitly retires it.
+and remains buildable until the migration task explicitly retires it. Its
+[preservation contract](docs/legacy-preservation.md) pins the independent
+SwiftPM, defaults, system-SSH, bundle, packaging, and release identity.
 
 ## Architecture (one glance)
 
@@ -58,6 +60,17 @@ agent loop.
 every push/PR. The full quality-gate pipeline (build matrix, signing/notarization
 verification, relay reproducibility, SBOM/secret scanning, serialized release
 orchestration) is built out under the M5 CI story.
+
+## Repository tools
+
+| Tool | Purpose | Command | Output |
+| --- | --- | --- | --- |
+| `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
+| Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
+| Legacy guard mutation tests | Prove accidental removal and identity/path migration fail closed | `make test-legacy-guard LEGACY_ROOT=/path/to/relux-proxy` | Disposable files under the system temporary directory; removed on exit |
+| Tuist via Mise | Generate the future Apple workspace at the repository-pinned version | `mise exec -- tuist generate` (after generator files land) | Generated Xcode workspace (gitignored) |
+
+Build/test evidence and other task-scoped scratch logs belong under `.temp/`.
 
 ## Security
 

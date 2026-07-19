@@ -62,3 +62,18 @@ its developer disk image mount must be repaired under Gate P0 before support is
 claimed. GitHub is scheduled to change the macOS 26 runner default from Xcode
 26.5 to 26.6 on July 21, so workflows must select `/Applications/Xcode_26.5.app`
 until the upgrade matrix promotes a new pin.
+
+## 2026-07-20 — Legacy preservation now fails closed on identity drift
+
+TASK-260715-14lk3y added a repository-owned preservation contract, SHA-256
+baseline, semantic regression guard, and negative mutation tests without
+vendoring or modifying the legacy repository. The guard verifies the signed
+v0.1.0 lineage, complete product-bearing source and release bytes, macOS 14
+SwiftPM product, bundle/default/system-SSH identities, universal packaging,
+Developer ID identity, stable `ReluxProxy.dmg`, and separation from exact paths
+reserved for future generated targets. A read-only detached v0.1.0 reference
+clone and a disposable packaging clone passed `swift test` (4/4), `swift build`,
+ad-hoc `make app`, universal slice inspection, `make dmg`, codesign verification,
+and DMG checksum verification. No incompatibility or cross-repository ownership
+decision was required; any baseline update still requires the separate approved
+legacy migration or retirement record.
