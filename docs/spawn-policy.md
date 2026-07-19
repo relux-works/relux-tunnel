@@ -1,48 +1,56 @@
 # Spawn policy — relux-tunnel
 
-Board execution on this project uses **Claude only**, restricted to two models.
-`task-board.config.json` cannot express this exactly (see "Why not in config"),
-so this document is the authoritative policy and MUST be honored by any
-orchestrator (human or agent) that spawns board work.
+Two-tier execution: a **Claude/Fable orchestrator** delegates to a **Codex/Sol
+executor**. The per-agent models are pinned in `task-board.config.json` via spawn
+ceilings (`model_criterion: equal`), so an explicit spawn request is coerced to
+the configured model even if mis-specified.
 
-## The rule
+## Roles → models
 
-- **Agent:** `claude` only. **Never** spawn `--agent codex`.
-- **Models:** exactly one of
-  - `claude-fable-5` — hardest / longest-running child tasks;
-  - `claude-opus-4-8` — everyday complex work (default choice).
-- **Never** use `claude-sonnet-5`, `claude-haiku-4-5`, or any Codex model.
-- Reasoning-effort flags are Codex-only and MUST NOT be passed to Claude spawns.
+| Role | Agent | Model | Effort | Set by |
+|---|---|---|---|---|
+| Orchestrator (this session) | claude | `claude-fable-5` | max | `/model` (session, not board config) |
+| Executor #1 | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
+| Any Claude spawn (sub-orchestrator / reviewer) | claude | `claude-fable-5` | — | `spawn.ceilings.claude` |
+
+Notes:
+- The orchestrator is the primary session, **not** a spawned child, so its model
+  (`claude-fable-5`) and effort (`max`) are set with `/model`, not the board
+  config. The `claude` ceiling only governs spawned Claude children.
+- Claude spawns do not accept a reasoning-effort flag (`claude_reasoning_effort_supported: false`).
+- Codex spawns require an effort; the ceiling pins it to `high` for `gpt-5.6-sol`.
 
 ## Canonical spawn commands
 
 ```bash
-# everyday complex task
-task-board spawn TASK-… --role developer --background --agent claude --model claude-opus-4-8
+# executor (developer / tester) — Codex Sol high
+task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
 
-# hardest / longest-running task
-task-board spawn TASK-… --role developer --background --agent claude --model claude-fable-5
+# reviewer — independent Codex Sol review (or --agent claude for a Fable review)
+task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
 
-# reviewer (same model rule)
-task-board spawn TASK-… --role reviewer  --background --agent claude --model claude-opus-4-8
+# sub-orchestrator / decomposition — Claude Fable
+task-board spawn TASK-… --role solution-architect --background --agent claude --model claude-fable-5
 ```
 
-## Why not in config
+## Config (`task-board.config.json`)
 
-`task-board` spawn ceilings (`spawn.ceilings.<agent>.model_criterion`) can only
-**pin exactly one model per agent** via `equal` (it coerces a request to that
-one model); the ordered criteria `less_or_equal` / `greater_or_equal` are
-declared but fail closed. There is **no** primitive to allow a two-model set,
-and **no** per-agent disable — the only hard switch is `spawn.enabled: false`,
-which would also kill Claude spawns.
+```json
+"spawn": {
+  "enabled": true,
+  "max_parallel": 20,
+  "ceilings": {
+    "codex":  { "model": "gpt-5.6-sol",   "model_criterion": "equal", "reasoning_effort": "high" },
+    "claude": { "model": "claude-fable-5", "model_criterion": "equal" }
+  }
+}
+```
 
-Therefore:
+`model_criterion: equal` coerces any spawn on that agent to the configured model;
+it cannot allowlist two models or disable an agent (only `spawn.enabled: false`
+is a global kill). To change a tier, edit the ceiling and redeploy.
 
-- `spawn.enabled: true` is kept (Claude spawns must work).
-- No `ceilings` are set, so both `claude-fable-5` and `claude-opus-4-8` remain
-  selectable.
-- "Claude-only, these two models, no Codex/Sonnet/Haiku" is enforced by this
-  policy and by orchestrator discipline, not by a config hard-block.
+## History
 
-If a future `task-board` adds a model allowlist or a per-agent enable flag,
-migrate this rule into `task-board.config.json` and shrink this doc to a pointer.
+Superseded the earlier Claude-only (fable/opus, no Codex) policy: the executor
+tier is now Codex `gpt-5.6-sol` at `high`, orchestration stays on Fable.
