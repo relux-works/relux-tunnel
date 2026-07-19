@@ -5,7 +5,7 @@
   "mode": "local",
   "spawn": {
     "enabled": true,
-    "max_parallel": 20,
+    "max_parallel": 1,
     "ceilings": {
       "codex": {
         "model": "gpt-5.6-sol",

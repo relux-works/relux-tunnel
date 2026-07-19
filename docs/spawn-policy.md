@@ -38,7 +38,7 @@ task-board spawn TASK-… --role solution-architect --background --agent claude 
 ```json
 "spawn": {
   "enabled": true,
-  "max_parallel": 20,
+  "max_parallel": 1,
   "ceilings": {
     "codex":  { "model": "gpt-5.6-sol",   "model_criterion": "equal", "reasoning_effort": "high" },
     "claude": { "model": "claude-fable-5", "model_criterion": "equal" }
@@ -46,9 +46,12 @@ task-board spawn TASK-… --role solution-architect --background --agent claude 
 }
 ```
 
-`model_criterion: equal` coerces any spawn on that agent to the configured model;
-it cannot allowlist two models or disable an agent (only `spawn.enabled: false`
-is a global kill). To change a tier, edit the ceiling and redeploy.
+`max_parallel: 1` means a single tracked background executor runs at a time
+(orchestrator session + one executor); further spawns queue and start as the slot
+frees. `model_criterion: equal` coerces any spawn on that agent to the configured
+model; it cannot allowlist two models or disable an agent (only
+`spawn.enabled: false` is a global kill). To change a tier, edit the ceiling and
+redeploy.
 
 ## History
 
