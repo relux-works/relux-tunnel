@@ -1,5 +1,5 @@
 ## Status
-to-review
+to-dev
 
 ## Assigned To
 [analyst] solution-architect (codex)
@@ -8,7 +8,7 @@ to-review
 2026-07-15T00:46:31Z
 
 ## Last Update
-2026-07-19T21:17:17Z
+2026-07-19T22:10:42Z
 
 ## Blocked By
 - (none)

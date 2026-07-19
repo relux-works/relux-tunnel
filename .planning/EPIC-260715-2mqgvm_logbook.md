@@ -36,3 +36,14 @@ Both focused DOT diagrams were written, but the installed Graphviz 14.0.4 binary
 exits before parsing because `/opt/homebrew/opt/libtool/lib/libltdl.7.dylib` is
 missing. DOT sources and the exact failure log are attached. No rendered-image
 validation is claimed, and repairing Homebrew is outside this planning-only run.
+
+## 2026-07-20 — Published v0.1.0 is the release baseline, not local dist output
+
+TASK-260715-1fv4z1 verified that all shipped source, test, packaging, and workflow
+files are unchanged between signed tag v0.1.0 and current HEAD. The ignored local
+`dist/ReluxProxy-v0.1.0-universal.dmg` is not byte-identical to the GitHub release
+and lacks a stapled notarization ticket. The published 1,775,722-byte DMGs hash to
+`5159c07c25f9c46df33462d256cab8a10eb79d677ad2e9b182e9e4188363c20d`, pass
+stapler and Gatekeeper validation, and have provenance evidence. Migration and
+regression work must use the signed tag plus published assets as the immutable
+baseline; local ignored output is diagnostic only.
