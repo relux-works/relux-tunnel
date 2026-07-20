@@ -483,3 +483,380 @@ func validEnvelopeDirection(direction EnvelopeDirection) bool {
 func maxInt() int {
 	return int(^uint(0) >> 1)
 }
+
+// DatagramAddress is a byte-preserving SOCKS/HEV address. Domain bytes are
+// opaque here; DNS presentation-form validation belongs to the resolver gate.
+type DatagramAddress struct {
+	Type  AddressType
+	Bytes []byte
+}
+
+// DatagramEndpoint is the destination on client requests and the
+// relay-observed source on responses. The codec never resolves or substitutes
+// an endpoint.
+type DatagramEndpoint struct {
+	Address DatagramAddress
+	Port    uint16
+}
+
+type Datagram struct {
+	Endpoint DatagramEndpoint
+	Data     []byte
+}
+
+type DatagramErrorCode string
+
+const (
+	DatagramInvalidConfiguration              DatagramErrorCode = "invalidConfiguration"
+	DatagramArithmeticOverflow                DatagramErrorCode = "arithmeticOverflow"
+	DatagramTruncatedFixedHeader              DatagramErrorCode = "truncatedFixedHeader"
+	DatagramUnknownAddressType                DatagramErrorCode = "unknownAddressType"
+	DatagramInvalidAddressLength              DatagramErrorCode = "invalidAddressLength"
+	DatagramHeaderLengthMismatch              DatagramErrorCode = "headerLengthMismatch"
+	DatagramTruncatedAddress                  DatagramErrorCode = "truncatedAddress"
+	DatagramTruncatedPort                     DatagramErrorCode = "truncatedPort"
+	DatagramInvalidPort                       DatagramErrorCode = "invalidPort"
+	DatagramMessageLengthExceedsProtocolLimit DatagramErrorCode = "messageLengthExceedsProtocolMaximum"
+	DatagramMessageLengthExceedsLocalLimit    DatagramErrorCode = "messageLengthExceedsLocalMaximum"
+	DatagramMessageLengthMismatch             DatagramErrorCode = "messageLengthMismatch"
+	DatagramOuterLengthMismatch               DatagramErrorCode = "outerLengthMismatch"
+)
+
+type DatagramPhase string
+
+const (
+	DatagramPhaseConfiguration DatagramPhase = "configuration"
+	DatagramPhaseEncoding      DatagramPhase = "encoding"
+	DatagramPhaseFixedHeader   DatagramPhase = "fixedHeader"
+	DatagramPhaseAddress       DatagramPhase = "address"
+	DatagramPhasePort          DatagramPhase = "port"
+	DatagramPhaseData          DatagramPhase = "data"
+	DatagramPhaseOuterLength   DatagramPhase = "outerLength"
+)
+
+type DatagramError struct {
+	Code        DatagramErrorCode
+	Phase       DatagramPhase
+	Scope       string
+	Disposition string
+}
+
+func (e *DatagramError) Error() string {
+	if e == nil {
+		return ""
+	}
+	return fmt.Sprintf(
+		"relayDatagram code=%s phase=%s scope=%s disposition=%s",
+		e.Code, e.Phase, e.Scope, e.Disposition,
+	)
+}
+
+type DatagramCodecMetrics struct {
+	InputRecords             uint64
+	InputBytes               uint64
+	DecodedRecords           uint64
+	EncodedRecords           uint64
+	EncodedBytes             uint64
+	DecodedMaterializedBytes uint64
+	Failures                 uint64
+}
+
+type DatagramCodec struct {
+	maximumPayloadLength uint16
+	metrics              DatagramCodecMetrics
+}
+
+func NewDatagramCodec(maximumPayloadLength uint16) (*DatagramCodec, *DatagramError) {
+	if failure := validateDatagramMaximumPayloadLength(maximumPayloadLength); failure != nil {
+		return nil, failure
+	}
+	return &DatagramCodec{maximumPayloadLength: maximumPayloadLength}, nil
+}
+
+func (c *DatagramCodec) MaximumPayloadLength() uint16 {
+	return c.maximumPayloadLength
+}
+
+func (c *DatagramCodec) Metrics() DatagramCodecMetrics {
+	return c.metrics
+}
+
+// ValidateDatagramEncodedLength computes and validates the exact HEV record
+// size before allocating an output buffer.
+func ValidateDatagramEncodedLength(
+	endpoint DatagramEndpoint,
+	dataLength uint64,
+	maximumPayloadLength uint16,
+) (int, *DatagramError) {
+	if failure := validateDatagramMaximumPayloadLength(maximumPayloadLength); failure != nil {
+		return 0, failure
+	}
+	headerLength, failure := validateDatagramEndpoint(endpoint, DatagramPhaseEncoding)
+	if failure != nil {
+		return 0, failure
+	}
+	if dataLength > ^uint64(0)-uint64(headerLength) ||
+		dataLength+uint64(headerLength) > uint64(maxInt()) {
+		return 0, datagramEncodingFailure(DatagramArithmeticOverflow, DatagramPhaseEncoding)
+	}
+	if dataLength > uint64(MaxUDPPayloadRelayHardCeiling) {
+		return 0, datagramEncodingFailure(
+			DatagramMessageLengthExceedsProtocolLimit,
+			DatagramPhaseData,
+		)
+	}
+	if dataLength > uint64(maximumPayloadLength) {
+		return 0, datagramEncodingFailure(
+			DatagramMessageLengthExceedsLocalLimit,
+			DatagramPhaseData,
+		)
+	}
+	recordLength := dataLength + uint64(headerLength)
+	if recordLength > uint64(MaxHEVRecordWidth) {
+		return 0, datagramEncodingFailure(DatagramArithmeticOverflow, DatagramPhaseEncoding)
+	}
+	return int(recordLength), nil
+}
+
+func (c *DatagramCodec) Encode(datagram Datagram) ([]byte, *DatagramError) {
+	recordLength, failure := ValidateDatagramEncodedLength(
+		datagram.Endpoint,
+		uint64(len(datagram.Data)),
+		c.maximumPayloadLength,
+	)
+	if failure != nil {
+		c.metrics.Failures++
+		return nil, failure
+	}
+	headerLength := recordLength - len(datagram.Data)
+	record := make([]byte, recordLength)
+	binary.BigEndian.PutUint16(record[0:2], uint16(len(datagram.Data)))
+	record[2] = byte(headerLength)
+	record[3] = byte(datagram.Endpoint.Address.Type)
+
+	addressOffset := 4
+	if datagram.Endpoint.Address.Type == AddressTypeDomain {
+		record[4] = byte(len(datagram.Endpoint.Address.Bytes))
+		addressOffset++
+	}
+	addressEnd := addressOffset + len(datagram.Endpoint.Address.Bytes)
+	copy(record[addressOffset:addressEnd], datagram.Endpoint.Address.Bytes)
+	binary.BigEndian.PutUint16(record[addressEnd:addressEnd+HEVPortWidth], datagram.Endpoint.Port)
+	copy(record[headerLength:], datagram.Data)
+
+	c.metrics.EncodedRecords++
+	c.metrics.EncodedBytes += uint64(len(record))
+	return record, nil
+}
+
+// Decode validates one complete envelope payload. It validates HEV structure
+// before payload-limit policy and finishes every check before slicing or
+// allocating decoded bytes.
+func (c *DatagramCodec) Decode(record []byte) (Datagram, *DatagramError) {
+	c.metrics.InputRecords++
+	c.metrics.InputBytes += uint64(len(record))
+	layout, failure := c.validateDatagramRecordLayout(record)
+	if failure != nil {
+		c.metrics.Failures++
+		return Datagram{}, failure
+	}
+
+	addressBytes := append([]byte(nil), record[layout.addressOffset:layout.addressEnd]...)
+	data := append([]byte(nil), record[layout.headerLength:]...)
+	result := Datagram{
+		Endpoint: DatagramEndpoint{
+			Address: DatagramAddress{Type: layout.addressType, Bytes: addressBytes},
+			Port:    layout.port,
+		},
+		Data: data,
+	}
+	c.metrics.DecodedRecords++
+	c.metrics.DecodedMaterializedBytes += uint64(len(addressBytes) + len(data))
+	return result, nil
+}
+
+type datagramRecordLayout struct {
+	addressType   AddressType
+	addressOffset int
+	addressEnd    int
+	headerLength  int
+	port          uint16
+}
+
+func (c *DatagramCodec) validateDatagramRecordLayout(record []byte) (datagramRecordLayout, *DatagramError) {
+	if len(record) < 4 {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramTruncatedFixedHeader,
+			DatagramPhaseFixedHeader,
+		)
+	}
+	messageLength := int(binary.BigEndian.Uint16(record[0:2]))
+	headerLength := int(record[2])
+	addressType := AddressType(record[3])
+	if addressType != AddressTypeIPv4 && addressType != AddressTypeIPv6 && addressType != AddressTypeDomain {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramUnknownAddressType,
+			DatagramPhaseAddress,
+		)
+	}
+	addressOffset := 4
+	addressLength := 0
+	expectedHeaderLength := 0
+	switch addressType {
+	case AddressTypeIPv4:
+		addressLength = 4
+		expectedHeaderLength = HEVHDRLENIPv4
+	case AddressTypeIPv6:
+		addressLength = 16
+		expectedHeaderLength = HEVHDRLENIPv6
+	case AddressTypeDomain:
+		if len(record) < 5 {
+			return datagramRecordLayout{}, datagramDecodingFailure(
+				DatagramTruncatedAddress,
+				DatagramPhaseAddress,
+			)
+		}
+		addressOffset = 5
+		addressLength = int(record[4])
+		if addressLength < MinDomainWireBytes || addressLength > MaxDomainWireBytes {
+			return datagramRecordLayout{}, datagramDecodingFailure(
+				DatagramInvalidAddressLength,
+				DatagramPhaseAddress,
+			)
+		}
+		expectedHeaderLength = HEVHDRLENDomainBase + addressLength
+	}
+	if headerLength != expectedHeaderLength {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramHeaderLengthMismatch,
+			DatagramPhaseFixedHeader,
+		)
+	}
+	addressEnd := addressOffset + addressLength
+	if len(record) < addressEnd {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramTruncatedAddress,
+			DatagramPhaseAddress,
+		)
+	}
+	portEnd := addressEnd + HEVPortWidth
+	if len(record) < portEnd {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramTruncatedPort,
+			DatagramPhasePort,
+		)
+	}
+	if portEnd != headerLength {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramHeaderLengthMismatch,
+			DatagramPhaseFixedHeader,
+		)
+	}
+	port := binary.BigEndian.Uint16(record[addressEnd:portEnd])
+	if port == 0 {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramInvalidPort,
+			DatagramPhasePort,
+		)
+	}
+	availableDataLength := len(record) - headerLength
+	if availableDataLength != messageLength {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramMessageLengthMismatch,
+			DatagramPhaseData,
+		)
+	}
+	if messageLength > maxInt()-headerLength {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramArithmeticOverflow,
+			DatagramPhaseOuterLength,
+		)
+	}
+	if headerLength+messageLength != len(record) {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramOuterLengthMismatch,
+			DatagramPhaseOuterLength,
+		)
+	}
+	if messageLength > int(MaxUDPPayloadRelayHardCeiling) {
+		return datagramRecordLayout{}, datagramDecodingFailure(
+			DatagramMessageLengthExceedsProtocolLimit,
+			DatagramPhaseData,
+		)
+	}
+	if messageLength > int(c.maximumPayloadLength) {
+		return datagramRecordLayout{}, datagramLocalLimitFailure()
+	}
+	return datagramRecordLayout{
+		addressType:   addressType,
+		addressOffset: addressOffset,
+		addressEnd:    addressEnd,
+		headerLength:  headerLength,
+		port:          port,
+	}, nil
+}
+
+func validateDatagramMaximumPayloadLength(value uint16) *DatagramError {
+	if value < MaxUDPPayloadFloor || value > MaxUDPPayloadRelayHardCeiling {
+		return &DatagramError{
+			Code:        DatagramInvalidConfiguration,
+			Phase:       DatagramPhaseConfiguration,
+			Scope:       "session",
+			Disposition: "closeSession",
+		}
+	}
+	return nil
+}
+
+func validateDatagramEndpoint(endpoint DatagramEndpoint, phase DatagramPhase) (int, *DatagramError) {
+	if endpoint.Port == 0 {
+		return 0, datagramEncodingFailure(DatagramInvalidPort, DatagramPhasePort)
+	}
+	switch endpoint.Address.Type {
+	case AddressTypeIPv4:
+		if len(endpoint.Address.Bytes) != 4 {
+			return 0, datagramEncodingFailure(DatagramInvalidAddressLength, phase)
+		}
+		return HEVHDRLENIPv4, nil
+	case AddressTypeIPv6:
+		if len(endpoint.Address.Bytes) != 16 {
+			return 0, datagramEncodingFailure(DatagramInvalidAddressLength, phase)
+		}
+		return HEVHDRLENIPv6, nil
+	case AddressTypeDomain:
+		if len(endpoint.Address.Bytes) < MinDomainWireBytes ||
+			len(endpoint.Address.Bytes) > MaxDomainWireBytes {
+			return 0, datagramEncodingFailure(DatagramInvalidAddressLength, phase)
+		}
+		return HEVHDRLENDomainBase + len(endpoint.Address.Bytes), nil
+	default:
+		return 0, datagramEncodingFailure(DatagramUnknownAddressType, phase)
+	}
+}
+
+func datagramEncodingFailure(code DatagramErrorCode, phase DatagramPhase) *DatagramError {
+	return &DatagramError{
+		Code:        code,
+		Phase:       phase,
+		Scope:       "association",
+		Disposition: "rejectDatagram",
+	}
+}
+
+func datagramDecodingFailure(code DatagramErrorCode, phase DatagramPhase) *DatagramError {
+	return &DatagramError{
+		Code:        code,
+		Phase:       phase,
+		Scope:       "association",
+		Disposition: "closeAssociation",
+	}
+}
+
+func datagramLocalLimitFailure() *DatagramError {
+	return &DatagramError{
+		Code:        DatagramMessageLengthExceedsLocalLimit,
+		Phase:       DatagramPhaseData,
+		Scope:       "association",
+		Disposition: "rejectDatagram",
+	}
+}

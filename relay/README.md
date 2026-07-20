@@ -14,6 +14,14 @@ Current protocol contents:
   `make relay-protocol-check`.
 - `internal/protocol/parity_test.go` — handwritten drift guard mirroring the
   Swift parity test.
+- `internal/protocol/codec.go` — bounded relay-envelope framing plus the exact
+  HEV UDP payload codec. The datagram layer validates `HDRLEN`, address shape,
+  port, and exact outer/`MSGLEN` arithmetic before applying the fixed 1472-byte
+  wire ceiling or any lower local cap, and it slices or allocates decoded bytes
+  only after every check succeeds.
+- `internal/protocol/codec_test.go` and `datagram_test.go` — stream framing,
+  HEV golden-vector, every-payload-size, allocation, malformed-input, and fuzz
+  coverage shared with the Swift behavior contract.
 - `internal/protocol/handshake.go` — bounded incremental protocol-v1 server
   hello state machine, feature intersection, maximum-frame negotiation,
   effective local-limit snapshot, deadline/cancellation events, and finite
