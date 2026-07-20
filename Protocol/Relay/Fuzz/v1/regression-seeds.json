@@ -1,0 +1,64 @@
+{
+  "algorithm": "lcg64-v1",
+  "baseInputs": [
+    {
+      "id": "ping",
+      "inputHex": "0000000e2000000000000001020304050607"
+    },
+    {
+      "id": "close-association",
+      "inputHex": "00000006300000000001"
+    },
+    {
+      "id": "close-session",
+      "inputHex": "00000006310000000000"
+    },
+    {
+      "id": "ipv4-empty-datagram",
+      "inputHex": "0000001010000000000100000a01c00002010035"
+    },
+    {
+      "id": "declared-length-at-ceiling",
+      "inputHex": "00001000"
+    },
+    {
+      "id": "declared-length-over-ceiling",
+      "inputHex": "00001001"
+    }
+  ],
+  "formatVersion": 1,
+  "maximumChunkBytes": 31,
+  "maximumInputBytes": 512,
+  "protocolVersion": 1,
+  "reproductionCommands": {
+    "go": "./scripts/tests/test-relay-protocol-go.sh -run TestHostileInputCorpus -count=1 -v",
+    "goFuzz": "./scripts/tests/test-relay-protocol-go.sh -fuzz FuzzHostileInputDecoder -fuzztime 30s",
+    "swift": "swift test --filter RelayProtocolHostileInputTests"
+  },
+  "seeds": [
+    {
+      "expectedSemanticDigest": "00a2ef92f18dcee7",
+      "id": "zero-state",
+      "iterations": 256,
+      "value": "0x0000000000000000"
+    },
+    {
+      "expectedSemanticDigest": "79cdb508a6fbb5f1",
+      "id": "ascending-bits",
+      "iterations": 256,
+      "value": "0x0123456789abcdef"
+    },
+    {
+      "expectedSemanticDigest": "8a739291891be7cb",
+      "id": "alternating-bits",
+      "iterations": 256,
+      "value": "0xaaaaaaaa55555555"
+    },
+    {
+      "expectedSemanticDigest": "930395cb54e2a3ed",
+      "id": "task-regression",
+      "iterations": 256,
+      "value": "0x2607152976c0ffee"
+    }
+  ]
+}

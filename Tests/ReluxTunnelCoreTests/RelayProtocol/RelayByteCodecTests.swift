@@ -129,6 +129,12 @@ struct RelayProtocolByteCodecTests {
         decoder.metrics.peakRetainedBytes
           <= Int(maximumFrame) + P.framePrefixWidth
       )
+      #expect(decoder.metrics.peakAllocatedBodyBytes == Int(maximumFrame))
+      #expect(decoder.metrics.allocatedBodyBytes == 0)
+      #expect(
+        decoder.metrics.processingIterations
+          <= decoder.metrics.inputBytes + decoder.metrics.bodyAllocations * 3 + 1
+      )
       expectReconciled(decoder.metrics)
     }
   }
@@ -146,6 +152,9 @@ struct RelayProtocolByteCodecTests {
       _ = try oversized.consume(oversizedPrefix)
     }
     #expect(oversized.metrics.bodyAllocations == 0)
+    #expect(oversized.metrics.peakAllocatedBodyBytes == 0)
+    #expect(oversized.metrics.allocatedBodyBytes == 0)
+    #expect(oversized.metrics.processingIterations == UInt64(P.framePrefixWidth + 1))
     #expect(oversized.metrics.peakRetainedBytes == P.framePrefixWidth)
     #expect(oversized.metrics.retainedBytes == 0)
     #expect(oversized.metrics.discardedBytes == UInt64(oversizedPrefix.count))

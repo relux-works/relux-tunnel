@@ -90,14 +90,17 @@ func codecFailure(code CodecErrorCode, phase CodecPhase) *CodecError {
 }
 
 type CodecMetrics struct {
-	InputBytes        uint64
-	OutputBytes       uint64
-	OutputFrames      uint64
-	RetainedBytes     int
-	PeakRetainedBytes int
-	BodyAllocations   uint64
-	DiscardedBytes    uint64
-	Failures          uint64
+	InputBytes             uint64
+	OutputBytes            uint64
+	OutputFrames           uint64
+	RetainedBytes          int
+	PeakRetainedBytes      int
+	BodyAllocations        uint64
+	AllocatedBodyBytes     int
+	PeakAllocatedBodyBytes int
+	ProcessingIterations   uint64
+	DiscardedBytes         uint64
+	Failures               uint64
 }
 
 // ValidateEnvelopeFrameLength performs the encoder's arithmetic and cap checks
@@ -275,11 +278,13 @@ func (d *EnvelopeDecoder) Consume(input []byte) ([]Envelope, *CodecError) {
 	outputFramesBeforeConsume := d.metrics.OutputFrames
 	frames := make([]Envelope, 0, 1)
 	for _, value := range input {
+		d.metrics.ProcessingIterations++
 		if d.body == nil {
 			d.prefix[d.prefixLength] = value
 			d.prefixLength++
 			d.updateRetainedMetrics()
 			if d.prefixLength == FramePrefixWidth {
+				d.metrics.ProcessingIterations++
 				if failure := d.acceptPrefix(); failure != nil {
 					return nil, d.failConsume(failure, outputBytesBeforeConsume, outputFramesBeforeConsume)
 				}
@@ -294,12 +299,14 @@ func (d *EnvelopeDecoder) Consume(input []byte) ([]Envelope, *CodecError) {
 		d.bodyLength++
 		d.updateRetainedMetrics()
 		if !d.headerValidated && d.bodyLength == EnvelopeHeaderWidth {
+			d.metrics.ProcessingIterations++
 			if failure := d.validateCurrentHeader(); failure != nil {
 				return nil, d.failConsume(failure, outputBytesBeforeConsume, outputFramesBeforeConsume)
 			}
 			d.headerValidated = true
 		}
 		if d.bodyLength == len(d.body) {
+			d.metrics.ProcessingIterations++
 			frame, failure := d.finishCurrentFrame()
 			if failure != nil {
 				return nil, d.failConsume(failure, outputBytesBeforeConsume, outputFramesBeforeConsume)
@@ -357,6 +364,10 @@ func (d *EnvelopeDecoder) acceptPrefix() *CodecError {
 	}
 	d.body = make([]byte, int(length))
 	d.metrics.BodyAllocations++
+	d.metrics.AllocatedBodyBytes = int(length)
+	if d.metrics.AllocatedBodyBytes > d.metrics.PeakAllocatedBodyBytes {
+		d.metrics.PeakAllocatedBodyBytes = d.metrics.AllocatedBodyBytes
+	}
 	return nil
 }
 
@@ -427,6 +438,7 @@ func (d *EnvelopeDecoder) clearScratch() {
 	d.body = nil
 	d.bodyLength = 0
 	d.headerValidated = false
+	d.metrics.AllocatedBodyBytes = 0
 }
 
 func (d *EnvelopeDecoder) updateRetainedMetrics() {

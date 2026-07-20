@@ -139,6 +139,12 @@ func TestEnvelopeDecoderEveryMaximumFrameSplitIsBounded(t *testing.T) {
 		if metrics.PeakRetainedBytes > int(maximumFrame)+FramePrefixWidth {
 			t.Fatalf("split %d retained peak %d above bound", split, metrics.PeakRetainedBytes)
 		}
+		if metrics.PeakAllocatedBodyBytes != int(maximumFrame) || metrics.AllocatedBodyBytes != 0 {
+			t.Fatalf("split %d body allocation metrics %#v", split, metrics)
+		}
+		if metrics.ProcessingIterations > metrics.InputBytes+metrics.BodyAllocations*3+1 {
+			t.Fatalf("split %d processing iteration metrics %#v", split, metrics)
+		}
 		assertCodecMetricsReconcile(t, metrics)
 	}
 }
@@ -198,6 +204,12 @@ func TestEnvelopeDecoderOversizedPrefixDoesNotAllocateBody(t *testing.T) {
 	metrics := decoder.Metrics()
 	if metrics.BodyAllocations != 0 {
 		t.Fatalf("attacker-sized prefix caused %d body allocations", metrics.BodyAllocations)
+	}
+	if metrics.PeakAllocatedBodyBytes != 0 || metrics.AllocatedBodyBytes != 0 {
+		t.Fatalf("attacker-sized prefix retained body allocation: %#v", metrics)
+	}
+	if metrics.ProcessingIterations != FramePrefixWidth+1 {
+		t.Fatalf("attacker-sized prefix processing iterations: %#v", metrics)
 	}
 	if metrics.PeakRetainedBytes != FramePrefixWidth || metrics.RetainedBytes != 0 {
 		t.Fatalf("unexpected retained metrics: %#v", metrics)

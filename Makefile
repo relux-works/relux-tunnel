@@ -3,7 +3,8 @@
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
 	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
 	relay-protocol-generate relay-protocol-vectors-generate \
-	relay-protocol-vectors-check relay-protocol-check
+	relay-protocol-vectors-check relay-protocol-conformance-check \
+	relay-protocol-hostile-diagnostics relay-protocol-check
 
 LEGACY_ROOT ?= ../relux-proxy
 
@@ -78,10 +79,16 @@ relay-protocol-vectors-generate:
 relay-protocol-vectors-check:
 	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-vectors.py check
 
-relay-protocol-check: relay-protocol-vectors-check
-	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py check
-	./scripts/tests/test-relay-protocol-go.sh
-	swift build
+relay-protocol-conformance-check: relay-protocol-vectors-check
+	./scripts/tests/test-relay-protocol-go.sh -v
 	swift test --filter RelayProtocol
+
+relay-protocol-hostile-diagnostics:
+	./scripts/tests/test-relay-protocol-go.sh -run TestHostileInputCorpus -count=1 -gcflags=all=-d=checkptr=2
+	swift test --sanitize=address --filter RelayProtocolHostileInputTests
+
+relay-protocol-check: relay-protocol-conformance-check
+	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py check
+	swift build
 
 validate-libssh2: check-libssh2 test-libssh2

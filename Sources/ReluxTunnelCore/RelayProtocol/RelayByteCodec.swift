@@ -102,6 +102,9 @@ public struct RelayEnvelopeCodecMetrics: Equatable, Sendable {
   public fileprivate(set) var retainedBytes: Int = 0
   public fileprivate(set) var peakRetainedBytes: Int = 0
   public fileprivate(set) var bodyAllocations: UInt64 = 0
+  public fileprivate(set) var allocatedBodyBytes: Int = 0
+  public fileprivate(set) var peakAllocatedBodyBytes: Int = 0
+  public fileprivate(set) var processingIterations: UInt64 = 0
   public fileprivate(set) var discardedBytes: UInt64 = 0
   public fileprivate(set) var failures: UInt64 = 0
 
@@ -287,10 +290,12 @@ public struct RelayEnvelopeDecoder: Sendable {
 
     do {
       for byte in bytes {
+        metrics.processingIterations += 1
         if expectedBodyLength == nil {
           prefix.append(byte)
           updateRetainedMetrics()
           if prefix.count == RelayProtocolV1.framePrefixWidth {
+            metrics.processingIterations += 1
             try acceptPrefix()
           }
           continue
@@ -299,10 +304,12 @@ public struct RelayEnvelopeDecoder: Sendable {
         body.append(byte)
         updateRetainedMetrics()
         if !headerValidated, body.count == RelayProtocolV1.envelopeHeaderWidth {
+          metrics.processingIterations += 1
           try validateCurrentHeader()
           headerValidated = true
         }
         if body.count == expectedBodyLength {
+          metrics.processingIterations += 1
           frames.append(try finishCurrentFrame())
         } else if let expectedBodyLength, body.count > expectedBodyLength {
           throw RelayEnvelopeFailure(code: .malformedState, phase: .body)
@@ -371,6 +378,11 @@ public struct RelayEnvelopeDecoder: Sendable {
     expectedBodyLength = Int(length)
     body.reserveCapacity(Int(length))
     metrics.bodyAllocations += 1
+    metrics.allocatedBodyBytes = Int(length)
+    metrics.peakAllocatedBodyBytes = max(
+      metrics.peakAllocatedBodyBytes,
+      metrics.allocatedBodyBytes
+    )
   }
 
   private mutating func validateCurrentHeader() throws {
@@ -467,6 +479,7 @@ public struct RelayEnvelopeDecoder: Sendable {
     body.removeAll(keepingCapacity: false)
     expectedBodyLength = nil
     headerValidated = false
+    metrics.allocatedBodyBytes = 0
   }
 
   private mutating func updateRetainedMetrics() {
