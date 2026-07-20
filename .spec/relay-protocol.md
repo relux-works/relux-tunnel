@@ -65,6 +65,16 @@ Unknown magic, unsupported version, nonzero status, or an unreasonable frame
 limit closes the channel and produces a degraded-mode reason. Version
 negotiation never guesses a lower framing format.
 
+The handshake owns only bytes present in the read callback that completes its
+fixed hello. A coalesced remainder beginning with any available prefix of
+`RLXR` is rejected as `duplicateHello` before success is published; a legal
+hello-plus-frame remainder is handed to the envelope decoder. When a read ends
+at exactly the 12-byte client or 16-byte server hello boundary, the handshake
+publishes success immediately without lookahead, delay, or a transport barrier.
+An `RLXR` prefix first observed in a subsequent read is post-handshake input;
+the session/envelope layer owns it and closes the session with a stable
+privacy-safe reason.
+
 ### Envelope
 
 ```text

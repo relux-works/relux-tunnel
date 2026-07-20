@@ -6,7 +6,7 @@ standard library only, `CGO_ENABLED=0`, module
 `github.com/relux-works/relux-tunnel/relay`) is owned by TASK-260715-27uz4n and
 is not created here.
 
-Current contents (TASK-260715-2azda7):
+Current protocol contents:
 
 - `internal/protocol/generated_v1.go` — generated protocol v1 constants and
   typed metadata. Never edit by hand; regenerate with
@@ -14,6 +14,13 @@ Current contents (TASK-260715-2azda7):
   `make relay-protocol-check`.
 - `internal/protocol/parity_test.go` — handwritten drift guard mirroring the
   Swift parity test.
+- `internal/protocol/handshake.go` — bounded incremental protocol-v1 server
+  hello state machine, feature intersection, maximum-frame negotiation,
+  effective local-limit snapshot, deadline/cancellation events, and finite
+  privacy-safe failures (TASK-260715-1y1g1u).
+- `internal/protocol/handshake_test.go` — exact-wire, every-split, coalescing,
+  boundary-limit, rejection, stale-generation, timeout, cancellation, and
+  diagnostic tests for the server state machine.
 
 Until the module scaffold lands, `scripts/tests/test-relay-protocol-go.sh`
 (invoked by `make relay-protocol-check`) compiles and tests this package inside
