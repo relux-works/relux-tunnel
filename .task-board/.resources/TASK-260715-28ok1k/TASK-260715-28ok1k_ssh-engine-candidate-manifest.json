@@ -1,0 +1,192 @@
+{
+  "task": "TASK-260715-28ok1k",
+  "audited_at": "2026-07-20",
+  "selection_status": "open",
+  "candidates": {
+    "swift_nio_ssh": {
+      "upstream": "https://github.com/apple/swift-nio-ssh",
+      "tag": "0.14.1",
+      "commit": "31cdc3c3391a10460dedf1170530cf651d2ca496",
+      "source_archive": "https://codeload.github.com/apple/swift-nio-ssh/tar.gz/31cdc3c3391a10460dedf1170530cf651d2ca496",
+      "source_archive_sha256": "0b135087e76cb03e33f544484f21e1c3ba3b967f8a0ba2aead960ce4d0d06e6a",
+      "license": "Apache-2.0",
+      "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "packaging": "SwiftPM source dependency",
+      "verified_build_command": "swift build -c release",
+      "apple_build_requirements": [
+        "APPLICATION_EXTENSION_API_ONLY=YES",
+        "iOS device arm64",
+        "iOS simulator arm64/x86_64",
+        "macOS arm64/x86_64"
+      ],
+      "package_resolved_origin_hash": "87b1cfeb4c77158fd4e5a086c52807c86b6fe400f6bf502cba251a7eb9fb0606",
+      "inspected_source_paths": [
+        "Package.swift",
+        "Package.resolved",
+        "LICENSE.txt",
+        "README.md",
+        "SECURITY.md",
+        "Sources/NIOSSH/Child Channels/SSHChannelMultiplexer.swift",
+        "Sources/NIOSSH/Child Channels/ChildChannelWindowManager.swift",
+        "Sources/NIOSSH/Child Channels/SSHChannelType.swift",
+        "Sources/NIOSSH/Child Channels/ChildChannelUserEvents.swift",
+        "Sources/NIOSSH/NIOSSHHandler.swift",
+        "Sources/NIOSSH/Key Exchange/SSHKeyExchangeStateMachine.swift",
+        "Sources/NIOSSH/Keys And Signatures/ClientServerAuthenticationDelegate.swift",
+        "Sources/NIOSSH/Keys And Signatures/NIOSSHPublicKey.swift",
+        "Sources/NIOSSH/TransportProtection/AESGCM.swift",
+        "Sources/NIOSSH/TransportProtection/SSHTransportProtection.swift",
+        "Sources/NIOSSH/SSHMessages.swift",
+        "Tests/NIOSSHTests"
+      ],
+      "transitive_dependencies": [
+        {
+          "name": "swift-asn1",
+          "upstream": "https://github.com/apple/swift-asn1",
+          "source_archive": "https://codeload.github.com/apple/swift-asn1/tar.gz/a9a5efd40eaf558a2bcd48d64b1d1646be686008",
+          "version": "1.7.1",
+          "commit": "a9a5efd40eaf558a2bcd48d64b1d1646be686008",
+          "archive_sha256": "422c98d0aecf8cd7f1022167a0acaba1b3c4e9341e81ed16a7677427c3893650",
+          "license": "Apache-2.0",
+          "license_sha256": "8c6db340475136df3c1201d458fa5755698eace76e510471ecc9d857d6083dac",
+          "notice_sha256": "11dd3b3b783e6ec26098dd38ebc962986ea109b85447e28e62867b83bd0f8c5b"
+        },
+        {
+          "name": "swift-atomics",
+          "upstream": "https://github.com/apple/swift-atomics",
+          "source_archive": "https://codeload.github.com/apple/swift-atomics/tar.gz/0442cb5a3f98ab802acb777929fdb446bda11a34",
+          "version": "1.3.1",
+          "commit": "0442cb5a3f98ab802acb777929fdb446bda11a34",
+          "archive_sha256": "e2652977537003d50b8da1f330ef73d94e50e294b7f5a2fd0f2ddbb03fbf632f",
+          "license": "Apache-2.0",
+          "license_sha256": "770af8291f708538d8ff885a0bbc4e045cd700531741c4f99528d435c14d7f55"
+        },
+        {
+          "name": "swift-collections",
+          "upstream": "https://github.com/apple/swift-collections",
+          "source_archive": "https://codeload.github.com/apple/swift-collections/tar.gz/a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
+          "version": "1.6.0",
+          "commit": "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
+          "archive_sha256": "8e8714b566f9fafc28bf3de967e789f84d9e53466faa3a2240060ca7c1a7f2c7",
+          "license": "Apache-2.0",
+          "license_sha256": "770af8291f708538d8ff885a0bbc4e045cd700531741c4f99528d435c14d7f55"
+        },
+        {
+          "name": "swift-crypto",
+          "upstream": "https://github.com/apple/swift-crypto",
+          "source_archive": "https://codeload.github.com/apple/swift-crypto/tar.gz/47d3869a7291f085c1fb9fb1e6d3b97a793f45c6",
+          "version": "4.5.1",
+          "commit": "47d3869a7291f085c1fb9fb1e6d3b97a793f45c6",
+          "archive_sha256": "c0d9f0d81e32160f36d9255e0174aaf63a7e0ca539345dd8caa7413e72a89aea",
+          "license": "Apache-2.0",
+          "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "notice_sha256": "b3ddc2ae068e76b3beb71be03c0400f90090f9469aa491bf7b1ac42320af37b8"
+        },
+        {
+          "name": "swift-nio",
+          "upstream": "https://github.com/apple/swift-nio",
+          "source_archive": "https://codeload.github.com/apple/swift-nio/tar.gz/0b18836bd8b0162e7e17a995a3fbee20ed8f3b2b",
+          "version": "2.101.3",
+          "commit": "0b18836bd8b0162e7e17a995a3fbee20ed8f3b2b",
+          "archive_sha256": "b7ffa2501fbbdac568999e96fa99e8eb392be42409540de797e7a087afa402ac",
+          "license": "Apache-2.0",
+          "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "notice_sha256": "d25ed2452b3476c342082d11e4e8bf5459174d2836124f842b499850bcebc50e"
+        },
+        {
+          "name": "swift-system",
+          "upstream": "https://github.com/apple/swift-system",
+          "source_archive": "https://codeload.github.com/apple/swift-system/tar.gz/b5544ba79a70a0cb3563e75bf26dc198d6b40ed3",
+          "version": "1.7.4",
+          "commit": "b5544ba79a70a0cb3563e75bf26dc198d6b40ed3",
+          "archive_sha256": "26b843b016b300232a24e788e2ce2a6c281e2e3fa045e4ca1ff1ee40f7796ba1",
+          "license": "Apache-2.0",
+          "license_sha256": "2245a990b635558be210fb3eb4f8a6f7a49aebc0fefbf5859146a65ddc7ddcf3"
+        }
+      ]
+    },
+    "libssh2": {
+      "upstream": "https://github.com/libssh2/libssh2",
+      "reported_version": "1.11.2_DEV",
+      "tag": null,
+      "commit": "a34302491c164d53c900fec9b3cbb050ecebe719",
+      "source_archive": "https://codeload.github.com/libssh2/libssh2/tar.gz/a34302491c164d53c900fec9b3cbb050ecebe719",
+      "source_archive_sha256": "744ba3e9a8e7a877038e94a74459340052a105ad599605a5b6d0d6bc5ec2c87c",
+      "license": "BSD-3-Clause",
+      "license_sha256": "a83a4da224ebeaaaea5efb4cd1ef1ab0998c1bd719d6f70b05e1d5c491372137",
+      "packaging": "locally rebuilt static XCFramework SwiftPM binaryTarget",
+      "inspected_source_paths": [
+        "CMakeLists.txt",
+        "COPYING",
+        "include/libssh2.h",
+        "src/channel.c",
+        "src/channel.h",
+        "src/packet.c",
+        "src/kex.c",
+        "src/session.c",
+        "src/hostkey.c",
+        "src/userauth.c",
+        "src/transport.c",
+        "src/crypto_config.h",
+        "src/openssl.c",
+        "src/openssl.h",
+        "src/libssh2_priv.h",
+        "tests"
+      ],
+      "crypto_backend": {
+        "name": "OpenSSL",
+        "version": "3.5.7",
+        "tag": "openssl-3.5.7",
+        "tag_object": "6ca677c395a4ae4472a12c5857c122ec33b36f66",
+        "commit": "8cf17aaeb4599f8af87fefd810b5b5fee90fe69e",
+        "source_archive": "https://github.com/openssl/openssl/releases/download/openssl-3.5.7/openssl-3.5.7.tar.gz",
+        "source_archive_sha256": "a8c0d28a529ca480f9f36cf5792e2cd21984552a3c8e4aa11a24aa31aeac98e8",
+        "license": "Apache-2.0",
+        "license_sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+        "acknowledgements_sha256": "58dee45791f007ced048114717f86672778fe75c551827c57e760861446ce3c3",
+        "common_configure_options": [
+          "no-shared",
+          "no-module",
+          "no-dso",
+          "no-tests",
+          "no-apps",
+          "no-docs",
+          "no-legacy",
+          "no-comp",
+          "-fapplication-extension",
+          "-fvisibility=hidden",
+          "-ffunction-sections",
+          "-fdata-sections"
+        ],
+        "apple_targets": {
+          "ios_arm64": "ios64-xcrun -miphoneos-version-min=17.0",
+          "ios_simulator_arm64": "iossimulator-arm64-xcrun -mios-simulator-version-min=17.0",
+          "ios_simulator_x86_64": "iossimulator-x86_64-xcrun -mios-simulator-version-min=17.0",
+          "macos_arm64": "darwin64-arm64-cc -mmacosx-version-min=14.0",
+          "macos_x86_64": "darwin64-x86_64-cc -mmacosx-version-min=14.0"
+        }
+      },
+      "cmake_flags": [
+        "-DBUILD_STATIC_LIBS=ON",
+        "-DBUILD_SHARED_LIBS=OFF",
+        "-DBUILD_EXAMPLES=OFF",
+        "-DBUILD_TESTING=OFF",
+        "-DLIBSSH2_BUILD_DOCS=OFF",
+        "-DENABLE_DEBUG_LOGGING=OFF",
+        "-DLIBSSH2_NO_DEPRECATED=ON",
+        "-DCRYPTO_BACKEND=OpenSSL",
+        "-DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE"
+      ],
+      "compile_definitions": [
+        "LIBSSH2_NO_RSA_SHA1",
+        "LIBSSH2_NO_AES_CBC"
+      ],
+      "apple_compile_flags": [
+        "-fapplication-extension",
+        "-fvisibility=hidden",
+        "-ffunction-sections",
+        "-fdata-sections"
+      ]
+    }
+  }
+}
