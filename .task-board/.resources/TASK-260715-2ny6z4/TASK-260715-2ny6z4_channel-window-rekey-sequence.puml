@@ -1,0 +1,49 @@
+@startuml
+!theme plain
+title Bounded channel credit and connection-global rekey (TASK-260715-2ny6z4)
+
+participant Consumer
+participant "SSHByteChannel" as Channel
+participant "Serialized transport owner" as Transport
+participant Server
+participant Observer
+
+Consumer -> Transport: openDirectTCPIP(destination, originator, policy)
+Transport -> Server: CHANNEL_OPEN(initialWindow = policy.initial)
+Server --> Transport: OPEN_CONFIRMATION
+Transport --> Consumer: channel
+
+par bounded write
+  Consumer -> Channel: writeSome(chunk <= maxWriteCall)
+  Channel -> Channel: wait for queue credit without polling
+  Channel -> Transport: accept prefix; queued <= maxQueuedWrite
+  Channel --> Consumer: accepted prefix count
+  Transport -> Server: CHANNEL_DATA in FIFO order
+also receive-window accounting
+  Server -> Transport: CHANNEL_DATA
+  Transport -> Channel: buffer <= maxBufferedRead; remaining credit decreases
+  Consumer -> Channel: read(maximumBytes)
+  Channel --> Consumer: delivered bytes
+  Channel -> Transport: returned credit eligible after delivery
+  Transport -> Server: WINDOW_ADJUST (after <= cap)
+  Transport -> Observer: windowAdjusted(before, amount, after, cap)
+end
+
+Transport -> Transport: byte/time/explicit/server trigger
+Transport -> Observer: rekeyStarted(reason set, generation)
+Transport -> Server: key exchange
+note over Channel,Server
+  Existing channel semantics remain valid; buffers stay bounded.
+  New channel opens wait with their existing deadline.
+end note
+Server --> Transport: NEWKEYS
+Transport -> Observer: rekeySucceeded(generation + 1)
+
+Consumer -> Channel: finishWriting()
+Channel -> Server: EOF after accepted bytes
+Server --> Channel: data then EOF
+Channel --> Consumer: remaining data then nil
+Consumer -> Channel: close()
+Channel -> Server: CLOSE
+Channel -> Transport: unregister exactly once
+@enduml

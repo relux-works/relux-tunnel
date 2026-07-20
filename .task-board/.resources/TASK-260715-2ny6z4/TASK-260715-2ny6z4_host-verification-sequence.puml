@@ -1,0 +1,40 @@
+@startuml
+!theme plain
+title Mandatory host verification before user authentication (TASK-260715-2ny6z4)
+
+participant Core
+participant "SSHTransport adapter" as Adapter
+participant "SSH engine / server" as Engine
+participant "SSHHostKeyPolicy" as Policy
+participant "SSHCredentialProvider" as Credentials
+
+Core -> Adapter: connect(configuration)
+Adapter -> Engine: TCP connect + initial KEX
+Engine --> Adapter: algorithm + raw SSH host-key bytes
+Adapter -> Adapter: SHA256 fingerprint from exact bytes
+Adapter -> Policy: evaluate(host, endpoint, algorithm, bytes, fingerprint, lane)
+
+alt explicit first-use record or approved match
+  Policy --> Adapter: acceptFirstUse / acceptMatch
+  Adapter -> Credentials: credential(reference)
+  Credentials --> Adapter: public-key signer
+  Adapter -> Engine: user authentication
+  Engine --> Adapter: success / typed rejection
+  Adapter --> Core: authenticated session or typed auth error
+else unknown, changed, algorithm, or policy reject
+  Policy --> Adapter: typed rejection
+  Adapter -> Engine: close before user auth
+  Adapter --> Core: typed host-key error
+end
+
+note over Adapter,Credentials
+  E-HOSTAUTH asserts Credentials and the server user-auth
+  callback are untouched on every host-policy rejection.
+end note
+
+note over Policy
+  Raw key bytes and fingerprint never enter default
+  logs, metrics, public errors, or telemetry.
+end note
+@enduml
+

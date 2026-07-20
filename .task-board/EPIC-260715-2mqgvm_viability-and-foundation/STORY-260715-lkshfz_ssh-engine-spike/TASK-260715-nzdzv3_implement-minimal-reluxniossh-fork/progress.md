@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:14Z
 
 ## Last Update
-2026-07-15T01:04:30Z
+2026-07-20T04:21:27Z
 
 ## Blocked By
 - TASK-260715-28ok1k
@@ -25,7 +25,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-nzdzv3_ssh-transport-conformance-contract.md](file://TASK-260715-nzdzv3/TASK-260715-nzdzv3_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport contract from TASK-260715-2ny6z4; consume after blocker review acceptance
 
 ## Outcome Resources
 (none)

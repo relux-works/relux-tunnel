@@ -1,0 +1,43 @@
+@startuml
+!theme plain
+!pragma layout smetana
+title SSHTransport connection lifecycle (TASK-260715-2ny6z4)
+
+[*] --> Idle
+Idle --> Resolving : connect / validate injected policy
+Resolving --> TCPConnecting : endpoint resolved
+TCPConnecting --> KeyExchange : socket connected
+KeyExchange --> AwaitingHostDecision : raw host key available
+AwaitingHostDecision --> Authenticating : policy accepts
+AwaitingHostDecision --> Failed : unknown / changed / rejected
+Authenticating --> Ready : public-key auth succeeds
+Authenticating --> Failed : rejected / unavailable / timeout
+Ready --> Rekeying : byte / time / explicit / server trigger
+Rekeying --> Ready : KEX succeeds / generation + 1
+Rekeying --> Failed : KEX timeout or failure
+
+Ready --> Closing : close
+Failed --> Closing : fail pending work once
+Closing --> Closed : channels, session, socket released
+Closed --> [*]
+
+note right of AwaitingHostDecision
+  Credential lookup and user authentication
+  are forbidden before host acceptance.
+end note
+
+note right of Rekeying
+  Existing channels stay logically valid.
+  New opens wait with bounded deadlines.
+end note
+
+note right of Closing
+  Idempotent, ownership reaches zero;
+  caller cancellation cannot interrupt cleanup.
+end note
+
+note left of Closing
+  cancel or close from any nonterminal
+  state enters Closing exactly once.
+end note
+@enduml
