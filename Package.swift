@@ -10,17 +10,44 @@ let package = Package(
   ],
   products: [
     .library(name: "ReluxTunnelCore", targets: ["ReluxTunnelCore"]),
+    .library(name: "ReluxTunnelNativeAdapter", targets: ["ReluxTunnelNativeAdapter"]),
     .library(name: "ReluxTunnelIOSAdapter", targets: ["ReluxTunnelIOSAdapter"]),
     .library(name: "ReluxTunnelMacOSAdapter", targets: ["ReluxTunnelMacOSAdapter"]),
     .executable(name: "ReluxTunnelHarness", targets: ["ReluxTunnelHarness"]),
   ],
   targets: [
     .target(name: "ReluxTunnelCore"),
-    .target(name: "ReluxTunnelIOSAdapter", dependencies: ["ReluxTunnelCore"]),
-    .target(name: "ReluxTunnelMacOSAdapter", dependencies: ["ReluxTunnelCore"]),
+    .binaryTarget(
+      name: "CReluxNativeFixture",
+      path: "NativeDependencies/Artifacts/ReluxNativeFixture.xcframework"
+    ),
+    .target(
+      name: "ReluxTunnelNativeAdapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "CReluxNativeFixture",
+      ]
+    ),
+    .target(
+      name: "ReluxTunnelIOSAdapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelNativeAdapter",
+      ]
+    ),
+    .target(
+      name: "ReluxTunnelMacOSAdapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelNativeAdapter",
+      ]
+    ),
     .target(
       name: "ReluxTunnelHarnessSupport",
-      dependencies: ["ReluxTunnelCore"]
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelNativeAdapter",
+      ]
     ),
     .executableTarget(
       name: "ReluxTunnelHarness",
@@ -42,6 +69,13 @@ let package = Package(
       dependencies: [
         "ReluxTunnelCore",
         "ReluxTunnelHarnessSupport",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxTunnelNativeAdapterTests",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelNativeAdapter",
       ]
     ),
   ]

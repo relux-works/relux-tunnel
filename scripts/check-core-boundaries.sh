@@ -35,13 +35,16 @@ import json, sys
 package = json.load(sys.stdin)
 targets = {target["name"]: target for target in package["targets"]}
 required = {
+    "CReluxNativeFixture",
     "ReluxTunnelCore",
+    "ReluxTunnelNativeAdapter",
     "ReluxTunnelIOSAdapter",
     "ReluxTunnelMacOSAdapter",
     "ReluxTunnelHarnessSupport",
     "ReluxTunnelHarness",
     "ReluxTunnelCoreTests",
     "ReluxTunnelHarnessTests",
+    "ReluxTunnelNativeAdapterTests",
 }
 missing = required - targets.keys()
 if missing:
@@ -59,11 +62,22 @@ def dependency_names(target):
                 names.add(value)
     return names
 
+if dependency_names(targets["ReluxTunnelNativeAdapter"]) != {
+    "CReluxNativeFixture",
+    "ReluxTunnelCore",
+}:
+    raise SystemExit("ReluxTunnelNativeAdapter must own the native/core boundary")
 for adapter in ("ReluxTunnelIOSAdapter", "ReluxTunnelMacOSAdapter"):
-    if dependency_names(targets[adapter]) != {"ReluxTunnelCore"}:
-        raise SystemExit(f"{adapter} must depend only on ReluxTunnelCore")
-if dependency_names(targets["ReluxTunnelHarnessSupport"]) != {"ReluxTunnelCore"}:
-    raise SystemExit("ReluxTunnelHarnessSupport must depend only on ReluxTunnelCore")
+    if dependency_names(targets[adapter]) != {
+        "ReluxTunnelCore",
+        "ReluxTunnelNativeAdapter",
+    }:
+        raise SystemExit(f"{adapter} must depend only on Core and NativeAdapter")
+if dependency_names(targets["ReluxTunnelHarnessSupport"]) != {
+    "ReluxTunnelCore",
+    "ReluxTunnelNativeAdapter",
+}:
+    raise SystemExit("ReluxTunnelHarnessSupport must depend only on Core and NativeAdapter")
 if dependency_names(targets["ReluxTunnelHarness"]) != {
     "ReluxTunnelCore",
     "ReluxTunnelHarnessSupport",

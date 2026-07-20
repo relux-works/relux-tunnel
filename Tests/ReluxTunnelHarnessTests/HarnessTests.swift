@@ -71,6 +71,7 @@ struct HarnessTests {
     #expect(result.schemaVersion == HarnessResultSchema.currentVersion)
     #expect(result.metrics.schemaVersion == HarnessMetricSchema.currentVersion)
     #expect(result.metrics.counters == ["harness.smoke.runs": 1])
+    #expect(result.metrics.gauges == ["harness.native_fixture.schema_version": 1])
     #expect(result.command == "smoke")
     #expect(result.status == "succeeded")
     #expect(result.durationNanoseconds == 0)

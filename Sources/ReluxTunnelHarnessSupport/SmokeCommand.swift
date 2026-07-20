@@ -1,5 +1,6 @@
 import Foundation
 import ReluxTunnelCore
+import ReluxTunnelNativeAdapter
 
 public struct SmokeHarnessCommand: HarnessCommand {
   public let name = "smoke"
@@ -24,6 +25,10 @@ public struct SmokeHarnessCommand: HarnessCommand {
     }
 
     await context.dependencies.runtime.metrics.incrementCounter(named: "harness.smoke.runs", by: 1)
+    await context.dependencies.runtime.metrics.setGauge(
+      named: "harness.native_fixture.schema_version",
+      to: Int64(NativeDependencyPackaging.schemaVersion)
+    )
     try await context.dependencies.faultPolicy.evaluate(.smokeFinish)
   }
 }

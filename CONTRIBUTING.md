@@ -14,6 +14,11 @@ Changes that alter protocol, security, privacy, entitlements, routing, failure
 modes, or supported platforms must update the corresponding specification and
 `.spec/decisions.md`.
 
+Native binary changes must also update `NativeDependencies/manifest.json`, be
+reproducible from pinned source, regenerate third-party notices, and pass
+`make validate-native`. Unpinned or runtime-downloaded native binaries are not
+accepted.
+
 ## Development baseline
 
 The current application requires macOS 14+, Xcode 15.3+, and Swift 5.10.

@@ -32,6 +32,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
   composition roots include the supervised public socket-pair packet bridge and
   are mapped in
   [`docs/core-adapter-boundaries.md`](docs/core-adapter-boundaries.md).
+- **Native dependencies**: pinned custom-build C graphs use source-rebuilt
+  static XCFrameworks behind `ReluxTunnelNativeAdapter`; see
+  [`docs/native-dependency-packaging.md`](docs/native-dependency-packaging.md).
 
 ## macOS experiment harness
 
@@ -105,6 +108,7 @@ orchestration) is built out under the M5 CI story.
 | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
 | SwiftPM | Build/test the shared core, provider adapters, and standalone macOS harness | `make validate-core`; `swift run ReluxTunnelHarness smoke --configuration ./smoke.json` | `.build/`; task-scoped logs under `.temp/` |
 | Core boundary guard | Reject forbidden Core/harness imports and invalid adapter or harness dependency direction | `make check-core-boundaries` | Terminal pass/fail report |
+| Native dependency validator | Rebuild and inspect pinned static XCFramework slices, checksums, notices, and extension-safe linkage | `make validate-native` | `NativeDependencies/Artifacts/`; `.build/native-apple-matrix/` |
 | Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
 | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
 | Legacy guard mutation tests | Prove accidental removal and identity/path migration fail closed | `make test-legacy-guard LEGACY_ROOT=/path/to/relux-proxy` | Disposable files under the system temporary directory; removed on exit |

@@ -1,4 +1,5 @@
-.PHONY: check-legacy test-legacy-guard check-core-boundaries core-build core-test validate-core
+.PHONY: check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native
 
 LEGACY_ROOT ?= ../relux-proxy
 
@@ -17,4 +18,15 @@ core-build:
 core-test:
 	swift test
 
-validate-core: check-core-boundaries core-test core-build
+check-native-dependencies:
+	./scripts/native-dependency-tool.py verify --dependency relux-native-fixture
+
+test-native-dependencies:
+	./scripts/tests/test-native-dependencies.sh
+
+native-apple-matrix:
+	./scripts/build-native-apple-matrix.sh
+
+validate-core: check-core-boundaries check-native-dependencies core-test core-build
+
+validate-native: check-core-boundaries check-native-dependencies test-native-dependencies native-apple-matrix core-test core-build

@@ -5,6 +5,18 @@
 
 ## 2026-07-20
 
+### 0619 — Native packaging seam accepted (TASK-260715-1g9cyt)
+- MILESTONE: ADR-019 static XCFramework `binaryTarget` seam reviewed and accepted; unblocks TASK-260715-sbrrp7, 1vv52g, 1af33i, 1ozsb6 with the HEV/lwIP and SSH candidate plug-in path documented in docs/native-dependency-packaging.md.
+- VERIFICATION: Reviewer independently reran `make validate-native` (exit 0): boundary guard, fixture source/artifact-lock verify, byte-identical rebuild, negative gates (tampered source, missing arch, dylib substitution, absolute path, hash drift), full Xcode 26.5 Apple matrix with `APPLICATION_EXTENSION_API_ONLY=YES`, stripped SwiftPM release harness link audit, 41 tests in 6 suites. Strict swift-format lint, py_compile, sh -n, and manifest JSON checks also pass.
+- VERIFICATION: Reviewer re-inspected the rebuilt `.temp/TASK-260715-1g9cyt/HevSocks5Tunnel.xcframework` — static and extension-safe; outcome log/notice SHA-256 match the values claimed in TASK-260715-1g9cyt_results.md; manifest HEV pins match the TASK-260715-uopycx audit exactly.
+- NOTE: `check-core-boundaries` now pins adapters/harness-support to exactly {Core, NativeAdapter}; intentional tightening, keeps native-graph drift visible in review.
+
+### 0610 — Static native packaging seam and HEV rebuild gate (TASK-260715-1g9cyt)
+- DECISION: ADR-019 uses locally source-rebuilt static XCFramework SwiftPM `binaryTarget`s for custom-build C graphs behind named native adapter modules; source-reviewable ReluxNIOSSH stays a pinned source package. `ReluxTunnelCore` retains no native dependency.
+- VERIFICATION: The harmless binary fixture rebuilds byte-identically for iOS arm64, iOS Simulator arm64/x86_64, and macOS arm64/x86_64. Negative gates reject source tampering, dylib substitution, missing architecture, and absolute build paths. Xcode 26.5 Release builds passed for the native consumer, both providers, and harness with `APPLICATION_EXTENSION_API_ONLY=YES`; 41 Swift tests pass.
+- VERIFICATION: The new HEV command verified clean root `ad760049` plus core `c234519`, task-system `b1afa0e`, lwIP `2a11c14`, and yaml `efa3611` archive hashes before rebuilding the full Apple XCFramework. Static/module-map/slice/extension checks pass and notices are regenerated from those exact sources.
+- ANOMALY: Xcode's generated Swift-package scheme instruments ordinary build actions for test coverage and embeds coverage source paths. The universal Xcode scheme remains the compile/link matrix; absolute-path/dylib inspection runs on the non-instrumented, release-stripped SwiftPM harness, matching the production harness packaging path.
+
 ### 0539 — Relay toolchain decision accepted (TASK-260715-3bdplx)
 - MILESTONE: Go 1.26.5 relay toolchain decision reviewed and accepted; unblocks TASK-260715-1ccx3l, 1g9cyt, 32umrc and the M2 relay build with no open language/tooling question.
 - VERIFICATION: Reviewer independently confirmed both `.temp/TASK-260715-3bdplx/go1265-{a,b}` trees byte-identical with SHA-256 matching the decision table; Linux outputs are static stripped ELF with no dynamic section; Darwin outputs link only `libSystem`+`libresolv` with `minos 12.0`; embedded build info shows go1.26.5, CGO_ENABLED=0, correct GOOS/GOARCH/GOAMD64/GOARM64, trimpath. Reviewer reran the stdio+UDP proof: native arm64 PASS, Rosetta amd64 PASS.

@@ -10,8 +10,10 @@ This document records the source boundary introduced by
 ```text
 ReluxProxyIOSTunnel (later) ─> ReluxTunnelIOSAdapter ─┐
                                                      ├─> ReluxTunnelCore
-ReluxProxyMacTunnel (later) ─> ReluxTunnelMacOSAdapter┘
-ReluxTunnelHarness (later) ──────────────────────────┘
+ReluxProxyMacTunnel (later) ─> ReluxTunnelMacOSAdapter┤
+ReluxTunnelHarness ─────────> ReluxTunnelHarnessSupport┘
+                               │
+                               └─> ReluxTunnelNativeAdapter ─> static native binaryTarget
 ```
 
 `ReluxTunnelCore` has no dependency on either adapter, any containing app,
@@ -20,6 +22,12 @@ import `NetworkExtension`. Their production initializers wrap public
 `NEPacketTunnelFlow`; their protocol-based initializers let both composition
 roots run against the same Swift Testing contracts before Gate P0 workspace
 targets exist.
+
+`ReluxTunnelNativeAdapter` is the only shared package target that directly
+imports packaged C modules. Provider adapters and harness support may depend on
+it, while the dependency direction remains native adapter to Core contracts.
+The manifest, rebuild, notice, and archive checks are described in
+[`native-dependency-packaging.md`](native-dependency-packaging.md).
 
 ## Implemented packet bridge
 
@@ -52,6 +60,7 @@ Run from the repository root:
 
 ```sh
 make check-core-boundaries
+make check-native-dependencies
 make core-test
 make core-build
 ```

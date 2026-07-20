@@ -44,6 +44,12 @@ struct ProviderAdapterContractTests {
     )
   }
 
+  @Test("both provider adapters link the pinned native fixture")
+  func nativePackagingAnchors() {
+    #expect(IOSNativePackagingAnchor.schemaVersion == 1)
+    #expect(MacOSNativePackagingAnchor.schemaVersion == 1)
+  }
+
   @Test("both roots reject unsupported message versions")
   func unsupportedVersionContract() async throws {
     let request = try ProviderMessageCodec.encodeVersionRequest(protocolVersion: 999)

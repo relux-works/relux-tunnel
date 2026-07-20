@@ -1,0 +1,4 @@
+module CReluxNativeFixture {
+  header "relux_native_fixture.h"
+  export *
+}

@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "cache_policy": {
+    "environment_variable": "RELUX_NATIVE_CACHE_DIR",
+    "default_under_tmpdir": "relux-native-dependencies",
+    "key_fields": [
+      "dependency",
+      "revision",
+      "source_sha256",
+      "xcode_build",
+      "compiler_flags"
+    ],
+    "runtime_downloads_allowed": false,
+    "cache_is_authoritative": false,
+    "mismatch_policy": "delete the keyed entry and rebuild only after source verification passes"
+  },
+  "dependencies": {
+    "relux-native-fixture": {
+      "revision": "relux-native-fixture-1",
+      "source": {
+        "kind": "repository_files",
+        "files": [
+          "NativeDependencies/Fixtures/ReluxNativeFixture/LICENSE",
+          "NativeDependencies/Fixtures/ReluxNativeFixture/Sources/relux_native_fixture.c",
+          "NativeDependencies/Fixtures/ReluxNativeFixture/include/module.modulemap",
+          "NativeDependencies/Fixtures/ReluxNativeFixture/include/relux_native_fixture.h"
+        ],
+        "sha256": "7b60fe3e2c3be07eea15cfcb331474318d950315e73c2a423bc6ff0e297b015d"
+      },
+      "integration": {
+        "swiftpm_kind": "binaryTarget",
+        "target_name": "CReluxNativeFixture",
+        "linkage": "static",
+        "artifact_path": "NativeDependencies/Artifacts/ReluxNativeFixture.xcframework",
+        "application_extension_api_only": true
+      },
+      "compiler": {
+        "tool": "xcrun --sdk <sdk> clang",
+        "common_c_flags": [
+          "-Os",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fapplication-extension",
+          "-ffunction-sections",
+          "-fdata-sections",
+          "-fno-common",
+          "-fno-ident"
+        ],
+        "slices": [
+          {
+            "library_identifier": "ios-arm64",
+            "platform": "ios",
+            "sdk": "iphoneos",
+            "minimum": "18.0",
+            "architectures": ["arm64"],
+            "target_triples": ["arm64-apple-ios18.0"]
+          },
+          {
+            "library_identifier": "ios-arm64_x86_64-simulator",
+            "platform": "ios",
+            "variant": "simulator",
+            "sdk": "iphonesimulator",
+            "minimum": "18.0",
+            "architectures": ["arm64", "x86_64"],
+            "target_triples": [
+              "arm64-apple-ios18.0-simulator",
+              "x86_64-apple-ios18.0-simulator"
+            ]
+          },
+          {
+            "library_identifier": "macos-arm64_x86_64",
+            "platform": "macos",
+            "sdk": "macosx",
+            "minimum": "15.0",
+            "architectures": ["arm64", "x86_64"],
+            "target_triples": [
+              "arm64-apple-macos15.0",
+              "x86_64-apple-macos15.0"
+            ]
+          }
+        ]
+      },
+      "license": {
+        "spdx": "MIT",
+        "files": ["NativeDependencies/Fixtures/ReluxNativeFixture/LICENSE"],
+        "notices_output": "NativeDependencies/THIRD_PARTY_NOTICES.txt"
+      },
+      "rebuild": {
+        "command": "./scripts/native-dependency-tool.py build-fixture --output NativeDependencies/Artifacts/ReluxNativeFixture.xcframework",
+        "verify_command": "./scripts/native-dependency-tool.py verify --dependency relux-native-fixture"
+      },
+      "artifact": {
+        "file_sha256": {
+          "Info.plist": "c1257d9e7e0fb658273a5d816ccef632345653d7e859fd1cb6e9eb85230e66cd",
+          "ios-arm64/Headers/module.modulemap": "26481594728f56dddb912656e8c81a1a5eb236784079e38be91bfdae222bed0c",
+          "ios-arm64/Headers/relux_native_fixture.h": "0349955e3222ffa20e17c70239c675acd9953291cfc338743bc603cc4bb50b6c",
+          "ios-arm64/libCReluxNativeFixture.a": "f754e74d66b1f6910425009a186930b94b0f1117aa3f39905f6f3914d84ed114",
+          "ios-arm64_x86_64-simulator/Headers/module.modulemap": "26481594728f56dddb912656e8c81a1a5eb236784079e38be91bfdae222bed0c",
+          "ios-arm64_x86_64-simulator/Headers/relux_native_fixture.h": "0349955e3222ffa20e17c70239c675acd9953291cfc338743bc603cc4bb50b6c",
+          "ios-arm64_x86_64-simulator/libCReluxNativeFixture.a": "f1b10e05d1a6cbbccc56f5addb844ba392174cf4940485c410738bd9a1ca58f6",
+          "macos-arm64_x86_64/Headers/module.modulemap": "26481594728f56dddb912656e8c81a1a5eb236784079e38be91bfdae222bed0c",
+          "macos-arm64_x86_64/Headers/relux_native_fixture.h": "0349955e3222ffa20e17c70239c675acd9953291cfc338743bc603cc4bb50b6c",
+          "macos-arm64_x86_64/libCReluxNativeFixture.a": "d151446802908e5b387bf8ce36a61de61713590fd6f87a9cf91c13e9380a1f34"
+        }
+      }
+    },
+    "hev-lwip": {
+      "revision": "ad7600497931205105b08367bd1b450048157e40",
+      "upstream": "https://github.com/heiher/hev-socks5-tunnel",
+      "source": {
+        "kind": "git_archive_with_submodules",
+        "sha256": "1d48d9b8a4dd5befc3460fda3ac4684149ace458c1630ca5f5692c9dc8dd154f",
+        "submodules": [
+          {"path": "src/core", "revision": "c234519072ff5b928b90b304da9a666bcb440455", "sha256": "4b17bed847de4336adad9961c1a6943ab4a4df670da057a12c50a0d06c3b2438"},
+          {"path": "third-part/hev-task-system", "revision": "b1afa0e21fb4ed5a69560e78e54baf0efdebe171", "sha256": "3e3ef1eaa15b151e48123e006a98ef9de134914488fb38bcc44626cd239ffe93"},
+          {"path": "third-part/lwip", "revision": "2a11c14c7a32887af25a034e82ef18b0b12076ac", "sha256": "3a2252de07e42d3e5d31d8af97005eb73d7f0ed7725d029f0025c99ab5a0497f"},
+          {"path": "third-part/yaml", "revision": "efa36117a8646d26d12b58e05bac472d7854a70d", "sha256": "b0f33a1062e687bef8f86d5e0690895e8e5f7f5fdeda285216a00bfcc5616334"}
+        ]
+      },
+      "integration": {
+        "swiftpm_kind": "binaryTarget",
+        "future_target_name": "CHevSocks5Tunnel",
+        "future_adapter_target": "ReluxTunnelHEVAdapter",
+        "linkage": "static",
+        "artifact_path": "NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework",
+        "application_extension_api_only": true
+      },
+      "compiler": {
+        "source": "pinned upstream build-apple.sh",
+        "common_flags": ["-O3", "-pipe", "-Wall", "-Werror", "-DENABLE_LIBRARY"],
+        "slice_flags": "-arch <arch> -m<sdk>-version-min=<minimum>",
+        "linker_flags": "-arch <arch> -m<sdk>-version-min=<minimum> -Wl,-Bsymbolic-functions",
+        "required_slices": [
+          {"library_identifier": "ios-arm64", "platform": "ios", "minimum": "15.0", "architectures": ["arm64"]},
+          {"library_identifier": "ios-arm64_x86_64-simulator", "platform": "ios", "variant": "simulator", "minimum": "15.0", "architectures": ["arm64", "x86_64"]},
+          {"library_identifier": "macos-arm64_x86_64", "platform": "macos", "minimum": "10.14", "architectures": ["arm64", "x86_64"]}
+        ]
+      },
+      "license": {
+        "components": [
+          {"name": "hev-socks5-tunnel", "revision": "ad7600497931205105b08367bd1b450048157e40", "spdx": "MIT", "path": "LICENSE"},
+          {"name": "hev-socks5-core", "revision": "c234519072ff5b928b90b304da9a666bcb440455", "spdx": "MIT", "path": "src/core/LICENSE"},
+          {"name": "hev-task-system", "revision": "b1afa0e21fb4ed5a69560e78e54baf0efdebe171", "spdx": "MIT", "path": "third-part/hev-task-system/LICENSE"},
+          {"name": "lwIP", "revision": "2a11c14c7a32887af25a034e82ef18b0b12076ac", "spdx": "BSD-3-Clause", "path": "third-part/lwip/LICENSE"},
+          {"name": "yaml", "revision": "efa36117a8646d26d12b58e05bac472d7854a70d", "spdx": "MIT", "path": "third-part/yaml/License"}
+        ],
+        "notices_output": "NativeDependencies/Generated/HEV_THIRD_PARTY_NOTICES.txt"
+      },
+      "rebuild": {
+        "command": "./scripts/native-dependency-tool.py build-hev --source-dir <pinned-recursive-checkout> --output NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework --notices NativeDependencies/Generated/HEV_THIRD_PARTY_NOTICES.txt",
+        "upstream_command": "./build-apple.sh",
+        "xcode_build": "17F42"
+      }
+    }
+  }
+}

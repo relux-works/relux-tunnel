@@ -20,6 +20,7 @@
 | ADR-016 | Accepted | Set new Apple targets to iOS 18.0 and macOS 15.0; preserve the legacy SwiftPM product at macOS 14.0; require minimum/current CI plus named physical baselines per TASK-260715-3r0993 |
 | ADR-017 | Accepted | Use Tuist 4.202.5 pinned exactly by repository-local Mise; generate with an explicit Xcode pin and deterministic graph/project comparison per TASK-260715-3r0993 |
 | ADR-018 | Accepted | Ship macOS in-app self-update via Sparkle 2.x with an EdDSA-signed appcast; every payload is an already-notarized Developer ID build; iOS updates stay with the App Store |
+| ADR-019 | Accepted | Package custom-build C dependencies such as HEV and libssh2 as locally rebuilt static XCFramework SwiftPM `binaryTarget`s behind named native adapter modules; keep reviewable source packages such as ReluxNIOSSH as source dependencies and keep all native dependencies out of `ReluxTunnelCore` proper |
 
 ## Decision rationale
 
