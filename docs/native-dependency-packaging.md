@@ -85,7 +85,12 @@ The pinned HEV graph is rebuilt only from a disposable recursive checkout:
 
 Before invoking upstream `build-apple.sh`, the command verifies the root and all
 four submodule revisions and deterministic git-archive SHA-256 values from the
-manifest. A mismatch fails before compilation. After compilation it performs
+manifest. The build seam then renders the verified script in memory so every
+iOS/tvOS build uses the manifest's 18.0 minimum and every macOS build uses its
+15.0 minimum; the pinned checkout remains unchanged. Missing, unknown, or
+unmodeled Apple SDK entries fail before compilation. The wrapper also fixes static
+archive timestamps through `ZERO_AR_DATE`, so clean rebuild hashes are stable.
+After compilation it performs
 the same static/slice/extension-safety inspection, verifies the per-file artifact
 lock, and emits notices directly from the verified license files into both the
 generated evidence location and a generated static Swift notice API (avoiding

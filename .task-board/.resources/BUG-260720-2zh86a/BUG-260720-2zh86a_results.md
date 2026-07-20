@@ -1,0 +1,5 @@
+# BUG-260720-2zh86a implementation results
+
+HEV now renders the checksum-verified upstream build-apple.sh in memory from manifest deployment minima without modifying pinned source. HEV iOS and tvOS slices declare 18.0; macOS declares 15.0. ReluxLibSSH2 triples and explicit OpenSSL/CMake minimum flags now declare iOS 18.0 and macOS 15.0. The inspector rejects unmodeled slices. ZERO_AR_DATE makes repeated HEV static archives byte-identical.
+
+Verification passed: canonical clean HEV rebuild with artifact lock; make validate-native full iOS device, iOS Simulator, macOS provider and harness matrix; 110 Swift tests; swift build; make validate-core; make validate-libssh2 real rekey/KEX/global-request integration; native negative gates; strict Swift format; Python compile; shell syntax; JSON parsing; git diff --check.

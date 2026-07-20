@@ -185,14 +185,14 @@
             "library_identifier": "ios-arm64",
             "platform": "ios",
             "sdk": "iphoneos",
-            "minimum": "17.0",
+            "minimum": "18.0",
             "architectures": ["arm64"],
             "builds": [
               {
                 "architecture": "arm64",
-                "target_triple": "arm64-apple-ios17.0",
+                "target_triple": "arm64-apple-ios18.0",
                 "openssl_target": "ios64-xcrun",
-                "minimum_flag": "-miphoneos-version-min=17.0"
+                "minimum_flag": "-miphoneos-version-min=18.0"
               }
             ]
           },
@@ -201,20 +201,20 @@
             "platform": "ios",
             "variant": "simulator",
             "sdk": "iphonesimulator",
-            "minimum": "17.0",
+            "minimum": "18.0",
             "architectures": ["arm64", "x86_64"],
             "builds": [
               {
                 "architecture": "arm64",
-                "target_triple": "arm64-apple-ios17.0-simulator",
+                "target_triple": "arm64-apple-ios18.0-simulator",
                 "openssl_target": "iossimulator-arm64-xcrun",
-                "minimum_flag": "-mios-simulator-version-min=17.0"
+                "minimum_flag": "-mios-simulator-version-min=18.0"
               },
               {
                 "architecture": "x86_64",
-                "target_triple": "x86_64-apple-ios17.0-simulator",
+                "target_triple": "x86_64-apple-ios18.0-simulator",
                 "openssl_target": "iossimulator-x86_64-xcrun",
-                "minimum_flag": "-mios-simulator-version-min=17.0"
+                "minimum_flag": "-mios-simulator-version-min=18.0"
               }
             ]
           },
@@ -222,20 +222,20 @@
             "library_identifier": "macos-arm64_x86_64",
             "platform": "macos",
             "sdk": "macosx",
-            "minimum": "14.0",
+            "minimum": "15.0",
             "architectures": ["arm64", "x86_64"],
             "builds": [
               {
                 "architecture": "arm64",
-                "target_triple": "arm64-apple-macos14.0",
+                "target_triple": "arm64-apple-macos15.0",
                 "openssl_target": "darwin64-arm64-cc",
-                "minimum_flag": "-mmacosx-version-min=14.0"
+                "minimum_flag": "-mmacosx-version-min=15.0"
               },
               {
                 "architecture": "x86_64",
-                "target_triple": "x86_64-apple-macos14.0",
+                "target_triple": "x86_64-apple-macos15.0",
                 "openssl_target": "darwin64-x86_64-cc",
-                "minimum_flag": "-mmacosx-version-min=14.0"
+                "minimum_flag": "-mmacosx-version-min=15.0"
               }
             ]
           }
@@ -283,17 +283,17 @@
           "ios-arm64/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
           "ios-arm64/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
           "ios-arm64/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
-          "ios-arm64/libReluxLibSSH2.a": "8049c3340afe4fd257c2ad872d7f5a0fa5a8a65679ce6840ed11d6f83a161f74",
+          "ios-arm64/libReluxLibSSH2.a": "faf58ec8fb2b4a06dc11dfde2629f6d1b5383a6092c814cff53af9da20c0ddf6",
           "ios-arm64_x86_64-simulator/Headers/libssh2.h": "aa542cff4e0e64927983da8c50b0315cd24c6d097fcdd42809d2e3b0878625bf",
           "ios-arm64_x86_64-simulator/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
           "ios-arm64_x86_64-simulator/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
           "ios-arm64_x86_64-simulator/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
-          "ios-arm64_x86_64-simulator/libReluxLibSSH2.a": "ff82b89b03fe8bfe14e042fa4628d2ea34a618b0413cb755f45e684e9b2edfbd",
+          "ios-arm64_x86_64-simulator/libReluxLibSSH2.a": "23808016945e4196f545e3deea4cc273d6929a99bc76579099be0816728277ca",
           "macos-arm64_x86_64/Headers/libssh2.h": "aa542cff4e0e64927983da8c50b0315cd24c6d097fcdd42809d2e3b0878625bf",
           "macos-arm64_x86_64/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
           "macos-arm64_x86_64/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
           "macos-arm64_x86_64/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
-          "macos-arm64_x86_64/libReluxLibSSH2.a": "cbbcd84691fb634875e8643aad8493414ce79d57e33aed7cbf9b7a08798d8c13"
+          "macos-arm64_x86_64/libReluxLibSSH2.a": "c051a1d0ebbc308b3201b20dbc389430431788a75d89109e520374093302254e"
         }
       }
     },
@@ -319,14 +319,16 @@
         "application_extension_api_only": true
       },
       "compiler": {
-        "source": "pinned upstream build-apple.sh",
+        "source": "pinned upstream build-apple.sh rendered in memory with manifest deployment minimums",
         "common_flags": ["-O3", "-pipe", "-Wall", "-Werror", "-DENABLE_LIBRARY"],
         "slice_flags": "-arch <arch> -m<sdk>-version-min=<minimum>",
         "linker_flags": "-arch <arch> -m<sdk>-version-min=<minimum> -Wl,-Bsymbolic-functions",
         "required_slices": [
-          {"library_identifier": "ios-arm64", "platform": "ios", "minimum": "15.0", "architectures": ["arm64"]},
-          {"library_identifier": "ios-arm64_x86_64-simulator", "platform": "ios", "variant": "simulator", "minimum": "15.0", "architectures": ["arm64", "x86_64"]},
-          {"library_identifier": "macos-arm64_x86_64", "platform": "macos", "minimum": "10.14", "architectures": ["arm64", "x86_64"]}
+          {"library_identifier": "ios-arm64", "platform": "ios", "minimum": "18.0", "architectures": ["arm64"]},
+          {"library_identifier": "ios-arm64_x86_64-simulator", "platform": "ios", "variant": "simulator", "minimum": "18.0", "architectures": ["arm64", "x86_64"]},
+          {"library_identifier": "macos-arm64_x86_64", "platform": "macos", "minimum": "15.0", "architectures": ["arm64", "x86_64"]},
+          {"library_identifier": "tvos-arm64", "platform": "tvos", "minimum": "18.0", "architectures": ["arm64"]},
+          {"library_identifier": "tvos-arm64_x86_64-simulator", "platform": "tvos", "variant": "simulator", "minimum": "18.0", "architectures": ["arm64", "x86_64"]}
         ]
       },
       "license": {
@@ -350,19 +352,19 @@
           "Info.plist": "15776a6df6737716ebe50524ab19d20f7c9d8016ff81a5d1ee7fd5a843333a2b",
           "ios-arm64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
           "ios-arm64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
-          "ios-arm64/libhev-socks5-tunnel.a": "48a32bc08d26e568a6b1a299cd1a514a8857d9a64b9cf140248d52205c4ebcb9",
+          "ios-arm64/libhev-socks5-tunnel.a": "2570b7bf64136e65e97c9865c2210105dfa4c355c07ecf35c80c4ddf98436674",
           "ios-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
           "ios-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
-          "ios-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "c8fc479a741233c0a7af053a5f38647d3323bff777bbeb13bf5c0e8164b57456",
+          "ios-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "00050a67773588ac7438abc8cb52af23b0bb8ca92dee7d316f603186bd1e629c",
           "macos-arm64_x86_64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
           "macos-arm64_x86_64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
-          "macos-arm64_x86_64/libhev-socks5-tunnel.a": "8770eb4da4873ff11ccaf06b643c2fce10da4bf200fdfb5670cf14e77580ad17",
+          "macos-arm64_x86_64/libhev-socks5-tunnel.a": "f6bdda3e182049877dc449c670f8a2300007461e3ac3e4c5d2c1b0394de91eee",
           "tvos-arm64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
           "tvos-arm64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
-          "tvos-arm64/libhev-socks5-tunnel.a": "37878bd37f4992c53258194090e9accacdbff8dcc9b09c0afcc57f33b48890e1",
+          "tvos-arm64/libhev-socks5-tunnel.a": "6a9ee19492602185ec17a41ece2833666d3df7b6a1c7300cfceaed11231c5951",
           "tvos-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
           "tvos-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
-          "tvos-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "11c7064752a5d5d90b0c7460f67507971db512e75e11457c07562060565603ca"
+          "tvos-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "225e871674f38d2299f9a7f62ab26849c850ec77282f1b7875d889af4943b6e1"
         }
       }
     }

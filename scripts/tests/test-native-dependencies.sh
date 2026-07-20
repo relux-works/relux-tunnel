@@ -24,7 +24,15 @@ expect_failure() {
 
 cd "$repo_root"
 
+python3 scripts/tests/test-native-build-configuration.py
+
 "$tool" verify --dependency relux-native-fixture
+"$tool" inspect --dependency hev-lwip \
+    --xcframework NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework \
+    --verify-lock
+"$tool" inspect --dependency libssh2-openssl \
+    --xcframework NativeDependencies/Artifacts/ReluxLibSSH2.xcframework \
+    --verify-lock
 
 rebuilt="$test_root/ReluxNativeFixture.xcframework"
 "$tool" build-fixture --output "$rebuilt"
@@ -85,5 +93,14 @@ printf '\n/* artifact drift */\n' >> \
     "$artifact_drift/ios-arm64/Headers/relux_native_fixture.h"
 expect_failure artifact-hash "$tool" inspect \
     --dependency relux-native-fixture --xcframework "$artifact_drift" --verify-lock
+
+unexpected_slice="$test_root/unexpected-slice.xcframework"
+cp -R "$fixture" "$unexpected_slice"
+/usr/libexec/PlistBuddy \
+    -c "Add :AvailableLibraries:3 dict" \
+    -c "Add :AvailableLibraries:3:LibraryIdentifier string unmodeled-slice" \
+    "$unexpected_slice/Info.plist"
+expect_failure unexpected-slice "$tool" inspect \
+    --dependency relux-native-fixture --xcframework "$unexpected_slice"
 
 echo "Native dependency checksum, reproducibility, notices, architecture, and extension-safety tests passed"

@@ -42,6 +42,13 @@ UNSAFE_DYNAMIC_SYMBOLS = {
 ABSOLUTE_BUILD_PATH = re.compile(
     rb"/(?:Users|private/(?:tmp|var)|var/folders|tmp)/[^\x00\n ]+"
 )
+HEV_SDK_PLATFORMS = {
+    "iphoneos": "ios",
+    "iphonesimulator": "ios",
+    "macosx": "macos",
+    "appletvos": "tvos",
+    "appletvsimulator": "tvos",
+}
 
 
 class NativeDependencyError(RuntimeError):
@@ -106,6 +113,7 @@ def run(
     cwd: Path | None = None,
     capture: bool = False,
     environment: dict[str, str] | None = None,
+    input_text: str | None = None,
 ) -> str:
     merged_environment = os.environ.copy()
     if environment:
@@ -117,6 +125,7 @@ def run(
         check=False,
         stdout=subprocess.PIPE if capture else None,
         stderr=subprocess.STDOUT if capture else None,
+        input=input_text,
         text=True,
     )
     if result.returncode != 0:
@@ -205,6 +214,61 @@ def expected_slices(item: dict[str, Any]) -> list[dict[str, Any]]:
     return compiler.get("slices", compiler.get("required_slices", []))
 
 
+def deployment_minimums(item: dict[str, Any]) -> dict[str, str]:
+    minimums: dict[str, str] = {}
+    for slice_ in expected_slices(item):
+        platform = slice_["platform"]
+        minimum = slice_.get("minimum")
+        if not minimum:
+            raise NativeDependencyError(
+                f"missing deployment minimum for {slice_['library_identifier']}"
+            )
+        existing = minimums.setdefault(platform, minimum)
+        if existing != minimum:
+            raise NativeDependencyError(
+                f"inconsistent {platform} deployment minimum: {existing} and {minimum}"
+            )
+    return minimums
+
+
+def render_hev_build_script(item: dict[str, Any], script: str) -> str:
+    minimums = deployment_minimums(item)
+    seen_sdks: set[str] = set()
+
+    def replace_minimum(match: re.Match[str]) -> str:
+        sdk = match.group("sdk")
+        platform = HEV_SDK_PLATFORMS.get(sdk)
+        if platform is None:
+            raise NativeDependencyError(f"unsupported HEV Apple SDK in build script: {sdk}")
+        if platform not in minimums:
+            raise NativeDependencyError(
+                f"HEV build script retains an unmodeled {platform} slice ({sdk})"
+            )
+        seen_sdks.add(sdk)
+        return f"{match.group('prefix')}{minimums[platform]}{match.group('suffix')}"
+
+    rendered = re.sub(
+        r"^(?P<prefix>\s*buildStatic\s+(?P<sdk>\S+)\s+\S+\s+)"
+        r"[0-9]+(?:\.[0-9]+)*(?P<suffix>\s*)$",
+        replace_minimum,
+        script,
+        flags=re.MULTILINE,
+    )
+    expected_sdks = {
+        sdk for sdk, platform in HEV_SDK_PLATFORMS.items() if platform in minimums
+    }
+    if seen_sdks != expected_sdks:
+        raise NativeDependencyError(
+            "HEV build script SDK coverage mismatch: expected "
+            f"{sorted(expected_sdks)}, got {sorted(seen_sdks)}"
+        )
+    return rendered
+
+
+def deterministic_build_environment() -> dict[str, str]:
+    return {"ZERO_AR_DATE": "1", "LC_ALL": "C", "LANG": "C"}
+
+
 def normalize_xcframework_plist(path: Path) -> None:
     info_path = path / "Info.plist"
     with info_path.open("rb") as stream:
@@ -233,6 +297,9 @@ def inspect_xcframework(item: dict[str, Any], path: Path, *, verify_lock: bool) 
     missing = sorted(set(expected) - set(libraries))
     if missing:
         raise NativeDependencyError(f"missing required XCFramework slices: {missing}")
+    unexpected = sorted(set(libraries) - set(expected))
+    if unexpected:
+        raise NativeDependencyError(f"unexpected unvalidated XCFramework slices: {unexpected}")
 
     for identifier, slice_ in expected.items():
         library = libraries[identifier]
@@ -552,7 +619,14 @@ def build_hev(item: dict[str, Any], source_dir: Path, output: Path, notices: Pat
         notice_swift_source(notices.read_text(encoding="utf-8")),
         encoding="utf-8",
     )
-    run(["./build-apple.sh"], cwd=source_dir)
+    upstream_build_script = (source_dir / "build-apple.sh").read_text(encoding="utf-8")
+    build_script = render_hev_build_script(item, upstream_build_script)
+    run(
+        ["bash"],
+        cwd=source_dir,
+        environment=deterministic_build_environment(),
+        input_text=build_script,
+    )
     candidate = source_dir / "HevSocks5Tunnel.xcframework"
     normalize_xcframework_plist(candidate)
     inspect_xcframework(item, candidate, verify_lock=True)

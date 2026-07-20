@@ -5,6 +5,18 @@
 
 ## 2026-07-20
 
+### 1447 — Deployment-target fix accepted; full Apple matrix unblocked (review BUG-260720-2zh86a)
+- MILESTONE: BUG-260720-2zh86a accepted → done. `make validate-native` full Apple matrix no longer stops on the HEV/libssh2 deployment-target mismatch; packet-plane Apple builds and physical validation (12x6oq) unblocked on this axis.
+- VERIFICATION: Reviewer reran independently on the exact tree: `make validate-native` exit 0 (iOS device/sim + macOS provider/harness matrix, 110 Swift tests), `make validate-core` exit 0, `make validate-libssh2` real rekey/KEX exit 0. `otool -l` confirmed every slice: HEV ios/tvos minos 18.0, macos 15.0; ReluxLibSSH2 ios 18.0, macos 15.0 — no 10.14/11.0 records remain.
+- FINDING: `inspect_xcframework` (`scripts/native-dependency-tool.py:284`) now enforces exact per-slice `minos` == manifest minimum and rejects unmodeled slices — this bug class is a standing gate, not a one-time fix. Render seam (`render_hev_build_script`) verified fail-closed against the real upstream `build-apple.sh` (matches all 8 `buildStatic` lines, errors on unknown/unmodeled SDKs).
+- NOTE: Pinned upstream checkout and C sources untouched; script rendered in memory from checksum-verified content. Review evidence: board outcome `BUG-260720-2zh86a_review.md`.
+
+### 1440 — Native Apple deployment minima aligned and HEV rebuild made deterministic (BUG-260720-2zh86a)
+- ROOT CAUSE: The pinned HEV `build-apple.sh` hardcoded iOS 15.0, macOS 10.14, and tvOS 17.0; its universal macOS archive mixed 10.14 and 11.0 Mach-O records. ReluxLibSSH2 independently targeted iOS 17.0/macOS 14.0. The native manifest treated those stale values as valid, so `make validate-native` stopped before the Xcode matrix.
+- FIX: The verified HEV build script is rendered in memory from manifest minima and executed without modifying the pinned checkout or C sources. Every retained HEV slice now targets iOS/tvOS 18.0 or macOS 15.0; ReluxLibSSH2 triples, OpenSSL flags, CMake targets, artifacts, and locks now target iOS 18.0/macOS 15.0. Inspection rejects unmodeled XCFramework slices.
+- ANOMALY / FIX: A repeated HEV rebuild initially changed archive hashes solely because upstream `libtool` embedded current timestamps. The build seam now sets `ZERO_AR_DATE=1` (plus stable locale); two clean full rebuilds produced the locked hashes, closing the pre-existing reproducibility gap.
+- VERIFICATION: `make validate-native` passed the complete iOS device, iOS Simulator, macOS provider/harness and stripped-link audit matrix, followed by 110 Swift tests and `swift build`. `make validate-core`, `make validate-libssh2` (real rekey/KEX/global-request test), native negative gates, strict Swift format, Python compile, shell syntax, JSON parsing, and `git diff --check` passed.
+
 ### 1415 — HEV statistics/teardown bug accepted after rework (review BUG-260720-2p4fln)
 - MILESTONE: BUG-260720-2p4fln accepted → done; TASK-260715-35wctc unblocked. Product fixes (pre-fini stats snapshot, coalesced single boundary stop, lwIP test-lifecycle discipline) and rework-01 descriptor-gate isolation all verified.
 - VERIFICATION: Second reviewer confirmed rework design: both former `openDescriptorCount() == baseline` gates (`Tests/ReluxTunnelNativeAdapterTests/HEVBridgeIntegrationTests.swift:230,275`) now assert harness-owned release only — boundary starts/stops 1/1, live SOCKS channels 0, queued batches/outstanding reads 0, both endpoint-close lifecycle stages reached, `packet_bridge_cleanup_close_error_total` 0 — with global baseline/observed/delta demoted to failure diagnostics. Isolation-safe under parallel suites, leak-detection intent preserved.
