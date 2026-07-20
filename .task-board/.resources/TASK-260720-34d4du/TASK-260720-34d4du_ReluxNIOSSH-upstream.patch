@@ -1,0 +1,2319 @@
+--- a/.gitignore
++++ b/.gitignore
+@@ -5,7 +5,6 @@
+ Package.pins
+ *.pem
+ /docs
+-Package.resolved
+ .podspecs
+ DerivedData
+ /.swiftpm
+--- /dev/null
++++ b/NOTICE-RELUX.txt
+@@ -0,0 +1,9 @@
++ReluxNIOSSH contains source derived from apple/swift-nio-ssh and remains
++licensed under the Apache License, Version 2.0. The full upstream license is
++preserved in LICENSE.txt. Upstream project attribution and original per-file
++copyright/SPDX headers are retained.
++
++Relux-specific changes are documented in RELUX_DELTA.md and
++PATCH_MANIFEST.json. No cryptographic algorithm implementation or negotiation
++default is changed by this fork.
++
+--- /dev/null
++++ b/PATCH_MANIFEST.json
+@@ -0,0 +1,45 @@
++{
++  "schemaVersion": 1,
++  "forkPackageIdentity": "ReluxNIOSSH",
++  "libraryProduct": "NIOSSH",
++  "upstream": {
++    "repository": "https://github.com/apple/swift-nio-ssh.git",
++    "tag": "0.14.1",
++    "commit": "31cdc3c3391a10460dedf1170530cf651d2ca496",
++    "archiveSHA256": "0b135087e76cb03e33f544484f21e1c3ba3b967f8a0ba2aead960ce4d0d06e6a",
++    "license": "Apache-2.0",
++    "licenseFile": "LICENSE.txt",
++    "licenseSHA256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
++  },
++  "patchedUpstreamFiles": [
++    ".gitignore",
++    "Package.swift",
++    "Sources/NIOSSH/Child Channels/ChildChannelOptions.swift",
++    "Sources/NIOSSH/Child Channels/ChildChannelWindowManager.swift",
++    "Sources/NIOSSH/Child Channels/SSHChildChannel.swift",
++    "Sources/NIOSSH/Connection State Machine/SSHConnectionStateMachine.swift",
++    "Sources/NIOSSH/Key Exchange/SSHKeyExchangeStateMachine.swift",
++    "Sources/NIOSSH/NIOSSHHandler.swift",
++    "Sources/NIOSSH/SSHClientConfiguration.swift",
++    "Sources/NIOSSH/User Authentication/UserAuthenticationMethod.swift",
++    "Sources/NIOSSH/User Authentication/UserAuthenticationStateMachine.swift",
++    "Tests/NIOSSHTests/EndToEndTests.swift"
++  ],
++  "addedFiles": [
++    "NOTICE-RELUX.txt",
++    "PATCH_MANIFEST.json",
++    "Package.resolved",
++    "REBASE.md",
++    "RELUX_DELTA.md",
++    "Sources/NIOSSH/ReluxPolicies.swift",
++    "Tests/NIOSSHTests/ReluxPolicyTests.swift",
++    "UPSTREAM.md"
++  ],
++  "logicalPatches": [
++    "0001-relux-package-provenance",
++    "0002-configurable-child-receive-window",
++    "0003-supported-automatic-rekey",
++    "0004-adapter-conformance-public-apis",
++    "0005-relux-policy-tests-and-maintenance"
++  ]
++}
+--- /dev/null
++++ b/Package.resolved
+@@ -0,0 +1,60 @@
++{
++  "originHash" : "38abb869de40c7950f7cb99eaf3fa157fc00ea8b3945be0bbee1acd2be711887",
++  "pins" : [
++    {
++      "identity" : "swift-asn1",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/apple/swift-asn1.git",
++      "state" : {
++        "revision" : "a9a5efd40eaf558a2bcd48d64b1d1646be686008",
++        "version" : "1.7.1"
++      }
++    },
++    {
++      "identity" : "swift-atomics",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/apple/swift-atomics.git",
++      "state" : {
++        "revision" : "0442cb5a3f98ab802acb777929fdb446bda11a34",
++        "version" : "1.3.1"
++      }
++    },
++    {
++      "identity" : "swift-collections",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/apple/swift-collections.git",
++      "state" : {
++        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
++        "version" : "1.6.0"
++      }
++    },
++    {
++      "identity" : "swift-crypto",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/apple/swift-crypto.git",
++      "state" : {
++        "revision" : "47d3869a7291f085c1fb9fb1e6d3b97a793f45c6",
++        "version" : "4.5.1"
++      }
++    },
++    {
++      "identity" : "swift-nio",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/apple/swift-nio.git",
++      "state" : {
++        "revision" : "0b18836bd8b0162e7e17a995a3fbee20ed8f3b2b",
++        "version" : "2.101.3"
++      }
++    },
++    {
++      "identity" : "swift-system",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/apple/swift-system.git",
++      "state" : {
++        "revision" : "b5544ba79a70a0cb3563e75bf26dc198d6b40ed3",
++        "version" : "1.7.4"
++      }
++    }
++  ],
++  "version" : 3
++}
+--- a/Package.swift
++++ b/Package.swift
+@@ -26,7 +26,7 @@
+ }
+ 
+ let package = Package(
+-    name: "swift-nio-ssh",
++    name: "ReluxNIOSSH",
+     platforms: [
+         .macOS(.v10_15),
+         .iOS(.v13),
+--- /dev/null
++++ b/REBASE.md
+@@ -0,0 +1,41 @@
++# ReluxNIOSSH rebase procedure
++
++1. Start from a clean disposable worktree. Do not rebase in a product checkout
++   with unrelated changes.
++2. Record the candidate upstream tag/commit and download its commit archive.
++3. Run the conflict preflight against every upstream file currently patched:
++
++   ```sh
++   python3 scripts/reluxniossh-fork-tool.py conflict-test \
++     --upstream-ref <candidate-tag-or-commit>
++   ```
++
++   Exit `0` means none of the patched upstream files changed since the current
++   pin. Exit `1` lists the files requiring semantic review; it must not be
++   bypassed.
++4. Replace the fork tree with the verified candidate archive, preserving its
++   license and attribution. Reapply the five logical patches from
++   `RELUX_DELTA.md` in order. Never carry an old hunk solely to make a diff apply.
++5. Update `UPSTREAM.md` and `PATCH_MANIFEST.json` with the new tag, commit,
++   archive/license hashes, dependency pins, and exact changed-file allowlist.
++6. Regenerate the upstream patch and inspect every hunk:
++
++   ```sh
++   python3 scripts/reluxniossh-fork-tool.py diff \
++     --output .temp/TASK-260715-nzdzv3/ReluxNIOSSH-upstream.patch
++   ```
++7. Run the conflict and validation gates:
++
++   ```sh
++   make validate-reluxniossh
++   swift format lint --recursive Dependencies/ReluxNIOSSH/Sources \
++     Dependencies/ReluxNIOSSH/Tests Dependencies/ReluxNIOSSH/Package.swift
++   ```
++8. Run the shared E-WINDOW and E-REKEY conformance rows when the adapter suite is
++   available. Compare default API behavior and algorithm lists with the new
++   upstream before proposing the pin update.
++
++If upstream changes its channel ownership, packet-protection boundary, or KEX
++state model such that these patches need compensating flags or duplicated state,
++stop the rebase and reassess the fork rather than forcing the old design onto the
++new engine.
+--- /dev/null
++++ b/RELUX_DELTA.md
+@@ -0,0 +1,107 @@
++# ReluxNIOSSH delta
++
++## Scope
++
++The fork changes only the five audited capability gaps required by the SSH
++transport contract:
++
++1. configurable, capped, observable per-child-channel receive windows;
++2. supported client rekey requests plus optional automatic protected-byte and
++   monotonic elapsed-time thresholds;
++3. public-key authentication backed by an asynchronous external signer that
++   receives NIOSSH's constructed payload and never receives a private key;
++4. bounded reply-observing global requests through NIOSSH's protected packet
++   and ordered response path;
++5. client KEX/host-key allowlists and an immutable exact negotiated-algorithm
++   snapshot.
++
++The `NIOSSH` product and module name remain unchanged for source compatibility.
++The package identity changes to `ReluxNIOSSH`. Existing callers that do not set a
++window option or rekey policy retain the upstream 16 MiB receive window,
++half-window adjustment trigger, and disabled automatic client rekey.
++
++No cipher, MAC, KEX, host-key, authentication, packet format, or server rekey
++algorithm implementation was added or changed. Caller allowlists only filter
++and order the algorithms already implemented by the pinned upstream source.
++
++## Logical patch and commit inventory
++
++The repository workflow deliberately leaves commits to the human reviewer. The
++recommended focused commit sequence is:
++
++| Patch | Purpose | Files |
++| --- | --- | --- |
++| `0001-relux-package-provenance` | Rename only the SwiftPM package identity, track and lock the audited resolved graph, and record the pin/license. | `.gitignore`, `Package.swift`, `Package.resolved`, `UPSTREAM.md`, `NOTICE-RELUX.txt` |
++| `0002-configurable-child-receive-window` | Add immutable window policy, pre-open channel option, snapshots, adjustment events, cap accounting, and upstream-compatible default. | `ReluxPolicies.swift`, `ChildChannelOptions.swift`, `ChildChannelWindowManager.swift`, `SSHChildChannel.swift` |
++| `0003-supported-automatic-rekey` | Add manual production-path request, byte/time policy, injected monotonic clock, safe coalescing, generation/counters, events, and server-trigger observation around the existing KEX state machine. | `ReluxPolicies.swift`, `NIOSSHHandler.swift`, `SSHConnectionStateMachine.swift` |
++| `0004-adapter-conformance-public-apis` | Add external async signing, reply-observing bounded global requests, client KEX/host-key allowlists, and exact negotiation snapshots without changing packet protection or crypto implementations. | `ReluxPolicies.swift`, `UserAuthenticationMethod.swift`, `UserAuthenticationStateMachine.swift`, `NIOSSHHandler.swift`, `SSHClientConfiguration.swift`, `SSHKeyExchangeStateMachine.swift`, `SSHConnectionStateMachine.swift` |
++| `0005-relux-policy-tests-and-maintenance` | Add deterministic Swift Testing coverage and fork comparison/rebase documentation. | `ReluxPolicyTests.swift`, `EndToEndTests.swift`, `PATCH_MANIFEST.json`, `RELUX_DELTA.md`, `REBASE.md` |
++
++`PATCH_MANIFEST.json` is the machine-readable authority for the exact changed
++file allowlist. The adapter-conformance extension grows the audited delta from
++16 to 20 files: four newly patched upstream files and no new fork-only files.
++`make check-reluxniossh` downloads the pinned archive, verifies both hashes, and
++fails if any delta exists outside that allowlist.
++
++## Public API delta
++
++- `SSHChildChannelOptions.receiveWindowConfiguration` sets policy only before
++  the local open/confirmation advertises receive credit.
++- `SSHChildChannelOptions.receiveWindowSnapshot` reports initial value, cap,
++  remaining protocol credit, unread bytes, delivered/unreturned credit, and
++  adjustment totals.
++- `NIOSSHChannelWindowAdjustedEvent` reports each adjustment without payload or
++  endpoint data.
++- `NIOSSHHandler` accepts optional `NIOSSHRekeyPolicy` and
++  `NIOSSHRekeyClock` initializer arguments, both with upstream-compatible
++  defaults.
++- `NIOSSHHandler.requestRekey(reason:promise:)` is the supported production
++  request path. Concurrent requests share the active KEX and their promises
++  resolve together.
++- `NIOSSHHandler.rekeySnapshot`, `NIOSSHRekeyStartedEvent`, and
++  `NIOSSHRekeySucceededEvent` expose common state without reflection or access
++  to the internal test-only `_rekey()` symbol.
++- `NIOSSHUserAuthenticationOffer.Offer.externalPublicKey` accepts an SSH
++  wire-format public key, its algorithm, and an asynchronous raw-signature
++  callback over NIOSSH's complete RFC 4252 payload. It stores no private key.
++- `NIOSSHHandler.sendGlobalRequest(_:promise:)` sends a bounded request with
++  `want-reply` through the existing encrypted/MACed write queue and resolves an
++  ordered success/failure response for RTT measurement.
++- `SSHClientConfiguration.keyExchangeAlgorithms` and `hostKeyAlgorithms`
++  restrict the already-bundled client algorithms; `nil` retains upstream
++  defaults while empty/unsupported policies fail closed.
++- `NIOSSHHandler.negotiatedAlgorithmsSnapshot` exposes the exact selected KEX,
++  host-key, cipher, and MAC strings from `NegotiationResult`, never configured
++  lists.
++
++## Upstream comparison
++
++Generate the exact unified source diff from the audited pin:
++
++```sh
++python3 scripts/reluxniossh-fork-tool.py diff \
++  --output .temp/TASK-260715-nzdzv3/ReluxNIOSSH-upstream.patch
++```
++
++All additions are confined to the paths and logical patches above. The full
++generated patch is attached to board task `TASK-260715-nzdzv3` as an outcome
++resource; it is not duplicated inside the source package.
++
++## Candidate upstreaming plan
++
++Submit independent upstream proposals so each capability can be reviewed
++without adopting Relux policy:
++
++1. receive-window proposal: child-channel option, immutable cap, snapshot, and
++   adjustment event, retaining the current default;
++2. rekey proposal: safe public request/coalescing first, followed by optional
++   byte/time policy and monotonic-clock seam if upstream accepts policy in the
++   engine rather than its caller;
++3. external-signer proposal: wire public key plus future-based signer offer;
++4. generic global-request proposal: bounded request value plus ordered reply;
++5. negotiation proposal: client algorithm filters plus exact result event.
++
++Keep Relux naming out of proposed upstream API. Split tests by proposal and
++retain the existing upstream XCTest suite while offering the new Swift Testing
++coverage. Drop each fork patch after an equivalent released upstream API is
++adopted and the shared SSH conformance suite passes unchanged.
+--- a/Sources/NIOSSH/Child Channels/ChildChannelOptions.swift
++++ b/Sources/NIOSSH/Child Channels/ChildChannelOptions.swift
+@@ -29,6 +29,13 @@
+ 
+     /// See: ``SSHChildChannelOptions/Types/PeerMaximumMessageLengthOption``.
+     public static let peerMaximumMessageLength: SSHChildChannelOptions.Types.PeerMaximumMessageLengthOption = .init()
++
++    /// See: ``SSHChildChannelOptions/Types/ReceiveWindowConfigurationOption``.
++    public static let receiveWindowConfiguration: SSHChildChannelOptions.Types.ReceiveWindowConfigurationOption =
++        .init()
++
++    /// See: ``SSHChildChannelOptions/Types/ReceiveWindowSnapshotOption``.
++    public static let receiveWindowSnapshot: SSHChildChannelOptions.Types.ReceiveWindowSnapshotOption = .init()
+ }
+ 
+ extension SSHChildChannelOptions {
+@@ -64,4 +71,21 @@
+ 
+         public init() {}
+     }
++
++    /// Sets or queries the receive-window policy for this child channel.
++    ///
++    /// The option may be set only from the child channel initializer, before
++    /// the local window is advertised to the peer.
++    public struct ReceiveWindowConfigurationOption: ChannelOption, Sendable {
++        public typealias Value = NIOSSHChannelWindowConfiguration
++
++        public init() {}
++    }
++
++    /// Queries the current receive-window accounting for this child channel.
++    public struct ReceiveWindowSnapshotOption: ChannelOption, Sendable {
++        public typealias Value = NIOSSHChannelWindowSnapshot
++
++        public init() {}
++    }
+ }
+--- a/Sources/NIOSSH/Child Channels/ChildChannelWindowManager.swift
++++ b/Sources/NIOSSH/Child Channels/ChildChannelWindowManager.swift
+@@ -13,16 +13,60 @@
+ //===----------------------------------------------------------------------===//
+ 
+ struct ChildChannelWindowManager {
+-    private(set) var targetWindowSize: UInt32
++    private(set) var configuration: NIOSSHChannelWindowConfiguration
+ 
+     private var bufferedBytes: UInt32
+ 
+     private var currentWindowSize: UInt32
+ 
++    private var deliveredButUnadjustedBytes: UInt32
++
++    private var adjustmentCount: UInt64
++
++    private var adjustmentBytes: UInt64
++
++    var targetWindowSize: UInt32 {
++        self.configuration.initialWindowSize
++    }
++
+     init(targetWindowSize: UInt32) {
+-        self.targetWindowSize = targetWindowSize
++        self.init(
++            configuration: .init(
++                initialWindowSize: targetWindowSize,
++                maximumWindowSize: targetWindowSize,
++                windowAdjustmentThreshold: max(1, targetWindowSize / 2)
++            )
++        )
++    }
++
++    init(configuration: NIOSSHChannelWindowConfiguration) {
++        self.configuration = configuration
+         self.bufferedBytes = 0
+-        self.currentWindowSize = targetWindowSize
++        self.currentWindowSize = configuration.initialWindowSize
++        self.deliveredButUnadjustedBytes = 0
++        self.adjustmentCount = 0
++        self.adjustmentBytes = 0
++    }
++
++    mutating func updateConfiguration(_ configuration: NIOSSHChannelWindowConfiguration) {
++        precondition(self.bufferedBytes == 0)
++        precondition(self.currentWindowSize == self.targetWindowSize)
++        precondition(self.deliveredButUnadjustedBytes == 0)
++        precondition(self.adjustmentCount == 0)
++
++        self = .init(configuration: configuration)
++    }
++
++    var snapshot: NIOSSHChannelWindowSnapshot {
++        .init(
++            initialWindowSize: self.configuration.initialWindowSize,
++            maximumWindowSize: self.configuration.maximumWindowSize,
++            remainingWindowSize: self.currentWindowSize,
++            bufferedBytes: self.bufferedBytes,
++            deliveredButUnadjustedBytes: self.deliveredButUnadjustedBytes,
++            adjustmentCount: self.adjustmentCount,
++            adjustmentBytes: self.adjustmentBytes
++        )
+     }
+ }
+ 
+@@ -47,25 +91,34 @@
+ 
+         self.bufferedBytes -= bytes
+ 
+-        // Ok, we want to check whether we need to build an increment.
+-        // To do it, we check what the current "available" window is, where
+-        // the "available" window is the window the remote peer still has plus
+-        // the bytes we haven't delivered to the user yet (as we don't want to
+-        // give those bytes back to the remote peer). There are three cases:
+-        //
+-        // 1. The available window is larger than the target. Do nothing.
+-        // 2. The available window is larger than half the target. Do nothing.
+-        // 3. The available window is smaller than half the target. Emit an increment.
+-        let availableWindow = self.currentWindowSize + self.bufferedBytes
+-        assert(availableWindow <= self.targetWindowSize)
++        let (newDeliveredBytes, deliveredOverflow) = self.deliveredButUnadjustedBytes.addingReportingOverflow(bytes)
++        precondition(!deliveredOverflow)
++        self.deliveredButUnadjustedBytes = newDeliveredBytes
+ 
+-        if availableWindow > (self.targetWindowSize / 2) {
++        guard let threshold = self.configuration.windowAdjustmentThreshold,
++            self.deliveredButUnadjustedBytes >= threshold
++        else {
+             return nil
+-        } else {
+-            let increment = self.targetWindowSize - availableWindow
+-            self.currentWindowSize += increment
+-            return Increment(rawValue: increment)
+         }
++
++        let remainingBefore = self.currentWindowSize
++        let capacity = self.configuration.maximumWindowSize - remainingBefore
++        let increment = min(self.deliveredButUnadjustedBytes, capacity)
++        guard increment > 0 else {
++            return nil
++        }
++
++        self.currentWindowSize += increment
++        self.deliveredButUnadjustedBytes -= increment
++        self.adjustmentCount += 1
++        self.adjustmentBytes += UInt64(increment)
++
++        return Increment(
++            rawValue: increment,
++            remainingWindowBefore: remainingBefore,
++            remainingWindowAfter: self.currentWindowSize,
++            maximumWindowSize: self.configuration.maximumWindowSize
++        )
+     }
+ }
+ 
+@@ -73,8 +126,29 @@
+     struct Increment {
+         var rawValue: UInt32
+ 
++        var remainingWindowBefore: UInt32
++
++        var remainingWindowAfter: UInt32
++
++        var maximumWindowSize: UInt32
++
+         init(rawValue: UInt32) {
+             self.rawValue = rawValue
++            self.remainingWindowBefore = 0
++            self.remainingWindowAfter = rawValue
++            self.maximumWindowSize = rawValue
++        }
++
++        init(
++            rawValue: UInt32,
++            remainingWindowBefore: UInt32,
++            remainingWindowAfter: UInt32,
++            maximumWindowSize: UInt32
++        ) {
++            self.rawValue = rawValue
++            self.remainingWindowBefore = remainingWindowBefore
++            self.remainingWindowAfter = remainingWindowAfter
++            self.maximumWindowSize = maximumWindowSize
+         }
+     }
+ }
+--- a/Sources/NIOSSH/Child Channels/SSHChildChannel.swift
++++ b/Sources/NIOSSH/Child Channels/SSHChildChannel.swift
+@@ -83,6 +83,9 @@
+     private var peerMaxMessageSize: UInt32
+ 
+     private var activationState: ActivationState
++
++    /// Becomes true immediately before the local receive window is advertised.
++    private var windowConfigurationLocked: Bool
+ 
+     // MARK: Stored properties for channel/channelcore conformance.
+ 
+@@ -158,6 +161,7 @@
+         self.allowRemoteHalfClosure = false
+         self.didWriteAutomaticMessage = false
+         self.activationState = .neverActivated
++        self.windowConfigurationLocked = false
+         self._pipeline = ChannelPipeline(channel: self)
+     }
+ }
+@@ -222,6 +226,11 @@
+             self.autoRead = value as! Bool
+         case _ as ChannelOptions.Types.AllowRemoteHalfClosureOption:
+             self.allowRemoteHalfClosure = value as! Bool
++        case _ as SSHChildChannelOptions.Types.ReceiveWindowConfigurationOption:
++            guard !self.windowConfigurationLocked else {
++                throw ChannelError.operationUnsupported
++            }
++            self.windowManager.updateConfiguration(value as! NIOSSHChannelWindowConfiguration)
+         default:
+             fatalError("setting option \(option) on SSHChildChannel not supported")
+         }
+@@ -245,6 +254,10 @@
+             return self.autoRead as! Option.Value
+         case _ as ChannelOptions.Types.AllowRemoteHalfClosureOption:
+             return self.allowRemoteHalfClosure as! Option.Value
++        case _ as SSHChildChannelOptions.Types.ReceiveWindowConfigurationOption:
++            return self.windowManager.configuration as! Option.Value
++        case _ as SSHChildChannelOptions.Types.ReceiveWindowSnapshotOption:
++            return self.windowManager.snapshot as! Option.Value
+         default:
+             fatalError("option \(option) not supported on SSHChildChannel")
+         }
+@@ -483,6 +496,7 @@
+     private func initializerComplete(userPromise: EventLoopPromise<Channel>?) {
+         // We need to work out what we need to do once the initializer completes.
+         self.userActivatePromise = userPromise
++        self.windowConfigurationLocked = true
+ 
+         if self.state.isActiveOnNetwork {
+             // We need to send a channelOpenSuccess.
+@@ -670,6 +684,8 @@
+     private func deliverSingleRead(_ data: PendingContent) {
+         switch data {
+         case .data(let data):
++            self.pipeline.syncOperations.fireChannelRead(NIOAny(data))
++
+             // We only futz with the window manager if the channel is not already closed.
+             if !self.didClose, !self.state.sentClose,
+                 let increment = self.windowManager.unbufferBytes(data.data.readableBytes)
+@@ -679,8 +695,15 @@
+                     bytesToAdd: UInt32(increment)
+                 )
+                 self.processOutboundMessage(.channelWindowAdjust(update), promise: nil)
+-            }
+-            self.pipeline.syncOperations.fireChannelRead(NIOAny(data))
++                self.pipeline.fireUserInboundEventTriggered(
++                    NIOSSHChannelWindowAdjustedEvent(
++                        remainingWindowBefore: increment.remainingWindowBefore,
++                        adjustment: increment.rawValue,
++                        remainingWindowAfter: increment.remainingWindowAfter,
++                        maximumWindowSize: increment.maximumWindowSize
++                    )
++                )
++            }
+ 
+         case .eof:
+             self.pipeline.fireUserInboundEventTriggered(ChannelEvent.inputClosed)
+--- a/Sources/NIOSSH/Connection State Machine/SSHConnectionStateMachine.swift
++++ b/Sources/NIOSSH/Connection State Machine/SSHConnectionStateMachine.swift
+@@ -55,6 +55,29 @@
+         case receivedDisconnect(SSHConnectionRole)
+ 
+         case sentDisconnect(SSHConnectionRole)
++
++        fileprivate var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms? {
++            switch self {
++            case .keyExchange(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .sentNewKeys(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .receivedNewKeys(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .receivedKexInitWhenActive(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .sentKexInitWhenActive(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .rekeying(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .rekeyingSentNewKeysState(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .rekeyingReceivedNewKeysState(let state):
++                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
++            case .idle, .sentVersion, .userAuthentication, .active, .receivedDisconnect, .sentDisconnect:
++                return nil
++            }
++        }
+ 
+         fileprivate mutating func bufferInboundData(_ data: inout ByteBuffer) {
+             switch self {
+@@ -772,11 +795,14 @@
+     /// The state of this state machine.
+     private var state: State
+ 
++    private(set) var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms?
++
+     init(
+         role: SSHConnectionRole,
+         protectionSchemes: [NIOSSHTransportProtection.Type] = Constants.bundledTransportProtectionSchemes
+     ) {
+         self.state = .idle(IdleState(role: role, protectionSchemes: protectionSchemes))
++        self.negotiatedAlgorithmsSnapshot = nil
+     }
+ 
+     func start() -> SSHMultiMessage? {
+@@ -798,7 +824,8 @@
+         allocator: ByteBufferAllocator,
+         loop: EventLoop
+     ) throws -> StateMachineInboundProcessResult? {
+-        try self.state.processInboundMessage(allocator: allocator, loop: loop)
++        defer { self.negotiatedAlgorithmsSnapshot = self.state.negotiatedAlgorithmsSnapshot }
++        return try self.state.processInboundMessage(allocator: allocator, loop: loop)
+     }
+ 
+     mutating func processOutboundMessage(
+@@ -807,6 +834,7 @@
+         allocator: ByteBufferAllocator,
+         loop: EventLoop
+     ) throws {
++        defer { self.negotiatedAlgorithmsSnapshot = self.state.negotiatedAlgorithmsSnapshot }
+         switch self.state {
+         case .idle(var state):
+             switch message {
+@@ -1220,6 +1248,7 @@
+ extension SSHConnectionStateMachine {
+     // Called when we wish to re-key the connection.
+     mutating func beginRekeying(buffer: inout ByteBuffer, allocator: ByteBufferAllocator, loop: EventLoop) throws {
++        defer { self.negotiatedAlgorithmsSnapshot = self.state.negotiatedAlgorithmsSnapshot }
+         switch self.state {
+         case .active(let state):
+             // Trying to rekey.
+@@ -1239,6 +1268,16 @@
+ // MARK: Helper properties
+ 
+ extension SSHConnectionStateMachine {
++    var isKeyExchangeInProgress: Bool {
++        switch self.state {
++        case .keyExchange, .receivedNewKeys, .sentNewKeys, .receivedKexInitWhenActive, .sentKexInitWhenActive,
++            .rekeying, .rekeyingReceivedNewKeysState, .rekeyingSentNewKeysState:
++            return true
++        case .idle, .sentVersion, .userAuthentication, .active, .receivedDisconnect, .sentDisconnect:
++            return false
++        }
++    }
++
+     var isActive: Bool {
+         switch self.state {
+         case .active:
+--- a/Sources/NIOSSH/Key Exchange/SSHKeyExchangeStateMachine.swift
++++ b/Sources/NIOSSH/Key Exchange/SSHKeyExchangeStateMachine.swift
+@@ -129,7 +129,7 @@
+ 
+         return .init(
+             cookie: rng.randomCookie(allocator: self.allocator),
+-            keyExchangeAlgorithms: Self.supportedKeyExchangeAlgorithms,
++            keyExchangeAlgorithms: self.supportedKeyExchangeAlgorithms,
+             serverHostKeyAlgorithms: self.supportedHostKeyAlgorithms,
+             encryptionAlgorithmsClientToServer: encryptionAlgorithms,
+             encryptionAlgorithmsServerToClient: encryptionAlgorithms,
+@@ -411,7 +411,9 @@
+         return NegotiationResult(
+             negotiatedKeyExchangeAlgorithm: keyExchange,
+             negotiatedHostKeyAlgorithm: hostKey,
+-            negotiatedProtection: scheme
++            negotiatedProtection: scheme,
++            negotiatedCipherAlgorithm: clientEncryption,
++            negotiatedMACAlgorithm: clientMAC
+         )
+     }
+ 
+@@ -451,13 +453,13 @@
+ 
+         switch self.role {
+         case .client:
+-            clientAlgorithms = Self.supportedKeyExchangeAlgorithms
++            clientAlgorithms = self.supportedKeyExchangeAlgorithms
+             serverAlgorithms = peerKeyExchangeAlgorithms
+             clientHostKeyAlgorithms = self.supportedHostKeyAlgorithms
+             serverHostKeyAlgorithms = peerHostKeyAlgorithms
+         case .server:
+             clientAlgorithms = peerKeyExchangeAlgorithms
+-            serverAlgorithms = Self.supportedKeyExchangeAlgorithms
++            serverAlgorithms = self.supportedKeyExchangeAlgorithms
+             clientHostKeyAlgorithms = peerHostKeyAlgorithms
+             serverHostKeyAlgorithms = self.supportedHostKeyAlgorithms
+         }
+@@ -553,15 +555,35 @@
+     private func expectingIncorrectGuess(_ kexMessage: SSHMessage.KeyExchangeMessage) -> Bool {
+         // A guess is wrong if the key exchange algorithm and/or the host key algorithm differ from our preference.
+         kexMessage.firstKexPacketFollows
+-            && (kexMessage.keyExchangeAlgorithms.first != Self.supportedKeyExchangeAlgorithms.first
++            && (kexMessage.keyExchangeAlgorithms.first != self.supportedKeyExchangeAlgorithms.first
+                 || kexMessage.serverHostKeyAlgorithms.first != self.supportedHostKeyAlgorithms.first)
++    }
++
++    /// The key-exchange algorithms advertised by this peer, in preference order.
++    private var supportedKeyExchangeAlgorithms: [Substring] {
++        switch self.role {
++        case .client(let configuration):
++            guard let configured = configuration.keyExchangeAlgorithms else {
++                return Self.supportedKeyExchangeAlgorithms
++            }
++            return configured.compactMap { configuredAlgorithm in
++                Self.supportedKeyExchangeAlgorithms.first { $0 == Substring(configuredAlgorithm) }
++            }
++        case .server:
++            return Self.supportedKeyExchangeAlgorithms
++        }
+     }
+ 
+     // The host key algorithms supported by this peer, in order of preference.
+     private var supportedHostKeyAlgorithms: [Substring] {
+         switch self.role {
+-        case .client:
+-            return Self.supportedServerHostKeyAlgorithms
++        case .client(let configuration):
++            guard let configured = configuration.hostKeyAlgorithms else {
++                return Self.supportedServerHostKeyAlgorithms
++            }
++            return configured.compactMap { configuredAlgorithm in
++                Self.supportedServerHostKeyAlgorithms.first { $0 == Substring(configuredAlgorithm) }
++            }
+         case .server(let configuration):
+             return configuration.hostKeys.flatMap { $0.hostKeyAlgorithms }
+         }
+@@ -614,11 +636,39 @@
+ 
+         var negotiatedProtection: NIOSSHTransportProtection.Type
+ 
++        var negotiatedCipherAlgorithm: Substring
++
++        var negotiatedMACAlgorithm: Substring
++
+         func negotiatedHostKey(_ keys: [NIOSSHPrivateKey]) -> NIOSSHPrivateKey {
+             // This force-unwrap is safe: to fail to obtain it is a programming error, as we must have negotiated
+             // the host key algorithm.
+             keys.first { $0.hostKeyAlgorithms.contains(self.negotiatedHostKeyAlgorithm) }!
+         }
++    }
++
++    var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms? {
++        let negotiated: NegotiationResult
++        switch self.state {
++        case .keyExchangeReceived(_, let result, _),
++            .awaitingKeyExchangeInitInvalidGuess(_, let result),
++            .awaitingKeyExchangeInit(_, let result),
++            .keyExchangeInitReceived(_, let result),
++            .keyExchangeInitSent(_, let result),
++            .keysExchanged(_, _, let result),
++            .newKeysReceived(_, _, let result),
++            .newKeysSent(_, _, let result):
++            negotiated = result
++        case .idle, .keyExchangeSent, .complete:
++            return nil
++        }
++
++        return .init(
++            keyExchangeAlgorithm: String(negotiated.negotiatedKeyExchangeAlgorithm),
++            hostKeyAlgorithm: String(negotiated.negotiatedHostKeyAlgorithm),
++            cipherAlgorithm: String(negotiated.negotiatedCipherAlgorithm),
++            macAlgorithm: String(negotiated.negotiatedMACAlgorithm)
++        )
+     }
+ 
+     /// Obtains the session ID, if we have one already.
+--- a/Sources/NIOSSH/NIOSSHHandler.swift
++++ b/Sources/NIOSSH/NIOSSHHandler.swift
+@@ -63,6 +63,30 @@
+ 
+     private var pendingGlobalRequestResponses: CircularBuffer<PendingGlobalRequestResponse?>
+ 
++    private let rekeyPolicy: NIOSSHRekeyPolicy
++
++    private let rekeyClock: any NIOSSHRekeyClock
++
++    private var rekeyTimer: Scheduled<Void>?
++
++    private var lastKeyExchangeTime: NIODeadline?
++
++    private var protectedBytesSent: UInt64
++
++    private var protectedBytesReceived: UInt64
++
++    private var keyExchangeGeneration: UInt64
++
++    private var rekeyReasons: Set<NIOSSHRekeyReason>
++
++    private var rekeyPromises: [EventLoopPromise<Void>]
++
++    /// Exact algorithms selected by the most recently observed key exchange.
++    ///
++    /// This property is not thread-safe and may only be read on the parent
++    /// channel's event loop.
++    public private(set) var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms?
++
+     /// Construct a new ``NIOSSHHandler``.
+     ///
+     /// - parameters:
+@@ -72,7 +96,9 @@
+     public init(
+         role: SSHConnectionRole,
+         allocator: ByteBufferAllocator,
+-        inboundChildChannelInitializer: ((Channel, SSHChannelType) -> EventLoopFuture<Void>)?
++        inboundChildChannelInitializer: ((Channel, SSHChannelType) -> EventLoopFuture<Void>)?,
++        rekeyPolicy: NIOSSHRekeyPolicy = .disabled,
++        rekeyClock: any NIOSSHRekeyClock = NIOSSHSystemRekeyClock()
+     ) {
+         self.stateMachine = SSHConnectionStateMachine(role: role, protectionSchemes: role.transportProtectionSchemes)
+         self.pendingWrite = false
+@@ -80,6 +106,16 @@
+         self.pendingChannelInitializations = CircularBuffer(initialCapacity: 4)
+         self.pendingGlobalRequests = CircularBuffer(initialCapacity: 4)
+         self.pendingGlobalRequestResponses = CircularBuffer(initialCapacity: 4)
++        self.rekeyPolicy = rekeyPolicy
++        self.rekeyClock = rekeyClock
++        self.rekeyTimer = nil
++        self.lastKeyExchangeTime = nil
++        self.protectedBytesSent = 0
++        self.protectedBytesReceived = 0
++        self.keyExchangeGeneration = 0
++        self.rekeyReasons = []
++        self.rekeyPromises = []
++        self.negotiatedAlgorithmsSnapshot = nil
+         self.multiplexer = SSHChannelMultiplexer(
+             delegate: self,
+             allocator: allocator,
+@@ -95,6 +131,7 @@
+     enum PendingGlobalRequestResponse {
+         case tcpForwarding(EventLoopPromise<GlobalRequest.TCPForwardingResponse?>)
+         case unknown(EventLoopPromise<ByteBuffer?>)
++        case global(EventLoopPromise<NIOSSHGlobalRequestResponse>)
+ 
+         func succeed(_ result: SSHMessage.RequestSuccessMessage?) {
+             switch self {
+@@ -102,6 +139,23 @@
+                 promise.succeed(result.map(GlobalRequest.TCPForwardingResponse.init))
+             case .unknown(let promise):
+                 promise.succeed(result?.buffer)
++            case .global(let promise):
++                if let result {
++                    promise.succeed(.success(result.buffer))
++                } else {
++                    promise.succeed(.failure)
++                }
++            }
++        }
++
++        func reject() {
++            switch self {
++            case .tcpForwarding(let promise):
++                promise.fail(NIOSSHError.globalRequestRefused)
++            case .unknown(let promise):
++                promise.fail(NIOSSHError.globalRequestRefused)
++            case .global(let promise):
++                promise.succeed(.failure)
+             }
+         }
+ 
+@@ -111,6 +165,8 @@
+                 promise.fail(error)
+             case .unknown(let promise):
+                 promise.fail(error)
++            case .global(let promise):
++                promise.fail(error)
+             }
+         }
+     }
+@@ -131,6 +187,9 @@
+ 
+     public func handlerRemoved(context: ChannelHandlerContext) {
+         self.context = nil
++        self.rekeyTimer?.cancel()
++        self.rekeyTimer = nil
++        self.failRekeyPromises(ChannelError.eof)
+ 
+         // We don't actually need to nil out the multiplexer here (it will nil its reference to us)
+         // but we _can_, and it doesn't hurt.
+@@ -170,15 +229,27 @@
+         self.expectingChannelReadComplete = true
+ 
+         var data = self.unwrapInboundIn(data)
++        self.recordProtectedInboundBytes(data.readableBytes)
+         self.stateMachine.bufferInboundData(&data)
+ 
+         do {
+-            while let result = try self.stateMachine.processInboundMessage(
+-                allocator: context.channel.allocator,
+-                loop: context.eventLoop
+-            ) {
++            while true {
++                let wasKeyExchangeInProgress = self.stateMachine.isKeyExchangeInProgress
++                guard
++                    let result = try self.stateMachine.processInboundMessage(
++                        allocator: context.channel.allocator,
++                        loop: context.eventLoop
++                    )
++                else {
++                    break
++                }
++                self.observeKeyExchangeTransition(
++                    wasKeyExchangeInProgress: wasKeyExchangeInProgress,
++                    context: context
++                )
+                 try self.processInboundMessageResult(result, context: context)
+             }
++            self.evaluateAutomaticRekey(context: context)
+         } catch {
+             context.fireErrorCaught(error)
+         }
+@@ -205,16 +276,23 @@
+         self.outboundFrameBuffer.clear()
+ 
+         for message in multiMessage {
++            let wasKeyExchangeInProgress = self.stateMachine.isKeyExchangeInProgress
+             try self.stateMachine.processOutboundMessage(
+                 message,
+                 buffer: &self.outboundFrameBuffer,
+                 allocator: context.channel.allocator,
+                 loop: context.eventLoop
+             )
++            self.observeKeyExchangeTransition(
++                wasKeyExchangeInProgress: wasKeyExchangeInProgress,
++                context: context
++            )
+             self.pendingWrite = true
+         }
+ 
++        self.recordProtectedOutboundBytes(self.outboundFrameBuffer.readableBytes)
+         context.write(self.wrapOutboundOut(self.outboundFrameBuffer), promise: promise)
++        self.evaluateAutomaticRekey(context: context)
+     }
+ 
+     private func processInboundMessageResult(
+@@ -320,6 +398,23 @@
+         self.sendGlobalRequestsIfPossible()
+     }
+ 
++    /// Sends a bounded extension request with `want-reply` and observes its ordered reply.
++    ///
++    /// The request is queued until authentication succeeds and then passes through
++    /// NIOSSH's normal packet serializer, encryption, MAC, and response-ordering path.
++    /// This function is not thread-safe and may only be called on the parent channel.
++    public func sendGlobalRequest(
++        _ request: NIOSSHGlobalRequest,
++        promise: EventLoopPromise<NIOSSHGlobalRequestResponse>? = nil
++    ) {
++        let message = SSHMessage.GlobalRequestMessage(
++            wantReply: true,
++            type: .unknown(request.name, request.payload)
++        )
++        self.pendingGlobalRequests.append((value: message, promise: promise.map { .global($0) }))
++        self.sendGlobalRequestsIfPossible()
++    }
++
+     /// Sends a global request of any kind. This is commonly used for TCP forwarding requests, but can be used to extend the protocol.
+     ///
+     /// This function is **not** thread-safe: it may only be called from on the channel.
+@@ -354,7 +449,7 @@
+         case .success(let response):
+             next?.succeed(response)
+         case .failure:
+-            next?.fail(NIOSSHError.globalRequestRefused)
++            next?.reject()
+         }
+     }
+ 
+@@ -505,18 +600,232 @@
+ // MARK: Initiate rekeying
+ 
+ extension NIOSSHHandler {
++    /// Current connection-wide key exchange accounting.
++    ///
++    /// This property is not thread-safe and may only be read on the parent
++    /// channel's event loop.
++    public var rekeySnapshot: NIOSSHRekeySnapshot {
++        .init(
++            keyExchangeGeneration: self.keyExchangeGeneration,
++            protectedBytesSent: self.protectedBytesSent,
++            protectedBytesReceived: self.protectedBytesReceived,
++            keyExchangeInProgress: self.stateMachine.hasActivated && self.stateMachine.isKeyExchangeInProgress,
++            observedReasons: self.rekeyReasons
++        )
++    }
++
++    /// Requests a connection-wide key exchange through the production rekey path.
++    ///
++    /// This function is not thread-safe and may only be called on the parent
++    /// channel's event loop. A request made while a key exchange is already in
++    /// progress coalesces into that exchange. Its promise completes when the
++    /// shared exchange succeeds.
++    public func requestRekey(
++        reason: NIOSSHRekeyReason = .manual,
++        promise: EventLoopPromise<Void>? = nil
++    ) {
++        guard let context = self.context else {
++            promise?.fail(ChannelError.ioOnClosedChannel)
++            return
++        }
++
++        do {
++            try self.startOrCoalesceRekey(reasons: [reason], promise: promise, context: context)
++        } catch {
++            promise?.fail(error)
++            context.fireErrorCaught(error)
++        }
++    }
++
+     // This function mostly exists for testing purposes: we don't initiate re-keying today because it's not
+     // well-supported by evidence. But we want to be able to test against implementations who do, so we have support for
+     // kicking it off.
+     internal func _rekey() throws {
+-        // As this is test-only there are a bunch of preconditions in here, we don't really mind if we hit them in testing.
+-        var buffer = self.context!.channel.allocator.buffer(capacity: 1024)
++        guard let context = self.context else {
++            throw ChannelError.ioOnClosedChannel
++        }
++        try self.startOrCoalesceRekey(reasons: [.manual], promise: nil, context: context)
++    }
++}
++
++extension NIOSSHHandler {
++    fileprivate func recordProtectedOutboundBytes(_ count: Int) {
++        guard self.keyExchangeGeneration > 0 else {
++            return
++        }
++        self.protectedBytesSent = self.protectedBytesSent.addingWithoutOverflow(UInt64(count))
++    }
++
++    fileprivate func recordProtectedInboundBytes(_ count: Int) {
++        guard self.keyExchangeGeneration > 0 else {
++            return
++        }
++        self.protectedBytesReceived = self.protectedBytesReceived.addingWithoutOverflow(UInt64(count))
++    }
++
++    fileprivate func observeKeyExchangeTransition(
++        wasKeyExchangeInProgress: Bool,
++        context: ChannelHandlerContext
++    ) {
++        let isKeyExchangeInProgress = self.stateMachine.isKeyExchangeInProgress
++
++        if !wasKeyExchangeInProgress, isKeyExchangeInProgress, self.stateMachine.hasActivated {
++            self.rekeyReasons.insert(.serverInitiated)
++            context.fireUserInboundEventTriggered(
++                NIOSSHRekeyStartedEvent(
++                    reasons: self.rekeyReasons,
++                    currentGeneration: self.keyExchangeGeneration
++                )
++            )
++        } else if wasKeyExchangeInProgress, !isKeyExchangeInProgress {
++            self.keyExchangeSucceeded(context: context)
++        }
++
++        if let algorithms = self.stateMachine.negotiatedAlgorithmsSnapshot {
++            self.negotiatedAlgorithmsSnapshot = algorithms
++        }
++
++        self.scheduleTimeRekeyIfNeeded(context: context)
++    }
++
++    fileprivate func keyExchangeSucceeded(context: ChannelHandlerContext) {
++        self.protectedBytesSent = 0
++        self.protectedBytesReceived = 0
++        self.lastKeyExchangeTime = self.rekeyClock.now()
++        self.rekeyTimer?.cancel()
++        self.rekeyTimer = nil
++        self.keyExchangeGeneration += 1
++
++        guard self.keyExchangeGeneration > 1 else {
++            return
++        }
++
++        let reasons = self.rekeyReasons
++        self.rekeyReasons = []
++        context.fireUserInboundEventTriggered(
++            NIOSSHRekeySucceededEvent(reasons: reasons, newGeneration: self.keyExchangeGeneration)
++        )
++        self.succeedRekeyPromises()
++    }
++
++    fileprivate func startOrCoalesceRekey(
++        reasons: Set<NIOSSHRekeyReason>,
++        promise: EventLoopPromise<Void>?,
++        context: ChannelHandlerContext
++    ) throws {
++        if self.stateMachine.hasActivated, self.stateMachine.isKeyExchangeInProgress {
++            self.rekeyReasons.formUnion(reasons)
++            if let promise {
++                self.rekeyPromises.append(promise)
++            }
++            return
++        }
++
++        guard self.stateMachine.isActive else {
++            throw ChannelError.operationUnsupported
++        }
++
++        var buffer = context.channel.allocator.buffer(capacity: 1024)
+         try self.stateMachine.beginRekeying(
+             buffer: &buffer,
+-            allocator: self.context!.channel.allocator,
+-            loop: self.context!.eventLoop
++            allocator: context.channel.allocator,
++            loop: context.eventLoop
+         )
+-        self.context!.writeAndFlush(self.wrapOutboundOut(buffer), promise: nil)
++        self.rekeyReasons.formUnion(reasons)
++        if let promise {
++            self.rekeyPromises.append(promise)
++        }
++        self.recordProtectedOutboundBytes(buffer.readableBytes)
++        context.writeAndFlush(self.wrapOutboundOut(buffer), promise: nil)
++        context.fireUserInboundEventTriggered(
++            NIOSSHRekeyStartedEvent(
++                reasons: self.rekeyReasons,
++                currentGeneration: self.keyExchangeGeneration
++            )
++        )
++    }
++
++    fileprivate func evaluateAutomaticRekey(context: ChannelHandlerContext) {
++        guard case .client = self.stateMachine.role, self.keyExchangeGeneration > 0 else {
++            return
++        }
++
++        var reasons: Set<NIOSSHRekeyReason> = []
++        if let threshold = self.rekeyPolicy.outboundByteThreshold, self.protectedBytesSent >= threshold {
++            reasons.insert(.outboundByteThreshold)
++        }
++        if let threshold = self.rekeyPolicy.inboundByteThreshold, self.protectedBytesReceived >= threshold {
++            reasons.insert(.inboundByteThreshold)
++        }
++        if let threshold = self.rekeyPolicy.elapsedTimeThreshold,
++            let origin = self.lastKeyExchangeTime,
++            self.elapsedNanoseconds(since: origin) >= UInt64(threshold.nanoseconds)
++        {
++            reasons.insert(.elapsedTimeThreshold)
++        }
++
++        guard !reasons.isEmpty else {
++            self.scheduleTimeRekeyIfNeeded(context: context)
++            return
++        }
++
++        do {
++            try self.startOrCoalesceRekey(reasons: reasons, promise: nil, context: context)
++        } catch {
++            context.fireErrorCaught(error)
++        }
++    }
++
++    fileprivate func scheduleTimeRekeyIfNeeded(context: ChannelHandlerContext) {
++        guard self.rekeyTimer == nil, self.stateMachine.isActive,
++            let threshold = self.rekeyPolicy.elapsedTimeThreshold,
++            let origin = self.lastKeyExchangeTime
++        else {
++            return
++        }
++
++        let thresholdNanoseconds = UInt64(threshold.nanoseconds)
++        let elapsed = self.elapsedNanoseconds(since: origin)
++        let remaining = elapsed >= thresholdNanoseconds ? 0 : thresholdNanoseconds - elapsed
++        let delay = TimeAmount.nanoseconds(Int64(clamping: remaining))
++        let loopBoundHandlerAndContext = NIOLoopBound((self, context), eventLoop: context.eventLoop)
++
++        self.rekeyTimer = context.eventLoop.scheduleTask(in: delay) {
++            let (handler, context) = loopBoundHandlerAndContext.value
++            handler.rekeyTimer = nil
++            guard handler.context != nil else {
++                return
++            }
++            handler.evaluateAutomaticRekey(context: context)
++        }
++    }
++
++    fileprivate func elapsedNanoseconds(since origin: NIODeadline) -> UInt64 {
++        let now = self.rekeyClock.now().uptimeNanoseconds
++        return now >= origin.uptimeNanoseconds ? now - origin.uptimeNanoseconds : 0
++    }
++
++    fileprivate func succeedRekeyPromises() {
++        let promises = self.rekeyPromises
++        self.rekeyPromises.removeAll(keepingCapacity: true)
++        for promise in promises {
++            promise.succeed(())
++        }
++    }
++
++    fileprivate func failRekeyPromises(_ error: Error) {
++        let promises = self.rekeyPromises
++        self.rekeyPromises.removeAll(keepingCapacity: true)
++        for promise in promises {
++            promise.fail(error)
++        }
++    }
++}
++
++extension UInt64 {
++    fileprivate func addingWithoutOverflow(_ other: UInt64) -> UInt64 {
++        let (result, overflow) = self.addingReportingOverflow(other)
++        return overflow ? .max : result
+     }
+ }
+ 
+--- /dev/null
++++ b/Sources/NIOSSH/ReluxPolicies.swift
+@@ -0,0 +1,269 @@
++//===----------------------------------------------------------------------===//
++//
++// This source file is part of the SwiftNIO open source project
++//
++// Copyright (c) 2026 Relux contributors
++// Licensed under Apache License v2.0
++//
++// See LICENSE.txt for license information
++// See CONTRIBUTORS.txt for the list of SwiftNIO project authors
++//
++// SPDX-License-Identifier: Apache-2.0
++//
++//===----------------------------------------------------------------------===//
++
++import NIOCore
++
++/// Invalid input supplied to ``NIOSSHGlobalRequest``.
++public enum NIOSSHGlobalRequestError: Error, Equatable, Sendable {
++    case emptyName
++    case payloadTooLarge(maximumBytes: Int, actualBytes: Int)
++}
++
++/// A bounded SSH global request that requires an ordered peer reply.
++public struct NIOSSHGlobalRequest: Equatable, Sendable {
++    /// Maximum extension payload accepted by the public request API.
++    public static let maximumPayloadBytes = 32 * 1024
++
++    public let name: String
++    public let payload: ByteBuffer
++
++    public init(name: String, payload: ByteBuffer = ByteBuffer()) throws {
++        guard !name.isEmpty else {
++            throw NIOSSHGlobalRequestError.emptyName
++        }
++        guard payload.readableBytes <= Self.maximumPayloadBytes else {
++            throw NIOSSHGlobalRequestError.payloadTooLarge(
++                maximumBytes: Self.maximumPayloadBytes,
++                actualBytes: payload.readableBytes
++            )
++        }
++        self.name = name
++        self.payload = payload
++    }
++}
++
++/// The ordered reply to a ``NIOSSHGlobalRequest``.
++public enum NIOSSHGlobalRequestResponse: Equatable, Sendable {
++    /// The peer accepted the request and returned the supplied response payload.
++    case success(ByteBuffer)
++
++    /// The peer explicitly rejected the request.
++    case failure
++}
++
++/// Exact algorithms selected by one completed SSH negotiation decision.
++public struct NIOSSHNegotiatedAlgorithms: Equatable, Sendable {
++    public let keyExchangeAlgorithm: String
++    public let hostKeyAlgorithm: String
++    public let cipherAlgorithm: String
++    public let macAlgorithm: String
++
++    public init(
++        keyExchangeAlgorithm: String,
++        hostKeyAlgorithm: String,
++        cipherAlgorithm: String,
++        macAlgorithm: String
++    ) {
++        self.keyExchangeAlgorithm = keyExchangeAlgorithm
++        self.hostKeyAlgorithm = hostKeyAlgorithm
++        self.cipherAlgorithm = cipherAlgorithm
++        self.macAlgorithm = macAlgorithm
++    }
++}
++
++/// Receive-window policy for one SSH child channel.
++///
++/// Set this policy with ``SSHChildChannelOptions/receiveWindowConfiguration``
++/// from the child channel initializer. The initializer completes before NIOSSH
++/// advertises the channel's local receive window.
++public struct NIOSSHChannelWindowConfiguration: Hashable, Sendable {
++    /// The receive window advertised when the channel is opened.
++    public let initialWindowSize: UInt32
++
++    /// The immutable upper bound for the channel's remaining protocol credit.
++    public let maximumWindowSize: UInt32
++
++    /// Delivered credit required before an automatic window adjustment.
++    ///
++    /// A `nil` value suppresses automatic `SSH_MSG_CHANNEL_WINDOW_ADJUST`
++    /// messages. Bytes become eligible for return only after they are delivered
++    /// through the child channel pipeline.
++    public let windowAdjustmentThreshold: UInt32?
++
++    public init(
++        initialWindowSize: UInt32,
++        maximumWindowSize: UInt32,
++        windowAdjustmentThreshold: UInt32?
++    ) {
++        precondition(initialWindowSize > 0, "initialWindowSize must be positive")
++        precondition(maximumWindowSize >= initialWindowSize, "maximumWindowSize must cover the initial window")
++        if let windowAdjustmentThreshold {
++            precondition(windowAdjustmentThreshold > 0, "windowAdjustmentThreshold must be positive")
++            precondition(
++                windowAdjustmentThreshold <= maximumWindowSize,
++                "windowAdjustmentThreshold must not exceed maximumWindowSize"
++            )
++        }
++
++        self.initialWindowSize = initialWindowSize
++        self.maximumWindowSize = maximumWindowSize
++        self.windowAdjustmentThreshold = windowAdjustmentThreshold
++    }
++
++    /// The behavior of unmodified SwiftNIO SSH 0.14.1.
++    public static let upstreamDefault = Self(
++        initialWindowSize: 1 << 24,
++        maximumWindowSize: 1 << 24,
++        windowAdjustmentThreshold: 1 << 23
++    )
++}
++
++/// A consistent child-channel receive-window snapshot.
++public struct NIOSSHChannelWindowSnapshot: Equatable, Sendable {
++    public var initialWindowSize: UInt32
++    public var maximumWindowSize: UInt32
++    public var remainingWindowSize: UInt32
++    public var bufferedBytes: UInt32
++    public var deliveredButUnadjustedBytes: UInt32
++    public var adjustmentCount: UInt64
++    public var adjustmentBytes: UInt64
++
++    public init(
++        initialWindowSize: UInt32,
++        maximumWindowSize: UInt32,
++        remainingWindowSize: UInt32,
++        bufferedBytes: UInt32,
++        deliveredButUnadjustedBytes: UInt32,
++        adjustmentCount: UInt64,
++        adjustmentBytes: UInt64
++    ) {
++        self.initialWindowSize = initialWindowSize
++        self.maximumWindowSize = maximumWindowSize
++        self.remainingWindowSize = remainingWindowSize
++        self.bufferedBytes = bufferedBytes
++        self.deliveredButUnadjustedBytes = deliveredButUnadjustedBytes
++        self.adjustmentCount = adjustmentCount
++        self.adjustmentBytes = adjustmentBytes
++    }
++}
++
++/// Fired on a child channel whenever NIOSSH emits a receive-window adjustment.
++public struct NIOSSHChannelWindowAdjustedEvent: Equatable, Sendable {
++    public var remainingWindowBefore: UInt32
++    public var adjustment: UInt32
++    public var remainingWindowAfter: UInt32
++    public var maximumWindowSize: UInt32
++
++    public init(
++        remainingWindowBefore: UInt32,
++        adjustment: UInt32,
++        remainingWindowAfter: UInt32,
++        maximumWindowSize: UInt32
++    ) {
++        self.remainingWindowBefore = remainingWindowBefore
++        self.adjustment = adjustment
++        self.remainingWindowAfter = remainingWindowAfter
++        self.maximumWindowSize = maximumWindowSize
++    }
++}
++
++/// Why a connection-wide key exchange was requested or observed.
++public enum NIOSSHRekeyReason: Hashable, Sendable {
++    case outboundByteThreshold
++    case inboundByteThreshold
++    case elapsedTimeThreshold
++    case manual
++    case serverInitiated
++}
++
++/// Optional automatic client-rekey thresholds.
++///
++/// The upstream-compatible default disables all automatic triggers. Thresholds
++/// count protected SSH packet bytes independently in each direction.
++public struct NIOSSHRekeyPolicy: Sendable {
++    public let outboundByteThreshold: UInt64?
++    public let inboundByteThreshold: UInt64?
++    public let elapsedTimeThreshold: TimeAmount?
++
++    public init(
++        outboundByteThreshold: UInt64? = nil,
++        inboundByteThreshold: UInt64? = nil,
++        elapsedTimeThreshold: TimeAmount? = nil
++    ) {
++        if let outboundByteThreshold {
++            precondition(outboundByteThreshold > 0, "outboundByteThreshold must be positive")
++        }
++        if let inboundByteThreshold {
++            precondition(inboundByteThreshold > 0, "inboundByteThreshold must be positive")
++        }
++        if let elapsedTimeThreshold {
++            precondition(elapsedTimeThreshold.nanoseconds > 0, "elapsedTimeThreshold must be positive")
++        }
++
++        self.outboundByteThreshold = outboundByteThreshold
++        self.inboundByteThreshold = inboundByteThreshold
++        self.elapsedTimeThreshold = elapsedTimeThreshold
++    }
++
++    public static let disabled = Self()
++}
++
++/// Monotonic time seam used by automatic elapsed-time rekeying.
++public protocol NIOSSHRekeyClock: Sendable {
++    func now() -> NIODeadline
++}
++
++/// The system monotonic clock used unless a caller injects another clock.
++public struct NIOSSHSystemRekeyClock: NIOSSHRekeyClock, Sendable {
++    public init() {}
++
++    public func now() -> NIODeadline {
++        .now()
++    }
++}
++
++/// Current connection-wide rekey state.
++public struct NIOSSHRekeySnapshot: Equatable, Sendable {
++    public var keyExchangeGeneration: UInt64
++    public var protectedBytesSent: UInt64
++    public var protectedBytesReceived: UInt64
++    public var keyExchangeInProgress: Bool
++    public var observedReasons: Set<NIOSSHRekeyReason>
++
++    public init(
++        keyExchangeGeneration: UInt64,
++        protectedBytesSent: UInt64,
++        protectedBytesReceived: UInt64,
++        keyExchangeInProgress: Bool,
++        observedReasons: Set<NIOSSHRekeyReason>
++    ) {
++        self.keyExchangeGeneration = keyExchangeGeneration
++        self.protectedBytesSent = protectedBytesSent
++        self.protectedBytesReceived = protectedBytesReceived
++        self.keyExchangeInProgress = keyExchangeInProgress
++        self.observedReasons = observedReasons
++    }
++}
++
++/// Fired on the parent channel when a post-authentication key exchange starts.
++public struct NIOSSHRekeyStartedEvent: Equatable, Sendable {
++    public var reasons: Set<NIOSSHRekeyReason>
++    public var currentGeneration: UInt64
++
++    public init(reasons: Set<NIOSSHRekeyReason>, currentGeneration: UInt64) {
++        self.reasons = reasons
++        self.currentGeneration = currentGeneration
++    }
++}
++
++/// Fired on the parent channel after a post-authentication key exchange succeeds.
++public struct NIOSSHRekeySucceededEvent: Equatable, Sendable {
++    public var reasons: Set<NIOSSHRekeyReason>
++    public var newGeneration: UInt64
++
++    public init(reasons: Set<NIOSSHRekeyReason>, newGeneration: UInt64) {
++        self.reasons = reasons
++        self.newGeneration = newGeneration
++    }
++}
+--- a/Sources/NIOSSH/SSHClientConfiguration.swift
++++ b/Sources/NIOSSH/SSHClientConfiguration.swift
+@@ -26,16 +26,32 @@
+     /// Supported data encryption algorithms
+     public var transportProtectionSchemes: [NIOSSHTransportProtection.Type]
+ 
++    /// Allowed key-exchange algorithms in caller preference order.
++    ///
++    /// A `nil` value preserves the upstream algorithm list. An empty or
++    /// unsupported list fails negotiation rather than widening the policy.
++    public var keyExchangeAlgorithms: [String]?
++
++    /// Allowed server host-key algorithms in caller preference order.
++    ///
++    /// A `nil` value preserves the upstream algorithm list. An empty or
++    /// unsupported list fails negotiation rather than widening the policy.
++    public var hostKeyAlgorithms: [String]?
++
+     public init(
+         userAuthDelegate: NIOSSHClientUserAuthenticationDelegate,
+         serverAuthDelegate: NIOSSHClientServerAuthenticationDelegate,
+-        globalRequestDelegate: GlobalRequestDelegate? = nil
++        globalRequestDelegate: GlobalRequestDelegate? = nil,
++        keyExchangeAlgorithms: [String]? = nil,
++        hostKeyAlgorithms: [String]? = nil
+     ) {
+         self.init(
+             userAuthDelegate: userAuthDelegate,
+             serverAuthDelegate: serverAuthDelegate,
+             globalRequestDelegate: globalRequestDelegate,
+-            transportProtectionSchemes: Constants.bundledTransportProtectionSchemes
++            transportProtectionSchemes: Constants.bundledTransportProtectionSchemes,
++            keyExchangeAlgorithms: keyExchangeAlgorithms,
++            hostKeyAlgorithms: hostKeyAlgorithms
+         )
+     }
+ 
+@@ -43,12 +59,16 @@
+         userAuthDelegate: NIOSSHClientUserAuthenticationDelegate,
+         serverAuthDelegate: NIOSSHClientServerAuthenticationDelegate,
+         globalRequestDelegate: GlobalRequestDelegate? = nil,
+-        transportProtectionSchemes: [NIOSSHTransportProtection.Type]
++        transportProtectionSchemes: [NIOSSHTransportProtection.Type],
++        keyExchangeAlgorithms: [String]? = nil,
++        hostKeyAlgorithms: [String]? = nil
+     ) {
+         self.userAuthDelegate = userAuthDelegate
+         self.serverAuthDelegate = serverAuthDelegate
+         self.globalRequestDelegate = globalRequestDelegate ?? DefaultGlobalRequestDelegate()
+         self.transportProtectionSchemes = transportProtectionSchemes
++        self.keyExchangeAlgorithms = keyExchangeAlgorithms
++        self.hostKeyAlgorithms = hostKeyAlgorithms
+     }
+ }
+ 
+--- a/Sources/NIOSSH/User Authentication/UserAuthenticationMethod.swift
++++ b/Sources/NIOSSH/User Authentication/UserAuthenticationMethod.swift
+@@ -11,6 +11,7 @@
+ // SPDX-License-Identifier: Apache-2.0
+ //
+ //===----------------------------------------------------------------------===//
++import Crypto
+ import NIOCore
+ 
+ /// The user authentication modes available at this point in time.
+@@ -177,6 +178,9 @@
+         /// The client would like to perform private key authentication.
+         case privateKey(PrivateKey)
+ 
++        /// The client would like to authenticate with an externally held key.
++        case externalPublicKey(ExternalPublicKey)
++
+         /// The client would like to perform password authentication.
+         case password(Password)
+ 
+@@ -214,6 +218,41 @@
+         }
+     }
+ 
++    /// Public key material and an asynchronous signer that never exposes its private key.
++    public struct ExternalPublicKey: Sendable {
++        /// An asynchronous signature callback.
++        ///
++        /// The input is NIOSSH's complete RFC 4252 signable authentication
++        /// payload. The returned bytes are the raw signature representation for
++        /// `algorithm`, without SSH string framing.
++        public typealias Signer = @Sendable (ByteBuffer, EventLoop) -> EventLoopFuture<ByteBuffer>
++
++        public let publicKeyBytes: ByteBuffer
++        public let algorithm: String
++
++        fileprivate let publicKey: NIOSSHPublicKey
++        fileprivate let signer: Signer
++
++        public init(
++            publicKeyBytes: ByteBuffer,
++            algorithm: String,
++            signer: @escaping Signer
++        ) throws {
++            var encodedKey = publicKeyBytes
++            guard let publicKey = try encodedKey.readSSHHostKey(), encodedKey.readableBytes == 0 else {
++                throw NIOSSHError.invalidOpenSSHPublicKey(reason: "incomplete or trailing wire-format key data")
++            }
++            guard publicKey.keyPrefix.elementsEqual(algorithm.utf8) else {
++                throw NIOSSHError.invalidOpenSSHPublicKey(reason: "algorithm does not match wire-format key data")
++            }
++
++            self.publicKeyBytes = publicKeyBytes
++            self.algorithm = algorithm
++            self.publicKey = publicKey
++            self.signer = signer
++        }
++    }
++
+     /// Information provided by the client when attempting to perform password-based authentication.
+     public struct Password: Sendable {
+         /// The client's password.
+@@ -235,6 +274,41 @@
+ }
+ 
+ extension SSHMessage.UserAuthRequestMessage {
++    static func make(
++        request: NIOSSHUserAuthenticationOffer,
++        sessionID: ByteBuffer,
++        loop: EventLoop
++    ) -> EventLoopFuture<Self> {
++        guard case .externalPublicKey(let externalKey) = request.offer else {
++            do {
++                return loop.makeSucceededFuture(try Self(request: request, sessionID: sessionID))
++            } catch {
++                return loop.makeFailedFuture(error)
++            }
++        }
++
++        let username = request.username
++        let service = "ssh-connection"
++        let dataToSign = UserAuthSignablePayload(
++            sessionIdentifier: sessionID,
++            userName: username,
++            serviceName: service,
++            publicKey: externalKey.publicKey
++        )
++
++        return externalKey.signer(dataToSign.bytes, loop).hop(to: loop).flatMapThrowing { signatureBytes in
++            let signature = try NIOSSHSignature(
++                externalSignatureBytes: signatureBytes,
++                algorithm: externalKey.algorithm
++            )
++            return Self(
++                username: username,
++                service: service,
++                method: .publicKey(.known(key: externalKey.publicKey, signature: signature))
++            )
++        }
++    }
++
+     init(request: NIOSSHUserAuthenticationOffer, sessionID: ByteBuffer) throws {
+         // We only ever ask for the ssh-connection service.
+         self.username = request.username
+@@ -250,12 +324,46 @@
+             )
+             let signature = try privateKeyRequest.privateKey.sign(dataToSign)
+             self.method = .publicKey(.known(key: privateKeyRequest.publicKey, signature: signature))
++        case .externalPublicKey:
++            preconditionFailure("External public-key offers must use the asynchronous request constructor")
+         case .password(let passwordRequest):
+             self.method = .password(passwordRequest.password)
+         case .hostBased:
+             fatalError("Unsupported")
+         case .none:
+             self.method = .none
++        }
++    }
++}
++
++extension NIOSSHSignature {
++    fileprivate init(externalSignatureBytes: ByteBuffer, algorithm: String) throws {
++        switch algorithm {
++        case "ssh-ed25519":
++            guard externalSignatureBytes.readableBytes == 64 else {
++                throw NIOSSHError.invalidUserAuthSignature
++            }
++            self.init(backingSignature: .ed25519(.byteBuffer(externalSignatureBytes)))
++        case "ecdsa-sha2-nistp256":
++            self.init(
++                backingSignature: .ecdsaP256(
++                    try P256.Signing.ECDSASignature(rawRepresentation: externalSignatureBytes.readableBytesView)
++                )
++            )
++        case "ecdsa-sha2-nistp384":
++            self.init(
++                backingSignature: .ecdsaP384(
++                    try P384.Signing.ECDSASignature(rawRepresentation: externalSignatureBytes.readableBytesView)
++                )
++            )
++        case "ecdsa-sha2-nistp521":
++            self.init(
++                backingSignature: .ecdsaP521(
++                    try P521.Signing.ECDSASignature(rawRepresentation: externalSignatureBytes.readableBytesView)
++                )
++            )
++        default:
++            throw NIOSSHError.unknownSignature(algorithm: algorithm)
+         }
+     }
+ }
+--- a/Sources/NIOSSH/User Authentication/UserAuthenticationStateMachine.swift
++++ b/Sources/NIOSSH/User Authentication/UserAuthenticationStateMachine.swift
+@@ -448,8 +448,13 @@
+         delegate.nextAuthenticationType(availableMethods: methods, nextChallengePromise: promise)
+ 
+         // The explicit capture list is here to force a copy of the buffer, rather than capturing self.
+-        return promise.futureResult.flatMapThrowing { [sessionID = self.sessionID] request in
+-            try request.map { try SSHMessage.UserAuthRequestMessage(request: $0, sessionID: sessionID) }
++        return promise.futureResult.flatMap { [sessionID = self.sessionID, loop = self.loop] request in
++            guard let request else {
++                return loop.makeSucceededFuture(nil)
++            }
++            return SSHMessage.UserAuthRequestMessage.make(request: request, sessionID: sessionID, loop: loop).map {
++                Optional($0)
++            }
+         }
+     }
+ }
+--- a/Tests/NIOSSHTests/EndToEndTests.swift
++++ b/Tests/NIOSSHTests/EndToEndTests.swift
+@@ -81,17 +81,27 @@
+         try self.server.connect(to: .init(unixDomainSocketPath: "/fake")).wait()
+     }
+ 
+-    func configureWithHarness(_ harness: TestHarness) throws {
++    func configureWithHarness(
++        _ harness: TestHarness,
++        clientRekeyPolicy: NIOSSHRekeyPolicy = .disabled,
++        clientRekeyClock: any NIOSSHRekeyClock = NIOSSHSystemRekeyClock(),
++        clientKeyExchangeAlgorithms: [String]? = nil,
++        clientHostKeyAlgorithms: [String]? = nil
++    ) throws {
+         let clientHandler = NIOSSHHandler(
+             role: .client(
+                 .init(
+                     userAuthDelegate: harness.clientAuthDelegate,
+                     serverAuthDelegate: harness.clientServerAuthDelegate,
+-                    globalRequestDelegate: harness.clientGlobalRequestDelegate
++                    globalRequestDelegate: harness.clientGlobalRequestDelegate,
++                    keyExchangeAlgorithms: clientKeyExchangeAlgorithms,
++                    hostKeyAlgorithms: clientHostKeyAlgorithms
+                 )
+             ),
+             allocator: self.client.allocator,
+-            inboundChildChannelInitializer: nil
++            inboundChildChannelInitializer: nil,
++            rekeyPolicy: clientRekeyPolicy,
++            rekeyClock: clientRekeyClock
+         )
+         let serverHandler = NIOSSHHandler(
+             role: .server(
+--- /dev/null
++++ b/Tests/NIOSSHTests/ReluxPolicyTests.swift
+@@ -0,0 +1,546 @@
++//===----------------------------------------------------------------------===//
++//
++// This source file is part of the SwiftNIO open source project
++//
++// Copyright (c) 2026 Relux contributors
++// Licensed under Apache License v2.0
++//
++// See LICENSE.txt for license information
++// See CONTRIBUTORS.txt for the list of SwiftNIO project authors
++//
++// SPDX-License-Identifier: Apache-2.0
++//
++//===----------------------------------------------------------------------===//
++
++import Crypto
++import NIOCore
++import NIOEmbedded
++import Testing
++
++@testable import NIOSSH
++
++private final class ReluxWindowEventRecorder: ChannelInboundHandler, @unchecked Sendable {
++    typealias InboundIn = SSHChannelData
++
++    var sequence: [String] = []
++    var adjustments: [NIOSSHChannelWindowAdjustedEvent] = []
++
++    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
++        self.sequence.append("read")
++        context.fireChannelRead(data)
++    }
++
++    func userInboundEventTriggered(context: ChannelHandlerContext, event: Any) {
++        if let adjustment = event as? NIOSSHChannelWindowAdjustedEvent {
++            self.sequence.append("adjust")
++            self.adjustments.append(adjustment)
++        }
++        context.fireUserInboundEventTriggered(event)
++    }
++}
++
++@Suite("Relux receive-window policy")
++struct ReluxWindowPolicyTests {
++    @Test(
++        "Configured initial windows are emitted on channel open",
++        arguments: [
++            NIOSSHChannelWindowConfiguration(
++                initialWindowSize: 32 * 1024,
++                maximumWindowSize: 32 * 1024,
++                windowAdjustmentThreshold: 16 * 1024
++            ),
++            NIOSSHChannelWindowConfiguration(
++                initialWindowSize: 64 * 1024,
++                maximumWindowSize: 64 * 1024,
++                windowAdjustmentThreshold: 32 * 1024
++            ),
++            NIOSSHChannelWindowConfiguration(
++                initialWindowSize: 512 * 1024,
++                maximumWindowSize: 1024 * 1024,
++                windowAdjustmentThreshold: 256 * 1024
++            ),
++        ]
++    )
++    func configuredInitialWindowIsOnWire(configuration: NIOSSHChannelWindowConfiguration) throws {
++        let delegate = DummyDelegate()
++        let multiplexer = SSHChannelMultiplexer(
++            delegate: delegate,
++            allocator: delegate.allocator,
++            childChannelInitializer: nil
++        )
++        defer {
++            multiplexer.parentChannelInactive()
++            multiplexer.parentHandlerRemoved()
++            delegate._channel.embeddedEventLoop.run()
++            _ = try? delegate._channel.finish(acceptAlreadyClosed: true)
++        }
++
++        var childChannel: Channel?
++        multiplexer.createChildChannel(nil, channelType: .session) { channel, _ in
++            childChannel = channel
++            return channel.setOption(SSHChildChannelOptions.receiveWindowConfiguration, value: configuration)
++        }
++        delegate._channel.embeddedEventLoop.run()
++
++        guard case .channelOpen(let open)? = delegate.writes.first?.0 else {
++            Issue.record("Expected a channel-open message")
++            return
++        }
++        #expect(open.initialWindowSize == configuration.initialWindowSize)
++
++        let snapshot = try #require(
++            try childChannel?.getOption(SSHChildChannelOptions.receiveWindowSnapshot).wait()
++        )
++        #expect(snapshot.initialWindowSize == configuration.initialWindowSize)
++        #expect(snapshot.maximumWindowSize == configuration.maximumWindowSize)
++        #expect(snapshot.remainingWindowSize == configuration.initialWindowSize)
++    }
++
++    @Test("Unread bytes suppress credit return and explicit policy can suppress adjustment")
++    func adjustmentSuppression() throws {
++        var manager = ChildChannelWindowManager(
++            configuration: .init(
++                initialWindowSize: 64 * 1024,
++                maximumWindowSize: 64 * 1024,
++                windowAdjustmentThreshold: nil
++            )
++        )
++
++        try manager.bufferFlowControlledBytes(32 * 1024)
++        var snapshot = manager.snapshot
++        #expect(snapshot.remainingWindowSize == 32 * 1024)
++        #expect(snapshot.bufferedBytes == 32 * 1024)
++        #expect(snapshot.adjustmentCount == 0)
++
++        #expect(manager.unbufferBytes(32 * 1024) == nil)
++        snapshot = manager.snapshot
++        #expect(snapshot.remainingWindowSize == 32 * 1024)
++        #expect(snapshot.bufferedBytes == 0)
++        #expect(snapshot.deliveredButUnadjustedBytes == 32 * 1024)
++        #expect(snapshot.adjustmentCount == 0)
++    }
++
++    @Test("Adjustments follow delivered bytes and never exceed the immutable cap")
++    func adjustmentAccountingAndCap() throws {
++        var manager = ChildChannelWindowManager(
++            configuration: .init(
++                initialWindowSize: 64 * 1024,
++                maximumWindowSize: 96 * 1024,
++                windowAdjustmentThreshold: 32 * 1024
++            )
++        )
++
++        try manager.bufferFlowControlledBytes(48 * 1024)
++        #expect(manager.unbufferBytes(31 * 1024) == nil)
++
++        let possibleIncrement = manager.unbufferBytes(1024)
++        let increment = try #require(possibleIncrement)
++        #expect(increment.rawValue == 32 * 1024)
++        #expect(increment.remainingWindowBefore == 16 * 1024)
++        #expect(increment.remainingWindowAfter == 48 * 1024)
++        #expect(increment.remainingWindowAfter <= increment.maximumWindowSize)
++
++        let snapshot = manager.snapshot
++        #expect(snapshot.bufferedBytes == 16 * 1024)
++        #expect(snapshot.deliveredButUnadjustedBytes == 0)
++        #expect(snapshot.adjustmentCount == 1)
++        #expect(snapshot.adjustmentBytes == 32 * 1024)
++    }
++
++    @Test("Window adjustment event follows delivery and snapshot accounting")
++    func windowAdjustmentEvent() throws {
++        let delegate = DummyDelegate()
++        let recorder = ReluxWindowEventRecorder()
++        let multiplexer = SSHChannelMultiplexer(
++            delegate: delegate,
++            allocator: delegate.allocator,
++            childChannelInitializer: nil
++        )
++        defer {
++            multiplexer.parentChannelInactive()
++            multiplexer.parentHandlerRemoved()
++            delegate._channel.embeddedEventLoop.run()
++            _ = try? delegate._channel.finish(acceptAlreadyClosed: true)
++        }
++
++        var childChannel: Channel?
++        multiplexer.createChildChannel(nil, channelType: .session) { channel, _ in
++            childChannel = channel
++            return channel.setOption(
++                SSHChildChannelOptions.receiveWindowConfiguration,
++                value: .init(
++                    initialWindowSize: 32 * 1024,
++                    maximumWindowSize: 32 * 1024,
++                    windowAdjustmentThreshold: 16 * 1024
++                )
++            ).flatMap {
++                channel.pipeline.addHandler(recorder)
++            }
++        }
++        delegate._channel.embeddedEventLoop.run()
++
++        try multiplexer.receiveMessage(
++            .channelOpenConfirmation(
++                .init(
++                    recipientChannel: 0,
++                    senderChannel: 7,
++                    initialWindowSize: 32 * 1024,
++                    maximumPacketSize: 32 * 1024
++                )
++            )
++        )
++
++        var payload = delegate.allocator.buffer(capacity: 16 * 1024)
++        payload.writeRepeatingByte(0x7e, count: 16 * 1024)
++        try multiplexer.receiveMessage(.channelData(.init(recipientChannel: 0, data: payload)))
++        multiplexer.parentChannelReadComplete()
++        delegate._channel.embeddedEventLoop.run()
++
++        #expect(recorder.sequence == ["read", "adjust"])
++        let adjustment = try #require(recorder.adjustments.first)
++        #expect(adjustment.remainingWindowBefore == 16 * 1024)
++        #expect(adjustment.adjustment == 16 * 1024)
++        #expect(adjustment.remainingWindowAfter == 32 * 1024)
++        #expect(adjustment.remainingWindowAfter <= adjustment.maximumWindowSize)
++
++        let snapshot = try #require(
++            try childChannel?.getOption(SSHChildChannelOptions.receiveWindowSnapshot).wait()
++        )
++        #expect(snapshot.remainingWindowSize == 32 * 1024)
++        #expect(snapshot.bufferedBytes == 0)
++        #expect(snapshot.adjustmentCount == 1)
++    }
++}
++
++private final class ReluxExternalSignerClientAuth: NIOSSHClientUserAuthenticationDelegate, @unchecked Sendable {
++    let signingKey: Curve25519.Signing.PrivateKey
++    private(set) var signatureInvocationCount = 0
++    private var hasOfferedKey = false
++
++    init(signingKey: Curve25519.Signing.PrivateKey) {
++        self.signingKey = signingKey
++    }
++
++    var publicKey: NIOSSHPublicKey {
++        NIOSSHPublicKey(backingKey: .ed25519(self.signingKey.publicKey))
++    }
++
++    func nextAuthenticationType(
++        availableMethods: NIOSSHAvailableUserAuthenticationMethods,
++        nextChallengePromise: EventLoopPromise<NIOSSHUserAuthenticationOffer?>
++    ) {
++        guard availableMethods.contains(.publicKey), !self.hasOfferedKey else {
++            nextChallengePromise.succeed(nil)
++            return
++        }
++        self.hasOfferedKey = true
++
++        var publicKeyBytes = ByteBufferAllocator().buffer(capacity: 64)
++        publicKeyBytes.writeSSHHostKey(self.publicKey)
++        let signingKey = self.signingKey
++        let invocationRecorder = self
++
++        do {
++            let externalKey = try NIOSSHUserAuthenticationOffer.Offer.ExternalPublicKey(
++                publicKeyBytes: publicKeyBytes,
++                algorithm: "ssh-ed25519"
++            ) { payload, eventLoop in
++                let promise = eventLoop.makePromise(of: ByteBuffer.self)
++                eventLoop.execute {
++                    do {
++                        let signature = try signingKey.signature(for: payload.readableBytesView)
++                        var signatureBytes = ByteBufferAllocator().buffer(capacity: signature.count)
++                        signatureBytes.writeBytes(signature)
++                        invocationRecorder.signatureInvocationCount += 1
++                        promise.succeed(signatureBytes)
++                    } catch {
++                        promise.fail(error)
++                    }
++                }
++                return promise.futureResult
++            }
++            nextChallengePromise.succeed(
++                .init(username: "foo", serviceName: "ssh-connection", offer: .externalPublicKey(externalKey))
++            )
++        } catch {
++            nextChallengePromise.fail(error)
++        }
++    }
++}
++
++@Suite("Relux adapter-conformance APIs", .serialized)
++struct ReluxAdapterConformanceTests {
++    @Test("External asynchronous signer authenticates without a NIOSSH private key")
++    func externalSignerAuthentication() throws {
++        let channels = BackToBackEmbeddedChannel()
++        defer { try? channels.finish() }
++
++        let signingKey = try Curve25519.Signing.PrivateKey(rawRepresentation: [UInt8](repeating: 0x42, count: 32))
++        let clientAuth = ReluxExternalSignerClientAuth(signingKey: signingKey)
++        var harness = TestHarness()
++        harness.clientAuthDelegate = clientAuth
++        harness.serverAuthDelegate = ExpectPublicKeyAuth(clientAuth.publicKey)
++
++        let events = UserEventExpecter()
++        try channels.configureWithHarness(harness)
++        try channels.client.pipeline.syncOperations.addHandler(events)
++        try channels.activate()
++        try channels.interactInMemory()
++
++        #expect(clientAuth.signatureInvocationCount == 1)
++        #expect(events.userEvents.contains { $0 is UserAuthSuccessEvent })
++
++        _ = try channels.createNewChannel()
++        try channels.interactInMemory()
++        #expect(channels.activeServerChannels.count == 1)
++    }
++
++    @Test("Reply-observing keepalive follows the protected global-request round trip")
++    func replyObservingKeepalive() throws {
++        let channels = BackToBackEmbeddedChannel()
++        defer { try? channels.finish() }
++
++        try channels.configureWithHarness(TestHarness())
++        try channels.activate()
++        try channels.interactInMemory()
++
++        var payload = channels.client.allocator.buffer(capacity: 8)
++        payload.writeInteger(UInt64(0x0102_0304_0506_0708))
++        let request = try NIOSSHGlobalRequest(name: "keepalive@openssh.com", payload: payload)
++        let promise = channels.client.eventLoop.makePromise(of: NIOSSHGlobalRequestResponse.self)
++        let completed = NIOLoopBoundBox(false, eventLoop: channels.client.eventLoop)
++        promise.futureResult.whenComplete { _ in completed.value = true }
++
++        channels.clientSSHHandler?.sendGlobalRequest(request, promise: promise)
++        #expect(!completed.value)
++        #expect(channels.activeServerChannels.isEmpty)
++
++        try channels.interactInMemory()
++
++        #expect(completed.value)
++        #expect(try promise.futureResult.wait() == .failure)
++        #expect(channels.activeServerChannels.isEmpty)
++        #expect(request.payload.readableBytes <= NIOSSHGlobalRequest.maximumPayloadBytes)
++
++        var oversized = channels.client.allocator.buffer(
++            capacity: NIOSSHGlobalRequest.maximumPayloadBytes + 1
++        )
++        oversized.writeRepeatingByte(0, count: NIOSSHGlobalRequest.maximumPayloadBytes + 1)
++        do {
++            _ = try NIOSSHGlobalRequest(name: "keepalive@openssh.com", payload: oversized)
++            Issue.record("Expected an oversized global request to be rejected")
++        } catch let error as NIOSSHGlobalRequestError {
++            #expect(
++                error
++                    == .payloadTooLarge(
++                        maximumBytes: NIOSSHGlobalRequest.maximumPayloadBytes,
++                        actualBytes: NIOSSHGlobalRequest.maximumPayloadBytes + 1
++                    )
++            )
++        } catch {
++            Issue.record("Unexpected global request validation error: \(error)")
++        }
++    }
++
++    @Test("Client allowlists constrain and report exact negotiated algorithms")
++    func algorithmAllowlistsAndSnapshot() throws {
++        let channels = BackToBackEmbeddedChannel()
++        defer { try? channels.finish() }
++
++        var harness = TestHarness()
++        harness.serverHostKeys = [
++            .init(ed25519Key: .init()),
++            .init(p256Key: .init()),
++        ]
++        let keyExchangeAllowlist = ["curve25519-sha256@libssh.org", "ecdh-sha2-nistp256"]
++        let hostKeyAllowlist = ["ecdsa-sha2-nistp256", "ssh-ed25519"]
++        try channels.configureWithHarness(
++            harness,
++            clientKeyExchangeAlgorithms: keyExchangeAllowlist,
++            clientHostKeyAlgorithms: hostKeyAllowlist
++        )
++        try channels.activate()
++        try channels.interactInMemory()
++
++        let snapshot = try #require(channels.clientSSHHandler?.negotiatedAlgorithmsSnapshot)
++        #expect(snapshot.keyExchangeAlgorithm == "curve25519-sha256@libssh.org")
++        #expect(snapshot.keyExchangeAlgorithm != "ecdh-sha2-nistp384")
++        #expect(snapshot.hostKeyAlgorithm == "ecdsa-sha2-nistp256")
++        #expect(snapshot.cipherAlgorithm == "aes256-gcm@openssh.com")
++        #expect(snapshot.macAlgorithm == "hmac-sha2-256")
++        #expect(keyExchangeAllowlist.count == 2)
++        #expect(hostKeyAllowlist.count == 2)
++
++    }
++}
++
++private final class ReluxFakeRekeyClock: NIOSSHRekeyClock, @unchecked Sendable {
++    var nowValue: NIODeadline = .uptimeNanoseconds(0)
++
++    func now() -> NIODeadline {
++        self.nowValue
++    }
++
++    func advance(by amount: TimeAmount) {
++        self.nowValue = self.nowValue + amount
++    }
++}
++
++@Suite("Relux automatic rekey policy", .serialized)
++struct ReluxRekeyPolicyTests {
++    @Test("Protected-byte threshold rekeys with active channels and preserves payload")
++    func byteThresholdWithActiveChannel() throws {
++        let channels = BackToBackEmbeddedChannel()
++        defer { try? channels.finish() }
++
++        try channels.configureWithHarness(
++            TestHarness(),
++            clientRekeyPolicy: .init(outboundByteThreshold: 4096)
++        )
++        try channels.activate()
++        try channels.interactInMemory()
++
++        let clientChild = try channels.createNewChannel()
++        try channels.interactInMemory()
++        let serverChild = try #require(channels.activeServerChannels.first)
++        let recorder = ReadRecordingHandler()
++        try serverChild.pipeline.syncOperations.addHandler(recorder)
++
++        var payload = clientChild.allocator.buffer(capacity: 8192)
++        payload.writeRepeatingByte(0x5a, count: 8192)
++        try clientChild.writeAndFlush(SSHChannelData(type: .channel, data: .byteBuffer(payload))).wait()
++        try channels.interactInMemory()
++
++        let snapshot = try #require(channels.clientSSHHandler?.rekeySnapshot)
++        #expect(snapshot.keyExchangeGeneration == 2)
++        #expect(!snapshot.keyExchangeInProgress)
++        #expect(clientChild.isActive)
++        #expect(serverChild.isActive)
++        #expect(recorder.reads.reduce(0) { $0 + $1.data.readableBytes } == 8192)
++    }
++
++    @Test("Inbound protected-byte threshold rekeys on the client")
++    func inboundByteThreshold() throws {
++        let channels = BackToBackEmbeddedChannel()
++        defer { try? channels.finish() }
++
++        try channels.configureWithHarness(
++            TestHarness(),
++            clientRekeyPolicy: .init(inboundByteThreshold: 4096)
++        )
++        try channels.activate()
++        try channels.interactInMemory()
++
++        _ = try channels.createNewChannel()
++        try channels.interactInMemory()
++        let serverChild = try #require(channels.activeServerChannels.first)
++
++        var payload = serverChild.allocator.buffer(capacity: 8192)
++        payload.writeRepeatingByte(0x3c, count: 8192)
++        try serverChild.writeAndFlush(SSHChannelData(type: .channel, data: .byteBuffer(payload))).wait()
++        try channels.interactInMemory()
++
++        let snapshot = try #require(channels.clientSSHHandler?.rekeySnapshot)
++        #expect(snapshot.keyExchangeGeneration == 2)
++        #expect(!snapshot.keyExchangeInProgress)
++    }
++
++    @Test("Injected monotonic clock deterministically triggers elapsed-time rekey")
++    func timeThreshold() throws {
++        let channels = BackToBackEmbeddedChannel()
++        let clock = ReluxFakeRekeyClock()
++        defer { try? channels.finish() }
++
++        try channels.configureWithHarness(
++            TestHarness(),
++            clientRekeyPolicy: .init(elapsedTimeThreshold: .seconds(10)),
++            clientRekeyClock: clock
++        )
++        try channels.activate()
++        try channels.interactInMemory()
++
++        clock.advance(by: .seconds(10))
++        channels.advanceTime(by: .seconds(10))
++        try channels.interactInMemory()
++
++        let snapshot = try #require(channels.clientSSHHandler?.rekeySnapshot)
++        #expect(snapshot.keyExchangeGeneration == 2)
++        #expect(!snapshot.keyExchangeInProgress)
++    }
++
++    @Test("Simultaneous byte and elapsed thresholds coalesce into one key exchange")
++    func simultaneousThresholdsCoalesce() throws {
++        let channels = BackToBackEmbeddedChannel()
++        let clock = ReluxFakeRekeyClock()
++        defer { try? channels.finish() }
++
++        try channels.configureWithHarness(
++            TestHarness(),
++            clientRekeyPolicy: .init(
++                outboundByteThreshold: 4096,
++                elapsedTimeThreshold: .seconds(10)
++            ),
++            clientRekeyClock: clock
++        )
++        try channels.activate()
++        try channels.interactInMemory()
++
++        let events = UserEventExpecter()
++        try channels.client.pipeline.syncOperations.addHandler(events)
++        let clientChild = try channels.createNewChannel()
++        try channels.interactInMemory()
++
++        clock.advance(by: .seconds(10))
++        var payload = clientChild.allocator.buffer(capacity: 8192)
++        payload.writeRepeatingByte(0xa5, count: 8192)
++        try clientChild.writeAndFlush(SSHChannelData(type: .channel, data: .byteBuffer(payload))).wait()
++        try channels.interactInMemory()
++
++        let started = events.userEvents.compactMap { $0 as? NIOSSHRekeyStartedEvent }
++        #expect(started.count == 1)
++        #expect(started.first?.reasons == [.outboundByteThreshold, .elapsedTimeThreshold])
++        #expect(channels.clientSSHHandler?.rekeySnapshot.keyExchangeGeneration == 2)
++    }
++
++    @Test("Concurrent explicit requests share one production-path key exchange")
++    func explicitRequestsCoalesce() throws {
++        let channels = BackToBackEmbeddedChannel()
++        defer { try? channels.finish() }
++
++        try channels.configureWithHarness(TestHarness())
++        try channels.activate()
++        try channels.interactInMemory()
++
++        let first = channels.client.eventLoop.makePromise(of: Void.self)
++        let second = channels.client.eventLoop.makePromise(of: Void.self)
++        channels.clientSSHHandler?.requestRekey(reason: .manual, promise: first)
++        channels.clientSSHHandler?.requestRekey(reason: .manual, promise: second)
++        #expect(channels.clientSSHHandler?.rekeySnapshot.keyExchangeInProgress == true)
++
++        try channels.interactInMemory()
++        try first.futureResult.wait()
++        try second.futureResult.wait()
++        #expect(channels.clientSSHHandler?.rekeySnapshot.keyExchangeGeneration == 2)
++    }
++
++    @Test("Server-initiated rekey remains supported and observable")
++    func serverInitiatedRekey() throws {
++        let channels = BackToBackEmbeddedChannel()
++        defer { try? channels.finish() }
++
++        try channels.configureWithHarness(TestHarness())
++        try channels.activate()
++        try channels.interactInMemory()
++
++        let events = UserEventExpecter()
++        try channels.client.pipeline.syncOperations.addHandler(events)
++        channels.serverSSHHandler?.requestRekey(reason: .manual)
++        try channels.interactInMemory()
++
++        let started = events.userEvents.compactMap { $0 as? NIOSSHRekeyStartedEvent }
++        let succeeded = events.userEvents.compactMap { $0 as? NIOSSHRekeySucceededEvent }
++        #expect(started.contains { $0.reasons.contains(.serverInitiated) })
++        #expect(succeeded.contains { $0.reasons.contains(.serverInitiated) })
++        #expect(channels.clientSSHHandler?.rekeySnapshot.keyExchangeGeneration == 2)
++    }
++}
+--- /dev/null
++++ b/UPSTREAM.md
+@@ -0,0 +1,31 @@
++# ReluxNIOSSH upstream provenance
++
++ReluxNIOSSH is a minimal source fork of
++[`apple/swift-nio-ssh`](https://github.com/apple/swift-nio-ssh).
++
++| Field | Value |
++| --- | --- |
++| Upstream tag | `0.14.1` |
++| Upstream commit | `31cdc3c3391a10460dedf1170530cf651d2ca496` |
++| Source archive SHA-256 | `0b135087e76cb03e33f544484f21e1c3ba3b967f8a0ba2aead960ce4d0d06e6a` |
++| License | Apache License 2.0 |
++| `LICENSE.txt` SHA-256 | `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` |
++| Fork package identity | `ReluxNIOSSH` |
++| Preserved library product/module | `NIOSSH` |
++
++The archive is the GitHub commit archive at:
++
++```text
++https://github.com/apple/swift-nio-ssh/archive/31cdc3c3391a10460dedf1170530cf651d2ca496.tar.gz
++```
++
++The fork checks in `Package.resolved` to lock the audited graph. Its resolved graph is SwiftNIO
++`2.101.3`, Swift Crypto `4.5.1`, Swift Atomics `1.3.1`, Swift ASN.1 `1.7.1`,
++Swift Collections `1.6.0`, and Swift System `1.7.4`, at the exact revisions in
++that file.
++
++Run the fail-closed provenance and delta check from the repository root:
++
++```sh
++make check-reluxniossh
++```

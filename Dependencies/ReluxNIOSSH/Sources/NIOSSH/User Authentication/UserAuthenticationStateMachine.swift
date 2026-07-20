@@ -448,8 +448,13 @@ extension UserAuthenticationStateMachine {
         delegate.nextAuthenticationType(availableMethods: methods, nextChallengePromise: promise)
 
         // The explicit capture list is here to force a copy of the buffer, rather than capturing self.
-        return promise.futureResult.flatMapThrowing { [sessionID = self.sessionID] request in
-            try request.map { try SSHMessage.UserAuthRequestMessage(request: $0, sessionID: sessionID) }
+        return promise.futureResult.flatMap { [sessionID = self.sessionID, loop = self.loop] request in
+            guard let request else {
+                return loop.makeSucceededFuture(nil)
+            }
+            return SSHMessage.UserAuthRequestMessage.make(request: request, sessionID: sessionID, loop: loop).map {
+                Optional($0)
+            }
         }
     }
 }

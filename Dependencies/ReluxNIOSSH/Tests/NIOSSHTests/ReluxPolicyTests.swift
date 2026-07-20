@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Crypto
 import NIOCore
 import NIOEmbedded
 import Testing
@@ -208,6 +209,168 @@ struct ReluxWindowPolicyTests {
         #expect(snapshot.remainingWindowSize == 32 * 1024)
         #expect(snapshot.bufferedBytes == 0)
         #expect(snapshot.adjustmentCount == 1)
+    }
+}
+
+private final class ReluxExternalSignerClientAuth: NIOSSHClientUserAuthenticationDelegate, @unchecked Sendable {
+    let signingKey: Curve25519.Signing.PrivateKey
+    private(set) var signatureInvocationCount = 0
+    private var hasOfferedKey = false
+
+    init(signingKey: Curve25519.Signing.PrivateKey) {
+        self.signingKey = signingKey
+    }
+
+    var publicKey: NIOSSHPublicKey {
+        NIOSSHPublicKey(backingKey: .ed25519(self.signingKey.publicKey))
+    }
+
+    func nextAuthenticationType(
+        availableMethods: NIOSSHAvailableUserAuthenticationMethods,
+        nextChallengePromise: EventLoopPromise<NIOSSHUserAuthenticationOffer?>
+    ) {
+        guard availableMethods.contains(.publicKey), !self.hasOfferedKey else {
+            nextChallengePromise.succeed(nil)
+            return
+        }
+        self.hasOfferedKey = true
+
+        var publicKeyBytes = ByteBufferAllocator().buffer(capacity: 64)
+        publicKeyBytes.writeSSHHostKey(self.publicKey)
+        let signingKey = self.signingKey
+        let invocationRecorder = self
+
+        do {
+            let externalKey = try NIOSSHUserAuthenticationOffer.Offer.ExternalPublicKey(
+                publicKeyBytes: publicKeyBytes,
+                algorithm: "ssh-ed25519"
+            ) { payload, eventLoop in
+                let promise = eventLoop.makePromise(of: ByteBuffer.self)
+                eventLoop.execute {
+                    do {
+                        let signature = try signingKey.signature(for: payload.readableBytesView)
+                        var signatureBytes = ByteBufferAllocator().buffer(capacity: signature.count)
+                        signatureBytes.writeBytes(signature)
+                        invocationRecorder.signatureInvocationCount += 1
+                        promise.succeed(signatureBytes)
+                    } catch {
+                        promise.fail(error)
+                    }
+                }
+                return promise.futureResult
+            }
+            nextChallengePromise.succeed(
+                .init(username: "foo", serviceName: "ssh-connection", offer: .externalPublicKey(externalKey))
+            )
+        } catch {
+            nextChallengePromise.fail(error)
+        }
+    }
+}
+
+@Suite("Relux adapter-conformance APIs", .serialized)
+struct ReluxAdapterConformanceTests {
+    @Test("External asynchronous signer authenticates without a NIOSSH private key")
+    func externalSignerAuthentication() throws {
+        let channels = BackToBackEmbeddedChannel()
+        defer { try? channels.finish() }
+
+        let signingKey = try Curve25519.Signing.PrivateKey(rawRepresentation: [UInt8](repeating: 0x42, count: 32))
+        let clientAuth = ReluxExternalSignerClientAuth(signingKey: signingKey)
+        var harness = TestHarness()
+        harness.clientAuthDelegate = clientAuth
+        harness.serverAuthDelegate = ExpectPublicKeyAuth(clientAuth.publicKey)
+
+        let events = UserEventExpecter()
+        try channels.configureWithHarness(harness)
+        try channels.client.pipeline.syncOperations.addHandler(events)
+        try channels.activate()
+        try channels.interactInMemory()
+
+        #expect(clientAuth.signatureInvocationCount == 1)
+        #expect(events.userEvents.contains { $0 is UserAuthSuccessEvent })
+
+        _ = try channels.createNewChannel()
+        try channels.interactInMemory()
+        #expect(channels.activeServerChannels.count == 1)
+    }
+
+    @Test("Reply-observing keepalive follows the protected global-request round trip")
+    func replyObservingKeepalive() throws {
+        let channels = BackToBackEmbeddedChannel()
+        defer { try? channels.finish() }
+
+        try channels.configureWithHarness(TestHarness())
+        try channels.activate()
+        try channels.interactInMemory()
+
+        var payload = channels.client.allocator.buffer(capacity: 8)
+        payload.writeInteger(UInt64(0x0102_0304_0506_0708))
+        let request = try NIOSSHGlobalRequest(name: "keepalive@openssh.com", payload: payload)
+        let promise = channels.client.eventLoop.makePromise(of: NIOSSHGlobalRequestResponse.self)
+        let completed = NIOLoopBoundBox(false, eventLoop: channels.client.eventLoop)
+        promise.futureResult.whenComplete { _ in completed.value = true }
+
+        channels.clientSSHHandler?.sendGlobalRequest(request, promise: promise)
+        #expect(!completed.value)
+        #expect(channels.activeServerChannels.isEmpty)
+
+        try channels.interactInMemory()
+
+        #expect(completed.value)
+        #expect(try promise.futureResult.wait() == .failure)
+        #expect(channels.activeServerChannels.isEmpty)
+        #expect(request.payload.readableBytes <= NIOSSHGlobalRequest.maximumPayloadBytes)
+
+        var oversized = channels.client.allocator.buffer(
+            capacity: NIOSSHGlobalRequest.maximumPayloadBytes + 1
+        )
+        oversized.writeRepeatingByte(0, count: NIOSSHGlobalRequest.maximumPayloadBytes + 1)
+        do {
+            _ = try NIOSSHGlobalRequest(name: "keepalive@openssh.com", payload: oversized)
+            Issue.record("Expected an oversized global request to be rejected")
+        } catch let error as NIOSSHGlobalRequestError {
+            #expect(
+                error
+                    == .payloadTooLarge(
+                        maximumBytes: NIOSSHGlobalRequest.maximumPayloadBytes,
+                        actualBytes: NIOSSHGlobalRequest.maximumPayloadBytes + 1
+                    )
+            )
+        } catch {
+            Issue.record("Unexpected global request validation error: \(error)")
+        }
+    }
+
+    @Test("Client allowlists constrain and report exact negotiated algorithms")
+    func algorithmAllowlistsAndSnapshot() throws {
+        let channels = BackToBackEmbeddedChannel()
+        defer { try? channels.finish() }
+
+        var harness = TestHarness()
+        harness.serverHostKeys = [
+            .init(ed25519Key: .init()),
+            .init(p256Key: .init()),
+        ]
+        let keyExchangeAllowlist = ["curve25519-sha256@libssh.org", "ecdh-sha2-nistp256"]
+        let hostKeyAllowlist = ["ecdsa-sha2-nistp256", "ssh-ed25519"]
+        try channels.configureWithHarness(
+            harness,
+            clientKeyExchangeAlgorithms: keyExchangeAllowlist,
+            clientHostKeyAlgorithms: hostKeyAllowlist
+        )
+        try channels.activate()
+        try channels.interactInMemory()
+
+        let snapshot = try #require(channels.clientSSHHandler?.negotiatedAlgorithmsSnapshot)
+        #expect(snapshot.keyExchangeAlgorithm == "curve25519-sha256@libssh.org")
+        #expect(snapshot.keyExchangeAlgorithm != "ecdh-sha2-nistp384")
+        #expect(snapshot.hostKeyAlgorithm == "ecdsa-sha2-nistp256")
+        #expect(snapshot.cipherAlgorithm == "aes256-gcm@openssh.com")
+        #expect(snapshot.macAlgorithm == "hmac-sha2-256")
+        #expect(keyExchangeAllowlist.count == 2)
+        #expect(hostKeyAllowlist.count == 2)
+
     }
 }
 

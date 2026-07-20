@@ -26,16 +26,32 @@ public struct SSHClientConfiguration {
     /// Supported data encryption algorithms
     public var transportProtectionSchemes: [NIOSSHTransportProtection.Type]
 
+    /// Allowed key-exchange algorithms in caller preference order.
+    ///
+    /// A `nil` value preserves the upstream algorithm list. An empty or
+    /// unsupported list fails negotiation rather than widening the policy.
+    public var keyExchangeAlgorithms: [String]?
+
+    /// Allowed server host-key algorithms in caller preference order.
+    ///
+    /// A `nil` value preserves the upstream algorithm list. An empty or
+    /// unsupported list fails negotiation rather than widening the policy.
+    public var hostKeyAlgorithms: [String]?
+
     public init(
         userAuthDelegate: NIOSSHClientUserAuthenticationDelegate,
         serverAuthDelegate: NIOSSHClientServerAuthenticationDelegate,
-        globalRequestDelegate: GlobalRequestDelegate? = nil
+        globalRequestDelegate: GlobalRequestDelegate? = nil,
+        keyExchangeAlgorithms: [String]? = nil,
+        hostKeyAlgorithms: [String]? = nil
     ) {
         self.init(
             userAuthDelegate: userAuthDelegate,
             serverAuthDelegate: serverAuthDelegate,
             globalRequestDelegate: globalRequestDelegate,
-            transportProtectionSchemes: Constants.bundledTransportProtectionSchemes
+            transportProtectionSchemes: Constants.bundledTransportProtectionSchemes,
+            keyExchangeAlgorithms: keyExchangeAlgorithms,
+            hostKeyAlgorithms: hostKeyAlgorithms
         )
     }
 
@@ -43,12 +59,16 @@ public struct SSHClientConfiguration {
         userAuthDelegate: NIOSSHClientUserAuthenticationDelegate,
         serverAuthDelegate: NIOSSHClientServerAuthenticationDelegate,
         globalRequestDelegate: GlobalRequestDelegate? = nil,
-        transportProtectionSchemes: [NIOSSHTransportProtection.Type]
+        transportProtectionSchemes: [NIOSSHTransportProtection.Type],
+        keyExchangeAlgorithms: [String]? = nil,
+        hostKeyAlgorithms: [String]? = nil
     ) {
         self.userAuthDelegate = userAuthDelegate
         self.serverAuthDelegate = serverAuthDelegate
         self.globalRequestDelegate = globalRequestDelegate ?? DefaultGlobalRequestDelegate()
         self.transportProtectionSchemes = transportProtectionSchemes
+        self.keyExchangeAlgorithms = keyExchangeAlgorithms
+        self.hostKeyAlgorithms = hostKeyAlgorithms
     }
 }
 

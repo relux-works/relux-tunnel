@@ -11,6 +11,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
+import Crypto
 import NIOCore
 
 /// The user authentication modes available at this point in time.
@@ -177,6 +178,9 @@ extension NIOSSHUserAuthenticationOffer {
         /// The client would like to perform private key authentication.
         case privateKey(PrivateKey)
 
+        /// The client would like to authenticate with an externally held key.
+        case externalPublicKey(ExternalPublicKey)
+
         /// The client would like to perform password authentication.
         case password(Password)
 
@@ -214,6 +218,41 @@ extension NIOSSHUserAuthenticationOffer.Offer {
         }
     }
 
+    /// Public key material and an asynchronous signer that never exposes its private key.
+    public struct ExternalPublicKey: Sendable {
+        /// An asynchronous signature callback.
+        ///
+        /// The input is NIOSSH's complete RFC 4252 signable authentication
+        /// payload. The returned bytes are the raw signature representation for
+        /// `algorithm`, without SSH string framing.
+        public typealias Signer = @Sendable (ByteBuffer, EventLoop) -> EventLoopFuture<ByteBuffer>
+
+        public let publicKeyBytes: ByteBuffer
+        public let algorithm: String
+
+        fileprivate let publicKey: NIOSSHPublicKey
+        fileprivate let signer: Signer
+
+        public init(
+            publicKeyBytes: ByteBuffer,
+            algorithm: String,
+            signer: @escaping Signer
+        ) throws {
+            var encodedKey = publicKeyBytes
+            guard let publicKey = try encodedKey.readSSHHostKey(), encodedKey.readableBytes == 0 else {
+                throw NIOSSHError.invalidOpenSSHPublicKey(reason: "incomplete or trailing wire-format key data")
+            }
+            guard publicKey.keyPrefix.elementsEqual(algorithm.utf8) else {
+                throw NIOSSHError.invalidOpenSSHPublicKey(reason: "algorithm does not match wire-format key data")
+            }
+
+            self.publicKeyBytes = publicKeyBytes
+            self.algorithm = algorithm
+            self.publicKey = publicKey
+            self.signer = signer
+        }
+    }
+
     /// Information provided by the client when attempting to perform password-based authentication.
     public struct Password: Sendable {
         /// The client's password.
@@ -235,6 +274,41 @@ extension NIOSSHUserAuthenticationOffer.Offer {
 }
 
 extension SSHMessage.UserAuthRequestMessage {
+    static func make(
+        request: NIOSSHUserAuthenticationOffer,
+        sessionID: ByteBuffer,
+        loop: EventLoop
+    ) -> EventLoopFuture<Self> {
+        guard case .externalPublicKey(let externalKey) = request.offer else {
+            do {
+                return loop.makeSucceededFuture(try Self(request: request, sessionID: sessionID))
+            } catch {
+                return loop.makeFailedFuture(error)
+            }
+        }
+
+        let username = request.username
+        let service = "ssh-connection"
+        let dataToSign = UserAuthSignablePayload(
+            sessionIdentifier: sessionID,
+            userName: username,
+            serviceName: service,
+            publicKey: externalKey.publicKey
+        )
+
+        return externalKey.signer(dataToSign.bytes, loop).hop(to: loop).flatMapThrowing { signatureBytes in
+            let signature = try NIOSSHSignature(
+                externalSignatureBytes: signatureBytes,
+                algorithm: externalKey.algorithm
+            )
+            return Self(
+                username: username,
+                service: service,
+                method: .publicKey(.known(key: externalKey.publicKey, signature: signature))
+            )
+        }
+    }
+
     init(request: NIOSSHUserAuthenticationOffer, sessionID: ByteBuffer) throws {
         // We only ever ask for the ssh-connection service.
         self.username = request.username
@@ -250,12 +324,46 @@ extension SSHMessage.UserAuthRequestMessage {
             )
             let signature = try privateKeyRequest.privateKey.sign(dataToSign)
             self.method = .publicKey(.known(key: privateKeyRequest.publicKey, signature: signature))
+        case .externalPublicKey:
+            preconditionFailure("External public-key offers must use the asynchronous request constructor")
         case .password(let passwordRequest):
             self.method = .password(passwordRequest.password)
         case .hostBased:
             fatalError("Unsupported")
         case .none:
             self.method = .none
+        }
+    }
+}
+
+extension NIOSSHSignature {
+    fileprivate init(externalSignatureBytes: ByteBuffer, algorithm: String) throws {
+        switch algorithm {
+        case "ssh-ed25519":
+            guard externalSignatureBytes.readableBytes == 64 else {
+                throw NIOSSHError.invalidUserAuthSignature
+            }
+            self.init(backingSignature: .ed25519(.byteBuffer(externalSignatureBytes)))
+        case "ecdsa-sha2-nistp256":
+            self.init(
+                backingSignature: .ecdsaP256(
+                    try P256.Signing.ECDSASignature(rawRepresentation: externalSignatureBytes.readableBytesView)
+                )
+            )
+        case "ecdsa-sha2-nistp384":
+            self.init(
+                backingSignature: .ecdsaP384(
+                    try P384.Signing.ECDSASignature(rawRepresentation: externalSignatureBytes.readableBytesView)
+                )
+            )
+        case "ecdsa-sha2-nistp521":
+            self.init(
+                backingSignature: .ecdsaP521(
+                    try P521.Signing.ECDSASignature(rawRepresentation: externalSignatureBytes.readableBytesView)
+                )
+            )
+        default:
+            throw NIOSSHError.unknownSignature(algorithm: algorithm)
         }
     }
 }

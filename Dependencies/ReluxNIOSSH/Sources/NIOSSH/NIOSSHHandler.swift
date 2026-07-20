@@ -81,6 +81,12 @@ public final class NIOSSHHandler {
 
     private var rekeyPromises: [EventLoopPromise<Void>]
 
+    /// Exact algorithms selected by the most recently observed key exchange.
+    ///
+    /// This property is not thread-safe and may only be read on the parent
+    /// channel's event loop.
+    public private(set) var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms?
+
     /// Construct a new ``NIOSSHHandler``.
     ///
     /// - parameters:
@@ -109,6 +115,7 @@ public final class NIOSSHHandler {
         self.keyExchangeGeneration = 0
         self.rekeyReasons = []
         self.rekeyPromises = []
+        self.negotiatedAlgorithmsSnapshot = nil
         self.multiplexer = SSHChannelMultiplexer(
             delegate: self,
             allocator: allocator,
@@ -124,6 +131,7 @@ extension NIOSSHHandler {
     enum PendingGlobalRequestResponse {
         case tcpForwarding(EventLoopPromise<GlobalRequest.TCPForwardingResponse?>)
         case unknown(EventLoopPromise<ByteBuffer?>)
+        case global(EventLoopPromise<NIOSSHGlobalRequestResponse>)
 
         func succeed(_ result: SSHMessage.RequestSuccessMessage?) {
             switch self {
@@ -131,6 +139,23 @@ extension NIOSSHHandler {
                 promise.succeed(result.map(GlobalRequest.TCPForwardingResponse.init))
             case .unknown(let promise):
                 promise.succeed(result?.buffer)
+            case .global(let promise):
+                if let result {
+                    promise.succeed(.success(result.buffer))
+                } else {
+                    promise.succeed(.failure)
+                }
+            }
+        }
+
+        func reject() {
+            switch self {
+            case .tcpForwarding(let promise):
+                promise.fail(NIOSSHError.globalRequestRefused)
+            case .unknown(let promise):
+                promise.fail(NIOSSHError.globalRequestRefused)
+            case .global(let promise):
+                promise.succeed(.failure)
             }
         }
 
@@ -139,6 +164,8 @@ extension NIOSSHHandler {
             case .tcpForwarding(let promise):
                 promise.fail(error)
             case .unknown(let promise):
+                promise.fail(error)
+            case .global(let promise):
                 promise.fail(error)
             }
         }
@@ -371,6 +398,23 @@ extension NIOSSHHandler {
         self.sendGlobalRequestsIfPossible()
     }
 
+    /// Sends a bounded extension request with `want-reply` and observes its ordered reply.
+    ///
+    /// The request is queued until authentication succeeds and then passes through
+    /// NIOSSH's normal packet serializer, encryption, MAC, and response-ordering path.
+    /// This function is not thread-safe and may only be called on the parent channel.
+    public func sendGlobalRequest(
+        _ request: NIOSSHGlobalRequest,
+        promise: EventLoopPromise<NIOSSHGlobalRequestResponse>? = nil
+    ) {
+        let message = SSHMessage.GlobalRequestMessage(
+            wantReply: true,
+            type: .unknown(request.name, request.payload)
+        )
+        self.pendingGlobalRequests.append((value: message, promise: promise.map { .global($0) }))
+        self.sendGlobalRequestsIfPossible()
+    }
+
     /// Sends a global request of any kind. This is commonly used for TCP forwarding requests, but can be used to extend the protocol.
     ///
     /// This function is **not** thread-safe: it may only be called from on the channel.
@@ -405,7 +449,7 @@ extension NIOSSHHandler {
         case .success(let response):
             next?.succeed(response)
         case .failure:
-            next?.fail(NIOSSHError.globalRequestRefused)
+            next?.reject()
         }
     }
 
@@ -635,6 +679,10 @@ extension NIOSSHHandler {
             )
         } else if wasKeyExchangeInProgress, !isKeyExchangeInProgress {
             self.keyExchangeSucceeded(context: context)
+        }
+
+        if let algorithms = self.stateMachine.negotiatedAlgorithmsSnapshot {
+            self.negotiatedAlgorithmsSnapshot = algorithms
         }
 
         self.scheduleTimeRekeyIfNeeded(context: context)

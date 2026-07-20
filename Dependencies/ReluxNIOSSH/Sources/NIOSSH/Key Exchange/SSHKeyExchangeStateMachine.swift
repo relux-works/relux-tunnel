@@ -129,7 +129,7 @@ struct SSHKeyExchangeStateMachine {
 
         return .init(
             cookie: rng.randomCookie(allocator: self.allocator),
-            keyExchangeAlgorithms: Self.supportedKeyExchangeAlgorithms,
+            keyExchangeAlgorithms: self.supportedKeyExchangeAlgorithms,
             serverHostKeyAlgorithms: self.supportedHostKeyAlgorithms,
             encryptionAlgorithmsClientToServer: encryptionAlgorithms,
             encryptionAlgorithmsServerToClient: encryptionAlgorithms,
@@ -411,7 +411,9 @@ struct SSHKeyExchangeStateMachine {
         return NegotiationResult(
             negotiatedKeyExchangeAlgorithm: keyExchange,
             negotiatedHostKeyAlgorithm: hostKey,
-            negotiatedProtection: scheme
+            negotiatedProtection: scheme,
+            negotiatedCipherAlgorithm: clientEncryption,
+            negotiatedMACAlgorithm: clientMAC
         )
     }
 
@@ -451,13 +453,13 @@ struct SSHKeyExchangeStateMachine {
 
         switch self.role {
         case .client:
-            clientAlgorithms = Self.supportedKeyExchangeAlgorithms
+            clientAlgorithms = self.supportedKeyExchangeAlgorithms
             serverAlgorithms = peerKeyExchangeAlgorithms
             clientHostKeyAlgorithms = self.supportedHostKeyAlgorithms
             serverHostKeyAlgorithms = peerHostKeyAlgorithms
         case .server:
             clientAlgorithms = peerKeyExchangeAlgorithms
-            serverAlgorithms = Self.supportedKeyExchangeAlgorithms
+            serverAlgorithms = self.supportedKeyExchangeAlgorithms
             clientHostKeyAlgorithms = peerHostKeyAlgorithms
             serverHostKeyAlgorithms = self.supportedHostKeyAlgorithms
         }
@@ -553,15 +555,35 @@ struct SSHKeyExchangeStateMachine {
     private func expectingIncorrectGuess(_ kexMessage: SSHMessage.KeyExchangeMessage) -> Bool {
         // A guess is wrong if the key exchange algorithm and/or the host key algorithm differ from our preference.
         kexMessage.firstKexPacketFollows
-            && (kexMessage.keyExchangeAlgorithms.first != Self.supportedKeyExchangeAlgorithms.first
+            && (kexMessage.keyExchangeAlgorithms.first != self.supportedKeyExchangeAlgorithms.first
                 || kexMessage.serverHostKeyAlgorithms.first != self.supportedHostKeyAlgorithms.first)
+    }
+
+    /// The key-exchange algorithms advertised by this peer, in preference order.
+    private var supportedKeyExchangeAlgorithms: [Substring] {
+        switch self.role {
+        case .client(let configuration):
+            guard let configured = configuration.keyExchangeAlgorithms else {
+                return Self.supportedKeyExchangeAlgorithms
+            }
+            return configured.compactMap { configuredAlgorithm in
+                Self.supportedKeyExchangeAlgorithms.first { $0 == Substring(configuredAlgorithm) }
+            }
+        case .server:
+            return Self.supportedKeyExchangeAlgorithms
+        }
     }
 
     // The host key algorithms supported by this peer, in order of preference.
     private var supportedHostKeyAlgorithms: [Substring] {
         switch self.role {
-        case .client:
-            return Self.supportedServerHostKeyAlgorithms
+        case .client(let configuration):
+            guard let configured = configuration.hostKeyAlgorithms else {
+                return Self.supportedServerHostKeyAlgorithms
+            }
+            return configured.compactMap { configuredAlgorithm in
+                Self.supportedServerHostKeyAlgorithms.first { $0 == Substring(configuredAlgorithm) }
+            }
         case .server(let configuration):
             return configuration.hostKeys.flatMap { $0.hostKeyAlgorithms }
         }
@@ -614,11 +636,39 @@ extension SSHKeyExchangeStateMachine {
 
         var negotiatedProtection: NIOSSHTransportProtection.Type
 
+        var negotiatedCipherAlgorithm: Substring
+
+        var negotiatedMACAlgorithm: Substring
+
         func negotiatedHostKey(_ keys: [NIOSSHPrivateKey]) -> NIOSSHPrivateKey {
             // This force-unwrap is safe: to fail to obtain it is a programming error, as we must have negotiated
             // the host key algorithm.
             keys.first { $0.hostKeyAlgorithms.contains(self.negotiatedHostKeyAlgorithm) }!
         }
+    }
+
+    var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms? {
+        let negotiated: NegotiationResult
+        switch self.state {
+        case .keyExchangeReceived(_, let result, _),
+            .awaitingKeyExchangeInitInvalidGuess(_, let result),
+            .awaitingKeyExchangeInit(_, let result),
+            .keyExchangeInitReceived(_, let result),
+            .keyExchangeInitSent(_, let result),
+            .keysExchanged(_, _, let result),
+            .newKeysReceived(_, _, let result),
+            .newKeysSent(_, _, let result):
+            negotiated = result
+        case .idle, .keyExchangeSent, .complete:
+            return nil
+        }
+
+        return .init(
+            keyExchangeAlgorithm: String(negotiated.negotiatedKeyExchangeAlgorithm),
+            hostKeyAlgorithm: String(negotiated.negotiatedHostKeyAlgorithm),
+            cipherAlgorithm: String(negotiated.negotiatedCipherAlgorithm),
+            macAlgorithm: String(negotiated.negotiatedMACAlgorithm)
+        )
     }
 
     /// Obtains the session ID, if we have one already.

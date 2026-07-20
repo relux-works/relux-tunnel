@@ -56,6 +56,29 @@ struct SSHConnectionStateMachine {
 
         case sentDisconnect(SSHConnectionRole)
 
+        fileprivate var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms? {
+            switch self {
+            case .keyExchange(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .sentNewKeys(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .receivedNewKeys(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .receivedKexInitWhenActive(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .sentKexInitWhenActive(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .rekeying(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .rekeyingSentNewKeysState(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .rekeyingReceivedNewKeysState(let state):
+                return state.keyExchangeStateMachine.negotiatedAlgorithmsSnapshot
+            case .idle, .sentVersion, .userAuthentication, .active, .receivedDisconnect, .sentDisconnect:
+                return nil
+            }
+        }
+
         fileprivate mutating func bufferInboundData(_ data: inout ByteBuffer) {
             switch self {
             case .idle:
@@ -772,11 +795,14 @@ struct SSHConnectionStateMachine {
     /// The state of this state machine.
     private var state: State
 
+    private(set) var negotiatedAlgorithmsSnapshot: NIOSSHNegotiatedAlgorithms?
+
     init(
         role: SSHConnectionRole,
         protectionSchemes: [NIOSSHTransportProtection.Type] = Constants.bundledTransportProtectionSchemes
     ) {
         self.state = .idle(IdleState(role: role, protectionSchemes: protectionSchemes))
+        self.negotiatedAlgorithmsSnapshot = nil
     }
 
     func start() -> SSHMultiMessage? {
@@ -798,7 +824,8 @@ struct SSHConnectionStateMachine {
         allocator: ByteBufferAllocator,
         loop: EventLoop
     ) throws -> StateMachineInboundProcessResult? {
-        try self.state.processInboundMessage(allocator: allocator, loop: loop)
+        defer { self.negotiatedAlgorithmsSnapshot = self.state.negotiatedAlgorithmsSnapshot }
+        return try self.state.processInboundMessage(allocator: allocator, loop: loop)
     }
 
     mutating func processOutboundMessage(
@@ -807,6 +834,7 @@ struct SSHConnectionStateMachine {
         allocator: ByteBufferAllocator,
         loop: EventLoop
     ) throws {
+        defer { self.negotiatedAlgorithmsSnapshot = self.state.negotiatedAlgorithmsSnapshot }
         switch self.state {
         case .idle(var state):
             switch message {
@@ -1220,6 +1248,7 @@ extension SSHConnectionStateMachine {
 extension SSHConnectionStateMachine {
     // Called when we wish to re-key the connection.
     mutating func beginRekeying(buffer: inout ByteBuffer, allocator: ByteBufferAllocator, loop: EventLoop) throws {
+        defer { self.negotiatedAlgorithmsSnapshot = self.state.negotiatedAlgorithmsSnapshot }
         switch self.state {
         case .active(let state):
             // Trying to rekey.

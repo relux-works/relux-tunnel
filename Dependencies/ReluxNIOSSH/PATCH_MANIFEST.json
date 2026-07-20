@@ -18,7 +18,11 @@
     "Sources/NIOSSH/Child Channels/ChildChannelWindowManager.swift",
     "Sources/NIOSSH/Child Channels/SSHChildChannel.swift",
     "Sources/NIOSSH/Connection State Machine/SSHConnectionStateMachine.swift",
+    "Sources/NIOSSH/Key Exchange/SSHKeyExchangeStateMachine.swift",
     "Sources/NIOSSH/NIOSSHHandler.swift",
+    "Sources/NIOSSH/SSHClientConfiguration.swift",
+    "Sources/NIOSSH/User Authentication/UserAuthenticationMethod.swift",
+    "Sources/NIOSSH/User Authentication/UserAuthenticationStateMachine.swift",
     "Tests/NIOSSHTests/EndToEndTests.swift"
   ],
   "addedFiles": [
@@ -35,6 +39,7 @@
     "0001-relux-package-provenance",
     "0002-configurable-child-receive-window",
     "0003-supported-automatic-rekey",
-    "0004-relux-policy-tests-and-maintenance"
+    "0004-adapter-conformance-public-apis",
+    "0005-relux-policy-tests-and-maintenance"
   ]
 }

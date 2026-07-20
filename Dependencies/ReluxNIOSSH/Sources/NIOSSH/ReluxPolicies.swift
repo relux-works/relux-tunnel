@@ -14,6 +14,64 @@
 
 import NIOCore
 
+/// Invalid input supplied to ``NIOSSHGlobalRequest``.
+public enum NIOSSHGlobalRequestError: Error, Equatable, Sendable {
+    case emptyName
+    case payloadTooLarge(maximumBytes: Int, actualBytes: Int)
+}
+
+/// A bounded SSH global request that requires an ordered peer reply.
+public struct NIOSSHGlobalRequest: Equatable, Sendable {
+    /// Maximum extension payload accepted by the public request API.
+    public static let maximumPayloadBytes = 32 * 1024
+
+    public let name: String
+    public let payload: ByteBuffer
+
+    public init(name: String, payload: ByteBuffer = ByteBuffer()) throws {
+        guard !name.isEmpty else {
+            throw NIOSSHGlobalRequestError.emptyName
+        }
+        guard payload.readableBytes <= Self.maximumPayloadBytes else {
+            throw NIOSSHGlobalRequestError.payloadTooLarge(
+                maximumBytes: Self.maximumPayloadBytes,
+                actualBytes: payload.readableBytes
+            )
+        }
+        self.name = name
+        self.payload = payload
+    }
+}
+
+/// The ordered reply to a ``NIOSSHGlobalRequest``.
+public enum NIOSSHGlobalRequestResponse: Equatable, Sendable {
+    /// The peer accepted the request and returned the supplied response payload.
+    case success(ByteBuffer)
+
+    /// The peer explicitly rejected the request.
+    case failure
+}
+
+/// Exact algorithms selected by one completed SSH negotiation decision.
+public struct NIOSSHNegotiatedAlgorithms: Equatable, Sendable {
+    public let keyExchangeAlgorithm: String
+    public let hostKeyAlgorithm: String
+    public let cipherAlgorithm: String
+    public let macAlgorithm: String
+
+    public init(
+        keyExchangeAlgorithm: String,
+        hostKeyAlgorithm: String,
+        cipherAlgorithm: String,
+        macAlgorithm: String
+    ) {
+        self.keyExchangeAlgorithm = keyExchangeAlgorithm
+        self.hostKeyAlgorithm = hostKeyAlgorithm
+        self.cipherAlgorithm = cipherAlgorithm
+        self.macAlgorithm = macAlgorithm
+    }
+}
+
 /// Receive-window policy for one SSH child channel.
 ///
 /// Set this policy with ``SSHChildChannelOptions/receiveWindowConfiguration``

@@ -14,7 +14,7 @@
    pin. Exit `1` lists the files requiring semantic review; it must not be
    bypassed.
 4. Replace the fork tree with the verified candidate archive, preserving its
-   license and attribution. Reapply the four logical patches from
+   license and attribution. Reapply the five logical patches from
    `RELUX_DELTA.md` in order. Never carry an old hunk solely to make a diff apply.
 5. Update `UPSTREAM.md` and `PATCH_MANIFEST.json` with the new tag, commit,
    archive/license hashes, dependency pins, and exact changed-file allowlist.
@@ -39,4 +39,3 @@ If upstream changes its channel ownership, packet-protection boundary, or KEX
 state model such that these patches need compensating flags or duplicated state,
 stop the rebase and reassess the fork rather than forcing the old design onto the
 new engine.
-

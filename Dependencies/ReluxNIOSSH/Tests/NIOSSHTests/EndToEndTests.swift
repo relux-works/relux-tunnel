@@ -84,14 +84,18 @@ class BackToBackEmbeddedChannel {
     func configureWithHarness(
         _ harness: TestHarness,
         clientRekeyPolicy: NIOSSHRekeyPolicy = .disabled,
-        clientRekeyClock: any NIOSSHRekeyClock = NIOSSHSystemRekeyClock()
+        clientRekeyClock: any NIOSSHRekeyClock = NIOSSHSystemRekeyClock(),
+        clientKeyExchangeAlgorithms: [String]? = nil,
+        clientHostKeyAlgorithms: [String]? = nil
     ) throws {
         let clientHandler = NIOSSHHandler(
             role: .client(
                 .init(
                     userAuthDelegate: harness.clientAuthDelegate,
                     serverAuthDelegate: harness.clientServerAuthDelegate,
-                    globalRequestDelegate: harness.clientGlobalRequestDelegate
+                    globalRequestDelegate: harness.clientGlobalRequestDelegate,
+                    keyExchangeAlgorithms: clientKeyExchangeAlgorithms,
+                    hostKeyAlgorithms: clientHostKeyAlgorithms
                 )
             ),
             allocator: self.client.allocator,
