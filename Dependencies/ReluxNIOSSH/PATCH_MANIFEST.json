@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "forkPackageIdentity": "ReluxNIOSSH",
+  "libraryProduct": "NIOSSH",
+  "upstream": {
+    "repository": "https://github.com/apple/swift-nio-ssh.git",
+    "tag": "0.14.1",
+    "commit": "31cdc3c3391a10460dedf1170530cf651d2ca496",
+    "archiveSHA256": "0b135087e76cb03e33f544484f21e1c3ba3b967f8a0ba2aead960ce4d0d06e6a",
+    "license": "Apache-2.0",
+    "licenseFile": "LICENSE.txt",
+    "licenseSHA256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  "patchedUpstreamFiles": [
+    ".gitignore",
+    "Package.swift",
+    "Sources/NIOSSH/Child Channels/ChildChannelOptions.swift",
+    "Sources/NIOSSH/Child Channels/ChildChannelWindowManager.swift",
+    "Sources/NIOSSH/Child Channels/SSHChildChannel.swift",
+    "Sources/NIOSSH/Connection State Machine/SSHConnectionStateMachine.swift",
+    "Sources/NIOSSH/NIOSSHHandler.swift",
+    "Tests/NIOSSHTests/EndToEndTests.swift"
+  ],
+  "addedFiles": [
+    "NOTICE-RELUX.txt",
+    "PATCH_MANIFEST.json",
+    "Package.resolved",
+    "REBASE.md",
+    "RELUX_DELTA.md",
+    "Sources/NIOSSH/ReluxPolicies.swift",
+    "Tests/NIOSSHTests/ReluxPolicyTests.swift",
+    "UPSTREAM.md"
+  ],
+  "logicalPatches": [
+    "0001-relux-package-provenance",
+    "0002-configurable-child-receive-window",
+    "0003-supported-automatic-rekey",
+    "0004-relux-policy-tests-and-maintenance"
+  ]
+}

@@ -1,0 +1,9 @@
+ReluxNIOSSH contains source derived from apple/swift-nio-ssh and remains
+licensed under the Apache License, Version 2.0. The full upstream license is
+preserved in LICENSE.txt. Upstream project attribution and original per-file
+copyright/SPDX headers are retained.
+
+Relux-specific changes are documented in RELUX_DELTA.md and
+PATCH_MANIFEST.json. No cryptographic algorithm implementation or negotiation
+default is changed by this fork.
+

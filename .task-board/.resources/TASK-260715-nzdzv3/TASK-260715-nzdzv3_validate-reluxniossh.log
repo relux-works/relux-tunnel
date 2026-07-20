@@ -1,0 +1,749 @@
+^Dpython3 scripts/reluxniossh-fork-tool.py verify
+verified ReluxNIOSSH at 31cdc3c3391a10460dedf1170530cf651d2ca496: archive/license hashes and 16-file delta match
+cd Dependencies/ReluxNIOSSH && swift test
+[2K[0/1] Planning build[2K[1/1] Planning build
+[2KBuilding for debugging...
+[2K[0/9] Write sources[2K[1/9] Write sources[2K[1/9] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/10] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/8] Write swift-version-45881B103DA9D485.txt[2K[2/9] Write swift-version-45881B103DA9D485.txt[2K[2/8] Write swift-version-45881B103DA9D485.txt[2K[2/7] Write swift-version-45881B103DA9D485.txt[2K[2/8] Write swift-version-45881B103DA9D485.txt[2K[2/7] Write swift-version-45881B103DA9D485.txt[2K[2/6] Write swift-version-45881B103DA9D485.txt[2K[2/7] Write swift-version-45881B103DA9D485.txt[2K[2/6] Write swift-version-45881B103DA9D485.txt[2K[2/5] Write swift-version-45881B103DA9D485.txt[2K[2/6] Write swift-version-45881B103DA9D485.txt[2K[2/5] Write swift-version-45881B103DA9D485.txt[2K[2/4] Write swift-version-45881B103DA9D485.txt[2K[2/5] Write swift-version-45881B103DA9D485.txt[2K[2/4] Write swift-version-45881B103DA9D485.txt[2K[2/3] Write swift-version-45881B103DA9D485.txt[2K[2/4] Write swift-version-45881B103DA9D485.txt[2K[2/5] Write swift-version-45881B103DA9D485.txt[2K[3/5] Compiling NIOSSHTests ReluxPolicyTests.swift[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/5] Emitting module NIOSSHTests[2K[4/6] Emitting module NIOSSHTests[2K[4/7] Emitting module NIOSSHTests[2K[4/8] Emitting module NIOSSHTests[2K[4/7] Emitting module NIOSSHTests[2K[4/6] Emitting module NIOSSHTests[2K[4/6] Emitting module NIOSSHTests[2K[4/6] Write Objects.LinkFileList[2K[5/6] Write Objects.LinkFileList[2K[5/6] Linking ReluxNIOSSHPackageTests[2K[6/6] Linking ReluxNIOSSHPackageTests
+[2KBuild complete! (6.14s)
+Test Suite 'All tests' started at 2026-07-20 08:47:57.228.
+Test Suite 'ReluxNIOSSHPackageTests.xctest' started at 2026-07-20 08:47:57.235.
+Test Suite 'AESGCMTests' started at 2026-07-20 08:47:57.235.
+Test Case '-[NIOSSHTests.AESGCMTests testBasicNonceManagement]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testBasicNonceManagement]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testCannotCreateWithIncorrectKeySize]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testCannotCreateWithIncorrectKeySize]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testCannotCreateWithIncorrectNonceSize]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testCannotCreateWithIncorrectNonceSize]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testCannotUpdateWithIncorrectKeySize]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testCannotUpdateWithIncorrectKeySize]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testCannotUpdateWithIncorrectNonceSize]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testCannotUpdateWithIncorrectNonceSize]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testDecryptingInvalidCiphertextLengthsAES128]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testDecryptingInvalidCiphertextLengthsAES128]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testDecryptingInvalidCiphertextLengthsAES256]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testDecryptingInvalidCiphertextLengthsAES256]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testExcessPaddingAES128]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testExcessPaddingAES128]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testExcessPaddingAES256]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testExcessPaddingAES256]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testInsufficientPaddingAES128]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testInsufficientPaddingAES128]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testInsufficientPaddingAES256]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testInsufficientPaddingAES256]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testSimpleAES128RoundTrip]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testSimpleAES128RoundTrip]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.AESGCMTests testSimpleAES256RoundTrip]' started.
+Test Case '-[NIOSSHTests.AESGCMTests testSimpleAES256RoundTrip]' passed (0.000 seconds).
+Test Suite 'AESGCMTests' passed at 2026-07-20 08:47:57.239.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+Test Suite 'ByteBufferSSHTests' started at 2026-07-20 08:47:57.240.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testCompositeStringDoesTheRightThingWithBB]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testCompositeStringDoesTheRightThingWithBB]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testGettingBoolFromByteBuffer]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testGettingBoolFromByteBuffer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testGettingSSHStringFromByteBuffer]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testGettingSSHStringFromByteBuffer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingBoolFromByteBuffer]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingBoolFromByteBuffer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDASAP256PublicKeysFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDASAP256PublicKeysFromBuffers]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDASAP384PublicKeysFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDASAP384PublicKeysFromBuffers]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDASAP521PublicKeysFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDASAP521PublicKeysFromBuffers]' passed (0.008 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDSAP256SignaturesFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDSAP256SignaturesFromBuffers]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDSAP384SignaturesFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDSAP384SignaturesFromBuffers]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDSAP521SignaturesFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingECDSAP521SignaturesFromBuffers]' passed (0.007 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingEd25519PublicKeysFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingEd25519PublicKeysFromBuffers]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingEd25519SignaturesFromBuffers]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingEd25519SignaturesFromBuffers]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingSSHStringFromByteBuffer]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testReadingSSHStringFromByteBuffer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testSettingSSHBoolInBuffer]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testSettingSSHBoolInBuffer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testSettingSSHStringInBufferWithByteBuffer]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testSettingSSHStringInBufferWithByteBuffer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testSettingSSHStringInBufferWithCollection]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testSettingSSHStringInBufferWithCollection]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWritePositiveMPInt]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWritePositiveMPInt]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWriteSSHPacketDoesTheRightThingWithBB]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWriteSSHPacketDoesTheRightThingWithBB]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWritingCompositeSSHString]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWritingCompositeSSHString]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWritingPaddingBytes]' started.
+Test Case '-[NIOSSHTests.ByteBufferSSHTests testWritingPaddingBytes]' passed (0.001 seconds).
+Test Suite 'ByteBufferSSHTests' passed at 2026-07-20 08:47:57.272.
+	 Executed 20 tests, with 0 failures (0 unexpected) in 0.032 (0.033) seconds
+Test Suite 'CertifiedKeyTests' started at 2026-07-20 08:47:57.272.
+Test Case '-[NIOSSHTests.CertifiedKeyTests test256UserBasedToComponents]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests test256UserBasedToComponents]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests test384HostBaseToComponents]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests test384HostBaseToComponents]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests test384HostToComponents]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests test384HostToComponents]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testBaseKeyToComponents]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testBaseKeyToComponents]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCaKeyToComponents]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCaKeyToComponents]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingCriticalOptions]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingCriticalOptions]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingExtensions]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingExtensions]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingKey]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingKey]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingKeyID]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingKeyID]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingNonce]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingNonce]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingSerial]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingSerial]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingSignature]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingSignature]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingSignatureKey]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingSignatureKey]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingType]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingType]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingValidBefore]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingValidBefore]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingValidPrincipals]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testCoWBehavesAppropriatelyWhenMutatingValidPrincipals]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpectedFieldContentHostP384]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpectedFieldContentHostP384]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpectedFieldContentUserEd25519]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpectedFieldContentUserEd25519]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpectedFieldContentUserP256]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpectedFieldContentUserP256]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpiredKeysFailValidation]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExpiredKeysFailValidation]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExtraCriticalExtensionsAreIgnored]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testExtraCriticalExtensionsAreIgnored]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeyRejectsBeingCreatedWithCertifiedKeyAsKey]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeyRejectsBeingCreatedWithCertifiedKeyAsKey]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeyRejectsBeingCreatedWithCertifiedKeyAsSignatureKey]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeyRejectsBeingCreatedWithCertifiedKeyAsSignatureKey]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysContainingUnsupportedCriticalExtensionsAreRejected]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysContainingUnsupportedCriticalExtensionsAreRejected]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysIgnoreUnsuitableCAs]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysIgnoreUnsuitableCAs]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysNotYetValidFailValidation]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysNotYetValidFailValidation]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysSignedByTheWrongEntityAreRejected]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysSignedByTheWrongEntityAreRejected]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysThatDontMatchPrincipalAreRejected]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysThatDontMatchPrincipalAreRejected]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysThatDontMatchTypeAreRejected]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testKeysThatDontMatchTypeAreRejected]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testLoadSerializeEd25519]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testLoadSerializeEd25519]' passed (0.009 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testLoadSerializeP256]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testLoadSerializeP256]' passed (0.013 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testLoadSerializeP384]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testLoadSerializeP384]' passed (0.013 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testNonCertifiedKeysDontAllowConstruction]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testNonCertifiedKeysDontAllowConstruction]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testStraightForwardHappyPathVerificationHost]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testStraightForwardHappyPathVerificationHost]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testStraightForwardHappyPathVerificationUser]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testStraightForwardHappyPathVerificationUser]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testStraightForwardHappyPathVerificationUserEd25519]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testStraightForwardHappyPathVerificationUserEd25519]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testUser256ToComponents]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testUser256ToComponents]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testUserKeyToComponents]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testUserKeyToComponents]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVCoWBehavesAppropriatelyWhenMutatingValidAfter]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVCoWBehavesAppropriatelyWhenMutatingValidAfter]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingCriticalOptions]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingCriticalOptions]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingExtensions]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingExtensions]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingKey]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingKey]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingKeyID]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingKeyID]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingNonce]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingNonce]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingSerial]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingSerial]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingSignature]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingSignature]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingSignatureKey]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingSignatureKey]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingType]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingType]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingValidAfter]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingValidAfter]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingValidBefore]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingValidBefore]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingValidPrincipals]' started.
+Test Case '-[NIOSSHTests.CertifiedKeyTests testVerificationFailsWhenMutatingValidPrincipals]' passed (0.001 seconds).
+Test Suite 'CertifiedKeyTests' passed at 2026-07-20 08:47:57.336.
+	 Executed 51 tests, with 0 failures (0 unexpected) in 0.061 (0.064) seconds
+Test Suite 'ChildChannelMultiplexerTests' started at 2026-07-20 08:47:57.336.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testAutoReadOnChildChannel]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testAutoReadOnChildChannel]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testBasicInboundChannelCreation]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testBasicInboundChannelCreation]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testBetterOutboundChannelCreation]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testBetterOutboundChannelCreation]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testCannotOpenNewChannelAfterDroppingDelegate]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testCannotOpenNewChannelAfterDroppingDelegate]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testChildChannelMaxMessageLengthOption]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testChildChannelMaxMessageLengthOption]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testChildChannelSupportsSyncOptions]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testChildChannelSupportsSyncOptions]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testCloseBeforeActiveOnOutboundChannelWhenReceivingFailure]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testCloseBeforeActiveOnOutboundChannelWhenReceivingFailure]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testClosingClosedChannelsDoesntHurt]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testClosingClosedChannelsDoesntHurt]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testClosingInputRejected]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testClosingInputRejected]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testDuplicateCloseFails]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testDuplicateCloseFails]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testEOFIsReceivedInOrder]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testEOFIsReceivedInOrder]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testEOFIsSentInOrder]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testEOFIsSentInOrder]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testEOFQueuesWithReads]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testEOFQueuesWithReads]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testErrorGracePeriod]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testErrorGracePeriod]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testFailingOutboundChannelInitializerDoesNotDoIO]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testFailingOutboundChannelInitializerDoesNotDoIO]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testLocalChildChannelsAlwaysGetTheRightChannelType]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testLocalChildChannelsAlwaysGetTheRightChannelType]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testMultiplexerDropsWritesAfterItLosesTheHandler]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testMultiplexerDropsWritesAfterItLosesTheHandler]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testMultiplexerRejectsInboundMessagesForUnknownChannels]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testMultiplexerRejectsInboundMessagesForUnknownChannels]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testNoDataLossOnChannelClose]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testNoDataLossOnChannelClose]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testOutboundChannelCreation]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testOutboundChannelCreation]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testParentChannelInactiveDisablesChildChannels]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testParentChannelInactiveDisablesChildChannels]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testPromiseCompletionDelaysUntilResponse]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testPromiseCompletionDelaysUntilResponse]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testPromiseCompletionDelaysUntilResponseOnFailure]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testPromiseCompletionDelaysUntilResponseOnFailure]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testReadsAreDelayedUntilRead]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testReadsAreDelayedUntilRead]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRejectInboundChannelCreation]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRejectInboundChannelCreation]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRemotelyCreatedChildChannelsGetTheRightChannelType]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRemotelyCreatedChildChannelsGetTheRightChannelType]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRespectingMaxMessageSize]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRespectingMaxMessageSize]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRespectingMaxMessageSizeOnOutboundChannel]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testRespectingMaxMessageSizeOnOutboundChannel]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testSimpleOutboundFlowControlManagement]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testSimpleOutboundFlowControlManagement]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testTCPCloseBeforeInitializer]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testTCPCloseBeforeInitializer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testTCPCloseWhileAwaitingChannelSetup]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testTCPCloseWhileAwaitingChannelSetup]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testTCPCloseWhileAwaitingInitializer]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testTCPCloseWhileAwaitingInitializer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testUserOutboundEventsAreQueuedUntilActivity]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testUserOutboundEventsAreQueuedUntilActivity]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeCorrectlySpotWindowSizesOfInboundChannels]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeCorrectlySpotWindowSizesOfInboundChannels]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeDealWithFlowControlProperly]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeDealWithFlowControlProperly]' passed (0.016 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeDontResizeTheWindowAfterLocalClosing]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeDontResizeTheWindowAfterLocalClosing]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeDontResizeTheWindowOnClose]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeDontResizeTheWindowOnClose]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeRejectExcessiveWindowSizes]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWeRejectExcessiveWindowSizes]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWriteAfterEOFFails]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWriteAfterEOFFails]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWritesAreQueuedUntilActivity]' started.
+Test Case '-[NIOSSHTests.ChildChannelMultiplexerTests testWritesAreQueuedUntilActivity]' passed (0.000 seconds).
+Test Suite 'ChildChannelMultiplexerTests' passed at 2026-07-20 08:47:57.364.
+	 Executed 40 tests, with 0 failures (0 unexpected) in 0.025 (0.028) seconds
+Test Suite 'EndToEndTests' started at 2026-07-20 08:47:57.364.
+Test Case '-[NIOSSHTests.EndToEndTests testChannelRequests]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testChannelRequests]' passed (0.005 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testCorrectBannerReceived]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testCorrectBannerReceived]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testCreateChannelAfterDisconnectFailsWithEventLoopTick]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testCreateChannelAfterDisconnectFailsWithEventLoopTick]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testCreateChannelAfterDisconnectFailsWithoutEventLoopTick]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testCreateChannelAfterDisconnectFailsWithoutEventLoopTick]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testCreateChannelBeforeIncompleteHandshakeFails]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testCreateChannelBeforeIncompleteHandshakeFails]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testDelayedHostKeyValidation]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testDelayedHostKeyValidation]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestAfterCloseFails]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestAfterCloseFails]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestsAreCancelledIfRemoved]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestsAreCancelledIfRemoved]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestTooEarlyIsDelayed]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestTooEarlyIsDelayed]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestWithCustomDelegate]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestWithCustomDelegate]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestWithDefaultDelegate]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testGlobalRequestWithDefaultDelegate]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testHandshakeFailure]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testHandshakeFailure]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testHandshakeSuccess]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testHandshakeSuccess]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testHostKeyRejection]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testHostKeyRejection]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testNeverStartedGlobalRequestsAreCancelledIfRemoved]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testNeverStartedGlobalRequestsAreCancelledIfRemoved]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testSecureEnclaveKeys]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testSecureEnclaveKeys]' passed (0.024 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testServerDoesNotSendBanner]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testServerDoesNotSendBanner]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testSupportClientInitiatedRekeying]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testSupportClientInitiatedRekeying]' passed (0.006 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testSupportServerInitiatedRekeying]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testSupportServerInitiatedRekeying]' passed (0.006 seconds).
+Test Case '-[NIOSSHTests.EndToEndTests testUnknownGlobalRequestCanTriggerResponse]' started.
+Test Case '-[NIOSSHTests.EndToEndTests testUnknownGlobalRequestCanTriggerResponse]' passed (0.004 seconds).
+Test Suite 'EndToEndTests' passed at 2026-07-20 08:47:57.460.
+	 Executed 20 tests, with 0 failures (0 unexpected) in 0.094 (0.096) seconds
+Test Suite 'FuzzResultTests' started at 2026-07-20 08:47:57.460.
+Test Case '-[NIOSSHTests.FuzzResultTests testOne]' started.
+Test Case '-[NIOSSHTests.FuzzResultTests testOne]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.FuzzResultTests testTwo]' started.
+Test Case '-[NIOSSHTests.FuzzResultTests testTwo]' passed (0.000 seconds).
+Test Suite 'FuzzResultTests' passed at 2026-07-20 08:47:57.461.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'HostKeyTests' started at 2026-07-20 08:47:57.461.
+Test Case '-[NIOSSHTests.HostKeyTests testBasicECDSAP256SigningFlow]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testBasicECDSAP256SigningFlow]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testBasicECDSAP384SigningFlow]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testBasicECDSAP384SigningFlow]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testBasicECDSAP521SigningFlow]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testBasicECDSAP521SigningFlow]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testBasicEd25519SigningFlow]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testBasicEd25519SigningFlow]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testDripFeedingKey]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testDripFeedingKey]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP256FailsVerificationWithDifferentKeys]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP256FailsVerificationWithDifferentKeys]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP256FailsVerificationWithWrongAlgorithms]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP256FailsVerificationWithWrongAlgorithms]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP384FailsVerificationWithDifferentKeys]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP384FailsVerificationWithDifferentKeys]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP384FailsVerificationWithWrongAlgorithms]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP384FailsVerificationWithWrongAlgorithms]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP521FailsVerificationWithDifferentKeys]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP521FailsVerificationWithDifferentKeys]' passed (0.007 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP521FailsVerificationWithWrongAlgorithms]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testECDASP521FailsVerificationWithWrongAlgorithms]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testEd25519FailsVerificationWithDifferentKeys]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testEd25519FailsVerificationWithDifferentKeys]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testEd25519FailsVerificationWithWrongAlgorithms]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testEd25519FailsVerificationWithWrongAlgorithms]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testInvalidDomainParametersForECDSAP256]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testInvalidDomainParametersForECDSAP256]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testInvalidDomainParametersForECDSAP384]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testInvalidDomainParametersForECDSAP384]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testInvalidDomainParametersForECDSAP521]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testInvalidDomainParametersForECDSAP521]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testKeyLiesAboutItsType]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testKeyLiesAboutItsType]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingEd25519KeyFromFileRoundTrips]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingEd25519KeyFromFileRoundTrips]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingP256KeyFromFileRoundTrips]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingP256KeyFromFileRoundTrips]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingP384KeyFromFileRoundTrips]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingP384KeyFromFileRoundTrips]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingP521KeyFromFileRoundTrips]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testLoadingP521KeyFromFileRoundTrips]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testMissingCommentIsTolerated]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testMissingCommentIsTolerated]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testUnrecognisedKey]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testUnrecognisedKey]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.HostKeyTests testUnrecognisedSignature]' started.
+Test Case '-[NIOSSHTests.HostKeyTests testUnrecognisedSignature]' passed (0.000 seconds).
+Test Suite 'HostKeyTests' passed at 2026-07-20 08:47:57.488.
+	 Executed 24 tests, with 0 failures (0 unexpected) in 0.026 (0.027) seconds
+Test Suite 'KeyExchangeTests' started at 2026-07-20 08:47:57.488.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionCurve25519]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionCurve25519]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionP256]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionP256]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionP384]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionP384]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionP521]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeNoPreviousSessionP521]' passed (0.006 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionCurve25519]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionCurve25519]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionP256]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionP256]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionP384]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionP384]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionP521]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithPreviousSessionP521]' passed (0.006 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithWiderKeys]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testBasicSuccessfulKeyExchangeWithWiderKeys]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testDisagreeingOnInitialExchangeBytesLeadsToFailedKeyExchange]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testDisagreeingOnInitialExchangeBytesLeadsToFailedKeyExchange]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testKeyExchangeWithECDSAP256Signatures]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testKeyExchangeWithECDSAP256Signatures]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testKeyExchangeWithECDSAP384Signatures]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testKeyExchangeWithECDSAP384Signatures]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testKeyExchangeWithECDSAP521Signatures]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testKeyExchangeWithECDSAP521Signatures]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.KeyExchangeTests testWeValidateTheExchangeHash]' started.
+Test Case '-[NIOSSHTests.KeyExchangeTests testWeValidateTheExchangeHash]' passed (0.001 seconds).
+Test Suite 'KeyExchangeTests' passed at 2026-07-20 08:47:57.518.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.029 (0.030) seconds
+Test Suite 'NIOSSHSignatureTests' started at 2026-07-20 08:47:57.518.
+Test Case '-[NIOSSHTests.NIOSSHSignatureTests testOversizedECDSARComponentIsRejected]' started.
+Test Case '-[NIOSSHTests.NIOSSHSignatureTests testOversizedECDSARComponentIsRejected]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.NIOSSHSignatureTests testOversizedECDSASComponentIsRejected]' started.
+Test Case '-[NIOSSHTests.NIOSSHSignatureTests testOversizedECDSASComponentIsRejected]' passed (0.000 seconds).
+Test Suite 'NIOSSHSignatureTests' passed at 2026-07-20 08:47:57.518.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'SSHConnectionStateMachineTests' started at 2026-07-20 08:47:57.518.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testBasicConnectionDance]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testBasicConnectionDance]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testClientToleratesLinesBeforeVersion]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testClientToleratesLinesBeforeVersion]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testClintVersionNotFound]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testClintVersionNotFound]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testDisconnectedReturnsNil]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testDisconnectedReturnsNil]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testDisconnectMessageCausesImmediateConnectionClose]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testDisconnectMessageCausesImmediateConnectionClose]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testFirstBlockDecodedOnce]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testFirstBlockDecodedOnce]' passed (0.011 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testGlobalRequestCanBeSent]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testGlobalRequestCanBeSent]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testGlobalRequestResponsesTriggerResponse]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testGlobalRequestResponsesTriggerResponse]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testIgnoreDebugAndIgnoreMessages]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testIgnoreDebugAndIgnoreMessages]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testReceivingChannelMessagesGetForwardedOnceConnectionMade]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testReceivingChannelMessagesGetForwardedOnceConnectionMade]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testServerRejectsLinesBeforeVersion]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testServerRejectsLinesBeforeVersion]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testUnimplementedGivesARichError]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testUnimplementedGivesARichError]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testVersionNotSupported]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testVersionNotSupported]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testWeTolerateMessagesAfterSendingKexInit]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testWeTolerateMessagesAfterSendingKexInit]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testWeTolerateMultipleStarts]' started.
+Test Case '-[NIOSSHTests.SSHConnectionStateMachineTests testWeTolerateMultipleStarts]' passed (0.000 seconds).
+Test Suite 'SSHConnectionStateMachineTests' passed at 2026-07-20 08:47:57.561.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.041 (0.042) seconds
+Test Suite 'SSHEncryptedTrafficTests' started at 2026-07-20 08:47:57.561.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testBasicEncryptedPacketExchange]' started.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testBasicEncryptedPacketExchange]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testBasicExchangeAES256]' started.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testBasicExchangeAES256]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testDripFeedAES128]' started.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testDripFeedAES128]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testDripFeedAES256]' started.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testDripFeedAES256]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testRejectsCorruptedPacket]' started.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testRejectsCorruptedPacket]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testRejectsIncompatibleKeys]' started.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testRejectsIncompatibleKeys]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testSamplePacketFromTesting]' started.
+Test Case '-[NIOSSHTests.SSHEncryptedTrafficTests testSamplePacketFromTesting]' passed (0.000 seconds).
+Test Suite 'SSHEncryptedTrafficTests' passed at 2026-07-20 08:47:57.563.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'SSHHandlerTests' started at 2026-07-20 08:47:57.563.
+Test Case '-[NIOSSHTests.SSHHandlerTests testHandlerInitializationActive]' started.
+Test Case '-[NIOSSHTests.SSHHandlerTests testHandlerInitializationActive]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHHandlerTests testHandlerInitializationOnAdd]' started.
+Test Case '-[NIOSSHTests.SSHHandlerTests testHandlerInitializationOnAdd]' passed (0.000 seconds).
+Test Suite 'SSHHandlerTests' passed at 2026-07-20 08:47:57.563.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'SSHKeyExchangeStateMachineTests' started at 2026-07-20 08:47:57.563.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraECDHInitForbidden]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraECDHInitForbidden]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraECDHReplyForbidden]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraECDHReplyForbidden]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraKeyExchangeMessagesAreForbidden]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraKeyExchangeMessagesAreForbidden]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraNewKeysMessageForbidden]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testExtraNewKeysMessageForbidden]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchange]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchange]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeClientRejectsHostKeyAsynchronously]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeClientRejectsHostKeyAsynchronously]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeClientRejectsHostKeySynchronously]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeClientRejectsHostKeySynchronously]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeDifferentPriorityBetweenServerAndClient]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeDifferentPriorityBetweenServerAndClient]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeMessageCookieValidation]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeMessageCookieValidation]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeRapidNewKeys]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeRapidNewKeys]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeServerReturnsWrongHostKeyType]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeServerReturnsWrongHostKeyType]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeUsingP256HostKeysOnly]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeUsingP256HostKeysOnly]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeUsingP384HostKeysOnly]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeUsingP384HostKeysOnly]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeUsingP521HostKeysOnly]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeUsingP521HostKeysOnly]' passed (0.006 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeWithInvalidGuess]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testKeyExchangeWithInvalidGuess]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testNonOverlappingTransportProtectionFails]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testNonOverlappingTransportProtectionFails]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testWeCanReExchangeKeysClientInitiates]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testWeCanReExchangeKeysClientInitiates]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testWeCanReExchangeKeysServerInitiates]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testWeCanReExchangeKeysServerInitiates]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testWeNegotiateTheClientsFirstPreference]' started.
+Test Case '-[NIOSSHTests.SSHKeyExchangeStateMachineTests testWeNegotiateTheClientsFirstPreference]' passed (0.003 seconds).
+Test Suite 'SSHKeyExchangeStateMachineTests' passed at 2026-07-20 08:47:57.615.
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.050 (0.052) seconds
+Test Suite 'SSHMessagesTests' started at 2026-07-20 08:47:57.615.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelClose]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelClose]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelData]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelData]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelEOF]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelEOF]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelExtendedData]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelExtendedData]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelFailure]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelFailure]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelOpen]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelOpen]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelOpenConfirmation]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelOpenConfirmation]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelOpenFailure]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelOpenFailure]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelRequest]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelRequest]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelSuccess]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelSuccess]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelWindowAdjust]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testChannelWindowAdjust]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testDebug]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testDebug]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testDisconnnect]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testDisconnnect]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testGlobalRequest]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testGlobalRequest]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testIgnore]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testIgnore]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testKeyExchangeInit]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testKeyExchangeInit]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testKeyExchangeMessage]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testKeyExchangeMessage]' passed (0.012 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testKeyExchangeReply]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testKeyExchangeReply]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testNewKeys]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testNewKeys]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testRequestFailure]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testRequestFailure]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testRequestSuccess]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testRequestSuccess]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testServiceAccept]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testServiceAccept]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testServiceRequest]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testServiceRequest]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testTypeError]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testTypeError]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUnimplemented]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUnimplemented]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUnknownGlobalRequest]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUnknownGlobalRequest]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthBanner]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthBanner]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthFailure]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthFailure]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKP256]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKP256]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKP384]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKP384]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKP521]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKP521]' passed (0.003 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKWithMismatchedKeyAndAlgorithm]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKWithMismatchedKeyAndAlgorithm]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKWithUnknownKeyFormat]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthPKOKWithUnknownKeyFormat]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequest]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequest]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestToleratesUnsupportedPublicKeyAlgorithms]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestToleratesUnsupportedPublicKeyAlgorithms]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestToleratesUnsupportedPublicKeyAlgorithmsWithoutSignatures]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestToleratesUnsupportedPublicKeyAlgorithmsWithoutSignatures]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestWithKeysAndSignature]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestWithKeysAndSignature]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestWithKeysNoSignature]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestWithKeysNoSignature]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestWithMismatchedKeyAndAlgorithm]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthRequestWithMismatchedKeyAndAlgorithm]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthSuccess]' started.
+Test Case '-[NIOSSHTests.SSHMessagesTests testUserAuthSuccess]' passed (0.000 seconds).
+Test Suite 'SSHMessagesTests' passed at 2026-07-20 08:47:57.649.
+	 Executed 40 tests, with 0 failures (0 unexpected) in 0.031 (0.034) seconds
+Test Suite 'SSHPacketParserTests' started at 2026-07-20 08:47:57.649.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testBinaryFull]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testBinaryFull]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testBinaryInParts]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testBinaryInParts]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testBinaryTwoMessages]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testBinaryTwoMessages]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersion]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersion]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionLineFeedFirstByteOnServer]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionLineFeedFirstByteOnServer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesOnClient]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesOnClient]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesOnServer]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesOnServer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesWithoutCarriageReturnOnClient]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesWithoutCarriageReturnOnClient]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesWithoutCarriageReturnOnServer]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithExtraLinesWithoutCarriageReturnOnServer]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithoutCarriageReturn]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testReadVersionWithoutCarriageReturn]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testSequencePreservedBetweenPlainAndCypher]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testSequencePreservedBetweenPlainAndCypher]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketParserTests testWeReclaimStorage]' started.
+Test Case '-[NIOSSHTests.SSHPacketParserTests testWeReclaimStorage]' passed (0.000 seconds).
+Test Suite 'SSHPacketParserTests' passed at 2026-07-20 08:47:57.651.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'SSHPacketSerializerTests' started at 2026-07-20 08:47:57.651.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testDisconnectMessage]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testDisconnectMessage]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testKeyExchange]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testKeyExchange]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testKeyExchangeInit]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testKeyExchangeInit]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testKeyExchangeReply]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testKeyExchangeReply]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testNewKey]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testNewKey]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testSequencePreservedBetweenPlainAndCypher]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testSequencePreservedBetweenPlainAndCypher]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testServiceAccept]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testServiceAccept]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testServiceRequest]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testServiceRequest]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testVersion]' started.
+Test Case '-[NIOSSHTests.SSHPacketSerializerTests testVersion]' passed (0.000 seconds).
+Test Suite 'SSHPacketSerializerTests' passed at 2026-07-20 08:47:57.653.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'UserAuthenticationStateMachineTests' started at 2026-07-20 08:47:57.653.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testAuthMessagesAfterSuccessAreIgnored]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testAuthMessagesAfterSuccessAreIgnored]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicHappyClientFlow]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicHappyClientFlow]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicSadClientFlow]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicSadClientFlow]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicSadThenHappyClientFlow]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicSadThenHappyClientFlow]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicServerRejections]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBasicServerRejections]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBeginningAuthenticationOnServersDoesNothing]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testBeginningAuthenticationOnServersDoesNothing]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testCertificateClientAuthFlow]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testCertificateClientAuthFlow]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientRejectsUserAuthRequests]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientRejectsUserAuthRequests]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientsRejectServiceAcceptOutOfSequence]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientsRejectServiceAcceptOutOfSequence]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientsRejectUnexpectedAuthServices]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientsRejectUnexpectedAuthServices]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientsRejectUserAuthRequests]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testClientsRejectUserAuthRequests]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testManyAuthRequestsInFlightAtOnce]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testManyAuthRequestsInFlightAtOnce]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyClientAuthFlow]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyClientAuthFlow]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyServerAuthFlowP256]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyServerAuthFlowP256]' passed (0.001 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyServerAuthFlowP384]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyServerAuthFlowP384]' passed (0.002 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyServerAuthFlowP521]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testPrivateKeyServerAuthFlowP521]' passed (0.004 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testRejectUnexpectedServices]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testRejectUnexpectedServices]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testRepeatedServiceRequestsDontWork]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testRepeatedServiceRequestsDontWork]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServerIgnoresMessagesAfterSuccess]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServerIgnoresMessagesAfterSuccess]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServerPerformsValidationsOnSignatures]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServerPerformsValidationsOnSignatures]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServerRejectsServiceAccepts]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServerRejectsServiceAccepts]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServersMayNotReceiveUserAuthFailureMessages]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServersMayNotReceiveUserAuthFailureMessages]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServersMayNotReceiveUserAuthSuccessMessages]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testServersMayNotReceiveUserAuthSuccessMessages]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testSimplePasswordDelegateOnlyTriesPassword]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testSimplePasswordDelegateOnlyTriesPassword]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testSimpleServerHappyPath]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testSimpleServerHappyPath]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseAfterCompleteFailureIsInvalid]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseAfterCompleteFailureIsInvalid]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseAfterFailureBeforeNextRequestIsInvalid]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseAfterFailureBeforeNextRequestIsInvalid]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseAfterInitBeforeSendingIsInvalid]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseAfterInitBeforeSendingIsInvalid]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseBeforeInitIsInvalid]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUnsolicitedResponseBeforeInitIsInvalid]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUserAuthBeforeServiceAcceptIsRejected]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUserAuthBeforeServiceAcceptIsRejected]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUserAuthRequestsMustAskForSSHConnection]' started.
+Test Case '-[NIOSSHTests.UserAuthenticationStateMachineTests testUserAuthRequestsMustAskForSSHConnection]' passed (0.000 seconds).
+Test Suite 'UserAuthenticationStateMachineTests' passed at 2026-07-20 08:47:57.670.
+	 Executed 31 tests, with 0 failures (0 unexpected) in 0.014 (0.016) seconds
+Test Suite 'UtilitiesTests' started at 2026-07-20 08:47:57.670.
+Test Case '-[NIOSSHTests.UtilitiesTests testInsecureEncryptionAlgorithm]' started.
+Test Case '-[NIOSSHTests.UtilitiesTests testInsecureEncryptionAlgorithm]' passed (0.000 seconds).
+Test Case '-[NIOSSHTests.UtilitiesTests testTestTransportProtection]' started.
+Test Case '-[NIOSSHTests.UtilitiesTests testTestTransportProtection]' passed (0.000 seconds).
+Test Suite 'UtilitiesTests' passed at 2026-07-20 08:47:57.670.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'ReluxNIOSSHPackageTests.xctest' passed at 2026-07-20 08:47:57.670.
+	 Executed 323 tests, with 0 failures (0 unexpected) in 0.415 (0.435) seconds
+Test Suite 'All tests' passed at 2026-07-20 08:47:57.670.
+	 Executed 323 tests, with 0 failures (0 unexpected) in 0.415 (0.442) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Relux receive-window policy" started.
+􀟈  Suite "Relux automatic rekey policy" started.
+􀟈  Test "Unread bytes suppress credit return and explicit policy can suppress adjustment" started.
+􀟈  Test "Configured initial windows are emitted on channel open" started.
+􀟈  Test "Window adjustment event follows delivery and snapshot accounting" started.
+􀟈  Test "Protected-byte threshold rekeys with active channels and preserves payload" started.
+􀟈  Test "Adjustments follow delivered bytes and never exceed the immutable cap" started.
+􀟈  Test case passing 1 argument configuration → NIOSSHChannelWindowConfiguration(initialWindowSize: 32768, maximumWindowSize: 32768, windowAdjustmentThreshold: Optional(16384)) to "Configured initial windows are emitted on channel open" started.
+􀟈  Test case passing 1 argument configuration → NIOSSHChannelWindowConfiguration(initialWindowSize: 65536, maximumWindowSize: 65536, windowAdjustmentThreshold: Optional(32768)) to "Configured initial windows are emitted on channel open" started.
+􀟈  Test case passing 1 argument configuration → NIOSSHChannelWindowConfiguration(initialWindowSize: 524288, maximumWindowSize: 1048576, windowAdjustmentThreshold: Optional(262144)) to "Configured initial windows are emitted on channel open" started.
+􁁛  Test "Unread bytes suppress credit return and explicit policy can suppress adjustment" passed after 0.001 seconds.
+􁁛  Test "Adjustments follow delivered bytes and never exceed the immutable cap" passed after 0.001 seconds.
+􁁛  Test "Window adjustment event follows delivery and snapshot accounting" passed after 0.001 seconds.
+􁁛  Test "Configured initial windows are emitted on channel open" with 3 test cases passed after 0.001 seconds.
+􁁛  Suite "Relux receive-window policy" passed after 0.001 seconds.
+􁁛  Test "Protected-byte threshold rekeys with active channels and preserves payload" passed after 0.007 seconds.
+􀟈  Test "Inbound protected-byte threshold rekeys on the client" started.
+􁁛  Test "Inbound protected-byte threshold rekeys on the client" passed after 0.006 seconds.
+􀟈  Test "Injected monotonic clock deterministically triggers elapsed-time rekey" started.
+􁁛  Test "Injected monotonic clock deterministically triggers elapsed-time rekey" passed after 0.006 seconds.
+􀟈  Test "Simultaneous byte and elapsed thresholds coalesce into one key exchange" started.
+􁁛  Test "Simultaneous byte and elapsed thresholds coalesce into one key exchange" passed after 0.006 seconds.
+􀟈  Test "Concurrent explicit requests share one production-path key exchange" started.
+􁁛  Test "Concurrent explicit requests share one production-path key exchange" passed after 0.006 seconds.
+􀟈  Test "Server-initiated rekey remains supported and observable" started.
+􁁛  Test "Server-initiated rekey remains supported and observable" passed after 0.006 seconds.
+􁁛  Suite "Relux automatic rekey policy" passed after 0.040 seconds.
+􁁛  Test run with 10 tests in 2 suites passed after 0.040 seconds.
+cd Dependencies/ReluxNIOSSH && swift build
+[2K[0/1] Planning build[2K[1/1] Planning build
+[2KBuilding for debugging...
+[2K[0/7] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/8] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/6] Write swift-version-45881B103DA9D485.txt[2K[1/7] Write swift-version-45881B103DA9D485.txt[2K[1/6] Write swift-version-45881B103DA9D485.txt[2K[1/5] Write swift-version-45881B103DA9D485.txt[2K[1/6] Write swift-version-45881B103DA9D485.txt[2K[1/5] Write swift-version-45881B103DA9D485.txt[2K[1/4] Write swift-version-45881B103DA9D485.txt[2K[1/5] Write swift-version-45881B103DA9D485.txt[2K[1/4] Write swift-version-45881B103DA9D485.txt[2K[1/3] Write swift-version-45881B103DA9D485.txt[2K[1/4] Write swift-version-45881B103DA9D485.txt[2K[1/3] Write swift-version-45881B103DA9D485.txt[2K[1/4] Write swift-version-45881B103DA9D485.txt[2K[1/3] Write swift-version-45881B103DA9D485.txt[2K[1/2] Write swift-version-45881B103DA9D485.txt[2K[1/3] Write swift-version-45881B103DA9D485.txt[2K[1/2] Write swift-version-45881B103DA9D485.txt[2K[1/1] Write swift-version-45881B103DA9D485.txt
+[2KBuild complete! (1.50s)

@@ -126,3 +126,10 @@ For ReluxNIOSSH, pin the source revision and package checksum/identity, place it
 concrete implementation in a named SSH adapter, and run the same provider and
 harness matrix. ADR-014 still owns the SSH engine selection; this seam does not
 pre-decide it.
+
+The source fork now lives as the independent package
+`Dependencies/ReluxNIOSSH`, pinned and diff-verified against SwiftNIO SSH
+`0.14.1` / `31cdc3c3391a10460dedf1170530cf651d2ca496`. It deliberately keeps
+the `NIOSSH` product/module name for source compatibility. The later
+`ReluxNIOSSHAdapter` target may add it as a package dependency; no
+`ReluxTunnelCore` target depends on it.
