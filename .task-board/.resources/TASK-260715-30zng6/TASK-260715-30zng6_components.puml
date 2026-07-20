@@ -1,0 +1,77 @@
+@startuml
+!theme plain
+title TASK-260715-30zng6 — M1 extension-owned component boundaries
+left to right direction
+skinparam componentStyle rectangle
+
+package "Containing app (not live data path)" #F3F3F3 {
+  [Profile / VPN manager] as App
+}
+
+package "Packet tunnel extension" #EAF2FF {
+  [iOS or macOS provider root] as Root
+  [TunnelProviderAdapter\nactor] as Provider
+  [TunnelRuntimeCoordinator\nactor; one generation] as Coord
+  [RuntimeSnapshotStore\nimmutable publication] as Snapshot
+
+  package "Injected platform seams" #FFF2CC {
+    [ConfigurationSnapshotSource] as Config
+    [PacketFlow] as PacketFlow
+    [NetworkSettingsPlanBuilder] as SettingsBuilder
+    [NetworkSettingsApplier] as SettingsApplier
+  }
+
+  package "Generation-owned mandatory M1 sessions" #D9EAD3 {
+    [SSHBootstrapSession / SSHTransport\nbaseline single session] as SSH
+    [TCPConsumer\naccepted CONNECT flows] as TCP
+    [DNSConsumer / VirtualDNSIngress\nSSH-only upstream] as DNS
+    [M1PacketPlaneSession\nprivate SOCKS owner + dispatcher] as Plane
+    [PacketFlowBridge\nendpoint A + pumps] as Bridge
+    [HEV supervisor\ndedicated thread + lease] as HEV
+  }
+
+  package "Future seams — inactive in M1" #F4CCCC {
+    [DatagramCapabilitySession\nM2 UDP] as UDP
+    [SSHSessionProvider\nM3 lanes] as Lanes
+    [RuntimeRecoveryPolicy\nM3 reconnect] as Recovery
+    [RoutePolicy\nM3 fail-closed] as RoutePolicy
+  }
+}
+
+App --> Root : system VPN start/stop\nversioned read-only messages
+Root --> Provider : lifecycle callbacks
+Provider --> Coord : constructs/starts/stops one generation
+Provider --> Snapshot : read immutable response
+Coord --> Snapshot : sole writer; generation + sequence
+Coord --> Config : atomic non-secret load
+Coord --> SSH : resolve, verify, authenticate before routes
+Coord --> TCP : prepare/stop; baseline direct-tcpip
+Coord --> DNS : prepare/stop; safe DNS readiness
+Coord --> Plane : pure preflight before routes\nPacketBridge.start after apply
+Coord --> SettingsBuilder : actual endpoint + bound M0 values
+Coord --> SettingsApplier : apply/clear; await completion
+Plane --> Bridge : owns one run
+Bridge --> PacketFlow : public packet reads/writes
+Bridge --> HEV : exclusive descriptor-B borrow
+HEV --> Plane : authenticated private SOCKS channel
+Plane --> TCP : validated CONNECT
+Plane --> DNS : virtual-DNS UDP/TCP only\nreject other UDP in M1
+TCP --> SSH : direct-tcpip only
+DNS --> SSH : DNS-over-TCP only
+
+Coord ..> UDP : optional later contribution; absent
+Coord ..> Lanes : single-session implementation only
+Coord ..> Recovery : M1 always stopGeneration
+SettingsBuilder ..> RoutePolicy : compatible only in M1
+
+note bottom of Coord
+  Sole writer of generation, state,
+  acquisition stack, routesInstalled,
+  cancellation and snapshot sequence.
+end note
+
+note bottom of App
+  Never owns live packet, HEV, SSH,
+  TCP, DNS, route or coordinator state.
+end note
+@enduml

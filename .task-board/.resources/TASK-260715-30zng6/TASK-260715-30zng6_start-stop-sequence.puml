@@ -1,0 +1,96 @@
+@startuml
+!theme plain
+title TASK-260715-30zng6 — M1 startup, rollback and idempotent stop
+hide footbox
+autonumber
+
+actor "Provider callback" as NE
+participant "TunnelProviderAdapter\nactor" as Adapter
+participant "RuntimeCoordinator\nactor" as C
+participant "Config source" as Config
+participant "SSH bootstrap" as SSH
+participant "TCP + DNS" as Consumers
+participant "Packet plane" as Plane
+participant "Settings builder/applier" as Settings
+participant "Snapshot store" as Snap
+
+== Ordered start ==
+NE -> Adapter: start(configuration envelope v1)
+Adapter -> Adapter: require idle; generation += 1
+Adapter -> C: make generation + structured cancellation root
+C -> Snap: starting/configuration; all capabilities false
+C -> Config: decode, bounded atomic load, validate references
+Config --> C: immutable non-secret snapshot
+C -> C: require production M0 binding permit for production root
+C -> SSH: resolve/connect on physical path
+SSH -> SSH: evaluate host evidence before credential/auth
+SSH --> C: verified session + actual remote endpoint
+C -> Consumers: prepare TCP flow consumer
+Consumers --> C: TCP prepared
+C -> Consumers: prepare DNS with SSH-only TCP upstream
+Consumers --> C: DNS ready
+C -> Plane: pure preflight(bound M0 packet/HEV configuration)
+Plane --> C: validated; no descriptor/HEV/listener/read acquired
+C -> Settings: build compatible plan(actual endpoint, DNS, MTU)
+Settings --> C: validated plan
+C -> Settings: apply(plan, generation)
+Settings --> C: committed
+C -> Plane: activateReads(generation) / existing PacketBridge.start
+Plane --> C: private ingress + read + mandatory supervision live
+C -> C: re-check SSH/TCP/DNS/packet health
+C -> Snap: usableTCPDNS; TCP + safeDNS true; UDP false
+C --> Adapter: start success
+Adapter --> NE: complete exactly once
+
+== Partial-start failure ==
+alt failure before settings apply
+  Config -[#red]> C: or SSH/consumer/plane error
+  C -> Snap: stopping; capabilities false
+  C -> C: reverse acquired-resource stack
+  C -> Plane: reset preflight or stop/join only if activation raced
+  C -> Consumers: stop/join acquired consumers
+  C -> SSH: idempotent close if acquired
+  C -> Snap: failed; routesInstalled=false
+  C --> Adapter: stable primary error + cleanup summary
+else failure/cancel after settings commit
+  Plane -[#red]> C: activation or final health failure
+  C -> Snap: stopping; capabilities false
+  C -> Plane: stop reads / bridge / HEV and join
+  C -> Settings: clear(generation)
+  alt clear confirmed
+    Settings --> C: cleared
+  else clear failed or uncertain
+    Settings -[#red]-> C: stable clear safety error
+    C -> Snap: failed; routesInstalled=true; routeState=clearFailed
+  end
+  C -> Consumers: stop DNS then TCP
+  C -> SSH: idempotent close
+  C -> Snap: failed; route fields match clear result
+  C --> Adapter: stop returns Void after snapshot/log publication
+end
+
+== Stop or mandatory runtime failure ==
+NE -> Adapter: stop(reason)
+Adapter -> C: stop(reason)
+C -> C: create or join one shielded cleanup task
+C -> Snap: stopping; capabilities false; close admission
+C -> Plane: stop reads / bridge / HEV and join
+opt settings committed or commit outcome uncertain
+  C -> Settings: clear and await; retain truthful failure/uncertainty
+end
+C -> Consumers: stop DNS transactions, then TCP flows
+C -> SSH: close channels/session/socket
+C -> Snap: disconnected if clear not required/confirmed;\nfailed + clearFailed only when required clear failed/uncertain
+C --> Adapter: stop returns Void
+Adapter --> NE: complete exactly once
+
+par repeated/concurrent stop
+  NE -> Adapter: stop(reason)
+  Adapter -> C: stop(reason)
+  C -> C: join existing cleanup task
+  C --> Adapter: same nonthrowing completion
+else stale callback
+  Settings -[#gray]>> C: old generation completion/event
+  C -> C: discard; state/routes/snapshot unchanged
+end
+@enduml

@@ -1,0 +1,62 @@
+@startuml
+!theme plain
+title TASK-260715-30zng6 — M1 runtime lifecycle
+hide empty description
+left to right direction
+
+state Idle #EFEFEF
+state LoadingConfiguration #FFF2CC
+state AuthenticatingSSH #FFF2CC
+state PreparingConsumers #FFF2CC
+state ApplyingSettings #FCE5CD
+state ActivatingPacketReads #FCE5CD
+state UsableTCPDNS #D9EAD3
+state Stopping #D9D9D9
+state Failed #F4CCCC
+
+[*] --> Idle
+Idle --> LoadingConfiguration : accepted start / generation += 1
+LoadingConfiguration --> AuthenticatingSSH : valid versioned non-secret snapshot
+AuthenticatingSSH --> PreparingConsumers : verified host + authenticated session + actual endpoint
+PreparingConsumers --> ApplyingSettings : TCP + DNS ready + packet preflight valid\n[no descriptor, HEV, listener or PacketFlow read]
+ApplyingSettings --> ActivatingPacketReads : settings apply committed
+ActivatingPacketReads --> UsableTCPDNS : read registered + all mandatory health ready\n/ publish TCP=true, safeDNS=true, UDP=false
+
+LoadingConfiguration --> Stopping : cancel or failure
+AuthenticatingSSH --> Stopping : cancel or failure
+PreparingConsumers --> Stopping : cancel or failure
+ApplyingSettings --> Stopping : cancel/failure; clear if commit uncertain
+ActivatingPacketReads --> Stopping : cancel/failure; stop reads then clear
+UsableTCPDNS --> Stopping : stop or mandatory health loss
+
+Stopping --> Idle : ordinary stop + clear not required/confirmed\n[resources baseline, routes false]
+Stopping --> Failed : startup/runtime failure or clear failed/uncertain\n[capabilities false; route fields truthful]
+Failed --> Idle : adapter releases failed generation
+
+Idle --> Idle : stop / idempotent no-op
+Stopping --> Stopping : repeated stop / join one cleanup task
+
+note bottom of LoadingConfiguration
+  Routes forbidden while configuration,
+  M0 binding permit, trust/authentication,
+  TCP/DNS/packet preparation or route plan
+  is invalid, absent, cancelled or stale.
+end note
+
+note bottom of ApplyingSettings
+  Routes may commit here but capabilities
+  remain false until packet reads activate.
+end note
+
+note bottom of Failed
+  routesInstalled is false when clear was
+  not required or was confirmed. Only a
+  required failed/uncertain clear publishes
+  true + routeState=clearFailed.
+end note
+
+note bottom of UsableTCPDNS
+  M1 has no ConnectedFull, reasserting,
+  UDP, lane scheduling or reconnect state.
+end note
+@enduml

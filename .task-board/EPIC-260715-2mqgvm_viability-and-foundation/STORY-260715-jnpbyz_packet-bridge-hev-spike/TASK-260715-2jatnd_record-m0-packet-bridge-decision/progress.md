@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:01:37Z
 
 ## Last Update
-2026-07-19T21:17:17Z
+2026-07-20T18:59:50Z
 
 ## Blocked By
 - TASK-260715-gyg51r
@@ -19,6 +19,7 @@ backlog
 - TASK-260715-1pn983
 - TASK-260715-38o3xg
 - TASK-260715-12x6oq
+- TASK-260720-1qhxqa
 
 ## Checklist
 - [ ] Every M0 Bridge gate row traces to reproducible evidence
