@@ -48,6 +48,8 @@ struct ProviderAdapterContractTests {
   func nativePackagingAnchors() {
     #expect(IOSNativePackagingAnchor.schemaVersion == 1)
     #expect(MacOSNativePackagingAnchor.schemaVersion == 1)
+    #expect(IOSNativePackagingAnchor.hevLinkageSmoke())
+    #expect(MacOSNativePackagingAnchor.hevLinkageSmoke())
   }
 
   @Test("both roots reject unsupported message versions")

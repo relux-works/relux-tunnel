@@ -21,6 +21,7 @@
 | ADR-017 | Accepted | Use Tuist 4.202.5 pinned exactly by repository-local Mise; generate with an explicit Xcode pin and deterministic graph/project comparison per TASK-260715-3r0993 |
 | ADR-018 | Accepted | Ship macOS in-app self-update via Sparkle 2.x with an EdDSA-signed appcast; every payload is an already-notarized Developer ID build; iOS updates stay with the App Store |
 | ADR-019 | Accepted | Package custom-build C dependencies such as HEV and libssh2 as locally rebuilt static XCFramework SwiftPM `binaryTarget`s behind named native adapter modules; keep reviewable source packages such as ReluxNIOSSH as source dependencies and keep all native dependencies out of `ReluxTunnelCore` proper |
+| ADR-020 | Accepted | Set HEV `udp-copy-buffer-nums` M0 baseline to 2 (injectable), so the effective task stack stays 24576; the pinned HEV computes task stack = 20480 + max(tcp-buffer-size, 1500 × udp-copy-buffer-nums) and the default 10 silently forces 35480. Final value is an M3 physical-UDP evidence gate; HEV stays unmodified (config only). Resolves the TASK-260715-1vv52g stop-the-line. |
 
 ## Decision rationale
 

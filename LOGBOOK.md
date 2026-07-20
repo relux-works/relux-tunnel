@@ -5,6 +5,27 @@
 
 ## 2026-07-20
 
+### 0748 — Review: reachable shutdown deadlock in HEV quit path (TASK-260715-1vv52g)
+- FINDING: `HEVDescriptorBorrowHandle.requestStop()` (`Sources/ReluxTunnelNativeAdapter/HEVIntegration.swift:374`) calls `hev_socks5_tunnel_quit()` unconditionally. Pinned upstream `hev_socks5_tunnel_stop` (`src/hev-socks5-tunnel.c:695`) busy-waits forever for `event_fds[1] >= 0`; `event_task_fini` resets both fds to `-1` when main returns, and init-failure returns (-1…-5) never create them.
+- ROOT CAUSE: Any ordering where HEV main returns before `requestStop()` — init failure, or the contract-modeled "unexpected HEV main return while active" — makes `supervisedCleanup` (`Sources/ReluxTunnelCore/PacketFlowBridge.swift:1017`) invoke quit after fini: infinite 100 ms `usleep` loop on a cooperative executor thread; provider `stop()` never returns, descriptors never close. Plain `stop()` racing a just-died HEV hits the same path.
+- FINDING: Masked in tests because fake runtimes' `requestStop` never blocks and every lifecycle test stops HEV before its main returns.
+- NOTE: A residual quit-vs-spontaneous-return race (write-after-close/assert inside HEV) is inherent upstream — its own `hev-jni.c` shares it — and is out of fixable scope without patching; the guard narrows the window to that inherent case.
+- REWORK: `requestStop()` now skips upstream quit after the joined main call has returned while preserving listener shutdown and stop metrics. Tests cover both main-return-first and stop-first orderings and fail if quit lands after return.
+- REWORK: The loopback listener fd is closed exactly once by its dispatch-source cancel handler on `listenerQueue`; `stop()` waits for cancellation before returning, eliminating the accept-loop fd-reuse window.
+- VERIFICATION: Strict swift-format, 49 Swift tests, `swift build`, 8 HEV tests under ThreadSanitizer, and `make validate-native` all pass. The residual quit-vs-spontaneous-return race remains upstream-inherent and would require a forbidden HEV patch; the return guard narrows exposure to that concurrent window.
+
+### 0702 — Unmodified HEV/lwIP bridge integration (TASK-260715-1vv52g)
+- DECISION: The real `DescriptorBorrowConsumer` runs pinned HEV `ad760049` on exactly one dedicated pthread, calls the public quit API once, joins before return, and never closes or duplicates bridge endpoint B. A process-wide lease protects HEV's global C state.
+- DECISION: HEV's upstream SOCKS connection is restricted to an IPv4-loopback listener with fresh per-run RFC 1929 credentials. Only an authenticated owned channel reaches the injected adapter; pending-authentication count and timeout are caller inputs, and an external no-auth ingress test is rejected before the seam.
+- VERIFICATION: The emitted in-memory YAML records caller MTU, `udp: tcp`, task stack 24576, TCP buffer 4096, `udp-copy-buffer-nums: 2`, and max sessions 1200. The generator rejects any stack input the pinned parser would silently raise.
+- VERIFICATION: The checksum-locked static XCFramework is a SwiftPM binary target for the shared native adapter and all provider/harness graphs. Generated and statically embedded HEV/core/task-system/lwIP notices are byte-identical and trace every manifest revision; the stripped harness audit requires HEV main/quit/stats symbols.
+- ANOMALY: Darwin accepted sockets inherited nonblocking behavior during the split RFC 1929 exchange; explicitly restoring blocking mode fixed a deterministic transient-`EAGAIN` authentication rejection without retries or sleeps.
+
+### 0634 — HEV low-memory baseline is not effective as recorded (TASK-260715-1vv52g)
+- BLOCKER: Pinned unmodified HEV `ad760049` silently raises the requested `task-stack-size: 24576` to `35480`: `hev-config.c` computes `TASK_STACK_SIZE (20480) + max(tcp-buffer-size (4096), UDP_BUF_SIZE (1500) * udp-copy-buffer-nums (default 10))` for every UDP mode, including `socks5.udp: tcp`.
+- VERIFICATION: A native probe linked directly against the checksum-verified rebuilt XCFramework reports `task-stack-size=35480`, `tcp-buffer-size=4096`, `udp-copy-buffer-nums=10`, and `max-session-count=1200`; evidence is `.temp/TASK-260715-1vv52g/hev-effective-config-probe-01.log`.
+- DECISION NEEDED: Either approve an additional injectable `udp-copy-buffer-nums` baseline of `1` or `2` so the effective stack remains 24576, explicitly accept 35480 as the effective stack while retaining 24576 only as an input, or revise the no-patch constraint. Recommendation: approve `2` as an explicit M0 measurement input; do not patch HEV or claim that 24576 is effective while the parser overrides it.
+
 ### 0619 — Native packaging seam accepted (TASK-260715-1g9cyt)
 - MILESTONE: ADR-019 static XCFramework `binaryTarget` seam reviewed and accepted; unblocks TASK-260715-sbrrp7, 1vv52g, 1af33i, 1ozsb6 with the HEV/lwIP and SSH candidate plug-in path documented in docs/native-dependency-packaging.md.
 - VERIFICATION: Reviewer independently reran `make validate-native` (exit 0): boundary guard, fixture source/artifact-lock verify, byte-identical rebuild, negative gates (tampered source, missing arch, dylib substitution, absolute path, hash drift), full Xcode 26.5 Apple matrix with `APPLICATION_EXTENSION_API_ONLY=YES`, stripped SwiftPM release harness link audit, 41 tests in 6 suites. Strict swift-format lint, py_compile, sh -n, and manifest JSON checks also pass.

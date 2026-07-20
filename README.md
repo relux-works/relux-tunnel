@@ -108,7 +108,7 @@ orchestration) is built out under the M5 CI story.
 | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
 | SwiftPM | Build/test the shared core, provider adapters, and standalone macOS harness | `make validate-core`; `swift run ReluxTunnelHarness smoke --configuration ./smoke.json` | `.build/`; task-scoped logs under `.temp/` |
 | Core boundary guard | Reject forbidden Core/harness imports and invalid adapter or harness dependency direction | `make check-core-boundaries` | Terminal pass/fail report |
-| Native dependency validator | Rebuild and inspect pinned static XCFramework slices, checksums, notices, and extension-safe linkage | `make validate-native` | `NativeDependencies/Artifacts/`; `.build/native-apple-matrix/` |
+| Native dependency validator | Rebuild and inspect pinned static XCFramework slices, checksums, notices, required HEV symbols, and extension-safe linkage | `make validate-native`; `./scripts/native-dependency-tool.py verify --dependency hev-lwip --source-dir /path/to/pinned/hev-socks5-tunnel` | `NativeDependencies/Artifacts/`; bundled notices; `.build/native-apple-matrix/` |
 | Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
 | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
 | Legacy guard mutation tests | Prove accidental removal and identity/path migration fail closed | `make test-legacy-guard LEGACY_ROOT=/path/to/relux-proxy` | Disposable files under the system temporary directory; removed on exit |

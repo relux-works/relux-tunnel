@@ -29,6 +29,11 @@ public struct SmokeHarnessCommand: HarnessCommand {
       named: "harness.native_fixture.schema_version",
       to: Int64(NativeDependencyPackaging.schemaVersion)
     )
+    _ = NativeDependencyPackaging.hevLinkageSmoke()
+    await context.dependencies.runtime.metrics.setGauge(
+      named: "harness.hev.linked",
+      to: 1
+    )
     try await context.dependencies.faultPolicy.evaluate(.smokeFinish)
   }
 }

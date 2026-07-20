@@ -1,25 +1,31 @@
 import Foundation
 
-public enum InternalSOCKSUDPMode: Sendable {
+public enum InternalSOCKSUDPMode: Equatable, Sendable {
   /// The fixed HEV UDP-in-TCP component contract from ADR-004.
   case udpInTCP
 }
 
 /// Caller-owned HEV/lwIP limits. Values are measured in later packet-plane work.
 public struct InternalSOCKSConfiguration: Equatable, Sendable {
+  public let mtuBytes: Int
   public let taskStackSizeBytes: Int
   public let tcpBufferSizeBytes: Int
+  public let udpCopyBufferCount: Int
   public let maximumSessionCount: Int
   public let udpMode: InternalSOCKSUDPMode
 
   public init(
+    mtuBytes: Int,
     taskStackSizeBytes: Int,
     tcpBufferSizeBytes: Int,
+    udpCopyBufferCount: Int,
     maximumSessionCount: Int,
     udpMode: InternalSOCKSUDPMode = .udpInTCP
   ) {
+    self.mtuBytes = mtuBytes
     self.taskStackSizeBytes = taskStackSizeBytes
     self.tcpBufferSizeBytes = tcpBufferSizeBytes
+    self.udpCopyBufferCount = udpCopyBufferCount
     self.maximumSessionCount = maximumSessionCount
     self.udpMode = udpMode
   }

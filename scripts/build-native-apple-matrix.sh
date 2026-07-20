@@ -42,6 +42,11 @@ build_scheme() {
 
 cd "$repo_root"
 
+"$tool" inspect \
+    --dependency hev-lwip \
+    --xcframework NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework \
+    --verify-lock
+
 # The native adapter is the shared Core/native consumer. The provider schemes
 # prove both extension destinations; the harness proves the macOS executable.
 build_scheme ReluxTunnelNativeAdapter 'generic/platform=iOS'
@@ -61,6 +66,9 @@ swiftpm_bin=$(swift build -c release --scratch-path "$swiftpm_scratch" --show-bi
 xcrun strip -S "$swiftpm_bin/ReluxTunnelHarness"
 "$tool" inspect-linked \
     --binary "$swiftpm_bin/ReluxTunnelHarness" \
-    --architectures "$(uname -m)"
+    --architectures "$(uname -m)" \
+    --required-symbol hev_socks5_tunnel_main_from_str \
+    --required-symbol hev_socks5_tunnel_quit \
+    --required-symbol hev_socks5_tunnel_stats
 
-echo "Native fixture linked for iOS device, iOS simulator, macOS provider, shared consumer, and harness"
+echo "Pinned HEV and native fixture linked for iOS device, iOS simulator, macOS provider, shared consumer, and harness"

@@ -308,7 +308,11 @@ def inspect_xcframework(item: dict[str, Any], path: Path, *, verify_lock: bool) 
             raise NativeDependencyError("XCFramework file hashes do not match manifest lock")
 
 
-def inspect_linked_binary(path: Path, required_architectures: list[str]) -> None:
+def inspect_linked_binary(
+    path: Path,
+    required_architectures: list[str],
+    required_symbols: list[str],
+) -> None:
     path = path.resolve()
     if not path.is_file():
         raise NativeDependencyError(f"missing linked binary: {path}")
@@ -341,6 +345,15 @@ def inspect_linked_binary(path: Path, required_architectures: list[str]) -> None
     )
     if disallowed_symbols:
         raise NativeDependencyError(f"dynamic loading symbols in linked binary: {disallowed_symbols}")
+
+    defined_symbols = run(["nm", "-gU", str(path)], capture=True).split()
+    missing_symbols = sorted(
+        symbol for symbol in required_symbols if f"_{symbol}" not in defined_symbols
+    )
+    if missing_symbols:
+        raise NativeDependencyError(
+            f"required native symbols are not linked: {missing_symbols}"
+        )
 
     match = ABSOLUTE_BUILD_PATH.search(path.read_bytes())
     if match:
@@ -494,13 +507,38 @@ def write_notices(item: dict[str, Any], source_root: Path, output: Path) -> None
     output.write_text("\n".join(sections) + "\n", encoding="utf-8")
 
 
+def notice_swift_source(notice: str) -> str:
+    if '#"""' in notice or '"""#' in notice:
+        raise NativeDependencyError("notice text cannot be represented as a raw Swift literal")
+    indented_notice = "\n".join(
+        f"    {line}" if line else "" for line in notice.rstrip().splitlines()
+    )
+    return (
+        "// Generated from the checksum-verified HEV notice set.\n"
+        "public enum HEVNoticeBundle {\n"
+        "  public static func contents() -> String {\n"
+        "    bundledContents\n"
+        "  }\n\n"
+        "  private static let bundledContents = #\"\"\"\n"
+        f"{indented_notice}\n"
+        "    \"\"\"#\n"
+        "}\n"
+    )
+
+
 def build_hev(item: dict[str, Any], source_dir: Path, output: Path, notices: Path) -> None:
     verify_hev_source(item, source_dir)
     write_notices(item, source_dir, notices)
+    embedded_notice = REPOSITORY_ROOT / item["license"]["embedded_notice_source"]
+    embedded_notice.parent.mkdir(parents=True, exist_ok=True)
+    embedded_notice.write_text(
+        notice_swift_source(notices.read_text(encoding="utf-8")),
+        encoding="utf-8",
+    )
     run(["./build-apple.sh"], cwd=source_dir)
     candidate = source_dir / "HevSocks5Tunnel.xcframework"
     normalize_xcframework_plist(candidate)
-    inspect_xcframework(item, candidate, verify_lock=False)
+    inspect_xcframework(item, candidate, verify_lock=True)
     output = output.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
     if output.exists():
@@ -529,6 +567,20 @@ def verify_dependency(
         if source_dir is None:
             raise NativeDependencyError("--source-dir is required to verify hev-lwip")
         verify_hev_source(item, source_dir)
+        inspect_xcframework(
+            item,
+            REPOSITORY_ROOT / integration["artifact_path"],
+            verify_lock=True,
+        )
+        generated_notices = REPOSITORY_ROOT / item["license"]["notices_output"]
+        embedded_notice = REPOSITORY_ROOT / item["license"]["embedded_notice_source"]
+        if not generated_notices.is_file() or not embedded_notice.is_file():
+            raise NativeDependencyError("HEV generated or embedded notices are missing")
+        expected_source = notice_swift_source(
+            generated_notices.read_text(encoding="utf-8")
+        )
+        if embedded_notice.read_text(encoding="utf-8") != expected_source:
+            raise NativeDependencyError("HEV generated and embedded notices differ")
     else:
         raise NativeDependencyError(f"no verifier implemented for {name}")
 
@@ -556,6 +608,7 @@ def parser() -> argparse.ArgumentParser:
     linked = subparsers.add_parser("inspect-linked")
     linked.add_argument("--binary", type=Path, required=True)
     linked.add_argument("--architectures", nargs="+", required=True)
+    linked.add_argument("--required-symbol", action="append", default=[])
 
     fixture = subparsers.add_parser("build-fixture")
     fixture.add_argument("--output", type=Path, required=True)
@@ -597,7 +650,11 @@ def main() -> int:
         inspect_xcframework(item, arguments.xcframework, verify_lock=arguments.verify_lock)
         print(f"{arguments.dependency} XCFramework is static and extension-safe")
     elif arguments.command == "inspect-linked":
-        inspect_linked_binary(arguments.binary, arguments.architectures)
+        inspect_linked_binary(
+            arguments.binary,
+            arguments.architectures,
+            arguments.required_symbol,
+        )
         print(f"{arguments.binary} linked dependencies and architectures are valid")
     elif arguments.command == "build-fixture":
         build_fixture(item, arguments.output)

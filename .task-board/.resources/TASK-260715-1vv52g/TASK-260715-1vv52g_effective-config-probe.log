@@ -1,0 +1,4 @@
+task-stack-size=35480
+tcp-buffer-size=4096
+udp-copy-buffer-nums=10
+max-session-count=1200

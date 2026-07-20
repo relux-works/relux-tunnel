@@ -11,4 +11,10 @@ public enum NativeDependencyPackaging: Sendable {
   public static func smoke(value: UInt32) -> UInt32 {
     relux_native_fixture_mix(value)
   }
+
+  /// Keeps the pinned HEV archive in every provider/harness link graph without
+  /// starting global HEV state.
+  public static func hevLinkageSmoke() -> HEVTrafficStatistics {
+    PinnedHEVNativeRuntime().statistics()
+  }
 }

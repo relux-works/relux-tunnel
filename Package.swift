@@ -21,11 +21,16 @@ let package = Package(
       name: "CReluxNativeFixture",
       path: "NativeDependencies/Artifacts/ReluxNativeFixture.xcframework"
     ),
+    .binaryTarget(
+      name: "HevSocks5Tunnel",
+      path: "NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework"
+    ),
     .target(
       name: "ReluxTunnelNativeAdapter",
       dependencies: [
         "ReluxTunnelCore",
         "CReluxNativeFixture",
+        "HevSocks5Tunnel",
       ]
     ),
     .target(

@@ -36,6 +36,7 @@ package = json.load(sys.stdin)
 targets = {target["name"]: target for target in package["targets"]}
 required = {
     "CReluxNativeFixture",
+    "HevSocks5Tunnel",
     "ReluxTunnelCore",
     "ReluxTunnelNativeAdapter",
     "ReluxTunnelIOSAdapter",
@@ -64,6 +65,7 @@ def dependency_names(target):
 
 if dependency_names(targets["ReluxTunnelNativeAdapter"]) != {
     "CReluxNativeFixture",
+    "HevSocks5Tunnel",
     "ReluxTunnelCore",
 }:
     raise SystemExit("ReluxTunnelNativeAdapter must own the native/core boundary")

@@ -1,0 +1,80 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/16] Compiling ReluxTunnelCore SSHContracts.swift
+[3/16] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[4/16] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[5/16] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[6/16] Compiling ReluxTunnelCore PacketContracts.swift
+[7/16] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[8/16] Compiling ReluxTunnelCore ComponentContracts.swift
+[9/16] Compiling ReluxTunnelCore RuntimeContracts.swift
+[10/16] Emitting module ReluxTunnelCore
+[11/16] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[12/21] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[13/21] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[14/21] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[15/21] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[16/21] Emitting module ReluxTunnelNativeAdapter
+[17/36] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[18/36] Emitting module ReluxTunnelIOSAdapter
+[19/36] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[20/36] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[21/36] Emitting module ReluxTunnelMacOSAdapter
+[22/36] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[23/41] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[24/41] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[25/41] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[26/41] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[27/41] Emitting module ReluxTunnelHarnessSupport
+[28/41] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[29/45] Emitting module ReluxTunnelHarness
+[30/45] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[30/45] Write Objects.LinkFileList
+[32/45] Emitting module ReluxTunnelNativeAdapterTests
+[33/45] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[34/45] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[34/45] Linking ReluxTunnelHarness
+[35/45] Applying ReluxTunnelHarness
+[37/45] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[38/45] Emitting module ReluxTunnelHarnessTests
+[39/45] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[40/45] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[41/45] Emitting module ReluxTunnelCoreTests
+[42/45] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[43/45] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[44/47] Emitting module ReluxTunnelPackageTests
+[45/47] Compiling ReluxTunnelPackageTests runner.swift
+[45/47] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[46/47] Linking ReluxTunnelPackageTests
+Build complete! (4.16s)
+Test Suite 'Selected tests' started at 2026-07-20 07:28:12.095.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-20 07:28:12.123.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-20 07:28:12.123.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-20 07:28:12.123.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.028) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "approved low-memory configuration is emitted exactly" started.
+􁁛  Test "approved low-memory configuration is emitted exactly" passed after 0.001 seconds.
+􀟈  Test "configuration rejects a stack request that upstream would silently raise" started.
+􁁛  Test "configuration rejects a stack request that upstream would silently raise" passed after 0.001 seconds.
+􀟈  Test "external no-auth ingress is rejected before the adapter seam" started.
+􁁛  Test "external no-auth ingress is rejected before the adapter seam" passed after 0.001 seconds.
+􀟈  Test "SOCKS boundary stop waits for listener close and is idempotent" started.
+􁁛  Test "SOCKS boundary stop waits for listener close and is idempotent" passed after 0.001 seconds.
+􀟈  Test "borrow passes only endpoint B and quit joins without closing it" started.
+􁁛  Test "borrow passes only endpoint B and quit joins without closing it" passed after 0.001 seconds.
+􀟈  Test "quit is never sent after HEV main returns in either stop ordering" started.
+􁁛  Test "quit is never sent after HEV main returns in either stop ordering" passed after 0.001 seconds.
+􀟈  Test "startup failure stops listener state and releases the process lease" started.
+􁁛  Test "startup failure stops listener state and releases the process lease" passed after 0.001 seconds.
+􀟈  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" started.
+􁁛  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" passed after 0.001 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 0.005 seconds.
+􁁛  Test run with 8 tests in 1 suite passed after 0.005 seconds.

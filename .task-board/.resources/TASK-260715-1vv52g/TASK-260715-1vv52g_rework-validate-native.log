@@ -1,0 +1,222 @@
+./scripts/check-core-boundaries.sh
+ReluxTunnelCore dependency and import boundaries are valid
+./scripts/native-dependency-tool.py verify --dependency relux-native-fixture
+relux-native-fixture source and packaging inputs are verified
+./scripts/tests/test-native-dependencies.sh
+relux-native-fixture source and packaging inputs are verified
+xcframework successfully written out to: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-native-fixture-jaj0n2zw/ReluxNativeFixture.xcframework
+rebuilt relux-native-fixture at /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-native-tests.qmBjTy/ReluxNativeFixture.xcframework
+wrote notices to /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-native-tests.qmBjTy/THIRD_PARTY_NOTICES.txt
+Native dependency checksum, reproducibility, notices, architecture, and extension-safety tests passed
+./scripts/build-native-apple-matrix.sh
+hev-lwip XCFramework is static and extension-safe
+2026-07-20 07:28:37.870 xcodebuild[92966:89180242] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-07-20 07:28:40.815 xcodebuild[93012:89180606] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-07-20 07:28:43.762 xcodebuild[93075:89181159] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, name:Any Mac }
+{ platform:macOS, variant:Mac Catalyst, name:Any Mac }
+2026-07-20 07:28:54.691 xcodebuild[93190:89182057] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-07-20 07:28:56.513 xcodebuild[93230:89182413] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-07-20 07:28:58.651 xcodebuild[93265:89182710] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, name:Any Mac }
+{ platform:macOS, variant:Mac Catalyst, name:Any Mac }
+2026-07-20 07:29:00.833 xcodebuild[93294:89182975] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, name:Any Mac }
+{ platform:macOS, variant:Mac Catalyst, name:Any Mac }
+/Users/iv/Developer/relux-tunnel/Package.swift: ReluxTunnelHarness: ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[0/1] Planning build
+Building for production...
+[0/4] Write sources
+[1/4] Write swift-version-45881B103DA9D485.txt
+[3/5] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[4/8] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[5/8] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[6/8] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[6/8] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[7/8] Linking ReluxTunnelHarness
+Build complete! (3.38s)
+/Users/iv/Developer/relux-tunnel/.build/native-apple-matrix/swiftpm-release/arm64-apple-macosx/release/ReluxTunnelHarness linked dependencies and architectures are valid
+Pinned HEV and native fixture linked for iOS device, iOS simulator, macOS provider, shared consumer, and harness
+swift test
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/15] Emitting module ReluxTunnelHarnessSupport
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[2/16] Linking ReluxTunnelHarness
+[3/16] Applying ReluxTunnelHarness
+[5/16] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[6/16] Emitting module ReluxTunnelNativeAdapterTests
+[7/16] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[8/16] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[9/16] Emitting module ReluxTunnelHarnessTests
+[10/16] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[11/16] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[12/16] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[13/16] Emitting module ReluxTunnelCoreTests
+[14/16] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[15/18] Compiling ReluxTunnelPackageTests runner.swift
+[16/18] Emitting module ReluxTunnelPackageTests
+[16/18] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[17/18] Linking ReluxTunnelPackageTests
+Build complete! (1.92s)
+Test Suite 'All tests' started at 2026-07-20 07:29:22.136.
+Test Suite 'All tests' passed at 2026-07-20 07:29:22.143.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Native dependency packaging" started.
+􀟈  Suite "PacketFlowBridge bounded execution" started.
+􀟈  Suite "Provider adapter contracts" started.
+􀟈  Suite "PacketFlow adapter read lifecycle" started.
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Suite "ReluxTunnelHarness" started.
+􀟈  Suite "PacketFlowBridge public socket pair" started.
+􀟈  Test "forward elapsed-time slices use the injected monotonic clock" started.
+􀟈  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" started.
+􀟈  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" started.
+􀟈  Test "forward and reverse count slices yield deterministically" started.
+􀟈  Test "both provider adapters link the pinned native fixture" started.
+􀟈  Test "pinned binary fixture is callable beside core contracts" started.
+􀟈  Test "macOS root satisfies the shared lifecycle contract" started.
+􀟈  Test "cancelling start at a startup barrier performs normal ordered cleanup" started.
+􀟈  Test "both roots return the same version message" started.
+􀟈  Test "iOS root satisfies the shared lifecycle contract" started.
+􀟈  Test "metric schema is exact and every run starts from zero" started.
+􀟈  Test "both roots reject unsupported message versions" started.
+􀟈  Test "writes preserve packet order and use public Darwin families" started.
+􀟈  Test "one hundred restart cycles restore descriptor and task ownership baselines" started.
+􀟈  Test "argument parser rejects missing and unknown subcommands" started.
+􀟈  Test "forward framing derives SDK families and preserves each payload" started.
+􀟈  Test "startup configuration failure closes both owned endpoints without borrowing" started.
+􀟈  Test "configuration schema versions fail closed" started.
+􀟈  Test "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test "only one callback registration can be outstanding" started.
+􀟈  Test "subcommands receive every packet and SSH experiment seam" started.
+􀟈  Test "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test "argument parser requires exactly one structured configuration input" started.
+􀟈  Test "first persistent socket error wins over a later HEV return" started.
+􀟈  Test "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test "signals map to shell-standard exit codes" started.
+􀟈  Test "smoke output is deterministic, versioned, and privacy safe" started.
+􀟈  Test "normal exit cleans files, sockets, and managed tasks" started.
+􀟈  Test "cardinality metrics expose counts but no packet data" started.
+􀟈  Test "unsupported families are reported without retaining payload" started.
+􀟈  Test "write rejection is the same typed error on both adapters" started.
+􀟈  Test "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test "reverse framing drops malformed datagrams and writes valid packets in order" started.
+􀟈  Test "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test "AF_INET maps only an IPv4 payload" started.
+􀟈  Test "would-block and ENOBUFS drop once; EMSGSIZE is the one fatal transition" started.
+􀟈  Test "approved low-memory configuration is emitted exactly" started.
+􀟈  Test case passing 1 argument platform → macOS to "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test case passing 1 argument platform → iOS to "writes preserve packet order and use public Darwin families" started.
+􀟈  Test case passing 1 argument platform → iOS to "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test case passing 1 argument platform → macOS to "writes preserve packet order and use public Darwin families" started.
+􀟈  Test case passing 1 argument platform → iOS to "only one callback registration can be outstanding" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument platform → macOS to "only one callback registration can be outstanding" started.
+􀟈  Test "normal stop preserves flags, joins the borrow, and closes B before A once" started.
+􀟈  Test case passing 1 argument platform → macOS to "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test case passing 1 argument platform → iOS to "unsupported families are reported without retaining payload" started.
+􀟈  Test case passing 1 argument platform → macOS to "write rejection is the same typed error on both adapters" started.
+􁁛  Test "both provider adapters link the pinned native fixture" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument platform → iOS to "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument platform → macOS to "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test case passing 1 argument platform → iOS to "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test case passing 1 argument platform → iOS to "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test case passing 1 argument platform → iOS to "write rejection is the same typed error on both adapters" started.
+􁁛  Test "pinned binary fixture is callable beside core contracts" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument platform → iOS to "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test case passing 1 argument platform → macOS to "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test case passing 1 argument platform → macOS to "unsupported families are reported without retaining payload" started.
+􁁛  Test "macOS root satisfies the shared lifecycle contract" passed after 0.001 seconds.
+􁁛  Test "iOS root satisfies the shared lifecycle contract" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument platform → macOS to "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test case passing 1 argument platform → macOS to "AF_INET maps only an IPv4 payload" started.
+􁁛  Test "argument parser rejects missing and unknown subcommands" passed after 0.001 seconds.
+􁁛  Test "configuration schema versions fail closed" passed after 0.001 seconds.
+􁁛  Test "both roots reject unsupported message versions" passed after 0.001 seconds.
+􁁛  Test "both roots return the same version message" passed after 0.001 seconds.
+􁁛  Test "signals map to shell-standard exit codes" passed after 0.001 seconds.
+􁁛  Test "argument parser requires exactly one structured configuration input" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument platform → iOS to "AF_INET maps only an IPv4 payload" started.
+􁁛  Test "writes preserve packet order and use public Darwin families" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" passed after 0.001 seconds.
+􁁛  Test "cardinality metrics expose counts but no packet data" passed after 0.001 seconds.
+􁁛  Test "startup configuration failure closes both owned endpoints without borrowing" passed after 0.001 seconds.
+􁁛  Test "write rejection is the same typed error on both adapters" with 2 test cases passed after 0.001 seconds.
+􁁛  Suite "Native dependency packaging" passed after 0.001 seconds.
+􁁛  Suite "Provider adapter contracts" passed after 0.001 seconds.
+􁁛  Test "approved low-memory configuration is emitted exactly" passed after 0.001 seconds.
+􁁛  Test "metric schema is exact and every run starts from zero" passed after 0.001 seconds.
+􁁛  Test "callback-first preserves callback order and packet boundaries" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "AF_INET6 maps only an IPv6 payload" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "AF_INET maps only an IPv4 payload" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "cancelling start at a startup barrier performs normal ordered cleanup" passed after 0.001 seconds.
+􁁛  Test "shutdown-first resumes once, retires a late callback, and prevents new reads" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "only one callback registration can be outstanding" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "packet/protocol cardinality mismatch is a typed batch anomaly" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "subcommands receive every packet and SSH experiment seam" passed after 0.001 seconds.
+􀟈  Test "configuration rejects a stack request that upstream would silently raise" started.
+􁁛  Test "normal stop preserves flags, joins the borrow, and closes B before A once" passed after 0.001 seconds.
+􁁛  Test "forward framing derives SDK families and preserves each payload" passed after 0.001 seconds.
+􁁛  Test "reverse framing drops malformed datagrams and writes valid packets in order" passed after 0.001 seconds.
+􁁛  Test "first persistent socket error wins over a later HEV return" passed after 0.001 seconds.
+􁁛  Test "cancellation-first resumes once and ignores its late callback" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "unsupported families are reported without retaining payload" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "empty payloads and family/version mismatches are typed malformed packets" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" passed after 0.001 seconds.
+􁁛  Test "forward elapsed-time slices use the injected monotonic clock" passed after 0.001 seconds.
+􁁛  Test "forward and reverse count slices yield deterministically" passed after 0.001 seconds.
+􁁛  Test "configuration rejects a stack request that upstream would silently raise" passed after 0.001 seconds.
+􁁛  Suite "PacketFlowBridge bounded execution" passed after 0.001 seconds.
+􀟈  Test "external no-auth ingress is rejected before the adapter seam" started.
+􁁛  Test "would-block and ENOBUFS drop once; EMSGSIZE is the one fatal transition" passed after 0.001 seconds.
+􁁛  Test "normal exit cleans files, sockets, and managed tasks" passed after 0.001 seconds.
+􁁛  Test "signal cancellation uses signal exit code and cleans all resources" passed after 0.001 seconds.
+􁁛  Test "external no-auth ingress is rejected before the adapter seam" passed after 0.001 seconds.
+􀟈  Test "SOCKS boundary stop waits for listener close and is idempotent" started.
+􁁛  Test "smoke output is deterministic, versioned, and privacy safe" passed after 0.002 seconds.
+􁁛  Suite "ReluxTunnelHarness" passed after 0.003 seconds.
+􁁛  Test "SOCKS boundary stop waits for listener close and is idempotent" passed after 0.001 seconds.
+􀟈  Test "borrow passes only endpoint B and quit joins without closing it" started.
+􁁛  Test "borrow passes only endpoint B and quit joins without closing it" passed after 0.001 seconds.
+􀟈  Test "quit is never sent after HEV main returns in either stop ordering" started.
+􁁛  Test "quit is never sent after HEV main returns in either stop ordering" passed after 0.001 seconds.
+􀟈  Test "startup failure stops listener state and releases the process lease" started.
+􁁛  Test "startup failure stops listener state and releases the process lease" passed after 0.001 seconds.
+􀟈  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" started.
+􁁛  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" passed after 0.001 seconds.
+􁁛  Test "callback/cancellation races resume exactly once and restore registration baseline" with 2 test cases passed after 0.003 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 0.004 seconds.
+􁁛  Test "callback/shutdown races resume exactly once and restore registration baseline" with 2 test cases passed after 0.003 seconds.
+􁁛  Suite "PacketFlow adapter read lifecycle" passed after 0.004 seconds.
+􁁛  Test "one hundred restart cycles restore descriptor and task ownership baselines" passed after 0.006 seconds.
+􁁛  Suite "PacketFlowBridge public socket pair" passed after 0.006 seconds.
+􁁛  Test run with 49 tests in 7 suites passed after 0.006 seconds.
+swift build
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version-45881B103DA9D485.txt
+[2/5] Emitting module ReluxTunnelMacOSAdapter
+[3/5] Emitting module ReluxTunnelIOSAdapter
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[3/5] Linking ReluxTunnelHarness
+[4/5] Applying ReluxTunnelHarness
+Build complete! (0.52s)

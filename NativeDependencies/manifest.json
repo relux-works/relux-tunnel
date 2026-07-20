@@ -120,8 +120,8 @@
       },
       "integration": {
         "swiftpm_kind": "binaryTarget",
-        "future_target_name": "CHevSocks5Tunnel",
-        "future_adapter_target": "ReluxTunnelHEVAdapter",
+        "target_name": "HevSocks5Tunnel",
+        "adapter_target": "ReluxTunnelNativeAdapter",
         "linkage": "static",
         "artifact_path": "NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework",
         "application_extension_api_only": true
@@ -145,12 +145,33 @@
           {"name": "lwIP", "revision": "2a11c14c7a32887af25a034e82ef18b0b12076ac", "spdx": "BSD-3-Clause", "path": "third-part/lwip/LICENSE"},
           {"name": "yaml", "revision": "efa36117a8646d26d12b58e05bac472d7854a70d", "spdx": "MIT", "path": "third-part/yaml/License"}
         ],
-        "notices_output": "NativeDependencies/Generated/HEV_THIRD_PARTY_NOTICES.txt"
+        "notices_output": "NativeDependencies/Generated/HEV_THIRD_PARTY_NOTICES.txt",
+        "embedded_notice_source": "Sources/ReluxTunnelNativeAdapter/HEVNoticeBundle.swift"
       },
       "rebuild": {
         "command": "./scripts/native-dependency-tool.py build-hev --source-dir <pinned-recursive-checkout> --output NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework --notices NativeDependencies/Generated/HEV_THIRD_PARTY_NOTICES.txt",
         "upstream_command": "./build-apple.sh",
         "xcode_build": "17F42"
+      },
+      "artifact": {
+        "file_sha256": {
+          "Info.plist": "15776a6df6737716ebe50524ab19d20f7c9d8016ff81a5d1ee7fd5a843333a2b",
+          "ios-arm64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "ios-arm64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "ios-arm64/libhev-socks5-tunnel.a": "48a32bc08d26e568a6b1a299cd1a514a8857d9a64b9cf140248d52205c4ebcb9",
+          "ios-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "ios-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "ios-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "c8fc479a741233c0a7af053a5f38647d3323bff777bbeb13bf5c0e8164b57456",
+          "macos-arm64_x86_64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "macos-arm64_x86_64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "macos-arm64_x86_64/libhev-socks5-tunnel.a": "8770eb4da4873ff11ccaf06b643c2fce10da4bf200fdfb5670cf14e77580ad17",
+          "tvos-arm64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "tvos-arm64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "tvos-arm64/libhev-socks5-tunnel.a": "37878bd37f4992c53258194090e9accacdbff8dcc9b09c0afcc57f33b48890e1",
+          "tvos-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "tvos-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "tvos-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "11c7064752a5d5d90b0c7460f67507971db512e75e11457c07562060565603ca"
+        }
       }
     }
   }

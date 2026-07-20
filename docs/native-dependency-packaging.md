@@ -33,19 +33,22 @@ ReluxTunnelCore                       (no native or platform dependency)
         ^
         |
 ReluxTunnelNativeAdapter ----------> CReluxNativeFixture binaryTarget
+        |                         `-> HevSocks5Tunnel binaryTarget
         ^                                      |
-        |                                      `-- static XCFramework only
+        |                                      `-- static XCFrameworks only
         +-- ReluxTunnelIOSAdapter
         +-- ReluxTunnelMacOSAdapter
         `-- ReluxTunnelHarnessSupport --> ReluxTunnelHarness
 ```
 
-The future `ReluxTunnelHEVAdapter` and a possible `ReluxTunnelLibSSH2Adapter`
-occupy the same layer as `ReluxTunnelNativeAdapter`: they depend on Core
-contracts plus their C binary target. The provider and harness composition
-roots swap or add the named adapter dependency; `ReluxTunnelCore` and its public
-contracts do not change direction. A `ReluxNIOSSHAdapter` uses the same layer
-but depends on the pinned Swift source package instead of a binary target.
+The HEV integration now occupies `ReluxTunnelNativeAdapter` itself: the adapter
+depends on Core contracts plus the pinned `HevSocks5Tunnel` binary target and
+supplies the bridge's real scoped-borrow consumer. A possible
+`ReluxTunnelLibSSH2Adapter` occupies the same layer. Provider and harness
+composition roots retain the named adapter dependency; `ReluxTunnelCore` and
+its public contracts do not change direction. A `ReluxNIOSSHAdapter` uses the
+same layer but depends on the pinned Swift source package instead of a binary
+target.
 
 ## Rebuild and verification
 
@@ -83,8 +86,20 @@ The pinned HEV graph is rebuilt only from a disposable recursive checkout:
 Before invoking upstream `build-apple.sh`, the command verifies the root and all
 four submodule revisions and deterministic git-archive SHA-256 values from the
 manifest. A mismatch fails before compilation. After compilation it performs
-the same static/slice/extension-safety inspection and emits notices directly
-from the verified license files.
+the same static/slice/extension-safety inspection, verifies the per-file artifact
+lock, and emits notices directly from the verified license files into both the
+generated evidence location and a generated static Swift notice API (avoiding
+SwiftPM's absolute build-path resource fallback). The Apple matrix
+builds the native adapter and both provider configurations for iOS device, iOS
+Simulator, and macOS, then proves that the stripped harness contains HEV's
+`main_from_str`, `quit`, and `stats` symbols.
+
+At runtime the adapter generates HEV configuration in memory, lends only the
+bridge-owned endpoint B to one dedicated pthread, calls the public unmodified
+quit API, joins that pthread, and leaves descriptor closure to bridge cleanup.
+Its SOCKS side binds only IPv4 loopback and requires fresh per-run RFC 1929
+credentials before an accepted channel can reach the injectable adapter seam.
+The pending-authentication limit and timeout remain caller-owned inputs.
 
 ## Cache policy
 
@@ -98,7 +113,7 @@ runtime.
 
 ## Candidate plug-in checklist
 
-For HEV or libssh2:
+For a new custom native graph such as libssh2:
 
 1. Add the exact upstream graph, source hashes, licenses, flags, and slices to
    the manifest.
