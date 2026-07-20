@@ -536,7 +536,7 @@ public struct RuntimeLifecycleSnapshot: Codable, Equatable, Sendable {
   }
 }
 
-public enum RuntimeErrorDomain: String, Codable, Sendable {
+public enum RuntimeErrorDomain: String, Codable, CaseIterable, Hashable, Sendable {
   case configuration
   case sshTrust
   case sshCredential
@@ -609,6 +609,8 @@ public struct RuntimeDiagnosticBucket: Codable, Equatable, Sendable {
 
 public struct RuntimeDiagnosticHistogram: Codable, Equatable, Sendable {
   public let unit: RuntimeDiagnosticUnit
+  /// Cumulative buckets ordered by increasing upper bound.
+  /// `UInt64.max` is the finite wire representation of the catch-all bucket.
   public let buckets: [RuntimeDiagnosticBucket]
 
   public init(unit: RuntimeDiagnosticUnit, buckets: [RuntimeDiagnosticBucket]) {

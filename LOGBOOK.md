@@ -3,6 +3,21 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-07-21
+
+### 0053 — Runtime diagnostics ingestion is bounded and non-blocking (TASK-260715-1i49fm)
+- REWORK: Component recorders now reserve one of 256 pending typed-update slots with a zero-timeout semaphore and enqueue on a private serial diagnostics lane. Snapshot construction can serialize on that lane without holding anything packet or SSH executors need; saturation increments one generation-scoped aggregate and retains no rejected label or value.
+- CARDINALITY: Diagnostics errors are constrained to a reviewed 10-case `RuntimeDiagnosticErrorCode` catalog with a fixed domain per code. Decoded unknown or domain-mismatched tokens are counted and discarded before enqueue, closing the unstable-label path.
+- SEQUENCING: Each generation publishes sequence zero first, increments through `UInt64.max`, then reports deterministic exhaustion. A new generation resets sequence and aggregates while stale recorder updates remain isolated.
+- REGRESSION: Populated recursive JSON and reflected-property allowlists freeze snapshot, histogram, bucket, and error shapes. Hostile private-field tokens, 10,000 distinct metrics/errors, queue saturation, and a deliberately paused snapshot prove redaction, bounded retention, and packet/SSH progress.
+- VERIFICATION: Focused and Thread Sanitizer diagnostics runs pass 9 tests; `make validate-core` passes boundaries/native verification, 192 tests in 22 suites, and the post-test build. Strict repository Swift format lint and `git diff --check` pass; maximum populated snapshot is 9,865 bytes against the 65,536-byte limit.
+
+### 0031 — Runtime diagnostics use fixed aggregate schema and generation-scoped sinks (TASK-260715-1i49fm)
+- DECISION: `RuntimeDiagnosticsStore` owns one bounded generation with 96 counters, 56 gauges, one cumulative DNS-latency histogram, and at most one cataloged error per each of 10 finite domains. Packet/HEV use its `TunnelMetrics` recorder, SSH uses the same recorder without lane identity, and coordinator/TCP/DNS/route/memory use typed finite-category updates; unknown free-form metric names are counted then discarded without retaining the label.
+- CONCURRENCY: Each recorder is stamped with its runtime generation. Advancing the store resets all aggregates and snapshot sequence, and late callbacks through an older recorder become no-ops. Component updates use the bounded non-blocking ingestion lane recorded at 0053; immutable snapshots are encoded only after leaving that lane.
+- PRIVACY: The default schema has no lane/run/flow IDs, DNS or destination fields, addresses, credentials, commands/stdin, payload content, or traffic samples. State transition times are monotonic process-uptime milliseconds; errors retain only validated domain/code; flow, memory, route, health, packet/byte, drop-reason, DNS-result, and SSH values are aggregates.
+- VERIFICATION: Superseded by the rework verification recorded at 0053.
+
 ## 2026-07-20
 
 ### 2359 — Runtime model rework closes nested-version and fail-safe projection gaps (TASK-260715-lovbdz)
