@@ -1,0 +1,19 @@
+TASK-260715-p89bdj diagram validation — 2026-07-20
+
+Tool readiness:
+- task-board version 0.20.1-15-g5e2c927: available and query/mutation smoke passed.
+- xcrun macOS SDK: available; active SDK is Xcode 26.5 MacOSX26.5.
+- Darwin macro check: EAGAIN=35, EWOULDBLOCK=EAGAIN.
+- plantuml executable: not found in PATH.
+- cached plantuml*.jar under /Users/iv/.agents and /Users/iv/Developer: not found.
+
+Source checks:
+- TASK-260715-p89bdj_lifecycle-state.puml has one lifecycle purpose, one title,
+  one @startuml, one @enduml, and explicit start/running/stop/failure paths.
+- TASK-260715-p89bdj_ownership-sequence.puml has one ownership-order purpose,
+  one title, one @startuml, one @enduml, and explicit start/stop/fatal sections.
+- Descriptor B close ordering follows HEV audit: request stop, await blocking main
+  return, then close B exactly once.
+
+Rendering was not attempted after readiness failed; authoritative deliverables
+are the task-scoped PlantUML sources.

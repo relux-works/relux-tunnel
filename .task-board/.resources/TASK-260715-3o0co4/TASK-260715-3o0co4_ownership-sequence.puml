@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+
+title PacketFlowBridge descriptor and task ownership ordering
+hide footbox
+autonumber
+
+actor Provider
+participant "Bridge lifecycle actor" as Bridge
+participant "Socket factory / owned FDs" as Socket
+participant "Bridge supervisor" as Supervisor
+participant "Forward + reverse children" as Pumps
+participant "HEV borrow handle\n(dedicated native thread)" as HEV
+
+== Start ==
+Provider -> Bridge: start(packetFlow, injected configuration)
+Bridge -> Socket: socketpair(AF_UNIX, SOCK_DGRAM)
+Socket --> Bridge: owned A + owned B
+Bridge -> Socket: CLOEXEC + NONBLOCK on A/B\nset/read SO_SNDBUF + SO_RCVBUF on A/B
+Bridge -> HEV: beginBorrowing(raw B)
+HEV --> Bridge: accepted borrow + observed handle
+Bridge -> Supervisor: install run owner
+Supervisor -> Pumps: start behind lifecycle gate
+Bridge -> Pumps: open gate after state = running
+Bridge --> Provider: RunHandle
+
+== Normal stop / cancellation ==
+Provider -> Bridge: stop() or owner cancellation
+Bridge -> Supervisor: enter stopping; cancel children/read registration
+Supervisor -> Pumps: cancel and join
+Pumps --> Supervisor: returned
+Supervisor -> HEV: requestStop() once
+HEV --> Supervisor: blocking main returned
+Supervisor -> Socket: close owned B exactly once
+Supervisor -> Socket: close owned A exactly once
+Supervisor --> Bridge: cleanup joined
+Bridge --> Provider: stop returns; RunHandle succeeds
+
+== Fatal branch ==
+Pumps -> Supervisor: first fatal error
+Supervisor -> Bridge: transition to failing; retain primary error
+Supervisor -> Pumps: cancel sibling and join
+Supervisor -> HEV: requestStop() once
+HEV --> Supervisor: blocking main returned
+Supervisor -> Socket: close B, then A
+Supervisor --> Bridge: cleanup joined + primary error
+Bridge --> Provider: RunHandle throws once
+
+note over Socket,HEV
+  B remains caller-owned throughout.
+  HEV borrows it exclusively and never closes it.
+end note
+
+@enduml

@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:01:35Z
 
 ## Last Update
-2026-07-15T01:04:29Z
+2026-07-20T00:02:14Z
 
 ## Blocked By
 - TASK-260715-3o0co4
@@ -24,7 +24,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-3dn813_packet-flow-bridge-contract.md](file://TASK-260715-3dn813/TASK-260715-3dn813_packet-flow-bridge-contract.md) — Normative contract for unit and fault-injection coverage
 
 ## Outcome Resources
 (none)

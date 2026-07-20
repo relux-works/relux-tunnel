@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:01:35Z
 
 ## Last Update
-2026-07-15T03:19:55Z
+2026-07-20T00:02:14Z
 
 ## Blocked By
 - TASK-260715-uopycx
@@ -28,7 +28,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1vv52g_packet-flow-descriptor-contract.md](file://TASK-260715-1vv52g/TASK-260715-1vv52g_packet-flow-descriptor-contract.md) — Descriptor borrow, HEV join, and close-order contract
 
 ## Outcome Resources
 (none)

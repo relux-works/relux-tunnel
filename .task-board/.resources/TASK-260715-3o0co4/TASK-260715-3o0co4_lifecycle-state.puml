@@ -1,0 +1,45 @@
+@startuml
+!theme plain
+
+title PacketFlowBridge run lifecycle
+hide empty description
+left to right direction
+
+state Idle
+state Starting
+state Running
+state Stopping
+state Failing
+state Stopped
+state Failed
+
+[*] --> Idle
+Idle --> Starting : start / validate + create pair
+Stopped --> Starting : restart / new run ID
+Failed --> Starting : restart / new run ID
+
+Starting --> Running : pair configured\nB borrow accepted\nsupervisor installed
+Starting --> Stopping : explicit stop or cancellation
+Running --> Stopping : explicit stop or cancellation
+Starting --> Failing : first fatal/startup error
+Running --> Failing : first fatal runtime error
+
+Stopping --> Stopped : pumps joined\nHEV main returned\nclose B then A
+Failing --> Failed : pumps joined\nHEV main returned\nclose B then A\npublish primary error
+
+Stopping --> Stopping : repeated stop / join same cleanup
+Failing --> Failing : sibling error / count only
+
+note bottom of Running
+  EAGAIN/EWOULDBLOCK and ENOBUFS
+  are bounded running-state events.
+  No retry and no side queue.
+end note
+
+note bottom of Failing
+  EMSGSIZE, peer EOF, PacketFlow rejection,
+  and unclassified persistent errors are fatal.
+end note
+
+@enduml
+

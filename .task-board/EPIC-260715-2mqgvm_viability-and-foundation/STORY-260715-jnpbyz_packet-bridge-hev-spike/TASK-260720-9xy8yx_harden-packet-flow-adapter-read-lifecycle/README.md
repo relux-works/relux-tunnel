@@ -1,0 +1,10 @@
+# Harden PacketFlow adapter read lifecycle
+
+## Description
+Harden the shared PacketFlow boundary and both iOS and macOS NEPacketTunnelFlow adapters so each read registration is single-flight, cancellation-safe, exactly-once resumed, and explicit about malformed packet/protocol batches before PacketFlowBridge depends on it.
+
+## Scope
+In scope: the shared PacketFlow read-result or typed-error contract; iOS and macOS NEPacketTunnelFlow adapters; one outstanding read per adapter; cancellation racing a late callback; exact packet/protocol cardinality; AF_INET and AF_INET6 mapping; unsupported-family and payload-version mismatch reporting; privacy-safe metrics; Swift Testing with an injected callback driver. Out of scope: socket-pair creation, HEV, packet framing, bridge pump implementation, routes, DNS, SSH, private utun access, arbitrary sleeps, and final tuning constants.
+
+## Acceptance Criteria
+1. A read registration resumes its awaiting Swift task exactly once whether the NE callback, task cancellation, or adapter shutdown wins, and a late callback after cancellation performs no bridge work and starts no new read. 2. The adapter permits at most one outstanding read, preserves callback order and packet boundaries, and treats packet/protocol cardinality mismatch as an explicit typed anomaly rather than zip truncation. 3. AF_INET and AF_INET6 map to typed packets only when the payload IP version matches; unsupported families, empty payloads, and mismatches are reported through the agreed result/error and metric contract without packet bytes or destinations in logs. 4. iOS and macOS adapters share the same conformance behavior and use only NEPacketTunnelFlow plus public Darwin family constants; no utun discovery, descriptor scanning, or system-FD reopening exists. 5. Deterministic Swift Testing covers callback-first, cancellation-first, shutdown-first, late-callback, mismatched-array, unsupported-family, IPv4, and IPv6 cases and proves no continuation, task, or callback-registration leak.
