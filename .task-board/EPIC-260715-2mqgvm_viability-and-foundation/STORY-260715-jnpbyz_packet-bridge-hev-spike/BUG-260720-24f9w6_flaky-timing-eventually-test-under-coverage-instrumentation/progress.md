@@ -5,20 +5,16 @@ backlog
 (none)
 
 ## Created
-2026-07-15T00:46:59Z
+2026-07-20T09:00:46Z
 
 ## Last Update
-2026-07-20T09:02:47Z
+2026-07-20T09:00:46Z
 
 ## Blocked By
-- STORY-260715-l2i2oo
+- (none)
 
 ## Blocks
-- STORY-260715-lkshfz
-- STORY-260715-1zzt0c
-- STORY-260715-19ii11
-- STORY-260715-1nsw9p
-- STORY-260716-d37sts
+- (none)
 
 ## Checklist
 (empty)

@@ -5,6 +5,16 @@
 
 ## 2026-07-20
 
+### 1259 — Packet-frame fuzz + allocation bounds verified over hostile corpus (TASK-260715-52h8i3)
+- MILESTONE: Deterministic seeded fuzz suite (`Tests/ReluxTunnelCoreTests/PacketFrameFuzzTests.swift`, written by prior codex run, verified unchanged) proves the p89bdj bounds contract on both framing directions: 50k hostile frames/direction pass with reverse peak malloc growth 12.7 MiB (256 MiB ceiling), forward 407 KiB, ~3.9 s/direction, monotonic drop counters, all four malformed reasons exercised, privacy-safe log keys. CI-scale run (512/direction) inside plain `swift test`: 105/105 pass; TSan run clean.
+- FINDING: Allocation growth is sublinear in corpus size (100× frames → ~96× less than linear reverse growth); untrusted declared lengths never size an allocation — splitter caps at `maximumDatagramBytes + 1`, bridge buffer sized once from MTU.
+- COVERAGE: `PacketFlowBridge.swift` 95.07% lines; fuzz corpus/tests 97–99%. `DarwinPacketBridgeIO.swift` 23% — real-socket syscall wrapper, outside fuzz scope, flagged for future integration coverage.
+- SCOPE: Docs added (`docs/packet-frame-fuzzing.md`, README tools row) documenting the extended command, env knobs, and `PACKET_FRAME_FUZZ_REPORT` evidence format. No product or test-logic changes this run.
+
+### 1256 — One-off full-suite flake on first coverage-instrumented run (TASK-260715-52h8i3)
+- ANOMALY: First `swift test --enable-code-coverage` invocation after a fresh instrumented build reported 105 tests failed with 1 issue while suite `Packet frame deterministic fuzz and allocation bounds` passed in that same run; the failing test was not captured before rerun. 8 follow-up runs (5 plain, 3 coverage) all passed 105/105.
+- STATUS: Monitoring. Fuzz suite is `.serialized`/deterministic and exonerated; suspect a timing-sensitive `eventually` expectation elsewhere under first-run instrumentation overhead. If it recurs, capture the full log before rerunning.
+
 ### 1233 — PacketFlowBridge fault matrix closes the deferred contract rows (TASK-260715-3dn813)
 - VERIFICATION: Deterministic Swift Testing now covers the synthetic 4+MTU ceiling, reverse truncation/oversize, normalized would-block spellings, both ENOBUFS directions, every persistent/fatal row, exact schema/endpoint gauges, drop-summary windows, saturation, all seven startup and seven cleanup barriers, and 100 callback-backed restart cycles. The full package passes 98 tests; 47 bridge tests also pass under ThreadSanitizer.
 - COVERAGE: `PacketFlowBridge.swift` plus `PacketFlowBridgeContracts.swift` measure 94.55% line coverage and 88.28% region coverage. Strict Swift format, `swift build`, and the Core boundary guard pass; production sources were not changed.

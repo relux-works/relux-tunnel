@@ -57,3 +57,12 @@ redeploy.
 
 Superseded the earlier Claude-only (fable/opus, no Codex) policy: the executor
 tier is now Codex `gpt-5.6-sol` at `high`, orchestration stays on Fable.
+
+## Security-testing tasks -> Claude
+
+Codex (`gpt-5.6-sol`) trips OpenAI's cybersecurity content filter on legitimate
+defensive security-testing tasks (fuzzing, adversarial/hostile-input corpora,
+exploit-adjacent, leak tests) and exits non-zero mid-run. Route these to
+`--agent claude --model claude-fable-5` instead (authorized defensive context).
+Examples: packet/protocol/UDP fuzz + allocation-bounds, DNS/route leak tests,
+security/redaction tests. Everyday non-security executor work stays on codex-sol.
