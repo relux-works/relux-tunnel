@@ -105,6 +105,193 @@
         }
       }
     },
+    "libssh2-openssl": {
+      "revision": "a34302491c164d53c900fec9b3cbb050ecebe719+openssl-3.5.7+relux-rekey-1",
+      "upstream": "https://github.com/libssh2/libssh2",
+      "source": {
+        "kind": "verified_archives_before_patch",
+        "libssh2": {
+          "revision": "a34302491c164d53c900fec9b3cbb050ecebe719",
+          "url": "https://codeload.github.com/libssh2/libssh2/tar.gz/a34302491c164d53c900fec9b3cbb050ecebe719",
+          "archive_sha256": "744ba3e9a8e7a877038e94a74459340052a105ad599605a5b6d0d6bc5ec2c87c",
+          "top_level_directory": "libssh2-a34302491c164d53c900fec9b3cbb050ecebe719"
+        },
+        "openssl": {
+          "revision": "openssl-3.5.7",
+          "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.7/openssl-3.5.7.tar.gz",
+          "archive_sha256": "a8c0d28a529ca480f9f36cf5792e2cd21984552a3c8e4aa11a24aa31aeac98e8",
+          "top_level_directory": "openssl-3.5.7"
+        },
+        "patch_manifest": "Dependencies/ReluxLibSSH2/PATCH_MANIFEST.json"
+      },
+      "integration": {
+        "swiftpm_kind": "binaryTarget",
+        "target_name": "ReluxLibSSH2",
+        "future_adapter_target": "ReluxTunnelLibSSH2Adapter",
+        "linkage": "static",
+        "artifact_path": "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework",
+        "application_extension_api_only": true,
+        "public_headers": [
+          "libssh2.h",
+          "libssh2_publickey.h",
+          "libssh2_sftp.h",
+          "module.modulemap"
+        ],
+        "required_symbols": ["libssh2_session_rekey"]
+      },
+      "compiler": {
+        "xcode_build": "17F42",
+        "libssh2_cmake_flags": [
+          "-DBUILD_STATIC_LIBS=ON",
+          "-DBUILD_SHARED_LIBS=OFF",
+          "-DBUILD_EXAMPLES=OFF",
+          "-DBUILD_TESTING=OFF",
+          "-DLIBSSH2_BUILD_DOCS=OFF",
+          "-DENABLE_DEBUG_LOGGING=OFF",
+          "-DLIBSSH2_NO_DEPRECATED=ON",
+          "-DCRYPTO_BACKEND=OpenSSL",
+          "-DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE"
+        ],
+        "libssh2_compile_definitions": [
+          "LIBSSH2_NO_RSA_SHA1",
+          "LIBSSH2_NO_AES_CBC"
+        ],
+        "common_c_flags": [
+          "-O2",
+          "-fapplication-extension",
+          "-fvisibility=hidden",
+          "-ffunction-sections",
+          "-fdata-sections",
+          "-fno-common",
+          "-fno-ident"
+        ],
+        "openssl_configure_options": [
+          "no-shared",
+          "no-module",
+          "no-dso",
+          "no-tests",
+          "no-apps",
+          "no-docs",
+          "no-legacy",
+          "no-comp"
+        ],
+        "slices": [
+          {
+            "library_identifier": "ios-arm64",
+            "platform": "ios",
+            "sdk": "iphoneos",
+            "minimum": "17.0",
+            "architectures": ["arm64"],
+            "builds": [
+              {
+                "architecture": "arm64",
+                "target_triple": "arm64-apple-ios17.0",
+                "openssl_target": "ios64-xcrun",
+                "minimum_flag": "-miphoneos-version-min=17.0"
+              }
+            ]
+          },
+          {
+            "library_identifier": "ios-arm64_x86_64-simulator",
+            "platform": "ios",
+            "variant": "simulator",
+            "sdk": "iphonesimulator",
+            "minimum": "17.0",
+            "architectures": ["arm64", "x86_64"],
+            "builds": [
+              {
+                "architecture": "arm64",
+                "target_triple": "arm64-apple-ios17.0-simulator",
+                "openssl_target": "iossimulator-arm64-xcrun",
+                "minimum_flag": "-mios-simulator-version-min=17.0"
+              },
+              {
+                "architecture": "x86_64",
+                "target_triple": "x86_64-apple-ios17.0-simulator",
+                "openssl_target": "iossimulator-x86_64-xcrun",
+                "minimum_flag": "-mios-simulator-version-min=17.0"
+              }
+            ]
+          },
+          {
+            "library_identifier": "macos-arm64_x86_64",
+            "platform": "macos",
+            "sdk": "macosx",
+            "minimum": "14.0",
+            "architectures": ["arm64", "x86_64"],
+            "builds": [
+              {
+                "architecture": "arm64",
+                "target_triple": "arm64-apple-macos14.0",
+                "openssl_target": "darwin64-arm64-cc",
+                "minimum_flag": "-mmacosx-version-min=14.0"
+              },
+              {
+                "architecture": "x86_64",
+                "target_triple": "x86_64-apple-macos14.0",
+                "openssl_target": "darwin64-x86_64-cc",
+                "minimum_flag": "-mmacosx-version-min=14.0"
+              }
+            ]
+          }
+        ]
+      },
+      "license": {
+        "components": [
+          {
+            "name": "libssh2",
+            "revision": "a34302491c164d53c900fec9b3cbb050ecebe719",
+            "spdx": "BSD-3-Clause",
+            "archive": "libssh2",
+            "path": "COPYING",
+            "sha256": "a83a4da224ebeaaaea5efb4cd1ef1ab0998c1bd719d6f70b05e1d5c491372137"
+          },
+          {
+            "name": "OpenSSL",
+            "revision": "openssl-3.5.7",
+            "spdx": "Apache-2.0",
+            "archive": "openssl",
+            "path": "LICENSE.txt",
+            "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+          },
+          {
+            "name": "OpenSSL acknowledgements",
+            "revision": "openssl-3.5.7",
+            "spdx": "NOTICE",
+            "archive": "openssl",
+            "path": "ACKNOWLEDGEMENTS.md",
+            "sha256": "58dee45791f007ced048114717f86672778fe75c551827c57e760861446ce3c3"
+          }
+        ],
+        "notices_output": "NativeDependencies/Generated/LIBSSH2_OPENSSL_THIRD_PARTY_NOTICES.txt",
+        "notices_sha256": "13858159cce95e8ba950d613fcc1a3f2b5eefd6baa183177133fbcf7fd194994"
+      },
+      "rebuild": {
+        "command": "python3 scripts/libssh2-fork-tool.py build-xcframework --libssh2-archive <libssh2.tar.gz> --openssl-archive <openssl-3.5.7.tar.gz> --output NativeDependencies/Artifacts/ReluxLibSSH2.xcframework",
+        "verify_command": "python3 scripts/libssh2-fork-tool.py verify",
+        "test_command": "python3 scripts/libssh2-fork-tool.py test-rekey"
+      },
+      "artifact": {
+        "file_sha256": {
+          "Info.plist": "c2f94cb9df3976a873298d7ce88cb37d30e74027a6192e659ab815deaa22f1a4",
+          "ios-arm64/Headers/libssh2.h": "27da2886742f5d20c169a88b9fad43a25fabd9fd509d8a74ff41bcf877e5badd",
+          "ios-arm64/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
+          "ios-arm64/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
+          "ios-arm64/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
+          "ios-arm64/libReluxLibSSH2.a": "8b05f46296fc8851b846678405c98710eaddf740668c8ce64ba230ea34041484",
+          "ios-arm64_x86_64-simulator/Headers/libssh2.h": "27da2886742f5d20c169a88b9fad43a25fabd9fd509d8a74ff41bcf877e5badd",
+          "ios-arm64_x86_64-simulator/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
+          "ios-arm64_x86_64-simulator/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
+          "ios-arm64_x86_64-simulator/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
+          "ios-arm64_x86_64-simulator/libReluxLibSSH2.a": "18cb8a1bdd90d3e2c3a967a3d91ffd988fb3255863cd003a12b3b8ed9e7c25a4",
+          "macos-arm64_x86_64/Headers/libssh2.h": "27da2886742f5d20c169a88b9fad43a25fabd9fd509d8a74ff41bcf877e5badd",
+          "macos-arm64_x86_64/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
+          "macos-arm64_x86_64/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
+          "macos-arm64_x86_64/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
+          "macos-arm64_x86_64/libReluxLibSSH2.a": "836e3a5dad2b43b7e62677437f2a269c90383f4e8563c09428ecc6349b7b15ed"
+        }
+      }
+    },
     "hev-lwip": {
       "revision": "ad7600497931205105b08367bd1b450048157e40",
       "upstream": "https://github.com/heiher/hev-socks5-tunnel",

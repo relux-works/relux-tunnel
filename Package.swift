@@ -25,6 +25,10 @@ let package = Package(
       name: "HevSocks5Tunnel",
       path: "NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework"
     ),
+    .binaryTarget(
+      name: "ReluxLibSSH2",
+      path: "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework"
+    ),
     .target(
       name: "ReluxTunnelNativeAdapter",
       dependencies: [
@@ -81,6 +85,14 @@ let package = Package(
       dependencies: [
         "ReluxTunnelCore",
         "ReluxTunnelNativeAdapter",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxLibSSH2PackagingTests",
+      dependencies: ["ReluxLibSSH2"],
+      linkerSettings: [
+        .linkedFramework("Security"),
+        .linkedFramework("CoreFoundation"),
       ]
     ),
   ]

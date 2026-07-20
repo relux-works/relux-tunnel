@@ -1,6 +1,7 @@
 .PHONY: check-legacy test-legacy-guard check-core-boundaries core-build core-test \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
-	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh
+	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
+	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2
 
 LEGACY_ROOT ?= ../relux-proxy
 
@@ -21,6 +22,7 @@ core-test:
 
 check-native-dependencies:
 	./scripts/native-dependency-tool.py verify --dependency relux-native-fixture
+	python3 scripts/libssh2-fork-tool.py verify
 
 test-native-dependencies:
 	./scripts/tests/test-native-dependencies.sh
@@ -42,3 +44,25 @@ build-reluxniossh:
 	cd Dependencies/ReluxNIOSSH && swift build
 
 validate-reluxniossh: check-reluxniossh test-reluxniossh build-reluxniossh
+
+LIBSSH2_SOURCE_ARCHIVE ?= .temp/TASK-260720-3vwls7/libssh2-a343024.tar.gz
+OPENSSL_SOURCE_ARCHIVE ?= .temp/TASK-260715-28ok1k/openssl-3.5.7.tar.gz
+
+check-libssh2:
+	python3 scripts/libssh2-fork-tool.py verify
+
+test-libssh2:
+	python3 scripts/libssh2-fork-tool.py test-rekey
+
+test-libssh2-source-gates:
+	python3 scripts/libssh2-fork-tool.py test-source-gates \
+		--libssh2-archive "$(LIBSSH2_SOURCE_ARCHIVE)" \
+		--openssl-archive "$(OPENSSL_SOURCE_ARCHIVE)"
+
+build-libssh2:
+	python3 scripts/libssh2-fork-tool.py build-xcframework \
+		--libssh2-archive "$(LIBSSH2_SOURCE_ARCHIVE)" \
+		--openssl-archive "$(OPENSSL_SOURCE_ARCHIVE)" \
+		--output NativeDependencies/Artifacts/ReluxLibSSH2.xcframework
+
+validate-libssh2: check-libssh2 test-libssh2

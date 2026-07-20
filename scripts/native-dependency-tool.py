@@ -39,7 +39,9 @@ UNSAFE_DYNAMIC_SYMBOLS = {
     "_dlopen",
     "_dlsym",
 }
-ABSOLUTE_BUILD_PATH = re.compile(rb"/(?:Users|private/(?:tmp|var)|tmp)/[^\x00\n ]+")
+ABSOLUTE_BUILD_PATH = re.compile(
+    rb"/(?:Users|private/(?:tmp|var)|var/folders|tmp)/[^\x00\n ]+"
+)
 
 
 class NativeDependencyError(RuntimeError):
@@ -272,6 +274,21 @@ def inspect_xcframework(item: dict[str, Any], path: Path, *, verify_lock: bool) 
             raise NativeDependencyError(
                 f"extension-unsafe load commands in {identifier}: {disallowed_load_commands}"
             )
+
+        minimum = slice_.get("minimum")
+        if minimum:
+            minimum_versions = set(
+                re.findall(r"^\s*minos\s+([0-9.]+)\s*$", load_commands, re.MULTILINE)
+            )
+            if not minimum_versions:
+                raise NativeDependencyError(
+                    f"missing minimum deployment version in {identifier}"
+                )
+            if minimum_versions != {minimum}:
+                raise NativeDependencyError(
+                    f"minimum deployment mismatch for {identifier}: expected "
+                    f"{minimum}, got {sorted(minimum_versions)}"
+                )
 
         undefined_symbols = run(["nm", "-u", str(library_path)], capture=True)
         disallowed_symbols = sorted(

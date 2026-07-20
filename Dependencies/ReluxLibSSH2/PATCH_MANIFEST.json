@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "upstream": {
+    "repository": "https://github.com/libssh2/libssh2",
+    "revision": "a34302491c164d53c900fec9b3cbb050ecebe719",
+    "archive_sha256": "744ba3e9a8e7a877038e94a74459340052a105ad599605a5b6d0d6bc5ec2c87c",
+    "license": "BSD-3-Clause",
+    "license_sha256": "a83a4da224ebeaaaea5efb4cd1ef1ab0998c1bd719d6f70b05e1d5c491372137"
+  },
+  "patches": [
+    {
+      "path": "patches/0001-public-client-rekey.patch",
+      "sha256": "873b3c2bad8ba481f7122922d075333f736853f8efab6cd39edc35098d111924",
+      "allowed_paths": [
+        "include/libssh2.h",
+        "src/session.c"
+      ],
+      "public_symbols": [
+        "libssh2_session_rekey"
+      ]
+    }
+  ],
+  "delta_policy": {
+    "maximum_patch_count": 1,
+    "maximum_changed_paths": 2,
+    "crypto_or_algorithm_changes_allowed": false,
+    "private_headers_exported": false
+  }
+}

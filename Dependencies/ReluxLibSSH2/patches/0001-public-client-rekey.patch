@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Relux Works <engineering@relux.works>
+Date: Mon, 20 Jul 2026 00:00:00 +0000
+Subject: [PATCH] session: expose client-initiated key re-exchange
+
+Export the existing nonblocking key-exchange state machine through the public
+session API. The wrapper uses the same blocking adjustment convention as the
+rest of libssh2 and invokes the established reexchange path without changing
+algorithms or cryptographic implementation.
+---
+ include/libssh2.h |  1 +
+ src/session.c     | 13 +++++++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/include/libssh2.h b/include/libssh2.h
+index 815772e..db584f9 100644
+--- a/include/libssh2.h
++++ b/include/libssh2.h
+@@ -613,6 +613,7 @@ LIBSSH2_API int libssh2_session_startup(LIBSSH2_SESSION *session, int sock);
+ #endif
+ LIBSSH2_API int libssh2_session_handshake(LIBSSH2_SESSION *session,
+                                           libssh2_socket_t sock);
++LIBSSH2_API int libssh2_session_rekey(LIBSSH2_SESSION *session);
+ LIBSSH2_API int libssh2_session_disconnect_ex(LIBSSH2_SESSION *session,
+                                               int reason,
+                                               const char *description,
+diff --git a/src/session.c b/src/session.c
+index b9b22c1..833ab4c 100644
+--- a/src/session.c
++++ b/src/session.c
+@@ -814,6 +814,19 @@ int libssh2_session_handshake(LIBSSH2_SESSION *session, libssh2_socket_t sock)
+     return rc;
+ }
+ 
++int libssh2_session_rekey(LIBSSH2_SESSION *session)
++{
++    int rc;
++
++    if(!session)
++        return LIBSSH2_ERROR_BAD_USE;
++
++    BLOCK_ADJUST(rc, session,
++                 ssh2_kex_exchange(session, 1, &session->startup_key_state));
++
++    return rc;
++}
++
+ #ifndef LIBSSH2_NO_DEPRECATED
+ /*
+  * DEPRECATED. Use libssh2_session_handshake() instead! This function is not
+-- 
+2.50.1
+

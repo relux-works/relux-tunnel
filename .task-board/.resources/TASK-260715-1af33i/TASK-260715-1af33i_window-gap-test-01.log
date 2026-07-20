@@ -1,0 +1,13 @@
+Command: swift test --filter windowAdjustmentEvent
+Working directory: Dependencies/ReluxNIOSSH
+Exit: 0
+
+Build complete.
+Swift Testing suite: Relux receive-window policy
+Test: Window adjustment event follows delivery and snapshot accounting
+Result: passed (1 test, 1 suite)
+
+Interpretation: the existing test confirms that a 16 KiB child-pipeline
+delivery makes the full 16 KiB eligible for adjustment at the pipeline
+boundary. It does not provide the consumer-driven partial-credit semantic
+required by SSHByteChannel.read(maximumBytes:).

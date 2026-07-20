@@ -1,5 +1,5 @@
 ## Status
-backlog
+blocked
 
 ## Assigned To
 [implementer] developer (codex)
@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:15Z
 
 ## Last Update
-2026-07-20T05:39:26Z
+2026-07-20T06:26:07Z
 
 ## Blocked By
 - TASK-260715-nzdzv3
@@ -45,6 +45,12 @@ spawn run started: [implementer] developer (codex) (run=RUN-260720-18645b)
 STOP-THE-LINE 2026-07-20: accepted core and fork APIs do not compose for three mandatory clauses: the neutral async signer cannot produce NIOSSHPrivateKey authentication offers; reply-requiring generic keepalive is internal-only; caller KEX/host-key policy and exact negotiated KEX/host-key/cipher/MAC are not public. No product code changed and no tests/builds were run because implementation cannot validly begin. Evidence, rejected forced fits, viable options, recommendation, and exact resume condition are attached in TASK-260715-1af33i_fork-api-blocker.md and recorded in LOGBOOK.md.
 agent completed: [implementer] developer (codex) (exit=0)
 spawn run completed: codex (run=RUN-260720-18645b, pid=12698, exit=0)
+spawn queued: [implementer] developer (codex) (run=RUN-260720-c15d42, max_parallel=1)
+spawn run started: [implementer] developer (codex) (run=RUN-260720-c15d42)
+STOP-THE-LINE 2026-07-20 round 2: accepted core and fork APIs still do not compose for mandatory E-WINDOW/E-INJECTION behavior. The fork returns full-frame receive credit at NIO pipeline delivery before bounded SSHByteChannel.read consumption, and the neutral SSHTCPConnection cannot be hosted by NIOSSH without a transferable socket/engine-bootstrap seam. No product code changed. Focused fork window test passed; adapter/root/Apple builds were not run because no valid adapter can be constructed. Evidence, rejected forced fits, options, recommendation, and exact resume condition are attached in TASK-260715-1af33i_adapter-api-blocker.md and recorded in LOGBOOK.md.
+agent completed: [implementer] developer (codex) (exit=0)
+spawn run completed: codex (run=RUN-260720-c15d42, pid=46407, exit=0)
+ORCHESTRATOR DEFERRAL (2026-07-20): NIOSSH adapter blocked on round-2 composition gaps (see fork-api-blocker + adapter-api-blocker): (Gap 1) fork returns receive credit at frame-delivery, contract requires consumer-driven credit after read(maximumBytes:) — proper backpressure; (Gap 2) neutral byte-seam SSHTCPConnection (fakeable, E-INJECTION) conflicts with NIOSSH channel-ownership (needs connected-socket/NIO pipeline). Resolving these requires BOTH a neutral-contract seam revision (connected-socket-lease/engine-bootstrap that stays fakeable) AND further fork surgery (consumer-driven credit + intake bound). This is the 3rd round of NIOSSH-specific gaps. DECISION: rather than keep bending contract+fork around NIOSSH, first prove the contract with libssh2 (TASK-260715-1ozsb6, whose callback transport fits the byte-seam) and gather comparative evidence. The accumulating NIOSSH fork/contract cost is recorded viability evidence for the engine selection (TASK-260715-1gjxer, gated on P0). RESUME 1af33i only after: (a) 1ozsb6 validates the contract, and (b) 1gjxer either selects NIOSSH (then invest the seam+fork changes) or selects libssh2 (then close 1af33i). Not escalating to human yet — libssh2 evidence needed first.
 
 ## Precondition Resources
 - [TASK-260715-1af33i_ssh-transport-conformance-contract.md](file://TASK-260715-1af33i/TASK-260715-1af33i_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport contract from TASK-260715-2ny6z4; consume after blocker review acceptance
@@ -54,3 +60,5 @@ spawn run completed: codex (run=RUN-260720-18645b, pid=12698, exit=0)
 - [TASK-260715-1af33i_spawn-log_-implementer--developer--codex-.log](file://TASK-260715-1af33i/TASK-260715-1af33i_spawn-log_-implementer--developer--codex-.log) — System spawn log captured by task-board
 - [TASK-260715-1af33i_blocker.md](file://TASK-260715-1af33i/TASK-260715-1af33i_blocker.md) — Stop-the-line evidence for missing common SSH contract
 - [TASK-260715-1af33i_fork-api-blocker.md](file://TASK-260715-1af33i/TASK-260715-1af33i_fork-api-blocker.md) — Stop-the-line evidence for missing ReluxNIOSSH authentication, keepalive, and algorithm negotiation APIs
+- [TASK-260715-1af33i_adapter-api-blocker.md](file://TASK-260715-1af33i/TASK-260715-1af33i_adapter-api-blocker.md) — Stop-the-line evidence for TCP ownership and consumer-driven receive-credit gaps
+- [TASK-260715-1af33i_window-gap-test-01.log](file://TASK-260715-1af33i/TASK-260715-1af33i_window-gap-test-01.log) — Focused fork receive-window behavior test evidence
