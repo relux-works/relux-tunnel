@@ -5,6 +5,12 @@
 
 ## 2026-07-20
 
+### 2118 — Canonical relay v1 vectors use an independent deterministic oracle (TASK-260715-1q7u14)
+- IMPLEMENTATION: A Python-standard-library reference path now emits and independently parses 89 canonical vectors covering both hello directions, all six message types and legal directions, all three HEV address types, every hello status and UDP error code, fixed and negotiated boundaries, malformed fields, association/session failure dispositions, and fragmented/coalesced stream plans. Limit metadata names generated schema selectors instead of copying policy values.
+- PRIVACY: Corpus endpoints use RFC documentation ranges, `.example`, and one opaque `x` byte for the required minimum-domain boundary; payloads use a fixed public byte pattern. Strict Swift and Go loaders reject unknown schema keys, validate IDs/chunks/provenance/schema digest/coverage, and report only the exact stable vector ID plus a finite local reason on failure.
+- ANOMALY: The accepted TASK-260715-18owh7 decision proposed ADR-021, but `.spec/decisions.md` still ends at ADR-020. The corpus cites the accepted task decision and generated schema directly rather than claiming a nonexistent ADR anchor; coordinator documentation follow-up remains outside this tester task.
+- TOOLCHAIN: The repository smoke harness remains intentionally pinned to the installed Go 1.25.5 because the authoritative `relay/go.mod` / Go 1.26.5 scaffold belongs to TASK-260715-27uz4n. The test is standard-library-only and `CGO_ENABLED=0`; release validation still requires the accepted 1.26.5 toolchain.
+
 ### 1929 — HEV codec review requires structural validation before limit policy (TASK-260715-516lhy)
 - REVIEW: Changes requested. Both Swift and Go decoders inspect `MSGLEN` against the 1472 protocol ceiling and lowered local cap before completing HEV structural validation. This reverses the accepted TASK-260715-18owh7 §4.4 order (structure at step 4, limits at step 5).
 - CONSEQUENCE: With local cap 512, the truncated IPv4 record `02 01 0A 01 C0 00 02 01 00 35` declares 513 DATA bytes but contains none; both implementations currently return the survivable `messageLengthExceedsLocalMaximum` / `rejectDatagram` policy result instead of the association-fatal structural length failure. Existing tests cover only a structurally valid local-cap record and therefore miss the combined case.

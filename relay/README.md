@@ -35,6 +35,10 @@ Current protocol contents:
 - `internal/protocol/session_test.go` — deterministic paired-peer nominal,
   hostile, malformed-datagram, crossed/duplicate close, abrupt termination,
   late callback, counter, privacy, and post-handshake `RLXR` coverage.
+- `internal/protocol/vectors_test.go` — strict loader and consumer for the
+  canonical production-code-independent corpus in
+  `Protocol/Relay/Vectors/v1/corpus.json`; failures name the stable vector ID
+  without printing input or payload bytes.
 
 Until the module scaffold lands, `scripts/tests/test-relay-protocol-go.sh`
 (invoked by `make relay-protocol-check`) compiles and tests this package inside

@@ -1,0 +1,2714 @@
+{
+  "formatVersion": 1,
+  "protocolVersion": 1,
+  "provenance": {
+    "generator": "scripts/relay-protocol-vectors.py",
+    "generatorFormatVersion": 1,
+    "generatorSHA256": "90fe8cc7b4c066c1bdd7d4ee647d714543135c396d385e32e428688c823f9bdc",
+    "privacy": "synthetic-only-rfc-reserved-endpoints",
+    "regenerateCommand": "make relay-protocol-vectors-generate",
+    "reviewPolicy": {
+      "compatibility": "Existing identifiers, bytes, or expectations may change only with the schema and both generated binding diffs; incompatible v1 edits require a new protocol version.",
+      "identifiers": "Never reuse or rename a published identifier; append a replacement vector and retain the old vector for review visibility.",
+      "requiredConsumers": [
+        "Swift ReluxTunnelCoreTests",
+        "Go relay/internal/protocol"
+      ]
+    },
+    "schemaSHA256": "3dd1bc9d8d0c1f9127cad05913137754da61d2657e8d0b8c0b30108e331e8000",
+    "sources": [
+      ".spec/relay-protocol.md",
+      ".spec/security-privacy.md",
+      "Protocol/Relay/relay-v1.schema.json",
+      "TASK-260715-111tde binding decision",
+      "TASK-260715-18owh7 limit decision"
+    ],
+    "task": "TASK-260715-1q7u14"
+  },
+  "vectors": [
+    {
+      "chunks": [
+        1,
+        2,
+        3,
+        6
+      ],
+      "covers": [
+        "hello:client",
+        "boundary:maxFrame:floor",
+        "chunk:fragmented"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "flags": 1,
+        "maxFrame": 2048,
+        "outcome": "success",
+        "version": 1
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.client.max-frame-floor",
+      "inputHex": "524c58520001000100000800",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        2,
+        3,
+        6
+      ],
+      "covers": [
+        "hello:client",
+        "boundary:maxFrame:default",
+        "chunk:fragmented"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "flags": 1,
+        "maxFrame": 4096,
+        "outcome": "success",
+        "version": 1
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.client.max-frame-default",
+      "inputHex": "524c58520001000100001000",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        2,
+        3,
+        6
+      ],
+      "covers": [
+        "hello:client",
+        "boundary:maxFrame:ceiling",
+        "chunk:fragmented"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "flags": 1,
+        "maxFrame": 65536,
+        "outcome": "success",
+        "version": 1
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.client.max-frame-ceiling",
+      "inputHex": "524c58520001000100010000",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:magic",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unknownMagic",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.bad-magic",
+      "inputHex": "584c58520001000000001000",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:version:below",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unsupportedVersion",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.version-zero",
+      "inputHex": "524c58520000000000001000",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:version:above",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unsupportedVersion",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.version-two",
+      "inputHex": "524c58520002000000001000",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:helloFlags",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "reservedClientFlags",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.reserved-flag",
+      "inputHex": "524c58520001000200001000",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:maxFrame:belowFloor",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unreasonableMaxFrame",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.max-frame-below-floor",
+      "inputHex": "524c585200010000000007ff",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:maxFrame:aboveCeiling",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unreasonableMaxFrame",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.max-frame-above-ceiling",
+      "inputHex": "524c58520001000000010001",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:clientHello:belowWidth",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "truncatedHello",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.truncated",
+      "inputHex": "524c585200010000000010",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:clientHello:aboveWidth",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "extendedHello",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "clientHelloValidation",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.hello.client.extended",
+      "inputHex": "524c5852000100000000100000",
+      "kind": "clientHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        3,
+        1,
+        5,
+        7
+      ],
+      "covers": [
+        "hello:server",
+        "boundary:maxFrame:floor",
+        "chunk:fragmented"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "features": 0,
+        "maxFrame": 2048,
+        "outcome": "success",
+        "status": 0,
+        "version": 1
+      },
+      "features": [],
+      "id": "v1.hello.server.accepted-floor",
+      "inputHex": "524c5852000100000000000000000800",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        3,
+        1,
+        5,
+        7
+      ],
+      "covers": [
+        "hello:server",
+        "helloStatus:ACCEPTED",
+        "chunk:fragmented"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "features": 1,
+        "maxFrame": 4096,
+        "outcome": "success",
+        "status": 0,
+        "version": 1
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.accepted-default-feature",
+      "inputHex": "524c5852000100000000000100001000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        3,
+        1,
+        5,
+        7
+      ],
+      "covers": [
+        "hello:server",
+        "boundary:maxFrame:ceiling",
+        "chunk:fragmented"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "features": 1,
+        "maxFrame": 65536,
+        "outcome": "success",
+        "status": 0,
+        "version": 1
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.accepted-ceiling",
+      "inputHex": "524c5852000100000000000100010000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "helloStatus:UNSUPPORTED_VERSION",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "unsupportedVersion",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.status-unsupported-version",
+      "inputHex": "524c5852000100010000000000000000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "helloStatus:INVALID_CLIENT_HELLO",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "invalidClientHello",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.status-invalid-client-hello",
+      "inputHex": "524c5852000100020000000000000000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "helloStatus:RESOURCE_POLICY_REJECTED",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "resourcePolicyRejected",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.status-resource-policy-rejected",
+      "inputHex": "524c5852000100030000000000000000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "helloStatus:RELAY_UNAVAILABLE",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "relayUnavailable",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.status-relay-unavailable",
+      "inputHex": "524c5852000100040000000000000000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:helloStatus",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "relayRejected",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.status-unknown",
+      "inputHex": "524c58520001ffff0000000000000000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:magic",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "unknownMagic",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.bad-magic",
+      "inputHex": "524c5851000100000000000000001000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:version:above",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "unsupportedVersion",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.version-two",
+      "inputHex": "524c5852000200000000000000001000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:features",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "impossibleFeatureSelection",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.reserved-feature",
+      "inputHex": "524c5852000100000000000200001000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:maxFrame:belowFloor",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "unreasonableMaxFrame",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.max-frame-below-floor",
+      "inputHex": "524c58520001000000000000000007ff",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:maxFrame:aboveCeiling",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "unreasonableMaxFrame",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.max-frame-above-ceiling",
+      "inputHex": "524c5852000100000000000000010001",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:serverHello:belowWidth",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "truncatedHello",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.truncated",
+      "inputHex": "524c58520001000000000000000010",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:serverHello:aboveWidth",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "extendedHello",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "serverHelloValidation",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.hello.server.extended",
+      "inputHex": "524c585200010000000000000000100000",
+      "kind": "serverHello",
+      "limitRefs": [
+        "maxFrame.clientHardCeiling"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "addressType:IPV4",
+        "boundary:payload:zero"
+      ],
+      "direction": "none",
+      "expected": {
+        "addressHex": "c000022c",
+        "addressType": "IPV4",
+        "dataHex": "",
+        "outcome": "success",
+        "port": 1
+      },
+      "features": [],
+      "id": "v1.datagram.ipv4-zero",
+      "inputHex": "00000a01c000022c0001",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "addressType:IPV6",
+        "boundary:port:maximum"
+      ],
+      "direction": "none",
+      "expected": {
+        "addressHex": "20010db8000000000000000000000044",
+        "addressType": "IPV6",
+        "dataHex": "cafe",
+        "outcome": "success",
+        "port": 65535
+      },
+      "features": [],
+      "id": "v1.datagram.ipv6-maximum",
+      "inputHex": "0002160420010db8000000000000000000000044ffffcafe",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "addressType:DOMAIN",
+        "boundary:domain:minimum"
+      ],
+      "direction": "none",
+      "expected": {
+        "addressHex": "78",
+        "addressType": "DOMAIN",
+        "dataHex": "00",
+        "outcome": "success",
+        "port": 53
+      },
+      "features": [],
+      "id": "v1.datagram.domain-minimum",
+      "inputHex": "000108030178003500",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "addressType:DOMAIN",
+        "address:domainTypical"
+      ],
+      "direction": "none",
+      "expected": {
+        "addressHex": "72656c61792e6578616d706c65",
+        "addressType": "DOMAIN",
+        "dataHex": "000102ff",
+        "outcome": "success",
+        "port": 5353
+      },
+      "features": [],
+      "id": "v1.datagram.domain-domaintypical",
+      "inputHex": "000414030d72656c61792e6578616d706c6514e9000102ff",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        4,
+        6,
+        255,
+        1472
+      ],
+      "covers": [
+        "messageType:UDP_DATAGRAM",
+        "direction:UDP_DATAGRAM:clientToRelay",
+        "addressType:DOMAIN",
+        "boundary:domain:maximum",
+        "boundary:payload:maximum",
+        "boundary:associationID:maximum",
+        "boundary:frameBody:maximumLegal",
+        "chunk:fragmented"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "addressHex": "6161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161612e6262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262622e6363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363632e6464646464646464646464646464646464646464646464646464646464646464646464646464646464646464646464642e6578616d706c65",
+        "addressType": "DOMAIN",
+        "dataHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8",
+        "frames": [
+          {
+            "associationID": 4294967295,
+            "flags": 0,
+            "messageType": "UDP_DATAGRAM",
+            "payloadHex": "05c0ff03f86161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161612e6262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262622e6363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363632e6464646464646464646464646464646464646464646464646464646464646464646464646464646464646464646464642e6578616d706c65ffff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8"
+          }
+        ],
+        "outcome": "success",
+        "port": 65535
+      },
+      "features": [],
+      "id": "v1.frame.maximum-legal-domain-datagram",
+      "inputHex": "000006c51000ffffffff05c0ff03f86161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161612e6262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262622e6363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363632e6464646464646464646464646464646464646464646464646464646464646464646464646464646464646464646464642e6578616d706c65ffff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8",
+      "kind": "envelopeDatagram",
+      "limitRefs": [
+        "maxFrame.floor",
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1738
+      ],
+      "covers": [
+        "boundary:payload:aboveMaximum",
+        "boundary:frameBody:aboveMaximumLegal",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "messageLengthExceedsProtocolMaximum",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "data",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.frame.above-maximum-legal-domain-datagram",
+      "inputHex": "000006c610000000000105c1ff03f86161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161612e6262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262622e6363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363632e6464646464646464646464646464646464646464646464646464646464646464646464646464646464646464646464642e6578616d706c65ffff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9",
+      "kind": "envelopeDatagram",
+      "limitRefs": [
+        "maxFrame.floor",
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        2,
+        5,
+        18
+      ],
+      "covers": [
+        "direction:UDP_DATAGRAM:relayToClient",
+        "addressType:IPV4"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "addressHex": "c000022c",
+        "addressType": "IPV4",
+        "dataHex": "7265706c79",
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_DATAGRAM",
+            "payloadHex": "00050a01c000022c01bb7265706c79"
+          }
+        ],
+        "outcome": "success",
+        "port": 443
+      },
+      "features": [],
+      "id": "v1.envelope.udp-datagram-relay-to-client-ipv4",
+      "inputHex": "0000001510000000000100050a01c000022c01bb7265706c79",
+      "kind": "envelopeDatagram",
+      "limitRefs": [
+        "maxFrame.floor",
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        2,
+        5,
+        30
+      ],
+      "covers": [
+        "direction:UDP_DATAGRAM:relayToClient",
+        "addressType:IPV6"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "addressHex": "20010db8000000000000000000000044",
+        "addressType": "IPV6",
+        "dataHex": "7265706c79",
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_DATAGRAM",
+            "payloadHex": "0005160420010db800000000000000000000004401bb7265706c79"
+          }
+        ],
+        "outcome": "success",
+        "port": 443
+      },
+      "features": [],
+      "id": "v1.envelope.udp-datagram-relay-to-client-ipv6",
+      "inputHex": "000000211000000000010005160420010db800000000000000000000004401bb7265706c79",
+      "kind": "envelopeDatagram",
+      "limitRefs": [
+        "maxFrame.floor",
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:INVALID_DATAGRAM"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0001"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-invalid-datagram",
+      "inputHex": "000000081100000000010001",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:UNSUPPORTED_ADDRESS"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0002"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-unsupported-address",
+      "inputHex": "000000081100000000010002",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:UNKNOWN_OR_CLOSED_ASSOCIATION"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0003"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-unknown-or-closed-association",
+      "inputHex": "000000081100000000010003",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:ASSOCIATION_LIMIT"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0004"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-association-limit",
+      "inputHex": "000000081100000000010004",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:DATAGRAM_TOO_LARGE"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0005"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-datagram-too-large",
+      "inputHex": "000000081100000000010005",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:QUEUE_SATURATED"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0006"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-queue-saturated",
+      "inputHex": "000000081100000000010006",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:RESOLUTION_FAILURE"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0007"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-resolution-failure",
+      "inputHex": "000000081100000000010007",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:SOCKET_FAILURE"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0008"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-socket-failure",
+      "inputHex": "000000081100000000010008",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:IDLE_EXPIRY"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "0009"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-idle-expiry",
+      "inputHex": "000000081100000000010009",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8
+      ],
+      "covers": [
+        "messageType:UDP_ERROR",
+        "direction:UDP_ERROR:relayToClient",
+        "udpError:RESOURCE_LIMIT"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "000a"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-resource-limit",
+      "inputHex": "00000008110000000001000a",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:udpErrorCode"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "UDP_ERROR",
+            "payloadHex": "ffff"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.udp-error-unknown",
+      "inputHex": "00000008110000000001ffff",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        18
+      ],
+      "covers": [
+        "messageType:PING",
+        "direction:PING:clientToRelay"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "PING",
+            "payloadHex": "0011223344556677"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.ping",
+      "inputHex": "0000000e2000000000000011223344556677",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        18
+      ],
+      "covers": [
+        "messageType:PONG",
+        "direction:PONG:relayToClient"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "PONG",
+            "payloadHex": "0011223344556677"
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.pong",
+      "inputHex": "0000000e2100000000000011223344556677",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        10
+      ],
+      "covers": [
+        "messageType:CLOSE_ASSOCIATION",
+        "direction:CLOSE_ASSOCIATION:clientToRelay",
+        "boundary:frameBody:minimum",
+        "boundary:associationID:minimum"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "CLOSE_ASSOCIATION",
+            "payloadHex": ""
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.close-association-client",
+      "inputHex": "00000006300000000001",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        10
+      ],
+      "covers": [
+        "messageType:CLOSE_ASSOCIATION",
+        "direction:CLOSE_ASSOCIATION:relayToClient",
+        "boundary:frameBody:minimum"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 4294967295,
+            "flags": 0,
+            "messageType": "CLOSE_ASSOCIATION",
+            "payloadHex": ""
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.close-association-relay",
+      "inputHex": "000000063000ffffffff",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        10
+      ],
+      "covers": [
+        "messageType:CLOSE_SESSION",
+        "direction:CLOSE_SESSION:clientToRelay",
+        "boundary:frameBody:minimum"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "CLOSE_SESSION",
+            "payloadHex": ""
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.close-session-client",
+      "inputHex": "00000006310000000000",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        10
+      ],
+      "covers": [
+        "messageType:CLOSE_SESSION",
+        "direction:CLOSE_SESSION:relayToClient",
+        "boundary:frameBody:minimum"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "CLOSE_SESSION",
+            "payloadHex": ""
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.envelope.close-session-relay",
+      "inputHex": "00000006310000000000",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "flag:dnsPriority",
+        "chunk:fragmented"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "addressHex": "72656c61792e6578616d706c65",
+        "addressType": "DOMAIN",
+        "dataHex": "646e73",
+        "frames": [
+          {
+            "associationID": 1,
+            "flags": 1,
+            "messageType": "UDP_DATAGRAM",
+            "payloadHex": "000314030d72656c61792e6578616d706c650035646e73"
+          }
+        ],
+        "outcome": "success",
+        "port": 53
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.envelope.udp-datagram-dns-priority",
+      "inputHex": "0000001d100100000001000314030d72656c61792e6578616d706c650035646e73",
+      "kind": "envelopeDatagram",
+      "limitRefs": [
+        "maxFrame.floor",
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        3,
+        8,
+        5,
+        2,
+        7,
+        12
+      ],
+      "covers": [
+        "chunk:fragmented",
+        "stream:multipleFrames"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "PING",
+            "payloadHex": "0011223344556677"
+          },
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "CLOSE_ASSOCIATION",
+            "payloadHex": ""
+          },
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "CLOSE_SESSION",
+            "payloadHex": ""
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.stream.fragmented-across-three-frames",
+      "inputHex": "0000000e20000000000000112233445566770000000630000000000100000006310000000000",
+      "kind": "stream",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        38
+      ],
+      "covers": [
+        "chunk:coalesced",
+        "stream:multipleFrames"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "frames": [
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "PING",
+            "payloadHex": "0011223344556677"
+          },
+          {
+            "associationID": 1,
+            "flags": 0,
+            "messageType": "CLOSE_ASSOCIATION",
+            "payloadHex": ""
+          },
+          {
+            "associationID": 0,
+            "flags": 0,
+            "messageType": "CLOSE_SESSION",
+            "payloadHex": ""
+          }
+        ],
+        "outcome": "success"
+      },
+      "features": [],
+      "id": "v1.stream.coalesced-three-frames",
+      "inputHex": "0000000e20000000000000112233445566770000000630000000000100000006310000000000",
+      "kind": "stream",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:frameLength:belowMinimum",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "frameLengthBelowMinimum",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "prefix",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-length-below-minimum",
+      "inputHex": "000000050000000000",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:frameLength:aboveEffectiveMaximum",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "frameLengthExceedsMaximum",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "prefix",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-length-above-effective-max",
+      "inputHex": "00000801",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:messageType",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unknownMessageType",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-unknown-type",
+      "inputHex": "00000006000000000000",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:reservedMessageType",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unknownMessageType",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-reserved-type",
+      "inputHex": "00000006400000000000",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:envelopeFlags",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "reservedFlags",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.envelope.failure-reserved-flag",
+      "inputHex": "0000000e2002000000000011223344556677",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:dnsFlagWithoutFeature",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidFlags",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-dns-flag-without-feature",
+      "inputHex": "0000001d100100000001000314030d72656c61792e6578616d706c650035646e73",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:dnsFlagMessage",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidFlags",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [
+        "dnsPriorityHint"
+      ],
+      "id": "v1.envelope.failure-dns-flag-on-ping",
+      "inputHex": "0000000e2001000000000011223344556677",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:direction",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidDirection",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-udp-error-wrong-direction",
+      "inputHex": "000000081100000000010001",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:direction",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "invalidDirection",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-ping-wrong-direction",
+      "inputHex": "0000000e2000000000000011223344556677",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:direction",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidDirection",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-pong-wrong-direction",
+      "inputHex": "0000000e2100000000000011223344556677",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:associationID:belowMinimum",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidAssociationID",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-datagram-zero-association",
+      "inputHex": "0000001010000000000000000a01c000022c0035",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:associationID",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidAssociationID",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-ping-nonzero-association",
+      "inputHex": "0000000e2000000000010011223344556677",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "malformed:associationID",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidAssociationID",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-close-session-nonzero-association",
+      "inputHex": "00000006310000000001",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:fixedPayload:below",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidPayloadLength",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-ping-short-payload",
+      "inputHex": "0000000d20000000000000112233445566",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:fixedPayload:above",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidPayloadLength",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-ping-long-payload",
+      "inputHex": "0000000f200000000000001122334455667788",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:fixedPayload:below",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "relayToClient",
+      "expected": {
+        "code": "invalidPayloadLength",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-udp-error-short-payload",
+      "inputHex": "0000000711000000000100",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:fixedPayload:above",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "invalidPayloadLength",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "header",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-close-association-extra-payload",
+      "inputHex": "0000000730000000000100",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:prefix:belowWidth",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unexpectedEOF",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "terminal",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-truncated-prefix-eof",
+      "inputHex": "000000",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "covers": [
+        "boundary:body:belowDeclared",
+        "failureScope:session.closeSession"
+      ],
+      "direction": "clientToRelay",
+      "expected": {
+        "code": "unexpectedEOF",
+        "disposition": "closeSession",
+        "outcome": "failure",
+        "phase": "terminal",
+        "scope": "session"
+      },
+      "features": [],
+      "id": "v1.envelope.failure-truncated-body-eof",
+      "inputHex": "0000000e20000000000000112233445566",
+      "kind": "envelope",
+      "limitRefs": [
+        "maxFrame.floor"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:fixedHeader:zero",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "truncatedFixedHeader",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "fixedHeader",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-empty",
+      "inputHex": "",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:fixedHeader:one",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "truncatedFixedHeader",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "fixedHeader",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-one-byte",
+      "inputHex": "00",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:fixedHeader:two",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "truncatedFixedHeader",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "fixedHeader",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-two-byte",
+      "inputHex": "0000",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:fixedHeader:belowMinimum",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "truncatedFixedHeader",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "fixedHeader",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-three-byte",
+      "inputHex": "00000a",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:addressType",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "unknownAddressType",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "address",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-unknown-address",
+      "inputHex": "00000aff",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:domain:lengthMissing",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "truncatedAddress",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "address",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-domain-length-missing",
+      "inputHex": "00000703",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:domain:belowMinimum",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "invalidAddressLength",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "address",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-domain-empty",
+      "inputHex": "00000703000035",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:domain:aboveMaximum",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "invalidAddressLength",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "address",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-domain-249",
+      "inputHex": "0000ff03f9",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "malformed:hdrlen",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "headerLengthMismatch",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "fixedHeader",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-ipv4-wrong-hdrlen",
+      "inputHex": "00000901c000022c0035",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:address:truncated",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "truncatedAddress",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "address",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-ipv4-truncated-address",
+      "inputHex": "00000a01c0",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:port:truncated",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "truncatedPort",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "port",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-ipv4-truncated-port",
+      "inputHex": "00000a01c000022c00",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:port:belowMinimum",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "invalidPort",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "port",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-zero-port",
+      "inputHex": "00000a01c000022c0000",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:msglen:aboveAvailable",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "messageLengthMismatch",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "data",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-declared-data-missing",
+      "inputHex": "00010a01c000022c0035",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:msglen:belowAvailable",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "messageLengthMismatch",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "data",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-undeclared-extra-data",
+      "inputHex": "00000a01c000022c0035aa",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:payload:aboveMaximum",
+        "failureScope:association.closeAssociation"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "messageLengthExceedsProtocolMaximum",
+        "disposition": "closeAssociation",
+        "outcome": "failure",
+        "phase": "data",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-payload-1473",
+      "inputHex": "05c10a01c000022c0035000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.clientDefault"
+      ],
+      "protocolVersion": 1
+    },
+    {
+      "chunks": [],
+      "covers": [
+        "boundary:localPayloadCap:above",
+        "failureScope:association.rejectDatagram"
+      ],
+      "direction": "none",
+      "expected": {
+        "code": "messageLengthExceedsLocalMaximum",
+        "disposition": "rejectDatagram",
+        "outcome": "failure",
+        "phase": "data",
+        "scope": "association"
+      },
+      "features": [],
+      "id": "v1.datagram.failure-local-cap-513",
+      "inputHex": "02010a01c000022c0035000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa000102030405060708090a",
+      "kind": "datagram",
+      "limitRefs": [
+        "maxUDPPayload.floor"
+      ],
+      "protocolVersion": 1
+    }
+  ]
+}

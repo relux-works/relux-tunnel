@@ -2,7 +2,8 @@
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
 	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
-	relay-protocol-generate relay-protocol-check
+	relay-protocol-generate relay-protocol-vectors-generate \
+	relay-protocol-vectors-check relay-protocol-check
 
 LEGACY_ROOT ?= ../relux-proxy
 
@@ -71,7 +72,13 @@ RELAY_PROTOCOL_ENV = LC_ALL=C LANG=C TZ=UTC PYTHONHASHSEED=0
 relay-protocol-generate:
 	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py generate
 
-relay-protocol-check:
+relay-protocol-vectors-generate:
+	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-vectors.py generate
+
+relay-protocol-vectors-check:
+	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-vectors.py check
+
+relay-protocol-check: relay-protocol-vectors-check
 	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py check
 	./scripts/tests/test-relay-protocol-go.sh
 	swift build
