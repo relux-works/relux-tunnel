@@ -1,0 +1,5 @@
+# TASK-260715-3o0co4 implementation results
+
+Implemented the supervised public AF_UNIX/SOCK_DGRAM PacketFlowBridge, RunHandle, descriptor-borrow contract, production Darwin socket/readiness I/O, bounded forward/reverse framing pumps, run-scoped saturating metric schema, privacy-safe logging, first-error-wins termination, and ordered exactly-once cleanup. Darwin receive sizing uses public SO_NREAD for the first-packet byte count plus one consuming recvmsg for MSG_TRUNC.
+
+Verification: swift format lint --strict --recursive Sources Tests Package.swift (pass); swift test (pass, 39 tests in 5 suites); swift build (pass); make check-core-boundaries (pass); git diff --check (pass); detached-task, utun, FD duplication/scanning/reopening, SCM_RIGHTS, and sensitive logger-field scans (pass). Tests cover byte-exact IPv4/IPv6 framing, zero and malformed frames, would-block/ENOBUFS/EMSGSIZE, PacketFlow rejection, count/time slices, startup cancellation/failure, first-error-wins, cleanup ordering, exact schema, and 100 restart cycles.

@@ -129,21 +129,24 @@ public struct PacketBridgeConfiguration: Equatable, Sendable {
   public let mtu: Int
   public let sendBufferBytes: Int
   public let receiveBufferBytes: Int
-  public let maximumReadBatch: Int
-  public let readTimeBudget: Duration
+  public let maximumWorkCount: Int
+  public let workTimeBudget: Duration
+  public let diagnosticsWindow: Duration
 
   public init(
     mtu: Int,
     sendBufferBytes: Int,
     receiveBufferBytes: Int,
-    maximumReadBatch: Int,
-    readTimeBudget: Duration
+    maximumWorkCount: Int,
+    workTimeBudget: Duration,
+    diagnosticsWindow: Duration
   ) {
     self.mtu = mtu
     self.sendBufferBytes = sendBufferBytes
     self.receiveBufferBytes = receiveBufferBytes
-    self.maximumReadBatch = maximumReadBatch
-    self.readTimeBudget = readTimeBudget
+    self.maximumWorkCount = maximumWorkCount
+    self.workTimeBudget = workTimeBudget
+    self.diagnosticsWindow = diagnosticsWindow
   }
 }
 
@@ -155,7 +158,7 @@ public protocol PacketBridge: AnyObject, Sendable {
   func start(
     packetFlow: any PacketFlow,
     configuration: PacketBridgeConfiguration
-  ) async throws
+  ) async throws -> PacketFlowBridgeRunHandle
   func stop() async
   func metrics() async -> TunnelMetricsSnapshot
 }

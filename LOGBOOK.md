@@ -5,6 +5,17 @@
 
 ## 2026-07-20
 
+### 0517 — PacketFlowBridge implementation accepted (TASK-260715-3o0co4)
+- MILESTONE: Public socket-pair PacketFlowBridge reviewed and accepted; the p89bdj contract's ownership ordering, first-error-wins termination, exact 30-counter/12-gauge schema, bounded slices, and prohibitions are all verified in `Sources/ReluxTunnelCore/PacketFlowBridge.swift`.
+- VERIFICATION: Reviewer independently reran swift build, swift test (39/39 in 5 suites), swift test --sanitize=thread --filter PacketFlowBridge (13/13, zero TSan reports), swift format lint --strict, make check-core-boundaries, and prohibition greps. Evidence: .task-board/.resources/TASK-260715-3o0co4/TASK-260715-3o0co4_review.md.
+- NOTE for TASK-260715-3dn813: rows not yet exercised at bridge level — pre-send synthetic 4+MTU ceiling fatal, reverse truncation→fatal, readiness `peerClosed` and unexpected-HEV-return, cancellation at every startup barrier stage, drop-summary window suppression, saturation logging. `PacketFlowBridge.runEnded` also carries a cosmetic dead `reachedRunning` branch (both arms set `.failed`).
+
+### 0510 — Public socket-pair PacketFlowBridge implemented (TASK-260715-3o0co4)
+- DECISION: `PacketFlowBridge` stores one supervisor plus forward, reverse, and HEV-return child tasks; a first-event control owns fatal/stop selection and cleanup always shuts down reads, cancels readiness, joins both pumps, requests and joins the HEV borrow, then closes B before A exactly once.
+- DECISION: Both descriptors preserve existing flags while adding `FD_CLOEXEC`/`O_NONBLOCK`; requested and effective endpoint-specific socket buffers, framing maxima, traffic, drops, lifecycle, and fatal reasons use the contract's run-scoped metric schema.
+- FINDING: Darwin `recvmsg` reports copied bytes while `MSG_TRUNC` marks truncation; the public `SO_NREAD` option is explicitly the first-packet byte count, so the production receiver combines `SO_NREAD` with one consuming `recvmsg` to record the exact observed datagram size without allocating from it.
+- VERIFICATION: Swift Testing covers byte-exact SDK-derived IPv4/IPv6 framing, zero/undersized/unknown/mismatched reverse frames, bounded count/time slices, queue-pressure loss, EMSGSIZE, PacketFlow rejection, first-error-wins, startup cancellation/failure, privacy-safe logging, and 100 restart cycles.
+
 ### 0425 — PacketFlow adapter read lifecycle accepted (TASK-260720-9xy8yx)
 - MILESTONE: Read-lifecycle hardening reviewed and accepted; both read-lifecycle defects from the 0407 entry (non-cancellable continuation, silent `zip` truncation) are closed and TASK-260715-3o0co4 (PacketFlowBridge) is unblocked.
 - VERIFICATION: Reviewer independently reran swift build, swift test (26/26), swift format lint --strict, and a TSan pass of PacketFlowAdapterTests (14/14); prohibition greps clean. Evidence: .task-board/.resources/TASK-260720-9xy8yx/TASK-260720-9xy8yx_review.md.

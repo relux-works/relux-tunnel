@@ -29,7 +29,8 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
 - **Full spec**: see [`.spec/`](.spec/) — start with `.spec/README.md`,
   `architecture.md`, `decisions.md` (ADR log), and `threat-model.md`.
 - **Shared package**: `ReluxTunnelCore` and its compile-only iOS/macOS provider
-  composition roots are mapped in
+  composition roots include the supervised public socket-pair packet bridge and
+  are mapped in
   [`docs/core-adapter-boundaries.md`](docs/core-adapter-boundaries.md).
 
 ## macOS experiment harness

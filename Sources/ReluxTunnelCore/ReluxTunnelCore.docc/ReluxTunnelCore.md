@@ -7,7 +7,7 @@ Platform-neutral contracts for the Relux packet-tunnel runtime.
 | Contract | Specification / decision | Boundary only in M0 |
 | --- | --- | --- |
 | `TunnelEndpoint`, `TunnelConfigurationReference`, `TunnelConfiguration` | `architecture.md` control/state ownership; `routing-dns-lifecycle.md` startup step 1 | No persistence, Keychain, route, or UI semantics |
-| `PacketFlow`, `TunnelPacket`, `PacketBridge` | `packet-plane.md`; ADR-003 | No socket pair, HEV, MTU selection, or utun discovery |
+| `PacketFlow`, `TunnelPacket`, `PacketFlowBridge` | `packet-plane.md`; ADR-003 | Public datagram socket pair and scoped descriptor borrow; no HEV implementation, tuning defaults, or utun discovery |
 | `SSHTransport` and channel/upload types | `ssh-transport.md`; ADR-005, ADR-006, ADR-014 | No engine selection, lane policy, authentication, or relay bootstrap |
 | `InternalSOCKSComponent` | `architecture.md` packet plane; `packet-plane.md`; ADR-004 | Process-local component seam only; not a user proxy |
 | `TunnelRuntime`, `TunnelProviderLifecycle` | `architecture.md` provider ownership; `routing-dns-lifecycle.md` | No route, DNS, reconnect, or capability implementation |
