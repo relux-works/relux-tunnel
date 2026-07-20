@@ -5,6 +5,13 @@
 
 ## 2026-07-21
 
+### 0211 — Coordinator fault suite freezes ownership boundaries and resource baselines (TASK-260715-32virr)
+- DECISION: Fault injection uses the coordinator's injected cancellation-check seam to fail at fourteen exact before/after ownership boundaries. This keeps production code unchanged while proving reverse rollback, one disconnecting publication, one terminal publication, exact error mapping, and single cleanup for configuration, SSH, TCP, DNS, packet plane, settings, and packet-read ownership.
+- COVERAGE: The explicit control table covers rejected duplicate starts, idempotent stops, healthy/stale/late callbacks in usable, stopping, disconnected, and failed states; phase gates now include configuration as well as SSH, TCP, DNS, packet preparation, settings apply, packet activation, and final health. All four mandatory dependency failures must revoke capability before cleanup begins.
+- BASELINE: The fixture now tracks tasks, timers, sockets, channels, and retained dependencies separately. One hundred factory generations restore every counter plus the coordinator's internal task/resource footprint; thirty-two concurrent starts produce one usable publication, and thirty-two repeated stop/health race generations clean each owned resource exactly once.
+- REVIEW FINDING: The first pass asserted only the broad coordinator error type for injected startup faults, so incorrect redacted domain/code mappings could pass. Rework freezes the exact error for all eleven startup rows, adds the committed-but-error settings disposition with exactly one clear, and directly covers `startupFailure` and `providerFailure` stop mappings. Start attempts are now explicitly rejected while stopping and after stopped or failed terminal states.
+- VERIFICATION: The focused 21-test suite passed 25 consecutive runs and Thread Sanitizer with no race report. Coordinator coverage is 95.48% lines / 92.25% regions. `make validate-core` passed 213 tests in 23 suites plus the post-test build; strict Swift format lint, no-sleep audit, diff check, and board validation passed.
+
 ### 0150 — M1 coordinator terminally consumes a stop-before-start generation (TASK-260715-3tlgwm)
 - REGRESSION: `stop()` treated the coordinator's initial disconnected state as an idempotent no-op, so it retained the profile reference and left the one-shot generation startable after stop returned.
 - FIX: The lifecycle now models one `generationConsumed` invariant shared by start and stop. A winning pre-start stop records termination, enters stopping, and runs the existing single cleanup owner; this releases the configuration reference before returning and makes every later start reject with `generationAlreadyConsumed`.

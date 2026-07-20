@@ -57,37 +57,97 @@ struct TunnelRuntimeCoordinatorTests {
   func partialStartRollback(point: StartupFailurePoint) async {
     let fixture = CoordinatorFixture(failurePoint: point)
 
-    await #expect(throws: TunnelRuntimeCoordinatorError.self) {
+    await #expect(throws: point.expectedError) {
       try await fixture.coordinator.start()
     }
 
     #expect(await fixture.coordinator.coordinatorState() == .failed)
     #expect(fixture.recorder.cleanupEvents() == point.expectedCleanup)
-    #expect(fixture.recorder.activeResources() == 0)
+    for event in point.expectedCleanup {
+      #expect(fixture.recorder.count(event) == 1)
+    }
+    #expect(
+      fixture.recorder.snapshots().count { $0.lifecycle.lifecycleState == .disconnecting } == 1
+    )
+    #expect(fixture.recorder.snapshots().count { $0.lifecycle.lifecycleState == .failed } == 1)
+    #expect(fixture.recorder.snapshots().last?.lifecycle.error == point.expectedFailure)
+    #expect(fixture.recorder.resourceBaseline() == .zero)
     #expect(await fixture.coordinator.resourceFootprint() == .baseline)
     #expect(fixture.recorder.snapshots().allSatisfy { !$0.capabilities.tcp })
     #expect(fixture.recorder.snapshots().allSatisfy { !$0.capabilities.safeDNS })
   }
 
-  @Test("unknown settings commit is cleared while definite non-commit is not")
+  @Test(
+    "failure before and after every ownership boundary rolls back once",
+    arguments: StartupOwnershipBoundary.allCases
+  )
+  func ownershipBoundaryFailure(boundary: StartupOwnershipBoundary) async {
+    let cancellation = OrdinalFailureCancellationChecker(failingAt: boundary.checkOrdinal)
+    let fixture = CoordinatorFixture(cancellation: cancellation)
+
+    await #expect(
+      throws: TunnelRuntimeCoordinatorError.startupFailed(
+        redactedError(domain: .runtimeInvariant, code: "startup_failed")
+      )
+    ) {
+      try await fixture.coordinator.start()
+    }
+
+    #expect(cancellation.checkCount() == boundary.checkOrdinal)
+    #expect(fixture.recorder.cleanupEvents() == boundary.expectedCleanup)
+    for event in boundary.expectedCleanup {
+      #expect(fixture.recorder.count(event) == 1)
+    }
+    #expect(
+      fixture.recorder.snapshots().count { $0.lifecycle.lifecycleState == .disconnecting } == 1
+    )
+    #expect(fixture.recorder.snapshots().count { $0.lifecycle.lifecycleState == .failed } == 1)
+    #expect(fixture.recorder.resourceBaseline() == .zero)
+    #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+    #expect(fixture.recorder.snapshots().allSatisfy { !$0.capabilities.tcp })
+    #expect(fixture.recorder.snapshots().allSatisfy { !$0.capabilities.safeDNS })
+  }
+
+  @Test("settings apply error dispositions preserve failure and clear exactly when required")
   func applyFailureCommitDisposition() async {
     let notCommitted = CoordinatorFixture(failurePoint: .settingsApplyNotCommitted)
-    await #expect(throws: TunnelRuntimeCoordinatorError.self) {
+    await #expect(throws: StartupFailurePoint.settingsApplyNotCommitted.expectedError) {
       try await notCommitted.coordinator.start()
     }
-    #expect(!notCommitted.recorder.events().contains("settings.clear"))
+    #expect(notCommitted.recorder.count("settings.clear") == 0)
+    #expect(notCommitted.recorder.resourceBaseline() == .zero)
+    #expect(await notCommitted.coordinator.resourceFootprint() == .baseline)
+
+    let committed = CoordinatorFixture(failurePoint: .settingsApplyCommitted)
+    await #expect(throws: StartupFailurePoint.settingsApplyCommitted.expectedError) {
+      try await committed.coordinator.start()
+    }
+    #expect(committed.recorder.count("settings.clear") == 1)
+    #expect(
+      committed.recorder.snapshots().last?.lifecycle.error
+        == StartupFailurePoint.settingsApplyCommitted.expectedFailure
+    )
+    #expect(committed.recorder.resourceBaseline() == .zero)
+    #expect(await committed.coordinator.resourceFootprint() == .baseline)
 
     let uncertain = CoordinatorFixture(failurePoint: .settingsApplyUncertain)
-    await #expect(throws: TunnelRuntimeCoordinatorError.self) {
+    await #expect(throws: StartupFailurePoint.settingsApplyUncertain.expectedError) {
       try await uncertain.coordinator.start()
     }
-    #expect(uncertain.recorder.events().contains("settings.clear"))
+    #expect(uncertain.recorder.count("settings.clear") == 1)
+    #expect(uncertain.recorder.resourceBaseline() == .zero)
+    #expect(await uncertain.coordinator.resourceFootprint() == .baseline)
   }
 
   @Test("concurrent starts are rejected and stop cancels an in-flight generation")
   func concurrentStartAndStop() async {
     let gate = SuspensionGate()
-    let fixture = CoordinatorFixture(cancellationPoint: .beforeSSH, gate: gate)
+    let stoppingGate = SuspensionGate()
+    let fixture = CoordinatorFixture(
+      cancellationPoint: .beforeSSH,
+      gate: gate,
+      stoppingSnapshotGate: stoppingGate
+    )
     let firstStart = Task { try await fixture.coordinator.start() }
     await gate.waitUntilReached()
 
@@ -98,9 +158,8 @@ struct TunnelRuntimeCoordinatorTests {
     let stop = Task {
       await fixture.coordinator.stop(reason: .system)
     }
-    await waitUntil {
-      fixture.recorder.snapshots().contains { $0.lifecycle.lifecycleState == .disconnecting }
-    }
+    await stoppingGate.waitUntilReached()
+    await stoppingGate.release()
     await gate.release()
 
     await #expect(throws: CancellationError.self) {
@@ -180,14 +239,20 @@ struct TunnelRuntimeCoordinatorTests {
   )
   func cancellationRollback(point: StartupCancellationPoint) async {
     let gate = SuspensionGate()
-    let fixture = CoordinatorFixture(cancellationPoint: point, gate: gate)
+    let stoppingGate = SuspensionGate()
+    let fixture = CoordinatorFixture(
+      cancellationPoint: point,
+      gate: gate,
+      stoppingSnapshotGate: stoppingGate
+    )
     let start = Task { try await fixture.coordinator.start() }
     await gate.waitUntilReached()
 
+    #expect(await fixture.coordinator.coordinatorState() == point.expectedState)
+
     let stop = Task { await fixture.coordinator.stop(reason: .system) }
-    await waitUntil {
-      fixture.recorder.snapshots().contains { $0.lifecycle.lifecycleState == .disconnecting }
-    }
+    await stoppingGate.waitUntilReached()
+    await stoppingGate.release()
     await gate.release()
 
     await #expect(throws: CancellationError.self) {
@@ -331,6 +396,309 @@ struct TunnelRuntimeCoordinatorTests {
     #expect(await fixture.coordinator.resourceFootprint() == .baseline)
   }
 
+  @Test("concurrent starts create exactly one usable runtime")
+  func concurrentStartsCreateOneRuntime() async {
+    let fixture = CoordinatorFixture()
+    var outcomes: [StartAttemptOutcome] = []
+
+    await withTaskGroup(of: StartAttemptOutcome.self) { group in
+      for _ in 0..<32 {
+        group.addTask {
+          do {
+            try await fixture.coordinator.start()
+            return .started
+          } catch TunnelRuntimeCoordinatorError.generationAlreadyConsumed {
+            return .alreadyConsumed
+          } catch {
+            return .unexpectedFailure
+          }
+        }
+      }
+      for await outcome in group {
+        outcomes.append(outcome)
+      }
+    }
+
+    #expect(outcomes.count { $0 == .started } == 1)
+    #expect(outcomes.count { $0 == .alreadyConsumed } == 31)
+    #expect(!outcomes.contains(.unexpectedFailure))
+    #expect(await fixture.coordinator.coordinatorState() == .usableTCPDNS)
+    #expect(
+      fixture.recorder.snapshots().count { $0.lifecycle.lifecycleState == .connectedDegraded } == 1
+    )
+
+    await fixture.coordinator.stop(reason: .system)
+    #expect(fixture.recorder.resourceBaseline() == .zero)
+    #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+  }
+
+  @Test(
+    "mandatory dependency health loss revokes capability before cleanup",
+    arguments: TunnelRuntimeMandatoryComponent.allCases
+  )
+  func mandatoryHealthLoss(component: TunnelRuntimeMandatoryComponent) async throws {
+    let generation: UInt64 = 44
+    let fixture = CoordinatorFixture(generation: generation)
+    try await fixture.coordinator.start()
+
+    await fixture.coordinator.receive(
+      TunnelRuntimeHealthEvent(
+        runtimeGeneration: generation,
+        component: component,
+        health: .unhealthy
+      )
+    )
+    await fixture.coordinator.stop(reason: .providerFailure)
+
+    #expect(await fixture.coordinator.coordinatorState() == .failed)
+    let events = fixture.recorder.events()
+    #expect(
+      index(of: "snapshot.disconnecting.0.0", in: events)
+        < index(of: "tcp.closeAdmission", in: events)
+    )
+    #expect(fixture.recorder.count("snapshot.disconnecting.0.0") == 1)
+    #expect(fixture.recorder.count("packet.stop") == 1)
+    #expect(fixture.recorder.count("settings.clear") == 1)
+    #expect(fixture.recorder.count("dns.stop") == 1)
+    #expect(fixture.recorder.count("tcp.stop") == 1)
+    #expect(fixture.recorder.count("ssh.close") == 1)
+    #expect(
+      fixture.recorder.snapshots().last?.lifecycle.error == component.expectedFailure
+    )
+    expectCapabilitiesRemainUnavailableAfterStopping(fixture.recorder.snapshots())
+    #expect(fixture.recorder.resourceBaseline() == .zero)
+    #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+  }
+
+  @Test(
+    "failure stop reasons map exactly and revoke capability before one cleanup",
+    arguments: FailureStopCase.allCases
+  )
+  func failureStopReason(stopCase: FailureStopCase) async throws {
+    let fixture = CoordinatorFixture()
+    try await fixture.coordinator.start()
+
+    await fixture.coordinator.stop(reason: stopCase.reason)
+    await fixture.coordinator.stop(reason: stopCase.reason)
+
+    #expect(await fixture.coordinator.coordinatorState() == .failed)
+    let events = fixture.recorder.events()
+    #expect(
+      index(of: "snapshot.disconnecting.0.0", in: events)
+        < index(of: "tcp.closeAdmission", in: events)
+    )
+    #expect(
+      fixture.recorder.cleanupEvents() == [
+        "tcp.closeAdmission",
+        "dns.closeAdmission",
+        "packet.stop",
+        "settings.clear",
+        "dns.stop",
+        "tcp.stop",
+        "ssh.close",
+      ]
+    )
+    #expect(fixture.recorder.count("snapshot.disconnecting.0.0") == 1)
+    #expect(fixture.recorder.snapshots().count { $0.lifecycle.lifecycleState == .failed } == 1)
+    #expect(fixture.recorder.snapshots().last?.lifecycle.error == stopCase.expectedFailure)
+    expectCapabilitiesRemainUnavailableAfterStopping(fixture.recorder.snapshots())
+    #expect(fixture.recorder.resourceBaseline() == .zero)
+    #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+  }
+
+  @Test(
+    "legal and illegal coordinator controls follow the transition table",
+    arguments: CoordinatorControlCase.allCases
+  )
+  func coordinatorControlTransitionTable(control: CoordinatorControlCase) async {
+    switch control {
+    case .startWhileStarting:
+      let gate = SuspensionGate()
+      let fixture = CoordinatorFixture(cancellationPoint: .beforeSSH, gate: gate)
+      let first = Task { try await fixture.coordinator.start() }
+      await gate.waitUntilReached()
+      await #expect(throws: TunnelRuntimeCoordinatorError.generationAlreadyConsumed) {
+        try await fixture.coordinator.start()
+      }
+      #expect(await fixture.coordinator.coordinatorState() == .starting(.sshAuthentication))
+      await gate.release()
+      await #expect(throws: Never.self) { try await first.value }
+      await fixture.coordinator.stop(reason: .system)
+
+    case .startWhileUsable:
+      let fixture = CoordinatorFixture()
+      await #expect(throws: Never.self) { try await fixture.coordinator.start() }
+      await #expect(throws: TunnelRuntimeCoordinatorError.generationAlreadyConsumed) {
+        try await fixture.coordinator.start()
+      }
+      #expect(await fixture.coordinator.coordinatorState() == .usableTCPDNS)
+      await fixture.coordinator.stop(reason: .system)
+
+    case .startWhileStopping:
+      let stoppingGate = SuspensionGate()
+      let fixture = CoordinatorFixture(stoppingSnapshotGate: stoppingGate)
+      await #expect(throws: Never.self) { try await fixture.coordinator.start() }
+      let stop = Task { await fixture.coordinator.stop(reason: .system) }
+      await stoppingGate.waitUntilReached()
+      await #expect(throws: TunnelRuntimeCoordinatorError.generationAlreadyConsumed) {
+        try await fixture.coordinator.start()
+      }
+      #expect(await fixture.coordinator.coordinatorState() == .stopping)
+      await stoppingGate.release()
+      await stop.value
+
+    case .startAfterStopped:
+      let fixture = CoordinatorFixture()
+      await #expect(throws: Never.self) { try await fixture.coordinator.start() }
+      await fixture.coordinator.stop(reason: .system)
+      let eventCount = fixture.recorder.events().count
+      await #expect(throws: TunnelRuntimeCoordinatorError.generationAlreadyConsumed) {
+        try await fixture.coordinator.start()
+      }
+      #expect(fixture.recorder.events().count == eventCount)
+      #expect(await fixture.coordinator.coordinatorState() == .disconnected)
+
+    case .startAfterFailed:
+      let fixture = CoordinatorFixture(failurePoint: .configuration)
+      await #expect(throws: StartupFailurePoint.configuration.expectedError) {
+        try await fixture.coordinator.start()
+      }
+      let eventCount = fixture.recorder.events().count
+      await #expect(throws: TunnelRuntimeCoordinatorError.generationAlreadyConsumed) {
+        try await fixture.coordinator.start()
+      }
+      #expect(fixture.recorder.events().count == eventCount)
+      #expect(await fixture.coordinator.coordinatorState() == .failed)
+      #expect(fixture.recorder.resourceBaseline() == .zero)
+      #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+
+    case .stopWhileDisconnected:
+      let fixture = CoordinatorFixture()
+      await fixture.coordinator.stop(reason: .system)
+      await fixture.coordinator.stop(reason: .userInitiated)
+      #expect(await fixture.coordinator.coordinatorState() == .disconnected)
+      #expect(
+        fixture.recorder.snapshots().map(\.lifecycle.lifecycleState)
+          == [.disconnecting, .disconnected]
+      )
+
+    case .healthyAndStaleWhileUsable:
+      let generation: UInt64 = 9
+      let fixture = CoordinatorFixture(generation: generation)
+      await #expect(throws: Never.self) { try await fixture.coordinator.start() }
+      let eventCount = fixture.recorder.events().count
+      await fixture.coordinator.receive(
+        TunnelRuntimeHealthEvent(
+          runtimeGeneration: generation,
+          component: .ssh,
+          health: .healthy
+        )
+      )
+      await fixture.coordinator.receive(
+        TunnelRuntimeHealthEvent(
+          runtimeGeneration: generation - 1,
+          component: .ssh,
+          health: .unhealthy
+        )
+      )
+      #expect(fixture.recorder.events().count == eventCount)
+      #expect(await fixture.coordinator.coordinatorState() == .usableTCPDNS)
+      await fixture.coordinator.stop(reason: .system)
+
+    case .callbackWhileStopping:
+      let generation: UInt64 = 10
+      let stoppingGate = SuspensionGate()
+      let fixture = CoordinatorFixture(
+        generation: generation,
+        stoppingSnapshotGate: stoppingGate
+      )
+      await #expect(throws: Never.self) { try await fixture.coordinator.start() }
+      let stop = Task { await fixture.coordinator.stop(reason: .system) }
+      await stoppingGate.waitUntilReached()
+      let eventCount = fixture.recorder.events().count
+      await fixture.coordinator.receive(
+        TunnelRuntimeHealthEvent(
+          runtimeGeneration: generation,
+          component: .dns,
+          health: .unhealthy
+        )
+      )
+      #expect(fixture.recorder.events().count == eventCount)
+      #expect(await fixture.coordinator.coordinatorState() == .stopping)
+      await stoppingGate.release()
+      await stop.value
+
+    case .callbackWhileDisconnected:
+      let generation: UInt64 = 11
+      let fixture = CoordinatorFixture(generation: generation)
+      await fixture.coordinator.stop(reason: .system)
+      let eventCount = fixture.recorder.events().count
+      await fixture.coordinator.receive(
+        TunnelRuntimeHealthEvent(
+          runtimeGeneration: generation,
+          component: .packetPlane,
+          health: .unhealthy
+        )
+      )
+      #expect(fixture.recorder.events().count == eventCount)
+      #expect(await fixture.coordinator.coordinatorState() == .disconnected)
+
+    case .callbackWhileFailed:
+      let generation: UInt64 = 12
+      let fixture = CoordinatorFixture(generation: generation, failurePoint: .configuration)
+      await #expect(throws: TunnelRuntimeCoordinatorError.self) {
+        try await fixture.coordinator.start()
+      }
+      let eventCount = fixture.recorder.events().count
+      await fixture.coordinator.receive(
+        TunnelRuntimeHealthEvent(
+          runtimeGeneration: generation,
+          component: .tcp,
+          health: .unhealthy
+        )
+      )
+      await fixture.coordinator.stop(reason: .providerFailure)
+      #expect(fixture.recorder.events().count == eventCount)
+      #expect(await fixture.coordinator.coordinatorState() == .failed)
+    }
+  }
+
+  @Test("repeated stop and health races clean exactly one generation")
+  func repeatedStopHealthRace() async throws {
+    for generation in 1...32 {
+      let fixture = CoordinatorFixture(generation: UInt64(generation))
+      try await fixture.coordinator.start()
+
+      await withTaskGroup(of: Void.self) { group in
+        for index in 0..<32 {
+          group.addTask {
+            if index.isMultiple(of: 2) {
+              await fixture.coordinator.stop(reason: .system)
+            } else {
+              await fixture.coordinator.receive(
+                TunnelRuntimeHealthEvent(
+                  runtimeGeneration: UInt64(generation),
+                  component: TunnelRuntimeMandatoryComponent.allCases[index % 4],
+                  health: .unhealthy
+                )
+              )
+            }
+          }
+        }
+      }
+      await fixture.coordinator.stop(reason: .system)
+
+      #expect(fixture.recorder.count("packet.stop") == 1)
+      #expect(fixture.recorder.count("settings.clear") == 1)
+      #expect(fixture.recorder.count("dns.stop") == 1)
+      #expect(fixture.recorder.count("tcp.stop") == 1)
+      #expect(fixture.recorder.count("ssh.close") == 1)
+      #expect(fixture.recorder.resourceBaseline() == .zero)
+      #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+      expectCapabilitiesRemainUnavailableAfterStopping(fixture.recorder.snapshots())
+    }
+  }
+
   @Test("stale health events cannot mutate the active generation")
   func staleHealthEvent() async throws {
     let fixture = CoordinatorFixture(generation: 8)
@@ -406,9 +774,12 @@ struct TunnelRuntimeCoordinatorTests {
 
     for _ in 0..<100 {
       let runtime = try await factory.makeRuntime(context: makeContext())
+      let coordinator = try #require(runtime as? TunnelRuntimeCoordinator)
       try await runtime.start()
       await runtime.stop(reason: .system)
       #expect(recorder.activeResources() == 0)
+      #expect(recorder.resourceBaseline() == .zero)
+      #expect(await coordinator.resourceFootprint() == .baseline)
     }
 
     #expect(recorder.count("settings.apply") == 100)
@@ -420,6 +791,86 @@ struct TunnelRuntimeCoordinatorTests {
   }
 }
 
+enum StartupOwnershipBoundary: String, CaseIterable, Sendable {
+  case beforeConfiguration
+  case afterConfiguration
+  case beforeSSH
+  case afterSSH
+  case beforeTCP
+  case afterTCP
+  case beforeDNS
+  case afterDNS
+  case beforePacketPlane
+  case afterPacketPlane
+  case beforeSettingsCommit
+  case afterSettingsCommit
+  case beforePacketReads
+  case afterPacketReads
+
+  var checkOrdinal: Int {
+    switch self {
+    case .beforeConfiguration: 2
+    case .afterConfiguration: 3
+    case .beforeSSH: 6
+    case .afterSSH: 7
+    case .beforeTCP: 10
+    case .afterTCP: 11
+    case .beforeDNS: 12
+    case .afterDNS: 13
+    case .beforePacketPlane: 14
+    case .afterPacketPlane: 15
+    case .beforeSettingsCommit: 21
+    case .afterSettingsCommit: 22
+    case .beforePacketReads: 24
+    case .afterPacketReads: 25
+    }
+  }
+
+  var expectedCleanup: [String] {
+    switch self {
+    case .beforeConfiguration, .afterConfiguration, .beforeSSH:
+      []
+    case .afterSSH, .beforeTCP:
+      ["ssh.close"]
+    case .afterTCP, .beforeDNS:
+      ["tcp.closeAdmission", "tcp.stop", "ssh.close"]
+    case .afterDNS, .beforePacketPlane:
+      [
+        "tcp.closeAdmission", "dns.closeAdmission", "dns.stop", "tcp.stop", "ssh.close",
+      ]
+    case .afterPacketPlane, .beforeSettingsCommit:
+      [
+        "tcp.closeAdmission", "dns.closeAdmission", "packet.stop", "dns.stop", "tcp.stop",
+        "ssh.close",
+      ]
+    case .afterSettingsCommit, .beforePacketReads, .afterPacketReads:
+      [
+        "tcp.closeAdmission", "dns.closeAdmission", "packet.stop", "settings.clear",
+        "dns.stop", "tcp.stop", "ssh.close",
+      ]
+    }
+  }
+}
+
+private enum StartAttemptOutcome: Equatable, Sendable {
+  case started
+  case alreadyConsumed
+  case unexpectedFailure
+}
+
+enum CoordinatorControlCase: String, CaseIterable, Sendable {
+  case startWhileStarting
+  case startWhileUsable
+  case startWhileStopping
+  case startAfterStopped
+  case startAfterFailed
+  case stopWhileDisconnected
+  case healthyAndStaleWhileUsable
+  case callbackWhileStopping
+  case callbackWhileDisconnected
+  case callbackWhileFailed
+}
+
 enum StartupFailurePoint: String, CaseIterable, Sendable {
   case configuration
   case ssh
@@ -428,6 +879,7 @@ enum StartupFailurePoint: String, CaseIterable, Sendable {
   case packetPrepare
   case settingsPlan
   case settingsApplyNotCommitted
+  case settingsApplyCommitted
   case settingsApplyUncertain
   case packetActivation
   case finalHealth
@@ -449,16 +901,63 @@ enum StartupFailurePoint: String, CaseIterable, Sendable {
         "tcp.closeAdmission", "dns.closeAdmission", "packet.stop", "dns.stop", "tcp.stop",
         "ssh.close",
       ]
-    case .settingsApplyUncertain, .packetActivation, .finalHealth:
+    case .settingsApplyCommitted, .settingsApplyUncertain, .packetActivation, .finalHealth:
       [
         "tcp.closeAdmission", "dns.closeAdmission", "packet.stop", "settings.clear",
         "dns.stop", "tcp.stop", "ssh.close",
       ]
     }
   }
+
+  var expectedFailure: RedactedRuntimeError {
+    switch self {
+    case .configuration:
+      redactedError(domain: .configuration, code: "configuration_invalid")
+    case .ssh:
+      redactedError(domain: .sshTransport, code: "ssh_session_lost")
+    case .tcp:
+      redactedError(domain: .tcp, code: "tcp_flow_failed")
+    case .dns, .finalHealth:
+      redactedError(domain: .dns, code: "dns_upstream_timeout")
+    case .packetPrepare, .packetActivation:
+      redactedError(domain: .packetPlane, code: "packet_plane_failed")
+    case .settingsPlan:
+      redactedError(domain: .networkSettings, code: "settings_invalid")
+    case .settingsApplyNotCommitted, .settingsApplyCommitted, .settingsApplyUncertain:
+      redactedError(domain: .networkSettings, code: "network_settings_apply_failed")
+    }
+  }
+
+  var expectedError: TunnelRuntimeCoordinatorError {
+    .startupFailed(expectedFailure)
+  }
+}
+
+enum FailureStopCase: String, CaseIterable, Sendable {
+  case startupFailure
+  case providerFailure
+
+  var reason: ProviderStopReason {
+    switch self {
+    case .startupFailure:
+      .startupFailure
+    case .providerFailure:
+      .providerFailure
+    }
+  }
+
+  var expectedFailure: RedactedRuntimeError {
+    switch self {
+    case .startupFailure:
+      redactedError(domain: .runtimeInvariant, code: "startup_failed")
+    case .providerFailure:
+      redactedError(domain: .runtimeInvariant, code: "provider_failure")
+    }
+  }
 }
 
 enum StartupCancellationPoint: String, CaseIterable, Sendable {
+  case duringConfiguration
   case beforeSSH
   case beforeTCP
   case beforeDNS
@@ -469,7 +968,7 @@ enum StartupCancellationPoint: String, CaseIterable, Sendable {
 
   var expectedCleanup: [String] {
     switch self {
-    case .beforeSSH:
+    case .duringConfiguration, .beforeSSH:
       []
     case .beforeTCP:
       ["ssh.close"]
@@ -491,6 +990,66 @@ enum StartupCancellationPoint: String, CaseIterable, Sendable {
       ]
     }
   }
+
+  var expectedState: TunnelRuntimeCoordinatorState {
+    switch self {
+    case .duringConfiguration:
+      .starting(.configuration)
+    case .beforeSSH:
+      .starting(.sshAuthentication)
+    case .beforeTCP, .beforeDNS, .beforePacketPreparation:
+      .starting(.consumers)
+    case .duringSettingsApply:
+      .starting(.networkSettings)
+    case .duringPacketActivation, .duringFinalHealth:
+      .starting(.packetReads)
+    }
+  }
+}
+
+private struct FixtureResourceBaseline: Equatable, Sendable {
+  var tasks = 0
+  var timers = 0
+  var sockets = 0
+  var channels = 0
+  var dependencies = 0
+
+  static let zero = FixtureResourceBaseline()
+
+  mutating func acquire(_ resource: String) {
+    apply(resource, delta: 1)
+  }
+
+  mutating func release(_ resource: String) {
+    apply(resource, delta: -1)
+    precondition(tasks >= 0 && timers >= 0 && sockets >= 0 && channels >= 0)
+    precondition(dependencies >= 0)
+  }
+
+  private mutating func apply(_ resource: String, delta: Int) {
+    switch resource {
+    case "ssh":
+      sockets += delta
+      dependencies += delta
+    case "tcp":
+      channels += delta
+      dependencies += delta
+    case "dns":
+      timers += delta
+      sockets += delta
+      dependencies += delta
+    case "packet":
+      sockets += delta
+      channels += delta
+      dependencies += delta
+    case "settings":
+      dependencies += delta
+    case "reads":
+      tasks += delta
+    default:
+      preconditionFailure("Unknown fixture resource: \(resource)")
+    }
+  }
 }
 
 private final class CoordinatorRecorder: @unchecked Sendable {
@@ -498,6 +1057,8 @@ private final class CoordinatorRecorder: @unchecked Sendable {
   private var recordedEvents: [String] = []
   private var recordedSnapshots: [TunnelRuntimePublishedSnapshot] = []
   private var resourceCount = 0
+  private var resources = FixtureResourceBaseline.zero
+  private var resourceLeases: [String: Int] = [:]
 
   func record(_ event: String) {
     lock.withLock {
@@ -519,6 +1080,8 @@ private final class CoordinatorRecorder: @unchecked Sendable {
   func acquire(_ resource: String) {
     lock.withLock {
       resourceCount += 1
+      resources.acquire(resource)
+      resourceLeases[resource, default: 0] += 1
       recordedEvents.append("\(resource).acquired")
     }
   }
@@ -526,6 +1089,9 @@ private final class CoordinatorRecorder: @unchecked Sendable {
   func release(_ resource: String) {
     lock.withLock {
       resourceCount -= 1
+      resources.release(resource)
+      resourceLeases[resource, default: 0] -= 1
+      precondition(resourceLeases[resource, default: 0] >= 0)
       recordedEvents.append("\(resource).close")
     }
   }
@@ -552,6 +1118,10 @@ private final class CoordinatorRecorder: @unchecked Sendable {
 
   func activeResources() -> Int {
     lock.withLock { resourceCount }
+  }
+
+  func resourceBaseline() -> FixtureResourceBaseline {
+    lock.withLock { resources }
   }
 }
 
@@ -639,6 +1209,7 @@ private struct CoordinatorFixture: Sendable {
     gate: SuspensionGate? = nil,
     clearFails: Bool = false,
     stoppingSnapshotGate: SuspensionGate? = nil,
+    cancellation: any TunnelCancellationChecking = TaskCancellationChecker(),
     startupCompletionHandoffHook:
       (@Sendable (TunnelRuntimeCoordinator) async -> Void)? = nil
   ) {
@@ -652,7 +1223,7 @@ private struct CoordinatorFixture: Sendable {
     self.recorder = recorder
     coordinator = TunnelRuntimeCoordinator(
       runtimeGeneration: generation,
-      context: makeContext(),
+      context: makeContext(cancellation: cancellation),
       dependencies: makeCoordinatorDependencies(
         recorder: recorder,
         faults: faults,
@@ -696,6 +1267,8 @@ private struct TestConfigurationSource: ConfigurationSnapshotSource {
     for reference: TunnelConfigurationReference
   ) async throws -> RuntimeConfigurationSnapshot {
     recorder.record("configuration.load")
+    await faults.pauseIfNeeded(at: .duringConfiguration)
+    try Task<Never, Never>.checkCancellation()
     if faults.failurePoint == .configuration { throw TestFailure() }
     return RuntimeConfigurationSnapshot(
       configurationGeneration: 1,
@@ -791,7 +1364,7 @@ private final class TestTCPConsumer: TCPConsumer, @unchecked Sendable {
   func stop() async {
     guard stopped.take() else { return }
     recorder.record("tcp.stop")
-    recorder.releaseWithoutEvent()
+    recorder.releaseWithoutEvent("tcp")
   }
 }
 
@@ -840,7 +1413,7 @@ private final class TestDNSConsumer: DNSConsumer, @unchecked Sendable {
   func stop() async {
     guard stopped.take() else { return }
     recorder.record("dns.stop")
-    recorder.releaseWithoutEvent()
+    recorder.releaseWithoutEvent("dns")
   }
 }
 
@@ -868,6 +1441,7 @@ private final class TestPacketPlane: M1PacketPlaneSession, @unchecked Sendable {
   private let recorder: CoordinatorRecorder
   private let faults: FaultController
   private let stopped = OnceFlag()
+  private let readsLease = ResourceLeaseFlag()
   private let healthCount = Counter()
 
   init(recorder: CoordinatorRecorder, faults: FaultController) {
@@ -880,6 +1454,9 @@ private final class TestPacketPlane: M1PacketPlaneSession, @unchecked Sendable {
     await faults.pauseIfNeeded(at: .duringPacketActivation)
     try Task<Never, Never>.checkCancellation()
     if faults.failurePoint == .packetActivation { throw TestFailure() }
+    if readsLease.activate() {
+      recorder.acquire("reads")
+    }
   }
 
   func health() async -> TunnelRuntimeComponentHealth {
@@ -891,7 +1468,10 @@ private final class TestPacketPlane: M1PacketPlaneSession, @unchecked Sendable {
   func stop() async {
     guard stopped.take() else { return }
     recorder.record("packet.stop")
-    recorder.releaseWithoutEvent()
+    if readsLease.deactivate() {
+      recorder.releaseWithoutEvent("reads")
+    }
+    recorder.releaseWithoutEvent("packet")
   }
 }
 
@@ -930,9 +1510,14 @@ private struct TestSettingsApplier: NetworkSettingsApplier {
     switch faults.failurePoint {
     case .settingsApplyNotCommitted:
       throw TestApplyFailure(commitDisposition: .notCommitted)
+    case .settingsApplyCommitted:
+      recorder.acquire("settings")
+      throw TestApplyFailure(commitDisposition: .committed)
     case .settingsApplyUncertain:
+      recorder.acquire("settings")
       throw TestApplyFailure(commitDisposition: .uncertain)
     default:
+      recorder.acquire("settings")
       return
     }
   }
@@ -940,6 +1525,7 @@ private struct TestSettingsApplier: NetworkSettingsApplier {
   func clear(runtimeGeneration: UInt64) async throws {
     recorder.record("settings.clear")
     if faults.clearFails { throw TestFailure() }
+    recorder.releaseIfAcquired("settings")
   }
 }
 
@@ -965,6 +1551,32 @@ private actor TestPacketFlow: PacketFlow {
 
 private struct TestFailure: Error, Sendable {}
 
+private final class OrdinalFailureCancellationChecker: TunnelCancellationChecking,
+  @unchecked Sendable
+{
+  private let lock = NSLock()
+  private let failingOrdinal: Int
+  private var checks = 0
+
+  init(failingAt failingOrdinal: Int) {
+    self.failingOrdinal = failingOrdinal
+  }
+
+  var isCancelled: Bool { false }
+
+  func checkCancellation() throws {
+    let shouldFail = lock.withLock {
+      checks += 1
+      return checks == failingOrdinal
+    }
+    if shouldFail { throw TestFailure() }
+  }
+
+  func checkCount() -> Int {
+    lock.withLock { checks }
+  }
+}
+
 private final class OnceFlag: @unchecked Sendable {
   private let lock = NSLock()
   private var available = true
@@ -973,6 +1585,27 @@ private final class OnceFlag: @unchecked Sendable {
     lock.withLock {
       guard available else { return false }
       available = false
+      return true
+    }
+  }
+}
+
+private final class ResourceLeaseFlag: @unchecked Sendable {
+  private let lock = NSLock()
+  private var active = false
+
+  func activate() -> Bool {
+    lock.withLock {
+      guard !active else { return false }
+      active = true
+      return true
+    }
+  }
+
+  func deactivate() -> Bool {
+    lock.withLock {
+      guard active else { return false }
+      active = false
       return true
     }
   }
@@ -991,9 +1624,21 @@ private final class Counter: @unchecked Sendable {
 }
 
 extension CoordinatorRecorder {
-  fileprivate func releaseWithoutEvent() {
+  fileprivate func releaseWithoutEvent(_ resource: String) {
     lock.withLock {
       resourceCount -= 1
+      resources.release(resource)
+      resourceLeases[resource, default: 0] -= 1
+      precondition(resourceLeases[resource, default: 0] >= 0)
+    }
+  }
+
+  fileprivate func releaseIfAcquired(_ resource: String) {
+    lock.withLock {
+      guard resourceLeases[resource, default: 0] > 0 else { return }
+      resourceCount -= 1
+      resources.release(resource)
+      resourceLeases[resource, default: 0] -= 1
     }
   }
 }
@@ -1012,7 +1657,24 @@ extension TunnelRuntimeCoordinatorResourceFootprint {
   )
 }
 
-private func makeContext() -> TunnelRuntimeContext {
+extension TunnelRuntimeMandatoryComponent {
+  fileprivate var expectedFailure: RedactedRuntimeError {
+    switch self {
+    case .ssh:
+      redactedError(domain: .sshTransport, code: "ssh_session_lost")
+    case .tcp:
+      redactedError(domain: .tcp, code: "tcp_flow_failed")
+    case .dns:
+      redactedError(domain: .dns, code: "dns_upstream_timeout")
+    case .packetPlane:
+      redactedError(domain: .packetPlane, code: "packet_plane_failed")
+    }
+  }
+}
+
+private func makeContext(
+  cancellation: any TunnelCancellationChecking = TaskCancellationChecker()
+) -> TunnelRuntimeContext {
   TunnelRuntimeContext(
     configuration: TunnelConfiguration(
       profileReference: TunnelConfigurationReference(
@@ -1021,10 +1683,10 @@ private func makeContext() -> TunnelRuntimeContext {
     ),
     packetFlow: TestPacketFlow(),
     dependencies: TunnelRuntimeDependencies(
-      clock: ContinuousTunnelClock(),
+      clock: TestCoordinatorClock(),
       logger: TestCoordinatorLogger(),
       metrics: TestCoordinatorMetrics(),
-      cancellation: TaskCancellationChecker(),
+      cancellation: cancellation,
       memoryPressure: TestCoordinatorMemoryPressure()
     )
   )
@@ -1051,21 +1713,22 @@ private struct TestCoordinatorMemoryPressure: TunnelMemoryPressureSource {
   func currentPressure() async -> TunnelMemoryPressure { .normal }
 }
 
+private struct TestCoordinatorClock: TunnelClock {
+  private let fixedInstant = ContinuousClock().now
+
+  func now() -> ContinuousClock.Instant { fixedInstant }
+
+  func sleep(for duration: Duration) async throws {
+    throw TestFailure()
+  }
+}
+
 private func testUUID(_ suffix: Int) -> UUID {
   UUID(uuidString: String(format: "00000000-0000-0000-0000-%012d", suffix))!
 }
 
 private func index(of event: String, in events: [String]) -> Int {
   events.firstIndex(of: event) ?? Int.max
-}
-
-private func waitUntil(
-  _ predicate: @escaping @Sendable () -> Bool
-) async {
-  for _ in 0..<1_000 {
-    if predicate() { return }
-    await Task.yield()
-  }
 }
 
 private func expectCapabilitiesRemainUnavailableAfterStopping(

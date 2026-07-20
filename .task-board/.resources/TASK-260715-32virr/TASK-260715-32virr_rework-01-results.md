@@ -1,0 +1,3 @@
+# Rework 01 outcome
+
+Exact error-mapping and transition-table gaps from TASK-260715-32virr_review-changes-01.md are implemented. All 11 startup rows assert exact startupFailed redacted errors; committed settings-apply error clears exactly once; startupFailure/providerFailure stop reasons assert exact terminal mappings and single cleanup; start-while-stopping/start-after-stopped/start-after-failed are explicit control cases. Validation: 21 focused tests, 25/25 repeats, TSan clean, 95.48% line and 92.25% region coverage, make validate-core 213 tests/23 suites plus build, strict format, diff, no-sleep and board checks. Detailed updated evidence remains in TASK-260715-32virr_results.md and TASK-260715-32virr_test-evidence.zip.
