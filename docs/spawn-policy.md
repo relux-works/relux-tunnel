@@ -66,3 +66,11 @@ exploit-adjacent, leak tests) and exits non-zero mid-run. Route these to
 `--agent claude --model claude-fable-5` instead (authorized defensive context).
 Examples: packet/protocol/UDP fuzz + allocation-bounds, DNS/route leak tests,
 security/redaction tests. Everyday non-security executor work stays on codex-sol.
+
+## Temporary: Codex out of credits -> claude-fable executor (2026-07-20)
+
+Codex (`gpt-5.6-sol`) hit its account usage limit (resets ~2026-07-26, or top up
+credits). Until credits are restored, run BOTH producers and reviewers on
+`--agent claude --model claude-fable-5` (independent instances for producer vs
+reviewer keep context separation). Switch executors back to codex-sol once credits
+are available. Orchestrator stays Fable.

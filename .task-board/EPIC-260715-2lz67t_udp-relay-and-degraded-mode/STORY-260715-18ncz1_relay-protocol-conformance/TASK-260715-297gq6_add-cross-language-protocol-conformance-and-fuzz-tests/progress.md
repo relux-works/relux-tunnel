@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:43:57Z
 
 ## Last Update
-2026-07-20T11:30:35Z
+2026-07-20T11:53:45Z
 
 ## Blocked By
 - TASK-260715-1q7u14
@@ -29,6 +29,7 @@ backlog
 - [ ] Persist deterministic regression seeds and exact reproduction commands
 
 ## Notes
+TASK-260715-18owh7 decision ready for review: fuzz/conformance must prove cross-language equivalence at every step of the §4.4 validation order, no allocation above effective maxFrame, and no resolver/socket call before step 8 (pre-socket validation spies). Decision resource TASK-260715-18owh7_decision.md.
 
 ## Precondition Resources
 - [TASK-260715-297gq6_relay-binding-input.md](file://TASK-260715-297gq6/TASK-260715-297gq6_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map

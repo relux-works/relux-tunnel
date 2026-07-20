@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:44:42Z
 
 ## Last Update
-2026-07-20T11:30:35Z
+2026-07-20T11:54:00Z
 
 ## Blocked By
 - TASK-260715-1jvgcn
@@ -24,6 +24,7 @@ backlog
 - [ ] Prove rootless nonblocking descriptors and no public relay listener
 
 ## Notes
+TASK-260715-18owh7 decision ready for review: relay maxAssociations 256 [1,1024] checked before socket/state creation (0x0004 on excess, no state admitted); relay idle 120s (RFC 4787 REQ-5 floor): 0x0009 when safe -> retire -> CLOSE_ASSOCIATION. Reply recv into localMaxUDPPayload+1 buffer, oversize = silent counted drop. Per-association socket-buffer sizing stays relay-local config, out of protocol scope. Decision §4.3/§4.4.
 
 ## Precondition Resources
 - [TASK-260715-xw5dxc_relay-binding-input.md](file://TASK-260715-xw5dxc/TASK-260715-xw5dxc_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map

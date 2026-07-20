@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:44:42Z
 
 ## Last Update
-2026-07-20T11:30:35Z
+2026-07-20T11:54:00Z
 
 ## Blocked By
 - TASK-260715-18owh7
@@ -28,6 +28,7 @@ backlog
 - [ ] Reconcile every resource counter and observed maximum after cleanup
 
 ## Notes
+TASK-260715-18owh7 decision ready for review: full §4.3 table is your input — per-assoc queued bytes client 32KiB/relay 64KiB [4KiB,256KiB]; aggregate per direction client 1MiB[..4MiB]/relay 4MiB[..16MiB]; controlReservedBytes client 16KiB/relay 64KiB; dnsPriorityWeight 4:1 WRR [1,16] starvation-free, scheduling only, no admission credit; charge max(4+frameLength,64) per queued frame, atomic reserve-before-enqueue, single release; 0x0006 edge-triggered per saturation episode (ends at <=50% drain); reply-direction oversize = silent counted drop; config outside [floor,ceiling] = fail-closed startup, no silent clamp. Decision §4.3-§4.5.
 
 ## Precondition Resources
 - [TASK-260715-z37ay7_relay-binding-input.md](file://TASK-260715-z37ay7/TASK-260715-z37ay7_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map

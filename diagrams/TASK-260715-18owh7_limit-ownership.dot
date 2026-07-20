@@ -1,0 +1,48 @@
+// TASK-260715-18owh7 — v1 resource-limit classes and ownership
+// Render: dot -Tsvg diagrams/TASK-260715-18owh7_limit-ownership.dot -o diagrams/artefacts/TASK-260715-18owh7_limit-ownership.svg
+digraph limit_ownership {
+  rankdir=LR;
+  node [shape=box, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9];
+
+  subgraph cluster_wire {
+    label="Negotiated wire value (hello, u32 BE)";
+    style=rounded;
+    maxFrame [label="maxFrame\ndefault 4096\nfloor 2048 / ceiling 65536\neffective = min(client, server, local hard cap)"];
+  }
+
+  subgraph cluster_const {
+    label="Fixed v1 wire constant (schema, not a wire field)";
+    style=rounded;
+    maxUDPPayload [label="maxUDPPayload = 1472\nHEV 1500-byte copy-buffer bound (fatal on overflow)\n+ unfragmented 1500-MTU egress\nraise => feature gate or v2 only"];
+  }
+
+  subgraph cluster_local {
+    label="Unilateral local caps (schema default/floor/hard ceiling, injectable)";
+    style=rounded;
+    maxAssociations [label="maxAssociations\n256 [1, 1024]"];
+    perAssocQueue [label="perAssociationQueuedBytes\nclient 32 KiB / relay 64 KiB\n[4 KiB, 256 KiB]"];
+    aggQueue [label="aggregateQueuedBytes per direction\nclient 1 MiB [.., 4 MiB]\nrelay 4 MiB [.., 16 MiB]"];
+    controlReserve [label="controlReservedBytes\nclient 16 KiB / relay 64 KiB"];
+    dnsWeight [label="dnsPriorityWeight 4 : 1\nWRR, starvation-free"];
+    idle [label="idleTimeout\nclient 60 s / relay 120 s\n[10 s, 600 s]"];
+  }
+
+  client [label="Client (Swift)\nRelayEffectiveLimits\n-> capability snapshot (3edgwz)", shape=component];
+  relay  [label="Relay (Go)\nRelayEffectiveLimits\n-> udp admission/scheduling", shape=component];
+
+  maxFrame -> client [label="may lower via hello"];
+  maxFrame -> relay  [label="may lower via hello"];
+  maxUDPPayload -> client [label="local config may lower (floor 512)"];
+  maxUDPPayload -> relay  [label="local config may lower (floor 512)"];
+  maxAssociations -> client [label="local only"];
+  maxAssociations -> relay  [label="local only; breach = 0x0004"];
+  perAssocQueue -> client; perAssocQueue -> relay;
+  aggQueue -> client; aggQueue -> relay [label="breach = drop + 0x0006 (edge-triggered)"];
+  controlReserve -> client; controlReserve -> relay;
+  dnsWeight -> client; dnsWeight -> relay;
+  idle -> client [label="closes first (stagger)"];
+  idle -> relay  [label="backstop; 0x0009"];
+
+  invariant [label="Invariants:\nno limit raisable above local hard ceiling by any input\nconfig outside [floor, ceiling] = fail-closed startup\nno socket/resolver call before full validation", shape=note];
+}

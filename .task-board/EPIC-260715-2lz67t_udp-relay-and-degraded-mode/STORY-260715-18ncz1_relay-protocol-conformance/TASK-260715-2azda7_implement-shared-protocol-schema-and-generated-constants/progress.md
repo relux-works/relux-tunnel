@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:43:57Z
 
 ## Last Update
-2026-07-20T11:30:36Z
+2026-07-20T11:53:16Z
 
 ## Blocked By
 - TASK-260715-111tde
@@ -25,6 +25,7 @@ backlog
 - [ ] Attach regeneration commands and representative generated diffs
 
 ## Notes
+TASK-260715-18owh7 decision ready for review (resource TASK-260715-18owh7_decision.md §6): add schema limits section — per-limit {name, class negotiatedWire|fixedWireConstant|localCap, width, unit, default, floor, hardCeiling}; maxFrame u32 [2048,65536] def 4096; maxUDPPayload fixedWireConstant 1472 (local lowering floor 512); maxAssociations 256 [1,1024]; perAssociationQueuedBytes client 32KiB relay 64KiB [4KiB,256KiB]; aggregateQueuedBytes/dir client 1MiB [64KiB,4MiB] relay 4MiB [64KiB,16MiB]; controlReservedBytes client 16KiB relay 64KiB [4KiB,256KiB]; dnsPriorityWeight 4:1 [1,16]; idleTimeout client 60s relay 120s [10s,600s]. Reserve hello flag bit 1, feature bit 1, msg types 0x40-0x4F (resource governance, unallocated). Validation must reject defaults outside [floor,ceiling] and fixedWireConstant edits without version/feature gate.
 
 ## Precondition Resources
 - [TASK-260715-2azda7_relay-binding-input.md](file://TASK-260715-2azda7/TASK-260715-2azda7_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map

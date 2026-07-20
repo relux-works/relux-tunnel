@@ -1,0 +1,39 @@
+@startuml
+!theme plain
+hide footbox
+title TASK-260715-18owh7 — v1 resource-limit enforcement points (validation before socket use)
+
+participant "HEV (pinned)\nUDP-in-TCP stream" as HEV
+participant "Swift adapter\nRelayEffectiveLimits (client)" as Client
+participant "Go relay\nRelayEffectiveLimits (relay)" as Relay
+participant "UDP socket\n(exit host)" as Sock
+
+autonumber
+
+== Client to destination ==
+HEV -> Client: HEV record (datlen, addr)
+Client -> Client: datlen <= min(1472, local cap)?\nelse bounded skip + hevOversizedInbound
+Client -> Client: association admission < maxAssociations(256)\nelse typed fast local failure, no wire bytes
+Client -> Client: queue credit: reserve max(4+frameLength, 64)\nagainst per-assoc 32 KiB + aggregate 1 MiB\nelse drop newest + counter
+Client -> Relay: UDP_DATAGRAM frame (<= effective maxFrame)
+Relay -> Relay: [1] frameLength in [6, effectiveMaxFrame] else session-fatal\n[2] type/flags/direction/ID else session-fatal
+Relay -> Relay: [3] new ID: active < maxAssociations(256)\nelse UDP_ERROR 0x0004, no state
+Relay -> Relay: [4] HDRLEN/ATYP/MSGLEN arithmetic, port != 0
+Relay -> Relay: [5] MSGLEN > 1472: violation -> 0x0005 + CLOSE_ASSOCIATION\nMSGLEN > local cap: policy -> 0x0005, drop only
+Relay -> Relay: [6] domain resolver-form rules (no resolver call yet)
+Relay -> Relay: [7] queue credit: per-assoc 64 KiB + aggregate 4 MiB\nelse drop + edge-triggered 0x0006
+Relay -> Sock: [8] only now: create/resolve/send
+
+== Reply to client ==
+Sock -> Relay: recv into (localMaxUDPPayload + 1) buffer
+Relay -> Relay: oversize -> silent counted drop\n(no error frame; external sender must not drive error channel)
+Relay -> Relay: association open? queue credit? else drop + counter
+Relay -> Client: UDP_DATAGRAM reply frame
+Client -> Client: MSGLEN > 1472 -> association-fatal (nonconforming peer)\nMSGLEN > local cap -> policy drop + counter
+Client -> HEV: HEV record write\n(addrlen + datlen <= 1491 < 1500 by construction;\npinned HEV kills the stream above 1500)
+
+== Idle expiry (staggered timers) ==
+Client -> Relay: CLOSE_ASSOCIATION (client idle 60 s fires first by design)
+note over Client,Relay: relay idle 120 s (RFC 4787 REQ-5 floor) is the backstop:\nUDP_ERROR 0x0009 when safe -> retire state -> CLOSE_ASSOCIATION
+
+@enduml

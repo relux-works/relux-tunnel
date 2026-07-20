@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:43:57Z
 
 ## Last Update
-2026-07-20T11:30:35Z
+2026-07-20T11:53:31Z
 
 ## Blocked By
 - TASK-260715-1y1g1u
@@ -31,6 +31,7 @@ backlog
 - [ ] Constrain remote errors and health payloads to privacy-safe bounded forms
 
 ## Notes
+TASK-260715-18owh7 decision ready for review: 0x0005 has two dispositions — violation (MSGLEN>1472): 0x0005 + CLOSE_ASSOCIATION; policy (local lowered cap): 0x0005 drop only. 0x0006 is edge-triggered: at most one per association per saturation episode, episode ends at <=50% per-assoc queue drain; drops always counted. Idle: relay 0x0009 when safe -> retire -> CLOSE_ASSOCIATION (120s); client closes first at 60s by design. Decision §4.2-§4.4.
 
 ## Precondition Resources
 - [TASK-260715-1jvgcn_relay-binding-input.md](file://TASK-260715-1jvgcn/TASK-260715-1jvgcn_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map

@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-20T11:30:35Z
+2026-07-20T11:54:00Z
 
 ## Blocked By
 - TASK-260715-30lv40
@@ -28,6 +28,7 @@ backlog
 - [ ] Test every input combination message version and stale-generation ordering
 
 ## Notes
+TASK-260715-18owh7 decision ready for review: version RelayEffectiveLimits into the capability snapshot — effectiveMaxFrame u32, maxUDPPayload u16, maxAssociations u32, perAssociationQueuedBytes u32, aggregateQueuedBytes u32, controlReservedBytes u32, dnsPriorityWeight u8, idleTimeoutMilliseconds u32. One immutable snapshot per session generation, derived at handshake completion; local-only, never serialized to the peer in M0. Decision §4.6.
 
 ## Precondition Resources
 - [TASK-260715-3edgwz_m1-snapshot-handoff.md](file://TASK-260715-3edgwz/TASK-260715-3edgwz_m1-snapshot-handoff.md) — M1 versioned model and diagnostics prerequisites for M2 snapshots
