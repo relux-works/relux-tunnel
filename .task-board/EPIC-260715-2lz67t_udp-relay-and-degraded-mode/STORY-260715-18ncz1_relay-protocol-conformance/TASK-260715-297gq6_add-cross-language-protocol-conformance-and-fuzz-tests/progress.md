@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:43:57Z
 
 ## Last Update
-2026-07-15T03:11:23Z
+2026-07-20T11:30:35Z
 
 ## Blocked By
 - TASK-260715-1q7u14
@@ -31,7 +31,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-297gq6_relay-binding-input.md](file://TASK-260715-297gq6/TASK-260715-297gq6_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map
 
 ## Outcome Resources
 (none)

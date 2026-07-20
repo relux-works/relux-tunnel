@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:44:25Z
 
 ## Last Update
-2026-07-15T03:19:57Z
+2026-07-20T11:30:36Z
 
 ## Blocked By
 - TASK-260715-19lr1c
@@ -33,6 +33,8 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-159pcp_ssh-exec-handoff.md](file://TASK-260715-159pcp/TASK-260715-159pcp_ssh-exec-handoff.md) — Authenticated SSH and exec prerequisite for relay launch
+- [TASK-260715-159pcp_relay-binding-input.md](file://TASK-260715-159pcp/TASK-260715-159pcp_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map
+- [TASK-260715-159pcp_relay-session-sequence.puml](file://TASK-260715-159pcp/TASK-260715-159pcp_relay-session-sequence.puml) — Identity preflight and stdio session establishment sequence from TASK-260715-111tde
 
 ## Outcome Resources
 - [TASK-260715-159pcp_bootstrap-trust-sequence.puml](file://TASK-260715-159pcp/TASK-260715-159pcp_bootstrap-trust-sequence.puml) — Planning sequence diagram for authenticated upload, verification, atomic install, and handshake

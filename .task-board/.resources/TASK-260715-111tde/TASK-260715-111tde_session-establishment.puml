@@ -1,0 +1,50 @@
+@startuml
+!theme plain
+hide footbox
+title TASK-260715-111tde — Relay identity and session establishment
+
+actor "ReluxTunnelCore\nrelay coordinator" as Client
+participant "SSHTransport" as SSH
+participant "Verified relux-relay" as Relay
+participant "Relay protocol v1\nsession state" as Session
+
+autonumber
+
+== Bounded identity preflight ==
+Client -> SSH: openExecChannel("<path> ~--identity ~--protocol 1")
+SSH -> Relay: authenticated exec
+Relay --> SSH: one canonical JSON line (<= 512 bytes) + EOF + exit 0
+SSH --> Client: bounded stdout, separate stderr, SSHExecExit
+Client -> Client: compare version/commit/platform/selfSha256\nwith signed manifest
+
+alt mismatch, extra bytes, invalid record, timeout, or nonzero exit
+  Client -> SSH: reset/close identity channel
+  Client -> Client: stable degraded capability reason
+else identity accepted
+  == Long-lived framed channel ==
+  Client -> SSH: openExecChannel("<path> ~--stdio ~--protocol 1")
+  SSH -> Relay: authenticated exec; stdout is protocol-only
+  Client -> Relay: client hello (12 bytes)
+  Relay -> Relay: validate fixed fields and local caps\nbefore body-sized allocation
+  Relay --> Client: server hello (16 bytes)
+  Client -> Client: validate status, selected features, maxFrame,\nand TASK-260715-18owh7 effective limits
+
+  alt invalid hello, limit, EOF, timeout, cancellation, or lane loss
+    Client -> SSH: reset/close channel
+    Relay -> Relay: retire generation and all associations once
+  else current generation accepted
+    Client -> Session: publish usable RelaySession
+    loop bounded multiplexed operation
+      Client <-> Relay: framed control/DNS/ordinary messages\nwith partial I/O and bounded queues
+    end
+    Client -> Relay: CLOSE_SESSION or EOF
+    Relay --> Client: CLOSE_SESSION / exit metadata
+    Client -> SSH: idempotent bounded close
+  end
+end
+
+note over Client,Relay
+No SFTP. Stderr never enters the framed decoder.
+No session is published before identity and hello validation.
+end note
+@enduml

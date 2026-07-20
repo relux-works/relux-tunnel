@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-15T02:46:54Z
+2026-07-20T11:30:35Z
 
 ## Blocked By
 - TASK-260715-30lv40
@@ -31,6 +31,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-3edgwz_m1-snapshot-handoff.md](file://TASK-260715-3edgwz/TASK-260715-3edgwz_m1-snapshot-handoff.md) — M1 versioned model and diagnostics prerequisites for M2 snapshots
+- [TASK-260715-3edgwz_relay-binding-input.md](file://TASK-260715-3edgwz/TASK-260715-3edgwz_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map
 
 ## Outcome Resources
 (none)

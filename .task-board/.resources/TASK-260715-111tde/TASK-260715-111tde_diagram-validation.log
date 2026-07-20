@@ -1,0 +1,27 @@
+TASK-260715-111tde diagram validation
+Date: 2026-07-20
+
+Tool:
+  PlantUML 1.2026.6 (6287b33)
+  Java: /usr/bin/java
+  Layout: PlantUML internal Smetana
+
+Sources:
+  diagrams/TASK-260715-111tde_protocol-boundaries.puml
+  diagrams/TASK-260715-111tde_session-establishment.puml
+
+Checks:
+  plantuml -checkonly ownership source: PASS
+  plantuml -checkonly session source: PASS
+  SVG render ownership: PASS (24,742 bytes)
+  SVG render session: PASS (26,729 bytes)
+  PNG render ownership: PASS (1,806 x 940; 65,497 bytes)
+  PNG render session: PASS (1,309 x 1,153; 51,733 bytes)
+  Rendered-error/line-through scan: PASS
+  Visual inspection of both PNGs: PASS
+
+Environment anomaly:
+  Homebrew Graphviz 14.0.4 cannot load
+  /opt/homebrew/opt/libtool/lib/libltdl.7.dylib. The ownership source therefore
+  pins PlantUML's internal Smetana layout; rendering does not depend on broken
+  system Graphviz.

@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:43:57Z
 
 ## Last Update
-2026-07-15T01:57:22Z
+2026-07-20T11:30:36Z
 
 ## Blocked By
 - TASK-260715-111tde
@@ -27,7 +27,8 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-2azda7_relay-binding-input.md](file://TASK-260715-2azda7/TASK-260715-2azda7_relay-binding-input.md) — Frozen TASK-260715-111tde relay binding decision; consume the task-specific artifact and validation map
+- [TASK-260715-2azda7_relay-ownership.puml](file://TASK-260715-2azda7/TASK-260715-2azda7_relay-ownership.puml) — Focused schema/generated/handwritten ownership diagram from TASK-260715-111tde
 
 ## Outcome Resources
 (none)
