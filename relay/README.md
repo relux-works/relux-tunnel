@@ -29,6 +29,12 @@ Current protocol contents:
 - `internal/protocol/handshake_test.go` — exact-wire, every-split, coalescing,
   boundary-limit, rejection, stale-generation, timeout, cancellation, and
   diagnostic tests for the server state machine.
+- `internal/protocol/session.go` — generated-backed v1 transition table and the
+  generation-safe session machine for direction, finite errors, bounded health
+  echo, association/session close acknowledgement, and cleanup-once semantics.
+- `internal/protocol/session_test.go` — deterministic paired-peer nominal,
+  hostile, malformed-datagram, crossed/duplicate close, abrupt termination,
+  late callback, counter, privacy, and post-handshake `RLXR` coverage.
 
 Until the module scaffold lands, `scripts/tests/test-relay-protocol-go.sh`
 (invoked by `make relay-protocol-check`) compiles and tests this package inside

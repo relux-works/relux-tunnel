@@ -248,6 +248,13 @@ func (d *EnvelopeDecoder) Metrics() CodecMetrics {
 	return d.metrics
 }
 
+// AtFrameBoundary reports whether the next byte begins a fresh frame-length
+// prefix. Session policy uses it to classify a post-handshake RLXR prefix
+// without handshake lookahead or a transport barrier.
+func (d *EnvelopeDecoder) AtFrameBoundary() bool {
+	return d.state == decoderReceiving && d.prefixLength == 0 && d.body == nil && d.bodyLength == 0
+}
+
 func (d *EnvelopeDecoder) Consume(input []byte) ([]Envelope, *CodecError) {
 	if d.state == decoderFailed {
 		return nil, d.failure

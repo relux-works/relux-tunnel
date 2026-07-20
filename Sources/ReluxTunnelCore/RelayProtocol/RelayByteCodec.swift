@@ -235,6 +235,16 @@ public struct RelayEnvelopeDecoder: Sendable {
   private var expectedBodyLength: Int?
   private var headerValidated = false
 
+  /// True only when the next byte starts a fresh frame-length prefix. Session
+  /// policy uses this to classify a post-handshake `RLXR` prefix without
+  /// adding handshake lookahead or weakening incremental framing.
+  public var isAtFrameBoundary: Bool {
+    if case .receiving = state {
+      return prefix.isEmpty && body.isEmpty && expectedBodyLength == nil
+    }
+    return false
+  }
+
   public init(
     maximumFrame: UInt32,
     direction: RelayEnvelopeDirection,
