@@ -1,0 +1,7 @@
+{
+  "description": "Dropping a required v1 limit leaves consumers without limit metadata and must be rejected.",
+  "expectError": "required limit 'dnsPriorityWeight' missing",
+  "operations": [
+    {"op": "delete", "path": ["limits", 2]}
+  ]
+}

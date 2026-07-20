@@ -1,0 +1,7 @@
+{
+  "description": "A limit default outside [floor, hardCeiling] must be rejected (TASK-260715-18owh7 section 6 validation rule).",
+  "expectError": "outside [floor",
+  "operations": [
+    {"op": "set", "path": ["limits", 4, "clientDefault"], "value": 0}
+  ]
+}

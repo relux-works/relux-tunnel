@@ -1,0 +1,10 @@
+{
+  "description": "Editing the maxUDPPayload fixed wire constant without a version/feature gate is a backward-incompatible v1 edit.",
+  "expectError": "incompatible v1 edit: maxUDPPayload",
+  "operations": [
+    {"op": "set", "path": ["limits", 6, "clientDefault"], "value": 1500},
+    {"op": "set", "path": ["limits", 6, "relayDefault"], "value": 1500},
+    {"op": "set", "path": ["limits", 6, "clientHardCeiling"], "value": 1500},
+    {"op": "set", "path": ["limits", 6, "relayHardCeiling"], "value": 1500}
+  ]
+}

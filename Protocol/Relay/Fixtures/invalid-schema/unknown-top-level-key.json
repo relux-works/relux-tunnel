@@ -1,0 +1,7 @@
+{
+  "description": "Unknown schema keys must be rejected so silent vocabulary extensions cannot slip through review.",
+  "expectError": "unknown key \"experimental\"",
+  "operations": [
+    {"op": "set", "path": ["experimental"], "value": true}
+  ]
+}

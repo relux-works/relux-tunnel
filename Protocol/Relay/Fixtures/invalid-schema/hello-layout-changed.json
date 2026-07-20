@@ -1,0 +1,7 @@
+{
+  "description": "Widening a client hello field changes the frozen exact 12-byte hello and must be rejected without a wireVersion bump.",
+  "expectError": "incompatible v1 edit: client hello layout changed",
+  "operations": [
+    {"op": "set", "path": ["hello", "client", "fields", 2, "width"], "value": 4}
+  ]
+}

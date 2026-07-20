@@ -1,0 +1,396 @@
+{
+  "addressTypes": [
+    {
+      "lengthPrefixed": false,
+      "maxAddressBytes": 4,
+      "minAddressBytes": 4,
+      "name": "IPV4",
+      "value": 1
+    },
+    {
+      "lengthPrefixed": true,
+      "maxAddressBytes": 248,
+      "minAddressBytes": 1,
+      "name": "DOMAIN",
+      "value": 3
+    },
+    {
+      "lengthPrefixed": false,
+      "maxAddressBytes": 16,
+      "minAddressBytes": 16,
+      "name": "IPV6",
+      "value": 4
+    }
+  ],
+  "compatibility": {
+    "class": "v1-frozen",
+    "note": "In-place v1 edits may only allocate a reserved flag/feature negotiated before use or append UDP error codes and hello statuses; any other wire-visible change requires a wireVersion bump (TASK-260715-111tde section 6)."
+  },
+  "envelope": {
+    "headerFields": [
+      {
+        "name": "type",
+        "width": 1
+      },
+      {
+        "name": "flags",
+        "width": 1
+      },
+      {
+        "name": "associationID",
+        "width": 4
+      }
+    ],
+    "lengthCoverage": "type-through-payload",
+    "prefix": {
+      "name": "frameLength",
+      "width": 4
+    }
+  },
+  "envelopeFlags": {
+    "bits": [
+      {
+        "bit": 0,
+        "gatedByFeature": "dnsPriorityHint",
+        "name": "dnsPriority",
+        "note": "Scheduling hint only; never authorization, admission, or limit privilege.",
+        "status": "allocated",
+        "validDirection": "clientToRelay",
+        "validOnMessage": "UDP_DATAGRAM"
+      }
+    ],
+    "width": 1
+  },
+  "features": {
+    "bits": [
+      {
+        "bit": 0,
+        "name": "dnsPriorityHint",
+        "note": "Server confirms the client-requested dnsPriorityHint capability.",
+        "status": "allocated"
+      },
+      {
+        "bit": 1,
+        "name": "resourceLimitExchange",
+        "note": "Reserved for the evidence-gated M3 resource governance exchange (TASK-260715-18owh7).",
+        "status": "reserved"
+      }
+    ],
+    "width": 4
+  },
+  "hello": {
+    "client": {
+      "fields": [
+        {
+          "name": "magic",
+          "width": 4
+        },
+        {
+          "name": "version",
+          "width": 2
+        },
+        {
+          "name": "flags",
+          "width": 2
+        },
+        {
+          "name": "maxFrame",
+          "width": 4
+        }
+      ]
+    },
+    "server": {
+      "fields": [
+        {
+          "name": "magic",
+          "width": 4
+        },
+        {
+          "name": "version",
+          "width": 2
+        },
+        {
+          "name": "status",
+          "width": 2
+        },
+        {
+          "name": "features",
+          "width": 4
+        },
+        {
+          "name": "maxFrame",
+          "width": 4
+        }
+      ]
+    }
+  },
+  "helloFlags": {
+    "bits": [
+      {
+        "bit": 0,
+        "name": "dnsPriorityHint",
+        "note": "Client requests the v1 dnsPriorityHint scheduling capability.",
+        "status": "allocated"
+      },
+      {
+        "bit": 1,
+        "name": "resourceLimitExchange",
+        "note": "Reserved for the evidence-gated M3 resource governance exchange (TASK-260715-18owh7).",
+        "status": "reserved"
+      }
+    ],
+    "width": 2
+  },
+  "helloStatuses": [
+    {
+      "name": "ACCEPTED",
+      "value": 0
+    },
+    {
+      "name": "UNSUPPORTED_VERSION",
+      "value": 1
+    },
+    {
+      "name": "INVALID_CLIENT_HELLO",
+      "value": 2
+    },
+    {
+      "name": "RESOURCE_POLICY_REJECTED",
+      "value": 3
+    },
+    {
+      "name": "RELAY_UNAVAILABLE",
+      "value": 4
+    }
+  ],
+  "hevRecord": {
+    "fixedPrefixFields": [
+      {
+        "name": "MSGLEN",
+        "width": 2
+      },
+      {
+        "name": "HDRLEN",
+        "width": 1
+      },
+      {
+        "name": "ATYP",
+        "width": 1
+      }
+    ],
+    "msglenLimit": "maxUDPPayload",
+    "portWidth": 2
+  },
+  "limits": [
+    {
+      "class": "localCap",
+      "clientDefault": 1048576,
+      "clientHardCeiling": 4194304,
+      "floor": 65536,
+      "name": "aggregateQueuedBytes",
+      "relayDefault": 4194304,
+      "relayHardCeiling": 16777216,
+      "unit": "bytes",
+      "width": 4
+    },
+    {
+      "class": "localCap",
+      "clientDefault": 16384,
+      "clientHardCeiling": 262144,
+      "floor": 4096,
+      "name": "controlReservedBytes",
+      "relayDefault": 65536,
+      "relayHardCeiling": 262144,
+      "unit": "bytes",
+      "width": 4
+    },
+    {
+      "class": "localCap",
+      "clientDefault": 4,
+      "clientHardCeiling": 16,
+      "floor": 1,
+      "name": "dnsPriorityWeight",
+      "relayDefault": 4,
+      "relayHardCeiling": 16,
+      "unit": "ratioToOne",
+      "width": 1
+    },
+    {
+      "class": "localCap",
+      "clientDefault": 60000,
+      "clientHardCeiling": 600000,
+      "floor": 10000,
+      "name": "idleTimeout",
+      "relayDefault": 120000,
+      "relayHardCeiling": 600000,
+      "unit": "milliseconds",
+      "width": 4
+    },
+    {
+      "class": "localCap",
+      "clientDefault": 256,
+      "clientHardCeiling": 1024,
+      "floor": 1,
+      "name": "maxAssociations",
+      "relayDefault": 256,
+      "relayHardCeiling": 1024,
+      "unit": "count",
+      "width": 4
+    },
+    {
+      "class": "negotiatedWire",
+      "clientDefault": 4096,
+      "clientHardCeiling": 65536,
+      "floor": 2048,
+      "name": "maxFrame",
+      "note": "Only negotiated wire value; effective = min(client, server), each clamped to its injected local hard cap (TASK-260715-18owh7 section 4.1).",
+      "relayDefault": 4096,
+      "relayHardCeiling": 65536,
+      "unit": "bytes",
+      "width": 4
+    },
+    {
+      "class": "fixedWireConstant",
+      "clientDefault": 1472,
+      "clientHardCeiling": 1472,
+      "floor": 512,
+      "name": "maxUDPPayload",
+      "note": "Fixed v1 wire constant pinned by the HEV 1500-byte UDP copy bound; floor is the permitted local lowering bound (TASK-260715-18owh7 section 4.2).",
+      "relayDefault": 1472,
+      "relayHardCeiling": 1472,
+      "unit": "bytes",
+      "width": 2
+    },
+    {
+      "class": "localCap",
+      "clientDefault": 32768,
+      "clientHardCeiling": 262144,
+      "floor": 4096,
+      "name": "perAssociationQueuedBytes",
+      "relayDefault": 65536,
+      "relayHardCeiling": 262144,
+      "unit": "bytes",
+      "width": 4
+    }
+  ],
+  "magic": {
+    "ascii": "RLXR"
+  },
+  "messageTypes": [
+    {
+      "associationID": "nonzero",
+      "direction": "both",
+      "name": "UDP_DATAGRAM",
+      "payload": {
+        "shape": "hevUDPRecord"
+      },
+      "value": 16
+    },
+    {
+      "associationID": "nonzero",
+      "direction": "relayToClient",
+      "name": "UDP_ERROR",
+      "payload": {
+        "shape": "fixed",
+        "width": 2
+      },
+      "value": 17
+    },
+    {
+      "associationID": "zero",
+      "direction": "clientToRelay",
+      "name": "PING",
+      "payload": {
+        "shape": "fixed",
+        "width": 8
+      },
+      "value": 32
+    },
+    {
+      "associationID": "zero",
+      "direction": "relayToClient",
+      "name": "PONG",
+      "payload": {
+        "shape": "fixed",
+        "width": 8
+      },
+      "value": 33
+    },
+    {
+      "associationID": "nonzero",
+      "direction": "both",
+      "name": "CLOSE_ASSOCIATION",
+      "payload": {
+        "shape": "fixed",
+        "width": 0
+      },
+      "value": 48
+    },
+    {
+      "associationID": "zero",
+      "direction": "both",
+      "name": "CLOSE_SESSION",
+      "payload": {
+        "shape": "fixed",
+        "width": 0
+      },
+      "value": 49
+    }
+  ],
+  "protocol": {
+    "byteOrder": "big-endian",
+    "name": "relux-relay",
+    "wireVersion": 1
+  },
+  "reservedMessageTypeRanges": [
+    {
+      "first": 64,
+      "last": 79,
+      "note": "Unallocated range reserved for the M3 limits exchange (TASK-260715-18owh7).",
+      "purpose": "resource-governance"
+    }
+  ],
+  "schemaFormatVersion": 1,
+  "udpErrorCodes": [
+    {
+      "name": "INVALID_DATAGRAM",
+      "value": 1
+    },
+    {
+      "name": "UNSUPPORTED_ADDRESS",
+      "value": 2
+    },
+    {
+      "name": "UNKNOWN_OR_CLOSED_ASSOCIATION",
+      "value": 3
+    },
+    {
+      "name": "ASSOCIATION_LIMIT",
+      "value": 4
+    },
+    {
+      "name": "DATAGRAM_TOO_LARGE",
+      "value": 5
+    },
+    {
+      "name": "QUEUE_SATURATED",
+      "value": 6
+    },
+    {
+      "name": "RESOLUTION_FAILURE",
+      "value": 7
+    },
+    {
+      "name": "SOCKET_FAILURE",
+      "value": 8
+    },
+    {
+      "name": "IDLE_EXPIRY",
+      "value": 9
+    },
+    {
+      "name": "RESOURCE_LIMIT",
+      "value": 10
+    }
+  ]
+}

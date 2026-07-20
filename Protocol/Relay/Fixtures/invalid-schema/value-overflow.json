@@ -1,0 +1,7 @@
+{
+  "description": "A UDP error code above the u16 payload width must be rejected as overflow.",
+  "expectError": "exceeds bounds",
+  "operations": [
+    {"op": "set", "path": ["udpErrorCodes", 9, "value"], "value": 70000}
+  ]
+}

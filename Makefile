@@ -1,7 +1,8 @@
 .PHONY: check-legacy test-legacy-guard check-core-boundaries core-build core-test \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
-	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2
+	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
+	relay-protocol-generate relay-protocol-check
 
 LEGACY_ROOT ?= ../relux-proxy
 
@@ -64,5 +65,16 @@ build-libssh2:
 		--libssh2-archive "$(LIBSSH2_SOURCE_ARCHIVE)" \
 		--openssl-archive "$(OPENSSL_SOURCE_ARCHIVE)" \
 		--output NativeDependencies/Artifacts/ReluxLibSSH2.xcframework
+
+RELAY_PROTOCOL_ENV = LC_ALL=C LANG=C TZ=UTC PYTHONHASHSEED=0
+
+relay-protocol-generate:
+	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py generate
+
+relay-protocol-check:
+	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py check
+	./scripts/tests/test-relay-protocol-go.sh
+	swift build
+	swift test --filter RelayProtocol
 
 validate-libssh2: check-libssh2 test-libssh2

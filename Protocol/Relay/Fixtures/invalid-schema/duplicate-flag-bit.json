@@ -1,0 +1,7 @@
+{
+  "description": "Two hello flag assignments on the same bit must be rejected.",
+  "expectError": "duplicate bit",
+  "operations": [
+    {"op": "set", "path": ["helloFlags", "bits", 1, "bit"], "value": 0}
+  ]
+}

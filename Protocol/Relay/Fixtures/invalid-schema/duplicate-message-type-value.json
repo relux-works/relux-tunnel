@@ -1,0 +1,7 @@
+{
+  "description": "Two message types share wire value 0x10; the schema must reject duplicated authority for one numeric value.",
+  "expectError": "duplicate message type value",
+  "operations": [
+    {"op": "set", "path": ["messageTypes", 1, "value"], "value": 16}
+  ]
+}

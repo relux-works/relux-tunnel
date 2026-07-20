@@ -1,0 +1,7 @@
+{
+  "description": "A reserved message-type range that covers an allocated message type must be rejected.",
+  "expectError": "overlaps allocated message type",
+  "operations": [
+    {"op": "set", "path": ["reservedMessageTypeRanges", 0, "first"], "value": 16}
+  ]
+}

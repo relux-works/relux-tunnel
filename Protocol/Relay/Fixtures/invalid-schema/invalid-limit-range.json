@@ -1,0 +1,7 @@
+{
+  "description": "A limit floor above its hard ceiling is an invalid range and must be rejected.",
+  "expectError": "exceeds client hard ceiling",
+  "operations": [
+    {"op": "set", "path": ["limits", 3, "floor"], "value": 700000}
+  ]
+}

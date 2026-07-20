@@ -1,0 +1,7 @@
+{
+  "description": "A message type without direction metadata must be rejected.",
+  "expectError": "missing key \"direction\"",
+  "operations": [
+    {"op": "delete", "path": ["messageTypes", 0, "direction"]}
+  ]
+}

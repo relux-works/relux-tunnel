@@ -1,0 +1,7 @@
+{
+  "description": "Moving an existing v1 message type to a new numeric value is a backward-incompatible edit without a wireVersion bump.",
+  "expectError": "incompatible v1 edit: allocated message type table changed",
+  "operations": [
+    {"op": "set", "path": ["messageTypes", 5, "value"], "value": 50}
+  ]
+}
