@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+!pragma layout elk
+title TASK-260715-1q4qhw — system state and provider capability authority
+
+state "Owned disabled" as Disabled
+state "System disconnected" as Ready
+state "System connecting" as Connecting
+state "System reasserting" as Reasserting
+state "System disconnecting" as Disconnecting
+state "System invalid" as Invalid
+
+state "System connected" as Connected {
+  state "Capability unknown" as Unknown
+  state "Provider TCP + safe DNS" as Degraded
+  state "Provider TCP + safe DNS + UDP" as Capabilities
+
+  [*] --> Unknown : NEVPNStatus.connected\nrequires fresh query
+  Unknown --> Degraded : fresh healthy compatible snapshot\nroutes + TCP + safe DNS
+  Unknown --> Capabilities : fresh healthy compatible snapshot\nroutes + TCP + safe DNS + UDP
+  Degraded --> Capabilities : newer current-generation snapshot adds UDP
+  Capabilities --> Degraded : newer snapshot removes UDP; safety remains
+}
+
+[*] --> Disabled
+Disabled --> Ready : explicit enable + save + reload
+Ready --> Disabled : explicit disable + save + reload
+Ready --> Connecting : session accepts start
+Connecting --> Connected : NEVPNStatus.connected
+Connecting --> Ready : disconnected / start failure
+Connecting --> Invalid : NEVPNStatus.invalid
+Connected --> Reasserting : NEVPNStatus.reasserting
+Reasserting --> Connected : NEVPNStatus.connected\ncapability resets to unknown
+Connected --> Disconnecting : stop
+Reasserting --> Disconnecting : stop
+Connecting --> Disconnecting : stop
+Connected --> Ready : disconnected / system failure
+Reasserting --> Ready : disconnected / system failure
+Disconnecting --> Ready : NEVPNStatus.disconnected
+Disconnecting --> Invalid : NEVPNStatus.invalid
+Ready --> Invalid : observed NEVPNStatus.invalid
+Invalid --> Disabled : fresh reload finds owned disabled
+Invalid --> Ready : fresh reload finds owned enabled/disconnected
+
+note right of Connected
+NETunnelProviderSession is connected authority.
+Only a fresh provider snapshot supplies capability facts.
+Every non-connected status clears all capability claims.
+end note
+
+note right of Capabilities
+Provider facts only; final UX wording is reserved.
+end note
+@enduml

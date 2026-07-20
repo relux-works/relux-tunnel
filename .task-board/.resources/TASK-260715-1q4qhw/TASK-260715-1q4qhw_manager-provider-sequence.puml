@@ -1,0 +1,69 @@
+@startuml
+!theme plain
+title TASK-260715-1q4qhw — manager, start, message, stop sequence
+
+actor User
+participant "Containing app" as App
+participant "Owned manager repository" as Repo
+participant "NetworkExtension preferences" as Prefs
+participant "NETunnelProviderSession" as Session
+participant "NEPacketTunnelProvider shell" as Provider
+participant "Shared adapter/coordinator" as Core
+
+== Install/update without implicit enable ==
+User -> App: install/update profile reference
+App -> Repo: ensure(desiredReference)
+Repo -> Prefs: loadAllFromPreferences()
+Prefs --> Repo: app-scoped managers
+Repo -> Repo: exact type + provider ID + owner marker predicate
+alt zero owned and no lookalike
+  Repo -> Prefs: save canonical disabled manager
+else exactly one owned
+  Repo -> Prefs: save only if canonical fields differ
+else duplicate or unmarked lookalike
+  Repo --> App: stable conflict; zero writes
+end
+Repo -> Prefs: reload all
+Prefs --> Repo: fresh persisted manager
+Repo --> App: validated fresh result
+
+== Explicit enable and start ==
+User -> App: enable/connect
+App -> Repo: enableOwnedManager(explicitIntent)
+Repo -> Prefs: fresh load, exact predicate, save enabled, reload
+Prefs --> App: permission/authorization + persisted outcome
+App -> Session: startTunnel(options: bounded v1 request)
+Session --> App: accepted or synchronous error
+Session -> Provider: startTunnel(options, completion)
+Provider -> Provider: create once-only 60 s gate
+Provider -> Core: start(stored reference)
+Core -> Core: config -> SSH -> consumers -> settings -> reads -> usable snapshot
+Core --> Provider: usable or mapped failure
+Provider --> Session: completion(nil/error) exactly once
+Session --> App: NEVPNStatusDidChange
+App -> Session: read status (system authority)
+
+== Read-only capability query ==
+App -> Session: sendProviderMessage(v1 command)
+Session -> Provider: handleAppMessage(data, responseHandler)
+Provider -> Core: current generation snapshot
+Core --> Provider: versioned bounded response
+Provider --> App: response exactly once
+App -> App: combine status + fresh provider facts
+
+== Stop; stop during start follows the same join ==
+User -> App: disconnect
+App -> Session: stopTunnel()
+Session -> Provider: stopTunnel(reason, completion)
+Provider -> Provider: register once-only 10 s stop gate
+Provider -> Core: stop(reason); reject new work
+Core -> Core: cancel + reverse cleanup + clear routes
+Core --> Provider: joined cleanup
+Provider --> Session: stop completion exactly once
+Session --> App: disconnected/invalid status
+
+note over App,Provider
+Host suspension, termination, or macOS quit removes app observers only.
+It never sends stop or owns forwarding cleanup.
+end note
+@enduml
