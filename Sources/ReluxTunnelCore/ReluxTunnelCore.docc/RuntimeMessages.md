@@ -53,3 +53,26 @@ The v1 capability schema deliberately has independent `tcp`, `safeDNS`, `udp`,
 `routeMode`, `routesInstalled`, and `healthy` fields and no aggregate full-mode
 claim. M1 producers publish TCP and safe DNS independently while UDP remains
 false.
+
+## Provider routing and retirement
+
+`TunnelProviderAdapter` accepts only `getProtocolCapabilities`,
+`getRuntimeSnapshot`, `getCapabilities`, and `getDiagnostics` as v1 provider
+commands. Although `RuntimeCommand` keeps `requestID` optional for wire-model
+compatibility, the provider router requires a UUID for every v1 request. It
+serializes reservations per runtime generation, bounds active and recently
+completed identifiers, rejects concurrent duplicates, and copies the request
+identifier into every successful response or post-decode protocol error.
+
+Each non-nil Apple response handler is wrapped in a once-only gate. Stop retires
+the generation and completes every accepted pending gate without waiting for a
+late snapshot or diagnostics callback. Nil handlers are never retained. Source
+lookups race the same retirement signal, so their late results cannot update or
+retain another provider generation.
+
+Provider cleanup is one joined operation with an injected ten-second graceful
+budget. Cancellation fans out through a fixed-capacity cleanup registry; expiry
+force-closes every registered controllable handle and records only a finite
+`cleanup_deadline_exceeded` error plus the raw numeric Apple reason. No localized
+platform error text, configuration, credential, endpoint, or traffic value is
+added to the message or cleanup diagnostics.

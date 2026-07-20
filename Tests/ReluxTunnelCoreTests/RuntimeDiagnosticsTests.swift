@@ -19,6 +19,7 @@ struct RuntimeDiagnosticsTests {
       "coordinator_transition_unknown_total",
       "diagnostics_ingestion_drop_total",
       "diagnostics_rejected_metric_update_total",
+      "provider_cleanup_deadline_exceeded_total",
       "dns_drop_queue_full_total",
       "dns_result_malformed_total",
       "dns_result_name_error_total",
@@ -139,6 +140,7 @@ struct RuntimeDiagnosticsTests {
       "memory_available_min_bytes",
       "memory_physical_footprint_bytes",
       "memory_physical_footprint_peak_bytes",
+      "provider_stop_reason_code",
       "route_installed",
       "route_mode_compatible",
       "route_mode_unknown",
@@ -188,8 +190,8 @@ struct RuntimeDiagnosticsTests {
     )
     #expect(RuntimeDiagnosticsSchema.maximumErrors == 10)
     #expect(RuntimeDiagnosticsSchema.maximumPendingUpdates == 256)
-    #expect(RuntimeDiagnosticsSchema.counterNames.count == 96)
-    #expect(RuntimeDiagnosticsSchema.gaugeNames.count == 56)
+    #expect(RuntimeDiagnosticsSchema.counterNames.count == 97)
+    #expect(RuntimeDiagnosticsSchema.gaugeNames.count == 57)
     #expect(
       RuntimeDiagnosticsSchema.errorCodes.map { "\($0.domain.rawValue):\($0.rawValue)" } == [
         "configuration:configuration_invalid",
@@ -201,10 +203,11 @@ struct RuntimeDiagnosticsTests {
         "packetPlane:packet_plane_failed",
         "networkSettings:network_settings_apply_failed",
         "runtimeInvariant:runtime_invariant_violated",
+        "runtimeInvariant:cleanup_deadline_exceeded",
         "protocol:protocol_unsupported",
       ]
     )
-    print("RUNTIME_DIAGNOSTICS_SCHEMA counters=96 gauges=56 histograms=1 errors=10")
+    print("RUNTIME_DIAGNOSTICS_SCHEMA counters=97 gauges=57 histograms=1 errors=11")
     #expect(
       (RuntimeDiagnosticsSchema.counterNames + RuntimeDiagnosticsSchema.gaugeNames
         + RuntimeDiagnosticsSchema.histogramNames).allSatisfy {
@@ -391,8 +394,8 @@ struct RuntimeDiagnosticsTests {
     await recorder.setGauge(named: "ssh_pending_reads", to: -1)
 
     let snapshot = try store.snapshot()
-    #expect(snapshot.counters.count == 96)
-    #expect(snapshot.gauges.count == 56)
+    #expect(snapshot.counters.count == 97)
+    #expect(snapshot.gauges.count == 57)
     let rejected = try #require(
       snapshot.counters["diagnostics_rejected_metric_update_total"]
     )

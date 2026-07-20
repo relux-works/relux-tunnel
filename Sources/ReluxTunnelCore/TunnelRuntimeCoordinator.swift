@@ -189,6 +189,12 @@ public actor LatestRuntimeSnapshotStore: RuntimeSnapshotStore {
   }
 }
 
+extension LatestRuntimeSnapshotStore: ProviderRuntimeSnapshotSource {
+  public func latestProviderSnapshot() -> TunnelRuntimePublishedSnapshot? {
+    latestSnapshot
+  }
+}
+
 public struct TunnelRuntimeCoordinatorDependencies: Sendable {
   public let configurationSource: any ConfigurationSnapshotSource
   public let sshBootstrap: any SSHBootstrap
@@ -308,6 +314,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
   private let packetFlow: any PacketFlow
   private let environment: TunnelRuntimeDependencies
   private let dependencies: TunnelRuntimeCoordinatorDependencies
+  private let cleanupRegistry: ProviderCleanupRegistry
   private let startupCompletionHandoffHook: (@Sendable (TunnelRuntimeCoordinator) async -> Void)?
 
   private var configurationReference: TunnelConfigurationReference?
@@ -335,6 +342,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
     self.runtimeGeneration = runtimeGeneration
     packetFlow = context.packetFlow
     environment = context.dependencies
+    cleanupRegistry = context.cleanupRegistry
     configurationReference = context.configuration.profileReference
     self.dependencies = dependencies
     startupCompletionHandoffHook = nil
@@ -350,6 +358,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
     self.runtimeGeneration = runtimeGeneration
     packetFlow = context.packetFlow
     environment = context.dependencies
+    cleanupRegistry = context.cleanupRegistry
     configurationReference = context.configuration.profileReference
     self.dependencies = dependencies
     self.startupCompletionHandoffHook = startupCompletionHandoffHook
@@ -521,6 +530,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
         healthSink: self
       )
     }
+    registerCleanupControl(sshSession)
     try checkCancellationAndOwnership()
 
     try await transitionDuringStartup(to: .consumers)
@@ -538,6 +548,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
         healthSink: self
       )
     }
+    registerCleanupControl(tcpConsumer)
     try checkCancellationAndOwnership()
 
     dnsConsumer = try await mapped(
@@ -549,6 +560,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
         healthSink: self
       )
     }
+    registerCleanupControl(dnsConsumer)
     try checkCancellationAndOwnership()
 
     guard let tcpConsumer, let dnsConsumer else {
@@ -567,6 +579,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
         healthSink: self
       )
     }
+    registerCleanupControl(packetPlane)
     try checkCancellationAndOwnership()
     try await requireMandatoryHealth()
 
@@ -658,6 +671,11 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
       preconditionFailure("Coordinator health check requested before acquisition")
     }
     return resource
+  }
+
+  private func registerCleanupControl<T>(_ resource: T?) {
+    guard let controllable = resource as? any ProviderCleanupControllable else { return }
+    cleanupRegistry.register(controllable)
   }
 
   private func mapped<T>(

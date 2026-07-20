@@ -1,0 +1,132 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/25] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[3/25] Emitting module ReluxLibSSH2PackagingTests
+[4/25] Compiling ReluxTunnelCore RelayByteCodec.swift
+[5/26] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[6/26] Compiling ReluxTunnelCore SSHContracts.swift
+[7/26] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[8/26] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[9/26] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[10/26] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[11/26] Compiling ReluxTunnelCore RuntimeContracts.swift
+[12/26] Compiling ReluxTunnelCore RelayHandshake.swift
+[13/26] Compiling ReluxTunnelCore RelaySession.swift
+[14/26] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[15/26] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[16/26] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[17/26] Compiling ReluxTunnelCore PacketContracts.swift
+[18/26] Compiling ReluxTunnelCore ComponentContracts.swift
+[19/26] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[20/26] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[21/26] Emitting module ReluxTunnelCore
+[22/31] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[23/31] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[24/31] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[25/31] Emitting module ReluxTunnelNativeAdapter
+[26/31] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[27/43] Emitting module ReluxTunnelIOSAdapter
+[28/43] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[29/43] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[30/43] Emitting module ReluxTunnelMacOSAdapter
+[31/43] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[32/43] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[33/68] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[34/68] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[35/68] Emitting module ReluxTunnelHarnessSupport
+[36/68] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[37/68] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[38/68] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[39/72] Emitting module ReluxTunnelHarness
+[40/72] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[40/72] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[41/72] Linking ReluxTunnelHarness
+[42/72] Applying ReluxTunnelHarness
+[44/72] Emitting module ReluxTunnelHarnessTests
+[45/72] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[46/72] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[47/72] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[48/72] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[49/73] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[50/73] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[51/73] Emitting module ReluxTunnelNativeAdapterTests
+[52/73] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[53/73] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[54/73] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[55/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[56/73] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[57/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[58/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[59/73] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[60/73] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[61/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[62/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[63/73] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[64/73] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[65/73] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[66/73] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[67/73] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[68/73] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[69/73] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[70/73] Emitting module ReluxTunnelCoreTests
+[71/73] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[72/75] Compiling ReluxTunnelPackageTests runner.swift
+[73/75] Emitting module ReluxTunnelPackageTests
+[73/75] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[74/75] Linking ReluxTunnelPackageTests
+Build complete! (9.11s)
+Test Suite 'Selected tests' started at 2026-07-21 03:25:34.351.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 03:25:34.379.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 03:25:34.379.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 03:25:34.379.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.028) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Provider adapter contracts" started.
+􀟈  Test "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test "both provider adapters link the pinned native fixture" started.
+􀟈  Test "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → iOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument seam → macOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 1 argument seam → macOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 1 argument seam → macOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument seam → iOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 1 argument seam → iOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 1 argument seam → iOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument seam → macOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument seam → macOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → iOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → macOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test case passing 1 argument seam → macOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → macOS to "every public Apple stop reason maps identically" started.
+􁁛  Test "both provider adapters link the pinned native fixture" passed after 0.002 seconds.
+􁁛  Test "stop during start completes start before stop and maps startup Apple reasons" with 4 test cases passed after 0.003 seconds.
+􁁛  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" with 2 test cases passed after 0.006 seconds.
+􁁛  Test "the injected 60-second startup budget cancels and joins rollback" with 2 test cases passed after 0.006 seconds.
+􁁛  Test "cleanup expiry force-closes handles and records redacted evidence" with 2 test cases passed after 0.007 seconds.
+􁁛  Test "malformed future mutating and missing-request inputs receive one bounded error" with 2 test cases passed after 0.007 seconds.
+􁁛  Test "provider failure cancels once and later system stop joins cleanup" with 2 test cases passed after 0.008 seconds.
+􁁛  Test "every public Apple stop reason maps identically" with 2 test cases passed after 0.008 seconds.
+􁁛  Test "one hundred cycles release every runtime and callback gate" with 2 test cases passed after 0.019 seconds.
+􁁛  Test "both roots route exactly the four read-only v1 commands" with 2 test cases passed after 0.067 seconds.
+􁁛  Suite "Provider adapter contracts" passed after 0.068 seconds.
+􁁛  Test run with 10 tests in 1 suite passed after 0.068 seconds.

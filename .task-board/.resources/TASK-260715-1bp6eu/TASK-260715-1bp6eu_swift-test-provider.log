@@ -1,0 +1,71 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[1/7] Write swift-version-45881B103DA9D485.txt
+[3/8] Emitting module ReluxTunnelNativeAdapter
+[4/11] Emitting module ReluxTunnelMacOSAdapter
+[5/11] Emitting module ReluxTunnelIOSAdapter
+[6/11] Emitting module ReluxTunnelHarnessSupport
+[7/14] Emitting module ReluxTunnelHarnessTests
+[8/14] Emitting module ReluxTunnelNativeAdapterTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[8/14] Linking ReluxTunnelHarness
+[9/14] Applying ReluxTunnelHarness
+[11/14] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[12/14] Emitting module ReluxTunnelCoreTests
+[12/14] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[13/14] Linking ReluxTunnelPackageTests
+Build complete! (2.37s)
+Test Suite 'Selected tests' started at 2026-07-21 03:25:18.142.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 03:25:18.149.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 03:25:18.149.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 03:25:18.149.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Provider adapter contracts" started.
+􀟈  Test "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test "both provider adapters link the pinned native fixture" started.
+􀟈  Test case passing 1 argument seam → iOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument seam → macOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → macOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 1 argument seam → iOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test case passing 1 argument seam → macOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 1 argument seam → iOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 1 argument seam → macOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 1 argument seam → iOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 1 argument seam → macOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → macOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument seam → iOS to "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → macOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument seam → macOS to "every public Apple stop reason maps identically" started.
+􁁛  Test "both provider adapters link the pinned native fixture" passed after 0.002 seconds.
+􁁛  Test "provider failure cancels once and later system stop joins cleanup" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "cleanup expiry force-closes handles and records redacted evidence" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "stop during start completes start before stop and maps startup Apple reasons" with 4 test cases passed after 0.003 seconds.
+􁁛  Test "the injected 60-second startup budget cancels and joins rollback" with 2 test cases passed after 0.004 seconds.
+􁁛  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" with 2 test cases passed after 0.004 seconds.
+􁁛  Test "every public Apple stop reason maps identically" with 2 test cases passed after 0.005 seconds.
+􁁛  Test "malformed future mutating and missing-request inputs receive one bounded error" with 2 test cases passed after 0.005 seconds.
+􁁛  Test "one hundred cycles release every runtime and callback gate" with 2 test cases passed after 0.008 seconds.
+􁁛  Test "both roots route exactly the four read-only v1 commands" with 2 test cases passed after 0.027 seconds.
+􁁛  Suite "Provider adapter contracts" passed after 0.027 seconds.
+􁁛  Test run with 10 tests in 1 suite passed after 0.028 seconds.

@@ -60,6 +60,7 @@ public enum RuntimeDiagnosticErrorCode: String, CaseIterable, Sendable {
   case packetPlaneFailed = "packet_plane_failed"
   case networkSettingsApplyFailed = "network_settings_apply_failed"
   case runtimeInvariantViolated = "runtime_invariant_violated"
+  case cleanupDeadlineExceeded = "cleanup_deadline_exceeded"
   case protocolUnsupported = "protocol_unsupported"
 
   public var domain: RuntimeErrorDomain {
@@ -72,7 +73,7 @@ public enum RuntimeDiagnosticErrorCode: String, CaseIterable, Sendable {
     case .dnsUpstreamTimeout: .dns
     case .packetPlaneFailed: .packetPlane
     case .networkSettingsApplyFailed: .networkSettings
-    case .runtimeInvariantViolated: .runtimeInvariant
+    case .runtimeInvariantViolated, .cleanupDeadlineExceeded: .runtimeInvariant
     case .protocolUnsupported: .protocol
     }
   }
@@ -124,6 +125,7 @@ public enum RuntimeDiagnosticsSchema {
       "coordinator_transition_unknown_total",
       "diagnostics_ingestion_drop_total",
       "diagnostics_rejected_metric_update_total",
+      "provider_cleanup_deadline_exceeded_total",
       "memory_sample_total",
       "hev_start_total",
       "hev_startup_failure_total",
@@ -170,6 +172,7 @@ public enum RuntimeDiagnosticsSchema {
       "route_mode_compatible",
       "route_mode_unknown",
       "route_installed",
+      "provider_stop_reason_code",
       "memory_physical_footprint_bytes",
       "memory_physical_footprint_peak_bytes",
       "memory_available_bytes",
@@ -376,6 +379,27 @@ public final class RuntimeDiagnosticsRecorder: @unchecked Sendable, TunnelMetric
       generation: runtimeGeneration,
       droppedUpdates: droppedUpdates
     )
+  }
+}
+
+extension RuntimeDiagnosticsRecorder: ProviderLifecycleDiagnosticsSink {
+  public func recordProviderStopReason(rawValue: Int) {
+    store.setGauge(
+      "provider_stop_reason_code",
+      to: Int64(clamping: rawValue),
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+  }
+
+  public func recordProviderCleanupDeadlineExceeded() {
+    store.incrementCounter(
+      "provider_cleanup_deadline_exceeded_total",
+      by: 1,
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+    recordError(.cleanupDeadlineExceeded)
   }
 }
 
@@ -805,6 +829,14 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
         uniqueKeysWithValues: RuntimeDiagnosticsSchema.gaugeNames.map { ($0, 0) }
       )
     )
+  }
+}
+
+extension RuntimeDiagnosticsStore: ProviderDiagnosticsSnapshotSource {
+  public func providerDiagnosticsSnapshot(
+    requestID: OpaqueRuntimeRequestIdentifier?
+  ) async throws -> RuntimeDiagnosticsSnapshot {
+    try snapshot(requestID: requestID)
   }
 }
 

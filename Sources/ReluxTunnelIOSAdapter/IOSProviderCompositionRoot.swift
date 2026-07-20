@@ -69,6 +69,28 @@ public struct IOSProviderCompositionRoot: TunnelProviderLifecycle {
   }
 
   public init(
+    packetFlow: any PacketFlow,
+    runtimeFactory: any TunnelRuntimeFactory,
+    dependencies: TunnelRuntimeDependencies,
+    snapshotSource: any ProviderRuntimeSnapshotSource,
+    diagnosticsSource: any ProviderDiagnosticsSnapshotSource,
+    lifecycleDiagnostics: (any ProviderLifecycleDiagnosticsSink)? = nil,
+    startBudget: Duration = .seconds(60),
+    cleanupBudget: Duration = .seconds(10)
+  ) {
+    adapter = TunnelProviderAdapter(
+      packetFlow: packetFlow,
+      runtimeFactory: runtimeFactory,
+      dependencies: dependencies,
+      snapshotSource: snapshotSource,
+      diagnosticsSource: diagnosticsSource,
+      lifecycleDiagnostics: lifecycleDiagnostics,
+      startBudget: startBudget,
+      cleanupBudget: cleanupBudget
+    )
+  }
+
+  public init(
     packetTunnelFlow: NEPacketTunnelFlow,
     runtimeFactory: any TunnelRuntimeFactory,
     dependencies: TunnelRuntimeDependencies
@@ -94,5 +116,33 @@ public struct IOSProviderCompositionRoot: TunnelProviderLifecycle {
 
   public func lifecyclePhase() async -> ProviderLifecyclePhase {
     await adapter.lifecyclePhase()
+  }
+
+  public func start(
+    configuration: TunnelConfiguration,
+    completionHandler: @escaping ProviderStartCompletionHandler
+  ) {
+    adapter.start(configuration: configuration, completionHandler: completionHandler)
+  }
+
+  public func stop(
+    rawReason: Int,
+    completionHandler: @escaping ProviderStopCompletionHandler
+  ) {
+    adapter.stop(rawReason: rawReason, completionHandler: completionHandler)
+  }
+
+  public func handleAppMessage(
+    _ message: Data,
+    responseHandler: ProviderMessageResponseHandler?
+  ) {
+    adapter.handleAppMessage(message, responseHandler: responseHandler)
+  }
+
+  public func providerDidFail(
+    _ errorCode: ProviderNSErrorCode,
+    cancelTunnelWithError: @escaping ProviderCancelTunnelHandler
+  ) {
+    adapter.providerDidFail(errorCode, cancelTunnelWithError: cancelTunnelWithError)
   }
 }

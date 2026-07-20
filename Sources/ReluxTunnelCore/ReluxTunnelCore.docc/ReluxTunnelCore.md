@@ -10,7 +10,7 @@ Platform-neutral contracts for the Relux packet-tunnel runtime.
 | `PacketFlow`, `TunnelPacket`, `PacketFlowBridge` | `packet-plane.md`; ADR-003 | Public datagram socket pair and scoped descriptor borrow; no HEV implementation, tuning defaults, or utun discovery |
 | `SSHTransport` and channel/upload types | `ssh-transport.md`; ADR-005, ADR-006, ADR-014 | No engine selection, lane policy, authentication, or relay bootstrap |
 | `InternalSOCKSComponent` | `architecture.md` packet plane; `packet-plane.md`; ADR-004 | Process-local component seam only; not a user proxy |
-| `TunnelRuntime`, `TunnelProviderLifecycle` | `architecture.md` provider ownership; `routing-dns-lifecycle.md` | No route, DNS, reconnect, or capability implementation |
+| `TunnelRuntime`, `TunnelProviderLifecycle`, `TunnelProviderAdapter` | accepted VPN lifecycle contract | Shared generation-safe start/stop/failure joining, four-command read-only routing, and bounded cleanup; no reconnect or mutable RPC |
 | `ProviderMessageCodec`, `RuntimeMessageCodec` | Accepted M1 runtime contract section 9 | Exact legacy version query plus bounded deterministic v1 configuration, command, snapshot, diagnostics, and error models |
 | Clock, logging, cancellation, metrics, memory pressure | `packet-plane.md` backpressure/memory/metrics; `ssh-transport.md` lifecycle/rekey metrics; `validation.md` | Injected observation/control seams with no production policy defaults |
 

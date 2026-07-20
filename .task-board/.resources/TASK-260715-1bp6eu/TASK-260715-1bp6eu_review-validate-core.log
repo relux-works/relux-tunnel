@@ -1,0 +1,737 @@
+./scripts/check-core-boundaries.sh
+ReluxTunnelCore dependency and import boundaries are valid
+./scripts/native-dependency-tool.py verify --dependency relux-native-fixture
+relux-native-fixture source and packaging inputs are verified
+python3 scripts/libssh2-fork-tool.py verify
++ xcodebuild -version
++ /Users/iv/Developer/relux-tunnel/scripts/native-dependency-tool.py inspect --dependency libssh2-openssl --xcframework /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework --verify-lock
+libssh2-openssl XCFramework is static and extension-safe
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64/libReluxLibSSH2.a
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64_x86_64-simulator/libReluxLibSSH2.a
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/macos-arm64_x86_64/libReluxLibSSH2.a
+ReluxLibSSH2 patch, artifact, public API, and notices are verified
+swift test
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/25] Emitting module ReluxLibSSH2PackagingTests
+[3/25] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[4/25] Compiling ReluxTunnelCore RuntimeContracts.swift
+[5/25] Compiling ReluxTunnelCore SSHContracts.swift
+[6/25] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[7/26] Compiling ReluxTunnelCore RelaySession.swift
+[8/26] Compiling ReluxTunnelCore RelayHandshake.swift
+[9/26] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[10/26] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[11/26] Compiling ReluxTunnelCore RelayByteCodec.swift
+[12/26] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[13/26] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[14/26] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[15/26] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[16/26] Compiling ReluxTunnelCore PacketContracts.swift
+[17/26] Compiling ReluxTunnelCore ComponentContracts.swift
+[18/26] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[19/26] Emitting module ReluxTunnelCore
+[20/26] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[21/26] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[22/31] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[23/31] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[24/31] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[25/31] Emitting module ReluxTunnelNativeAdapter
+[26/31] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[27/43] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[28/43] Emitting module ReluxTunnelMacOSAdapter
+[29/43] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[30/43] Emitting module ReluxTunnelIOSAdapter
+[31/43] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[32/43] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[33/43] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[34/68] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[35/68] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[36/68] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[37/68] Emitting module ReluxTunnelHarnessSupport
+[38/68] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[39/72] Emitting module ReluxTunnelHarness
+[40/72] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[40/72] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[41/72] Linking ReluxTunnelHarness
+[42/72] Applying ReluxTunnelHarness
+[44/72] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[45/72] Emitting module ReluxTunnelHarnessTests
+[46/72] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[47/73] Emitting module ReluxTunnelNativeAdapterTests
+[48/73] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[49/73] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[50/73] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[51/73] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[52/73] Emitting module ReluxTunnelCoreTests
+[53/73] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[54/73] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[55/73] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[56/73] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[57/73] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[58/73] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[59/73] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[60/73] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[61/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[62/73] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[63/73] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[64/73] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[65/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[66/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[67/73] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[68/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[69/73] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[70/73] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[71/73] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[72/75] Compiling ReluxTunnelPackageTests runner.swift
+[73/75] Emitting module ReluxTunnelPackageTests
+[73/75] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[74/75] Linking ReluxTunnelPackageTests
+Build complete! (8.33s)
+Test Suite 'All tests' started at 2026-07-21 03:33:48.312.
+Test Suite 'All tests' passed at 2026-07-21 03:33:48.320.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Suite "RelayProtocol v1 envelope codec" started.
+􀟈  Suite "RelayProtocol v1 canonical conformance vectors" started.
+􀟈  Suite "Tunnel runtime coordinator" started.
+􀟈  Suite "RelayProtocol v1 HEV datagram codec" started.
+􀟈  Suite "PacketFlowBridge bounded execution" started.
+􀟈  Suite "Native dependency packaging" started.
+􀟈  Suite "ReluxTunnelHarness" started.
+􀟈  Suite "RelayProtocol generated constants" started.
+􀟈  Suite "Legacy provider version compatibility" started.
+􀟈  Suite "Privacy-safe runtime diagnostics" started.
+􀟈  Test "Public server-KEX observation symbols and typed states are exported" started.
+􀟈  Suite "PacketFlow adapter read lifecycle" started.
+􀟈  Suite "PacketFlowBridge lifecycle fault matrix" started.
+􀟈  Test "Public reply-correlated global-request symbol and bounds are exported" started.
+􀟈  Suite "Packet frame deterministic fuzz and allocation bounds" started.
+􀟈  Suite "RelayProtocol v1 client handshake" started.
+􀟈  Test "Public client-rekey symbol is exported by the XCFramework module" started.
+􀟈  Suite "PacketFlowBridge explicit prohibitions" started.
+􀟈  Suite "RelayProtocol v1 deterministic hostile input" started.
+􀟈  Suite "Versioned runtime message codecs" started.
+􀟈  Suite "PacketFlowBridge public socket pair" started.
+􀟈  Suite "RelayProtocol v1 session semantics" started.
+􀟈  Suite "Provider adapter contracts" started.
+􀟈  Suite "Candidate-neutral SSH transport contract" started.
+􀟈  Test "encoder arithmetic and negotiated cap checks are explicit" started.
+􀟈  Test "decoder rejects framing and metadata violations terminally" started.
+􀟈  Test "concurrent starts create exactly one usable runtime" started.
+􀟈  Test "latest snapshot store rejects older generations and sequences" started.
+􀟈  Test "every stream split and coalesced sequence preserves ordered frames" started.
+􀟈  Test "every prefix and body boundary of a maximum accepted frame is deterministic" started.
+􀟈  Test "EOF cancellation reset and malformed post-EOF state are deterministic" started.
+􀟈  Test "caller cancellation during startup completion owns cleanup" started.
+􀟈  Test "relay-to-client metadata direction accepts only relay messages" started.
+􀟈  Test "metadata hook is bounded and hook text stays private" started.
+􀟈  Test "stop before start consumes the generation and releases configuration" started.
+􀟈  Test "encoder emits exact network-order bytes and write slices" started.
+􀟈  Suite "PacketFlowBridge deterministic fault injection" started.
+􀟈  Test "every legal payload size encodes without truncation" started.
+􀟈  Test "encoder size arithmetic and endpoint validation are bounded and typed" started.
+􀟈  Test "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "HEV IPv4, IPv6, and domain vectors are byte exact at zero, typical, and maximum DATA" started.
+􀟈  Test "caller task cancellation is propagated and cleanup remains shielded" started.
+􀟈  Test "HEV structure is validated before local and protocol DATA limits" started.
+􀟈  Test "forward and reverse count slices yield deterministically" started.
+􀟈  Test "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "startup gates settings and publishes M1 usability only after reads" started.
+􀟈  Test "repeated stop and health races clean exactly one generation" started.
+􀟈  Test "deterministic chunk properties reconcile byte and frame metrics" started.
+􀟈  Test "maximum domain and DATA lengths produce the generated maximum record width" started.
+􀟈  Test "invalid codec limits are session-fatal configuration errors" started.
+􀟈  Test "response encoding preserves the relay-observed source endpoint" started.
+􀟈  Test "settings apply error dispositions preserve failure and clear exactly when required" started.
+􀟈  Test "reverse time budget checks the fake monotonic clock before a second receive" started.
+􀟈  Test "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "failure diagnostics contain only finite protocol metadata" started.
+􀟈  Test "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test "one hundred generations return all owned resources to baseline" started.
+􀟈  Test "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test "reverse count budget includes invalid datagrams and flushes one bounded batch" started.
+􀟈  Test "every permitted DATA size round-trips for every address form" started.
+􀟈  Test "repeated concurrent stop joins one reverse-order cleanup" started.
+􀟈  Test "cancelling start at a startup barrier performs normal ordered cleanup" started.
+􀟈  Test "smoke output is deterministic, versioned, and privacy safe" started.
+􀟈  Test "normal exit cleans files, sockets, and managed tasks" started.
+􀟈  Test "domain bytes are opaque and preserved without IDNA or DNS normalization" started.
+􀟈  Test "signals map to shell-standard exit codes" started.
+􀟈  Test "schema v1 contains exactly the reviewed aggregate names" started.
+􀟈  Test "configuration rejects a non-opaque runtime profile reference" started.
+􀟈  Test "forward elapsed-time slices use the injected monotonic clock" started.
+􀟈  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" started.
+􀟈  Test "malformed inner lengths, address forms, and ports fail before materialization" started.
+􀟈  Test "configuration schema versions fail closed" started.
+􀟈  Test "stop wins a concurrent pre-start ordering and cannot be revived" started.
+􀟈  Test "maximum aggregate state remains well below the wire bound" started.
+􀟈  Test "concurrent updates and requests return consistent bounded snapshots" started.
+􀟈  Test "populated output rejects prohibited nested values and identifiers" started.
+􀟈  Test "argument parser requires exactly one structured configuration input" started.
+􀟈  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" started.
+􀟈  Test "a valid wire record over a lowered local cap is dropped without materialization" started.
+􀟈  Test "clear failure preserves truthful route state and no capability" started.
+􀟈  Test "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test "concurrent starts are rejected and stop cancels an in-flight generation" started.
+􀟈  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" started.
+􀟈  Test "Swift codecs consume every canonical vector" started.
+􀟈  Test "forward count budget includes malformed work and retains only the current batch" started.
+􀟈  Test "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test "mandatory health loss during startup completion owns cleanup" started.
+􀟈  Test "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test "populated snapshot recursively contains only approved stable fields" started.
+􀟈  Test "message metadata covers every message type case exactly once" started.
+􀟈  Test "stale health events cannot mutate the active generation" started.
+􀟈  Test "only one callback registration can be outstanding" started.
+􀟈  Test "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test "hello and envelope layouts are contiguous with frozen exact widths" started.
+􀟈  Test "writes preserve packet order and use public Darwin families" started.
+􀟈  Test "write rejection is the same typed error on both adapters" started.
+􀟈  Test "AF_INET maps only an IPv4 payload" started.
+􀟈  Test "limit bounds are ordered and fit their declared widths" started.
+􀟈  Test "strict loader reports the exact vector identifier without payload bytes" started.
+􀟈  Test "strict loader validates schema, provenance, coverage, and limit references" started.
+􀟈  Test "parity lines re-derived from typed metadata match the embedded fingerprint" started.
+􀟈  Test "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test "unknown high-cardinality labels are discarded without retention" started.
+􀟈  Test "cardinality metrics expose counts but no packet data" started.
+􀟈  Test "argument parser rejects missing and unknown subcommands" started.
+􀟈  Test "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test "legacy messages reject additive fields duplicates and oversize input" started.
+􀟈  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" started.
+􀟈  Test "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test "subcommands receive every packet and SSH experiment seam" started.
+􀟈  Test "reserved message type ranges exclude every allocated type" started.
+􀟈  Test "runtime readiness failure is a single persistent socket fatal" started.
+􀟈  Test "legacy request and response keep the exact two-field v1 encoding" started.
+􀟈  Test "readiness installation failure closes both endpoints without borrowing" started.
+􁁛  Test "Public server-KEX observation symbols and typed states are exported" passed after 0.001 seconds.
+􀟈  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test "duplicate start and concurrent stop calls have no duplicate side effects" started.
+􀟈  Test "configuration rejects every out-of-policy field" started.
+􀟈  Test "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test "pinned binary fixture is callable beside core contracts" started.
+􀟈  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" started.
+􀟈  Test "typed sources project aggregate health flow DNS route memory SSH and errors" started.
+􀟈  Test "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test "async channel exchange handles partial IO and preserves coalesced bytes" started.
+􀟈  Test "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test "async failures cancel reset and close the generation" started.
+􀟈  Test "local-only limits use lower injected caps and cannot exceed schema baselines" started.
+􀟈  Test "reserved masks exclude exactly the allocated bits" started.
+􀟈  Test "frozen v1 wire values match the accepted binding and limit decisions" started.
+􀟈  Test "every split boundary and a coalesced frame produce the same result" started.
+􀟈  Test "platform adapters use the public readPackets/writePackets boundary" started.
+􀟈  Test "seed manifest covers required frame classes and prior regressions" started.
+􀟈  Test "unsupported families are reported without retaining payload" started.
+􀟈  Test "generation reset rejects stale handles and preserves monotonic counters" started.
+􀟈  Test "magic version features and maximum-frame violations fail closed" started.
+􀟈  Test "duplicate hello detection respects the exact-boundary ownership contract" started.
+􀟈  Test "server status values map to finite local reasons" started.
+􀟈  Test "timeout EOF cancellation duplicate trailing and stale events are deterministic" started.
+􀟈  Test "shared regression seeds preserve semantic and resource bounds" started.
+􀟈  Test "diagnostics never reflect attacker-controlled bytes or numeric statuses" started.
+􀟈  Test "client hello uses the frozen 12-byte big-endian layout" started.
+􀟈  Test "exact decoder rejects truncated and extended standalone hellos" started.
+􀟈  Test "configuration shapes cannot carry private-key or passphrase bytes" started.
+􀟈  Test "unknown commands and provider-input values reject before decoding" started.
+􀟈  Test "snapshot ordering rejects lower generations and non-increasing sequences" started.
+􁁛  Test "Public client-rekey symbol is exported by the XCFramework module" passed after 0.001 seconds.
+􁁛  Test "Public reply-correlated global-request symbol and bounds are exported" passed after 0.001 seconds.
+􀟈  Test "unknown output modes and lifecycle values project all capabilities false" started.
+􀟈  Test "bridge contains no retry queue, side buffer, wall clock, or arbitrary sleep" started.
+􀟈  Test "missing required fields and encoded or decoded oversize payloads reject" started.
+􀟈  Test "redacted runtime errors accept finite codes and reject free-form text" started.
+􀟈  Test "all v1 provider and message models round-trip deterministically" started.
+􀟈  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" started.
+􀟈  Test "old and future protocol and schema versions reject with stable errors" started.
+􀟈  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" started.
+􀟈  Test "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test "sorted-key golden output is stable" started.
+􀟈  Test "unknown object fields are ignored and omitted when re-encoded" started.
+􀟈  Test "bridge and adapters contain no private utun or descriptor-discovery mechanism" started.
+􀟈  Test case passing 1 argument point → .beforeSSH to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeDNS to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforePacketPreparation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringSettingsApply to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeTCP to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument control → .startWhileStarting to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "diagnostics default absent aggregates to empty while position remains required" started.
+􀟈  Test case passing 1 argument point → .duringConfiguration to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringFinalHealth to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument control → .startAfterStopped to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument point → .duringPacketActivation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument control → .startWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "both provider adapters link the pinned native fixture" started.
+􀟈  Test "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 1 argument control → .startWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "outbound datagrams are structurally and locally bounded for both peers" started.
+􀟈  Test case passing 1 argument control → .stopWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .startAfterFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "PONG and UDP_ERROR are emitted only by bounded response APIs" started.
+􀟈  Test "reverse framing drops malformed datagrams and writes valid packets in order" started.
+􀟈  Test case passing 1 argument control → .healthyAndStaleWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .callbackWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "invalid first datagrams do not admit association state" started.
+􀟈  Test case passing 1 argument control → .callbackWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .callbackWhileFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "would-block and ENOBUFS drop once; EMSGSIZE is the one fatal transition" started.
+􀟈  Test "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test "queue saturation is edge-triggered and idle expiry is error retire close" started.
+􀟈  Test "startup configuration failure closes both owned endpoints without borrowing" started.
+􀟈  Test "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument boundary → .afterConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforeConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument component → .tcp to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument component → .ssh to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument component → .dns to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument boundary → .afterSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "hostile metadata and exact-boundary post-handshake RLXR close both peers" started.
+􀟈  Test case passing 1 argument boundary → .beforeTCP to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterTCP to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "one hundred restart cycles restore descriptor and task ownership baselines" started.
+􀟈  Test case passing 1 argument boundary → .beforeDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument component → .packetPlane to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument stopCase → .startupFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test "first persistent socket error wins over a later HEV return" started.
+􀟈  Test case passing 1 argument stopCase → .providerFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "forward framing derives SDK families and preserves each payload" started.
+􀟈  Test case passing 1 argument boundary → .afterDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforeSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketReads to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "paired peers exchange datagrams PING PONG and finite UDP errors" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketReads to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforeSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "metric schema is exact and every run starts from zero" started.
+􀟈  Test "every public Apple stop reason maps identically" started.
+􀟈  Test "live associations clean up once for every abrupt session termination" started.
+􀟈  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test "diagnostics never reflect remote payloads or unknown error numbers" started.
+􀟈  Test "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test "association ownership rejects unsolicited and unknown relay replies" started.
+􀟈  Test "channel protocols preserve endpoints, partial writes, stream EOF, and exit results" started.
+􀟈  Test "normal stop preserves flags, joins the borrow, and closes B before A once" started.
+􀟈  Test "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument platform → iOS to "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test case passing 1 argument platform → macOS to "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test "factories erase candidate types behind one dependency shape" started.
+􀟈  Test "duplicate crossed association closes clean up once and permit ordered reuse" started.
+􀟈  Test case passing 1 argument platform → iOS to "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test "graceful abrupt duplicate and stale session termination is once per generation" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test case passing 1 argument platform → macOS to "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test "transition table covers every generated v1 message" started.
+􀟈  Test case passing 1 argument platform → iOS to "only one callback registration can be outstanding" started.
+􀟈  Test "max association credit bounds unique IDs and permits retired reuse" started.
+􀟈  Test case passing 1 argument platform → iOS to "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test "caller-owned policies reject invalid bounds and durations" started.
+RUNTIME_DIAGNOSTICS_SCHEMA counters=97 gauges=57 histograms=1 errors=11
+􀟈  Test "byte, time, explicit, server rekey and keepalive share typed events" started.
+􀟈  Test case passing 1 argument platform → iOS to "writes preserve packet order and use public Darwin families" started.
+􀟈  Test case passing 1 argument platform → macOS to "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test "stable errors expose every common code and no engine payload" started.
+􀟈  Test case passing 1 argument platform → iOS to "write rejection is the same typed error on both adapters" started.
+􀟈  Test case passing 1 argument platform → macOS to "write rejection is the same typed error on both adapters" started.
+􀟈  Test case passing 1 argument platform → macOS to "writes preserve packet order and use public Darwin families" started.
+􀟈  Test case passing 1 argument platform → macOS to "only one callback registration can be outstanding" started.
+􀟈  Test case passing 1 argument platform → iOS to "AF_INET maps only an IPv4 payload" started.
+􀟈  Test "schema-v1 metrics contain exactly the reviewed counters and gauges" started.
+􀟈  Test "window snapshots and adjustments enforce immutable caps" started.
+􀟈  Test case passing 1 argument platform → macOS to "AF_INET maps only an IPv4 payload" started.
+􀟈  Test "exec upload is typed as bounded exec stdin with no subsystem surface" started.
+􀟈  Test "events, metrics, errors, and typed logs exclude sensitive contract inputs" started.
+􀟈  Test "host evidence is canonical and acceptance gates credential lookup" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback/cancellation races resume exactly once and restore registration baseline" started.
+RUNTIME_DIAGNOSTICS_MAX_ENCODED_BYTES 9976
+􀟈  Test "all public-key authentication outcomes map without losing their category" started.
+􀟈  Test case passing 1 argument platform → iOS to "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test "connection state transitions reject lifecycle shortcuts" started.
+􀟈  Test case passing 1 argument platform → macOS to "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test case passing 1 argument point → .configuration to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .ssh to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .tcp to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .dns to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument failure → socketPair to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument point → .packetPrepare to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsPlan to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsApplyNotCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument failure → getDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument point → .settingsApplyCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument failure → getStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument point → .settingsApplyUncertain to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument failure → setStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument point → .packetActivation to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument failure → setSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument point → .finalHealth to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument failure → setReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument stage → packetReadsStopped to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → readinessCancelled to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → pumpsJoined to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument platform → iOS to "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test case passing 1 argument stage → borrowStopRequested to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → borrowReturned to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → hevDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → bridgeDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument input → mtu to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → sendBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → sendBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → receiveBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → receiveBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → workCount to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → workTime to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument platform → macOS to "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test case passing 1 argument input → diagnosticsWindow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → datagramOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument stage → configurationValidated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → socketPairCreated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → descriptorsConfigured to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → readinessInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → supervisorInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument platform → iOS to "unsupported families are reported without retaining payload" started.
+􀟈  Test case passing 1 argument platform → macOS to "unsupported families are reported without retaining payload" started.
+􁁛  Test "encoder arithmetic and negotiated cap checks are explicit" passed after 0.008 seconds.
+􀟈  Test case passing 1 argument stage → borrowAccepted to "cancellation at every startup stage restores all observable resources" started.
+􁁛  Test "latest snapshot store rejects older generations and sequences" passed after 0.008 seconds.
+􀟈  Test case passing 1 argument stage → running to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test "run counters saturate at UInt64.max and log saturation once" started.
+􁁛  Test "relay-to-client metadata direction accepts only relay messages" passed after 0.009 seconds.
+􀟈  Test "forward malformed packets count as work and preserve the valid boundary" started.
+􀟈  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" started.
+􀟈  Test "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test "readiness peer close is exact peer EOF and closes only after borrow return" started.
+􀟈  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" started.
+􀟈  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" started.
+􀟈  Test "reverse EMSGSIZE errno is fatal without retry" started.
+􀟈  Test "counters and maxima are monotonic within a run and reset for the next run" started.
+􀟈  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" started.
+􁁛  Test "EOF cancellation reset and malformed post-EOF state are deterministic" passed after 0.009 seconds.
+􀟈  Test "unclassified forward errno is one fatal transition without retry" started.
+􀟈  Test "metric schema has the exact names and units" started.
+􀟈  Test "reverse MSG_TRUNC reports the full observed size and fails before write" started.
+􀟈  Test "drop summaries are window-limited and flush unsummarized drops at stop" started.
+􀟈  Test "unexpected HEV return is peer EOF and remains the primary error" started.
+􀟈  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" started.
+􀟈  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test "all bridge logs expose only public privacy-safe fields" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test "reverse framing covers every malformed length and family/version rule" started.
+􀟈  Test "PacketFlow read errors are fatal and do not schedule another read" started.
+􁁛  Test "metadata hook is bounded and hook text stays private" passed after 0.010 seconds.
+􁁛  Test "encoder size arithmetic and endpoint validation are bounded and typed" passed after 0.010 seconds.
+􁁛  Test "encoder emits exact network-order bytes and write slices" passed after 0.010 seconds.
+􁁛  Test "decoder rejects framing and metadata violations terminally" passed after 0.010 seconds.
+􀟈  Test case passing 1 argument seam → iOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → macOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → iOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 1 argument seam → macOS to "both roots route exactly the four read-only v1 commands" started.
+􁁛  Test "invalid codec limits are session-fatal configuration errors" passed after 0.011 seconds.
+􀟈  Test case passing 1 argument seam → iOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test case passing 1 argument seam → macOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􁁛  Test "response encoding preserves the relay-observed source endpoint" passed after 0.011 seconds.
+􀟈  Test case passing 1 argument seam → iOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 1 argument seam → macOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 1 argument seam → iOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument seam → macOS to "one hundred cycles release every runtime and callback gate" started.
+􁁛  Test "failure diagnostics contain only finite protocol metadata" passed after 0.012 seconds.
+􁁛  Test "maximum domain and DATA lengths produce the generated maximum record width" passed after 0.012 seconds.
+􁁛  Test "HEV structure is validated before local and protocol DATA limits" passed after 0.012 seconds.
+􁁛  Test "domain bytes are opaque and preserved without IDNA or DNS normalization" passed after 0.012 seconds.
+􀟈  Test case passing 1 argument seam → iOS to "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → macOS to "every public Apple stop reason maps identically" started.
+􁁛  Test "signals map to shell-standard exit codes" passed after 0.013 seconds.
+􀟈  Test case passing 1 argument seam → macOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􁁛  Test "configuration rejects a non-opaque runtime profile reference" passed after 0.013 seconds.
+􀟈  Test case passing 1 argument seam → iOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􁁛  Test "configuration schema versions fail closed" passed after 0.014 seconds.
+􀟈  Test case passing 1 argument seam → iOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument seam → macOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􁁛  Test "malformed inner lengths, address forms, and ports fail before materialization" passed after 0.014 seconds.
+􁁛  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" passed after 0.014 seconds.
+􁁛  Test "argument parser requires exactly one structured configuration input" passed after 0.014 seconds.
+􁁛  Test "a valid wire record over a lowered local cap is dropped without materialization" passed after 0.015 seconds.
+􁁛  Test "every stream split and coalesced sequence preserves ordered frames" passed after 0.015 seconds.
+􁁛  Test "message metadata covers every message type case exactly once" passed after 0.023 seconds.
+􁁛  Test "HEV IPv4, IPv6, and domain vectors are byte exact at zero, typical, and maximum DATA" passed after 0.024 seconds.
+􁁛  Test "writes preserve packet order and use public Darwin families" with 2 test cases passed after 0.024 seconds.
+􁁛  Test "hello and envelope layouts are contiguous with frozen exact widths" passed after 0.024 seconds.
+􁁛  Test "schema v1 contains exactly the reviewed aggregate names" passed after 0.024 seconds.
+􁁛  Test "write rejection is the same typed error on both adapters" with 2 test cases passed after 0.024 seconds.
+􁁛  Test "limit bounds are ordered and fit their declared widths" passed after 0.024 seconds.
+􁁛  Test "argument parser rejects missing and unknown subcommands" passed after 0.025 seconds.
+􁁛  Test "cardinality metrics expose counts but no packet data" passed after 0.025 seconds.
+􁁛  Test "parity lines re-derived from typed metadata match the embedded fingerprint" passed after 0.025 seconds.
+􁁛  Test "reserved message type ranges exclude every allocated type" passed after 0.025 seconds.
+􁁛  Test "every socket setup errno closes exactly the descriptors that were created" with 9 test cases passed after 0.025 seconds.
+􁁛  Test "populated snapshot recursively contains only approved stable fields" passed after 0.025 seconds.
+􁁛  Test "readiness installation failure closes both endpoints without borrowing" passed after 0.025 seconds.
+􁁛  Test "configuration rejects every out-of-policy field" passed after 0.025 seconds.
+􁁛  Test "deterministic chunk properties reconcile byte and frame metrics" passed after 0.026 seconds.
+􁁛  Test "legacy request and response keep the exact two-field v1 encoding" passed after 0.026 seconds.
+􁁛  Test "pinned binary fixture is callable beside core contracts" passed after 0.025 seconds.
+􁁛  Test "every invalid configuration branch fails before descriptor creation" with 9 test cases passed after 0.026 seconds.
+􁁛  Test "maximum aggregate state remains well below the wire bound" passed after 0.026 seconds.
+􁁛  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" passed after 0.026 seconds.
+􁁛  Test "legacy messages reject additive fields duplicates and oversize input" passed after 0.026 seconds.
+􁁛  Test "local-only limits use lower injected caps and cannot exceed schema baselines" passed after 0.026 seconds.
+􁁛  Test "magic version features and maximum-frame violations fail closed" passed after 0.026 seconds.
+􁁛  Test "every split boundary and a coalesced frame produce the same result" passed after 0.026 seconds.
+􁁛  Test "platform adapters use the public readPackets/writePackets boundary" passed after 0.026 seconds.
+􁁛  Test "seed manifest covers required frame classes and prior regressions" passed after 0.026 seconds.
+􁁛  Test "reserved masks exclude exactly the allocated bits" passed after 0.026 seconds.
+􁁛  Test "strict loader reports the exact vector identifier without payload bytes" passed after 0.027 seconds.
+􁁛  Test "timeout EOF cancellation duplicate trailing and stale events are deterministic" passed after 0.026 seconds.
+􁁛  Test "typed sources project aggregate health flow DNS route memory SSH and errors" passed after 0.026 seconds.
+􁁛  Test "client hello uses the frozen 12-byte big-endian layout" passed after 0.026 seconds.
+􁁛  Test "diagnostics never reflect attacker-controlled bytes or numeric statuses" passed after 0.026 seconds.
+􁁛  Test "server status values map to finite local reasons" passed after 0.026 seconds.
+􁁛  Test "snapshot ordering rejects lower generations and non-increasing sequences" passed after 0.026 seconds.
+􁁛  Test "unknown commands and provider-input values reject before decoding" passed after 0.026 seconds.
+􁁛  Test "duplicate hello detection respects the exact-boundary ownership contract" passed after 0.026 seconds.
+􁁛  Test "redacted runtime errors accept finite codes and reject free-form text" passed after 0.026 seconds.
+􁁛  Test "unknown output modes and lifecycle values project all capabilities false" passed after 0.026 seconds.
+􁁛  Test "exact decoder rejects truncated and extended standalone hellos" passed after 0.026 seconds.
+􀟈  Test case passing 1 argument actualBytes → 0 to "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test case passing 1 argument actualBytes → 2 to "zero and positive short datagram sends are fatal and never retried" started.
+􁁛  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" passed after 0.026 seconds.
+􁁛  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" passed after 0.026 seconds.
+􁁛  Test "frozen v1 wire values match the accepted binding and limit decisions" passed after 0.027 seconds.
+􁁛  Test "sorted-key golden output is stable" passed after 0.027 seconds.
+􁁛  Test "generation reset rejects stale handles and preserves monotonic counters" passed after 0.027 seconds.
+􁁛  Test "unknown object fields are ignored and omitted when re-encoded" passed after 0.027 seconds.
+􁁛  Test "both provider adapters link the pinned native fixture" passed after 0.027 seconds.
+􁁛  Test "diagnostics default absent aggregates to empty while position remains required" passed after 0.027 seconds.
+􁁛  Test "PONG and UDP_ERROR are emitted only by bounded response APIs" passed after 0.026 seconds.
+􁁛  Test "old and future protocol and schema versions reject with stable errors" passed after 0.027 seconds.
+􁁛  Test "invalid first datagrams do not admit association state" passed after 0.027 seconds.
+􁁛  Test "all v1 provider and message models round-trip deterministically" passed after 0.027 seconds.
+􁁛  Test "queue saturation is edge-triggered and idle expiry is error retire close" passed after 0.026 seconds.
+􁁛  Test "hostile metadata and exact-boundary post-handshake RLXR close both peers" passed after 0.027 seconds.
+􁁛  Test "startup configuration failure closes both owned endpoints without borrowing" passed after 0.027 seconds.
+􁁛  Test "paired peers exchange datagrams PING PONG and finite UDP errors" passed after 0.027 seconds.
+􁁛  Test "diagnostics never reflect remote payloads or unknown error numbers" passed after 0.026 seconds.
+􁁛  Test "live associations clean up once for every abrupt session termination" passed after 0.027 seconds.
+􁁛  Test "association ownership rejects unsolicited and unknown relay replies" passed after 0.026 seconds.
+􁁛  Test "every legal payload size encodes without truncation" passed after 0.030 seconds.
+􁁛  Test "factories erase candidate types behind one dependency shape" passed after 0.026 seconds.
+􁁛  Test "graceful abrupt duplicate and stale session termination is once per generation" passed after 0.026 seconds.
+􁁛  Test "duplicate crossed association closes clean up once and permit ordered reuse" passed after 0.027 seconds.
+􁁛  Test "transition table covers every generated v1 message" passed after 0.026 seconds.
+􁁛  Test "channel protocols preserve endpoints, partial writes, stream EOF, and exit results" passed after 0.027 seconds.
+􁁛  Test "bridge contains no retry queue, side buffer, wall clock, or arbitrary sleep" passed after 0.029 seconds.
+􁁛  Test "strict loader validates schema, provenance, coverage, and limit references" passed after 0.030 seconds.
+􁁛  Test "configuration shapes cannot carry private-key or passphrase bytes" passed after 0.029 seconds.
+􁁛  Test "populated output rejects prohibited nested values and identifiers" passed after 0.030 seconds.
+􁁛  Test "missing required fields and encoded or decoded oversize payloads reject" passed after 0.029 seconds.
+􁁛  Test "max association credit bounds unique IDs and permits retired reuse" passed after 0.027 seconds.
+􁁛  Test "byte, time, explicit, server rekey and keepalive share typed events" passed after 0.027 seconds.
+􁁛  Test "outbound datagrams are structurally and locally bounded for both peers" passed after 0.029 seconds.
+􁁛  Test "caller-owned policies reject invalid bounds and durations" passed after 0.027 seconds.
+􁁛  Test "stable errors expose every common code and no engine payload" passed after 0.027 seconds.
+􁁛  Test "window snapshots and adjustments enforce immutable caps" passed after 0.026 seconds.
+􁁛  Test "schema-v1 metrics contain exactly the reviewed counters and gauges" passed after 0.026 seconds.
+􁁛  Test "exec upload is typed as bounded exec stdin with no subsystem surface" passed after 0.026 seconds.
+􁁛  Test "host evidence is canonical and acceptance gates credential lookup" passed after 0.026 seconds.
+􁁛  Test "all public-key authentication outcomes map without losing their category" passed after 0.026 seconds.
+􁁛  Test "events, metrics, errors, and typed logs exclude sensitive contract inputs" passed after 0.027 seconds.
+􁁛  Test "connection state transitions reject lifecycle shortcuts" passed after 0.027 seconds.
+􁁛  Test "bridge and adapters contain no private utun or descriptor-discovery mechanism" passed after 0.029 seconds.
+􁁛  Test "metric schema has the exact names and units" passed after 0.022 seconds.
+􁁛  Test "stop before start consumes the generation and releases configuration" passed after 0.031 seconds.
+􁁛  Suite "RelayProtocol generated constants" passed after 0.033 seconds.
+􁁛  Test "Swift codecs consume every canonical vector" passed after 0.032 seconds.
+􁁛  Suite "Legacy provider version compatibility" passed after 0.033 seconds.
+􁁛  Suite "Native dependency packaging" passed after 0.033 seconds.
+􁁛  Suite "PacketFlowBridge explicit prohibitions" passed after 0.033 seconds.
+􁁛  Suite "Versioned runtime message codecs" passed after 0.033 seconds.
+􁁛  Suite "RelayProtocol v1 session semantics" passed after 0.033 seconds.
+􁁛  Suite "Candidate-neutral SSH transport contract" passed after 0.035 seconds.
+􁁛  Test "startup gates settings and publishes M1 usability only after reads" passed after 0.036 seconds.
+􁁛  Test "failure before and after every ownership boundary rolls back once" with 14 test cases passed after 0.036 seconds.
+􁁛  Test "failure stop reasons map exactly and revoke capability before one cleanup" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "mandatory dependency health loss revokes capability before cleanup" with 4 test cases passed after 0.036 seconds.
+􁁛  Test "cancelling start at a startup barrier performs normal ordered cleanup" passed after 0.036 seconds.
+􁁛  Test "clear failure preserves truthful route state and no capability" passed after 0.036 seconds.
+􁁛  Test "shutdown-first resumes once, retires a late callback, and prevents new reads" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "empty payloads and family/version mismatches are typed malformed packets" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "only one callback registration can be outstanding" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "AF_INET6 maps only an IPv6 payload" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "stale health events cannot mutate the active generation" passed after 0.036 seconds.
+􁁛  Test "mandatory health loss during startup completion owns cleanup" passed after 0.036 seconds.
+􁁛  Suite "RelayProtocol v1 canonical conformance vectors" passed after 0.037 seconds.
+􁁛  Test "AF_INET maps only an IPv4 payload" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "callback-first preserves callback order and packet boundaries" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "async channel exchange handles partial IO and preserves coalesced bytes" passed after 0.035 seconds.
+􁁛  Test "every partial startup acquisition rolls back only acquired resources" with 11 test cases passed after 0.036 seconds.
+􀟈  Test "coalesced arbitrary bytes split deterministically without declared-length allocation" started.
+􁁛  Test "subcommands receive every packet and SSH experiment seam" passed after 0.036 seconds.
+􁁛  Test "packet/protocol cardinality mismatch is a typed batch anomaly" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "unsupported families are reported without retaining payload" with 2 test cases passed after 0.035 seconds.
+􁁛  Test "metric schema is exact and every run starts from zero" passed after 0.034 seconds.
+􁁛  Test "normal stop preserves flags, joins the borrow, and closes B before A once" passed after 0.034 seconds.
+􁁛  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" passed after 0.028 seconds.
+􁁛  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" passed after 0.028 seconds.
+􁁛  Test "first persistent socket error wins over a later HEV return" passed after 0.035 seconds.
+􁁛  Test "readiness peer close is exact peer EOF and closes only after borrow return" passed after 0.028 seconds.
+􁁛  Test "normal exit cleans files, sockets, and managed tasks" passed after 0.037 seconds.
+􁁛  Test "unexpected HEV return is peer EOF and remains the primary error" passed after 0.028 seconds.
+􁁛  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" passed after 0.038 seconds.
+􁁛  Test "caller cancellation during startup completion owns cleanup" passed after 0.038 seconds.
+􁁛  Test "legal and illegal coordinator controls follow the transition table" with 10 test cases passed after 0.038 seconds.
+􁁛  Test "repeated concurrent stop joins one reverse-order cleanup" passed after 0.038 seconds.
+􁁛  Test "caller task cancellation is propagated and cleanup remains shielded" passed after 0.039 seconds.
+􁁛  Test "would-block and ENOBUFS drop once; EMSGSIZE is the one fatal transition" passed after 0.036 seconds.
+􁁛  Test "stop wins a concurrent pre-start ordering and cannot be revived" passed after 0.038 seconds.
+􁁛  Test "cancellation-first resumes once and ignores its late callback" with 2 test cases passed after 0.038 seconds.
+􁁛  Test "runtime readiness failure is a single persistent socket fatal" passed after 0.038 seconds.
+􁁛  Test "reverse EMSGSIZE errno is fatal without retry" passed after 0.029 seconds.
+􁁛  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" passed after 0.029 seconds.
+􁁛  Test "reverse MSG_TRUNC reports the full observed size and fails before write" passed after 0.029 seconds.
+􁁛  Test "zero and positive short datagram sends are fatal and never retried" with 2 test cases passed after 0.029 seconds.
+􁁛  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" passed after 0.029 seconds.
+􁁛  Test "unclassified forward errno is one fatal transition without retry" passed after 0.029 seconds.
+􁁛  Test "reverse framing drops malformed datagrams and writes valid packets in order" passed after 0.037 seconds.
+􁁛  Test "forward framing derives SDK families and preserves each payload" passed after 0.036 seconds.
+􁁛  Test "PacketFlow read errors are fatal and do not schedule another read" passed after 0.029 seconds.
+􁁛  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" passed after 0.039 seconds.
+􁁛  Test "cancellation at every startup stage restores all observable resources" with 7 test cases passed after 0.038 seconds.
+􁁛  Test "signal cancellation uses signal exit code and cleans all resources" passed after 0.039 seconds.
+􁁛  Test "reverse framing covers every malformed length and family/version rule" passed after 0.029 seconds.
+􁁛  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" passed after 0.030 seconds.
+􁁛  Test "forward malformed packets count as work and preserve the valid boundary" passed after 0.030 seconds.
+􁁛  Test "reverse time budget checks the fake monotonic clock before a second receive" passed after 0.039 seconds.
+􁁛  Test "all bridge logs expose only public privacy-safe fields" passed after 0.029 seconds.
+􁁛  Test "reverse count budget includes invalid datagrams and flushes one bounded batch" passed after 0.039 seconds.
+􁁛  Test "duplicate start and concurrent stop calls have no duplicate side effects" passed after 0.039 seconds.
+􁁛  Test "run counters saturate at UInt64.max and log saturation once" passed after 0.030 seconds.
+􁁛  Test "concurrent starts are rejected and stop cancels an in-flight generation" passed after 0.039 seconds.
+relay-hostile-seed language=swift id=zero-state value=0x0000000000000000 semanticDigest=00a2ef92f18dcee7
+􁁛  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" with 7 test cases passed after 0.039 seconds.
+􁁛  Test "cancellation after each startup acquisition rolls back in reverse order" with 8 test cases passed after 0.040 seconds.
+􁁛  Test "forward elapsed-time slices use the injected monotonic clock" passed after 0.039 seconds.
+􁁛  Test "cleanup expiry force-closes handles and records redacted evidence" with 2 test cases passed after 0.037 seconds.
+􁁛  Test "provider failure cancels once and later system stop joins cleanup" with 2 test cases passed after 0.036 seconds.
+􁁛  Test "stop during start completes start before stop and maps startup Apple reasons" with 4 test cases passed after 0.037 seconds.
+􁁛  Test "forward count budget includes malformed work and retains only the current batch" passed after 0.039 seconds.
+􁁛  Test "settings apply error dispositions preserve failure and clear exactly when required" passed after 0.040 seconds.
+􁁛  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" passed after 0.031 seconds.
+􁁛  Suite "PacketFlowBridge lifecycle fault matrix" passed after 0.041 seconds.
+􁁛  Test "drop summaries are window-limited and flush unsummarized drops at stop" passed after 0.030 seconds.
+􁁛  Test "forward and reverse count slices yield deterministically" passed after 0.040 seconds.
+􁁛  Test "counters and maxima are monotonic within a run and reset for the next run" passed after 0.031 seconds.
+􁁛  Test "the injected 60-second startup budget cancels and joins rollback" with 2 test cases passed after 0.037 seconds.
+􁁛  Suite "PacketFlowBridge bounded execution" passed after 0.041 seconds.
+􁁛  Suite "PacketFlowBridge deterministic fault injection" passed after 0.040 seconds.
+􁁛  Test "smoke output is deterministic, versioned, and privacy safe" passed after 0.040 seconds.
+􁁛  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" with 2 test cases passed after 0.038 seconds.
+􁁛  Suite "ReluxTunnelHarness" passed after 0.042 seconds.
+􁁛  Test "async failures cancel reset and close the generation" passed after 0.040 seconds.
+􁁛  Suite "RelayProtocol v1 client handshake" passed after 0.042 seconds.
+􁁛  Test "concurrent starts create exactly one usable runtime" passed after 0.041 seconds.
+􁁛  Test "malformed future mutating and missing-request inputs receive one bounded error" with 2 test cases passed after 0.039 seconds.
+􁁛  Test "every public Apple stop reason maps identically" with 2 test cases passed after 0.041 seconds.
+􁁛  Test "repeated stop and health races clean exactly one generation" passed after 0.049 seconds.
+􁁛  Test "callback/shutdown races resume exactly once and restore registration baseline" with 2 test cases passed after 0.048 seconds.
+􁁛  Test "callback/cancellation races resume exactly once and restore registration baseline" with 2 test cases passed after 0.049 seconds.
+􁁛  Suite "PacketFlow adapter read lifecycle" passed after 0.050 seconds.
+􁁛  Test "one hundred cycles release every runtime and callback gate" with 2 test cases passed after 0.048 seconds.
+􁁛  Test "concurrent updates and requests return consistent bounded snapshots" passed after 0.051 seconds.
+􁁛  Test "one hundred restart cycles restore descriptor and task ownership baselines" passed after 0.054 seconds.
+􁁛  Suite "PacketFlowBridge public socket pair" passed after 0.057 seconds.
+􁁛  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" passed after 0.059 seconds.
+relay-hostile-seed language=swift id=ascending-bits value=0x0123456789abcdef semanticDigest=79cdb508a6fbb5f1
+􀟈  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" started.
+􁁛  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" passed after 0.004 seconds.
+􀟈  Test "a stalled real HEV path accounts every bridge send or bounded drop" started.
+􁁛  Test "unknown high-cardinality labels are discarded without retention" passed after 0.065 seconds.
+􁁛  Suite "Privacy-safe runtime diagnostics" passed after 0.067 seconds.
+􁁛  Test "both roots route exactly the four read-only v1 commands" with 2 test cases passed after 0.067 seconds.
+􁁛  Suite "Provider adapter contracts" passed after 0.069 seconds.
+relay-hostile-seed language=swift id=alternating-bits value=0xaaaaaaaa55555555 semanticDigest=8a739291891be7cb
+relay-hostile-seed language=swift id=task-regression value=0x2607152976c0ffee semanticDigest=930395cb54e2a3ed
+relay-hostile-summary language=swift seeds=4 cases=2096 inputBytes=28577 peakRetainedBytes=20 peakAllocatedBodyBytes=4096 maximumBodyAllocations=2 maximumProcessingIterations=42 maximumProcessingIterationCeiling=43 maximumChunkCount=5 maximumDiagnosticBytes=96 terminalRetainedBytes=0 terminalOutstandingBodyBytes=0 resetRetainedBytes=0 resetOutstandingBodyBytes=0 durationMilliseconds=75
+􁁛  Test "shared regression seeds preserve semantic and resource bounds" passed after 0.083 seconds.
+􁁛  Suite "RelayProtocol v1 deterministic hostile input" passed after 0.085 seconds.
+􁁛  Test "one hundred generations return all owned resources to baseline" passed after 0.095 seconds.
+􁁛  Suite "Tunnel runtime coordinator" passed after 0.096 seconds.
+􁁛  Test "coalesced arbitrary bytes split deterministically without declared-length allocation" passed after 0.116 seconds.
+􀟈  Test "fixture minimization preserves a replayable invariant violation" started.
+􁁛  Test "fixture minimization preserves a replayable invariant violation" passed after 0.001 seconds.
+􀟈  Test "reverse parser replays hostile corpus with bounded runtime, allocation, and counters" started.
+􁁛  Test "a stalled real HEV path accounts every bridge send or bounded drop" passed after 0.093 seconds.
+􀟈  Test "bridge write failure while real HEV is active tears every boundary down" started.
+􁁛  Test "bridge write failure while real HEV is active tears every boundary down" passed after 0.072 seconds.
+􀟈  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" started.
+PACKET_FRAME_FUZZ_REPORT direction=reverse seed=353398966579 iterations=512 duration_ms=4 peak_allocation_bytes=126480 revision=unspecified shortHeader=134 emptyPayload=34 unknownFamily=65 payloadVersionMismatch=180
+􁁛  Test "reverse parser replays hostile corpus with bounded runtime, allocation, and counters" passed after 0.093 seconds.
+􀟈  Test "forward framing rejects hostile typed packets before bounded datagram allocation" started.
+􁁛  Test "every prefix and body boundary of a maximum accepted frame is deterministic" passed after 0.277 seconds.
+􁁛  Suite "RelayProtocol v1 envelope codec" passed after 0.278 seconds.
+PACKET_FRAME_FUZZ_REPORT direction=forward seed=353398966579 iterations=512 duration_ms=2 peak_allocation_bytes=22240 revision=unspecified malformed=506
+􁁛  Test "forward framing rejects hostile typed packets before bounded datagram allocation" passed after 0.094 seconds.
+􀟈  Test "over-MTU replay fixtures are fatal before forwarding or packet writes" started.
+􁁛  Test "over-MTU replay fixtures are fatal before forwarding or packet writes" passed after 0.001 seconds.
+􀟈  Test "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 1 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 68 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 576 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 1280 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 1500 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 9000 to "boundary MTUs preserve exact frames" started.
+􁁛  Test "boundary MTUs preserve exact frames" with 6 test cases passed after 0.001 seconds.
+􁁛  Suite "Packet frame deterministic fuzz and allocation bounds" passed after 0.343 seconds.
+􁁛  Test "every permitted DATA size round-trips for every address form" passed after 0.587 seconds.
+􁁛  Suite "RelayProtocol v1 HEV datagram codec" passed after 0.588 seconds.
+􁁛  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" passed after 3.228 seconds.
+􀟈  Test "approved low-memory configuration is emitted exactly" started.
+􁁛  Test "approved low-memory configuration is emitted exactly" passed after 0.001 seconds.
+􀟈  Test "configuration rejects a stack request that upstream would silently raise" started.
+􁁛  Test "configuration rejects a stack request that upstream would silently raise" passed after 0.001 seconds.
+􀟈  Test "external no-auth ingress is rejected before the adapter seam" started.
+􁁛  Test "external no-auth ingress is rejected before the adapter seam" passed after 0.004 seconds.
+􀟈  Test "SOCKS boundary stop waits for listener close and is idempotent" started.
+􁁛  Test "SOCKS boundary stop waits for listener close and is idempotent" passed after 0.001 seconds.
+􀟈  Test "borrow passes only endpoint B and quit joins without closing it" started.
+􁁛  Test "borrow passes only endpoint B and quit joins without closing it" passed after 0.001 seconds.
+􀟈  Test "quit is never sent after HEV main returns in either stop ordering" started.
+􁁛  Test "quit is never sent after HEV main returns in either stop ordering" passed after 0.001 seconds.
+􀟈  Test "startup failure stops listener state and releases the process lease" started.
+􁁛  Test "startup failure stops listener state and releases the process lease" passed after 0.002 seconds.
+􀟈  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" started.
+􁁛  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" passed after 0.001 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 3.473 seconds.
+􁁛  Test run with 218 tests in 23 suites passed after 3.473 seconds.
+swift build
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version-45881B103DA9D485.txt
+[2/7] Emitting module ReluxTunnelIOSAdapter
+[3/7] Emitting module ReluxTunnelMacOSAdapter
+[4/7] Emitting module ReluxTunnelHarnessSupport
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[4/6] Linking ReluxTunnelHarness
+[5/6] Applying ReluxTunnelHarness
+Build complete! (0.85s)
