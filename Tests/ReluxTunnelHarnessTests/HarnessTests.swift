@@ -434,7 +434,7 @@ private actor TestRuntime: TunnelRuntime {
 }
 
 private actor TestPacketFlow: PacketFlow {
-  func readPackets() async throws -> [TunnelPacket] { [] }
+  func readPackets() async throws -> PacketReadBatch { PacketReadBatch(results: []) }
   func writePackets(_ packets: [TunnelPacket]) async throws {}
 }
 

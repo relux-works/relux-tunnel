@@ -1,51 +1,54 @@
-import Darwin
 import Foundation
 import NetworkExtension
 import ReluxTunnelCore
 
-public enum IOSPacketFlowAdapterError: Error {
-  case writeRejected
-}
-
 /// Public-API adapter for the iOS provider's `NEPacketTunnelFlow`.
 public final class IOSPacketFlowAdapter: PacketFlow, @unchecked Sendable {
-  private let packetFlow: NEPacketTunnelFlow
+  private let boundary: PacketFlowAdapterBoundary
 
   public init(packetFlow: NEPacketTunnelFlow) {
-    self.packetFlow = packetFlow
+    boundary = PacketFlowAdapterBoundary(
+      driver: IOSNEPacketFlowDriver(packetFlow: packetFlow)
+    )
   }
 
-  public func readPackets() async throws -> [TunnelPacket] {
-    await withCheckedContinuation { continuation in
-      packetFlow.readPackets { packets, protocols in
-        let result = zip(packets, protocols).compactMap { packet, protocolNumber in
-          switch protocolNumber.int32Value {
-          case AF_INET:
-            TunnelPacket(payload: packet, addressFamily: .ipv4)
-          case AF_INET6:
-            TunnelPacket(payload: packet, addressFamily: .ipv6)
-          default:
-            nil
-          }
-        }
-        continuation.resume(returning: result)
-      }
-    }
+  public init(driver: any PacketFlowPlatformDriver) {
+    boundary = PacketFlowAdapterBoundary(driver: driver)
+  }
+
+  public func readPackets() async throws -> PacketReadBatch {
+    try await boundary.readPackets()
   }
 
   public func writePackets(_ packets: [TunnelPacket]) async throws {
-    let payloads = packets.map(\.payload)
-    let protocols = packets.map { packet in
-      switch packet.addressFamily {
-      case .ipv4:
-        NSNumber(value: AF_INET)
-      case .ipv6:
-        NSNumber(value: AF_INET6)
-      }
+    try boundary.writePackets(packets)
+  }
+
+  public func shutdown() async {
+    boundary.shutDown()
+  }
+}
+
+private final class IOSNEPacketFlowDriver: PacketFlowPlatformDriver, @unchecked Sendable {
+  private let packetFlow: NEPacketTunnelFlow
+
+  init(packetFlow: NEPacketTunnelFlow) {
+    self.packetFlow = packetFlow
+  }
+
+  func registerRead(
+    _ callback: @escaping @Sendable ([Data], [Int32]) -> Void
+  ) {
+    packetFlow.readPackets { packets, protocols in
+      callback(packets, protocols.map(\.int32Value))
     }
-    guard packetFlow.writePackets(payloads, withProtocols: protocols) else {
-      throw IOSPacketFlowAdapterError.writeRejected
-    }
+  }
+
+  func writePackets(_ packets: [Data], protocols: [Int32]) -> Bool {
+    packetFlow.writePackets(
+      packets,
+      withProtocols: protocols.map { NSNumber(value: $0) }
+    )
   }
 }
 

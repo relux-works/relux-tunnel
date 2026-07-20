@@ -174,8 +174,8 @@ private struct MockRuntimeFactory: TunnelRuntimeFactory {
 }
 
 private actor MockPacketFlow: PacketFlow {
-  func readPackets() async throws -> [TunnelPacket] {
-    []
+  func readPackets() async throws -> PacketReadBatch {
+    PacketReadBatch(results: [])
   }
 
   func writePackets(_ packets: [TunnelPacket]) async throws {}
