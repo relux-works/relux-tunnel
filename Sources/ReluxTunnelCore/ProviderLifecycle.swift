@@ -1,6 +1,6 @@
 import Foundation
 
-public enum TunnelLifecycleState: String, Codable, Sendable {
+public enum TunnelLifecycleState: String, Codable, Equatable, Sendable {
   case disconnected
   case connecting
   case connectedFull
@@ -8,6 +8,12 @@ public enum TunnelLifecycleState: String, Codable, Sendable {
   case reasserting
   case failed
   case disconnecting
+  case unknown
+
+  public init(from decoder: any Decoder) throws {
+    let value = try decoder.singleValueContainer().decode(String.self)
+    self = TunnelLifecycleState(rawValue: value) ?? .unknown
+  }
 }
 
 public enum ProviderStopReason: Equatable, Sendable {
@@ -67,6 +73,7 @@ public enum ProviderAdapterError: Error, Equatable {
 public enum ProviderMessageError: Error, Equatable {
   case unsupportedProtocolVersion(UInt16)
   case unsupportedKind(String)
+  case invalidPayload(RuntimeProtocolErrorCode)
 }
 
 public struct ProviderVersionRequest: Codable, Equatable, Sendable {
@@ -91,34 +98,71 @@ public struct ProviderVersionResponse: Codable, Equatable, Sendable {
 
 /// Minimal M0 app-message codec. Additional message semantics belong to later specs.
 public enum ProviderMessageCodec {
-  public static let currentVersion: UInt16 = 1
+  public static let currentVersion = RuntimeMessageProtocol.currentProtocolVersion
   public static let versionKind = "version"
 
   public static func encodeVersionRequest(
     protocolVersion: UInt16 = currentVersion
   ) throws -> Data {
-    try encoder().encode(ProviderVersionRequest(protocolVersion: protocolVersion))
+    try RuntimeJSONCodec.encode(
+      ProviderVersionRequest(protocolVersion: protocolVersion),
+      maximumBytes: RuntimeMessageSizeLimit.legacyVersion
+    )
   }
 
   public static func decodeVersionResponse(_ data: Data) throws -> ProviderVersionResponse {
-    try JSONDecoder().decode(ProviderVersionResponse.self, from: data)
+    try validateLegacyObject(data)
+    let response: ProviderVersionResponse
+    do {
+      response = try JSONDecoder().decode(ProviderVersionResponse.self, from: data)
+    } catch {
+      throw ProviderMessageError.invalidPayload(.corruptPayload)
+    }
+    guard response.kind == versionKind else {
+      throw ProviderMessageError.unsupportedKind(response.kind)
+    }
+    guard response.protocolVersion == currentVersion else {
+      throw ProviderMessageError.unsupportedProtocolVersion(response.protocolVersion)
+    }
+    return response
   }
 
   static func response(to data: Data) throws -> Data {
-    let request = try JSONDecoder().decode(ProviderVersionRequest.self, from: data)
+    try validateLegacyObject(data)
+    let request: ProviderVersionRequest
+    do {
+      request = try JSONDecoder().decode(ProviderVersionRequest.self, from: data)
+    } catch {
+      throw ProviderMessageError.invalidPayload(.corruptPayload)
+    }
     guard request.kind == versionKind else {
       throw ProviderMessageError.unsupportedKind(request.kind)
     }
     guard request.protocolVersion == currentVersion else {
       throw ProviderMessageError.unsupportedProtocolVersion(request.protocolVersion)
     }
-    return try encoder().encode(ProviderVersionResponse(protocolVersion: currentVersion))
+    return try RuntimeJSONCodec.encode(
+      ProviderVersionResponse(protocolVersion: currentVersion),
+      maximumBytes: RuntimeMessageSizeLimit.legacyVersion
+    )
   }
 
-  private static func encoder() -> JSONEncoder {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys]
-    return encoder
+  private static func validateLegacyObject(_ data: Data) throws {
+    do {
+      let keys = try StrictJSONValidator.validate(
+        data,
+        maximumBytes: RuntimeMessageSizeLimit.legacyVersion
+      )
+      guard keys == ["kind", "protocolVersion"] else {
+        throw ProviderMessageError.invalidPayload(.corruptPayload)
+      }
+    } catch let error as ProviderMessageError {
+      throw error
+    } catch let error as RuntimeMessageCodecError {
+      throw ProviderMessageError.invalidPayload(error.protocolErrorCode)
+    } catch {
+      throw ProviderMessageError.invalidPayload(.corruptPayload)
+    }
   }
 }
 

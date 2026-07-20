@@ -1004,7 +1004,11 @@ private func fixtureConnectionConfiguration(
     canonicalHostname: "ssh.example",
     endpoint: endpoint,
     username: "fixture-user",
-    profileReference: TunnelConfigurationReference(rawValue: "fixture-profile"),
+    profileReference: TunnelConfigurationReference(
+      profileIdentifier: OpaqueProfileIdentifier(
+        UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+      )
+    ),
     credentialReference: SSHCredentialReference(rawValue: "fixture-credential"),
     trustRecordReference: SSHTrustRecordReference(rawValue: "fixture-trust"),
     algorithms: SSHAlgorithmPolicy(

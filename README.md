@@ -30,7 +30,8 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
   `architecture.md`, `decisions.md` (ADR log), and `threat-model.md`.
 - **Shared package**: `ReluxTunnelCore` and its compile-only iOS/macOS provider
   composition roots include the supervised public socket-pair packet bridge and
-  are mapped in
+  bounded, deterministic v1 runtime configuration/message codecs; the module
+  boundaries are mapped in
   [`docs/core-adapter-boundaries.md`](docs/core-adapter-boundaries.md).
 - **Native dependencies**: pinned custom-build C graphs use source-rebuilt
   static XCFrameworks behind `ReluxTunnelNativeAdapter`; see
@@ -57,7 +58,7 @@ swift run ReluxTunnelHarness smoke --configuration ./smoke.json
   "seed": 42,
   "sourceRevision": "replace-with-git-revision",
   "dependencyRevisions": {},
-  "profileReference": {"value": "smoke-profile", "privacy": "sensitive"},
+  "profileReference": {"value": "11111111-1111-1111-1111-111111111111", "privacy": "sensitive"},
   "parameters": {
     "mode": {"value": "noop", "privacy": "public"}
   }

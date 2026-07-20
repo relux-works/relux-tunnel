@@ -76,8 +76,11 @@ struct ProviderAdapterContractTests {
     let factory = MockRuntimeFactory(recorder: recorder, expectedPacketFlow: packetFlow)
     let root = makeRoot(packetFlow, factory, testDependencies())
     let configuration = TunnelConfiguration(
-      profileReference: TunnelConfigurationReference(rawValue: "profile-ref"),
-      parameters: ["fixture": "contract"]
+      profileReference: TunnelConfigurationReference(
+        profileIdentifier: OpaqueProfileIdentifier(
+          UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+        )
+      )
     )
 
     #expect(await root.lifecyclePhase() == .idle)

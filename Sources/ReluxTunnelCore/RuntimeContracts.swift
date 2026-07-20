@@ -11,30 +11,16 @@ public struct TunnelEndpoint: Codable, Hashable, Sendable {
   }
 }
 
-/// An opaque reference to profile data owned outside the live tunnel runtime.
-public struct TunnelConfigurationReference: Codable, Hashable, Sendable {
-  public let rawValue: String
-
-  public init(rawValue: String) {
-    self.rawValue = rawValue
-  }
-}
-
 /// The minimal configuration crossing from a provider into the shared runtime.
 ///
-/// Parameters remain stringly typed at this boundary until their owning M0 or
-/// later specification defines a stable typed model. Secrets must be referenced,
-/// not placed in this value.
+/// This value intentionally has no string dictionary or byte storage. The
+/// provider resolves the UUID-backed reference through the bounded versioned
+/// configuration snapshot codec before it retrieves any credentials.
 public struct TunnelConfiguration: Equatable, Sendable {
   public let profileReference: TunnelConfigurationReference
-  public let parameters: [String: String]
 
-  public init(
-    profileReference: TunnelConfigurationReference,
-    parameters: [String: String] = [:]
-  ) {
+  public init(profileReference: TunnelConfigurationReference) {
     self.profileReference = profileReference
-    self.parameters = parameters
   }
 }
 

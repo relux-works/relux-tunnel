@@ -1,0 +1,54 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version-45881B103DA9D485.txt
+[2/7] Emitting module ReluxTunnelIOSAdapter
+[3/7] Emitting module ReluxTunnelMacOSAdapter
+[4/7] Emitting module ReluxTunnelHarnessSupport
+[5/8] Emitting module ReluxTunnelHarnessTests
+[6/8] Emitting module ReluxTunnelNativeAdapterTests
+[7/8] Emitting module ReluxTunnelCoreTests
+Build complete! (1.32s)
+Test Suite 'Selected tests' started at 2026-07-21 00:10:05.275.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 00:10:05.282.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 00:10:05.282.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 00:10:05.282.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Legacy provider version compatibility" started.
+􀟈  Suite "Versioned runtime message codecs" started.
+􀟈  Test "legacy request and response keep the exact two-field v1 encoding" started.
+􀟈  Test "legacy messages reject additive fields duplicates and oversize input" started.
+􀟈  Test "redacted runtime errors accept finite codes and reject free-form text" started.
+􀟈  Test "old and future protocol and schema versions reject with stable errors" started.
+􀟈  Test "unknown commands and provider-input values reject before decoding" started.
+􀟈  Test "diagnostics default absent aggregates to empty while position remains required" started.
+􀟈  Test "missing required fields and encoded or decoded oversize payloads reject" started.
+􀟈  Test "unknown output modes and lifecycle values project all capabilities false" started.
+􀟈  Test "snapshot ordering rejects lower generations and non-increasing sequences" started.
+􀟈  Test "configuration shapes cannot carry private-key or passphrase bytes" started.
+􀟈  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" started.
+􀟈  Test "unknown object fields are ignored and omitted when re-encoded" started.
+􀟈  Test "all v1 provider and message models round-trip deterministically" started.
+􁁛  Test "snapshot ordering rejects lower generations and non-increasing sequences" passed after 0.001 seconds.
+􁁛  Test "unknown object fields are ignored and omitted when re-encoded" passed after 0.001 seconds.
+􁁛  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" passed after 0.001 seconds.
+􀟈  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" started.
+􁁛  Test "legacy request and response keep the exact two-field v1 encoding" passed after 0.001 seconds.
+􀟈  Test "sorted-key golden output is stable" started.
+􁁛  Test "legacy messages reject additive fields duplicates and oversize input" passed after 0.001 seconds.
+􁁛  Test "diagnostics default absent aggregates to empty while position remains required" passed after 0.001 seconds.
+􁁛  Test "unknown output modes and lifecycle values project all capabilities false" passed after 0.001 seconds.
+􁁛  Test "unknown commands and provider-input values reject before decoding" passed after 0.001 seconds.
+􁁛  Test "sorted-key golden output is stable" passed after 0.001 seconds.
+􁁛  Test "redacted runtime errors accept finite codes and reject free-form text" passed after 0.001 seconds.
+􁁛  Suite "Legacy provider version compatibility" passed after 0.001 seconds.
+􁁛  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" passed after 0.001 seconds.
+􁁛  Test "old and future protocol and schema versions reject with stable errors" passed after 0.001 seconds.
+􁁛  Test "all v1 provider and message models round-trip deterministically" passed after 0.001 seconds.
+􁁛  Test "configuration shapes cannot carry private-key or passphrase bytes" passed after 0.004 seconds.
+􁁛  Test "missing required fields and encoded or decoded oversize payloads reject" passed after 0.011 seconds.
+􁁛  Suite "Versioned runtime message codecs" passed after 0.012 seconds.
+􁁛  Test run with 15 tests in 2 suites passed after 0.012 seconds.

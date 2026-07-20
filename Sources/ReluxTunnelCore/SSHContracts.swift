@@ -601,9 +601,6 @@ public struct SSHConnectionConfiguration: Equatable, Sendable {
     guard !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
       throw SSHContractValidationError.empty(.username)
     }
-    guard !profileReference.rawValue.isEmpty else {
-      throw SSHContractValidationError.empty(.profileReference)
-    }
     guard !credentialReference.rawValue.isEmpty else {
       throw SSHContractValidationError.empty(.credentialReference)
     }

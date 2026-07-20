@@ -48,6 +48,23 @@ struct HarnessTests {
     }
   }
 
+  @Test("configuration rejects a non-opaque runtime profile reference")
+  func configurationProfileReferenceValidation() throws {
+    let encoded = try HarnessConfigurationCodec.encode(makeConfiguration())
+    let invalid = Data(
+      String(decoding: encoded, as: UTF8.self)
+        .replacingOccurrences(
+          of: "11111111-1111-1111-1111-111111111111",
+          with: "raw-profile-or-secret"
+        )
+        .utf8
+    )
+
+    #expect(throws: HarnessConfigurationError.invalidProfileReference) {
+      try HarnessConfigurationCodec.decode(invalid)
+    }
+  }
+
   @Test("signals map to shell-standard exit codes")
   func signalExitCodes() {
     #expect(HarnessCancellationReason.interrupt.exitCode == .interrupted)
@@ -228,7 +245,10 @@ private func makeConfiguration(
     seed: 42,
     sourceRevision: "0123456789abcdef",
     dependencyRevisions: ["fixture": "abcdef"],
-    profileReference: HarnessConfigurationValue(value: "profile-secret", privacy: .sensitive),
+    profileReference: HarnessConfigurationValue(
+      value: "11111111-1111-1111-1111-111111111111",
+      privacy: .sensitive
+    ),
     parameters: [
       "destination": HarnessConfigurationValue(value: "example.test", privacy: .sensitive),
       "mode": HarnessConfigurationValue(value: "noop", privacy: .public),
@@ -414,7 +434,7 @@ private struct DependencyCommand: HarnessCommand {
     _ = await context.dependencies.runtime.memoryPressure.currentPressure()
     let composition = HarnessCoreComposition(dependencies: context.dependencies)
     let runtime = try await composition.makeRuntime(
-      configuration: context.configuration.tunnelConfiguration(),
+      configuration: try context.configuration.tunnelConfiguration(),
       factory: RecordingRuntimeFactory(recorder: recorder)
     )
     try await runtime.start()

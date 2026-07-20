@@ -52,10 +52,14 @@ public struct HarnessConfigurationDocument: Codable, Equatable, Sendable {
     self.parameters = parameters
   }
 
-  public func tunnelConfiguration() -> TunnelConfiguration {
-    TunnelConfiguration(
-      profileReference: TunnelConfigurationReference(rawValue: profileReference.value),
-      parameters: parameters.mapValues(\.value)
+  public func tunnelConfiguration() throws -> TunnelConfiguration {
+    guard let profileIdentifier = UUID(uuidString: profileReference.value) else {
+      throw HarnessConfigurationError.invalidProfileReference
+    }
+    return TunnelConfiguration(
+      profileReference: TunnelConfigurationReference(
+        profileIdentifier: OpaqueProfileIdentifier(profileIdentifier)
+      )
     )
   }
 
@@ -94,6 +98,7 @@ public enum HarnessConfigurationError: Error, Equatable, CustomStringConvertible
   case emptyDependencyName
   case emptyDependencyRevision(String)
   case emptyProfileReference
+  case invalidProfileReference
   case emptyParameterName
 
   public var description: String {
@@ -108,6 +113,8 @@ public enum HarnessConfigurationError: Error, Equatable, CustomStringConvertible
       "dependency revision for \(name) must not be empty"
     case .emptyProfileReference:
       "profileReference.value must not be empty"
+    case .invalidProfileReference:
+      "profileReference.value must be an opaque UUID"
     case .emptyParameterName:
       "configuration parameter names must not be empty"
     }
@@ -136,6 +143,9 @@ public enum HarnessConfigurationCodec {
     }
     guard !configuration.profileReference.value.isEmpty else {
       throw HarnessConfigurationError.emptyProfileReference
+    }
+    guard UUID(uuidString: configuration.profileReference.value) != nil else {
+      throw HarnessConfigurationError.invalidProfileReference
     }
     guard !configuration.dependencyRevisions.keys.contains("") else {
       throw HarnessConfigurationError.emptyDependencyName
