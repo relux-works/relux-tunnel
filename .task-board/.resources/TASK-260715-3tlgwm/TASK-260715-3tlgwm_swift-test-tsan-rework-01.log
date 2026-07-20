@@ -1,0 +1,136 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[1/7] Write swift-version-45881B103DA9D485.txt
+[3/26] Emitting module ReluxLibSSH2PackagingTests
+[4/26] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[5/26] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[6/27] Compiling ReluxTunnelCore SSHContracts.swift
+[7/27] Compiling ReluxTunnelCore RelayHandshake.swift
+[8/27] Compiling ReluxTunnelCore RelaySession.swift
+[9/27] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[10/27] Compiling ReluxTunnelCore RuntimeContracts.swift
+[11/27] Compiling ReluxTunnelCore RelayByteCodec.swift
+[12/27] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[13/27] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[14/27] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[15/27] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[16/27] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[17/27] Compiling ReluxTunnelCore PacketContracts.swift
+[18/27] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[19/27] Compiling ReluxTunnelCore ComponentContracts.swift
+[20/27] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[21/27] Emitting module ReluxTunnelCore
+[22/27] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[23/32] Emitting module ReluxTunnelNativeAdapter
+[24/32] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[25/32] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[26/32] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[27/32] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[28/44] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[29/44] Emitting module ReluxTunnelIOSAdapter
+[30/44] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[31/44] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[32/44] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[33/44] Emitting module ReluxTunnelMacOSAdapter
+[34/44] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[35/69] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[36/69] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[37/69] Emitting module ReluxTunnelHarnessSupport
+[38/69] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[39/69] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[40/73] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[41/73] Emitting module ReluxTunnelHarness
+[41/73] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[42/73] Linking ReluxTunnelHarness
+[43/73] Applying ReluxTunnelHarness
+[45/73] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[46/73] Emitting module ReluxTunnelHarnessTests
+[47/73] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[48/73] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[49/74] Emitting module ReluxTunnelNativeAdapterTests
+[50/74] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[51/74] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[52/74] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[53/74] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[54/74] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[55/74] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[56/74] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[57/74] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[58/74] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[59/74] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[60/74] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[61/74] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[62/74] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[63/74] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[64/74] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[65/74] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[66/74] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[67/74] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[68/74] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[69/74] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[70/74] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[71/74] Emitting module ReluxTunnelCoreTests
+[72/74] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[73/76] Compiling ReluxTunnelPackageTests runner.swift
+[74/76] Emitting module ReluxTunnelPackageTests
+[74/76] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[75/76] Linking ReluxTunnelPackageTests
+Build complete! (8.80s)
+Test Suite 'Selected tests' started at 2026-07-21 01:33:33.856.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 01:33:33.883.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 01:33:33.883.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 01:33:33.883.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.027) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Tunnel runtime coordinator" started.
+􀟈  Test "clear failure preserves truthful route state and no capability" started.
+􀟈  Test "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "caller cancellation during startup completion owns cleanup" started.
+􀟈  Test "one hundred generations return all owned resources to baseline" started.
+􀟈  Test "repeated concurrent stop joins one reverse-order cleanup" started.
+􀟈  Test "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test "concurrent starts are rejected and stop cancels an in-flight generation" started.
+􀟈  Test "stale health events cannot mutate the active generation" started.
+􀟈  Test "caller task cancellation is propagated and cleanup remains shielded" started.
+􀟈  Test "latest snapshot store rejects older generations and sequences" started.
+􀟈  Test case passing 1 argument point → .beforePacketPreparation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeDNS to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "unknown settings commit is cleared while definite non-commit is not" started.
+􀟈  Test case passing 1 argument point → .duringSettingsApply to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeSSH to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "mandatory health loss during startup completion owns cleanup" started.
+􀟈  Test case passing 1 argument point → .duringFinalHealth to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .ssh to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .configuration to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .duringPacketActivation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeTCP to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "startup gates settings and publishes M1 usability only after reads" started.
+􀟈  Test case passing 1 argument point → .settingsApplyUncertain to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .packetPrepare to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .finalHealth to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsApplyNotCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .dns to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsPlan to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .tcp to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .packetActivation to "every partial startup acquisition rolls back only acquired resources" started.
+􁁛  Test "latest snapshot store rejects older generations and sequences" passed after 0.001 seconds.
+􁁛  Test "stale health events cannot mutate the active generation" passed after 0.002 seconds.
+􁁛  Test "clear failure preserves truthful route state and no capability" passed after 0.002 seconds.
+􁁛  Test "startup gates settings and publishes M1 usability only after reads" passed after 0.002 seconds.
+􁁛  Test "repeated concurrent stop joins one reverse-order cleanup" passed after 0.002 seconds.
+􁁛  Test "caller task cancellation is propagated and cleanup remains shielded" passed after 0.002 seconds.
+􁁛  Test "concurrent starts are rejected and stop cancels an in-flight generation" passed after 0.003 seconds.
+􁁛  Test "caller cancellation during startup completion owns cleanup" passed after 0.003 seconds.
+􁁛  Test "mandatory health loss during startup completion owns cleanup" passed after 0.003 seconds.
+􁁛  Test "cancellation after each startup acquisition rolls back in reverse order" with 7 test cases passed after 0.003 seconds.
+􁁛  Test "every partial startup acquisition rolls back only acquired resources" with 10 test cases passed after 0.003 seconds.
+􁁛  Test "unknown settings commit is cleared while definite non-commit is not" passed after 0.003 seconds.
+􁁛  Test "one hundred generations return all owned resources to baseline" passed after 0.183 seconds.
+􁁛  Suite "Tunnel runtime coordinator" passed after 0.184 seconds.
+􁁛  Test run with 13 tests in 1 suite passed after 0.184 seconds.
