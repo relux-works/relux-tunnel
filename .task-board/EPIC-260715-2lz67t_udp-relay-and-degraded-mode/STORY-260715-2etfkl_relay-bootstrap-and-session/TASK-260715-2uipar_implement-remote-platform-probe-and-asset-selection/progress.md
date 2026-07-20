@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:44:25Z
 
 ## Last Update
-2026-07-15T03:19:56Z
+2026-07-20T18:42:15Z
 
 ## Blocked By
 - TASK-260715-1ue4oy
@@ -29,6 +29,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-2uipar_ssh-exec-handoff.md](file://TASK-260715-2uipar/TASK-260715-2uipar_ssh-exec-handoff.md) — Authenticated SSH and exec prerequisite for remote probing
+- [TASK-260715-2uipar_protocol-v1-developer-contract.md](file://TASK-260715-2uipar/TASK-260715-2uipar_protocol-v1-developer-contract.md) — Accepted relay protocol v1 developer contract and compatibility gates from TASK-260715-2z9b4a
 
 ## Outcome Resources
 (none)

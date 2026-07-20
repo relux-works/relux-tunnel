@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-15T02:23:57Z
+2026-07-20T18:42:17Z
 
 ## Blocked By
 - TASK-260715-ak0s72
@@ -28,7 +28,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-uh8kk6_protocol-v1-developer-contract.md](file://TASK-260715-uh8kk6/TASK-260715-uh8kk6_protocol-v1-developer-contract.md) — Accepted relay protocol v1 developer contract and compatibility gates from TASK-260715-2z9b4a
 
 ## Outcome Resources
 (none)

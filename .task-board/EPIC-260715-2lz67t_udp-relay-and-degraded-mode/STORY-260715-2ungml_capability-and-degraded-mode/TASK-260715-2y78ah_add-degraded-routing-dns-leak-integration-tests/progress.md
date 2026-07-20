@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-15T02:24:01Z
+2026-07-20T18:42:17Z
 
 ## Blocked By
 - TASK-260715-1vg1mb
@@ -33,6 +33,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-2y78ah_m1-harness-handoff.md](file://TASK-260715-2y78ah/TASK-260715-2y78ah_m1-harness-handoff.md) — M1 composed routing and DNS harness prerequisite
+- [TASK-260715-2y78ah_protocol-v1-developer-contract.md](file://TASK-260715-2y78ah/TASK-260715-2y78ah_protocol-v1-developer-contract.md) — Accepted relay protocol v1 developer contract and compatibility gates from TASK-260715-2z9b4a
 
 ## Outcome Resources
 (none)

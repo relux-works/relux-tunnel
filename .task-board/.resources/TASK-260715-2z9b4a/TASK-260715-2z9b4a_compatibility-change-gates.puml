@@ -1,0 +1,84 @@
+@startuml
+!theme plain
+
+title TASK-260715-2z9b4a — relay protocol compatibility and change gate
+
+skinparam activity {
+  BackgroundColor #F7F9FC
+  BorderColor #334155
+  FontColor #0F172A
+}
+skinparam activityDiamond {
+  BackgroundColor #FFF7D6
+  BorderColor #A16207
+}
+skinparam arrow {
+  Color #475569
+}
+
+start
+:Describe proposed behavior and every wire-visible byte/state change;
+:Classify against relay-v1.schema.json and frozen v1 rules;
+
+if (Wire-visible change?) then (no)
+  :Keep wire version 1; <<#D9F2E6>>
+  :Update handwritten behavior/tests only;
+  :Run make relay-protocol-check;
+  stop
+endif
+
+if (Append-only UDP error code?) then (yes)
+  if (Old v1 maps unknown code to
+  unknownRelayError at association scope?) then (yes)
+    :Append schema value; <<#D9F2E6>>
+    :Regenerate Swift + Go and update vectors;
+    :Run full gate and owner review;
+    stop
+  else (no)
+    :New protocol version; <<#FDE2E2>>
+  endif
+else (no)
+  if (Optional behavior safely absent?) then (yes)
+    if (Reserved request flag + server
+    feature available?) then (yes)
+      :Allocate both in schema;
+      :Client requests before use;
+      :Server returns request ∩ support;
+      if (New flags/messages emitted only
+      after confirmation?) then (yes)
+        if (Local hard caps remain authoritative
+        and old peers fail closed?) then (yes)
+          :Compatible v1 feature allocation; <<#D9F2E6>>
+          :Add feature-gated vectors and negative unnegotiated cases;
+          :Run make relay-protocol-check;
+          stop
+        else (no)
+          :New protocol version; <<#FDE2E2>>
+        endif
+      else (no)
+        :New protocol version; <<#FDE2E2>>
+      endif
+    else (no)
+      :New protocol version; <<#FDE2E2>>
+    endif
+  else (no)
+    :New protocol version; <<#FDE2E2>>
+  endif
+endif
+
+:Create parallel schema and generated bindings;
+:Create parallel canonical vector corpus;
+:Keep v1 bytes and identifiers immutable;
+:Unsupported version returns 0x0001 and closes;
+:Never guess a downgrade;
+:Protocol + Swift + Go owner review;
+stop
+
+legend bottom
+  Compatible v1 requires safe absence, negotiation before use,
+  deterministic old-peer rejection, and unchanged local hard caps.
+  Width/order/hello-size/length/numeric/required-sequence changes
+  always take the new-version path.
+endlegend
+
+@enduml

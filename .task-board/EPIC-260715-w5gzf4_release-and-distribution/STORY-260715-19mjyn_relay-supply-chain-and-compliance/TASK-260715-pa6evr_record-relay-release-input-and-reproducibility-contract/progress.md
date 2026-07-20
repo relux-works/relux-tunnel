@@ -8,7 +8,7 @@ backlog
 2026-07-15T03:01:55Z
 
 ## Last Update
-2026-07-16T21:08:23Z
+2026-07-20T18:42:44Z
 
 ## Blocked By
 - TASK-260715-whtdsf
@@ -30,7 +30,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-pa6evr_protocol-v1-developer-contract.md](file://TASK-260715-pa6evr/TASK-260715-pa6evr_protocol-v1-developer-contract.md) — Accepted relay protocol v1 developer contract and compatibility gates from TASK-260715-2z9b4a
 
 ## Outcome Resources
 (none)
