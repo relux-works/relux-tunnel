@@ -22,6 +22,7 @@
 | ADR-018 | Accepted | Ship macOS in-app self-update via Sparkle 2.x with an EdDSA-signed appcast; every payload is an already-notarized Developer ID build; iOS updates stay with the App Store |
 | ADR-019 | Accepted | Package custom-build C dependencies such as HEV and libssh2 as locally rebuilt static XCFramework SwiftPM `binaryTarget`s behind named native adapter modules; keep reviewable source packages such as ReluxNIOSSH as source dependencies and keep all native dependencies out of `ReluxTunnelCore` proper |
 | ADR-020 | Accepted | Set HEV `udp-copy-buffer-nums` M0 baseline to 2 (injectable), so the effective task stack stays 24576; the pinned HEV computes task stack = 20480 + max(tcp-buffer-size, 1500 × udp-copy-buffer-nums) and the default 10 silently forces 35480. Final value is an M3 physical-UDP evidence gate; HEV stays unmodified (config only). Resolves the TASK-260715-1vv52g stop-the-line. |
+| ADR-021 | Accepted | Keep protocol v1 resource limits as fixed schema constants and unilateral local caps (no wire exchange beyond the existing `maxFrame` min-negotiation): `maxUDPPayload` frozen at 1472 by the pinned HEV 1500-byte UDP copy-buffer bound; association/queue/idle values are injectable M0 baselines with schema-owned floors and hard ceilings; hello flag bit 1, feature bit 1, and message types `0x40–0x4F` reserved for an evidence-gated M3 limits exchange (TASK-260715-18owh7) |
 
 ## Decision rationale
 
