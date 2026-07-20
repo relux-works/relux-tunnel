@@ -117,6 +117,106 @@ struct PacketFlowBridgeBoundedTests {
     let metrics = await fixture.bridge.metrics()
     #expect(metrics.counters["packet_bridge_forward_budget_time_yield_total"] == 2)
     #expect(await scheduler.yieldCount == 2)
+    #expect(clock.sleepCallCount == 0)
+    await fixture.bridge.stop()
+  }
+
+  @Test("forward count budget includes malformed work and retains only the current batch")
+  func forwardMalformedCountBudget() async throws {
+    let scheduler = FirstYieldGateScheduler()
+    let fixture = BridgeFixture(maximumWorkCount: 2, scheduler: scheduler)
+    let flow = FakePacketFlow(events: fixture.events)
+    _ = try await fixture.bridge.start(
+      packetFlow: flow,
+      configuration: fixture.configuration
+    )
+    let packet = PacketReadResult.packet(
+      TunnelPacket(payload: Data([0x45, 1]), addressFamily: .ipv4))
+    await flow.enqueue(
+      PacketReadBatch(results: [
+        .malformed(.unsupportedAddressFamily(Int32.max)),
+        packet,
+        .malformed(.emptyPayload(expectedFamily: .ipv4)),
+        packet,
+        packet,
+      ]))
+
+    await scheduler.waitForFirstYield()
+    #expect(fixture.socketIO.sentDatagrams.count == 1)
+    #expect(await flow.readCallCount == 1)
+    #expect(await flow.activeReadCount == 0)
+    await scheduler.releaseFirstYield()
+
+    #expect(await eventually { fixture.socketIO.sentDatagrams.count == 3 })
+    #expect(await eventually { await flow.readCallCount == 2 })
+    let metrics = await fixture.bridge.metrics()
+    #expect(metrics.counters["packet_bridge_forward_budget_count_yield_total"] == 2)
+    #expect(metrics.counters["packet_bridge_forward_drop_malformed_total"] == 2)
+    #expect(await flow.maximumActiveReadCount == 1)
+    await fixture.bridge.stop()
+  }
+
+  @Test("reverse count budget includes invalid datagrams and flushes one bounded batch")
+  func reverseMalformedCountBudget() async throws {
+    let scheduler = CountingScheduler()
+    let fixture = BridgeFixture(maximumWorkCount: 3, scheduler: scheduler)
+    let flow = FakePacketFlow(events: fixture.events)
+    _ = try await fixture.bridge.start(
+      packetFlow: flow,
+      configuration: fixture.configuration
+    )
+    fixture.socketIO.enqueueReceives([
+      .datagram(Data()),
+      .datagram(familyWord(AF_INET) + Data([0x45, 1])),
+      .datagram(familyWord(Int32.max) + Data([0x45])),
+      .datagram(familyWord(AF_INET) + Data([0x45, 2])),
+    ])
+
+    fixture.readinessFactory.latest?.signal(.readable)
+    #expect(await eventually { await flow.writtenBatches.count == 1 })
+    #expect(await flow.writtenBatches.first?.count == 1)
+    #expect(fixture.socketIO.receiveAttemptCount == 3)
+    fixture.readinessFactory.latest?.signal(.readable)
+    #expect(await eventually { await flow.writtenBatches.count == 2 })
+
+    let metrics = await fixture.bridge.metrics()
+    #expect(metrics.counters["packet_bridge_reverse_budget_count_yield_total"] == 1)
+    #expect(metrics.counters["packet_bridge_reverse_drop_malformed_total"] == 2)
+    #expect(await scheduler.yieldCount == 1)
+    await fixture.bridge.stop()
+  }
+
+  @Test("reverse time budget checks the fake monotonic clock before a second receive")
+  func reverseTimeBudget() async throws {
+    let clock = AdvancingClock()
+    let scheduler = CountingScheduler()
+    let fixture = BridgeFixture(
+      maximumWorkCount: 100,
+      workTimeBudget: .seconds(1),
+      clock: clock,
+      scheduler: scheduler
+    )
+    fixture.socketIO.receiveHook = { clock.advance(by: .seconds(2)) }
+    let flow = FakePacketFlow(events: fixture.events)
+    _ = try await fixture.bridge.start(
+      packetFlow: flow,
+      configuration: fixture.configuration
+    )
+    fixture.socketIO.enqueueReceives([
+      .datagram(familyWord(AF_INET) + Data([0x45, 1])),
+      .datagram(familyWord(AF_INET) + Data([0x45, 2])),
+    ])
+
+    fixture.readinessFactory.latest?.signal(.readable)
+    #expect(await eventually { await flow.writtenPackets.count == 1 })
+    #expect(fixture.socketIO.receiveAttemptCount == 1)
+    fixture.readinessFactory.latest?.signal(.readable)
+    #expect(await eventually { await flow.writtenPackets.count == 2 })
+
+    let metrics = await fixture.bridge.metrics()
+    #expect(metrics.counters["packet_bridge_reverse_budget_time_yield_total"] == 2)
+    #expect(await scheduler.yieldCount == 2)
+    #expect(clock.sleepCallCount == 0)
     await fixture.bridge.stop()
   }
 
@@ -157,18 +257,59 @@ private actor CountingScheduler: PacketBridgeScheduler {
 private final class AdvancingClock: TunnelClock, @unchecked Sendable {
   private let lock = NSLock()
   private var instant = ContinuousClock().now
+  private var sleeps = 0
+
+  var sleepCallCount: Int { lock.withLock { sleeps } }
 
   func now() -> ContinuousClock.Instant {
     lock.withLock { instant }
   }
 
   func sleep(for duration: Duration) async throws {
+    lock.withLock { sleeps += 1 }
     try Task<Never, Never>.checkCancellation()
     advance(by: duration)
   }
 
   func advance(by duration: Duration) {
     lock.withLock { instant = instant.advanced(by: duration) }
+  }
+}
+
+private actor FirstYieldGateScheduler: PacketBridgeScheduler {
+  private var yieldCount = 0
+  private var reachedContinuation: CheckedContinuation<Void, Never>?
+  private var releaseContinuation: CheckedContinuation<Void, Never>?
+  private var firstYieldReached = false
+  private var firstYieldReleased = false
+
+  func yield() async {
+    yieldCount += 1
+    guard yieldCount == 1 else {
+      await Task.yield()
+      return
+    }
+    firstYieldReached = true
+    reachedContinuation?.resume()
+    reachedContinuation = nil
+    if !firstYieldReleased {
+      await withCheckedContinuation { continuation in
+        releaseContinuation = continuation
+      }
+    }
+  }
+
+  func waitForFirstYield() async {
+    if firstYieldReached { return }
+    await withCheckedContinuation { continuation in
+      reachedContinuation = continuation
+    }
+  }
+
+  func releaseFirstYield() {
+    firstYieldReleased = true
+    releaseContinuation?.resume()
+    releaseContinuation = nil
   }
 }
 

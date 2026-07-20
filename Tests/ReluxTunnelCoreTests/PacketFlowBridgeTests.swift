@@ -218,13 +218,20 @@ struct PacketFlowBridgeTests {
   func repeatedRestart() async throws {
     let fixture = BridgeFixture()
     for iteration in 0..<100 {
-      let flow = FakePacketFlow(events: fixture.events)
+      let driver = BridgeCallbackDriver()
+      let flow = BoundaryPacketFlow(driver: driver)
       let handle = try await fixture.bridge.start(
         packetFlow: flow,
         configuration: fixture.configuration
       )
+      #expect(await eventually { driver.snapshot().registrationCount == 1 })
       await fixture.bridge.stop()
       try await handle.waitForTermination()
+      #expect(driver.snapshot() == .init(registrationCount: 1, outstandingCount: 1))
+      driver.deliver(packets: [Data([0x45])], protocols: [AF_INET])
+      #expect(driver.snapshot() == .init(registrationCount: 1, outstandingCount: 0))
+      #expect(fixture.readinessFactory.latest?.snapshot().activeWaitCount == 0)
+      #expect(fixture.consumer.latest?.snapshot().activeWaitCount == 0)
       #expect(
         await fixture.bridge.lifecycleState()
           == .stopped(lastRunID: "run-\(iteration + 1)")
@@ -233,6 +240,7 @@ struct PacketFlowBridgeTests {
     #expect(fixture.socketIO.closedDescriptors.count == 200)
     #expect(Set(fixture.socketIO.closedDescriptors).count == 200)
     #expect(fixture.consumer.borrowedDescriptors.count == 100)
+    #expect(fixture.readinessFactory.sourcesSnapshot.count == 100)
   }
 }
 
@@ -249,8 +257,12 @@ final class BridgeFixture: @unchecked Sendable {
 
   init(
     autoReturnBorrowOnStop: Bool = true,
+    mtu: Int = 20,
+    sendBufferBytes: Int = 4096,
+    receiveBufferBytes: Int = 4096,
     maximumWorkCount: Int = 8,
     workTimeBudget: Duration = .seconds(1),
+    diagnosticsWindow: Duration = .seconds(60),
     clock: any TunnelClock = ContinuousTunnelClock(),
     scheduler: any PacketBridgeScheduler = TaskPacketBridgeScheduler(),
     lifecycleBarrier: any PacketBridgeLifecycleBarrier = NoOpPacketBridgeLifecycleBarrier()
@@ -262,12 +274,12 @@ final class BridgeFixture: @unchecked Sendable {
       autoReturnOnStop: autoReturnBorrowOnStop
     )
     configuration = PacketBridgeConfiguration(
-      mtu: 20,
-      sendBufferBytes: 4096,
-      receiveBufferBytes: 4096,
+      mtu: mtu,
+      sendBufferBytes: sendBufferBytes,
+      receiveBufferBytes: receiveBufferBytes,
       maximumWorkCount: maximumWorkCount,
       workTimeBudget: workTimeBudget,
-      diagnosticsWindow: .seconds(60)
+      diagnosticsWindow: diagnosticsWindow
     )
     bridge = PacketFlowBridge(
       socketIO: socketIO,
@@ -298,11 +310,16 @@ final class BridgeEventRecorder: @unchecked Sendable {
 
 actor FakePacketFlow: PacketFlow {
   private let events: BridgeEventRecorder
-  private var queued: [PacketReadBatch] = []
+  private var queued: [FakePacketReadOutcome] = []
   private var readWaiter: CheckedContinuation<PacketReadBatch, Error>?
   private var isShutDown = false
   private(set) var writtenPackets: [TunnelPacket] = []
+  private(set) var writtenBatches: [[TunnelPacket]] = []
   private(set) var writeAttemptCount = 0
+  private(set) var readCallCount = 0
+  private(set) var activeReadCount = 0
+  private(set) var maximumActiveReadCount = 0
+  private(set) var shutdownCount = 0
   private let rejectWrites: Bool
 
   init(events: BridgeEventRecorder, rejectWrites: Bool = false) {
@@ -311,11 +328,15 @@ actor FakePacketFlow: PacketFlow {
   }
 
   func readPackets() async throws -> PacketReadBatch {
+    readCallCount += 1
+    activeReadCount += 1
+    maximumActiveReadCount = max(maximumActiveReadCount, activeReadCount)
+    defer { activeReadCount -= 1 }
     if isShutDown {
       throw PacketFlowError.adapterShutDown
     }
     if !queued.isEmpty {
-      return queued.removeFirst()
+      return try queued.removeFirst().get()
     }
     return try await withCheckedThrowingContinuation { continuation in
       readWaiter = continuation
@@ -327,12 +348,14 @@ actor FakePacketFlow: PacketFlow {
     if rejectWrites {
       throw PacketFlowError.writeRejected
     }
+    writtenBatches.append(packets)
     writtenPackets.append(contentsOf: packets)
   }
 
   func shutdown() async {
     guard !isShutDown else { return }
     isShutDown = true
+    shutdownCount += 1
     events.record("flow.shutdown")
     let waiter = readWaiter
     readWaiter = nil
@@ -344,7 +367,30 @@ actor FakePacketFlow: PacketFlow {
       readWaiter = nil
       waiter.resume(returning: batch)
     } else {
-      queued.append(batch)
+      queued.append(.batch(batch))
+    }
+  }
+
+  func enqueueError(_ error: PacketFlowError) {
+    if let waiter = readWaiter {
+      readWaiter = nil
+      waiter.resume(throwing: error)
+    } else {
+      queued.append(.error(error))
+    }
+  }
+}
+
+enum FakePacketReadOutcome: Sendable {
+  case batch(PacketReadBatch)
+  case error(PacketFlowError)
+
+  func get() throws -> PacketReadBatch {
+    switch self {
+    case .batch(let batch):
+      batch
+    case .error(let error):
+      throw error
     }
   }
 }
@@ -379,8 +425,14 @@ final class FakePacketBridgeSocketIO: PacketBridgeSocketIO, @unchecked Sendable 
   private var sendOutcomes: [FakeSendOutcome] = []
   private var receiveOutcomes: [FakeReceiveOutcome] = []
   private var closes: [Int32] = []
+  private var closeCalls: [Int32] = []
+  private var receiveCalls = 0
+  private var effectiveSendBuffers: [Int32: Int32] = [:]
+  private var effectiveReceiveBuffers: [Int32: Int32] = [:]
+  private var closeFailures: Set<Int32> = []
   var failOperation: PacketBridgeOperation?
   var sendHook: (@Sendable () -> Void)?
+  var receiveHook: (@Sendable () -> Void)?
 
   init(events: BridgeEventRecorder) {
     self.events = events
@@ -391,6 +443,8 @@ final class FakePacketBridgeSocketIO: PacketBridgeSocketIO, @unchecked Sendable 
   var bufferRequests: [BufferRequest] { lock.withLock { requests } }
   var sentDatagrams: [Data] { lock.withLock { sends } }
   var closedDescriptors: [Int32] { lock.withLock { closes } }
+  var closeAttempts: [Int32] { lock.withLock { closeCalls } }
+  var receiveAttemptCount: Int { lock.withLock { receiveCalls } }
 
   func makeDatagramSocketPair() throws -> PacketBridgeSocketPair {
     try failIfNeeded(.socketPair)
@@ -448,7 +502,10 @@ final class FakePacketBridgeSocketIO: PacketBridgeSocketIO, @unchecked Sendable 
   ) throws -> Int32 {
     try failIfNeeded(buffer == .send ? .getSendBuffer : .getReceiveBuffer)
     return lock.withLock {
-      buffer == .send ? sendBuffers[descriptor] ?? 0 : receiveBuffers[descriptor] ?? 0
+      if buffer == .send {
+        return effectiveSendBuffers[descriptor] ?? sendBuffers[descriptor] ?? 0
+      }
+      return effectiveReceiveBuffers[descriptor] ?? receiveBuffers[descriptor] ?? 0
     }
   }
 
@@ -477,7 +534,8 @@ final class FakePacketBridgeSocketIO: PacketBridgeSocketIO, @unchecked Sendable 
     on descriptor: Int32,
     into bytes: UnsafeMutableRawBufferPointer
   ) throws -> PacketBridgeReceiveResult {
-    try lock.withLock {
+    let result = try lock.withLock {
+      receiveCalls += 1
       guard !receiveOutcomes.isEmpty else {
         throw PacketFlowBridgeError.socketError(operation: .receive, errno: EAGAIN)
       }
@@ -497,9 +555,18 @@ final class FakePacketBridgeSocketIO: PacketBridgeSocketIO, @unchecked Sendable 
         )
       }
     }
+    receiveHook?()
+    return result
   }
 
   func closeDescriptor(_ descriptor: Int32) throws {
+    let shouldFail = lock.withLock {
+      closeCalls.append(descriptor)
+      return closeFailures.contains(descriptor)
+    }
+    if shouldFail {
+      throw PacketFlowBridgeError.socketError(operation: .close, errno: EINTR)
+    }
     try failIfNeeded(.close)
     lock.withLock { closes.append(descriptor) }
     events.record("close.\(descriptor)")
@@ -513,6 +580,24 @@ final class FakePacketBridgeSocketIO: PacketBridgeSocketIO, @unchecked Sendable 
     lock.withLock { receiveOutcomes.append(contentsOf: outcomes) }
   }
 
+  func setEffectiveBuffer(
+    _ buffer: PacketBridgeSocketBuffer,
+    descriptor: Int32,
+    bytes: Int32
+  ) {
+    lock.withLock {
+      if buffer == .send {
+        effectiveSendBuffers[descriptor] = bytes
+      } else {
+        effectiveReceiveBuffers[descriptor] = bytes
+      }
+    }
+  }
+
+  func failClose(descriptor: Int32) {
+    _ = lock.withLock { closeFailures.insert(descriptor) }
+  }
+
   private func failIfNeeded(_ operation: PacketBridgeOperation) throws {
     if lock.withLock({ failOperation == operation }) {
       throw PacketFlowBridgeError.socketError(operation: operation, errno: EIO)
@@ -521,12 +606,26 @@ final class FakePacketBridgeSocketIO: PacketBridgeSocketIO, @unchecked Sendable 
 }
 
 final class FakeReadinessSource: PacketBridgeReadinessSource, @unchecked Sendable {
+  struct Snapshot: Equatable {
+    let waitCallCount: Int
+    let activeWaitCount: Int
+    let maximumActiveWaitCount: Int
+    let cancelCount: Int
+  }
+
+  private let lock = NSLock()
   private let events: BridgeEventRecorder
+  private let failWaits: Bool
   private let stream: AsyncStream<PacketBridgeReadinessEvent>
   private let continuation: AsyncStream<PacketBridgeReadinessEvent>.Continuation
+  private var waitCalls = 0
+  private var activeWaits = 0
+  private var maximumActiveWaits = 0
+  private var cancels = 0
 
-  init(events: BridgeEventRecorder) {
+  init(events: BridgeEventRecorder, failWaits: Bool = false) {
     self.events = events
+    self.failWaits = failWaits
     (stream, continuation) = AsyncStream.makeStream(
       of: PacketBridgeReadinessEvent.self,
       bufferingPolicy: .bufferingNewest(1)
@@ -534,6 +633,15 @@ final class FakeReadinessSource: PacketBridgeReadinessSource, @unchecked Sendabl
   }
 
   func waitForEvent() async throws -> PacketBridgeReadinessEvent {
+    lock.withLock {
+      waitCalls += 1
+      activeWaits += 1
+      maximumActiveWaits = max(maximumActiveWaits, activeWaits)
+    }
+    defer { lock.withLock { activeWaits -= 1 } }
+    if failWaits {
+      throw PacketFlowBridgeError.readinessFailure
+    }
     for await event in stream {
       return event
     }
@@ -541,6 +649,7 @@ final class FakeReadinessSource: PacketBridgeReadinessSource, @unchecked Sendabl
   }
 
   func cancel() async {
+    lock.withLock { cancels += 1 }
     events.record("readiness.cancel")
     continuation.finish()
   }
@@ -548,34 +657,61 @@ final class FakeReadinessSource: PacketBridgeReadinessSource, @unchecked Sendabl
   func signal(_ event: PacketBridgeReadinessEvent) {
     continuation.yield(event)
   }
+
+  func snapshot() -> Snapshot {
+    lock.withLock {
+      Snapshot(
+        waitCallCount: waitCalls,
+        activeWaitCount: activeWaits,
+        maximumActiveWaitCount: maximumActiveWaits,
+        cancelCount: cancels
+      )
+    }
+  }
 }
 
 final class FakeReadinessFactory: PacketBridgeReadinessFactory, @unchecked Sendable {
   private let lock = NSLock()
   private let events: BridgeEventRecorder
   private var sources: [FakeReadinessSource] = []
+  var failCreation = false
+  var failWaits = false
 
   init(events: BridgeEventRecorder) {
     self.events = events
   }
 
   var latest: FakeReadinessSource? { lock.withLock { sources.last } }
+  var sourcesSnapshot: [FakeReadinessSource] { lock.withLock { sources } }
 
   func makeReadinessSource(
     descriptor: Int32
   ) throws -> any PacketBridgeReadinessSource {
-    let source = FakeReadinessSource(events: events)
+    if lock.withLock({ failCreation }) {
+      throw PacketFlowBridgeError.readinessFailure
+    }
+    let source = FakeReadinessSource(events: events, failWaits: lock.withLock { failWaits })
     lock.withLock { sources.append(source) }
     return source
   }
 }
 
 final class FakeBorrowHandle: DescriptorBorrowHandle, @unchecked Sendable {
+  struct Snapshot: Equatable {
+    let stopRequestCount: Int
+    let waitCallCount: Int
+    let activeWaitCount: Int
+    let didReturn: Bool
+  }
+
   private let lock = NSLock()
   private let events: BridgeEventRecorder
   private let autoReturnOnStop: Bool
   private var didReturn = false
   private var waiter: CheckedContinuation<Void, Never>?
+  private var stopRequests = 0
+  private var waitCalls = 0
+  private var activeWaits = 0
 
   init(events: BridgeEventRecorder, autoReturnOnStop: Bool) {
     self.events = events
@@ -583,6 +719,7 @@ final class FakeBorrowHandle: DescriptorBorrowHandle, @unchecked Sendable {
   }
 
   func requestStop() async {
+    lock.withLock { stopRequests += 1 }
     events.record("borrow.stop")
     if autoReturnOnStop {
       returnNow()
@@ -590,6 +727,11 @@ final class FakeBorrowHandle: DescriptorBorrowHandle, @unchecked Sendable {
   }
 
   func waitForReturn() async {
+    lock.withLock {
+      waitCalls += 1
+      activeWaits += 1
+    }
+    defer { lock.withLock { activeWaits -= 1 } }
     await withCheckedContinuation { continuation in
       lock.lock()
       if didReturn {
@@ -615,6 +757,17 @@ final class FakeBorrowHandle: DescriptorBorrowHandle, @unchecked Sendable {
     events.record("borrow.return")
     waiter?.resume()
   }
+
+  func snapshot() -> Snapshot {
+    lock.withLock {
+      Snapshot(
+        stopRequestCount: stopRequests,
+        waitCallCount: waitCalls,
+        activeWaitCount: activeWaits,
+        didReturn: didReturn
+      )
+    }
+  }
 }
 
 final class FakeDescriptorConsumer: DescriptorBorrowConsumer, @unchecked Sendable {
@@ -623,6 +776,7 @@ final class FakeDescriptorConsumer: DescriptorBorrowConsumer, @unchecked Sendabl
   private let autoReturnOnStop: Bool
   private var descriptors: [Int32] = []
   private var handles: [FakeBorrowHandle] = []
+  var failBorrow = false
 
   init(events: BridgeEventRecorder, autoReturnOnStop: Bool) {
     self.events = events
@@ -631,10 +785,14 @@ final class FakeDescriptorConsumer: DescriptorBorrowConsumer, @unchecked Sendabl
 
   var borrowedDescriptors: [Int32] { lock.withLock { descriptors } }
   var latest: FakeBorrowHandle? { lock.withLock { handles.last } }
+  var handlesSnapshot: [FakeBorrowHandle] { lock.withLock { handles } }
 
   func beginBorrowing(
     _ descriptor: Int32
   ) async throws -> any DescriptorBorrowHandle {
+    if lock.withLock({ failBorrow }) {
+      throw PacketFlowBridgeError.descriptorBorrowFailure
+    }
     let handle = FakeBorrowHandle(events: events, autoReturnOnStop: autoReturnOnStop)
     lock.withLock {
       descriptors.append(descriptor)

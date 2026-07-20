@@ -5,6 +5,11 @@
 
 ## 2026-07-20
 
+### 1233 — PacketFlowBridge fault matrix closes the deferred contract rows (TASK-260715-3dn813)
+- VERIFICATION: Deterministic Swift Testing now covers the synthetic 4+MTU ceiling, reverse truncation/oversize, normalized would-block spellings, both ENOBUFS directions, every persistent/fatal row, exact schema/endpoint gauges, drop-summary windows, saturation, all seven startup and seven cleanup barriers, and 100 callback-backed restart cycles. The full package passes 98 tests; 47 bridge tests also pass under ThreadSanitizer.
+- COVERAGE: `PacketFlowBridge.swift` plus `PacketFlowBridgeContracts.swift` measure 94.55% line coverage and 88.28% region coverage. Strict Swift format, `swift build`, and the Core boundary guard pass; production sources were not changed.
+- ANOMALY: ThreadSanitizer scheduling exposed a test-observation race where the fake PacketFlow recorded a reverse write before the bridge's subsequent metric increment. The test now waits on the metric boundary explicitly; no product data race or contract defect was found.
+
 ### 1208 — libssh2 adapter hits third-round channel/exec/window API boundary (TASK-260715-1ozsb6)
 - BLOCKER: Pinned `ssh2_channel_read` automatically sends WINDOW_ADJUST before returning consumer bytes when remaining credit crosses its private threshold. There is no public manual-window mode, so consumer-earned credit and the immutable advertised cap cannot be enforced.
 - BLOCKER: `ssh2_channel_open` parses all RFC 4254 rejection reasons, then collapses them to `LIBSSH2_ERROR_CHANNEL_FAILURE`; no public typed/numeric reason survives. The remaining diagnostic string is not a stable control-flow API.
