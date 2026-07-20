@@ -415,25 +415,43 @@ struct PacketFlowBridgeFaultTests {
     _ = try await fixture.bridge.start(packetFlow: flow, configuration: fixture.configuration)
     let packet = PacketReadResult.packet(
       TunnelPacket(payload: Data([0x45, 1]), addressFamily: .ipv4))
+    await flow.waitForReadCallCount(1)
 
     await flow.enqueue(PacketReadBatch(results: [packet]))
-    #expect(await eventually { fixture.socketIO.sentDatagrams.count == 1 })
-    #expect(fixture.logger.messages.filter { $0.message == "packet_bridge.drop_summary" }.isEmpty)
+    await flow.waitForReadCallCount(2)
+    let summariesBeforeWindow = fixture.logger.messages.filter {
+      $0.message == "packet_bridge.drop_summary"
+    }
+    #expect(summariesBeforeWindow.count == 0)
 
     clock.advance(by: .seconds(10))
     await flow.enqueue(PacketReadBatch(results: [packet]))
-    #expect(await eventually { fixture.socketIO.sentDatagrams.count == 2 })
+    await flow.waitForReadCallCount(3)
+    let summariesAtWindow = fixture.logger.messages.filter {
+      $0.message == "packet_bridge.drop_summary"
+    }
+    #expect(summariesAtWindow.count == 1)
     #expect(
-      fixture.logger.messages.filter { $0.message == "packet_bridge.drop_summary" }.count == 1)
+      summariesAtWindow.first?.fields["packet_bridge_forward_drop_would_block_total"]?.value
+        == "2")
+    #expect(summariesAtWindow.first?.fields["packet_bridge_forward_drop_no_buffer_total"] == nil)
 
     await flow.enqueue(PacketReadBatch(results: [packet]))
-    #expect(await eventually { fixture.socketIO.sentDatagrams.count == 3 })
-    #expect(
-      fixture.logger.messages.filter { $0.message == "packet_bridge.drop_summary" }.count == 1)
+    await flow.waitForReadCallCount(4)
+    let summariesInsideNextWindow = fixture.logger.messages.filter {
+      $0.message == "packet_bridge.drop_summary"
+    }
+    #expect(summariesInsideNextWindow.count == 1)
 
     await fixture.bridge.stop()
+    let summariesAfterStop = fixture.logger.messages.filter {
+      $0.message == "packet_bridge.drop_summary"
+    }
+    #expect(summariesAfterStop.count == 2)
     #expect(
-      fixture.logger.messages.filter { $0.message == "packet_bridge.drop_summary" }.count == 2)
+      summariesAfterStop.last?.fields["packet_bridge_forward_drop_no_buffer_total"]?.value == "1")
+    #expect(
+      summariesAfterStop.last?.fields["packet_bridge_forward_drop_would_block_total"] == nil)
     #expect(clock.sleepCallCount == 0)
   }
 

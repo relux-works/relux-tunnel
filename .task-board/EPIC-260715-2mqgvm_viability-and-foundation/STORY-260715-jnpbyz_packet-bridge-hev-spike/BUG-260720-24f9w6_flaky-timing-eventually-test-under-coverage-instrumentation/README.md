@@ -7,4 +7,4 @@ LOCALIZED by BUG-260720-2p4fln reviewer: PacketFlowBridgeFaultTests.swift:426 ("
 (define bug scope / affected area)
 
 ## Acceptance Criteria
-(define fix acceptance criteria)
+1. PacketFlowBridgeFaultTests.swift:426 (drop summaries are window-limited...) is deterministic: it no longer depends on wall-clock/window timing or ordering races; pass/fail is derived from injected-clock or awaited signals, not real-time polling. 2. The assertion's original intent (bounded/window-limited drop summary accounting) is preserved. 3. Stability proven across ~30 full swift test runs with zero failures of this test (and no new flake introduced). 4. swift build + validate-core stay green; no regression to the 3dn813 bridge fault-test deliverable. 5. If a failure recurs it reports observed-vs-expected for diagnosability.

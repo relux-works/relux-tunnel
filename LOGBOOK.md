@@ -5,6 +5,17 @@
 
 ## 2026-07-20
 
+### 1501 — Flaky drop-summary test fix accepted; 1256 flake anomaly closed (review BUG-260720-24f9w6)
+- MILESTONE: BUG-260720-24f9w6 accepted → done. The pre-existing ~11-13% `PacketFlowBridgeFaultTests.swift:426` flake (LOGBOOK 1256 anomaly, excluded during 2p4fln review) is resolved; the 3dn813 fault-test deliverable is fully deterministic.
+- VERIFICATION: Design verified against production code: `waitForReadCallCount(N+1)` is a strict happens-after for batch N drop accounting — pump awaits `recordDrop` (summary emitted synchronously in the metrics actor, `PacketFlowBridge.swift:1224-1271`) before the next `readPackets()` resumes waiters; `stop()` joins pumps before `flushDropSummary` (`PacketFlowBridge.swift:1012-1045`). Injected `ManualTunnelClock` alone drives the 10s window; `eventually{}` removed; `sleepCallCount == 0` asserted. Intent strengthened, not loosened: exact per-window counters (would_block=2 first summary, no_buffer=1 stop flush, no carryover).
+- VERIFICATION: Reviewer reran independently: `swift build` clean, strict Swift format clean, full `swift test` 110/110, `make validate-core` exit 0. Implementer's 30/30 stability logs audited (all contain full-suite pass line, zero recorded issues); orchestrator 20× clean. Tests-only change — no production code touched.
+- STATUS: Resolved. Review evidence: board outcome `BUG-260720-24f9w6_review-verdict.md`.
+
+### 1454 — Drop-summary window test now awaits completed batch processing (BUG-260720-24f9w6)
+- ROOT CAUSE: The test treated `FakePacketBridgeSocketIO.sentDatagrams.count` as proof that a dropped send had been fully accounted. The fake records the attempted datagram before throwing `EAGAIN`/`ENOBUFS`, so the assertion could reach the logger while `PacketBridgeRunMetrics.recordDrop` was still suspended, producing the intermittent observed count of 0.
+- FIX: `FakePacketFlow` now exposes an actor-backed read-call milestone. The test waits for the pump to request its next read after each injected batch, which proves the prior batch's drop counter and summary emission have completed without sleeps, retry windows, or wall-clock polling. The manual clock still drives the exact 10-second boundary.
+- COVERAGE / VERIFICATION: The test now checks the first summary contains exactly two would-block drops, no summary is added inside the next window, and stop flushes exactly one no-buffer drop. Focused test, strict Swift format, `swift build`, `make validate-core` (110 tests), and 30 additional full `swift test` runs passed; all 30 logs contain the target test pass line.
+
 ### 1447 — Deployment-target fix accepted; full Apple matrix unblocked (review BUG-260720-2zh86a)
 - MILESTONE: BUG-260720-2zh86a accepted → done. `make validate-native` full Apple matrix no longer stops on the HEV/libssh2 deployment-target mismatch; packet-plane Apple builds and physical validation (12x6oq) unblocked on this axis.
 - VERIFICATION: Reviewer reran independently on the exact tree: `make validate-native` exit 0 (iOS device/sim + macOS provider/harness matrix, 110 Swift tests), `make validate-core` exit 0, `make validate-libssh2` real rekey/KEX exit 0. `otool -l` confirmed every slice: HEV ios/tvos minos 18.0, macos 15.0; ReluxLibSSH2 ios 18.0, macos 15.0 — no 10.14/11.0 records remain.

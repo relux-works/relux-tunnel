@@ -309,9 +309,15 @@ final class BridgeEventRecorder: @unchecked Sendable {
 }
 
 actor FakePacketFlow: PacketFlow {
+  private struct ReadCallWaiter {
+    let minimumCount: Int
+    let continuation: CheckedContinuation<Void, Never>
+  }
+
   private let events: BridgeEventRecorder
   private var queued: [FakePacketReadOutcome] = []
   private var readWaiter: CheckedContinuation<PacketReadBatch, Error>?
+  private var readCallWaiters: [ReadCallWaiter] = []
   private var isShutDown = false
   private(set) var writtenPackets: [TunnelPacket] = []
   private(set) var writtenBatches: [[TunnelPacket]] = []
@@ -329,6 +335,7 @@ actor FakePacketFlow: PacketFlow {
 
   func readPackets() async throws -> PacketReadBatch {
     readCallCount += 1
+    resumeReadCallWaiters()
     activeReadCount += 1
     maximumActiveReadCount = max(maximumActiveReadCount, activeReadCount)
     defer { activeReadCount -= 1 }
@@ -377,6 +384,22 @@ actor FakePacketFlow: PacketFlow {
       waiter.resume(throwing: error)
     } else {
       queued.append(.error(error))
+    }
+  }
+
+  func waitForReadCallCount(_ minimumCount: Int) async {
+    guard readCallCount < minimumCount else { return }
+    await withCheckedContinuation { continuation in
+      readCallWaiters.append(
+        ReadCallWaiter(minimumCount: minimumCount, continuation: continuation))
+    }
+  }
+
+  private func resumeReadCallWaiters() {
+    let ready = readCallWaiters.filter { $0.minimumCount <= readCallCount }
+    readCallWaiters.removeAll { $0.minimumCount <= readCallCount }
+    for waiter in ready {
+      waiter.continuation.resume()
     }
   }
 }
