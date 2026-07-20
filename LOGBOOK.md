@@ -5,6 +5,18 @@
 
 ## 2026-07-20
 
+### 0539 — Relay toolchain decision accepted (TASK-260715-3bdplx)
+- MILESTONE: Go 1.26.5 relay toolchain decision reviewed and accepted; unblocks TASK-260715-1ccx3l, 1g9cyt, 32umrc and the M2 relay build with no open language/tooling question.
+- VERIFICATION: Reviewer independently confirmed both `.temp/TASK-260715-3bdplx/go1265-{a,b}` trees byte-identical with SHA-256 matching the decision table; Linux outputs are static stripped ELF with no dynamic section; Darwin outputs link only `libSystem`+`libresolv` with `minos 12.0`; embedded build info shows go1.26.5, CGO_ENABLED=0, correct GOOS/GOARCH/GOAMD64/GOARM64, trimpath. Reviewer reran the stdio+UDP proof: native arm64 PASS, Rosetta amd64 PASS.
+- VERIFICATION: External claims fact-checked live — all four Go 1.26.5 archive SHA-256 match go.dev; Syft archive SHA-256 matches its checksums file and the binary reports v1.48.0 commit `3e2bc6e`; SPDX 2.3 SBOMs contain `stdlib@go1.26.5` with declared BSD-3-Clause. Evidence: .task-board/.resources/TASK-260715-3bdplx/TASK-260715-3bdplx_review.md.
+- NOTE: Native Linux amd64/arm64 and Intel-Mac execution remain mandatory release stop-line gates, correctly recorded as release CI scope, not a cross-build blocker.
+
+### 0533 — Relay toolchain selects cgo-free Go 1.26.5 (TASK-260715-3bdplx)
+- DECISION: Implement `relux-relay` as a standard-library-only Go module pinned to official Go 1.26.5; build `linux/{amd64,arm64}` and `darwin/{amd64,arm64}` with `CGO_ENABLED=0`, exact output names, SPDX SBOMs, and a versioned JSON SHA-256 manifest.
+- FINDING: cgo-free Linux outputs are fully static without musl or glibc; Darwin outputs necessarily retain `libSystem` and `libresolv`. The selected Go toolchain raises the remote macOS floor to 12.0; the project sets a conservative Linux 4.4 floor.
+- VERIFICATION: A hello-stdio + UDP proof cross-built all four targets twice byte-identically with Go 1.26.5; macOS arm64 ran natively and amd64 under Rosetta 2. Native Linux and Intel-Mac release smoke remain mandatory stop-line CI gates because this host had no Linux runtime or Intel hardware. Evidence: `.research/260720_task-260715-3bdplx-relay-language-cross-build-toolchain.md`.
+- ANOMALY: The initially installed Go 1.25.5 was behind security patch releases; the proof was repeated with current Go 1.26.5. Toolchain patch freshness is now an explicit 48-hour security-update policy.
+
 ### 0517 — PacketFlowBridge implementation accepted (TASK-260715-3o0co4)
 - MILESTONE: Public socket-pair PacketFlowBridge reviewed and accepted; the p89bdj contract's ownership ordering, first-error-wins termination, exact 30-counter/12-gauge schema, bounded slices, and prohibitions are all verified in `Sources/ReluxTunnelCore/PacketFlowBridge.swift`.
 - VERIFICATION: Reviewer independently reran swift build, swift test (39/39 in 5 suites), swift test --sanitize=thread --filter PacketFlowBridge (13/13, zero TSan reports), swift format lint --strict, make check-core-boundaries, and prohibition greps. Evidence: .task-board/.resources/TASK-260715-3o0co4/TASK-260715-3o0co4_review.md.
