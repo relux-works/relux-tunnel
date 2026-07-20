@@ -1,34 +1,304 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Relux Works <engineering@relux.works>
 Date: Mon, 20 Jul 2026 00:00:00 +0000
-Subject: [PATCH] session: expose client-initiated key re-exchange
+Subject: [PATCH] session: expose rekey and global-request observation
 
-Export the existing nonblocking key-exchange state machine through the public
-session API. The wrapper uses the same blocking adjustment convention as the
-rest of libssh2 and invokes the established reexchange path without changing
-algorithms or cryptographic implementation.
+Export the existing nonblocking client key-exchange state machine, typed
+server-initiated KEX lifecycle observation, and a single reply-correlated
+global request. All packet transmission and reply handling continues through
+libssh2's established encrypted transport and ordered packet brigade.
 ---
- include/libssh2.h |  1 +
- src/session.c     | 13 +++++++++++++
- 2 files changed, 14 insertions(+)
+ include/libssh2.h  |  49 ++++++++++++++++
+ src/keepalive.c    | 100 ++++++++++++++++++++++++++++++++
+ src/kex.c          |  17 ++++++
+ src/libssh2_priv.h |  10 ++++
+ src/packet.c       |   8 +++
+ src/session.c      |  38 ++++++++++++
+ 6 files changed, 222 insertions(+)
 
 diff --git a/include/libssh2.h b/include/libssh2.h
-index 815772e..db584f9 100644
+index b95ee76..2161c70 100644
 --- a/include/libssh2.h
 +++ b/include/libssh2.h
-@@ -613,6 +613,7 @@ LIBSSH2_API int libssh2_session_startup(LIBSSH2_SESSION *session, int sock);
+@@ -369,6 +369,34 @@ typedef struct _LIBSSH2_SK_SIG_INFO {
+ #endif
+ typedef struct _LIBSSH2_SESSION                     LIBSSH2_SESSION;
+ typedef struct _LIBSSH2_CHANNEL                     LIBSSH2_CHANNEL;
++
++/* Latest lifecycle state for a server-initiated key exchange. The generation
++ * increments exactly once when an inbound KEXINIT starts a new exchange. */
++typedef enum {
++    LIBSSH2_SERVER_KEX_NONE = 0,
++    LIBSSH2_SERVER_KEX_STARTED,
++    LIBSSH2_SERVER_KEX_SUCCEEDED,
++    LIBSSH2_SERVER_KEX_FAILED
++} LIBSSH2_SERVER_KEX_STATE;
++
++typedef struct {
++    LIBSSH2_SERVER_KEX_STATE state;
++    libssh2_uint64_t generation;
++} LIBSSH2_SERVER_KEX_STATUS;
++
++typedef void (*LIBSSH2_SERVER_KEX_OBSERVER)(
++    LIBSSH2_SESSION *session,
++    const LIBSSH2_SERVER_KEX_STATUS *status,
++    void *abstract);
++
++typedef enum {
++    LIBSSH2_GLOBAL_REQUEST_REPLY_NONE = 0,
++    LIBSSH2_GLOBAL_REQUEST_REPLY_SUCCESS,
++    LIBSSH2_GLOBAL_REQUEST_REPLY_FAILURE
++} LIBSSH2_GLOBAL_REQUEST_REPLY;
++
++#define LIBSSH2_GLOBAL_REQUEST_MAX_NAME_LENGTH 255
++#define LIBSSH2_GLOBAL_REQUEST_MAX_PAYLOAD_LENGTH 1024
+ typedef struct _LIBSSH2_LISTENER                    LIBSSH2_LISTENER;
+ typedef struct _LIBSSH2_KNOWNHOSTS                  LIBSSH2_KNOWNHOSTS;
+ typedef struct _LIBSSH2_AGENT                       LIBSSH2_AGENT;
+@@ -613,6 +641,27 @@ LIBSSH2_API int libssh2_session_startup(LIBSSH2_SESSION *session, int sock);
  #endif
  LIBSSH2_API int libssh2_session_handshake(LIBSSH2_SESSION *session,
                                            libssh2_socket_t sock);
 +LIBSSH2_API int libssh2_session_rekey(LIBSSH2_SESSION *session);
++/* The observer runs synchronously inside libssh2. It must copy STATUS before
++ * returning and must not re-enter the session. */
++LIBSSH2_API void libssh2_session_server_kex_observer_set(
++    LIBSSH2_SESSION *session,
++    LIBSSH2_SERVER_KEX_OBSERVER observer,
++    void *abstract);
++LIBSSH2_API int libssh2_session_server_kex_status(
++    LIBSSH2_SESSION *session,
++    LIBSSH2_SERVER_KEX_STATUS *status);
++/* Sends one want-reply SSH global request. Repeat with identical arguments
++ * after EAGAIN or TIMEOUT until REPLY completes. Only one may be outstanding;
++ * keeping timed-out requests pending prevents a late reply from being
++ * correlated with a newer request. */
++LIBSSH2_API int libssh2_session_global_request(
++    LIBSSH2_SESSION *session,
++    const char *request_name,
++    size_t request_name_len,
++    const unsigned char *payload,
++    size_t payload_len,
++    LIBSSH2_GLOBAL_REQUEST_REPLY *reply);
  LIBSSH2_API int libssh2_session_disconnect_ex(LIBSSH2_SESSION *session,
                                                int reason,
                                                const char *description,
+diff --git a/src/keepalive.c b/src/keepalive.c
+index 061e1d9..3f90ac5 100644
+--- a/src/keepalive.c
++++ b/src/keepalive.c
+@@ -31,10 +31,110 @@
+  */
+ 
+ #include "libssh2_priv.h"
++#include "packet.h"
+ #include "transport.h" /* ssh2_transport_write() */
+ 
+ /* Keep-alive stuff. */
+ 
++static void global_request_reset(LIBSSH2_SESSION *session)
++{
++    SSH2_SAFEFREE(session, session->globalReq_packet);
++    session->globalReq_packet_len = 0;
++    session->globalReq_state = ssh2_NB_state_idle;
++    memset(&session->globalReq_packet_requirev_state, 0,
++           sizeof(session->globalReq_packet_requirev_state));
++}
++
++int libssh2_session_global_request(
++    LIBSSH2_SESSION *session,
++    const char *request_name,
++    size_t request_name_len,
++    const unsigned char *payload,
++    size_t payload_len,
++    LIBSSH2_GLOBAL_REQUEST_REPLY *reply)
++{
++    static const unsigned char reply_codes[3] =
++        { SSH_MSG_REQUEST_SUCCESS, SSH_MSG_REQUEST_FAILURE, 0 };
++    unsigned char *data;
++    size_t data_len;
++    int rc;
++
++    if(!session || !reply)
++        return LIBSSH2_ERROR_BAD_USE;
++    if(!request_name || !request_name_len ||
++       request_name_len > LIBSSH2_GLOBAL_REQUEST_MAX_NAME_LENGTH ||
++       payload_len > LIBSSH2_GLOBAL_REQUEST_MAX_PAYLOAD_LENGTH ||
++       (payload_len && !payload))
++        return LIBSSH2_ERROR_INVAL;
++
++    *reply = LIBSSH2_GLOBAL_REQUEST_REPLY_NONE;
++
++    if(session->globalReq_state == ssh2_NB_state_idle) {
++        unsigned char *cursor;
++
++        session->globalReq_packet_len = 1 + 4 + request_name_len + 1 +
++            payload_len;
++        cursor = session->globalReq_packet =
++            SSH2_ALLOC(session, session->globalReq_packet_len);
++        if(!cursor)
++            return ssh2_err(session, LIBSSH2_ERROR_ALLOC,
++                            "Unable to allocate global-request packet");
++
++        *(cursor++) = SSH_MSG_GLOBAL_REQUEST;
++        ssh2_store_str(&cursor, request_name, request_name_len);
++        *(cursor++) = 1; /* want_reply */
++        if(payload_len)
++            memcpy(cursor, payload, payload_len);
++        session->globalReq_state = ssh2_NB_state_created;
++    }
++    else {
++        const unsigned char *packet_name = session->globalReq_packet + 5;
++        const unsigned char *packet_payload = packet_name + request_name_len + 1;
++
++        if(session->globalReq_packet_len !=
++           1 + 4 + request_name_len + 1 + payload_len ||
++           ssh2_ntohu32(session->globalReq_packet + 1) != request_name_len ||
++           memcmp(packet_name, request_name, request_name_len) ||
++           (payload_len && memcmp(packet_payload, payload, payload_len)))
++            return LIBSSH2_ERROR_BAD_USE;
++    }
++
++    if(session->globalReq_state == ssh2_NB_state_created) {
++        rc = ssh2_transport_send(session, session->globalReq_packet,
++                                 session->globalReq_packet_len, NULL, 0);
++        if(rc == LIBSSH2_ERROR_EAGAIN)
++            return rc;
++        if(rc) {
++            global_request_reset(session);
++            return rc;
++        }
++        session->globalReq_state = ssh2_NB_state_sent;
++    }
++
++    rc = ssh2_packet_requirev(session, reply_codes, &data, &data_len,
++                              0, NULL, 0,
++                              &session->globalReq_packet_requirev_state);
++    if(rc == LIBSSH2_ERROR_EAGAIN || rc == LIBSSH2_ERROR_TIMEOUT)
++        return rc;
++    if(rc) {
++        global_request_reset(session);
++        return rc;
++    }
++    if(data_len < 1) {
++        SSH2_FREE(session, data);
++        global_request_reset(session);
++        return ssh2_err(session, LIBSSH2_ERROR_PROTO,
++                        "Invalid global-request reply");
++    }
++
++    *reply = data[0] == SSH_MSG_REQUEST_SUCCESS ?
++        LIBSSH2_GLOBAL_REQUEST_REPLY_SUCCESS :
++        LIBSSH2_GLOBAL_REQUEST_REPLY_FAILURE;
++    SSH2_FREE(session, data);
++    global_request_reset(session);
++    return 0;
++}
++
+ void libssh2_keepalive_config(LIBSSH2_SESSION *session,
+                               int want_reply,
+                               unsigned int interval_s)
+diff --git a/src/kex.c b/src/kex.c
+index 1d940d0..c7bb348 100644
+--- a/src/kex.c
++++ b/src/kex.c
+@@ -3641,6 +3641,19 @@ static int kex_agree_methods(LIBSSH2_SESSION *session, unsigned char *data,
+  *
+  * Returns some errors without ssh2_err()
+  */
++static void server_kex_complete(LIBSSH2_SESSION *session, int rc)
++{
++    if(session->server_kex_status.state != LIBSSH2_SERVER_KEX_STARTED)
++        return;
++
++    session->server_kex_status.state = rc ? LIBSSH2_SERVER_KEX_FAILED :
++        LIBSSH2_SERVER_KEX_SUCCEEDED;
++    if(session->server_kex_observer)
++        session->server_kex_observer(
++            session, &session->server_kex_status,
++            session->server_kex_observer_abstract);
++}
++
+ int ssh2_kex_exchange(LIBSSH2_SESSION *session, int reexchange,
+                       struct key_exchange_state *key_state)
+ {
+@@ -3692,6 +3705,7 @@ int ssh2_kex_exchange(LIBSSH2_SESSION *session, int reexchange,
+                 session->state &= ~SSH2_STATE_INITIAL_KEX;
+                 session->state &= ~SSH2_STATE_KEX_ACTIVE;
+                 session->state &= ~SSH2_STATE_EXCHANGING_KEYS;
++                server_kex_complete(session, -1);
+                 return -1;
+             }
+ 
+@@ -3717,6 +3731,7 @@ int ssh2_kex_exchange(LIBSSH2_SESSION *session, int reexchange,
+                 session->state &= ~SSH2_STATE_INITIAL_KEX;
+                 session->state &= ~SSH2_STATE_KEX_ACTIVE;
+                 session->state &= ~SSH2_STATE_EXCHANGING_KEYS;
++                server_kex_complete(session, -1);
+                 return -1;
+             }
+ 
+@@ -3762,6 +3777,8 @@ int ssh2_kex_exchange(LIBSSH2_SESSION *session, int reexchange,
+ 
+     key_state->state = ssh2_NB_state_idle;
+ 
++    server_kex_complete(session, rc);
++
+     return rc;
+ }
+ 
+diff --git a/src/libssh2_priv.h b/src/libssh2_priv.h
+index 8511037..e50da3a 100644
+--- a/src/libssh2_priv.h
++++ b/src/libssh2_priv.h
+@@ -707,6 +707,10 @@ struct _LIBSSH2_SESSION {
+ 
+     int state;
+ 
++    LIBSSH2_SERVER_KEX_STATUS server_kex_status;
++    LIBSSH2_SERVER_KEX_OBSERVER server_kex_observer;
++    void *server_kex_observer_abstract;
++
+     /* Flag options */
+     struct flags flag;
+ 
+@@ -960,6 +964,12 @@ struct _LIBSSH2_SESSION {
+     int keepalive_want_reply;
+     ssh2_time_t keepalive_last_sent;
+ 
++    /* State for one reply-requiring global request. */
++    ssh2_NB_states globalReq_state;
++    unsigned char *globalReq_packet;
++    size_t globalReq_packet_len;
++    struct packet_requirev_state globalReq_packet_requirev_state;
++
+     /* Configurable timeout for packets. Replaces LIBSSH2_READ_TIMEOUT */
+     ssh2_timediff_t packet_read_timeout;
+ };
+diff --git a/src/packet.c b/src/packet.c
+index a3b2cdb..77d4f48 100644
+--- a/src/packet.c
++++ b/src/packet.c
+@@ -1362,6 +1362,14 @@ ssh2_packet_add_jump_authagent:
+         memset(&session->startup_key_state, 0,
+                sizeof(session->startup_key_state));
+ 
++        if(session->server_kex_status.generation < UINT64_MAX)
++            session->server_kex_status.generation++;
++        session->server_kex_status.state = LIBSSH2_SERVER_KEX_STARTED;
++        if(session->server_kex_observer)
++            session->server_kex_observer(
++                session, &session->server_kex_status,
++                session->server_kex_observer_abstract);
++
+         /*
+          * If there was a key reexchange failure, let's hope we did not
+          * send NEWKEYS yet, otherwise remote drops us like a rock
 diff --git a/src/session.c b/src/session.c
-index b9b22c1..833ab4c 100644
+index 6235c47..1c33904 100644
 --- a/src/session.c
 +++ b/src/session.c
-@@ -814,6 +814,19 @@ int libssh2_session_handshake(LIBSSH2_SESSION *session, libssh2_socket_t sock)
+@@ -815,6 +815,42 @@ int libssh2_session_handshake(LIBSSH2_SESSION *session, libssh2_socket_t sock)
      return rc;
  }
  
@@ -45,9 +315,40 @@ index b9b22c1..833ab4c 100644
 +    return rc;
 +}
 +
++void libssh2_session_server_kex_observer_set(
++    LIBSSH2_SESSION *session,
++    LIBSSH2_SERVER_KEX_OBSERVER observer,
++    void *abstract)
++{
++    if(!session)
++        return;
++
++    session->server_kex_observer = observer;
++    session->server_kex_observer_abstract = abstract;
++}
++
++int libssh2_session_server_kex_status(
++    LIBSSH2_SESSION *session,
++    LIBSSH2_SERVER_KEX_STATUS *status)
++{
++    if(!session || !status)
++        return LIBSSH2_ERROR_BAD_USE;
++
++    *status = session->server_kex_status;
++    return 0;
++}
++
  #ifndef LIBSSH2_NO_DEPRECATED
  /*
   * DEPRECATED. Use libssh2_session_handshake() instead! This function is not
+@@ -1026,6 +1062,8 @@ static int session_free(LIBSSH2_SESSION *session)
+     if(session->server_hostkey)
+         SSH2_FREE(session, session->server_hostkey);
+ 
++    SSH2_SAFEFREE(session, session->globalReq_packet);
++
+     /* error string */
+     if(session->err_msg && ((session->err_flags & SSH2_ERR_FLAG_DUP) != 0))
+         SSH2_FREE(session, SSH2_UNCONST(session->err_msg));
 -- 
 2.50.1
-

@@ -1,0 +1,24 @@
+python3 scripts/libssh2-fork-tool.py verify
++ xcodebuild -version
++ /Users/iv/Developer/relux-tunnel/scripts/native-dependency-tool.py inspect --dependency libssh2-openssl --xcframework /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework --verify-lock
+libssh2-openssl XCFramework is static and extension-safe
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64/libReluxLibSSH2.a
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64_x86_64-simulator/libReluxLibSSH2.a
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/macos-arm64_x86_64/libReluxLibSSH2.a
+ReluxLibSSH2 patch, artifact, public API, and notices are verified
+python3 scripts/libssh2-fork-tool.py test-rekey
++ xcodebuild -version
++ /Users/iv/Developer/relux-tunnel/scripts/native-dependency-tool.py inspect --dependency libssh2-openssl --xcframework /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework --verify-lock
+libssh2-openssl XCFramework is static and extension-safe
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64/libReluxLibSSH2.a
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64_x86_64-simulator/libReluxLibSSH2.a
++ nm -gU /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/macos-arm64_x86_64/libReluxLibSSH2.a
++ clang -Wall -Wextra -Werror -I /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/macos-arm64_x86_64/Headers /Users/iv/Developer/relux-tunnel/Dependencies/ReluxLibSSH2/Tests/rekey_test.c /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/macos-arm64_x86_64/libReluxLibSSH2.a -framework Security -framework CoreFoundation -o /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-libssh2-rekey-test-3l5gupnv/rekey-test
++ /usr/bin/ssh-keygen -q -t ed25519 -N '' -f /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-libssh2-rekey-test-3l5gupnv/sshd-host-key
++ /usr/bin/ssh-keygen -q -t ed25519 -N '' -f /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-libssh2-rekey-test-3l5gupnv/client-key
++ /usr/sbin/sshd -t -f /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-libssh2-rekey-test-3l5gupnv/sshd_config
++ /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-libssh2-rekey-test-3l5gupnv/rekey-test 127.0.0.1 61379 iv /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-libssh2-rekey-test-3l5gupnv/client-key.pub /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/relux-libssh2-rekey-test-3l5gupnv/client-key
+command failed: count=-43 total=0
+reply-correlated global requests completed with RTT=29ms, 2 EAGAIN result(s), and 1 deterministic timeout/miss
+client rekey completed after 3 EAGAIN result(s); post-rekey channels succeeded; 14 server-KEX transitions observed
+client/server KEX observation plus reply-correlated global-request RTT and timeout paths succeeded

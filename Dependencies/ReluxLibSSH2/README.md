@@ -7,17 +7,24 @@ archives, verifies both SHA-256 values before extraction or patching, applies th
 single allowlisted patch in a disposable directory, and produces the checked-in
 static XCFramework.
 
-The public addition is:
+The public additions are:
 
 ```c
 int libssh2_session_rekey(LIBSSH2_SESSION *session);
+void libssh2_session_server_kex_observer_set(...);
+int libssh2_session_server_kex_status(...);
+int libssh2_session_global_request(...);
 ```
 
-It drives the existing `ssh2_kex_exchange(session, 1, ...)` state machine. In
-nonblocking mode callers repeat after `LIBSSH2_ERROR_EAGAIN`; blocking mode uses
-libssh2's normal socket-wait adjustment. No private header is distributed by the
-XCFramework.
+The rekey operation drives the existing `ssh2_kex_exchange(session, 1, ...)`
+state machine. The observer reports server-initiated start/success/failure with
+a monotonic generation, directly from inbound KEXINIT and the existing KEX
+completion paths. The global-request operation sends one bounded, want-reply
+request through libssh2's normal transport and correlates the ordered
+success/failure reply. A timed-out request remains pending so a late reply
+cannot be mistaken for a newer request. In nonblocking mode callers repeat
+after `LIBSSH2_ERROR_EAGAIN` (and repeat the same request after
+`LIBSSH2_ERROR_TIMEOUT`). No private header is distributed by the XCFramework.
 
 See `UPSTREAM.md` for exact source inputs and `RELUX_DELTA.md` for the delta and
 rebase procedure.
-

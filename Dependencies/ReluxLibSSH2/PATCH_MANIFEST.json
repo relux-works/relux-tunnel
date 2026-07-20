@@ -10,19 +10,26 @@
   "patches": [
     {
       "path": "patches/0001-public-client-rekey.patch",
-      "sha256": "873b3c2bad8ba481f7122922d075333f736853f8efab6cd39edc35098d111924",
+      "sha256": "79e2464813e3c3add9486b2fb8c9e50004b48b246bbc771b5dd1675a152fa30e",
       "allowed_paths": [
         "include/libssh2.h",
+        "src/keepalive.c",
+        "src/kex.c",
+        "src/libssh2_priv.h",
+        "src/packet.c",
         "src/session.c"
       ],
       "public_symbols": [
-        "libssh2_session_rekey"
+        "libssh2_session_rekey",
+        "libssh2_session_server_kex_observer_set",
+        "libssh2_session_server_kex_status",
+        "libssh2_session_global_request"
       ]
     }
   ],
   "delta_policy": {
     "maximum_patch_count": 1,
-    "maximum_changed_paths": 2,
+    "maximum_changed_paths": 6,
     "crypto_or_algorithm_changes_allowed": false,
     "private_headers_exported": false
   }

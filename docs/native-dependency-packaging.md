@@ -138,8 +138,8 @@ The libssh2 candidate uses the C side of the same seam. `ReluxLibSSH2` is a
 static XCFramework binary target rebuilt from checksum-verified libssh2
 `a34302491c164d53c900fec9b3cbb050ecebe719` plus OpenSSL `3.5.7`. The source
 tool verifies both archives before extraction or patching, applies the single
-two-file allowlisted patch in a disposable tree, and merges static libssh2 and
-libcrypto archives per architecture. It then enforces the existing
+six-file allowlisted observation patch in a disposable tree, and merges static
+libssh2 and libcrypto archives per architecture. It then enforces the existing
 architecture, minimum-OS, static-link, forbidden-symbol, extension-safety,
 absolute-path, public-header, notice, and artifact-lock gates. Its stable
 logical OpenSSL prefix prevents task-local build paths from entering runtime

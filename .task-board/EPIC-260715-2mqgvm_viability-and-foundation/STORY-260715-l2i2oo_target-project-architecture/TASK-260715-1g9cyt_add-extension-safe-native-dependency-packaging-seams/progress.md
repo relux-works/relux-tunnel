@@ -8,7 +8,7 @@ done
 2026-07-15T01:00:13Z
 
 ## Last Update
-2026-07-20T06:35:36Z
+2026-07-20T07:22:16Z
 
 ## Blocked By
 - TASK-260715-2nfz7w
@@ -20,6 +20,7 @@ done
 - TASK-260715-1af33i
 - TASK-260715-1ozsb6
 - TASK-260720-3vwls7
+- TASK-260720-2sltje
 
 ## Checklist
 - [x] Native fixture builds for every required Apple configuration

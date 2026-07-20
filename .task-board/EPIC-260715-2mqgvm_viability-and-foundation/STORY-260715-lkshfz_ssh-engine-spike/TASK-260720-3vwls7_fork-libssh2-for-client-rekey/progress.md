@@ -8,7 +8,7 @@ done
 2026-07-20T06:34:55Z
 
 ## Last Update
-2026-07-20T07:12:24Z
+2026-07-20T07:22:16Z
 
 ## Blocked By
 - TASK-260715-28ok1k
@@ -16,6 +16,7 @@ done
 
 ## Blocks
 - TASK-260715-1ozsb6
+- TASK-260720-2sltje
 
 ## Checklist
 - [x] Public client-rekey exported over existing ssh2_kex_exchange (no private-symbol import)

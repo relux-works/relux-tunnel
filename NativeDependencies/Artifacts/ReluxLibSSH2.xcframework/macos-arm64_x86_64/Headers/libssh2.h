@@ -369,6 +369,34 @@ typedef struct _LIBSSH2_SK_SIG_INFO {
 #endif
 typedef struct _LIBSSH2_SESSION                     LIBSSH2_SESSION;
 typedef struct _LIBSSH2_CHANNEL                     LIBSSH2_CHANNEL;
+
+/* Latest lifecycle state for a server-initiated key exchange. The generation
+ * increments exactly once when an inbound KEXINIT starts a new exchange. */
+typedef enum {
+    LIBSSH2_SERVER_KEX_NONE = 0,
+    LIBSSH2_SERVER_KEX_STARTED,
+    LIBSSH2_SERVER_KEX_SUCCEEDED,
+    LIBSSH2_SERVER_KEX_FAILED
+} LIBSSH2_SERVER_KEX_STATE;
+
+typedef struct {
+    LIBSSH2_SERVER_KEX_STATE state;
+    libssh2_uint64_t generation;
+} LIBSSH2_SERVER_KEX_STATUS;
+
+typedef void (*LIBSSH2_SERVER_KEX_OBSERVER)(
+    LIBSSH2_SESSION *session,
+    const LIBSSH2_SERVER_KEX_STATUS *status,
+    void *abstract);
+
+typedef enum {
+    LIBSSH2_GLOBAL_REQUEST_REPLY_NONE = 0,
+    LIBSSH2_GLOBAL_REQUEST_REPLY_SUCCESS,
+    LIBSSH2_GLOBAL_REQUEST_REPLY_FAILURE
+} LIBSSH2_GLOBAL_REQUEST_REPLY;
+
+#define LIBSSH2_GLOBAL_REQUEST_MAX_NAME_LENGTH 255
+#define LIBSSH2_GLOBAL_REQUEST_MAX_PAYLOAD_LENGTH 1024
 typedef struct _LIBSSH2_LISTENER                    LIBSSH2_LISTENER;
 typedef struct _LIBSSH2_KNOWNHOSTS                  LIBSSH2_KNOWNHOSTS;
 typedef struct _LIBSSH2_AGENT                       LIBSSH2_AGENT;
@@ -614,6 +642,26 @@ LIBSSH2_API int libssh2_session_startup(LIBSSH2_SESSION *session, int sock);
 LIBSSH2_API int libssh2_session_handshake(LIBSSH2_SESSION *session,
                                           libssh2_socket_t sock);
 LIBSSH2_API int libssh2_session_rekey(LIBSSH2_SESSION *session);
+/* The observer runs synchronously inside libssh2. It must copy STATUS before
+ * returning and must not re-enter the session. */
+LIBSSH2_API void libssh2_session_server_kex_observer_set(
+    LIBSSH2_SESSION *session,
+    LIBSSH2_SERVER_KEX_OBSERVER observer,
+    void *abstract);
+LIBSSH2_API int libssh2_session_server_kex_status(
+    LIBSSH2_SESSION *session,
+    LIBSSH2_SERVER_KEX_STATUS *status);
+/* Sends one want-reply SSH global request. Repeat with identical arguments
+ * after EAGAIN or TIMEOUT until REPLY completes. Only one may be outstanding;
+ * keeping timed-out requests pending prevents a late reply from being
+ * correlated with a newer request. */
+LIBSSH2_API int libssh2_session_global_request(
+    LIBSSH2_SESSION *session,
+    const char *request_name,
+    size_t request_name_len,
+    const unsigned char *payload,
+    size_t payload_len,
+    LIBSSH2_GLOBAL_REQUEST_REPLY *reply);
 LIBSSH2_API int libssh2_session_disconnect_ex(LIBSSH2_SESSION *session,
                                               int reason,
                                               const char *description,

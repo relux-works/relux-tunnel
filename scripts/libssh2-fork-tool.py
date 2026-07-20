@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify, build, and test the bounded Relux libssh2 client-rekey fork."""
+"""Verify, build, and test the bounded Relux libssh2 observation fork."""
 
 from __future__ import annotations
 
@@ -135,10 +135,22 @@ def verify_patch_manifest(item: dict[str, Any]) -> None:
         "LIBSSH2_API int libssh2_session_rekey(LIBSSH2_SESSION *session);",
         "ssh2_kex_exchange(session, 1, &session->startup_key_state)",
         "BLOCK_ADJUST(rc, session,",
+        "LIBSSH2_SERVER_KEX_STARTED",
+        "server_kex_complete(session, rc)",
+        "LIBSSH2_GLOBAL_REQUEST_MAX_PAYLOAD_LENGTH",
+        "libssh2_session_global_request(",
+        "ssh2_transport_send(session, session->globalReq_packet",
+        "ssh2_packet_requirev(session, reply_codes",
     )
     if any(fragment not in patch_text for fragment in required_fragments):
-        raise ForkError("libssh2 patch does not contain the required public wrapper")
-    prohibited = ("src/kex.c", "src/openssl.c", "src/crypto", "src/hostkey.c")
+        raise ForkError("libssh2 patch omits a required observation hook")
+    prohibited = (
+        "src/openssl.c",
+        "src/crypto",
+        "src/crypt.c",
+        "src/mac.c",
+        "src/hostkey.c",
+    )
     if any(path in patch_text for path in prohibited):
         raise ForkError("libssh2 patch touches prohibited crypto/algorithm surfaces")
 
@@ -254,10 +266,29 @@ def prepare_sources(
         )
     public_header = (patched_source / "include" / "libssh2.h").read_text()
     session_source = (patched_source / "src" / "session.c").read_text()
-    if "LIBSSH2_API int libssh2_session_rekey" not in public_header:
-        raise ForkError("patched public header does not export libssh2_session_rekey")
+    required_public = (
+        "LIBSSH2_API int libssh2_session_rekey",
+        "LIBSSH2_API void libssh2_session_server_kex_observer_set",
+        "LIBSSH2_API int libssh2_session_server_kex_status",
+        "LIBSSH2_API int libssh2_session_global_request",
+    )
+    if any(symbol not in public_header for symbol in required_public):
+        raise ForkError("patched public header omits a required observation API")
     if "ssh2_kex_exchange(session, 1, &session->startup_key_state)" not in session_source:
         raise ForkError("patched wrapper does not invoke the existing reexchange path")
+    packet_source = (patched_source / "src" / "packet.c").read_text()
+    kex_source = (patched_source / "src" / "kex.c").read_text()
+    keepalive_source = (patched_source / "src" / "keepalive.c").read_text()
+    if "LIBSSH2_SERVER_KEX_STARTED" not in packet_source or (
+        "server_kex_complete(session, rc)" not in kex_source
+    ):
+        raise ForkError("patched source omits server-KEX lifecycle observation")
+    if (
+        "ssh2_transport_send(session, session->globalReq_packet"
+        not in keepalive_source
+        or "ssh2_packet_requirev(session, reply_codes" not in keepalive_source
+    ):
+        raise ForkError("global request bypasses established transport/reply ordering")
     return libssh2_source, patched_source, openssl_source
 
 
@@ -518,8 +549,17 @@ def verify_artifact(item: dict[str, Any]) -> None:
         if actual_headers != sorted(item["integration"]["public_headers"]):
             raise ForkError(f"unexpected public headers in {slice_dir}: {actual_headers}")
         public_header = (headers / "libssh2.h").read_text(encoding="utf-8")
-        if "LIBSSH2_API int libssh2_session_rekey" not in public_header:
-            raise ForkError("XCFramework public header omits libssh2_session_rekey")
+        required_declarations = (
+            "LIBSSH2_API int libssh2_session_rekey",
+            "LIBSSH2_API void libssh2_session_server_kex_observer_set",
+            "LIBSSH2_API int libssh2_session_server_kex_status",
+            "LIBSSH2_API int libssh2_session_global_request",
+        )
+        if any(
+            declaration not in public_header
+            for declaration in required_declarations
+        ):
+            raise ForkError("XCFramework public header omits an observation API")
         if (headers / "libssh2_priv.h").exists():
             raise ForkError("private libssh2 header leaked into XCFramework")
 
@@ -643,6 +683,8 @@ def test_rekey(item: dict[str, Any]) -> None:
             stderr=subprocess.DEVNULL,
             text=True,
         )
+        client_failure: ForkError | None = None
+        client_result = ""
         try:
             deadline = time.monotonic() + 5
             while time.monotonic() < deadline:
@@ -656,17 +698,20 @@ def test_rekey(item: dict[str, Any]) -> None:
             else:
                 raise ForkError("test sshd did not become ready")
 
-            client_result = run(
-                [
-                    str(client),
-                    "127.0.0.1",
-                    str(port),
-                    username,
-                    str(client_key.with_suffix(".pub")),
-                    str(client_key),
-                ],
-                capture=True,
-            )
+            try:
+                client_result = run(
+                    [
+                        str(client),
+                        "127.0.0.1",
+                        str(port),
+                        username,
+                        str(client_key.with_suffix(".pub")),
+                        str(client_key),
+                    ],
+                    capture=True,
+                )
+            except ForkError as error:
+                client_failure = error
         finally:
             server.terminate()
             try:
@@ -676,13 +721,23 @@ def test_rekey(item: dict[str, Any]) -> None:
                 server.wait(timeout=5)
 
         log = log_path.read_text(encoding="utf-8", errors="replace")
+        if client_failure:
+            tail = "\n".join(log.splitlines()[-120:])
+            raise ForkError(f"{client_failure}\nsshd log tail:\n{tail}")
         assert_rekey_log(log)
         if "EAGAIN result(s)" not in client_result:
             raise ForkError("client test did not exercise nonblocking EAGAIN rekey")
         print(client_result.strip())
+        required_client_evidence = (
+            "reply-correlated global requests completed with RTT=",
+            "deterministic timeout/miss",
+            "server-KEX transitions observed",
+        )
+        if any(evidence not in client_result for evidence in required_client_evidence):
+            raise ForkError("client test omitted observation/timeout evidence")
         print(
-            "client-initiated and server-initiated KEX each installed inbound/outbound "
-            "NEWKEYS; post-rekey channels succeeded"
+            "client/server KEX observation plus reply-correlated global-request "
+            "RTT and timeout paths succeeded"
         )
 
 

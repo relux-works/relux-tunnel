@@ -137,7 +137,12 @@
           "libssh2_sftp.h",
           "module.modulemap"
         ],
-        "required_symbols": ["libssh2_session_rekey"]
+        "required_symbols": [
+          "libssh2_session_rekey",
+          "libssh2_session_server_kex_observer_set",
+          "libssh2_session_server_kex_status",
+          "libssh2_session_global_request"
+        ]
       },
       "compiler": {
         "xcode_build": "17F42",
@@ -274,21 +279,21 @@
       "artifact": {
         "file_sha256": {
           "Info.plist": "c2f94cb9df3976a873298d7ce88cb37d30e74027a6192e659ab815deaa22f1a4",
-          "ios-arm64/Headers/libssh2.h": "27da2886742f5d20c169a88b9fad43a25fabd9fd509d8a74ff41bcf877e5badd",
+          "ios-arm64/Headers/libssh2.h": "aa542cff4e0e64927983da8c50b0315cd24c6d097fcdd42809d2e3b0878625bf",
           "ios-arm64/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
           "ios-arm64/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
           "ios-arm64/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
-          "ios-arm64/libReluxLibSSH2.a": "8b05f46296fc8851b846678405c98710eaddf740668c8ce64ba230ea34041484",
-          "ios-arm64_x86_64-simulator/Headers/libssh2.h": "27da2886742f5d20c169a88b9fad43a25fabd9fd509d8a74ff41bcf877e5badd",
+          "ios-arm64/libReluxLibSSH2.a": "8049c3340afe4fd257c2ad872d7f5a0fa5a8a65679ce6840ed11d6f83a161f74",
+          "ios-arm64_x86_64-simulator/Headers/libssh2.h": "aa542cff4e0e64927983da8c50b0315cd24c6d097fcdd42809d2e3b0878625bf",
           "ios-arm64_x86_64-simulator/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
           "ios-arm64_x86_64-simulator/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
           "ios-arm64_x86_64-simulator/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
-          "ios-arm64_x86_64-simulator/libReluxLibSSH2.a": "18cb8a1bdd90d3e2c3a967a3d91ffd988fb3255863cd003a12b3b8ed9e7c25a4",
-          "macos-arm64_x86_64/Headers/libssh2.h": "27da2886742f5d20c169a88b9fad43a25fabd9fd509d8a74ff41bcf877e5badd",
+          "ios-arm64_x86_64-simulator/libReluxLibSSH2.a": "ff82b89b03fe8bfe14e042fa4628d2ea34a618b0413cb755f45e684e9b2edfbd",
+          "macos-arm64_x86_64/Headers/libssh2.h": "aa542cff4e0e64927983da8c50b0315cd24c6d097fcdd42809d2e3b0878625bf",
           "macos-arm64_x86_64/Headers/libssh2_publickey.h": "38d598f704c74a49e38fb922aa42675b020b2d7c139ae49dbfd828010a468352",
           "macos-arm64_x86_64/Headers/libssh2_sftp.h": "a29919f96a84c3e061bd1d2e417b9eadc4afa48ee6d179b4480661ce953472b3",
           "macos-arm64_x86_64/Headers/module.modulemap": "e6fec44cf52da3780332f975ccbb5eb5d1d8239f675ade075a1bcfb4187c689a",
-          "macos-arm64_x86_64/libReluxLibSSH2.a": "836e3a5dad2b43b7e62677437f2a269c90383f4e8563c09428ecc6349b7b15ed"
+          "macos-arm64_x86_64/libReluxLibSSH2.a": "cbbcd84691fb634875e8643aad8493414ce79d57e33aed7cbf9b7a08798d8c13"
         }
       }
     },
