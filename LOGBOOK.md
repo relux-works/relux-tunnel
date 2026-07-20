@@ -5,6 +5,13 @@
 
 ## 2026-07-20
 
+### 1847 — Incremental relay envelope codec is bounded and cross-language equivalent (TASK-260715-89h7cw)
+- IMPLEMENTATION: Swift and Go now encode the four-byte big-endian body length plus type/flags/association ID as separate header/payload write slices, and decode arbitrary partial/coalesced stream reads while retaining at most one negotiated frame plus the fixed prefix. Prefix bounds are checked before the first body allocation; generated message metadata drives direction, association-ID, fixed-payload, reserved-flag, and negotiated DNS-priority validation.
+- DECISION: One `consume` call is transactional when a later coalesced frame is session-fatal: frames completed earlier in that same call are not returned or counted, while frames returned by earlier calls remain counted. This keeps the throwing Swift API and mirrored Go behavior deterministic and preserves `inputBytes = outputBytes + retainedBytes + discardedBytes` after both success and failure.
+- SECURITY: Terminal failures expose only finite code/phase/session/closeSession fields. The metadata hook receives no payload bytes, and its error text is collapsed to `metadataRejected`; tests prove attacker payload/destination text does not enter errors or metrics.
+- REWORK: The Swift codec suite type is `RelayProtocolByteCodecTests`, so the frozen `swift test --filter RelayProtocol` step now selects it. `make relay-protocol-check` visibly runs the envelope suite and passes 29 tests across the generated-constants, handshake, and codec suites while retaining the mirrored Go smoke package.
+- VERIFICATION: Strict Swift format, gofmt, Go vet/test under `CGO_ENABLED=0`, a 3-second Go fuzz pass (968,055 executions), every payload size through the 2048-byte negotiated floor, every split of a maximum accepted frame, 139 Swift tests, schema/codegen drift checks, core-boundary validation, and final `swift build` all pass.
+
 ### 1807 — Protocol v1 handshake review findings corrected (TASK-260715-1y1g1u rework)
 - FIX: Swift and Go now derive every local-only `RelayEffectiveLimits` field as `min(generated peer default or fixed constant, injected config)`. Lower injected caps remain effective, while valid above-default configuration cannot raise the immutable generation snapshot; negotiated `effectiveMaxFrame` remains independent.
 - FIX: Both incremental state machines classify a full or partial generated `RLXR` prefix already present after the accepted hello in the same callback as `duplicateHello` before publishing success, while preserving legal coalesced hello-plus-frame input.
