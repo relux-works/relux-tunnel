@@ -5,6 +5,12 @@
 
 ## 2026-07-20
 
+### 1208 — libssh2 adapter hits third-round channel/exec/window API boundary (TASK-260715-1ozsb6)
+- BLOCKER: Pinned `ssh2_channel_read` automatically sends WINDOW_ADJUST before returning consumer bytes when remaining credit crosses its private threshold. There is no public manual-window mode, so consumer-earned credit and the immutable advertised cap cannot be enforced.
+- BLOCKER: `ssh2_channel_open` parses all RFC 4254 rejection reasons, then collapses them to `LIBSSH2_ERROR_CHANNEL_FAILURE`; no public typed/numeric reason survives. The remaining diagnostic string is not a stable control-flow API.
+- BLOCKER: Channels store only integer `exit_status` defaulting to zero and an optional signal name. The public API cannot distinguish explicit status 0 from no exit metadata and discards the RFC `core dumped` signal bit.
+- ROUTING: This is the third fork-gap round anticipated by TASK-260720-2sltje. Do not add a partial/mock-only adapter. Recommend failing libssh2 red at M0 unless its value justifies one explicitly approved consolidated fork extension for manual windows, typed open failures, and lossless exec-exit metadata; the alternative is an explicit M0-to-M3/common-contract revision. Exact evidence and resume decision are attached as `TASK-260715-1ozsb6_third-public-api-blocker.md`.
+
 ### 1200 — Bounded libssh2 observation fork clears the remaining public-API clauses (TASK-260720-2sltje)
 - DECISION: The existing libssh2 patch remains a single allowlisted six-file delta. It adds typed server-initiated KEX `STARTED`/`SUCCEEDED`/`FAILED` observation with a monotonic generation and one bounded, nonblocking reply-correlated global-request operation; packet ordering, encryption, MAC, KEX algorithms, and crypto implementations remain unchanged.
 - DECISION: A timed-out global request stays outstanding until its late reply is drained. This deliberately prevents an unnumbered SSH `REQUEST_SUCCESS`/`REQUEST_FAILURE` from being miscorrelated with a newer request; callers can record a miss at `LIBSSH2_ERROR_TIMEOUT` and continue the same operation to restore the request slot.
