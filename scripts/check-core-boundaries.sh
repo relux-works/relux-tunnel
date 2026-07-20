@@ -10,6 +10,12 @@ if grep -R -n -E "^[[:space:]]*import[[:space:]]+($forbidden)([[:space:]]|$)" So
     exit 1
 fi
 
+ssh_candidate_names='ReluxNIOSSH|SwiftNIO|NIOSSH|libssh2|OpenSSL'
+if grep -R -n -E "$ssh_candidate_names" Sources/ReluxTunnelCore; then
+    echo "ReluxTunnelCore names an SSH candidate or candidate dependency" >&2
+    exit 1
+fi
+
 if grep -R -n -E "^[[:space:]]*import[[:space:]]+($forbidden)([[:space:]]|$)" \
     Sources/ReluxTunnelHarness Sources/ReluxTunnelHarnessSupport; then
     echo "ReluxTunnelHarness imports a provider-only or UI framework" >&2

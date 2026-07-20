@@ -2,13 +2,13 @@
 backlog
 
 ## Assigned To
-(none)
+[implementer] developer (codex)
 
 ## Created
 2026-07-15T01:03:15Z
 
 ## Last Update
-2026-07-20T04:21:27Z
+2026-07-20T05:08:09Z
 
 ## Blocked By
 - TASK-260715-nzdzv3
@@ -26,11 +26,24 @@ backlog
 - [ ] Adapter fully conforms without leaking candidate types
 - [ ] Host key, channels, windows, rekey, cancellation, and metrics are wired
 - [ ] Apple-target and harness build or smoke evidence is attached
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [x] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [x] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
 
 ## Notes
+spawn queued: [implementer] developer (codex) (run=RUN-260720-bf5c69, max_parallel=1)
+spawn run started: [implementer] developer (codex) (run=RUN-260720-bf5c69)
+STOP-THE-LINE 2026-07-20: required development transition rejected because TASK-260720-100wu6 Implement the candidate-neutral SSH transport contract is backlog. Source inspection confirms SSHContracts.swift is still the earlier skeleton, so implementing this adapter now would duplicate or leak the common boundary. Evidence, rejected forced-fit options, recommendation, and exact resume condition are attached in TASK-260715-1af33i_blocker.md. No product code changed; tests and builds were not run because implementation could not validly start.
+agent completed: [implementer] developer (codex) (exit=0)
+spawn run completed: codex (run=RUN-260720-bf5c69, pid=86256, exit=0)
 
 ## Precondition Resources
 - [TASK-260715-1af33i_ssh-transport-conformance-contract.md](file://TASK-260715-1af33i/TASK-260715-1af33i_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport contract from TASK-260715-2ny6z4; consume after blocker review acceptance
+- [TASK-260715-1af33i_inputs.md](file://TASK-260715-1af33i/TASK-260715-1af33i_inputs.md) — ReluxNIOSSH adapter requirements
 
 ## Outcome Resources
-(none)
+- [TASK-260715-1af33i_spawn-log_-implementer--developer--codex-.log](file://TASK-260715-1af33i/TASK-260715-1af33i_spawn-log_-implementer--developer--codex-.log) — System spawn log captured by task-board
+- [TASK-260715-1af33i_blocker.md](file://TASK-260715-1af33i/TASK-260715-1af33i_blocker.md) — Stop-the-line evidence for missing common SSH contract

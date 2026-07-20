@@ -445,7 +445,11 @@ private actor TestPacketFlow: PacketFlow {
 }
 
 private actor TestSSHTransport: SSHTransport {
-  func connect(profile: SSHProfile) async throws -> SSHSession {
+  private let lane = SSHLaneIdentity(
+    rawValue: UUID(uuidString: "10000000-0000-0000-0000-000000000001")!
+  )
+
+  func connect(configuration: SSHConnectionConfiguration) async throws -> SSHSession {
     throw HarnessUnavailableDependencyError.sshTransport
   }
 
@@ -457,22 +461,30 @@ private actor TestSSHTransport: SSHTransport {
     throw HarnessUnavailableDependencyError.sshTransport
   }
 
-  func openExecChannel(command: String) async throws -> any SSHExecChannel {
+  func openExecChannel(
+    request: SSHExecRequest,
+    policy: SSHChannelPolicy
+  ) async throws -> any SSHExecChannel {
     throw HarnessUnavailableDependencyError.sshTransport
   }
 
-  func upload(
-    source: any SSHUploadSource,
-    remotePath: String,
-    chunkSize: Int
-  ) async throws {
+  func upload(_ request: SSHExecUploadRequest) async throws -> SSHExecExit {
     throw HarnessUnavailableDependencyError.sshTransport
   }
 
-  func requestRekey() async throws {}
+  func requestRekey(reason: SSHClientRekeyReason) async throws {}
 
-  func metrics() -> SSHTransportMetrics {
-    SSHTransportMetrics(bytesSent: 0, bytesReceived: 0, openChannelCount: 0, queuedWriteBytes: 0)
+  func sendKeepalive() async throws -> Duration { .zero }
+
+  func snapshot() -> SSHTransportSnapshot {
+    SSHTransportSnapshot(
+      lane: lane,
+      connectionState: .idle,
+      negotiatedAlgorithms: nil,
+      keyExchangeGeneration: 0,
+      counters: SSHTransportCounters(),
+      gauges: SSHTransportGauges()
+    )
   }
 
   func close() {}
