@@ -84,6 +84,7 @@ let package = Package(
       name: "ReluxTunnelNativeAdapterTests",
       dependencies: [
         "ReluxTunnelCore",
+        "ReluxTunnelMacOSAdapter",
         "ReluxTunnelNativeAdapter",
       ]
     ),

@@ -353,6 +353,8 @@ private final class HEVDescriptorBorrowHandle: DescriptorBorrowHandle, @unchecke
   private let lock = NSLock()
   private var stopRequested = false
   private var joinTask: Task<Void, Never>?
+  private var boundaryStopTask: Task<Void, Never>?
+  private var statisticsBeforeStop: HEVTrafficStatistics?
   private var leaseReleased = false
 
   init(
@@ -383,9 +385,13 @@ private final class HEVDescriptorBorrowHandle: DescriptorBorrowHandle, @unchecke
     // quit after return. A spontaneous return concurrent with this check remains
     // an upstream-inherent race that cannot be removed without patching HEV.
     if context.returnCode == nil {
+      let statistics = runtime.statistics()
+      lock.withLock {
+        statisticsBeforeStop = statistics
+      }
       runtime.requestStop()
     }
-    await boundary.stop()
+    await stopBoundaryOnce()
     await metrics.incrementCounter(named: "hev_stop_request_total", by: 1)
   }
 
@@ -402,7 +408,7 @@ private final class HEVDescriptorBorrowHandle: DescriptorBorrowHandle, @unchecke
       return created
     }
     await task.value
-    await boundary.stop()
+    await stopBoundaryOnce()
 
     let shouldRelease = lock.withLock {
       guard !leaseReleased else { return false }
@@ -410,7 +416,7 @@ private final class HEVDescriptorBorrowHandle: DescriptorBorrowHandle, @unchecke
       return true
     }
     guard shouldRelease else { return }
-    let statistics = runtime.statistics()
+    let statistics = lock.withLock { statisticsBeforeStop } ?? runtime.statistics()
     HEVProcessLease.shared.release()
     await metrics.setGauge(
       named: "hev_transmitted_packets", to: clampedInt64(statistics.transmittedPackets))
@@ -431,6 +437,21 @@ private final class HEVDescriptorBorrowHandle: DescriptorBorrowHandle, @unchecke
         "return_code": .init(String(context.returnCode ?? -1), privacy: .public)
       ]
     )
+  }
+
+  private func stopBoundaryOnce() async {
+    let task = lock.withLock { () -> Task<Void, Never> in
+      if let boundaryStopTask {
+        return boundaryStopTask
+      }
+      let boundary = self.boundary
+      let created = Task {
+        await boundary.stop()
+      }
+      boundaryStopTask = created
+      return created
+    }
+    await task.value
   }
 
   private func clampedInt64(_ value: UInt64) -> Int64 {

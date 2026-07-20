@@ -1,0 +1,10 @@
+# Preserve HEV traffic statistics before fini
+
+## Description
+Real PacketFlowBridge-to-HEV integration traffic succeeds, but HEVDescriptorBorrowHandle joins HEV before reading statistics. Pinned HEV resets stat_tx_packets/stat_tx_bytes/stat_rx_packets/stat_rx_bytes inside hev_socks5_tunnel_fini before main_from_str returns, so all completed-run HEV gauges are reported as zero. Preserve unmodified HEV and the endpoint-B ownership/quit safety contract while making completed-run counters observable.
+
+## Scope
+In scope: HEVNativeRuntime/borrow-handle statistics capture timing and synchronization; intentional stop and spontaneous-return behavior; regression tests using the real pinned HEV binary. Out of scope: patching HEV/lwIP, changing bridge counters, or weakening traffic observability.
+
+## Acceptance Criteria
+1. Completed-run HEV traffic counters (tx/rx packets/bytes) are observable and nonzero after real traffic: snapshot statistics while HEV is still ACTIVE (before hev_socks5_tunnel_fini clears the globals), WITHOUT modifying pinned HEV and WITHOUT regressing the endpoint-B ownership / quit-after-return safety (the 1vv52g reviewed teardown guard). 2. The TASK-260715-35wctc integration matrix double-stop failures (access recorder starts=1 but stops=2; '100 real HEV cycles' stop-count mismatch) are resolved — determine whether this is a product teardown-ordering defect (boundary stop invoked twice) or a test-expectation error, and fix the correct side; document which. 3. The lwIP assertion 'tcp_slowtmr: active pcb->state != CLOSED' (src/core/tcp.c:1236) no longer fires — ensure connections/PCBs reach CLOSED before HEV teardown in the tested lifecycle (product teardown sequencing or test cycle discipline, whichever is correct). 4. The FULL TASK-260715-35wctc integration matrix passes deterministically (repeatably), plus swift build, ThreadSanitizer clean, strict format/lint. 5. HEV stays unmodified; any Swift-side change preserves the accepted 1vv52g contract + tests (49 HEV tests still green).

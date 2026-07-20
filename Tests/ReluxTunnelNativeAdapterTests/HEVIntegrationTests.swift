@@ -131,11 +131,18 @@ struct HEVIntegrationTests {
     await handle.waitForReturn()
 
     #expect(runtime.stopRequestCount == 1)
+    #expect(runtime.statisticsCallCount == 1)
+    #expect(runtime.statisticsAfterStopCallCount == 0)
     #expect(boundary.effectiveStopCount == 1)
+    #expect(boundary.stopInvocationCount == 1)
     #expect(fcntl(descriptors[1], F_GETFD) >= 0)
     #expect(await metrics.counter("hev_start_total") == 1)
     #expect(await metrics.counter("hev_stop_request_total") == 1)
     #expect(await metrics.counter("hev_main_return_total") == 1)
+    #expect(await metrics.gauge("hev_transmitted_packets") == 1)
+    #expect(await metrics.gauge("hev_transmitted_bytes") == 2)
+    #expect(await metrics.gauge("hev_received_packets") == 3)
+    #expect(await metrics.gauge("hev_received_bytes") == 4)
   }
 
   @Test("quit is never sent after HEV main returns in either stop ordering")
@@ -165,6 +172,7 @@ struct HEVIntegrationTests {
     #expect(returnedFirstRuntime.stopRequestCount == 0)
     #expect(returnedFirstRuntime.lateStopRequestCount == 0)
     #expect(returnedFirstBoundary.effectiveStopCount == 1)
+    #expect(returnedFirstBoundary.stopInvocationCount == 1)
     #expect(await returnedFirstMetrics.counter("hev_stop_request_total") == 1)
 
     let stoppedFirstRuntime = ReturnAwareHEVRuntime(waitForStop: true)
@@ -185,6 +193,7 @@ struct HEVIntegrationTests {
     #expect(stoppedFirstRuntime.stopRequestCount == 1)
     #expect(stoppedFirstRuntime.lateStopRequestCount == 0)
     #expect(stoppedFirstBoundary.effectiveStopCount == 1)
+    #expect(stoppedFirstBoundary.stopInvocationCount == 1)
     #expect(fcntl(descriptors[1], F_GETFD) >= 0)
   }
 
@@ -345,6 +354,7 @@ private final class RecordingBoundary: HEVSOCKSBoundary, @unchecked Sendable {
   private let lock = NSLock()
   private var stopped = false
   private var stopCount = 0
+  private var stopInvocations = 0
 
   init(access: HEVSOCKSAccess) {
     self.access = access
@@ -354,12 +364,17 @@ private final class RecordingBoundary: HEVSOCKSBoundary, @unchecked Sendable {
     lock.withLock { stopCount }
   }
 
+  var stopInvocationCount: Int {
+    lock.withLock { stopInvocations }
+  }
+
   func start() async throws -> HEVSOCKSAccess {
     access
   }
 
   func stop() async {
     lock.withLock {
+      stopInvocations += 1
       guard !stopped else { return }
       stopped = true
       stopCount += 1
@@ -431,6 +446,8 @@ private final class BlockingHEVRuntime: HEVNativeRuntime, @unchecked Sendable {
   private var descriptor: Int32?
   private var configuration = ""
   private var stops = 0
+  private var statisticsCalls = 0
+  private var statisticsAfterStopCalls = 0
 
   init() {
     let pair = AsyncStream<Void>.makeStream()
@@ -448,6 +465,14 @@ private final class BlockingHEVRuntime: HEVNativeRuntime, @unchecked Sendable {
 
   var stopRequestCount: Int {
     condition.withLock { stops }
+  }
+
+  var statisticsCallCount: Int {
+    condition.withLock { statisticsCalls }
+  }
+
+  var statisticsAfterStopCallCount: Int {
+    condition.withLock { statisticsAfterStopCalls }
   }
 
   func run(configuration: Data, tunnelDescriptor: Int32) -> Int32 {
@@ -471,12 +496,24 @@ private final class BlockingHEVRuntime: HEVNativeRuntime, @unchecked Sendable {
   }
 
   func statistics() -> HEVTrafficStatistics {
-    HEVTrafficStatistics(
-      transmittedPackets: 1,
-      transmittedBytes: 2,
-      receivedPackets: 3,
-      receivedBytes: 4
-    )
+    condition.withLock {
+      statisticsCalls += 1
+      if shouldStop {
+        statisticsAfterStopCalls += 1
+        return HEVTrafficStatistics(
+          transmittedPackets: 0,
+          transmittedBytes: 0,
+          receivedPackets: 0,
+          receivedBytes: 0
+        )
+      }
+      return HEVTrafficStatistics(
+        transmittedPackets: 1,
+        transmittedBytes: 2,
+        receivedPackets: 3,
+        receivedBytes: 4
+      )
+    }
   }
 
   func waitUntilStarted() async {
@@ -567,6 +604,10 @@ private actor RecordingMetrics: TunnelMetrics {
 
   func counter(_ name: String) -> UInt64 {
     counters[name, default: 0]
+  }
+
+  func gauge(_ name: String) -> Int64 {
+    gauges[name, default: 0]
   }
 }
 

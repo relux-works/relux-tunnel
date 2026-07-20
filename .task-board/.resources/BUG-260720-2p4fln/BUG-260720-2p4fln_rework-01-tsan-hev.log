@@ -1,0 +1,50 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write swift-version-45881B103DA9D485.txt
+[2/6] Emitting module ReluxTunnelNativeAdapter
+[3/8] Emitting module ReluxTunnelMacOSAdapter
+[4/8] Emitting module ReluxTunnelHarnessSupport
+[5/9] Emitting module ReluxTunnelHarnessTests
+[6/9] Emitting module ReluxTunnelNativeAdapterTests
+[7/9] Emitting module ReluxTunnelCoreTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[7/8] Linking ReluxTunnelPackageTests
+Build complete! (1.51s)
+Test Suite 'Selected tests' started at 2026-07-20 14:01:28.886.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-20 14:01:28.914.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-20 14:01:28.914.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-20 14:01:28.914.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.027) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" started.
+􁁛  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" passed after 0.017 seconds.
+􀟈  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" started.
+􁁛  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" passed after 0.004 seconds.
+􀟈  Test "a stalled real HEV path accounts every bridge send or bounded drop" started.
+􁁛  Test "a stalled real HEV path accounts every bridge send or bounded drop" passed after 0.547 seconds.
+􀟈  Test "bridge write failure while real HEV is active tears every boundary down" started.
+􁁛  Test "bridge write failure while real HEV is active tears every boundary down" passed after 0.062 seconds.
+􀟈  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" started.
+􁁛  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" passed after 6.426 seconds.
+􀟈  Test "approved low-memory configuration is emitted exactly" started.
+􁁛  Test "approved low-memory configuration is emitted exactly" passed after 0.001 seconds.
+􀟈  Test "configuration rejects a stack request that upstream would silently raise" started.
+􁁛  Test "configuration rejects a stack request that upstream would silently raise" passed after 0.001 seconds.
+􀟈  Test "external no-auth ingress is rejected before the adapter seam" started.
+􁁛  Test "external no-auth ingress is rejected before the adapter seam" passed after 0.001 seconds.
+􀟈  Test "SOCKS boundary stop waits for listener close and is idempotent" started.
+􁁛  Test "SOCKS boundary stop waits for listener close and is idempotent" passed after 0.001 seconds.
+􀟈  Test "borrow passes only endpoint B and quit joins without closing it" started.
+􁁛  Test "borrow passes only endpoint B and quit joins without closing it" passed after 0.001 seconds.
+􀟈  Test "quit is never sent after HEV main returns in either stop ordering" started.
+􁁛  Test "quit is never sent after HEV main returns in either stop ordering" passed after 0.001 seconds.
+􀟈  Test "startup failure stops listener state and releases the process lease" started.
+􁁛  Test "startup failure stops listener state and releases the process lease" passed after 0.001 seconds.
+􀟈  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" started.
+􁁛  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" passed after 0.001 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 7.064 seconds.
+􁁛  Test run with 13 tests in 1 suite passed after 7.064 seconds.

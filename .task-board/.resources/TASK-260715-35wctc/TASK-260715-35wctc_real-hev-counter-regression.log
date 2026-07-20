@@ -1,0 +1,19 @@
+Building for debugging...
+[0/4] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.11s)
+Test Suite 'Selected tests' started at 2026-07-20 13:17:48.373.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-20 13:17:48.379.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-20 13:17:48.379.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-20 13:17:48.379.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" started.
+􀢄  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" recorded an issue at HEVBridgeIntegrationTests.swift:81:5: Expectation failed: (nativeMetrics.gauges["hev_transmitted_packets", default: 0] → 0) > 0
+􀢄  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" recorded an issue at HEVBridgeIntegrationTests.swift:82:5: Expectation failed: (nativeMetrics.gauges["hev_received_packets", default: 0] → 0) > 0
+􀢄  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" failed after 0.013 seconds with 2 issues.
+􀢄  Suite "Pinned HEV integration" failed after 0.014 seconds with 2 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.014 seconds with 2 issues.
