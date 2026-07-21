@@ -29,6 +29,9 @@ GO_LICENSE_SHA256 = "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467d
 VERSION_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
 COMMIT_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+MAX_RELAY_VERSION_BYTES = 64
+MAX_IDENTITY_BYTES = 512
+MAX_IDENTITY_MANIFEST_BYTES = 64 * 1024
 
 MANIFEST_NAME = "relux-relay-manifest-v1.json"
 CHECKSUMS_NAME = "relux-relay-SHA256SUMS"
@@ -396,7 +399,12 @@ def protocol_test_filename(target: dict[str, str]) -> str:
 
 
 def validate_release_inputs(relay_version: str, source_commit: str) -> None:
-    if not VERSION_PATTERN.fullmatch(relay_version):
+    if (
+        not relay_version
+        or len(relay_version.encode("ascii", errors="ignore")) != len(relay_version)
+        or len(relay_version) > MAX_RELAY_VERSION_BYTES
+        or not VERSION_PATTERN.fullmatch(relay_version)
+    ):
         raise ReleaseError("relay version must be a deterministic semantic version")
     if not COMMIT_PATTERN.fullmatch(source_commit):
         raise ReleaseError("source commit must be 40 lowercase hexadecimal characters")
@@ -1493,6 +1501,162 @@ def target_for_name(name: str) -> dict[str, str]:
     raise ReleaseError(f"unsupported relay target: {name}")
 
 
+def read_bounded(path: Path, maximum_bytes: int, label: str) -> bytes:
+    flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0)
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    if no_follow is None:
+        raise ReleaseError(f"{label} no-follow reads are unavailable")
+    try:
+        descriptor = os.open(path, flags | no_follow)
+        with os.fdopen(descriptor, "rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise ReleaseError(f"{label} is not a regular file")
+            contents = stream.read(maximum_bytes + 1)
+    except OSError as error:
+        raise ReleaseError(f"{label} is unavailable") from error
+    if len(contents) > maximum_bytes:
+        raise ReleaseError(f"{label} exceeds its size limit")
+    return contents
+
+
+def load_identity_manifest(path: Path) -> dict[str, Any]:
+    encoded = read_bounded(
+        path, MAX_IDENTITY_MANIFEST_BYTES, "relay identity manifest"
+    )
+    try:
+        manifest = json.loads(encoded.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ReleaseError("relay identity manifest is invalid JSON") from error
+    if not isinstance(manifest, dict) or encoded != stable_json(manifest):
+        raise ReleaseError("relay identity manifest is not canonical JSON")
+
+    top_keys, toolchain_keys, artifact_keys = expected_manifest_keys()
+    if (
+        set(manifest) != top_keys
+        or not isinstance(manifest.get("toolchain"), dict)
+        or set(manifest["toolchain"]) != toolchain_keys
+    ):
+        raise ReleaseError("relay identity manifest field set changed")
+    validate_release_inputs(
+        manifest.get("relayVersion", ""), manifest.get("sourceCommit", "")
+    )
+    if (
+        manifest.get("schemaVersion") != MANIFEST_SCHEMA_VERSION
+        or manifest.get("relayProtocolVersion") != PROTOCOL_VERSION
+        or manifest["toolchain"]
+        != {"go": GO_VERSION, "cgoEnabled": False, "syft": SYFT_VERSION}
+    ):
+        raise ReleaseError("relay identity manifest contract changed")
+
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, list) or len(artifacts) != len(TARGETS):
+        raise ReleaseError("relay identity manifest target matrix changed")
+    for artifact in artifacts:
+        if not isinstance(artifact, dict) or set(artifact) != artifact_keys:
+            raise ReleaseError("relay identity manifest artifact field set changed")
+    return manifest
+
+
+def verify_identity_against_manifest(
+    identity_output: bytes,
+    manifest_path: Path,
+    executable: Path,
+    target_name: str,
+) -> None:
+    if (
+        not identity_output
+        or len(identity_output) > MAX_IDENTITY_BYTES
+        or not identity_output.endswith(b"\n")
+        or identity_output.count(b"\n") != 1
+    ):
+        raise ReleaseError("relay identity output framing mismatch")
+    try:
+        identity = json.loads(identity_output.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ReleaseError("relay identity output is invalid JSON") from error
+    identity_keys = {
+        "schemaVersion",
+        "relayProtocolVersion",
+        "relayVersion",
+        "sourceCommit",
+        "os",
+        "arch",
+        "selfSha256",
+    }
+    if not isinstance(identity, dict) or set(identity) != identity_keys:
+        raise ReleaseError("relay identity output field set changed")
+
+    manifest = load_identity_manifest(manifest_path)
+    target = target_for_name(target_name)
+    target_index = TARGETS.index(target)
+    artifact = manifest["artifacts"][target_index]
+    filename = target_filename(target)
+    expected_target = {
+        "os": target["os"],
+        "arch": target["arch"],
+        "goTarget": target_name,
+        "canonicalTarget": target["canonicalTarget"],
+        "filename": filename,
+        "sbom": f"{filename}.spdx.json",
+    }
+    if any(artifact.get(key) != value for key, value in expected_target.items()):
+        raise ReleaseError("relay identity manifest target mismatch")
+    if (
+        type(artifact.get("size")) is not int
+        or artifact["size"] <= 0
+        or not isinstance(artifact.get("sha256"), str)
+        or not SHA256_PATTERN.fullmatch(artifact["sha256"])
+    ):
+        raise ReleaseError("relay identity manifest artifact metadata mismatch")
+
+    flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0)
+    no_follow = getattr(os, "O_NOFOLLOW", None)
+    if no_follow is None:
+        raise ReleaseError("relay identity executable no-follow reads are unavailable")
+    try:
+        descriptor = os.open(executable, flags | no_follow)
+        with os.fdopen(descriptor, "rb") as stream:
+            executable_status = os.fstat(stream.fileno())
+            if not stat.S_ISREG(executable_status.st_mode):
+                raise ReleaseError("relay identity executable is not a regular file")
+            digest = hashlib.sha256()
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except OSError as error:
+        raise ReleaseError("relay identity executable is unavailable") from error
+    if executable_status.st_size != artifact["size"]:
+        raise ReleaseError("relay identity executable size mismatch")
+    if digest.hexdigest() != artifact["sha256"]:
+        raise ReleaseError("relay identity executable checksum mismatch")
+
+    expected_identity = {
+        "schemaVersion": MANIFEST_SCHEMA_VERSION,
+        "relayProtocolVersion": PROTOCOL_VERSION,
+        "relayVersion": manifest["relayVersion"],
+        "sourceCommit": manifest["sourceCommit"],
+        "os": target["os"],
+        "arch": target["arch"],
+        "selfSha256": artifact["sha256"],
+    }
+    canonical_identity = (
+        json.dumps(expected_identity, ensure_ascii=True, separators=(",", ":")) + "\n"
+    ).encode("ascii")
+    if identity_output != canonical_identity:
+        raise ReleaseError("relay identity output mismatch")
+
+
+def verify_identity(arguments: argparse.Namespace) -> None:
+    identity_output = read_bounded(
+        Path(arguments.identity_output), MAX_IDENTITY_BYTES, "relay identity output"
+    )
+    verify_identity_against_manifest(
+        identity_output,
+        Path(arguments.manifest),
+        Path(arguments.executable),
+        arguments.target,
+    )
+
+
 def prepare_build_sandbox(path: Path, cache_mode: str) -> Path:
     sandbox = validate_output_path(path)
     if cache_mode == "clean":
@@ -1693,6 +1857,20 @@ def parser() -> argparse.ArgumentParser:
     compare.add_argument("--first-tests", required=True)
     compare.add_argument("--second-tests", required=True)
     compare.set_defaults(action=compare_release)
+
+    identity = subparsers.add_parser(
+        "verify-identity",
+        help="verify canonical relay identity against one manifest-selected artifact",
+    )
+    identity.add_argument(
+        "--target",
+        required=True,
+        choices=[f"{target['os']}/{target['arch']}" for target in TARGETS],
+    )
+    identity.add_argument("--manifest", required=True)
+    identity.add_argument("--executable", required=True)
+    identity.add_argument("--identity-output", required=True)
+    identity.set_defaults(action=verify_identity)
 
     provision_go_command = subparsers.add_parser(
         "provision-go",

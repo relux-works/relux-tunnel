@@ -147,6 +147,7 @@ class RelayReleaseTests(unittest.TestCase):
         relay_release.validate_release_inputs("0.1.0", valid_commit)
         for version, commit in (
             ("latest", valid_commit),
+            ("1.2.3-" + "x" * relay_release.MAX_RELAY_VERSION_BYTES, valid_commit),
             ("0.1.0", "ABCDEF" * 6 + "ABCD"),
             ("0.1.0", "host-specific-source"),
         ):
@@ -756,6 +757,199 @@ class RelayReleaseTests(unittest.TestCase):
         encoded = relay_release.stable_json(manifest).decode("utf-8")
         self.assertNotIn(str(Path.home()), encoded)
         self.assertEqual(json.loads(encoded), manifest)
+
+    def test_identity_preflight_binds_manifest_target_size_hash_and_bytes(self) -> None:
+        relay_version = "1.2.3-test.1"
+        source_commit = "0123456789abcdef0123456789abcdef01234567"
+        target_name = "darwin/arm64"
+        target_index = 1
+
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture = Path(temporary)
+            release = fixture / "copied-release"
+            release.mkdir()
+            for index, target in enumerate(relay_release.TARGETS, start=1):
+                filename = relay_release.target_filename(target)
+                (release / filename).write_bytes(
+                    f"copied executable fixture {index}".encode("ascii")
+                )
+                (release / f"{filename}.spdx.json").write_text(
+                    "{}\n", encoding="utf-8"
+                )
+
+            manifest = relay_release.build_manifest(
+                relay_version, source_commit, release
+            )
+            manifest_path = fixture / relay_release.MANIFEST_NAME
+            manifest_path.write_bytes(relay_release.stable_json(manifest))
+            selected_artifact = manifest["artifacts"][target_index]
+            selected_copy = fixture / "selected-executable-copy"
+            selected_copy.write_bytes(
+                (release / selected_artifact["filename"]).read_bytes()
+            )
+
+            def identity_output(self_sha256: str) -> bytes:
+                identity = {
+                    "schemaVersion": 1,
+                    "relayProtocolVersion": 1,
+                    "relayVersion": relay_version,
+                    "sourceCommit": source_commit,
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "selfSha256": self_sha256,
+                }
+                return (
+                    json.dumps(identity, separators=(",", ":")) + "\n"
+                ).encode("ascii")
+
+            canonical_identity = identity_output(selected_artifact["sha256"])
+            relay_release.verify_identity_against_manifest(
+                canonical_identity, manifest_path, selected_copy, target_name
+            )
+
+            identity_path = fixture / "canonical-identity.json"
+            identity_path.write_bytes(canonical_identity)
+            with mock.patch(
+                "sys.argv",
+                [
+                    str(SCRIPT),
+                    "verify-identity",
+                    "--target",
+                    target_name,
+                    "--manifest",
+                    str(manifest_path),
+                    "--executable",
+                    str(selected_copy),
+                    "--identity-output",
+                    str(identity_path),
+                ],
+            ), mock.patch("sys.stderr", new_callable=io.StringIO) as diagnostics:
+                self.assertEqual(relay_release.main(), 0)
+                self.assertEqual(diagnostics.getvalue(), "")
+
+            with self.subTest("identity self hash mismatch"):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "identity output mismatch"
+                ):
+                    relay_release.verify_identity_against_manifest(
+                        identity_output("0" * 64),
+                        manifest_path,
+                        selected_copy,
+                        target_name,
+                    )
+
+            with self.subTest("manifest size mismatch"):
+                altered = json.loads(json.dumps(manifest))
+                altered["artifacts"][target_index]["size"] += 1
+                altered_manifest = fixture / "size-mismatch-manifest.json"
+                altered_manifest.write_bytes(relay_release.stable_json(altered))
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "executable size mismatch"
+                ):
+                    relay_release.verify_identity_against_manifest(
+                        canonical_identity,
+                        altered_manifest,
+                        selected_copy,
+                        target_name,
+                    )
+
+            with self.subTest("manifest target tuple mismatch"):
+                altered = json.loads(json.dumps(manifest))
+                altered["artifacts"][target_index]["canonicalTarget"] = (
+                    "x86_64-apple-darwin"
+                )
+                altered_manifest = fixture / "target-mismatch-manifest.json"
+                altered_manifest.write_bytes(relay_release.stable_json(altered))
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "manifest target mismatch"
+                ):
+                    relay_release.verify_identity_against_manifest(
+                        canonical_identity,
+                        altered_manifest,
+                        selected_copy,
+                        target_name,
+                    )
+
+            with self.subTest("manifest self hash mismatch"):
+                altered = json.loads(json.dumps(manifest))
+                altered["artifacts"][target_index]["sha256"] = "f" * 64
+                altered_manifest = fixture / "hash-mismatch-manifest.json"
+                altered_manifest.write_bytes(relay_release.stable_json(altered))
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "executable checksum mismatch"
+                ):
+                    relay_release.verify_identity_against_manifest(
+                        canonical_identity,
+                        altered_manifest,
+                        selected_copy,
+                        target_name,
+                    )
+
+            with self.subTest("selected executable bytes tampered"):
+                tampered_copy = fixture / "tampered-executable-copy"
+                tampered = bytearray(selected_copy.read_bytes())
+                tampered[-1] ^= 1
+                tampered_copy.write_bytes(tampered)
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "executable checksum mismatch"
+                ):
+                    relay_release.verify_identity_against_manifest(
+                        canonical_identity,
+                        manifest_path,
+                        tampered_copy,
+                        target_name,
+                    )
+
+            with self.subTest("selected executable symlink rejected"):
+                symlink_copy = fixture / "symlink-executable-copy"
+                symlink_copy.symlink_to(selected_copy)
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "executable is unavailable"
+                ):
+                    relay_release.verify_identity_against_manifest(
+                        canonical_identity,
+                        manifest_path,
+                        symlink_copy,
+                        target_name,
+                    )
+
+            with self.subTest("extra identity stdout"):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "output framing mismatch"
+                ):
+                    relay_release.verify_identity_against_manifest(
+                        canonical_identity + b"extra\n",
+                        manifest_path,
+                        selected_copy,
+                        target_name,
+                    )
+
+            with self.subTest("CLI mismatch is stable and privacy safe"):
+                mismatch_path = fixture / "mismatched-identity.json"
+                mismatch_path.write_bytes(identity_output("0" * 64))
+                with mock.patch(
+                    "sys.argv",
+                    [
+                        str(SCRIPT),
+                        "verify-identity",
+                        "--target",
+                        target_name,
+                        "--manifest",
+                        str(manifest_path),
+                        "--executable",
+                        str(selected_copy),
+                        "--identity-output",
+                        str(mismatch_path),
+                    ],
+                ), mock.patch(
+                    "sys.stderr", new_callable=io.StringIO
+                ) as diagnostics:
+                    self.assertEqual(relay_release.main(), 1)
+                    self.assertEqual(
+                        diagnostics.getvalue(),
+                        "relay-release: relay identity output mismatch\n",
+                    )
+                    self.assertNotIn(str(fixture), diagnostics.getvalue())
 
 
 if __name__ == "__main__":

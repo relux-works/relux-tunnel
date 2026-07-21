@@ -83,21 +83,31 @@ remain separate tasks.
 
 ## Target shells
 
-- `cmd/relux-relay` provides only `smoke`, a deterministic JSON metadata and
-  empty-health contract. It reports executable version, protocol version,
-  source revision, and `GOOS/GOARCH`, and explicitly reports
-  `relayBehaviorImplemented: false`.
+- `cmd/relux-relay` accepts exactly `--identity --protocol 1` or
+  `--stdio --protocol 1`. Identity emits one bounded canonical JSON line with
+  the release version, source commit, target, and SHA-256 of the running
+  executable. Stdio owns one bounded reader and one stdout writer; protocol
+  stdout contains only the server hello and framed bytes. EOF, cancellation,
+  SIGINT, and SIGTERM tear down the process-owned streams without listeners,
+  daemonization, runtime files, privilege requests, or child processes.
+  Exit statuses are fixed: `0` success, `64` unsupported invocation, `65`
+  protocol rejection, `70` unavailable build/runtime configuration, `74`
+  stream failure, and `130` SIGINT/SIGTERM or context cancellation. Release
+  versions are ASCII semantic versions bounded to 64 bytes so the identity
+  line always remains within its 512-byte limit.
 - `cmd/relux-relay-protocol-test` provides `smoke` plus `run`. The runnable
   shell checks only the empty health configuration and one protocol-version
   mismatch against the existing generated/schema-backed handshake code.
 - `manifest-v1.schema.json` freezes the application-consumed release manifest
   field names. `scripts/relay_release.py` builds and verifies the accepted
   Linux/macOS by amd64/arm64 matrix, deterministic checksums, SPDX 2.3 SBOMs,
-  and combined repository/Go license notices.
+  and combined repository/Go license notices. Its `verify-identity` boundary
+  consumes the exact bounded identity line and rejects a target tuple, size,
+  manifest SHA-256, or selected executable-byte mismatch before stdio launch.
 
-The command shells do not yet wire UDP association handling, upload, SSH
+The entrypoint does not yet wire UDP association socket behavior, upload, SSH
 execution, or release publication. The reusable SSH-independent UDP registry
-is implemented in `internal/udp` for later stdio/session integration.
+is implemented in `internal/udp` for later session integration.
 
 From the repository root, run:
 

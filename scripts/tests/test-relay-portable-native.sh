@@ -35,22 +35,20 @@ if [ ! -x "$binary" ]; then
     exit 1
 fi
 
-output=$(env -i PATH=/usr/bin:/bin LC_ALL=C LANG=C TZ=UTC "$binary" smoke)
+output=$(env -i PATH=/usr/bin:/bin LC_ALL=C LANG=C TZ=UTC "$binary" --identity --protocol 1)
 python3 -c '
-import json, sys
+import hashlib, json, pathlib, sys
 expected = {
     "schemaVersion": 1,
-    "executable": "relux-relay",
-    "executableVersion": sys.argv[2],
-    "protocolVersion": 1,
-    "sourceRevision": sys.argv[3],
-    "buildTarget": sys.argv[1],
-    "contract": "metadata-and-empty-health",
-    "relayBehaviorImplemented": False,
-    "status": "ok",
+    "relayProtocolVersion": 1,
+    "relayVersion": sys.argv[2],
+    "sourceCommit": sys.argv[3],
+    "os": "linux",
+    "arch": sys.argv[1].split("/", 1)[1],
+    "selfSha256": hashlib.sha256(pathlib.Path(sys.argv[5]).read_bytes()).hexdigest(),
 }
 if json.loads(sys.argv[4]) != expected:
-    raise SystemExit("portable native Linux smoke contract mismatch")
-' "$target" "$relay_version" "$source_commit" "$output"
+    raise SystemExit("portable native Linux identity contract mismatch")
+' "$target" "$relay_version" "$source_commit" "$output" "$binary"
 
 echo "runtime $target: native unprivileged Ubuntu 24.04 fixture pass"
