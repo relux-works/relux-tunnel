@@ -5,6 +5,12 @@
 
 ## 2026-07-21
 
+### 0710 — Bounded full-duplex pump owns fixed reservations and independent terminal handoff (TASK-260715-sdnk2k)
+- DECISION: `ReluxTunnelCore` now owns a candidate-neutral local nonblocking byte-stream/readiness seam and one structured full-duplex pump. Each direction retains exactly one current `Data` plus offset; no next read occurs until that buffer drains. Caller-injected chunk/write/fairness/no-progress limits are validated, and a shared non-waiting reservation actor caps aggregate pump-owned bytes across concurrent flows without a capacity queue.
+- CANCELLATION: One locked control signal wakes local readiness, cancels both structured child tasks, calls `SSHByteChannel.cancel()` once, discards late positive completions, joins both directions, and releases the aggregate reservation once. EOF, cancellation, local/remote closure, read/write error, zero progress, and bound violation are handed to the later lifecycle owner as finite directional events; the pump does not choose half-close/reset policy.
+- COVERAGE: Swift Testing exercises exact bidirectional hashes (`6d440a59…f5ad`, `66f02f2a…4378`), randomized fragmentation/partial writes/alternating local pressure, twelve changing seeds, SSH-credit suspension, fairness progress, all five suspending seams, late completion, typed failures, aggregate denial, no-spin permanent pressure, and a 100-run cleanup baseline.
+- VERIFICATION: Focused normal and Thread Sanitizer suites pass 12 tests, twenty repeated seeded runs pass, strict recursive Swift format passes, and the second `make validate-core` passes 288 tests in 26 suites plus build. The first full run exposed one unrelated existing concurrent provider-failure assertion (`iOS` expected 1007, observed 1009); its isolated rerun and the full rerun passed without pump changes.
+
 ### 0638 — Private HEV SOCKS pending admission rejects before protocol bytes (TASK-260715-1juybj)
 - CORRECTION: The normative ownership sequence now matches `HEVSOCKSBoundary.swift:284-299`: immediately after TCP accept/socket setup, an already-stopped or generation-retired boundary or a full pending-authentication set closes the descriptor without a SOCKS5 method reply, RFC 1929 reply, authentication enqueue, or adapter handoff.
 - BOUNDARY: Wrong/stale capability and the M1 monotonic accept-to-auth deadline remain authentication-phase failures with only phase-and-remaining-budget-safe replies. The post-handoff adapter resource reservation is separate from the boundary pending-authentication ceiling.
