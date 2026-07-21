@@ -66,7 +66,7 @@ release pipeline remain incomplete or evidence-gated.
 | DF-07 | DNS uses configured numeric exit-resolver endpoints through relay UDP with bounded TCP fallback | Packet plane to SSH exit resolver | Policy is proposed and implementation is blocked on production-authorized limits and selected-SSH evidence; no physical fallback is permitted by design |
 | DF-08 | The app uploads and launches the relay through exec stdin, then verifies identity and protocol | Authenticated SSH session to user account | Rootless stdio entrypoint and artifact verification tooling exist; remote install/upload/launch composition is planned; SFTP is outside the transport contract |
 | DF-09 | Typed aggregate runtime diagnostics return to the containing app and may enter a user-created support export | Extension to app to user-selected recipient | Bounded typed runtime diagnostics are implemented; support-export redaction, preview, retention, and sharing are planned |
-| DF-10 | CI builds application/relay artifacts and a macOS app fetches a signed update | Build system and update channel to device | Pinned relay-build CI exists; application release CI and Sparkle integration are planned |
+| DF-10 | CI builds application/relay artifacts and a macOS app fetches a signed update | Build system and update channel to device | Sparkle 2.9.4, signed-feed/payload, already-notarized final-DMG, channel, rollback, key, privacy, and system-extension lifecycle contracts are accepted under TASK-260717-2uyfn5; integration, release CI, credentials, publication, and physical evidence remain planned |
 
 ## 4. Trust boundaries
 
@@ -207,7 +207,7 @@ protect availability; they are not an authorization system for destination use.
 | M-09 | Full mode may degrade to TCP plus safe DNS without leaking UDP | Accepted design in ADR-007; model types exist | Implement capability negotiation, degraded transition/recovery, UDP rejection, and physical full/degraded tests |
 | M-10 | Compatible and platform-scoped fail-closed route modes are explicit | Accepted design in ADR-012; VPN-manager fields exist | Current coordinator accepts only compatible mode; implement route policy and validate documented OS exceptions |
 | M-11 | Diagnostics use finite aggregate schemas without payload/destination fields | Implemented and tested for runtime snapshots | Implement export redaction, preview, retention, security tests, and downstream privacy approval |
-| M-12 | macOS updates require signed appcast and notarized Developer ID payloads | Accepted design in ADR-018 | Implement Sparkle integration, appcast/release jobs, key custody/rotation, rollback/withdrawal, and integrity tests |
+| M-12 | macOS updates require a signed feed and EdDSA payload over an already-notarized Developer ID DMG | Exact Sparkle 2.9.4, fail-closed feed, forward-rollback, two-root key, privacy, and host/system-extension lifecycle design accepted in ADR-018 and `TASK-260717-2uyfn5` | Implement host/XPC integration and appcast/release jobs; perform human key ceremony, privacy audit, withdrawal/rotation drill, and physical clean-install/update/system-extension gates before any shipped claim |
 
 ## 7. Does-hide / does-not-hide matrix
 

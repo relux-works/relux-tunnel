@@ -93,9 +93,13 @@ agent loop.
 ## Distribution
 
 - **macOS**: Developer ID + hardened runtime + notarization + stapling, stable
-  `ReluxProxy.dmg` from authenticated GitHub releases, plus **in-app self-update**
-  (Sparkle 2.x, EdDSA-signed appcast — every payload is an already-notarized
-  build). See ADR-018 and `.spec/platform-distribution.md`.
+  `ReluxProxy.dmg` from authenticated GitHub releases, plus the accepted
+  **in-app self-update design**: exact Sparkle 2.9.4, a public HTTPS signed feed,
+  EdDSA-signed final DMGs that are already Developer ID signed/notarized/stapled,
+  and a separately activated packet-tunnel system extension. Implementation and
+  physical update evidence remain release gates. See ADR-018,
+  `.spec/platform-distribution.md`, and
+  [the dated decision](.research/260721_macos-self-update.md).
 - **iOS**: Apple Distribution via TestFlight/App Store; the App Store owns iOS
   updates.
 

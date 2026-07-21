@@ -11,7 +11,8 @@ TASK-260715-3r0993; they do not consume an unversioned global Tuist installation
 Planned targets:
 
 - `ReluxProxyMac` containing app;
-- `ReluxProxyMacTunnel` packet tunnel extension;
+- `ReluxProxyMacTunnel` packet-tunnel system extension for direct Developer ID
+  distribution;
 - `ReluxProxyIOS` containing app;
 - `ReluxProxyIOSTunnel` packet tunnel extension;
 - `ReluxTunnelCore` Swift package shared by both providers;
@@ -65,9 +66,10 @@ shims.
 
 Developer ID distribution uses hardened runtime, nested signing in inside-out
 order, notarization, stapling, Gatekeeper validation, checksums, and provenance
-attestation. The packet tunnel extension and containing app need compatible
-entitlements/profiles. A stable `ReluxProxy.dmg` release asset may continue, but
-on a private repository it requires authenticated GitHub access.
+attestation. The packet-tunnel system extension and containing app need
+compatible entitlements/profiles and the same approved Team ID. A stable
+`ReluxProxy.dmg` release asset may continue, but on a private repository it
+requires authenticated GitHub access.
 
 ### iOS
 
@@ -78,23 +80,115 @@ iterations before App Store submission.
 
 ### macOS self-update
 
-The macOS app ships an in-app self-update channel so security fixes reach users
-without a manual re-download (ADR-018). Constraints:
+The macOS app ships the ADR-018 in-app update design so security fixes can reach
+users without a manual re-download. This remains accepted design until the
+integration, release pipeline, key ceremony, and physical gates pass.
 
-- Sparkle 2.x with an EdDSA (ed25519) signed appcast; the public key is pinned in
-  `Info.plist` (`SUPublicEDKey`), the private key is a CI secret held in the same
-  custody as the Developer ID / notarization credentials.
-- Every update payload is an already-notarized Developer ID build, so hardened
-  runtime, Gatekeeper, and stapling guarantees are preserved end to end. The
-  updater embeds without introducing notarization-breaking entitlements.
-- The appcast and update assets are published from the same authenticated GitHub
-  release channel as the notarized DMG; a missing or invalid signature fails
-  closed, downgrades are refused outside an explicit rollback channel, and a
-  payload whose team identifier does not match is rejected.
-- iOS is out of scope for self-update: the App Store owns iOS updates.
-- Key custody, rotation, appcast withdrawal, emergency stop, and rollback are
-  documented in the self-update runbook and referenced by the threat model
-  (supply-chain adversary, §4.E).
+#### Dependency and integration
+
+- Pin official Sparkle **2.9.4** exactly through Swift Package Manager at tag
+  commit `b6496a74a087257ef5e6da1c5b29a447a60f5bd7`; the official binary-target
+  checksum is
+  `cb6fdbdc8884f15d62a616e79face92b08322410fd2d425edc6596ccbf4ba3b0`.
+  Ranges, branches, prereleases, and automatic dependency upgrades are
+  prohibited. Ship the tagged complete `LICENSE`, including bundled licenses.
+- Link and embed Sparkle only in the sandboxed, hardened-runtime
+  `ReluxProxyMac` host. Use a host-owned `SPUStandardUpdaterController`; never
+  link Sparkle into the packet-tunnel system extension, shared core, harness, or
+  iOS.
+- The sandboxed host enables `SUEnableInstallerLauncherService` and Sparkle's
+  documented `<host-bundle-id>-spks` / `<host-bundle-id>-spki` Mach lookup
+  exceptions. Because the host has outbound network-client access, Downloader,
+  Installer Connection, and Installer Status XPC services stay disabled.
+  Xcode Archive + Developer ID Export must re-sign the framework, both bundled
+  XPC services, `Autoupdate`, and `Updater.app`; “Code Sign on Copy” alone is not
+  release evidence.
+- Hardened Runtime remains enabled on all executable code. Distribution has no
+  `get-task-allow`, disabled library validation, unsigned/JIT executable-memory,
+  or unreviewed exception entitlement.
+
+#### Feed and updater settings
+
+- `SUFeedURL` is
+  `https://updates.relux.works/macos/appcast.xml`. The origin is public,
+  read-only, ATS-compatible HTTPS; no repository credential or user secret is
+  embedded in the app. Private GitHub releases remain the authenticated manual
+  download channel and may mirror the exact same final DMG bytes.
+- Pin the later ceremony's public key in `SUPublicEDKey`. Set
+  `SUVerifyUpdateBeforeExtraction=YES`, `SURequireSignedFeed=YES`, and
+  `SUSignedFeedFailureExpirationInterval=0`. Feed, release-note, payload, TLS,
+  parse, version, or download failure has no unsigned, alternate-feed, website,
+  or expiration fallback.
+- Leave `SUEnableAutomaticChecks` absent so Sparkle asks on second launch; set a
+  86,400-second schedule, `SUAutomaticallyUpdate=NO`,
+  `SUAllowsAutomaticUpdates=NO`, `SUEnableSystemProfiling=NO`, and
+  `SUEnableJavaScript=NO`. A user may check manually and a declined automatic
+  check preference is respected.
+- Stable appcast items omit `sparkle:channel`. Opt-in prereleases use exactly
+  `prerelease`; prerelease clients also see Sparkle's unexcludable default
+  channel. One monotonically increasing integer `CFBundleVersion` sequence spans
+  both channels. Appcast version strings match the app exactly and the baseline
+  `sparkle:minimumSystemVersion` is `15.0.0`.
+- Appcast and detached release notes use `Cache-Control: no-store`; versioned
+  payloads use `Cache-Control: public, max-age=31536000, immutable`. Enclosure
+  URLs are immutable, same-origin, and non-redirecting. Publish verified assets
+  first and atomically replace the signed appcast last.
+
+#### Signed, already-notarized payload invariant
+
+The baseline enclosure is a DMG, not ZIP, PKG, or delta. Build and sign all
+nested code inside-out, verify exact identities/entitlements and Hardened
+Runtime, notarize and staple the app, assemble/sign/notarize/staple the final
+DMG, and only then run Sparkle 2.9.4 signing tools over the final immutable DMG
+bytes. Any later mutation invalidates publication and requires rebuilding the
+Apple and Sparkle evidence. A missing signing input, failed notarization/stapling,
+identity or entitlement drift, signature failure, wrong version/channel/floor,
+remote digest/header mismatch, or premature feed publication fails CI closed.
+
+#### System-extension lifecycle
+
+Apple TN3134 requires a system extension for a directly distributed macOS
+packet-tunnel provider. The host must confirm an orderly tunnel stop before
+allowing update installation. Sparkle then replaces/relaunches only the
+containing app. On relaunch the host separately requests activation/replacement
+of the embedded same-Team-ID, same-bundle-ID system extension and does not claim
+the new provider active until the OS reports success. The baseline does not
+auto-reconnect after update.
+
+Apple documents that new-version activation can require user approval and can
+return restart-required. Exact approval reuse, UI, timing, active-provider, and
+managed-system behavior are OS-controlled and remain unknown. Physical clean
+install and old-to-new update evidence, including denial, restart, relaunch,
+provider-version proof, and manual reconnect, is mandatory under
+`TASK-260715-1r48pc` and `TASK-260715-2aessv`.
+
+#### Withdrawal, rollback, keys, and privacy
+
+- Withdrawal republishes a valid signed feed without the affected item and
+  removes/denies its asset. It prevents new discovery after a fresh check but
+  cannot recall already downloaded or installed software.
+- Sparkle 2 does not support downgrades. Emergency rollback publishes
+  last-known-good source as a newly signed/notarized release with a higher
+  `CFBundleVersion`; true downgrade is a separate manual recovery path. There is
+  no rollback channel.
+- `TASK-260717-ziprhs` owns the human EdDSA key ceremony. The private key exists
+  only in a protected release environment plus separately controlled encrypted
+  escrow; two custodians approve import, use, rotation, and destruction. No
+  secret enters source, PR jobs, logs, artifacts, the feed origin, or board
+  resources.
+- Planned EdDSA rotation uses an old-key-signed Developer ID DMG bridge that pins
+  the new public key while the Developer ID identity stays unchanged. Developer
+  ID and EdDSA identities never rotate in the same update. There is no remote
+  revocation of a key pinned in installed apps; unsupported recovery remains a
+  manual notarized download.
+- Update requests carry no Sparkle system profile, custom identifier parameters,
+  traffic/destination/DNS data, analytics, JavaScript, or tracking content. The
+  origin may keep access-controlled security/availability logs for at most seven
+  days, never join them to product profiles, and must be disclosed before
+  production.
+
+The dated authority, sources, human release gates, and downstream contracts are
+in [`.research/260721_macos-self-update.md`](../.research/260721_macos-self-update.md).
 
 ## CI/CD contract
 
@@ -106,8 +200,10 @@ provisioning secret is committed.
 Required pipelines:
 
 1. shared-core unit and protocol conformance tests on macOS;
-2. macOS host/extension build, entitlement inspection, signing verification,
-   notarization, DMG publication, checksums, and stable-name asset;
+2. macOS host/system-extension build, entitlement inspection, nested signing,
+   notarization/stapling, final-DMG verification, Sparkle 2.9.4 payload/feed
+   signing, asset-first/feed-last publication, cache/privacy probes, checksums,
+   and stable manual-download asset;
 3. iOS host/extension archive, entitlement/provisioning inspection, and
    TestFlight upload;
 4. reproducible relay cross-build matrix, tests, checksums, manifest generation,

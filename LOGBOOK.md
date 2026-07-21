@@ -5,6 +5,12 @@
 
 ## 2026-07-21
 
+### 2305 — macOS self-update is exact, signed-feed, forward-only, and system-extension gated (TASK-260717-2uyfn5)
+- DECISION: Pin official Sparkle 2.9.4 exactly in the macOS host; require pre-extraction EdDSA verification plus a signed feed with failure expiration disabled; publish only final Developer ID-signed, hardened-runtime, notarized/stapled DMGs from a public read-only HTTPS origin after asset-first verification. Stable is Sparkle's default channel and opt-in prerelease uses `prerelease`; private GitHub remains manual distribution.
+- CORRECTION: Sparkle 2 removed downgrade support, so emergency rollback is last-known-good source rebuilt at a higher `CFBundleVersion`, not an explicit rollback channel. Sparkle also documents Developer ID key rotation, so downstream tests must enforce the approved product identities instead of asserting every Team ID change is intrinsically rejected by Sparkle.
+- PLATFORM: Apple TN3134 requires the directly distributed macOS packet tunnel to be a system extension. Sparkle host replacement/relaunch does not activate the new provider; the host must stop the tunnel, relaunch, submit a separate replacement request, surface approval/restart state, and avoid automatic reconnect. Exact OS behavior remains a physical gate under `TASK-260715-1r48pc` and `TASK-260715-2aessv`.
+- SECURITY/PRIVACY: Production EdDSA generation stays human-owned under `TASK-260717-ziprhs`, with protected CI use, encrypted escrow, two-custodian rotation, and no secret in source/logs/board. System profiling, custom feed parameters, automatic installation, JavaScript, and analytics are off; update-origin logs are operational-only with a seven-day maximum.
+
 ### 2230 — Security claims separate component evidence from release guarantees (TASK-260717-3ujeip)
 - FINDING: The seed threat model stated several accepted designs as shipped mitigations even though the repository has no concrete packet-tunnel provider target, selected production SSH adapter, Keychain vault, DNS/route composition, relay deployment/frame-pump composition, degraded-mode controller, platform fail-closed implementation, Sparkle path, or application release pipeline.
 - DECISION: Security copy now carries stable claim IDs and one of four evidence boundaries: implemented component, contract implemented/integration gated, accepted design/release gated, or planned/unverified. No positive system-VPN claim is authorized as a verified release claim until candidate-specific composition and physical evidence is accepted.
