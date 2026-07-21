@@ -4,7 +4,10 @@
 	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
 	relay-protocol-generate relay-protocol-vectors-generate \
 	relay-protocol-vectors-check relay-protocol-conformance-check \
-	relay-protocol-hostile-diagnostics relay-protocol-check
+	relay-protocol-hostile-diagnostics relay-protocol-check \
+	relay-shell-test relay-shell-vet relay-shell-build relay-shell-release \
+	relay-shell-verify relay-shell-smoke relay-shell-reproducibility relay-shell-validate \
+	relay-provision-go relay-provision-syft relay-provision-tools relay-print-apple-bundle-input
 
 LEGACY_ROOT ?= ../relux-proxy
 
@@ -69,6 +72,103 @@ build-libssh2:
 		--output NativeDependencies/Artifacts/ReluxLibSSH2.xcframework
 
 RELAY_PROTOCOL_ENV = LC_ALL=C LANG=C TZ=UTC PYTHONHASHSEED=0
+
+RELAY_HOST_OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
+RELAY_HOST_ARCH ?= $(shell uname -m | sed -e 's/^x86_64$$/amd64/' -e 's/^aarch64$$/arm64/')
+RELAY_TOOLCHAIN_ROOT ?= $(CURDIR)/.build/relay/toolchains
+RELAY_GO_INSTALL ?= $(RELAY_TOOLCHAIN_ROOT)/go1.26.5-$(RELAY_HOST_OS)-$(RELAY_HOST_ARCH)
+RELAY_SYFT_INSTALL ?= $(RELAY_TOOLCHAIN_ROOT)/syft1.48.0-$(RELAY_HOST_OS)-$(RELAY_HOST_ARCH)
+RELAY_GO ?= $(RELAY_GO_INSTALL)/go/bin/go
+RELAY_GOROOT ?= $(RELAY_GO_INSTALL)/go
+RELAY_GO_TOOLCHAIN ?= local
+RELAY_SYFT ?= $(RELAY_SYFT_INSTALL)/syft
+RELAY_GO_ARCHIVE ?=
+RELAY_SYFT_ARCHIVE ?=
+RELAY_VERSION ?=
+SOURCE_COMMIT ?=
+RELAY_APPLE_BUNDLE_INPUT ?= .build/relay/apple-bundle-input
+RELAY_PROTOCOL_TEST_OUTPUT ?= .build/relay/protocol-tests
+RELAY_REPRO_BUNDLE_INPUT ?= .build/relay/repro/apple-bundle-input
+RELAY_REPRO_TEST_OUTPUT ?= .build/relay/repro/protocol-tests
+
+RELAY_BUILD_ARGUMENTS = \
+	--go "$(RELAY_GO)" \
+	--go-toolchain "$(RELAY_GO_TOOLCHAIN)" \
+	--syft "$(RELAY_SYFT)" \
+	--relay-version "$(RELAY_VERSION)" \
+	--source-commit "$(SOURCE_COMMIT)" \
+	--require-provenance
+
+RELAY_GO_ENV = \
+	GOROOT="$(RELAY_GOROOT)" \
+	GOTOOLCHAIN="$(RELAY_GO_TOOLCHAIN)" \
+	GOENV=off \
+	GOCACHE="$(CURDIR)/.temp/relay-go-cache" \
+	GOPATH="$(CURDIR)/.temp/relay-go-path" \
+	CGO_ENABLED=0
+
+relay-shell-test:
+	cd relay && RELUX_TUNNEL_REPO_ROOT="$(CURDIR)" $(RELAY_GO_ENV) "$(RELAY_GO)" test ./...
+	python3 -m unittest scripts/tests/test_relay_release.py
+
+relay-shell-vet:
+	cd relay && RELUX_TUNNEL_REPO_ROOT="$(CURDIR)" $(RELAY_GO_ENV) "$(RELAY_GO)" vet ./...
+
+relay-provision-go:
+	python3 scripts/relay_release.py provision-go \
+		--archive "$(RELAY_GO_ARCHIVE)" \
+		--destination "$(RELAY_GO_INSTALL)"
+
+relay-provision-syft:
+	python3 scripts/relay_release.py provision-syft \
+		--archive "$(RELAY_SYFT_ARCHIVE)" \
+		--destination "$(RELAY_SYFT_INSTALL)"
+
+relay-provision-tools: relay-provision-go relay-provision-syft
+
+relay-shell-build:
+	python3 scripts/relay_release.py build \
+		$(RELAY_BUILD_ARGUMENTS) \
+		--output "$(RELAY_APPLE_BUNDLE_INPUT)" \
+		--test-output "$(RELAY_PROTOCOL_TEST_OUTPUT)"
+
+relay-shell-release:
+	python3 scripts/relay_release.py build \
+		$(RELAY_BUILD_ARGUMENTS) \
+		--require-clean \
+		--output "$(RELAY_APPLE_BUNDLE_INPUT)" \
+		--test-output "$(RELAY_PROTOCOL_TEST_OUTPUT)"
+
+relay-shell-verify:
+	python3 scripts/relay_release.py verify \
+		--go "$(RELAY_GO)" \
+		--go-toolchain "$(RELAY_GO_TOOLCHAIN)" \
+		--require-provenance \
+		--output "$(RELAY_APPLE_BUNDLE_INPUT)" \
+		--test-output "$(RELAY_PROTOCOL_TEST_OUTPUT)"
+
+relay-shell-smoke:
+	./scripts/tests/test-relay-shell-artifacts.sh \
+		"$(RELAY_APPLE_BUNDLE_INPUT)" \
+		"$(RELAY_PROTOCOL_TEST_OUTPUT)" \
+		"$(RELAY_VERSION)" \
+		"$(SOURCE_COMMIT)"
+
+relay-shell-reproducibility: relay-shell-build
+	python3 scripts/relay_release.py build \
+		$(RELAY_BUILD_ARGUMENTS) \
+		--output "$(RELAY_REPRO_BUNDLE_INPUT)" \
+		--test-output "$(RELAY_REPRO_TEST_OUTPUT)"
+	python3 scripts/relay_release.py compare \
+		--first "$(RELAY_APPLE_BUNDLE_INPUT)" \
+		--second "$(RELAY_REPRO_BUNDLE_INPUT)" \
+		--first-tests "$(RELAY_PROTOCOL_TEST_OUTPUT)" \
+		--second-tests "$(RELAY_REPRO_TEST_OUTPUT)"
+
+relay-shell-validate: relay-shell-test relay-shell-vet relay-shell-reproducibility relay-shell-verify relay-shell-smoke
+
+relay-print-apple-bundle-input:
+	@echo "$(RELAY_APPLE_BUNDLE_INPUT)"
 
 relay-protocol-generate:
 	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py generate

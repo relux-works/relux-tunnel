@@ -1,10 +1,68 @@
 # relay/
 
 Go implementation root for `relux-relay` (relay protocol v1). The authoritative
-Go module scaffold (`go.mod` pinned per TASK-260715-3bdplx: Go 1.26.5,
-standard library only, `CGO_ENABLED=0`, module
-`github.com/relux-works/relux-tunnel/relay`) is owned by TASK-260715-27uz4n and
-is not created here.
+module is pinned to Go 1.26.5, the standard library only, `CGO_ENABLED=0`, and
+`github.com/relux-works/relux-tunnel/relay`.
+
+## Target shells
+
+- `cmd/relux-relay` provides only `smoke`, a deterministic JSON metadata and
+  empty-health contract. It reports executable version, protocol version,
+  source revision, and `GOOS/GOARCH`, and explicitly reports
+  `relayBehaviorImplemented: false`.
+- `cmd/relux-relay-protocol-test` provides `smoke` plus `run`. The runnable
+  shell checks only the empty health configuration and one protocol-version
+  mismatch against the existing generated/schema-backed handshake code.
+- `manifest-v1.schema.json` freezes the application-consumed release manifest
+  field names. `scripts/relay_release.py` builds and verifies the accepted
+  Linux/macOS by amd64/arm64 matrix, deterministic checksums, SPDX 2.3 SBOMs,
+  and combined repository/Go license notices.
+
+No UDP socket, association, upload, SSH execution, or release-publication
+behavior is implemented by these shells.
+
+From the repository root, run:
+
+```sh
+mkdir -p .temp/relay-tools
+curl -fL \
+  -o .temp/relay-tools/go1.26.5.darwin-arm64.tar.gz \
+  https://go.dev/dl/go1.26.5.darwin-arm64.tar.gz
+curl -fL \
+  -o .temp/relay-tools/syft_1.48.0_darwin_arm64.tar.gz \
+  https://github.com/anchore/syft/releases/download/v1.48.0/syft_1.48.0_darwin_arm64.tar.gz
+make relay-provision-tools \
+  RELAY_GO_ARCHIVE=.temp/relay-tools/go1.26.5.darwin-arm64.tar.gz \
+  RELAY_SYFT_ARCHIVE=.temp/relay-tools/syft_1.48.0_darwin_arm64.tar.gz
+make relay-shell-test
+make relay-shell-validate \
+  RELAY_VERSION=0.1.0 \
+  SOURCE_COMMIT=0123456789abcdef0123456789abcdef01234567
+```
+
+The provision commands never download tools. They accept only the official
+archive name for the current Darwin/Linux amd64/arm64 host, verify the pinned
+upstream SHA-256, retain the verified archive beside the installed tool, and
+write a canonical path-free provenance receipt. Release builds recheck the
+archive, compare the installed Go driver/compiler/linker and Syft executable
+against archive members, require `GOTOOLCHAIN=local`, and validate exact tool
+identity. Go is pinned to `go1.26.5`; Syft is pinned to 1.48.0 commit
+`3e2bc6ed095f7ec1a415fb38cfe1c319e95dfed6`. The accepted checksums for all
+four provisioning hosts are declared in `scripts/relay_release.py`. Replace
+`darwin-arm64` / `darwin_arm64` in the example with the current supported host
+pair. After provisioning, build and SBOM generation are offline.
+
+Automatic `GOTOOLCHAIN=go1.26.5` acquisition is a developer convenience only;
+it is not used by `relay-shell-build`, `relay-shell-release`, or
+`relay-shell-verify`. Release entry points fail closed when the provisioned
+tool, provenance receipt, retained archive, checksum, version, commit, or host
+platform is missing or mismatched.
+
+The default Apple bundle input is `.build/relay/apple-bundle-input`; query it
+with `make relay-print-apple-bundle-input`. Cross-built Linux binaries are not
+executed on macOS. Native Linux amd64, Linux arm64, macOS arm64, and Intel macOS
+runtime rows remain mandatory release-CI gates; Rosetta is recorded only as
+additional local evidence.
 
 Current protocol contents:
 
@@ -40,9 +98,6 @@ Current protocol contents:
   `Protocol/Relay/Vectors/v1/corpus.json`; failures name the stable vector ID
   without printing input or payload bytes.
 
-Until the module scaffold lands, `scripts/tests/test-relay-protocol-go.sh`
-(invoked by `make relay-protocol-check`) compiles and tests this package inside
-a throwaway module under `.temp/relay-protocol-go-smoke/`. When
-TASK-260715-27uz4n adds `relay/go.mod`, these files need no changes: the
-package path `relay/internal/protocol` already matches the binding ADR, and the
-smoke script can then be switched to plain `go test ./...` inside the module.
+`scripts/tests/test-relay-protocol-go.sh` (invoked by
+`make relay-protocol-check`) vets and tests this package directly inside the
+pinned module with no dependency resolution.

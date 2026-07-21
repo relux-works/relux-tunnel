@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relux.works/schemas/relux-relay-manifest-v1.schema.json",
+  "title": "Relux relay artifact manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "relayProtocolVersion",
+    "relayVersion",
+    "sourceCommit",
+    "toolchain",
+    "artifacts"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "relayProtocolVersion": {"const": 1},
+    "relayVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "sourceCommit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "toolchain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["go", "cgoEnabled", "syft"],
+      "properties": {
+        "go": {"const": "go1.26.5"},
+        "cgoEnabled": {"const": false},
+        "syft": {"const": "1.48.0"}
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/artifact"}
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "os",
+        "arch",
+        "goTarget",
+        "canonicalTarget",
+        "filename",
+        "size",
+        "sha256",
+        "sbom",
+        "sbomSha256"
+      ],
+      "properties": {
+        "os": {"enum": ["darwin", "linux"]},
+        "arch": {"enum": ["amd64", "arm64"]},
+        "goTarget": {"type": "string", "pattern": "^(darwin|linux)/(amd64|arm64)$"},
+        "canonicalTarget": {
+          "enum": [
+            "aarch64-apple-darwin",
+            "aarch64-unknown-linux",
+            "x86_64-apple-darwin",
+            "x86_64-unknown-linux"
+          ]
+        },
+        "filename": {"type": "string", "pattern": "^relux-relay-(darwin|linux)-(amd64|arm64)$"},
+        "size": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sbom": {"type": "string", "pattern": "^relux-relay-(darwin|linux)-(amd64|arm64)\\.spdx\\.json$"},
+        "sbomSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}
