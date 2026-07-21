@@ -76,7 +76,11 @@ class RelayReleaseTests(unittest.TestCase):
                 bundle.addfile(info, None if contents is None else io.BytesIO(contents))
 
     def write_elf_fixture(
-        self, path: Path, machine: int, program_types: list[int]
+        self,
+        path: Path,
+        machine: int,
+        program_types: list[int],
+        section_names: list[str] | None = None,
     ) -> None:
         header = bytearray(64)
         header[:6] = b"\x7fELF\x02\x01"
@@ -86,7 +90,25 @@ class RelayReleaseTests(unittest.TestCase):
         programs = bytearray(56 * len(program_types))
         for index, program_type in enumerate(program_types):
             struct.pack_into("<I", programs, index * 56, program_type)
-        path.write_bytes(header + programs)
+        if not section_names:
+            path.write_bytes(header + programs)
+            return
+        names = bytearray(b"\0.shstrtab\0")
+        name_offsets = []
+        for name in section_names:
+            name_offsets.append(len(names))
+            names.extend(name.encode("ascii") + b"\0")
+        section_offset = len(header) + len(programs)
+        section_count = 2 + len(section_names)
+        names_offset = section_offset + section_count * 64
+        struct.pack_into("<Q", header, 40, section_offset)
+        struct.pack_into("<HHH", header, 58, 64, section_count, 1)
+        sections = bytearray(section_count * 64)
+        struct.pack_into("<I", sections, 64, 1)
+        struct.pack_into("<QQ", sections, 64 + 24, names_offset, len(names))
+        for index, name_offset in enumerate(name_offsets, start=2):
+            struct.pack_into("<I", sections, index * 64, name_offset)
+        path.write_bytes(header + programs + sections + names)
 
     def macho_dylib_command(self, name: str) -> bytes:
         encoded = name.encode("ascii") + b"\0"
@@ -98,13 +120,49 @@ class RelayReleaseTests(unittest.TestCase):
         )
 
     def write_macho_fixture(
-        self, path: Path, cpu_type: int, minimum: int = 0x000C0000
+        self,
+        path: Path,
+        cpu_type: int,
+        minimum: int = 0x000C0000,
+        debug_section: bool = False,
     ) -> None:
         commands = [
             self.macho_dylib_command("/usr/lib/libSystem.B.dylib"),
             self.macho_dylib_command("/usr/lib/libresolv.9.dylib"),
             struct.pack("<IIIIII", 0x32, 24, 1, minimum, 0x000C0000, 0),
         ]
+        if debug_section:
+            commands.append(
+                struct.pack(
+                    "<II16sQQQQIIII",
+                    0x19,
+                    152,
+                    b"__DWARF\0",
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                )
+                + struct.pack(
+                    "<16s16sQQIIIIIIII",
+                    b"__debug_info\0",
+                    b"__DWARF\0",
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                )
+            )
         header = struct.pack(
             "<IIIIIIII",
             0xFEEDFACF,
@@ -131,6 +189,14 @@ class RelayReleaseTests(unittest.TestCase):
                 ("linux", "amd64", "x86_64-unknown-linux"),
                 ("linux", "arm64", "aarch64-unknown-linux"),
             ],
+        )
+
+    def test_portable_aggregate_inspects_only_after_all_builds(self) -> None:
+        makefile = (relay_release.ROOT / "Makefile").read_text(encoding="utf-8")
+        self.assertIn(
+            "relay-portable-assets: relay-toolchain-build-all\n"
+            "\t$(MAKE) relay-toolchain-inspect-assets\n",
+            makefile,
         )
         self.assertEqual(
             [relay_release.target_filename(target) for target in relay_release.TARGETS],
@@ -397,6 +463,158 @@ class RelayReleaseTests(unittest.TestCase):
                 relay_release.ReleaseError, "minimum OS or SDK"
             ):
                 relay_release.verify_linkage_contract(darwin, relay_release.TARGETS[1])
+
+    def test_debug_symbol_contract_rejects_elf_and_macho_dwarf(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            linux = directory / "relay-linux"
+            self.write_elf_fixture(linux, 62, [1], [".gopclntab"])
+            relay_release.verify_debug_symbol_contract(linux, relay_release.TARGETS[2])
+            self.write_elf_fixture(linux, 62, [1], [".debug_info"])
+            with self.assertRaisesRegex(relay_release.ReleaseError, "debug symbols"):
+                relay_release.verify_debug_symbol_contract(
+                    linux, relay_release.TARGETS[2]
+                )
+
+            darwin = directory / "relay-darwin"
+            self.write_macho_fixture(darwin, 0x0100000C)
+            relay_release.verify_debug_symbol_contract(darwin, relay_release.TARGETS[1])
+            self.write_macho_fixture(darwin, 0x0100000C, debug_section=True)
+            with self.assertRaisesRegex(relay_release.ReleaseError, "debug symbols"):
+                relay_release.verify_debug_symbol_contract(
+                    darwin, relay_release.TARGETS[1]
+                )
+
+    def write_portable_asset_fixture(self, root: Path) -> None:
+        for target in relay_release.TARGETS:
+            directory = root / relay_release.target_directory(target)
+            directory.mkdir(parents=True)
+            binary = directory / relay_release.target_filename(target)
+            if target["os"] == "linux":
+                machine = 62 if target["arch"] == "amd64" else 183
+                self.write_elf_fixture(binary, machine, [1])
+            else:
+                cpu_type = 0x01000007 if target["arch"] == "amd64" else 0x0100000C
+                self.write_macho_fixture(binary, cpu_type)
+            binary.chmod(0o755)
+
+    def test_portable_asset_report_is_exact_budgeted_and_path_free(self) -> None:
+        relay_version = "0.1.0"
+        source_commit = "0123456789abcdef0123456789abcdef01234567"
+        manifest = relay_release.verify_toolchain_manifest()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "portable"
+            root.mkdir()
+            self.write_portable_asset_fixture(root)
+            with mock.patch.object(relay_release, "verify_go_build_info"):
+                report = relay_release.portable_asset_report(
+                    root,
+                    relay_version,
+                    source_commit,
+                    "1784563200",
+                    1_000_000,
+                    "go",
+                    "local",
+                    manifest,
+                )
+            self.assertEqual(report["schemaVersion"], 1)
+            self.assertEqual(report["relayProtocolVersion"], 1)
+            self.assertEqual(report["buildMode"], "release")
+            self.assertEqual(len(report["artifacts"]), 4)
+            self.assertEqual(
+                [artifact["filename"] for artifact in report["artifacts"]],
+                [
+                    "relux-relay-darwin-amd64",
+                    "relux-relay-darwin-arm64",
+                    "relux-relay-linux-amd64",
+                    "relux-relay-linux-arm64",
+                ],
+            )
+            self.assertTrue(report["withinBundleBudget"])
+            self.assertEqual(
+                report["remainingBudgetBytes"],
+                report["bundleBudgetBytes"] - report["totalAssetSizeBytes"],
+            )
+            encoded = relay_release.stable_json(report).decode("utf-8")
+            self.assertNotIn(str(root), encoded)
+            self.assertNotIn(str(Path.home()), encoded)
+            self.assertTrue(
+                all(
+                    artifact["debugSymbolDisposition"].startswith("stripped")
+                    for artifact in report["artifacts"]
+                )
+            )
+
+            with mock.patch.object(relay_release, "verify_go_build_info"):
+                over_budget = relay_release.portable_asset_report(
+                    root,
+                    relay_version,
+                    source_commit,
+                    "1784563200",
+                    1,
+                    "go",
+                    "local",
+                    manifest,
+                )
+            self.assertFalse(over_budget["withinBundleBudget"])
+            self.assertLess(over_budget["remainingBudgetBytes"], 0)
+
+            extra = root / "linux-amd64" / "undeclared-executable"
+            extra.write_bytes(b"extra")
+            extra.chmod(0o755)
+            with mock.patch.object(relay_release, "verify_go_build_info"):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "not canonical"
+                ):
+                    relay_release.portable_asset_report(
+                        root,
+                        relay_version,
+                        source_commit,
+                        "1784563200",
+                        1_000_000,
+                        "go",
+                        "local",
+                        manifest,
+                    )
+
+    def test_inspect_assets_retains_measured_over_budget_report(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        manifest = relay_release.verify_toolchain_manifest()
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            fixture = Path(temporary)
+            portable_root = fixture / "portable"
+            portable_root.mkdir()
+            self.write_portable_asset_fixture(portable_root)
+            report_path = fixture / "portable-assets-v1.json"
+            arguments = mock.Mock(
+                go="go",
+                go_toolchain="local",
+                relay_version="0.1.0",
+                source_commit="0123456789abcdef0123456789abcdef01234567",
+                source_date_epoch="1784563200",
+                bundle_budget_bytes=1,
+                portable_root=str(portable_root),
+                report=str(report_path),
+                require_clean=False,
+            )
+            with (
+                mock.patch.object(relay_release, "verify_checkout_revision"),
+                mock.patch.object(
+                    relay_release,
+                    "verify_toolchain_manifest",
+                    return_value=manifest,
+                ),
+                mock.patch.object(relay_release, "verify_go_module_policy"),
+                mock.patch.object(relay_release, "verify_go_toolchain"),
+                mock.patch.object(relay_release, "verify_go_build_info"),
+                self.assertRaisesRegex(
+                    relay_release.ReleaseError, "exceed bundle budget"
+                ),
+            ):
+                relay_release.inspect_portable_assets(arguments)
+            retained = json.loads(report_path.read_text(encoding="utf-8"))
+            self.assertFalse(retained["withinBundleBudget"])
+            self.assertEqual(len(retained["artifacts"]), 4)
 
     def test_output_paths_cannot_escape_build_root(self) -> None:
         accepted = relay_release.validate_output_path(Path(".build/relay/test-output"))
@@ -773,9 +991,7 @@ class RelayReleaseTests(unittest.TestCase):
                 (release / filename).write_bytes(
                     f"copied executable fixture {index}".encode("ascii")
                 )
-                (release / f"{filename}.spdx.json").write_text(
-                    "{}\n", encoding="utf-8"
-                )
+                (release / f"{filename}.spdx.json").write_text("{}\n", encoding="utf-8")
 
             manifest = relay_release.build_manifest(
                 relay_version, source_commit, release
@@ -798,9 +1014,9 @@ class RelayReleaseTests(unittest.TestCase):
                     "arch": "arm64",
                     "selfSha256": self_sha256,
                 }
-                return (
-                    json.dumps(identity, separators=(",", ":")) + "\n"
-                ).encode("ascii")
+                return (json.dumps(identity, separators=(",", ":")) + "\n").encode(
+                    "ascii"
+                )
 
             canonical_identity = identity_output(selected_artifact["sha256"])
             relay_release.verify_identity_against_manifest(
@@ -855,9 +1071,9 @@ class RelayReleaseTests(unittest.TestCase):
 
             with self.subTest("manifest target tuple mismatch"):
                 altered = json.loads(json.dumps(manifest))
-                altered["artifacts"][target_index]["canonicalTarget"] = (
-                    "x86_64-apple-darwin"
-                )
+                altered["artifacts"][target_index][
+                    "canonicalTarget"
+                ] = "x86_64-apple-darwin"
                 altered_manifest = fixture / "target-mismatch-manifest.json"
                 altered_manifest.write_bytes(relay_release.stable_json(altered))
                 with self.assertRaisesRegex(
@@ -941,9 +1157,7 @@ class RelayReleaseTests(unittest.TestCase):
                         "--identity-output",
                         str(mismatch_path),
                     ],
-                ), mock.patch(
-                    "sys.stderr", new_callable=io.StringIO
-                ) as diagnostics:
+                ), mock.patch("sys.stderr", new_callable=io.StringIO) as diagnostics:
                     self.assertEqual(relay_release.main(), 1)
                     self.assertEqual(
                         diagnostics.getvalue(),

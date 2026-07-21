@@ -49,6 +49,27 @@ make relay-build-linux-amd64 RELAY_VERSION="$RELAY_VERSION" SOURCE_COMMIT="$SOUR
 make relay-build-linux-arm64 RELAY_VERSION="$RELAY_VERSION" SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" RELAY_BUILD_CLEAN_FLAG=--require-clean
 ```
 
+To produce and inspect the exact four-asset staging set in one command, the
+caller must supply the currently approved total bundle budget in bytes:
+
+```sh
+make relay-portable-assets \
+  RELAY_VERSION="$RELAY_VERSION" \
+  SOURCE_COMMIT="$SOURCE_COMMIT" \
+  SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
+  RELAY_BUNDLE_BUDGET_BYTES=<approved-total-bytes> \
+  RELAY_BUILD_CLEAN_FLAG=--require-clean
+```
+
+The command writes the four executables under `.build/relay/portable/` and a
+path-free `.build/relay/portable-assets-v1.json` evidence report. Inspection
+requires exactly the four canonical target directories and filenames, checks
+regular executable permissions, raw format and machine type, CPU baseline,
+linkage, minimum runtime, dynamic-library inventory, absence of DWARF/debug
+sections, sizes, and SHA-256 values. It records an over-budget measurement
+before failing. The budget has no default so build tooling cannot silently
+invent or change application bundle policy.
+
 Clean mode is the default and deletes only that target's output and workspace
 below `.build/relay/`. For local incremental iteration, append
 `RELAY_CACHE_MODE=incremental`; it reuses only the same target-scoped workspace.

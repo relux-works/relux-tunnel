@@ -24,6 +24,7 @@ SYFT_VERSION = "1.48.0"
 SYFT_COMMIT = "3e2bc6ed095f7ec1a415fb38cfe1c319e95dfed6"
 PROTOCOL_VERSION = 1
 MANIFEST_SCHEMA_VERSION = 1
+PORTABLE_REPORT_SCHEMA_VERSION = 1
 PROVENANCE_SCHEMA_VERSION = 1
 GO_LICENSE_SHA256 = "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
 VERSION_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
@@ -392,6 +393,10 @@ def verify_archive_provenance(
 
 def target_filename(target: dict[str, str]) -> str:
     return f"relux-relay-{target['os']}-{target['arch']}"
+
+
+def target_directory(target: dict[str, str]) -> str:
+    return f"{target['os']}-{target['arch']}"
 
 
 def protocol_test_filename(target: dict[str, str]) -> str:
@@ -1210,6 +1215,79 @@ def verify_linkage_contract(path: Path, target: dict[str, str]) -> None:
         raise ReleaseError(f"Darwin minimum OS or SDK contract changed: {path.name}")
 
 
+def verify_debug_symbol_contract(path: Path, target: dict[str, str]) -> None:
+    data = path.read_bytes()
+    if target["os"] == "linux":
+        if len(data) < 64 or data[:6] != b"\x7fELF\x02\x01":
+            raise ReleaseError(f"Linux debug-symbol metadata is invalid: {path.name}")
+        section_offset = struct.unpack_from("<Q", data, 40)[0]
+        section_entry_size, section_count, names_index = struct.unpack_from(
+            "<HHH", data, 58
+        )
+        if section_count == 0 and section_offset == 0:
+            return
+        if (
+            section_count == 0
+            or section_entry_size < 64
+            or names_index >= section_count
+            or section_offset + section_entry_size * section_count > len(data)
+        ):
+            raise ReleaseError(f"Linux section metadata is invalid: {path.name}")
+        names_header = section_offset + names_index * section_entry_size
+        names_offset, names_size = struct.unpack_from("<QQ", data, names_header + 24)
+        if names_offset + names_size > len(data):
+            raise ReleaseError(f"Linux section names are invalid: {path.name}")
+        names = data[names_offset : names_offset + names_size]
+        forbidden = {".symtab", ".gdb_index"}
+        for index in range(section_count):
+            header = section_offset + index * section_entry_size
+            name_offset = struct.unpack_from("<I", data, header)[0]
+            if name_offset >= len(names):
+                raise ReleaseError(f"Linux section name is invalid: {path.name}")
+            raw_name = names[name_offset:].split(b"\0", 1)[0]
+            try:
+                name = raw_name.decode("ascii")
+            except UnicodeDecodeError as error:
+                raise ReleaseError(
+                    f"Linux section name is not ASCII: {path.name}"
+                ) from error
+            if name in forbidden or name.startswith((".debug_", ".zdebug_")):
+                raise ReleaseError(f"debug symbols are present: {path.name}")
+        return
+
+    if len(data) < 32 or data[:4] != b"\xcf\xfa\xed\xfe":
+        raise ReleaseError(f"Darwin debug-symbol metadata is invalid: {path.name}")
+    command_count, command_bytes = struct.unpack_from("<II", data, 16)
+    cursor = 32
+    command_end = cursor + command_bytes
+    if command_end > len(data):
+        raise ReleaseError(f"Darwin load commands are truncated: {path.name}")
+    for _ in range(command_count):
+        if cursor + 8 > command_end:
+            raise ReleaseError(f"Darwin load command is truncated: {path.name}")
+        command, command_size = struct.unpack_from("<II", data, cursor)
+        if command_size < 8 or cursor + command_size > command_end:
+            raise ReleaseError(f"Darwin load command size is invalid: {path.name}")
+        if command == 0x19:
+            if command_size < 72:
+                raise ReleaseError(f"Darwin segment command is invalid: {path.name}")
+            segment = data[cursor + 8 : cursor + 24].split(b"\0", 1)[0]
+            section_count = struct.unpack_from("<I", data, cursor + 64)[0]
+            if 72 + section_count * 80 > command_size:
+                raise ReleaseError(f"Darwin section table is invalid: {path.name}")
+            if segment == b"__DWARF":
+                raise ReleaseError(f"debug symbols are present: {path.name}")
+            for index in range(section_count):
+                section_offset = cursor + 72 + index * 80
+                section = data[section_offset : section_offset + 16].split(b"\0", 1)[0]
+                section_segment = data[section_offset + 16 : section_offset + 32].split(
+                    b"\0", 1
+                )[0]
+                if section_segment == b"__DWARF" or section.startswith(b"__debug_"):
+                    raise ReleaseError(f"debug symbols are present: {path.name}")
+        cursor += command_size
+
+
 def verify_go_build_info(
     go_command: str, go_toolchain: str, binary: Path, target: dict[str, str]
 ) -> None:
@@ -1242,6 +1320,122 @@ def verify_go_build_info(
         or architecture_settings != {target["architectureVariable"]}
     ):
         raise ReleaseError(f"unexpected Go build metadata: {binary.name}")
+
+
+def portable_asset_report(
+    portable_root: Path,
+    relay_version: str,
+    source_commit: str,
+    source_date_epoch: str,
+    bundle_budget_bytes: int,
+    go_command: str,
+    go_toolchain: str,
+    toolchain_manifest: dict[str, Any],
+) -> dict[str, Any]:
+    validate_release_inputs(relay_version, source_commit)
+    validate_source_date_epoch(source_date_epoch)
+    if bundle_budget_bytes <= 0:
+        raise ReleaseError("bundle budget must be a positive byte count")
+    validate_isolated_directory(portable_root, "portable asset root", create=False)
+    expected_directories = {target_directory(target) for target in TARGETS}
+    actual_directories = {entry.name for entry in portable_root.iterdir()}
+    if actual_directories != expected_directories:
+        raise ReleaseError(
+            "portable asset root must contain exactly four target directories"
+        )
+
+    target_contracts = {
+        contract["goTarget"]: contract for contract in toolchain_manifest["targets"]
+    }
+    artifacts: list[dict[str, Any]] = []
+    for target in TARGETS:
+        directory = portable_root / target_directory(target)
+        validate_isolated_directory(
+            directory,
+            f"portable target directory {target_directory(target)}",
+            create=False,
+        )
+        filename = target_filename(target)
+        entries = list(directory.iterdir())
+        if len(entries) != 1 or entries[0].name != filename:
+            raise ReleaseError(
+                f"portable target directory is not canonical: {filename}"
+            )
+        binary = entries[0]
+        try:
+            status = binary.stat(follow_symlinks=False)
+        except OSError as error:
+            raise ReleaseError(
+                f"portable executable is unavailable: {filename}"
+            ) from error
+        if (
+            not stat.S_ISREG(status.st_mode)
+            or status.st_size <= 0
+            or status.st_mode & 0o111 == 0
+        ):
+            raise ReleaseError(f"portable executable is invalid: {filename}")
+        verify_binary_format(binary, target)
+        verify_linkage_contract(binary, target)
+        verify_debug_symbol_contract(binary, target)
+        verify_go_build_info(go_command, go_toolchain, binary, target)
+        target_name = f"{target['os']}/{target['arch']}"
+        contract = target_contracts[target_name]
+        is_linux = target["os"] == "linux"
+        artifacts.append(
+            {
+                "os": target["os"],
+                "arch": target["arch"],
+                "goTarget": target_name,
+                "canonicalTarget": target["canonicalTarget"],
+                "filename": filename,
+                "binaryFormat": (
+                    "ELF64 little-endian" if is_linux else "Mach-O 64-bit"
+                ),
+                "machineArchitecture": (
+                    "x86_64" if target["arch"] == "amd64" else "arm64"
+                ),
+                "cpuBaseline": contract["cpuBaseline"],
+                "minimumRuntime": contract["minimumRuntime"],
+                "linkage": (
+                    "static; no PT_INTERP or PT_DYNAMIC"
+                    if is_linux
+                    else "dynamic; declared system libraries only"
+                ),
+                "dynamicLibraries": contract["dynamicLibraries"],
+                "debugSymbolDisposition": (
+                    "stripped by Go linker -s -w; no DWARF sections or companion debug artifact"
+                ),
+                "executableMode": f"{stat.S_IMODE(status.st_mode):04o}",
+                "sizeBytes": status.st_size,
+                "sha256": sha256(binary),
+            }
+        )
+    total_size = sum(artifact["sizeBytes"] for artifact in artifacts)
+    report = {
+        "schemaVersion": PORTABLE_REPORT_SCHEMA_VERSION,
+        "relayProtocolVersion": PROTOCOL_VERSION,
+        "relayVersion": relay_version,
+        "sourceCommit": source_commit,
+        "sourceDateEpoch": source_date_epoch,
+        "buildMode": "release",
+        "toolchain": {
+            "go": GO_VERSION,
+            "compiler": "gc",
+            "linker": "Go internal linker",
+            "cgoEnabled": False,
+        },
+        "stripPolicy": {
+            "linkerFlags": ["-s", "-w"],
+            "externalDebugCompanion": False,
+        },
+        "bundleBudgetBytes": bundle_budget_bytes,
+        "totalAssetSizeBytes": total_size,
+        "remainingBudgetBytes": bundle_budget_bytes - total_size,
+        "withinBundleBudget": total_size <= bundle_budget_bytes,
+        "artifacts": artifacts,
+    }
+    reject_host_paths(stable_json(report).decode("utf-8"), "portable asset report")
+    return report
 
 
 def expected_manifest_keys() -> tuple[set[str], set[str], set[str]]:
@@ -1520,9 +1714,7 @@ def read_bounded(path: Path, maximum_bytes: int, label: str) -> bytes:
 
 
 def load_identity_manifest(path: Path) -> dict[str, Any]:
-    encoded = read_bounded(
-        path, MAX_IDENTITY_MANIFEST_BYTES, "relay identity manifest"
-    )
+    encoded = read_bounded(path, MAX_IDENTITY_MANIFEST_BYTES, "relay identity manifest")
     try:
         manifest = json.loads(encoded.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
@@ -1705,6 +1897,44 @@ def build_portable_target(arguments: argparse.Namespace) -> None:
     verify_binary_format(output, target)
     verify_linkage_contract(output, target)
     verify_go_build_info(arguments.go, arguments.go_toolchain, output, target)
+
+
+def inspect_portable_assets(arguments: argparse.Namespace) -> None:
+    arguments.go = resolve_tool_command(arguments.go)
+    validate_release_inputs(arguments.relay_version, arguments.source_commit)
+    source_date_epoch = validate_source_date_epoch(arguments.source_date_epoch)
+    verify_checkout_revision(arguments.source_commit)
+    if arguments.require_clean:
+        verify_clean_checkout(arguments.source_commit)
+    toolchain_manifest = verify_toolchain_manifest()
+    verify_go_module_policy()
+    verify_go_toolchain(arguments.go, arguments.go_toolchain, require_provenance=True)
+    portable_root = validate_output_path(Path(arguments.portable_root))
+    report_path = validate_output_path(Path(arguments.report))
+    if portable_root == report_path or portable_root in report_path.parents:
+        raise ReleaseError("portable report must remain outside the four-asset root")
+    report = portable_asset_report(
+        portable_root,
+        arguments.relay_version,
+        arguments.source_commit,
+        source_date_epoch,
+        arguments.bundle_budget_bytes,
+        arguments.go,
+        arguments.go_toolchain,
+        toolchain_manifest,
+    )
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    if report_path.exists() or report_path.is_symlink():
+        try:
+            report_status = report_path.stat(follow_symlinks=False)
+        except OSError as error:
+            raise ReleaseError("portable report output cannot be inspected") from error
+        if not stat.S_ISREG(report_status.st_mode):
+            raise ReleaseError("portable report output must be a regular file")
+    report_path.write_bytes(stable_json(report))
+    if not report["withinBundleBudget"]:
+        overage = -report["remainingBudgetBytes"]
+        raise ReleaseError(f"portable assets exceed bundle budget by {overage} bytes")
 
 
 def extract_toolchain_licenses(arguments: argparse.Namespace) -> None:
@@ -1908,6 +2138,20 @@ def parser() -> argparse.ArgumentParser:
     build_target.add_argument("--require-clean", action="store_true")
     add_toolchain_options(build_target)
     build_target.set_defaults(action=build_portable_target)
+
+    inspect_assets = subparsers.add_parser(
+        "inspect-assets",
+        help="inspect exactly four portable relay assets and write a budget report",
+    )
+    inspect_assets.add_argument("--portable-root", required=True)
+    inspect_assets.add_argument("--report", required=True)
+    inspect_assets.add_argument("--relay-version", required=True)
+    inspect_assets.add_argument("--source-commit", required=True)
+    inspect_assets.add_argument("--source-date-epoch", required=True)
+    inspect_assets.add_argument("--bundle-budget-bytes", required=True, type=int)
+    inspect_assets.add_argument("--require-clean", action="store_true")
+    add_toolchain_options(inspect_assets)
+    inspect_assets.set_defaults(action=inspect_portable_assets)
 
     licenses = subparsers.add_parser(
         "extract-licenses",

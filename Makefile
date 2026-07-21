@@ -10,7 +10,8 @@
 	relay-provision-go relay-provision-syft relay-provision-tools relay-print-apple-bundle-input \
 	relay-toolchain-check relay-toolchain-test relay-toolchain-negative-test \
 	relay-build-darwin-amd64 relay-build-darwin-arm64 relay-build-linux-amd64 \
-	relay-build-linux-arm64 relay-toolchain-build-all relay-toolchain-licenses \
+	relay-build-linux-arm64 relay-toolchain-build-all relay-toolchain-inspect-assets \
+	relay-portable-assets relay-toolchain-licenses \
 	relay-toolchain-native-linux-smoke relay-toolchain-ci
 
 LEGACY_ROOT ?= ../relux-proxy
@@ -97,6 +98,8 @@ RELAY_REPRO_BUNDLE_INPUT ?= .build/relay/repro/apple-bundle-input
 RELAY_REPRO_TEST_OUTPUT ?= .build/relay/repro/protocol-tests
 RELAY_PORTABLE_ROOT ?= .build/relay/portable
 RELAY_PORTABLE_WORK_ROOT ?= .build/relay/work/portable
+RELAY_PORTABLE_REPORT ?= .build/relay/portable-assets-v1.json
+RELAY_BUNDLE_BUDGET_BYTES ?=
 RELAY_TOOLCHAIN_LICENSE_OUTPUT ?= .build/relay/toolchain-licenses
 RELAY_CACHE_MODE ?= clean
 RELAY_BUILD_CLEAN_FLAG ?=
@@ -217,6 +220,21 @@ relay-build-linux-arm64:
 	python3 scripts/relay_release.py build-target --target linux/arm64 --go "$(RELAY_GO)" --go-toolchain "$(RELAY_GO_TOOLCHAIN)" --relay-version "$(RELAY_VERSION)" --source-commit "$(SOURCE_COMMIT)" --source-date-epoch "$(SOURCE_DATE_EPOCH)" --cache-mode "$(RELAY_CACHE_MODE)" $(RELAY_BUILD_CLEAN_FLAG) --work-dir "$(RELAY_PORTABLE_WORK_ROOT)/linux-arm64" --output "$(RELAY_PORTABLE_ROOT)/linux-arm64/relux-relay-linux-arm64"
 
 relay-toolchain-build-all: relay-build-darwin-amd64 relay-build-darwin-arm64 relay-build-linux-amd64 relay-build-linux-arm64
+
+relay-toolchain-inspect-assets:
+	python3 scripts/relay_release.py inspect-assets \
+		--portable-root "$(RELAY_PORTABLE_ROOT)" \
+		--report "$(RELAY_PORTABLE_REPORT)" \
+		--go "$(RELAY_GO)" \
+		--go-toolchain "$(RELAY_GO_TOOLCHAIN)" \
+		--relay-version "$(RELAY_VERSION)" \
+		--source-commit "$(SOURCE_COMMIT)" \
+		--source-date-epoch "$(SOURCE_DATE_EPOCH)" \
+		--bundle-budget-bytes "$(RELAY_BUNDLE_BUDGET_BYTES)" \
+		$(RELAY_BUILD_CLEAN_FLAG)
+
+relay-portable-assets: relay-toolchain-build-all
+	$(MAKE) relay-toolchain-inspect-assets
 
 relay-toolchain-licenses:
 	python3 scripts/relay_release.py extract-licenses --go "$(RELAY_GO)" --go-toolchain "$(RELAY_GO_TOOLCHAIN)" --output "$(RELAY_TOOLCHAIN_LICENSE_OUTPUT)"
