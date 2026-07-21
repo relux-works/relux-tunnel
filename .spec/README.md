@@ -1,9 +1,11 @@
 # Relux Proxy specifications
 
-This directory is the source of truth for the planned Relux Proxy VPN product.
-The existing repository still contains the macOS menu bar SOCKS client described
-in [`docs/current-state.md`](../docs/current-state.md); the VPN architecture in
-these specifications has not been implemented.
+This directory is the source of truth for the target Relux Proxy VPN product.
+Implementation is partial: shared packet, provider/runtime, SSH-contract, relay,
+and diagnostic components exist, but there is no shippable system-VPN target or
+end-to-end release evidence. [`threat-model.md`](threat-model.md) and
+[`security-claims.md`](security-claims.md) distinguish implemented components,
+accepted design, and planned/evidence-gated behavior.
 
 ## Specification map
 
@@ -16,6 +18,8 @@ these specifications has not been implemented.
 | [`relay-protocol.md`](relay-protocol.md) | Rootless remote relay lifecycle and wire protocol |
 | [`routing-dns-lifecycle.md`](routing-dns-lifecycle.md) | Routes, DNS, reconnect, and kill-switch behavior |
 | [`security-privacy.md`](security-privacy.md) | Threat model, credential handling, and privacy controls |
+| [`threat-model.md`](threat-model.md) | macOS-first assets, flows, adversaries, boundaries, controls, and residual risks |
+| [`security-claims.md`](security-claims.md) | Approved/prohibited user-facing claims and evidence crosswalk |
 | [`platform-distribution.md`](platform-distribution.md) | Apple targets, entitlements, signing, CI, and release channels |
 | [`validation.md`](validation.md) | Test strategy, performance measurements, and go/no-go gates |
 | [`delivery.md`](delivery.md) | Milestones, dependencies, estimates, and exit criteria |

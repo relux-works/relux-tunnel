@@ -5,6 +5,12 @@
 
 ## 2026-07-21
 
+### 2230 — Security claims separate component evidence from release guarantees (TASK-260717-3ujeip)
+- FINDING: The seed threat model stated several accepted designs as shipped mitigations even though the repository has no concrete packet-tunnel provider target, selected production SSH adapter, Keychain vault, DNS/route composition, relay deployment/frame-pump composition, degraded-mode controller, platform fail-closed implementation, Sparkle path, or application release pipeline.
+- DECISION: Security copy now carries stable claim IDs and one of four evidence boundaries: implemented component, contract implemented/integration gated, accepted design/release gated, or planned/unverified. No positive system-VPN claim is authorized as a verified release claim until candidate-specific composition and physical evidence is accepted.
+- BOUNDARY: SSH metadata remains visible and fingerprintable; the exit sees destinations, resolver traffic, and plaintext; Relux Works is absent only from the baseline traffic path; fail-closed is platform-scoped; the authenticated internal SOCKS listener is loopback-only but not process-private; the product path uses exec/stdin/stdout and does not require SFTP.
+- RESIDUAL: Production SSH selection (`TASK-260715-1gjxer`), DNS runtime authorization (`TASK-260721-3miqh4`), physical route/DNS evidence, credentials/entitlements, relay composition, update/release controls, and independent candidate review remain explicit evidence gates.
+
 ### 2138 — Relay identity preflight is bound to manifest-selected bytes (TASK-260715-2ywde4 rework-01)
 - REWORK: `scripts/relay_release.py verify-identity` now consumes the exact canonical identity line (one LF, at most 512 bytes), the canonical four-target manifest record, and the selected executable. It rejects identity SHA-256, manifest SHA-256, size, target tuple, extra stdout, selected-byte tampering, noncanonical manifest data, and symlink/non-regular inputs with stable path-free diagnostics.
 - SECURITY: Manifest, identity, and executable reads use one regular-file `O_NOFOLLOW` descriptor; executable size and SHA-256 come from the same open descriptor, removing the prior path-swap window. `test-relay-shell-artifacts.sh` captures exact stdout/stderr in a mode-0700/umask-077 temporary directory and invokes the comparator before stdio smoke for native Darwin arm64 and Rosetta amd64.
