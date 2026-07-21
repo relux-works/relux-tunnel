@@ -343,6 +343,68 @@ struct ClientUDPAssociationRegistryTests {
     await expectClock(clock, pendingSleeps: 0, outstandingSleepTasks: 0)
   }
 
+  @Test("control observation validates identity and state without refreshing activity")
+  func controlObservationDoesNotRefreshActivity() async throws {
+    let clock = ManualAssociationClock()
+    let registry = ClientUDPAssociationRegistry<Int>(
+      generation: 44,
+      configuration: try configuration(maximumAssociations: 1),
+      clock: clock
+    )
+    let key = try await registry.admit(103, generation: 44).get()
+    await expectClock(clock, pendingSleeps: 1, outstandingSleepTasks: 1)
+
+    switch await registry.observeActiveAssociation(
+      associationID: key.associationID,
+      generation: 44
+    ) {
+    case .resolved(let handle, let observedKey):
+      #expect(handle == 103)
+      #expect(observedKey == key)
+    default:
+      Issue.record("active association was not observed")
+    }
+    var snapshot = await registry.snapshot()
+    #expect(snapshot.metrics.activityUpdates == 0)
+    #expect(snapshot.scheduledTimers == 1)
+    await expectClock(clock, pendingSleeps: 1, outstandingSleepTasks: 1)
+
+    switch await registry.observeActiveAssociation(
+      associationID: key.associationID,
+      generation: 43
+    ) {
+    case .staleGeneration:
+      break
+    default:
+      Issue.record("stale-generation observation was not rejected")
+    }
+    switch await registry.observeActiveAssociation(
+      associationID: key.associationID + 1,
+      generation: 44
+    ) {
+    case .unknownAssociation:
+      break
+    default:
+      Issue.record("unknown-association observation was not rejected")
+    }
+    _ = await registry.closeLocally(key)
+    switch await registry.observeActiveAssociation(
+      associationID: key.associationID,
+      generation: 44
+    ) {
+    case .unavailable(.closing):
+      break
+    default:
+      Issue.record("closing association was not reported unavailable")
+    }
+
+    snapshot = await registry.snapshot()
+    #expect(snapshot.metrics.activityUpdates == 0)
+    #expect(snapshot.metrics.staleEvents == 1)
+    #expect(snapshot.metrics.lateEvents == 2)
+    await expectClock(clock, pendingSleeps: 0, outstandingSleepTasks: 0)
+  }
+
   @Test("expiry activity and remote-close race has one terminal cleanup")
   func expiryRace() async throws {
     let clock = ManualAssociationClock()

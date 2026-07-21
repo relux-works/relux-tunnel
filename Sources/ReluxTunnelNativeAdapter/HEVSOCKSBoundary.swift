@@ -12,7 +12,7 @@ public final class HEVSOCKSChannel: @unchecked Sendable {
   private let lock = NSLock()
   private var descriptor: Int32?
 
-  fileprivate init(descriptor: Int32) {
+  init(descriptor: Int32) {
     self.descriptor = descriptor
   }
 

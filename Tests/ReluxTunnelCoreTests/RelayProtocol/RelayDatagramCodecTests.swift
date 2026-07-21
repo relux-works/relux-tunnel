@@ -153,6 +153,24 @@ struct RelayProtocolDatagramCodecTests {
     }
   }
 
+  @Test("bounded HEV header validation does not require declared DATA bytes")
+  func boundedHeaderValidation() throws {
+    let complete = hevOracle(
+      headerTail: vectorEndpoints()[2].headerTail,
+      data: patternedData(count: Int(P.maxUDPPayloadClientHardCeiling) + 1)
+    )
+    let headerLength = Int(complete.byte(at: 2))
+    let header = Data(complete.prefix(headerLength))
+    try RelayDatagramWire.validateHeader(header)
+
+    var zeroPort = header
+    zeroPort[zeroPort.index(before: zeroPort.endIndex)] = 0
+    zeroPort[zeroPort.index(zeroPort.endIndex, offsetBy: -2)] = 0
+    expectFailure(.invalidPort, scope: .association, disposition: .closeAssociation) {
+      try RelayDatagramWire.validateHeader(zeroPort)
+    }
+  }
+
   @Test("HEV structure is validated before local and protocol DATA limits")
   func structuralValidationPrecedesPayloadLimits() throws {
     let limitCases: [(String, UInt16, UInt16)] = [

@@ -425,6 +425,28 @@ public actor ClientUDPAssociationRegistry<HEVAssociation: Hashable & Sendable> {
     return .resolved(record.handle, record.key)
   }
 
+  /// Observes an active association without treating control traffic as
+  /// datagram activity. This preserves the existing idle deadline and timer
+  /// arm while retaining generation, identifier, allocation, and state checks.
+  public func observeActiveAssociation(
+    associationID: UInt32,
+    generation: UInt64
+  ) -> ClientUDPAssociationResolution<HEVAssociation> {
+    guard generation == currentGeneration else {
+      metrics.staleEvents = incremented(metrics.staleEvents)
+      return .staleGeneration
+    }
+    guard let record = recordsByID[associationID] else {
+      metrics.lateEvents = incremented(metrics.lateEvents)
+      return .unknownAssociation
+    }
+    guard record.state == .active else {
+      metrics.lateEvents = incremented(metrics.lateEvents)
+      return .unavailable(record.state)
+    }
+    return .resolved(record.handle, record.key)
+  }
+
   @discardableResult
   public func recordActivity(
     for key: ClientUDPAssociationKey

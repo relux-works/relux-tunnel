@@ -120,6 +120,24 @@ public struct RelayDatagramCodecMetrics: Equatable, Sendable {
 }
 
 public enum RelayDatagramWire {
+  /// Validates a complete HEV header without retaining or materializing its
+  /// declared DATA bytes. This is the adapter's structural-before-limit gate
+  /// for oversized stream records.
+  public static func validateHeader(_ header: Data) throws {
+    guard header.count >= 3 else {
+      throw decodingFailure(.truncatedFixedHeader, phase: .fixedHeader)
+    }
+    guard Int(header.byte(at: 2)) == header.count else {
+      throw decodingFailure(.headerLengthMismatch, phase: .fixedHeader)
+    }
+
+    var headerOnlyRecord = header
+    headerOnlyRecord[headerOnlyRecord.startIndex] = 0
+    headerOnlyRecord[headerOnlyRecord.index(after: headerOnlyRecord.startIndex)] = 0
+    var codec = try RelayDatagramCodec()
+    _ = try codec.decode(headerOnlyRecord)
+  }
+
   /// Computes and validates the exact HEV record size before allocation.
   public static func encodedLength(
     endpoint: RelayDatagramEndpoint,

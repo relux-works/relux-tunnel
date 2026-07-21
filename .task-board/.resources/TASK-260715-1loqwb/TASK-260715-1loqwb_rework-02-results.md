@@ -1,0 +1,5 @@
+# TASK-260715-1loqwb rework 02 results
+
+Added ClientUDPAssociationRegistry.observeActiveAssociation for generation-safe, allocation-safe, active-state observation without idle refresh. HEVUDPDatagramAdapter routes only queueSaturated and datagramTooLarge through it. Deterministic manual-clock cases for both codes prove unchanged activityUpdates, timer-arm count, and exact original deadline, followed by expiry and exactly-once cleanup at that deadline. Registry tests cover active, stale-generation, unknown-ID, and closing-state outcomes.
+
+Verification: focused adapter 12 tests repeated 5/5; focused TSan 12/12; registry 13/13; full Swift 332 tests in 29 suites; make relay-protocol-check; strict swift format; git diff check; core boundaries; privacy, public-proxy, and admission scans; swift build; task-board validate.
