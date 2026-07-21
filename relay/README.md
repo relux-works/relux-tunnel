@@ -18,8 +18,9 @@ module is pinned to Go 1.26.5, the standard library only, `CGO_ENABLED=0`, and
   Linux/macOS by amd64/arm64 matrix, deterministic checksums, SPDX 2.3 SBOMs,
   and combined repository/Go license notices.
 
-No UDP socket, association, upload, SSH execution, or release-publication
-behavior is implemented by these shells.
+The command shells do not yet wire UDP association handling, upload, SSH
+execution, or release publication. The reusable SSH-independent UDP registry
+is implemented in `internal/udp` for later stdio/session integration.
 
 From the repository root, run:
 
@@ -97,6 +98,20 @@ Current protocol contents:
   canonical production-code-independent corpus in
   `Protocol/Relay/Vectors/v1/corpus.json`; failures name the stable vector ID
   without printing input or payload bytes.
+- `internal/udp` — one-owner-goroutine association registry keyed by session
+  generation, nonzero client ID, and an incarnation token. It admits bounded
+  association/socket/logical-timer/pending-close state before descriptor
+  creation. Single-family use stays lazy; callers that require both families
+  use one atomic family-set transaction. Any family creation failure retires
+  all staged and already-owned association sockets exactly once, leaving no
+  partial association. Production sockets are nonblocking, close-on-exec,
+  unconnected, and deliberately unbound; a later bounded `sendto` call may let
+  the kernel choose an unprivileged ephemeral source port, while registry
+  creation never exposes a public UDP listener.
+- `internal/udp/registry_test.go` — controlled-socket and fake-monotonic-clock
+  coverage for duplicate IDs, every ceiling, partial creation failure,
+  rearm/expiry ABA ordering, crossed close, generation replacement/loss,
+  cancellation, real descriptor properties, and repeated baseline recovery.
 
 `scripts/tests/test-relay-protocol-go.sh` (invoked by
 `make relay-protocol-check`) vets and tests this package directly inside the
