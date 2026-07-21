@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:16:47Z
 
 ## Last Update
-2026-07-15T01:28:49Z
+2026-07-21T02:00:04Z
 
 ## Blocked By
 - TASK-260715-1juybj
@@ -24,6 +24,7 @@ backlog
 - [ ] Attach task-scoped channel-open evidence
 
 ## Notes
+Contract input: consume TASK-260715-1juybj_contract.md sections 4.3, 5, 6, and 10 for exact reply mapping, fixed sanitized originator, once-only open, late-channel rollback, and caller-injected channel policy.
 
 ## Precondition Resources
 (none)

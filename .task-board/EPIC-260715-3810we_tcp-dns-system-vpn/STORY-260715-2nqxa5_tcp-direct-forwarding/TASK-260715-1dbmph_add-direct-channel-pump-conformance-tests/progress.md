@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:16:47Z
 
 ## Last Update
-2026-07-15T01:28:30Z
+2026-07-21T02:00:04Z
 
 ## Blocked By
 - TASK-260715-1n9v9o
@@ -23,6 +23,7 @@ backlog
 - [ ] Attach task-scoped conformance commands and results
 
 ## Notes
+Contract input: consume TASK-260715-1juybj_contract.md sections 5-10 and both task-scoped diagrams for exact open, pump, terminal-race, cleanup, and privacy assertions.
 
 ## Precondition Resources
 (none)

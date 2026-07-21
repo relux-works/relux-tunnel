@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:16:47Z
 
 ## Last Update
-2026-07-15T02:23:53Z
+2026-07-21T02:00:17Z
 
 ## Blocked By
 - TASK-260715-1gvdtz
@@ -25,6 +25,7 @@ backlog
 - [ ] Attach task-scoped documentation and review evidence
 
 ## Notes
+Contract input: use TASK-260715-1juybj_contract.md and both task-scoped diagrams as the normative pre-implementation baseline, then replace only measured-value placeholders with accepted implementation and matrix evidence; preserve the no-migration M3 seam.
 
 ## Precondition Resources
 (none)

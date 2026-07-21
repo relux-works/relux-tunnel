@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:16:47Z
 
 ## Last Update
-2026-07-15T01:28:30Z
+2026-07-21T02:00:04Z
 
 ## Blocked By
 - TASK-260715-b6uruh
@@ -23,6 +23,7 @@ backlog
 - [ ] Attach task-scoped corpus manifest commands and results
 
 ## Notes
+Contract input: consume TASK-260715-1juybj_contract.md sections 2, 4, and 6. AC was refined to cover valid CONNECT plus one capped coalesced early-payload chunk.
 
 ## Precondition Resources
 (none)

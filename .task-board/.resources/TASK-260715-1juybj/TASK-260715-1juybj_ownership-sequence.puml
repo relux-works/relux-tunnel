@@ -1,0 +1,83 @@
+@startuml
+!theme plain
+
+title TASK-260715-1juybj — Admission, open, streaming, and cleanup ownership
+
+participant "HEV/lwIP\n(generation client)" as HEV
+participant "HEV SOCKS boundary\n(listener + RFC 1929 capability)" as Boundary
+participant "Adapter resource registry" as Registry
+participant "SSHProxyAdapter\n(flow owner)" as Flow
+participant "M1 assignment seam\n(constant baseline)" as Selector
+participant "SSHTransport" as SSH
+participant "SSHByteChannel" as Channel
+
+HEV -> Boundary : TCP connect to 127.0.0.1:ephemeral
+Boundary -> Boundary : accept descriptor; configure socket
+alt already stopped / generation retired / pending-authentication full
+  Boundary -> Boundary : close descriptor immediately
+  note right
+    No SOCKS5 method reply and no RFC 1929 reply.
+    Never enqueue authentication or hand off to adapter.
+  end note
+else pending-authentication slot acquired
+  Boundary -> Boundary : register pending descriptor\n(M1 captures monotonic deadline at accept)
+  HEV -> Boundary : greeting [05 01 02]
+  Boundary --> HEV : method selection [05 02]
+  HEV -> Boundary : RFC 1929 [01 ULEN UNAME PLEN PASSWD]
+  alt wrong/stale capability or M1 absolute deadline expiry
+    Boundary --> HEV : [01 01] only when phase and remaining budget permit
+    Boundary -> Boundary : close; release pending slot once; no adapter handoff
+  else current generation capability
+    Boundary --> HEV : [01 00]
+    Boundary -> Flow : exclusive HEVSOCKSChannel\npositioned at first request byte
+    Flow -> Registry : tryReserve(flow + parser)
+    alt adapter capacity unavailable
+      Flow --> HEV : bounded REP=01 or close
+      Flow -> Registry : release once
+    else reserved
+      HEV -> Flow : [05 01 00 ATYP DST PORT]\n(+ bounded early payload if coalesced)
+      Flow -> Selector : assignment(request) exactly once
+      Selector --> Flow : baseline transport + policy
+      Flow -> Registry : tryReserve(open)
+      Flow -> SSH : openDirectTCPIP(destination,\n127.0.0.1:0, policy)
+      alt reject / timeout / cancellation
+        SSH --> Flow : stable error or late channel
+        Flow -> Channel : close late channel if present
+        Flow --> HEV : fixed mapped failure reply when safe
+      else channel owned
+        SSH --> Flow : SSHByteChannel
+        Flow --> HEV : [05 00 00 01 0.0.0.0 0]
+        par local to SSH
+          loop one bounded local chunk
+            HEV -> Flow : partial bytes / EOF
+            Flow -> Channel : writeSome prefix / finishWriting
+          end
+        else SSH to local
+          loop one bounded remote chunk
+            Channel -> Flow : read bytes / nil EOF
+            Flow -> HEV : partial writes / shutdown write half
+          end
+        end
+      end
+      Flow -> Flow : first terminal claim; cancel/join pumps
+      Flow -> Channel : cancel/reset/close once
+      Flow -> Flow : shutdown + close local socket once
+      Flow -> Registry : release open/flow/byte reservations once
+    end
+  end
+end
+
+note right of Boundary
+  Current source: bounded pending set plus
+  per-receive SO_RCVTIMEO inactivity timeout.
+  M1: one monotonic accept-to-auth deadline
+  spans all reads, comparisons, and replies;
+  progress cannot extend it.
+end note
+
+note over Selector,Channel
+  Selector output is pinned for the flow lifetime.
+  M1 performs no lane scheduling; M3 may replace only this seam.
+end note
+
+@enduml

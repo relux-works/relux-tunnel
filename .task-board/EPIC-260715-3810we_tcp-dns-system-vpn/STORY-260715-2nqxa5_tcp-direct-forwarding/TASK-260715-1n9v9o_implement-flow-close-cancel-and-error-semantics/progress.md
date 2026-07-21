@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:16:47Z
 
 ## Last Update
-2026-07-15T01:28:49Z
+2026-07-21T02:00:04Z
 
 ## Blocked By
 - TASK-260715-b6uruh
@@ -26,6 +26,7 @@ backlog
 - [ ] Attach task-scoped lifecycle and terminal-reason evidence
 
 ## Notes
+Contract input: consume TASK-260715-1juybj_contract.md sections 4.3 and 8-10 plus TASK-260715-1juybj_flow-state.puml. Scope was refined to the contract deadlines and explicit no-default-idle policy.
 
 ## Precondition Resources
 (none)

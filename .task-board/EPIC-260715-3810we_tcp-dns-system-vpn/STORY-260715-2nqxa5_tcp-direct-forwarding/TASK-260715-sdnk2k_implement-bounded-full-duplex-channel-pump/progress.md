@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:16:47Z
 
 ## Last Update
-2026-07-15T01:28:29Z
+2026-07-21T02:00:04Z
 
 ## Blocked By
 - TASK-260715-1juybj
@@ -22,6 +22,7 @@ backlog
 - [ ] Attach task-scoped buffer-budget and integrity evidence
 
 ## Notes
+Contract input: consume TASK-260715-1juybj_contract.md sections 6-8 for one-buffer-per-direction ownership, aggregate byte reservation, partial I/O, fairness, zero-progress defense, and cancellation.
 
 ## Precondition Resources
 (none)

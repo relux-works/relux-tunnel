@@ -1,0 +1,60 @@
+@startuml
+!theme plain
+
+top to bottom direction
+skinparam state {
+  FontSize 14
+  Padding 12
+}
+
+title TASK-260715-1juybj — One CONNECT flow ownership state
+
+[*] --> Authenticated : exclusive handoff
+Authenticated --> Reserved : reserve flow + parser
+Authenticated --> Terminal : stale | capacity
+Reserved --> Parsing
+Parsing --> Opening : valid CONNECT
+Parsing --> Terminal : request failure
+Opening --> Replying : channel owned
+Opening --> Terminal : open failure
+Replying --> Streaming : REP=00 sent
+Replying --> Terminal : reply failure
+Streaming --> HalfClosedLocal : local EOF
+Streaming --> HalfClosedRemote : SSH EOF
+HalfClosedLocal --> HalfClosedBoth : SSH EOF
+HalfClosedRemote --> HalfClosedBoth : local EOF
+HalfClosedBoth --> Terminal : graceful close
+Streaming --> Terminal : abort
+HalfClosedLocal --> Terminal : abort
+HalfClosedRemote --> Terminal : abort
+Terminal --> [*] : once-only cleanup
+
+note left of Authenticated
+  Boundary transfers the exclusive socket
+  at the first CONNECT-request byte.
+end note
+
+note right of Opening
+  One open attempt. A late channel after
+  rejection, timeout, or cancellation closes.
+end note
+
+note right of Streaming
+  Two independent pumps.
+  One bounded buffer per direction.
+  No side queue and no flow migration.
+end note
+
+note right of HalfClosedBoth
+  Local EOF calls finishWriting once.
+  SSH EOF calls local shutdown(SHUT_WR) once.
+end note
+
+note right of Terminal
+  First terminal claimant fixes the reason.
+  Cleanup joins tasks, closes owned handles,
+  and releases reservations once. Late events
+  cannot revive or double-release the flow.
+end note
+
+@enduml

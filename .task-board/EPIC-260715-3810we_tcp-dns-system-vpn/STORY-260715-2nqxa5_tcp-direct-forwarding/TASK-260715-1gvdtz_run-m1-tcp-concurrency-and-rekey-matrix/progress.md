@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:16:47Z
 
 ## Last Update
-2026-07-15T01:29:22Z
+2026-07-21T02:00:04Z
 
 ## Blocked By
 - TASK-260715-1s9gku
@@ -27,6 +27,7 @@ backlog
 - [ ] Attach task-scoped matrix configuration and results
 
 ## Notes
+Contract input: consume TASK-260715-1juybj_contract.md sections 6, 7, 10, and 11; measure exact ceilings rather than promoting M0 candidate values, and retain no-migration behavior through rekey.
 
 ## Precondition Resources
 (none)
