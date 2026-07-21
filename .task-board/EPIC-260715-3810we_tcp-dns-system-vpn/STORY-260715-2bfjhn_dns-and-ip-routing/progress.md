@@ -1,5 +1,5 @@
 ## Status
-analysis
+backlog
 
 ## Assigned To
 (none)
@@ -8,7 +8,7 @@ analysis
 2026-07-15T00:46:59Z
 
 ## Last Update
-2026-07-21T06:52:21Z
+2026-07-21T18:34:22Z
 
 ## Blocked By
 - STORY-260715-1y04r0

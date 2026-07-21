@@ -1,5 +1,5 @@
 ## Status
-analysis
+blocked
 
 ## Assigned To
 [reviewer] reviewer (codex)
@@ -8,7 +8,7 @@ analysis
 2026-07-21T04:36:58Z
 
 ## Last Update
-2026-07-21T06:40:26Z
+2026-07-21T18:34:22Z
 
 ## Blocked By
 - TASK-260715-1tnjlu
@@ -66,6 +66,7 @@ spawn run started: [reviewer] reviewer (codex) (run=RUN-260721-6c4f3d)
 Independent re-review 02 changes requested. Reproduced 65,535/65,537 max-wire success, one-byte-over rejection, both family orders, controlled 5/30 run, event traces, zero resolver calls, observed zero cleanup, ledger math, hashes/copies, and privacy checks. Blocking recoverable defects: all-five timing rows at harness lines 1060-1068 are tautologies rather than validator exercises; verify_policy_artifact ignores productionAuthorization and other authority-critical structural fields; reliability scenarios record but do not assert exact trigger-specific attempt/transmission/terminal counts. Added direct blocker links to TASK-260715-1gjxer and TASK-260715-1pn983 without cycles. Deleted the prohibited zero-byte automatic reviewer spawn-log outcome. Full evidence and bounded rework: TASK-260721-3miqh4_re-review-02-verdict.md. Route to analysis; after rework, absent selected-SSH/residual-budget inputs should produce an evidence-backed blocked verdict, not acceptance.
 agent completed: [reviewer] reviewer (codex) (exit=0)
 spawn run completed: codex (run=RUN-260721-6c4f3d, pid=15331, exit=0)
+Orchestrator disposition after accepted BUG-260721-17f093: all bounded validator, authority-structure, reliability assertion, artifact, and privacy defects are independently reviewer-accepted. This parent cannot enter to-review because the board correctly enforces unfinished TASK-260715-1gjxer selected SSH engine evidence and TASK-260715-1pn983 accepted ADR-009 residual DNS budget. productionAuthorization remains false, ADR-022 remains Proposed, candidate values remain injectable, and later physical provider evidence remains a manual gate. Marked blocked on exact dependencies; no workaround or premature acceptance.
 
 ## Precondition Resources
 - [TASK-260721-3miqh4_dns-policy-precondition.md](file://TASK-260721-3miqh4/TASK-260721-3miqh4_dns-policy-precondition.md) — ADR-022 invariant boundary and exact numeric evidence still required
