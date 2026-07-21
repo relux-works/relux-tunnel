@@ -86,12 +86,38 @@ tombstones for cancelled work; a client sees at most one terminal result.
 Every numeric endpoint count, DNS message size, byte budget, in-flight/queued
 capacity, channel-open/response/logical/startup/idle deadline default, and hard
 ceiling belongs to injected `DNSRuntimePolicyV1`, not the profile. Production
-composition has no built-in fallback values. `TASK-260721-3miqh4` must select and
-independently approve them from primary requirements, worst-case memory
-accounting, and controlled fixtures. The policy validator must reject nonpositive
-or inconsistent values and prove that request bytes, a maximum response,
-framing, correlation metadata, connection buffers, retry-batch reservations,
-and queued bytes remain inside the assigned aggregate DNS budget.
+composition has no built-in fallback values. `TASK-260721-3miqh4` publishes a
+non-authoritative measurement candidate: default 4 endpoints, 65,535 DNS
+message bytes, 16 live owners, 256 KiB queued wire, 4 MiB aggregate DNS, and
+2/5/5/1/35/10/10-second channel-open/response/relay-UDP/dispatch/logical/
+startup/idle values; candidate hard envelope 8 endpoints, 32 owners, 1 MiB
+queued wire, 8 MiB aggregate, and 5/10/10/2/135/45/30-second values. The exact
+local ledgers are 3,686,706 and 7,635,554 bytes. These values are not production
+defaults or accepted hard caps: selected-SSH `direct-tcpip` evidence and an
+accepted ADR-009 residual DNS component ledger do not yet exist. Machine policy
+sets `productionAuthorization.permitted=false`; consumers must remain blocked.
+Artifact verification also requires the exact non-authoritative candidate class,
+both false authorization booleans, blocker identities `TASK-260715-1gjxer` and
+`TASK-260715-1pn983`, the declared later physical evidence gate, structural
+attempt/equation/metadata contracts, and wire vectors. Missing or changed
+authority structure fails closed. Default and hard timing rows are exercised by
+20 one-field mutations through the real validator, and reliability evidence is
+accepted only when every scenario matches its exact attempt, endpoint, terminal,
+duplicate, late, cancellation, tombstone, epoch, retry-batch, trace, and cleanup
+projection.
+
+Policy validation requires startup to cover `E×open + dispatch`; M1 ready and
+cold paths to cover response/open slices; M2 ready and cold paths to add one
+bounded relay/UDP phase; queued bytes to remain below aggregate bytes; and the
+exact ledger to fit the aggregate. One owner reserves its encoded request,
+maximum response, two-byte framing for each, one framed retry request, and
+1,024 bytes of correlation/tombstone metadata. The component also reserves one
+65,537-byte read buffer, one 65,537-byte write buffer, 64 KiB manager state,
+64 KiB diagnostics, 64 bytes per endpoint, and queued wire capacity.
+Inconsistent combinations fail closed. The task-scoped authority is
+`.research/260721_task-260721-3miqh4-dns-runtime-policy-v1.md` with machine
+vectors under `.research/fixtures/` and controlled measurements under
+`.research/raw/`.
 
 Only standard idempotent DNS QUERY operations are accepted in the baseline.
 A complete valid response, including any error RCODE, is authoritative and does

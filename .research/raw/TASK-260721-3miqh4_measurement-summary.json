@@ -1,0 +1,837 @@
+{
+  "allFixtureCleanupOwnershipZero": true,
+  "allResolverSentinelCallsZero": true,
+  "authority": {
+    "authorityClass": "non-authoritative-candidate",
+    "blockingTaskIDs": [
+      "TASK-260715-1gjxer",
+      "TASK-260715-1pn983"
+    ],
+    "candidateMeasurementsOnly": true,
+    "physicalEvidenceGate": {
+      "classification": "later-external-physical-evidence-gate",
+      "required": true,
+      "requirements": [
+        "selected-engine controlled SSH direct-tcpip timing and cleanup rows",
+        "physical baseline-provider startup and footprint rows"
+      ]
+    },
+    "productionAuthorization": false,
+    "reason": "ADR-014 selected-SSH evidence and the accepted cross-layer ADR-009 residual component ledger do not yet exist"
+  },
+  "dualFamilyOrders": {
+    "ipv4ThenIPv6": {
+      "attempts": 2,
+      "responseBytes": 30
+    },
+    "ipv6ThenIPv4": {
+      "attempts": 2,
+      "responseBytes": 30
+    }
+  },
+  "fixtureRuns": 3,
+  "generatedAtUTC": "2026-07-21T06:35:54Z",
+  "isolatedMemoryTrials": {
+    "default": [
+      {
+        "allocatedBytes": 3686706,
+        "cleanupOwnership": {
+          "connectionBufferBytes": 0,
+          "connections": 0,
+          "fixedComponentBytes": 0,
+          "liveTrackedBytes": 0,
+          "queuedWireBytes": 0,
+          "reservationBytes": 0,
+          "tombstones": 0,
+          "transactions": 0
+        },
+        "constructedEnvelopeMatchesLedger": true,
+        "incrementalPhysicalFootprintBytes": 3932160,
+        "ledgerAccountedBytes": 3686706,
+        "openFileDescriptorDeltaAfterCleanup": 0,
+        "path": ".research/raw/TASK-260721-3miqh4_memory-default-01.json",
+        "sha256": "021f6c76c823933f2ff1452adbece98b287463496355ae4c2655dc2690612073"
+      },
+      {
+        "allocatedBytes": 3686706,
+        "cleanupOwnership": {
+          "connectionBufferBytes": 0,
+          "connections": 0,
+          "fixedComponentBytes": 0,
+          "liveTrackedBytes": 0,
+          "queuedWireBytes": 0,
+          "reservationBytes": 0,
+          "tombstones": 0,
+          "transactions": 0
+        },
+        "constructedEnvelopeMatchesLedger": true,
+        "incrementalPhysicalFootprintBytes": 3457048,
+        "ledgerAccountedBytes": 3686706,
+        "openFileDescriptorDeltaAfterCleanup": 0,
+        "path": ".research/raw/TASK-260721-3miqh4_memory-default-02.json",
+        "sha256": "480232aa79d867342a3de5d7bac5b8aa2a78c0654ffb7e6ae0973e03925f101d"
+      },
+      {
+        "allocatedBytes": 3686706,
+        "cleanupOwnership": {
+          "connectionBufferBytes": 0,
+          "connections": 0,
+          "fixedComponentBytes": 0,
+          "liveTrackedBytes": 0,
+          "queuedWireBytes": 0,
+          "reservationBytes": 0,
+          "tombstones": 0,
+          "transactions": 0
+        },
+        "constructedEnvelopeMatchesLedger": true,
+        "incrementalPhysicalFootprintBytes": 3457048,
+        "ledgerAccountedBytes": 3686706,
+        "openFileDescriptorDeltaAfterCleanup": 0,
+        "path": ".research/raw/TASK-260721-3miqh4_memory-default-03.json",
+        "sha256": "e08e679f32ce50f9d5c0598138acc6852c30ae1090604407deb363e10d1ffaa4"
+      }
+    ],
+    "hard": [
+      {
+        "allocatedBytes": 7635554,
+        "cleanupOwnership": {
+          "connectionBufferBytes": 0,
+          "connections": 0,
+          "fixedComponentBytes": 0,
+          "liveTrackedBytes": 0,
+          "queuedWireBytes": 0,
+          "reservationBytes": 0,
+          "tombstones": 0,
+          "transactions": 0
+        },
+        "constructedEnvelopeMatchesLedger": true,
+        "incrementalPhysicalFootprintBytes": 7225344,
+        "ledgerAccountedBytes": 7635554,
+        "openFileDescriptorDeltaAfterCleanup": 0,
+        "path": ".research/raw/TASK-260721-3miqh4_memory-hard-01.json",
+        "sha256": "7a4ac4d5824548dad9923bfe86c7ad71591cab8500b629cdf5ef52dbf61c0c16"
+      },
+      {
+        "allocatedBytes": 7635554,
+        "cleanupOwnership": {
+          "connectionBufferBytes": 0,
+          "connections": 0,
+          "fixedComponentBytes": 0,
+          "liveTrackedBytes": 0,
+          "queuedWireBytes": 0,
+          "reservationBytes": 0,
+          "tombstones": 0,
+          "transactions": 0
+        },
+        "constructedEnvelopeMatchesLedger": true,
+        "incrementalPhysicalFootprintBytes": 7749656,
+        "ledgerAccountedBytes": 7635554,
+        "openFileDescriptorDeltaAfterCleanup": 0,
+        "path": ".research/raw/TASK-260721-3miqh4_memory-hard-02.json",
+        "sha256": "a97feca5dca1c8add84064929e80a28830b7fd7401e532875f237303dcecfbd2"
+      },
+      {
+        "allocatedBytes": 7635554,
+        "cleanupOwnership": {
+          "connectionBufferBytes": 0,
+          "connections": 0,
+          "fixedComponentBytes": 0,
+          "liveTrackedBytes": 0,
+          "queuedWireBytes": 0,
+          "reservationBytes": 0,
+          "tombstones": 0,
+          "transactions": 0
+        },
+        "constructedEnvelopeMatchesLedger": true,
+        "incrementalPhysicalFootprintBytes": 7618584,
+        "ledgerAccountedBytes": 7635554,
+        "openFileDescriptorDeltaAfterCleanup": 0,
+        "path": ".research/raw/TASK-260721-3miqh4_memory-hard-03.json",
+        "sha256": "cb8ac88596951f26c06bdd091bd2dd10f1f4a091cc476ddf0160fd12f656eb34"
+      }
+    ]
+  },
+  "latencyAcrossRuns": {
+    "ipv4LoopbackTCP": {
+      "maximumRunP99Milliseconds": 0.59,
+      "medianOfRunMediansMilliseconds": 0.368,
+      "runMediansMilliseconds": [
+        0.368,
+        0.366,
+        0.38
+      ],
+      "runP99Milliseconds": [
+        0.466,
+        0.475,
+        0.59
+      ]
+    },
+    "ipv4LoopbackTCPWith100msServerDelay": {
+      "maximumRunP99Milliseconds": 110.378,
+      "medianOfRunMediansMilliseconds": 103.772,
+      "runMediansMilliseconds": [
+        103.772,
+        102.368,
+        105.807
+      ],
+      "runP99Milliseconds": [
+        110.378,
+        110.234,
+        110.22
+      ]
+    }
+  },
+  "measuredIterationsPerRun": 30,
+  "rawArtifacts": [
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_measurements-run-01.json",
+      "sha256": "eb3144a58a7b953b4f744762a6196bcd4f214c0106d4a5995378ba42da4a3a78"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_measurements-run-02.json",
+      "sha256": "6998f7c9fd54d52d23577b6a60b44eab8a7212390124a624482dbc68b5880117"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_measurements-run-03.json",
+      "sha256": "0e2be108a000f3c1179809fce6c05942c18a9127ad913c132e236a113bc20e23"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_memory-default-01.json",
+      "sha256": "021f6c76c823933f2ff1452adbece98b287463496355ae4c2655dc2690612073"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_memory-default-02.json",
+      "sha256": "480232aa79d867342a3de5d7bac5b8aa2a78c0654ffb7e6ae0973e03925f101d"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_memory-default-03.json",
+      "sha256": "e08e679f32ce50f9d5c0598138acc6852c30ae1090604407deb363e10d1ffaa4"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_memory-hard-01.json",
+      "sha256": "7a4ac4d5824548dad9923bfe86c7ad71591cab8500b629cdf5ef52dbf61c0c16"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_memory-hard-02.json",
+      "sha256": "a97feca5dca1c8add84064929e80a28830b7fd7401e532875f237303dcecfbd2"
+    },
+    {
+      "path": ".research/raw/TASK-260721-3miqh4_memory-hard-03.json",
+      "sha256": "cb8ac88596951f26c06bdd091bd2dd10f1f4a091cc476ddf0160fd12f656eb34"
+    }
+  ],
+  "schemaVersion": 1,
+  "taskID": "TASK-260721-3miqh4",
+  "transactionOwnerScenarios": {
+    "cancellationTombstoneLateResponse": {
+      "cancellations": 1,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 1,
+      "exactAssertion": {
+        "eventCount": 9,
+        "eventTraceSHA256": "b536363bcc957708eef12721a6d4836a44228f57b428d6d56fe2de0204c197f5",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 1,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "owner-cancelled-tombstoned"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 1,
+      "tombstonesRetired": 1,
+      "udpAttempts": 0,
+      "udpTransmissions": 0,
+      "visibleResponses": 0
+    },
+    "concurrentConnectionFailure": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 2,
+      "coordinatedRetryBatches": 1,
+      "duplicateDeliveryAttemptsBeforeDedup": 1,
+      "exactAssertion": {
+        "eventCount": 101,
+        "eventTraceSHA256": "71d4ec6957ce5c26ef20c1ca5a2d09b6b9e474c622326b8535fc60b23f48c057",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 1,
+      "logicalQueries": 16,
+      "tcpAttempts": 32,
+      "tcpEndpointOrdinals": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "terminalCount": 16,
+      "terminalOutcomes": [
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal",
+        "tcp-response-terminal"
+      ],
+      "terminalOwners": [
+        16,
+        15,
+        14,
+        13,
+        12,
+        11,
+        10,
+        9,
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 0,
+      "udpTransmissions": 0,
+      "visibleResponses": 16
+    },
+    "duplicateDeliveryDetection": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 0,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 1,
+      "exactAssertion": {
+        "eventCount": 3,
+        "eventTraceSHA256": "4f6e2e7d1c75715e559c71135fdfe9cf320238bba76b1ef2a5987b96c5c63629",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 1,
+      "logicalQueries": 1,
+      "tcpAttempts": 0,
+      "tcpEndpointOrdinals": [],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 0,
+      "udpTransmissions": 0,
+      "visibleResponses": 1
+    },
+    "m2CancellationDuringTCP": {
+      "cancellations": 1,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 1,
+      "exactAssertion": {
+        "eventCount": 8,
+        "eventTraceSHA256": "a7537c5c7a3f93f7a19f1ed0d1556447fbab7cbf2ec38840f741b3d388fb36ff",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 1,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "owner-cancelled-tombstoned"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 1,
+      "tombstonesRetired": 1,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 0
+    },
+    "m2DatagramSizeSameEndpointTCP": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 6,
+        "eventTraceSHA256": "d54270b9218f5b7e401ea1c779d5a6477dd9b36dd9d45876b30ca7c91d7ddc67",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-same-endpoint-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 0,
+      "visibleResponses": 1
+    },
+    "m2LateUDPAfterTCPTerminal": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 1,
+      "exactAssertion": {
+        "eventCount": 7,
+        "eventTraceSHA256": "f7af082d0c49663339b3ebb6ae46008ac6e1f50f705b87eab2d989bb4d3f6f38",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 1,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-same-endpoint-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 1
+    },
+    "m2LaterEndpointPromotion": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 2,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 9,
+        "eventTraceSHA256": "af07db07162b7d7eb9d8b5696ded9c13a42297e7994d56b46f04ed337ada37d7",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 2,
+      "tcpEndpointOrdinals": [
+        1,
+        2
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-promoted-endpoint-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 1
+    },
+    "m2MalformedNoShopping": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 0,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 3,
+        "eventTraceSHA256": "0921f36e6483d60bcb057ee3d1544c859345bf8c8f7dece05b9c978c957f9c51",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 0,
+      "tcpEndpointOrdinals": [],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "udp-malformed-terminal-no-shopping"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 0
+    },
+    "m2MismatchedNoShopping": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 0,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 3,
+        "eventTraceSHA256": "494722d113246bf08f8e2bbd6f288b0974c62869479d86ded17f5e8eca58cc48",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 0,
+      "tcpEndpointOrdinals": [],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "udp-mismatched-terminal-no-shopping"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 0
+    },
+    "m2RelayAssociationFailureSameEndpointTCP": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 6,
+        "eventTraceSHA256": "d54270b9218f5b7e401ea1c779d5a6477dd9b36dd9d45876b30ca7c91d7ddc67",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-same-endpoint-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 0,
+      "visibleResponses": 1
+    },
+    "m2RelaySessionFailureSameEndpointTCP": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 6,
+        "eventTraceSHA256": "a8e456d9aba558781f2ff5c205ecf9d9e25014700773f9ee382ed619b5b82fdc",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-same-endpoint-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 1
+    },
+    "m2TimeoutSameEndpointTCP": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 6,
+        "eventTraceSHA256": "a8e456d9aba558781f2ff5c205ecf9d9e25014700773f9ee382ed619b5b82fdc",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-same-endpoint-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 1
+    },
+    "m2TruncatedSameEndpointTCP": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 1,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 6,
+        "eventTraceSHA256": "a8e456d9aba558781f2ff5c205ecf9d9e25014700773f9ee382ed619b5b82fdc",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 1,
+      "tcpEndpointOrdinals": [
+        1
+      ],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "tcp-same-endpoint-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 1
+    },
+    "m2ValidUDP": {
+      "cancellations": 0,
+      "cleanupOwnership": {
+        "connectionBufferBytes": 0,
+        "connections": 0,
+        "fixedComponentBytes": 0,
+        "liveTrackedBytes": 0,
+        "queuedWireBytes": 0,
+        "reservationBytes": 0,
+        "tombstones": 0,
+        "transactions": 0
+      },
+      "connectionEpochsOpened": 0,
+      "coordinatedRetryBatches": 0,
+      "duplicateDeliveryAttemptsBeforeDedup": 0,
+      "exactAssertion": {
+        "eventCount": 3,
+        "eventTraceSHA256": "c0e92502e03f648dcc9ad97193bfa9aa68e669f88586c4bd6fba913d20bc5585",
+        "passed": true
+      },
+      "lateCallbacksSuppressed": 0,
+      "logicalQueries": 1,
+      "tcpAttempts": 0,
+      "tcpEndpointOrdinals": [],
+      "terminalCount": 1,
+      "terminalOutcomes": [
+        "udp-response-terminal"
+      ],
+      "terminalOwners": [
+        1
+      ],
+      "tombstonesCreated": 0,
+      "tombstonesRetired": 0,
+      "udpAttempts": 1,
+      "udpTransmissions": 1,
+      "visibleResponses": 1
+    }
+  },
+  "warmupIterationsPerRun": 5,
+  "wireBoundaries": {
+    "coalescedFramesParsed": 2,
+    "maximumMessageBytesAccepted": 65535,
+    "maximumWireFrameBytesAccepted": 65537,
+    "oneByteOverMessageBytesRejected": 65536,
+    "partialWriteBytes": 32,
+    "splitBodyChunkBytes": 997,
+    "splitPrefixChunks": 2
+  }
+}

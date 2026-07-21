@@ -1,5 +1,5 @@
 ## Status
-backlog
+analysis
 
 ## Assigned To
 (none)
@@ -8,12 +8,14 @@ backlog
 2026-07-15T00:46:59Z
 
 ## Last Update
-2026-07-21T04:52:40Z
+2026-07-21T06:52:21Z
 
 ## Blocked By
 - STORY-260715-1y04r0
 - STORY-260715-2wjwuf
 - STORY-260715-2nqxa5
+- STORY-260715-lkshfz
+- STORY-260715-1zzt0c
 
 ## Blocks
 - STORY-260715-eto58m

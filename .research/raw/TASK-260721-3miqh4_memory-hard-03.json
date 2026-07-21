@@ -1,0 +1,67 @@
+{
+  "environment": {
+    "hardwareModel": "Mac15,9",
+    "machine": "arm64",
+    "platform": "macOS-26.5-arm64-arm-64bit-Mach-O",
+    "privacy": "no serial number, hardware UUID, hostname, username, endpoint, or query name emitted",
+    "pythonVersion": "3.14.4",
+    "sourceRevision": "e27f4b76af8dfe2e476354d33c4f3b3046dbaeb6",
+    "taskID": "TASK-260721-3miqh4"
+  },
+  "generatedAtUTC": "2026-07-21T06:35:13Z",
+  "ledger": {
+    "accountedBytes": 7635554,
+    "aggregateBudgetBytes": 8388608,
+    "connectionReadBufferBytes": 65537,
+    "connectionWriteBufferBytes": 65537,
+    "correlationAndTombstoneBytesPerQuery": 1024,
+    "diagnosticsReserveBytes": 65536,
+    "endpointTableBytes": 512,
+    "headroomBytes": 753054,
+    "managerBaseBytes": 65536,
+    "perQueryReservationBytes": 197635,
+    "queuedWireBytes": 1048576,
+    "requestBytesPerQuery": 65535,
+    "responseBytesPerQuery": 65535,
+    "retryBatchRequestBytesPerQuery": 65535,
+    "tcpFramingBytesPerQuery": 6,
+    "transactionReservationsBytes": 6324320
+  },
+  "measurement": {
+    "allocatedBytes": 7635554,
+    "baselineOpenFileDescriptors": 4,
+    "baselinePhysicalFootprintBytes": 23003592,
+    "cleanupOpenFileDescriptors": 4,
+    "cleanupOwnership": {
+      "connectionBufferBytes": 0,
+      "connections": 0,
+      "fixedComponentBytes": 0,
+      "liveTrackedBytes": 0,
+      "queuedWireBytes": 0,
+      "reservationBytes": 0,
+      "tombstones": 0,
+      "transactions": 0
+    },
+    "cleanupPhysicalFootprintBytes": 30622176,
+    "constructedEnvelopeMatchesLedger": true,
+    "incrementalPhysicalFootprintBytes": 7618584,
+    "ledgerAccountedBytes": 7635554,
+    "liveTrackedAllocationBytesAfterCleanup": 0,
+    "openFileDescriptorDeltaAfterCleanup": 0,
+    "peakOwnership": {
+      "connectionBufferBytes": 131074,
+      "connections": 1,
+      "fixedComponentBytes": 131584,
+      "liveTrackedBytes": 7635554,
+      "queuedWireBytes": 1048576,
+      "reservationBytes": 6324320,
+      "tombstones": 0,
+      "transactions": 32
+    },
+    "peakPhysicalFootprintBytes": 30622176,
+    "processPeakRSSBytes": 42221568
+  },
+  "memoryTrial": "hard",
+  "schemaVersion": 1,
+  "taskID": "TASK-260721-3miqh4"
+}

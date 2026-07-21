@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:37:23Z
 
 ## Last Update
-2026-07-21T04:43:43Z
+2026-07-21T06:40:26Z
 
 ## Blocked By
 - TASK-260715-29ws8l
@@ -34,6 +34,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-2hhh7x_dns-policy-precondition.md](file://TASK-260715-2hhh7x/TASK-260715-2hhh7x_dns-policy-precondition.md) — Resolver profile fields, no-inference migration, and evidence-gated endpoint validation policy
+- [TASK-260715-2hhh7x_dns-runtime-policy-v1.md](file://TASK-260715-2hhh7x/TASK-260715-2hhh7x_dns-runtime-policy-v1.md) — Non-authoritative DNS policy handoff; production remains gated
 
 ## Outcome Resources
 - [TASK-260715-2hhh7x_credential-boundaries.puml](file://TASK-260715-2hhh7x/TASK-260715-2hhh7x_credential-boundaries.puml) — Solution-architecture component view of App Group, Keychain, manager, provider, and SSH trust boundaries

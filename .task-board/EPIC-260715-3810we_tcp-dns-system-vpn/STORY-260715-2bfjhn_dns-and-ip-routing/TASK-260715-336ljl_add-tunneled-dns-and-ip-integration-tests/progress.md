@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:17:04Z
 
 ## Last Update
-2026-07-21T04:43:25Z
+2026-07-21T06:40:27Z
 
 ## Blocked By
 - TASK-260715-393tuu
@@ -33,6 +33,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-336ljl_dns-policy-precondition.md](file://TASK-260715-336ljl/TASK-260715-336ljl_dns-policy-precondition.md) — Controlled-fixture contract for shared failure, policy boundaries, and physical DNS sentinel
+- [TASK-260715-336ljl_dns-runtime-policy-v1.md](file://TASK-260715-336ljl/TASK-260715-336ljl_dns-runtime-policy-v1.md) — Non-authoritative DNS policy handoff; production remains gated
 
 ## Outcome Resources
 (none)

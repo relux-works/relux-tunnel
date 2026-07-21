@@ -1,0 +1,551 @@
+{
+  "accountingConstants": {
+    "connectionReadBufferBytes": 65537,
+    "connectionWriteBufferBytes": 65537,
+    "correlationAndTombstoneBytesPerQuery": 1024,
+    "diagnosticsReserveBytes": 65536,
+    "endpointMetadataBytes": 64,
+    "managerBaseBytes": 65536,
+    "retryRequestCopiesPerQuery": 1,
+    "tcpFramingBytesPerMessage": 2
+  },
+  "accountingProof": {
+    "default": {
+      "accountedBytes": 3686706,
+      "aggregateBudgetBytes": 4194304,
+      "headroomBytes": 507598,
+      "perQueryReservationBytes": 197635,
+      "transactionReservationsBytes": 3162160
+    },
+    "hardEnvelope": {
+      "accountedBytes": 7635554,
+      "aggregateBudgetBytes": 8388608,
+      "headroomBytes": 753054,
+      "perQueryReservationBytes": 197635,
+      "transactionReservationsBytes": 6324320
+    }
+  },
+  "attemptPolicy": {
+    "m1CoordinatedRetryBatchesMaximumPerEpochFailure": 1,
+    "m1EndpointOrder": "stored-serial",
+    "m1ParallelRacing": false,
+    "m1TCPAttemptsPerEndpointMaximum": 1,
+    "m2TCPAttemptsPerEndpointMaximum": 1,
+    "m2UDPAttemptsMaximum": 1,
+    "terminalClaimsPerLogicalQueryMaximum": 1
+  },
+  "authorityClass": "non-authoritative-candidate",
+  "candidateMeasurementsOnly": true,
+  "defaults": {
+    "channelOpenTimeoutMilliseconds": 2000,
+    "dispatchAllowanceMilliseconds": 1000,
+    "idleCloseTimeoutMilliseconds": 10000,
+    "logicalQueryTimeoutMilliseconds": 35000,
+    "maxAggregateDNSBytes": 4194304,
+    "maxConfiguredEndpoints": 4,
+    "maxDNSMessageBytes": 65535,
+    "maxInFlightQueries": 16,
+    "maxQueuedWireBytes": 262144,
+    "relayUDPPhaseTimeoutMilliseconds": 5000,
+    "responseTimeoutMilliseconds": 5000,
+    "startupReadinessTimeoutMilliseconds": 10000
+  },
+  "hardCeilings": {
+    "channelOpenTimeoutMilliseconds": 5000,
+    "dispatchAllowanceMilliseconds": 2000,
+    "idleCloseTimeoutMilliseconds": 30000,
+    "logicalQueryTimeoutMilliseconds": 135000,
+    "maxAggregateDNSBytes": 8388608,
+    "maxConfiguredEndpoints": 8,
+    "maxDNSMessageBytes": 65535,
+    "maxInFlightQueries": 32,
+    "maxQueuedWireBytes": 1048576,
+    "relayUDPPhaseTimeoutMilliseconds": 10000,
+    "responseTimeoutMilliseconds": 10000,
+    "startupReadinessTimeoutMilliseconds": 45000
+  },
+  "metadataSubledger": {
+    "managerBase": {
+      "allocatorAlignmentAndImplementationSlack": 12288,
+      "epochAndConnectionState": 8192,
+      "fixedMetricsAndCounters": 4096,
+      "headroom": 0,
+      "ownerAndTombstoneMapBuckets": 16384,
+      "reserved": 65536,
+      "retryAndAdmissionContainers": 8192,
+      "subtotal": 65536,
+      "timerAndDeadlineContainers": 8192,
+      "upstreamIDOccupancyBitmap": 8192
+    },
+    "perQuery": {
+      "allocatorAlignmentAndImplementationSlack": 128,
+      "canonicalQuestionCorrelation": 64,
+      "clientAndUpstreamIDsFlagsAndPadding": 16,
+      "deadlineStateTerminalAndCancellation": 64,
+      "epochAndGeneration": 16,
+      "headroom": 544,
+      "reserved": 1024,
+      "retryAndTombstoneBookkeeping": 64,
+      "subtotal": 480,
+      "timerTaskContinuationAndQueueHandles": 128
+    }
+  },
+  "minimums": {
+    "channelOpenTimeoutMilliseconds": 250,
+    "dispatchAllowanceMilliseconds": 1,
+    "idleCloseTimeoutMilliseconds": 2000,
+    "logicalQueryTimeoutMilliseconds": 1000,
+    "maxAggregateDNSBytes": 262144,
+    "maxConfiguredEndpoints": 1,
+    "maxDNSMessageBytes": 65535,
+    "maxInFlightQueries": 1,
+    "maxQueuedWireBytes": 512,
+    "relayUDPPhaseTimeoutMilliseconds": 500,
+    "responseTimeoutMilliseconds": 500,
+    "startupReadinessTimeoutMilliseconds": 250
+  },
+  "policyName": "DNSRuntimePolicyV1",
+  "productionAuthorization": {
+    "adr022MayAdvanceToAccepted": false,
+    "blockingTaskIDs": [
+      "TASK-260715-1gjxer",
+      "TASK-260715-1pn983"
+    ],
+    "permitted": false,
+    "physicalEvidenceGate": {
+      "classification": "later-external-physical-evidence-gate",
+      "required": true,
+      "requirements": [
+        "selected-engine controlled SSH direct-tcpip timing and cleanup rows",
+        "physical baseline-provider startup and footprint rows"
+      ]
+    }
+  },
+  "profileStorage": {
+    "storesResolverIdentityOnly": true,
+    "storesRuntimePolicyValues": false
+  },
+  "schemaVersion": 1,
+  "status": "candidate-blocked-missing-accepted-budget-and-ssh-evidence",
+  "taskID": "TASK-260721-3miqh4",
+  "timingBoundaryVectors": [
+    {
+      "actualErrors": [],
+      "base": "defaults",
+      "boundary": "exact-equality",
+      "expectedError": "startupReadinessTimeoutMilliseconds:endpoint-open-coverage",
+      "expectedOverallValid": true,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "startupReadinessTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 9000,
+      "name": "defaults-startupColdSerialMilliseconds-exact-equality",
+      "relationship": "startupColdSerialMilliseconds",
+      "requiredMilliseconds": 9000
+    },
+    {
+      "actualErrors": [
+        "startupReadinessTimeoutMilliseconds:endpoint-open-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "one-millisecond-under",
+      "expectedError": "startupReadinessTimeoutMilliseconds:endpoint-open-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "startupReadinessTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 8999,
+      "name": "defaults-startupColdSerialMilliseconds-one-millisecond-under",
+      "relationship": "startupColdSerialMilliseconds",
+      "requiredMilliseconds": 9000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 27000,
+      "name": "defaults-m1ReadyConnectionMilliseconds-exact-equality",
+      "relationship": "m1ReadyConnectionMilliseconds",
+      "requiredMilliseconds": 27000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m1-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 26999,
+      "name": "defaults-m1ReadyConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m1ReadyConnectionMilliseconds",
+      "requiredMilliseconds": 27000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 29000,
+      "name": "defaults-m1ColdConnectionMilliseconds-exact-equality",
+      "relationship": "m1ColdConnectionMilliseconds",
+      "requiredMilliseconds": 29000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 28999,
+      "name": "defaults-m1ColdConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m1ColdConnectionMilliseconds",
+      "requiredMilliseconds": 29000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 32000,
+      "name": "defaults-m2ReadyTCPConnectionMilliseconds-exact-equality",
+      "relationship": "m2ReadyTCPConnectionMilliseconds",
+      "requiredMilliseconds": 32000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 31999,
+      "name": "defaults-m2ReadyTCPConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m2ReadyTCPConnectionMilliseconds",
+      "requiredMilliseconds": 32000
+    },
+    {
+      "actualErrors": [],
+      "base": "defaults",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-cold-coverage",
+      "expectedOverallValid": true,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 34000,
+      "name": "defaults-m2ColdTCPConnectionMilliseconds-exact-equality",
+      "relationship": "m2ColdTCPConnectionMilliseconds",
+      "requiredMilliseconds": 34000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "defaults",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-cold-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 33999,
+      "name": "defaults-m2ColdTCPConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m2ColdTCPConnectionMilliseconds",
+      "requiredMilliseconds": 34000
+    },
+    {
+      "actualErrors": [],
+      "base": "hardCeilings",
+      "boundary": "exact-equality",
+      "expectedError": "startupReadinessTimeoutMilliseconds:endpoint-open-coverage",
+      "expectedOverallValid": true,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "startupReadinessTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 42000,
+      "name": "hardCeilings-startupColdSerialMilliseconds-exact-equality",
+      "relationship": "startupColdSerialMilliseconds",
+      "requiredMilliseconds": 42000
+    },
+    {
+      "actualErrors": [
+        "startupReadinessTimeoutMilliseconds:endpoint-open-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "one-millisecond-under",
+      "expectedError": "startupReadinessTimeoutMilliseconds:endpoint-open-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "startupReadinessTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 41999,
+      "name": "hardCeilings-startupColdSerialMilliseconds-one-millisecond-under",
+      "relationship": "startupColdSerialMilliseconds",
+      "requiredMilliseconds": 42000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 117000,
+      "name": "hardCeilings-m1ReadyConnectionMilliseconds-exact-equality",
+      "relationship": "m1ReadyConnectionMilliseconds",
+      "requiredMilliseconds": 117000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m1-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 116999,
+      "name": "hardCeilings-m1ReadyConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m1ReadyConnectionMilliseconds",
+      "requiredMilliseconds": 117000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 122000,
+      "name": "hardCeilings-m1ColdConnectionMilliseconds-exact-equality",
+      "relationship": "m1ColdConnectionMilliseconds",
+      "requiredMilliseconds": 122000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m1-cold-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 121999,
+      "name": "hardCeilings-m1ColdConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m1ColdConnectionMilliseconds",
+      "requiredMilliseconds": 122000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 127000,
+      "name": "hardCeilings-m2ReadyTCPConnectionMilliseconds-exact-equality",
+      "relationship": "m2ReadyTCPConnectionMilliseconds",
+      "requiredMilliseconds": 127000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-ready-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 126999,
+      "name": "hardCeilings-m2ReadyTCPConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m2ReadyTCPConnectionMilliseconds",
+      "requiredMilliseconds": 127000
+    },
+    {
+      "actualErrors": [],
+      "base": "hardCeilings",
+      "boundary": "exact-equality",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-cold-coverage",
+      "expectedOverallValid": true,
+      "expectedRelationshipValid": true,
+      "expectedTargetErrorPresent": false,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 132000,
+      "name": "hardCeilings-m2ColdTCPConnectionMilliseconds-exact-equality",
+      "relationship": "m2ColdTCPConnectionMilliseconds",
+      "requiredMilliseconds": 132000
+    },
+    {
+      "actualErrors": [
+        "logicalQueryTimeoutMilliseconds:m2-cold-coverage"
+      ],
+      "base": "hardCeilings",
+      "boundary": "one-millisecond-under",
+      "expectedError": "logicalQueryTimeoutMilliseconds:m2-cold-coverage",
+      "expectedOverallValid": false,
+      "expectedRelationshipValid": false,
+      "expectedTargetErrorPresent": true,
+      "mutatedField": "logicalQueryTimeoutMilliseconds",
+      "mutatedValueMilliseconds": 131999,
+      "name": "hardCeilings-m2ColdTCPConnectionMilliseconds-one-millisecond-under",
+      "relationship": "m2ColdTCPConnectionMilliseconds",
+      "requiredMilliseconds": 132000
+    }
+  ],
+  "timingProof": {
+    "candidateDefault": {
+      "m1ColdConnectionMilliseconds": 29000,
+      "m1ReadyConnectionMilliseconds": 27000,
+      "m2ColdTCPConnectionMilliseconds": 34000,
+      "m2ReadyTCPConnectionMilliseconds": 32000,
+      "startupColdSerialMilliseconds": 9000
+    },
+    "hardEnvelope": {
+      "m1ColdConnectionMilliseconds": 122000,
+      "m1ReadyConnectionMilliseconds": 117000,
+      "m2ColdTCPConnectionMilliseconds": 132000,
+      "m2ReadyTCPConnectionMilliseconds": 127000,
+      "startupColdSerialMilliseconds": 42000
+    }
+  },
+  "timingSemantics": {
+    "dispatchAllowance": "one non-resetting allowance for scheduling and terminal publication across the logical/startup state machine",
+    "logicalDeadline": "one monotonic deadline that never resets on UDP-to-TCP fallback, channel open, retry batch, or endpoint promotion",
+    "relayUDPPhaseTimeout": "one bounded association/session/send/receive phase ending on valid response, typed failure, datagram-size rejection, or timeout",
+    "responseTimeout": "complete correlated framed TCP response after request write ownership"
+  },
+  "validationEquations": [
+    "all fields are integers and minimum <= value <= hard ceiling",
+    "startupRequired = E * channelOpen + dispatchAllowance",
+    "m1ReadyRequired = E * response + (E - 1) * channelOpen + dispatchAllowance",
+    "m1ColdRequired = E * (channelOpen + response) + dispatchAllowance",
+    "m2ReadyRequired = relayUDPPhase + m1ReadyRequired",
+    "m2ColdRequired = relayUDPPhase + m1ColdRequired",
+    "startupReadiness >= startupRequired",
+    "logicalQuery >= max(m1ReadyRequired, m1ColdRequired, m2ReadyRequired, m2ColdRequired)",
+    "maxQueuedWireBytes < maxAggregateDNSBytes",
+    "perQueryReservationBytes = 3 * (maxDNSMessageBytes + 2) + 1024",
+    "accountedBytes = maxInFlightQueries * perQueryReservationBytes + maxQueuedWireBytes + 65537 + 65537 + 65536 + 65536 + maxConfiguredEndpoints * 64",
+    "accountedBytes <= maxAggregateDNSBytes"
+  ],
+  "vectors": [
+    {
+      "base": "defaults",
+      "expectedAccountedBytes": 3686706,
+      "expectedValid": true,
+      "name": "default-valid"
+    },
+    {
+      "base": "hardCeilings",
+      "expectedAccountedBytes": 7635554,
+      "expectedValid": true,
+      "name": "hard-envelope-valid"
+    },
+    {
+      "base": "defaults",
+      "expectedError": "maxConfiguredEndpoints:above-ceiling",
+      "expectedValid": false,
+      "name": "endpoint-over-ceiling",
+      "override": {
+        "maxConfiguredEndpoints": 9
+      }
+    },
+    {
+      "base": "defaults",
+      "expectedError": "maxDNSMessageBytes:above-ceiling",
+      "expectedValid": false,
+      "name": "message-one-byte-over",
+      "override": {
+        "maxDNSMessageBytes": 65536
+      }
+    },
+    {
+      "base": "defaults",
+      "expectedError": "maxAggregateDNSBytes:ledger-overflow",
+      "expectedValid": false,
+      "name": "ledger-overflow",
+      "override": {
+        "maxAggregateDNSBytes": 3000000
+      }
+    }
+  ],
+  "wireBoundaryVectors": [
+    {
+      "expectedAccepted": true,
+      "messageBytes": 65535,
+      "wireBytes": 65537
+    },
+    {
+      "expectedAccepted": false,
+      "messageBytes": 65536
+    }
+  ]
+}

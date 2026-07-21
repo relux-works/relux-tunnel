@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:43Z
 
 ## Last Update
-2026-07-15T02:25:43Z
+2026-07-21T06:16:46Z
 
 ## Blocked By
 - TASK-260715-2jatnd
@@ -21,6 +21,7 @@ backlog
 - TASK-260715-3kjhkw
 - TASK-260715-1zikbu
 - TASK-260715-1r6k4t
+- TASK-260721-3miqh4
 
 ## Checklist
 - [ ] Attach the task-scoped consumer ledger, formulas, pressure table, and state diagrams
@@ -30,7 +31,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1pn983_dns-policy-residual-budget-input.md](file://TASK-260715-1pn983/TASK-260715-1pn983_dns-policy-residual-budget-input.md) — Cross-layer ledger must assign and prove the residual DNS component budget
 
 ## Outcome Resources
 - [TASK-260715-1pn983_memory-pressure-plan.puml](file://TASK-260715-1pn983/TASK-260715-1pn983_memory-pressure-plan.puml) — Planning state diagram for soft, pressure, critical, and recovery actions

@@ -8,7 +8,7 @@ backlog
 2026-07-21T04:22:01Z
 
 ## Last Update
-2026-07-21T04:43:08Z
+2026-07-21T06:40:27Z
 
 ## Blocked By
 - TASK-260715-1tnjlu
@@ -28,6 +28,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260721-33o8fc_dns-policy-precondition.md](file://TASK-260721-33o8fc/TASK-260721-33o8fc_dns-policy-precondition.md) — Reworked ADR candidate defining resolver schema invariants and evidence-gated endpoint count
+- [TASK-260721-33o8fc_dns-runtime-policy-v1.md](file://TASK-260721-33o8fc/TASK-260721-33o8fc_dns-runtime-policy-v1.md) — Non-authoritative DNS policy handoff; production remains gated
 
 ## Outcome Resources
 (none)

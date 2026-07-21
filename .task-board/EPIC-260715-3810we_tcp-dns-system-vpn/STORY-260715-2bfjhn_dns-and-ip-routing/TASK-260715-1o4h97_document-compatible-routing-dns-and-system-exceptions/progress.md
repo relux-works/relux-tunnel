@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:17:04Z
 
 ## Last Update
-2026-07-15T03:11:39Z
+2026-07-21T06:40:26Z
 
 ## Blocked By
 - TASK-260715-336ljl
@@ -28,7 +28,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1o4h97_dns-runtime-policy-v1.md](file://TASK-260715-1o4h97/TASK-260715-1o4h97_dns-runtime-policy-v1.md) — Non-authoritative DNS policy handoff; production remains gated
 
 ## Outcome Resources
 (none)

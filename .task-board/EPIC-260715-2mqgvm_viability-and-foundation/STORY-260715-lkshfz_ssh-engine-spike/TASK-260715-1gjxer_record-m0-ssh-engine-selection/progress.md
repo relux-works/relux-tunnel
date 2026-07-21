@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:17Z
 
 ## Last Update
-2026-07-20T18:59:50Z
+2026-07-21T06:16:46Z
 
 ## Blocked By
 - TASK-260715-3ikonq
@@ -24,6 +24,7 @@ backlog
 - TASK-260715-159pcp
 - TASK-260715-12x6oq
 - TASK-260720-1qhxqa
+- TASK-260721-3miqh4
 
 ## Checklist
 - [ ] Every mandatory gate maps to evidence for both candidates
@@ -33,7 +34,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1gjxer_dns-policy-selected-ssh-evidence-gate.md](file://TASK-260715-1gjxer/TASK-260715-1gjxer_dns-policy-selected-ssh-evidence-gate.md) — DNS policy requires selected-engine direct-tcpip timing memory and cleanup rows
 
 ## Outcome Resources
 (none)

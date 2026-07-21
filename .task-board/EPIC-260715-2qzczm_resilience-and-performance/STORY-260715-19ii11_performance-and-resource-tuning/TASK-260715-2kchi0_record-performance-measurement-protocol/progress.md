@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:45Z
 
 ## Last Update
-2026-07-15T02:25:43Z
+2026-07-21T05:52:44Z
 
 ## Blocked By
 - (none)
@@ -25,7 +25,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-2kchi0_dns-policy-measurement-input.md](file://TASK-260715-2kchi0/TASK-260715-2kchi0_dns-policy-measurement-input.md) — Measurement protocol must cover selected-SSH DNS timing footprint startup and cleanup rows
 
 ## Outcome Resources
 - [TASK-260715-2kchi0_m3-dependency-plan.dot](file://TASK-260715-2kchi0/TASK-260715-2kchi0_m3-dependency-plan.dot) — Task-scoped Graphviz critical-path and tuning dependency plan

@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:44:42Z
 
 ## Last Update
-2026-07-21T04:43:34Z
+2026-07-21T06:40:26Z
 
 ## Blocked By
 - TASK-260715-1loqwb
@@ -33,6 +33,7 @@ backlog
 ## Precondition Resources
 - [TASK-260715-28jdml_m1-dns-handoff.md](file://TASK-260715-28jdml/TASK-260715-28jdml_m1-dns-handoff.md) — Reworked M1 and M2 DNS ownership, evidence-policy, retry, and dependency handoff
 - [TASK-260715-28jdml_protocol-v1-developer-contract.md](file://TASK-260715-28jdml/TASK-260715-28jdml_protocol-v1-developer-contract.md) — Accepted relay protocol v1 developer contract and compatibility gates from TASK-260715-2z9b4a
+- [TASK-260715-28jdml_dns-runtime-policy-v1.md](file://TASK-260715-28jdml/TASK-260715-28jdml_dns-runtime-policy-v1.md) — Non-authoritative DNS policy handoff; production remains gated
 
 ## Outcome Resources
 (none)
