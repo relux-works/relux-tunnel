@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:43Z
 
 ## Last Update
-2026-07-15T02:25:43Z
+2026-07-21T10:14:32Z
 
 ## Blocked By
 - TASK-260715-1gjxer
@@ -28,7 +28,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-3f9kv8_m2-capability-contract.md](file://TASK-260715-3f9kv8/TASK-260715-3f9kv8_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 - [TASK-260715-3f9kv8_lane-assignment-plan.puml](file://TASK-260715-3f9kv8/TASK-260715-3f9kv8_lane-assignment-plan.puml) — Planning activity diagram for deterministic lane eligibility, selection, pinning, and bounded rejection

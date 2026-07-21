@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:44Z
 
 ## Last Update
-2026-07-15T02:46:55Z
+2026-07-21T10:14:32Z
 
 ## Blocked By
 - TASK-260715-2lodgq
@@ -29,7 +29,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-3ddzdd_m2-capability-contract.md](file://TASK-260715-3ddzdd/TASK-260715-3ddzdd_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 (none)

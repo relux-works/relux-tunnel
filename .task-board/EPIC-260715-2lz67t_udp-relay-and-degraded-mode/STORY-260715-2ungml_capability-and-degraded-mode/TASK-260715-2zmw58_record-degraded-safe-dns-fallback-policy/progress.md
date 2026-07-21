@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-21T04:23:01Z
+2026-07-21T10:14:31Z
 
 ## Blocked By
 - TASK-260715-30lv40
@@ -26,6 +26,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-2zmw58_m1-resolver-decision.md](file://TASK-260715-2zmw58/TASK-260715-2zmw58_m1-resolver-decision.md) — Approved M1 resolver decision prerequisite for degraded DNS
+- [TASK-260715-2zmw58_m2-capability-contract.md](file://TASK-260715-2zmw58/TASK-260715-2zmw58_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 (none)

@@ -1,0 +1,67 @@
+@startuml
+!theme plain
+title TASK-260715-30lv40 — M1/M2/M3/app authority boundaries
+left to right direction
+skinparam componentStyle rectangle
+
+package "Apple system" {
+  [NETunnelProviderSession.status] as SystemState
+}
+
+package "Packet-tunnel extension" {
+  package "M1 authority" {
+    [TunnelProviderAdapter] as Adapter
+    [TunnelRuntimeCoordinator] as Coordinator
+    [Packet + TCP + safe DNS + settings] as Base
+    [Immutable snapshot store] as Store
+  }
+
+  package "M2 authority" {
+    [Relay bootstrap/session validator] as Relay
+    [Association generation] as Associations
+    [Relay-only reprobe] as Reprobe
+  }
+
+  package "M3 authority" {
+    [Path/host/route/lane reconnect] as Reconnect
+    [Provider reasserting] as Reasserting
+  }
+}
+
+package "Containing app / M4" {
+  [Presentation model] as UI
+}
+
+SystemState --> UI : system session fact
+Adapter --> Coordinator : runtime generation + lifecycle
+Coordinator <--> Base : base control / facts
+Coordinator --> Store : sole snapshot writer
+Coordinator <--> Relay : relay control / facts
+Relay --> Associations : owns active relay generation
+Relay --> Reprobe : finite eligible reason only
+Reconnect --> Coordinator : current transport generation + recovery fact
+Reconnect --> Reasserting : sole writer
+Reconnect --> Relay : one local validation-start event\nafter current BaseReady per transport attempt
+Reconnect --> Reprobe : cancel before M3 retry
+Store --> UI : versioned immutable provider truth
+
+note bottom of UI
+Combines system status and current provider snapshot for display.
+Never owns runtime truth, generations, or retry loops.
+end note
+
+note bottom of Reprobe
+No path resolution, host reconnect, route replacement,
+lane-pool repair, sleep/wake, NAT64, or captive handling.
+end note
+
+note bottom of Relay
+M2 owns candidate validation and active relay promotion.
+Candidate proof is internal; M3 owns reconnect cadence.
+end note
+
+note bottom of Store
+No credentials, destinations, DNS queries, payloads,
+host identifiers, remote strings, or raw spawn logs.
+end note
+@enduml

@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-20T18:42:16Z
+2026-07-21T10:14:32Z
 
 ## Blocked By
 - TASK-260715-30lv40
@@ -31,6 +31,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-ak0s72_protocol-v1-developer-contract.md](file://TASK-260715-ak0s72/TASK-260715-ak0s72_protocol-v1-developer-contract.md) — Accepted relay protocol v1 developer contract and compatibility gates from TASK-260715-2z9b4a
+- [TASK-260715-ak0s72_m2-capability-contract.md](file://TASK-260715-ak0s72/TASK-260715-ak0s72_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 (none)

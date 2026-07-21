@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:44Z
 
 ## Last Update
-2026-07-16T21:08:21Z
+2026-07-21T10:14:31Z
 
 ## Blocked By
 - TASK-260715-30ugfm
@@ -32,7 +32,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1zikbu_m2-capability-contract.md](file://TASK-260715-1zikbu/TASK-260715-1zikbu_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 - [TASK-260715-1zikbu_reconnect-state-plan.puml](file://TASK-260715-1zikbu/TASK-260715-1zikbu_reconnect-state-plan.puml) — Planning state diagram for generation-safe reconnect, settings replacement, and capability restoration

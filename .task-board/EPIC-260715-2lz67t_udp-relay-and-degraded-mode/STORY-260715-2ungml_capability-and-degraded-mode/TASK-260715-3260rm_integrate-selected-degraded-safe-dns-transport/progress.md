@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-15T03:19:56Z
+2026-07-21T10:14:32Z
 
 ## Blocked By
 - TASK-260715-2zmw58
@@ -33,6 +33,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-3260rm_m1-safe-dns-handoff.md](file://TASK-260715-3260rm/TASK-260715-3260rm_m1-safe-dns-handoff.md) — M1 safe-DNS component prerequisites for degraded integration
+- [TASK-260715-3260rm_m2-capability-contract.md](file://TASK-260715-3260rm/TASK-260715-3260rm_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 (none)

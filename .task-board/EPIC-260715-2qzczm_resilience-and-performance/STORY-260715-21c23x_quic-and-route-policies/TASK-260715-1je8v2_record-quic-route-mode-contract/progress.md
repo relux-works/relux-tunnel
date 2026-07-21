@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:44Z
 
 ## Last Update
-2026-07-16T21:08:21Z
+2026-07-21T10:14:31Z
 
 ## Blocked By
 - TASK-260715-30lv40
@@ -37,7 +37,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1je8v2_m2-capability-contract.md](file://TASK-260715-1je8v2/TASK-260715-1je8v2_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 - [TASK-260715-1je8v2_quic-policy-plan.puml](file://TASK-260715-1je8v2/TASK-260715-1je8v2_quic-policy-plan.puml) — Planning activity diagram for Allow, Block, and Auto QUIC outcomes without silent timeout

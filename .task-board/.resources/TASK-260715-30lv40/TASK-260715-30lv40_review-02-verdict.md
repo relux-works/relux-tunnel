@@ -1,0 +1,20 @@
+# TASK-260715-30lv40 — independent re-review 02 verdict
+
+Verdict: changes requested; route to analysis for bounded contract rework. No external or human-only blocker exists.
+
+## Evidence that passed
+
+- The four rework-01 findings are closed: clearing the live relay registration makes retired work stale before a later attempt exists; T15 is the sole higher-local-policy re-arm into a fresh bounded recovery cycle; activation_ready is a finite published local outcome during all-false activation; and the lifecycle view separates registered Waiting and Running phases.
+- The contract recount is 11 states, 32 transitions, 59 finite reason rows, and five retry classes. Required platform, asset, bootstrap, checksum, launch, version, feature, limit, framing, health, process, lane, safe-DNS, stop, stale-generation, and association outcomes are finite and privacy-safe.
+- Full, degraded, failed, stopping, stale, corrupt, unknown, and production-gate projections are otherwise fail-closed. M2 relay reprobe and M3 path/host/route/lane/sleep/NAT64/captive ownership remain exclusive; UI is read-only.
+- All 16 downstream precondition copies are byte-identical to the binding contract; every downstream task has a non-empty description and AC. Direct dependency fields were unchanged by rework. The broad plan related-mode cycle remains a pre-existing board-query anomaly; task-board validate passes.
+- PlantUML 1.2026.6 check-only passes and fresh renders are byte-identical to both attached PNGs. Visual inspection confirms readable Waiting/Running lifecycle phases and a single-purpose ownership view.
+- Fresh validation passes: 306 core Swift tests in 27 suites; 57 RelayProtocol Swift tests in seven suites plus vector/schema/regeneration/build gates; all Go relay packages; 11 relay release-script tests; board validation; git diff --check; resource hashes; and privacy scan.
+
+## Required bounded rework
+
+1. T07 has an unsatisfiable source guard. RelayReady and therefore Full require a current activeSession registration plus open UDP admission. The connectingActivation source retains activationCandidate with all bits false. T07 nevertheless uses Full as its source guard and only then says it promotes the registration. The action also does not explicitly open UDP or bind activeRelayGeneration before publication. T04 says set candidate active relay without distinguishing that candidate from the schema field that must remain null while udp is false. Define a separate internal validated-relay-candidate predicate. Make T07 guard BaseReady plus that candidate proof, then atomically open UDP, bind activeRelayGeneration, promote to activeSession, re-evaluate Full, and publish. State explicitly that T04 cannot expose activeRelayGeneration.
+
+2. T26 repeats the same circularity and lacks a legal callback phase. reassertingAwaitingBase says the M2 registration is null, the finite relayWorkPhase enum has no reconnect-validator phase, and RelayReady already requires activeSession. T26 nevertheless requires a fresh M2-registered RelayReady and then says it promotes the validator registration to activeSession. Define the exact M3-to-M2 validation-start event after current BaseReady, its finite registration phase, captured tuple, allowed callbacks, retirement order, and state-row resource allowance. Make T26/T27 consume candidate success/failure; only the atomic T26 target action may open UDP, bind the active relay, promote the registration, satisfy RelayReady, and publish Full.
+
+Keep the 32-transition external lifecycle if desired, but do not leave validator registration as an invisible action. Update the state/readiness/transition/snapshot tables, examples, lifecycle labels if affected, all 16 copies, validation packet, and race-test handoff. Preserve the existing production gates, numeric non-decisions, and exclusive M3 reconnect ownership.

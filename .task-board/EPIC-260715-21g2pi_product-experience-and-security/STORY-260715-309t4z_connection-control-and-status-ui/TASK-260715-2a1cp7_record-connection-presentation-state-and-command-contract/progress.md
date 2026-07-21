@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:37:49Z
 
 ## Last Update
-2026-07-15T02:48:44Z
+2026-07-21T10:14:31Z
 
 ## Blocked By
 - TASK-260715-2hhh7x
@@ -28,7 +28,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-2a1cp7_m2-capability-contract.md](file://TASK-260715-2a1cp7/TASK-260715-2a1cp7_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
 
 ## Outcome Resources
 - [TASK-260715-2a1cp7_connection-state-contract.puml](file://TASK-260715-2a1cp7/TASK-260715-2a1cp7_connection-state-contract.puml) — Solution-architecture state view for disconnected through full, degraded, reasserting, failed, and stop
