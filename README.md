@@ -31,8 +31,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
 - **Shared package**: `ReluxTunnelCore` and its compile-only iOS/macOS provider
   composition roots include the supervised public socket-pair packet bridge,
   bounded deterministic v1 runtime configuration/message codecs, and the
-  injectable owned `NETunnelProviderManager` repository with thin public-API
-  host seams; the module boundaries are mapped in
+  injectable owned `NETunnelProviderManager` repository plus a generation-safe
+  host session controller whose system status and provider capability authorities
+  remain separate behind thin public-API host seams; the module boundaries are mapped in
   [`docs/core-adapter-boundaries.md`](docs/core-adapter-boundaries.md).
 - **Native dependencies**: pinned custom-build C graphs use source-rebuilt
   static XCFrameworks behind `ReluxTunnelNativeAdapter`; see

@@ -199,6 +199,7 @@ public protocol VPNPreferenceObservation: Sendable {
 
 public protocol VPNPreferencesManager: AnyObject, Sendable {
   var snapshot: VPNManagerSnapshot { get }
+  var hostSession: (any VPNHostSession)? { get }
 
   func applyCanonicalConfiguration(_ configuration: CanonicalVPNManagerConfiguration)
   func setEnabled(_ enabled: Bool)
@@ -212,6 +213,10 @@ public protocol VPNPreferencesManager: AnyObject, Sendable {
   func observeTerminalStatus(
     completion: @escaping @Sendable (VPNManagerSessionStatus) -> Void
   ) -> any VPNPreferenceObservation
+}
+
+extension VPNPreferencesManager {
+  public var hostSession: (any VPNHostSession)? { nil }
 }
 
 public protocol VPNPreferencesClient: Sendable {
@@ -262,6 +267,7 @@ public enum VPNManagerRepositoryError: Error, Equatable, Sendable {
   case savedButReloadFailed
   case removedButReloadFailed
   case ownedManagerNotFound
+  case tunnelProviderSessionUnavailable
   case sessionTransitionInProgress(VPNManagerSessionStatus)
   case stopTimedOut
 }
@@ -308,6 +314,31 @@ public actor OwnedVPNManagerRepository {
     return try await ensureWhileHoldingOperation(
       profileIdentifier: profileIdentifier,
       localizedDescription: localizedDescription
+    )
+  }
+
+  /// Returns a session only from a freshly loaded exact-owned current manager.
+  ///
+  /// The repository does not cache the manager or session. Session commands use
+  /// this handoff so ownership, schema, and enabled validation remain centralized
+  /// in the accepted repository rather than being duplicated by the controller.
+  public func loadFreshOwnedSession(
+    requireEnabled: Bool
+  ) async throws -> FreshOwnedVPNSession {
+    await acquireOperation()
+    defer { releaseOperation() }
+
+    let manager = try await loadSingleCurrentOwned()
+    if requireEnabled, !manager.snapshot.isEnabled {
+      throw VPNManagerRepositoryError.configurationDisabled
+    }
+    guard let session = manager.hostSession else {
+      throw VPNManagerRepositoryError.tunnelProviderSessionUnavailable
+    }
+    return FreshOwnedVPNSession(
+      session: session,
+      configurationReference: try requireCurrent(manager.snapshot),
+      isEnabled: manager.snapshot.isEnabled
     )
   }
 

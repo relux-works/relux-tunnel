@@ -76,3 +76,19 @@ force-closes every registered controllable handle and records only a finite
 `cleanup_deadline_exceeded` error plus the raw numeric Apple reason. No localized
 platform error text, configuration, credential, endpoint, or traffic value is
 added to the message or cleanup diagnostics.
+
+## Host projection
+
+`VPNSessionController` sends the read-only protocol, lifecycle, and capability
+requests only while the freshly read exact `NETunnelProviderSession` status is
+connected. Each request has a UUID correlation identifier and a three-second
+monotonic deadline. A combined provider projection requires matching lifecycle
+and capability positions that are strictly newer than the controller's last
+accepted generation/sequence position. Relaunch creates a new controller with
+no app-owned runtime history and requests the current facts again.
+
+System session status remains independent: every non-connected status clears
+provider capability immediately, while missing, nil, timed-out, corrupt,
+unsupported, wrong-request, mismatched, stale, and late responses leave a
+connected system session capability-unknown. Controller retirement removes
+observers and cancels host waits without stopping the system tunnel.

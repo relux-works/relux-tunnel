@@ -1,0 +1,144 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/27] Emitting module ReluxLibSSH2PackagingTests
+[3/27] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[4/27] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[5/27] Compiling ReluxTunnelCore RuntimeContracts.swift
+[6/27] Compiling ReluxTunnelCore RelayByteCodec.swift
+[7/27] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[8/28] Compiling ReluxTunnelCore RelaySession.swift
+[9/28] Compiling ReluxTunnelCore PacketContracts.swift
+[10/28] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[11/28] Compiling ReluxTunnelCore VPNManagerRepository.swift
+[12/28] Compiling ReluxTunnelCore SSHContracts.swift
+[13/28] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[14/28] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[15/28] Compiling ReluxTunnelCore RelayHandshake.swift
+[16/28] Compiling ReluxTunnelCore VPNSessionController.swift
+[17/28] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[18/28] Emitting module ReluxTunnelCore
+[19/28] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[20/28] Compiling ReluxTunnelCore ComponentContracts.swift
+[21/28] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[22/28] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[23/28] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[24/33] Emitting module ReluxTunnelNativeAdapter
+[25/33] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[26/33] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[27/33] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[28/33] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[29/47] Compiling ReluxTunnelMacOSAdapter MacOSVPNManagerPreferences.swift
+[30/47] Emitting module ReluxTunnelMacOSAdapter
+[31/47] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[32/47] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[33/47] Compiling ReluxTunnelIOSAdapter IOSVPNManagerPreferences.swift
+[34/47] Emitting module ReluxTunnelIOSAdapter
+[35/47] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[36/47] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[37/51] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[38/51] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[39/51] Emitting module ReluxTunnelHarnessSupport
+[40/51] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[41/51] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[42/51] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[43/78] Emitting module ReluxTunnelHarness
+[44/78] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[44/78] Write Objects.LinkFileList
+[46/78] Emitting module ReluxTunnelHarnessTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[46/78] Linking ReluxTunnelHarness
+[47/78] Applying ReluxTunnelHarness
+[49/78] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[50/78] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[51/78] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[52/78] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[53/78] Emitting module ReluxTunnelNativeAdapterTests
+[54/78] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[55/78] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[56/79] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[57/79] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[58/79] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[59/79] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[60/79] Compiling ReluxTunnelCoreTests VPNSessionControllerTests.swift
+[61/79] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[62/79] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[63/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[64/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[65/79] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[66/79] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[67/79] Compiling ReluxTunnelCoreTests OwnedVPNManagerRepositoryTests.swift
+[68/79] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[69/79] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[70/79] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[71/79] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[72/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[73/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[74/79] Emitting module ReluxTunnelCoreTests
+[75/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[76/79] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[77/79] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[78/81] Compiling ReluxTunnelPackageTests runner.swift
+[79/81] Emitting module ReluxTunnelPackageTests
+[79/81] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[80/81] Linking ReluxTunnelPackageTests
+Build complete! (8.88s)
+Test Suite 'Selected tests' started at 2026-07-21 05:16:23.339.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 05:16:23.366.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 05:16:23.366.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 05:16:23.366.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.027) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "VPN session controller" started.
+􀟈  Test "controller deallocation releases its exact-session observer without stopping" started.
+􀟈  Test "start-stop race uses one system stop and converges from fresh status" started.
+􀟈  Test "start preflight maps every system status without duplicate start calls" started.
+􀟈  Test "caller cancellation after accepted start stops once" started.
+􀟈  Test "connected projection recovers only from matching current provider snapshots" started.
+􀟈  Test "a newer provider generation resets the sequence baseline" started.
+􀟈  Test "stop maps every status and never duplicates the stop call" started.
+􀟈  Test "non-running provider lifecycle facts suppress every capability claim" started.
+􀟈  Test "all public system and provider disconnect codes map exactly" started.
+􀟈  Test "concurrent stops join one fresh load one system stop and one terminal wait" started.
+􀟈  Test "provider message timeout cancellation and late response cannot publish capability" started.
+􀟈  Test "synchronous start errors use stable mappings" started.
+􀟈  Test "initial observer registration race reads authoritative status and retirement releases it" started.
+􀟈  Test "stop timeout never claims cleanup and cancellation does not issue another stop" started.
+􀟈  Test "start sends exactly one bounded v1 request matching the stored reference" started.
+􀟈  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" started.
+􀟈  Test "start timeout stops once and never projects connected" started.
+􀟈  Test "controller retirement cancels start wait without stopping the tunnel" started.
+􀟈  Test "terminal start fetches and maps the last disconnect error exactly once" started.
+􀟈  Test "stale and out-of-order provider facts clear capability" started.
+􀟈  Test "last disconnect timeout and cancellation supplement but never change system status" started.
+􀟈  Test "recreated controller accepts a fresh response without app-owned history" started.
+􀟈  Test "every non-connected system status clears provider capability" started.
+􁁛  Test "all public system and provider disconnect codes map exactly" passed after 0.001 seconds.
+􁁛  Test "non-running provider lifecycle facts suppress every capability claim" passed after 0.001 seconds.
+􁁛  Test "controller deallocation releases its exact-session observer without stopping" passed after 0.001 seconds.
+􁁛  Test "initial observer registration race reads authoritative status and retirement releases it" passed after 0.001 seconds.
+􁁛  Test "concurrent stops join one fresh load one system stop and one terminal wait" passed after 0.001 seconds.
+􁁛  Test "controller retirement cancels start wait without stopping the tunnel" passed after 0.002 seconds.
+􁁛  Test "caller cancellation after accepted start stops once" passed after 0.002 seconds.
+􁁛  Test "every non-connected system status clears provider capability" passed after 0.002 seconds.
+􁁛  Test "terminal start fetches and maps the last disconnect error exactly once" passed after 0.001 seconds.
+􁁛  Test "start timeout stops once and never projects connected" passed after 0.002 seconds.
+􁁛  Test "last disconnect timeout and cancellation supplement but never change system status" passed after 0.002 seconds.
+􁁛  Test "start-stop race uses one system stop and converges from fresh status" passed after 0.002 seconds.
+􁁛  Test "stop timeout never claims cleanup and cancellation does not issue another stop" passed after 0.002 seconds.
+􁁛  Test "stop maps every status and never duplicates the stop call" passed after 0.002 seconds.
+􁁛  Test "provider message timeout cancellation and late response cannot publish capability" passed after 0.003 seconds.
+􁁛  Test "synchronous start errors use stable mappings" passed after 0.003 seconds.
+􁁛  Test "connected projection recovers only from matching current provider snapshots" passed after 0.004 seconds.
+􁁛  Test "start sends exactly one bounded v1 request matching the stored reference" passed after 0.004 seconds.
+􁁛  Test "start preflight maps every system status without duplicate start calls" passed after 0.004 seconds.
+􁁛  Test "stale and out-of-order provider facts clear capability" passed after 0.004 seconds.
+􁁛  Test "a newer provider generation resets the sequence baseline" passed after 0.005 seconds.
+􁁛  Test "recreated controller accepts a fresh response without app-owned history" passed after 0.004 seconds.
+􁁛  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" passed after 0.005 seconds.
+􁁛  Suite "VPN session controller" passed after 0.006 seconds.
+􁁛  Test run with 23 tests in 1 suite passed after 0.006 seconds.

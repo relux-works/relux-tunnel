@@ -86,6 +86,11 @@ private final class MacOSVPNPreferencesManager: VPNPreferencesManager, @unchecke
     )
   }
 
+  var hostSession: (any VPNHostSession)? {
+    guard let session = manager.connection as? NETunnelProviderSession else { return nil }
+    return MacOSVPNHostSession(manager: manager, session: session)
+  }
+
   func applyCanonicalConfiguration(_ configuration: CanonicalVPNManagerConfiguration) {
     let tunnelProtocol = NETunnelProviderProtocol()
     tunnelProtocol.providerBundleIdentifier = configuration.providerBundleIdentifier
@@ -132,6 +137,96 @@ private final class MacOSVPNPreferencesManager: VPNPreferencesManager, @unchecke
     completion: @escaping @Sendable (VPNManagerSessionStatus) -> Void
   ) -> any VPNPreferenceObservation {
     MacOSVPNStatusObservation(connection: manager.connection, completion: completion)
+  }
+}
+
+private final class MacOSVPNHostSession: VPNHostSession, @unchecked Sendable {
+  private let manager: NETunnelProviderManager
+  private let session: NETunnelProviderSession
+
+  init(manager: NETunnelProviderManager, session: NETunnelProviderSession) {
+    self.manager = manager
+    self.session = session
+  }
+
+  var status: VPNManagerSessionStatus {
+    VPNManagerSessionStatus(session.status)
+  }
+
+  func startTunnel(options: [String: Data]) throws {
+    try MacOSVPNHostSessionStartAdapter.start {
+      try session.startTunnel(options: options.mapValues { $0 as NSData })
+    }
+  }
+
+  func stopTunnel() {
+    session.stopTunnel()
+  }
+
+  func sendProviderMessage(
+    _ message: Data,
+    responseHandler: @escaping @Sendable (Data?) -> Void
+  ) throws {
+    try session.sendProviderMessage(message, responseHandler: responseHandler)
+  }
+
+  func fetchLastDisconnectError(
+    completion: @escaping @Sendable (VPNPlatformError?) -> Void
+  ) {
+    session.fetchLastDisconnectError { error in
+      completion(
+        error.map {
+          let platformError = $0 as NSError
+          return VPNPlatformError(domain: platformError.domain, code: platformError.code)
+        }
+      )
+    }
+  }
+
+  func observeStatusChanges(
+    notification: @escaping @Sendable () -> Void
+  ) -> any VPNPreferenceObservation {
+    MacOSVPNNotificationObservation(connection: session, notification: notification)
+  }
+}
+
+enum MacOSVPNHostSessionStartAdapter {
+  static func start(_ operation: () throws -> Void) throws {
+    do {
+      try operation()
+    } catch {
+      throw VPNPreferencePlatformError(error)
+    }
+  }
+}
+
+private final class MacOSVPNNotificationObservation: VPNPreferenceObservation, @unchecked Sendable {
+  private let lock = NSLock()
+  private var token: (any NSObjectProtocol)?
+
+  init(
+    connection: NEVPNConnection,
+    notification: @escaping @Sendable () -> Void
+  ) {
+    token = NotificationCenter.default.addObserver(
+      forName: .NEVPNStatusDidChange,
+      object: connection,
+      queue: nil
+    ) { _ in
+      notification()
+    }
+  }
+
+  func cancel() {
+    let token = lock.withLock {
+      defer { self.token = nil }
+      return self.token
+    }
+    if let token { NotificationCenter.default.removeObserver(token) }
+  }
+
+  deinit {
+    cancel()
   }
 }
 

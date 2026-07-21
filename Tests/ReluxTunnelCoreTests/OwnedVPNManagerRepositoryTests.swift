@@ -1,6 +1,8 @@
 import Foundation
+@preconcurrency import NetworkExtension
 import ReluxTunnelCore
 import Testing
+
 @testable import ReluxTunnelIOSAdapter
 @testable import ReluxTunnelMacOSAdapter
 
@@ -897,6 +899,80 @@ struct OwnedVPNManagerRepositoryTests {
     }
   }
 
+  @Test("fresh session handoff reuses exact ownership and current-schema validation")
+  func freshSessionHandoffUsesRepositoryAuthority() async throws {
+    let session = RepositoryHostSessionStub()
+    let manager = FakeVPNPreferencesManager(
+      snapshot: try ownedSnapshot(profileID: profileID, enabled: true),
+      hostSession: session
+    )
+    let client = FakeVPNPreferencesClient(managers: [manager])
+    let repository = OwnedVPNManagerRepository(identity: try identity(), client: client)
+
+    let fresh = try await repository.loadFreshOwnedSession(requireEnabled: true)
+    #expect(ObjectIdentifier(fresh.session) == ObjectIdentifier(session))
+    #expect(
+      fresh.configurationReference == TunnelConfigurationReference(profileIdentifier: profileID))
+    #expect(fresh.isEnabled)
+    #expect(client.loadCount == 1)
+
+    let disabled = FakeVPNPreferencesManager(
+      snapshot: try ownedSnapshot(profileID: profileID, enabled: false),
+      hostSession: session
+    )
+    let disabledRepository = OwnedVPNManagerRepository(
+      identity: try identity(),
+      client: FakeVPNPreferencesClient(managers: [disabled])
+    )
+    await #expect(throws: VPNManagerRepositoryError.configurationDisabled) {
+      try await disabledRepository.loadFreshOwnedSession(requireEnabled: true)
+    }
+    #expect(disabled.totalMutationCount == 0)
+
+    let controller = VPNSessionController(repository: disabledRepository)
+    await #expect(throws: VPNSessionControllerError.configurationDisabled) {
+      try await controller.start()
+    }
+    #expect(session.startCount == 0)
+    #expect(disabled.totalMutationCount == 0)
+  }
+
+  @Test(
+    "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors",
+    arguments: AppleVPNStartAdapterSeam.allCases
+  )
+  func hostStartAdaptersNormalizeErrors(_ seam: AppleVPNStartAdapterSeam) throws {
+    let knownCases: [(code: Int, kind: VPNPreferencePlatformError.Kind)] = [
+      (NEVPNError.configurationInvalid.rawValue, .configurationInvalid),
+      (NEVPNError.configurationDisabled.rawValue, .configurationDisabled),
+      (NEVPNError.connectionFailed.rawValue, .connectionFailed),
+    ]
+
+    for knownCase in knownCases {
+      let source = NSError(domain: NEVPNErrorDomain, code: knownCase.code)
+      #expect(
+        throws: VPNPreferencePlatformError(
+          kind: knownCase.kind,
+          domain: NEVPNErrorDomain,
+          code: knownCase.code
+        )
+      ) {
+        try seam.start { throw source }
+      }
+    }
+
+    let unknown = NSError(domain: "works.relux.tests.start", code: 8_675_309)
+    #expect(
+      throws: VPNPreferencePlatformError(
+        kind: .other,
+        domain: unknown.domain,
+        code: unknown.code
+      )
+    ) {
+      try seam.start { throw unknown }
+    }
+  }
+
   private func identity(
     platform: PlatformVPNIdentity.Platform = .macOS
   ) throws -> PlatformVPNIdentity {
@@ -1072,6 +1148,22 @@ enum AppleVPNStatusObservationSeam: String, CaseIterable, Sendable,
         unregister: { source.unregister($0) },
         completion: completion
       )
+    }
+  }
+}
+
+enum AppleVPNStartAdapterSeam: String, CaseIterable, Sendable,
+  CustomTestStringConvertible
+{
+  case iOS
+  case macOS
+
+  var testDescription: String { rawValue }
+
+  func start(_ operation: () throws -> Void) throws {
+    switch self {
+    case .iOS: try IOSVPNHostSessionStartAdapter.start(operation)
+    case .macOS: try MacOSVPNHostSessionStartAdapter.start(operation)
     }
   }
 }
@@ -1316,12 +1408,17 @@ private final class FakeVPNPreferencesManager: VPNPreferencesManager, @unchecked
   private var _saveErrors: [VPNPreferencePlatformError?] = []
   private var _removeErrors: [VPNPreferencePlatformError?] = []
   private var terminalObservers: [@Sendable (VPNManagerSessionStatus) -> Void] = []
+  let hostSession: (any VPNHostSession)?
 
   var statusAfterStop: VPNManagerSessionStatus?
   var onSave: (@Sendable (VPNPreferencePlatformError?) -> Void)?
 
-  init(snapshot: VPNManagerSnapshot) {
+  init(
+    snapshot: VPNManagerSnapshot,
+    hostSession: (any VPNHostSession)? = nil
+  ) {
     state = snapshot
+    self.hostSession = hostSession
   }
 
   var snapshot: VPNManagerSnapshot { lock.withLock { state } }
@@ -1442,5 +1539,34 @@ private final class FakeVPNPreferencesManager: VPNPreferencesManager, @unchecked
       hasAppRules: value.hasAppRules,
       sessionStatus: sessionStatus ?? value.sessionStatus
     )
+  }
+}
+
+private final class RepositoryHostSessionStub: VPNHostSession, @unchecked Sendable {
+  private let lock = NSLock()
+  private var _startCount = 0
+
+  var status: VPNManagerSessionStatus { .disconnected }
+  var startCount: Int { lock.withLock { _startCount } }
+
+  func startTunnel(options: [String: Data]) throws {
+    lock.withLock { _startCount += 1 }
+  }
+  func stopTunnel() {}
+  func sendProviderMessage(
+    _ message: Data,
+    responseHandler: @escaping @Sendable (Data?) -> Void
+  ) throws {
+    responseHandler(nil)
+  }
+  func fetchLastDisconnectError(
+    completion: @escaping @Sendable (VPNPlatformError?) -> Void
+  ) {
+    completion(nil)
+  }
+  func observeStatusChanges(
+    notification: @escaping @Sendable () -> Void
+  ) -> any VPNPreferenceObservation {
+    FakeVPNPreferenceObservation()
   }
 }

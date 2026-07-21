@@ -1,0 +1,230 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/27] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[3/27] Emitting module ReluxLibSSH2PackagingTests
+[4/27] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[5/28] Compiling ReluxTunnelCore VPNManagerRepository.swift
+[6/28] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[7/28] Compiling ReluxTunnelCore RelayHandshake.swift
+[8/28] Compiling ReluxTunnelCore RuntimeContracts.swift
+[9/28] Compiling ReluxTunnelCore RelayByteCodec.swift
+[10/28] Compiling ReluxTunnelCore SSHContracts.swift
+[11/28] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[12/28] Compiling ReluxTunnelCore ComponentContracts.swift
+[13/28] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[14/28] Compiling ReluxTunnelCore RelaySession.swift
+[15/28] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[16/28] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[17/28] Compiling ReluxTunnelCore VPNSessionController.swift
+[18/28] Compiling ReluxTunnelCore PacketContracts.swift
+[19/28] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[20/28] Emitting module ReluxTunnelCore
+[21/28] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[22/28] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[23/28] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[24/33] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[25/33] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[26/33] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[27/33] Emitting module ReluxTunnelNativeAdapter
+[28/33] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[29/47] Emitting module ReluxTunnelHarnessSupport
+[30/47] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[31/47] Compiling ReluxTunnelMacOSAdapter MacOSVPNManagerPreferences.swift
+[32/47] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[33/47] Emitting module ReluxTunnelMacOSAdapter
+[34/47] Compiling ReluxTunnelIOSAdapter IOSVPNManagerPreferences.swift
+[35/47] Emitting module ReluxTunnelIOSAdapter
+[36/47] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[37/47] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[38/47] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[39/47] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[40/47] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[41/47] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[42/47] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[43/78] Emitting module ReluxTunnelHarness
+[44/78] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[44/78] Write Objects.LinkFileList
+[46/78] Emitting module ReluxTunnelHarnessTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[46/78] Linking ReluxTunnelHarness
+[47/78] Applying ReluxTunnelHarness
+[49/78] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[50/78] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[51/78] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[52/78] Emitting module ReluxTunnelNativeAdapterTests
+[53/78] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[54/78] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[55/78] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[56/78] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[57/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[58/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[59/79] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[60/79] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[61/79] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[62/79] Emitting module ReluxTunnelCoreTests
+[63/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[64/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[65/79] Compiling ReluxTunnelCoreTests OwnedVPNManagerRepositoryTests.swift
+[66/79] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[67/79] Compiling ReluxTunnelCoreTests VPNSessionControllerTests.swift
+[68/79] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[69/79] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[70/79] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[71/79] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[72/79] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[73/79] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[74/79] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[75/79] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[76/79] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[77/79] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[78/81] Compiling ReluxTunnelPackageTests runner.swift
+[79/81] Emitting module ReluxTunnelPackageTests
+[79/81] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[80/81] Linking ReluxTunnelPackageTests
+Build complete! (8.82s)
+Test Suite 'Selected tests' started at 2026-07-21 05:33:14.856.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 05:33:14.883.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 05:33:14.883.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 05:33:14.883.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.027) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "VPN session controller" started.
+􀟈  Suite "Owned VPN manager repository" started.
+􀟈  Test "a stale save retries once with a freshly loaded manager" started.
+􀟈  Test "production identities fail closed while both injected host seams compile" started.
+􀟈  Test "authorization and saved-but-reload-failed results are stable" started.
+􀟈  Test "active duplicate and future duplicate repair paths perform zero writes" started.
+􀟈  Test "exact ownership predicate never mutates unrelated or wrong-type managers" started.
+􀟈  Test "provider configuration contains only the marker version and bounded opaque reference" started.
+􀟈  Test "every positive future manager version is preserved without writes" started.
+􀟈  Test "notification-first terminal completion wins exactly once" started.
+􀟈  Test "nil manager collection fails closed without constructing or writing" started.
+􀟈  Test "iOS seam decodes NSNumber manager versions exactly and preserves invalid values" started.
+􀟈  Test "ensure preserves an existing enabled state while replacing all noncanonical fields" started.
+􀟈  Test "fresh session handoff reuses exact ownership and current-schema validation" started.
+􀟈  Test "already enabled still follows explicit save and fresh reload verification" started.
+􀟈  Test "inactive duplicate repair removes exact owned managers only and recreates one" started.
+􀟈  Test "disable and removal stop active sessions before preference writes" started.
+􀟈  Test "notification before registration returns resolves once and retires its token" started.
+􀟈  Test "resolved observation ignores duplicate and late notifications" started.
+􀟈  Test "a second stale save maps to concurrent modification" started.
+􀟈  Test "cancelled observation unregisters once and ignores late notification" started.
+􀟈  Test "stop timeout prevents disable and preference save" started.
+􀟈  Test "timeout retires a load token and ignores its late callback" started.
+􀟈  Test "enable is explicit and reports the enterprise VPN system effect" started.
+􀟈  Test "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" started.
+􀟈  Test "concurrent zero-manager ensure saves one canonical manager" started.
+􀟈  Test "terminal status present before registration resolves without waiting" started.
+􀟈  Test "unmarked and type-confused provider lookalikes are zero-write conflicts" started.
+􀟈  Test "stop maps every status and never duplicates the stop call" started.
+􀟈  Test "controller retirement cancels start wait without stopping the tunnel" started.
+􀟈  Test "stale enable retries revalidate unrelated unmarked and future replacements" started.
+􀟈  Test "operation gate queues every repository entry point behind an active callback" started.
+􀟈  Test "concurrent stops join one fresh load one system stop and one terminal wait" started.
+􀟈  Test "cancellation retires a load token and ignores its late callback" started.
+􀟈  Test "recreated controller accepts a fresh response without app-owned history" started.
+􀟈  Test "future owned configuration is preserved and corruption is repaired only by ensure" started.
+􀟈  Test "terminal transition during registration is caught by the authoritative recheck" started.
+􀟈  Test "terminal start fetches and maps the last disconnect error exactly once" started.
+􀟈  Test "connected projection recovers only from matching current provider snapshots" started.
+􀟈  Test "provider message timeout cancellation and late response cannot publish capability" started.
+􀟈  Test "initial observer registration race reads authoritative status and retirement releases it" started.
+􀟈  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" started.
+􀟈  Test "all public system and provider disconnect codes map exactly" started.
+􀟈  Test "enable rejects every active session transition without writes" started.
+􀟈  Test "zero and one owned ensure converge without enabling" started.
+􀟈  Test case passing 1 argument platform → macOS to "notification-first terminal completion wins exactly once" started.
+􀟈  Test "controller deallocation releases its exact-session observer without stopping" started.
+􀟈  Test "macOS seam decodes NSNumber manager versions exactly and preserves invalid values" started.
+􀟈  Test "stale and out-of-order provider facts clear capability" started.
+􀟈  Test case passing 1 argument platform → iOS to "notification-first terminal completion wins exactly once" started.
+􀟈  Test "stop timeout never claims cleanup and cancellation does not issue another stop" started.
+􀟈  Test "start timeout stops once and never projects connected" started.
+􀟈  Test "caller cancellation after accepted start stops once" started.
+􀟈  Test "non-running provider lifecycle facts suppress every capability claim" started.
+􀟈  Test "start sends exactly one bounded v1 request matching the stored reference" started.
+􀟈  Test "start preflight maps every system status without duplicate start calls" started.
+􀟈  Test "save verification uses a distinct reload and rejects noncanonical persistence" started.
+􀟈  Test "every non-connected system status clears provider capability" started.
+􀟈  Test "start-stop race uses one system stop and converges from fresh status" started.
+􀟈  Test "a newer provider generation resets the sequence baseline" started.
+􀟈  Test "last disconnect timeout and cancellation supplement but never change system status" started.
+􀟈  Test case passing 1 argument platform → iOS to "notification before registration returns resolves once and retires its token" started.
+􀟈  Test case passing 1 argument platform → iOS to "resolved observation ignores duplicate and late notifications" started.
+􀟈  Test case passing 1 argument platform → macOS to "resolved observation ignores duplicate and late notifications" started.
+􀟈  Test "synchronous start errors use stable mappings" started.
+􀟈  Test case passing 1 argument platform → macOS to "notification before registration returns resolves once and retires its token" started.
+􀟈  Test case passing 1 argument platform → iOS to "cancelled observation unregisters once and ignores late notification" started.
+􀟈  Test case passing 1 argument seam → iOS to "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" started.
+􀟈  Test case passing 1 argument platform → macOS to "terminal status present before registration resolves without waiting" started.
+􀟈  Test case passing 1 argument seam → macOS to "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" started.
+􀟈  Test case passing 1 argument platform → macOS to "cancelled observation unregisters once and ignores late notification" started.
+􀟈  Test case passing 1 argument platform → iOS to "terminal status present before registration resolves without waiting" started.
+􀟈  Test case passing 1 argument platform → macOS to "terminal transition during registration is caught by the authoritative recheck" started.
+􀟈  Test case passing 1 argument platform → iOS to "terminal transition during registration is caught by the authoritative recheck" started.
+􁁛  Test "production identities fail closed while both injected host seams compile" passed after 0.003 seconds.
+􁁛  Test "exact ownership predicate never mutates unrelated or wrong-type managers" passed after 0.003 seconds.
+􁁛  Test "notification-first terminal completion wins exactly once" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "nil manager collection fails closed without constructing or writing" passed after 0.003 seconds.
+􁁛  Test "active duplicate and future duplicate repair paths perform zero writes" passed after 0.003 seconds.
+􁁛  Test "notification before registration returns resolves once and retires its token" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "resolved observation ignores duplicate and late notifications" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "a stale save retries once with a freshly loaded manager" passed after 0.003 seconds.
+􁁛  Test "already enabled still follows explicit save and fresh reload verification" passed after 0.003 seconds.
+􁁛  Test "cancelled observation unregisters once and ignores late notification" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "authorization and saved-but-reload-failed results are stable" passed after 0.004 seconds.
+􁁛  Test "a second stale save maps to concurrent modification" passed after 0.003 seconds.
+􁁛  Test "ensure preserves an existing enabled state while replacing all noncanonical fields" passed after 0.003 seconds.
+􁁛  Test "terminal status present before registration resolves without waiting" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "disable and removal stop active sessions before preference writes" passed after 0.003 seconds.
+􁁛  Test "every positive future manager version is preserved without writes" passed after 0.004 seconds.
+􁁛  Test "enable is explicit and reports the enterprise VPN system effect" passed after 0.003 seconds.
+􁁛  Test "terminal transition during registration is caught by the authoritative recheck" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "inactive duplicate repair removes exact owned managers only and recreates one" passed after 0.004 seconds.
+􁁛  Test "all public system and provider disconnect codes map exactly" passed after 0.002 seconds.
+􁁛  Test "non-running provider lifecycle facts suppress every capability claim" passed after 0.002 seconds.
+􁁛  Test "future owned configuration is preserved and corruption is repaired only by ensure" passed after 0.003 seconds.
+􁁛  Test "unmarked and type-confused provider lookalikes are zero-write conflicts" passed after 0.003 seconds.
+􁁛  Test "zero and one owned ensure converge without enabling" passed after 0.002 seconds.
+􁁛  Test "stale enable retries revalidate unrelated unmarked and future replacements" passed after 0.004 seconds.
+􁁛  Test "save verification uses a distinct reload and rejects noncanonical persistence" passed after 0.004 seconds.
+􁁛  Test "enable rejects every active session transition without writes" passed after 0.003 seconds.
+􁁛  Test "timeout retires a load token and ignores its late callback" passed after 0.004 seconds.
+􁁛  Test "controller deallocation releases its exact-session observer without stopping" passed after 0.003 seconds.
+􁁛  Test "initial observer registration race reads authoritative status and retirement releases it" passed after 0.003 seconds.
+􁁛  Test "fresh session handoff reuses exact ownership and current-schema validation" passed after 0.005 seconds.
+􁁛  Test "stop timeout prevents disable and preference save" passed after 0.005 seconds.
+􁁛  Test "cancellation retires a load token and ignores its late callback" passed after 0.004 seconds.
+􁁛  Test "terminal start fetches and maps the last disconnect error exactly once" passed after 0.004 seconds.
+􁁛  Test "controller retirement cancels start wait without stopping the tunnel" passed after 0.005 seconds.
+􁁛  Test "iOS seam decodes NSNumber manager versions exactly and preserves invalid values" passed after 0.006 seconds.
+􁁛  Test "caller cancellation after accepted start stops once" passed after 0.004 seconds.
+􁁛  Test "start timeout stops once and never projects connected" passed after 0.004 seconds.
+􁁛  Test "connected projection recovers only from matching current provider snapshots" passed after 0.005 seconds.
+􁁛  Test "concurrent stops join one fresh load one system stop and one terminal wait" passed after 0.006 seconds.
+􁁛  Test "every non-connected system status clears provider capability" passed after 0.004 seconds.
+􁁛  Test "start-stop race uses one system stop and converges from fresh status" passed after 0.004 seconds.
+􁁛  Test "start sends exactly one bounded v1 request matching the stored reference" passed after 0.005 seconds.
+􁁛  Test "last disconnect timeout and cancellation supplement but never change system status" passed after 0.005 seconds.
+􁁛  Test "provider message timeout cancellation and late response cannot publish capability" passed after 0.005 seconds.
+􁁛  Test "macOS seam decodes NSNumber manager versions exactly and preserves invalid values" passed after 0.005 seconds.
+􁁛  Test "stop timeout never claims cleanup and cancellation does not issue another stop" passed after 0.005 seconds.
+􁁛  Test "synchronous start errors use stable mappings" passed after 0.005 seconds.
+􁁛  Test "stop maps every status and never duplicates the stop call" passed after 0.006 seconds.
+􁁛  Test "concurrent zero-manager ensure saves one canonical manager" passed after 0.007 seconds.
+􁁛  Test "start preflight maps every system status without duplicate start calls" passed after 0.005 seconds.
+􁁛  Test "stale and out-of-order provider facts clear capability" passed after 0.006 seconds.
+􁁛  Test "a newer provider generation resets the sequence baseline" passed after 0.005 seconds.
+􁁛  Test "provider configuration contains only the marker version and bounded opaque reference" passed after 0.008 seconds.
+􁁛  Test "recreated controller accepts a fresh response without app-owned history" passed after 0.007 seconds.
+􁁛  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" passed after 0.007 seconds.
+􁁛  Suite "VPN session controller" passed after 0.009 seconds.
+􁁛  Test "operation gate queues every repository entry point behind an active callback" passed after 0.009 seconds.
+􁁛  Test "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" with 2 test cases passed after 0.015 seconds.
+􁁛  Suite "Owned VPN manager repository" passed after 0.016 seconds.
+􁁛  Test run with 58 tests in 2 suites passed after 0.017 seconds.
