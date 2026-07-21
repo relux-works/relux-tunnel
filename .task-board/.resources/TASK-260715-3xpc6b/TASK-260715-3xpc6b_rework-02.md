@@ -1,0 +1,10 @@
+# Rework 02 — outbound activity semantics and scoped resolver results
+
+Close both findings in `TASK-260715-3xpc6b_review-02.md` without weakening prior rework guarantees.
+
+1. **Separate admission from activity.** `Reserve`, `Ensure`, and token-scoped family attachment must not refresh an existing association merely because state/socket admission succeeded. Only a successful outbound send may touch/rearm activity. Preserve an initial bounded lifetime for a newly created socketless reservation or newly admitted association, but EAGAIN, ENOBUFS, resolver failure/cancellation, terminal send error and other zero-byte/failed paths must not move an existing association deadline.
+2. Add deterministic injected-clock tests for numeric and resolved-domain existing associations. Prove success refreshes activity while EAGAIN, ENOBUFS, resolver failure/cancellation and terminal send errors do not. Assert exact deadlines/timer epochs and full baselines, not only dispositions/counters.
+3. **Reject scoped resolver IPv6.** Treat any resolver result with a non-empty zone as unsupported before accepted-result byte credit, family/socket admission or send. Count it through bounded aggregate discard/error accounting. If no valid result remains, prove zero descriptors/sends/state side effects beyond the original reservation's bounded lifecycle; if a later in-cap unzoned result exists, prove deterministic fallback to it without zone/address rewriting.
+4. Preserve incarnation-first async resolver ownership, fixed worker/job bounds, cancellation/reuse barriers, truncation precedence, mapped-IPv6 numeric preflight, fairness, source fidelity, privacy and rootless/SSH-independent scope.
+
+Use `go-testing-tools` deterministic seams and invariant checks. Run focused/repeated/race tests, full relay Go tests/vet/build/coverage/cross-build, protocol gate, full Swift tests/build, gofmt/diff checks, board validation and privacy/prohibition/resource scans. Update task-scoped evidence, remove raw spawn logs and return to `to-review` only when both findings are closed.

@@ -636,6 +636,22 @@ func (s *Session) receiveDecoded(frame Envelope) SessionStep {
 }
 
 func (s *Session) handleDatagram(frame Envelope, outbound *[]Envelope, events *[]SessionEvent) {
+	if s.peer == SessionPeerRelay {
+		switch s.preflightClientOwnedAssociation(frame.AssociationID) {
+		case associationAdmitted:
+		case associationUnknownOrClosed:
+			s.metrics.DatagramsRejected++
+			s.emitUDPError(UDPErrorCodeUnknownOrClosedAssociation, frame.AssociationID, outbound)
+			s.closeRejectedAssociation(frame.AssociationID, outbound)
+			return
+		case associationLimitExceeded:
+			s.metrics.DatagramsRejected++
+			s.emitUDPError(UDPErrorCodeAssociationLimit, frame.AssociationID, outbound)
+			s.closeRejectedAssociation(frame.AssociationID, outbound)
+			return
+		}
+	}
+
 	datagram, failure := s.datagramCodec.Decode(frame.Payload)
 	if failure != nil {
 		s.metrics.DatagramsRejected++
@@ -677,6 +693,32 @@ func (s *Session) handleDatagram(frame Envelope, outbound *[]Envelope, events *[
 		AssociationID: frame.AssociationID,
 		Datagram:      datagram,
 	})
+}
+
+// preflightClientOwnedAssociation applies association identity and capacity
+// before HEV payload inspection without materializing new state. The later
+// admission is synchronous in the same session owner and therefore cannot
+// race this result.
+func (s *Session) preflightClientOwnedAssociation(associationID uint32) associationAdmission {
+	if associationID == 0 {
+		return associationUnknownOrClosed
+	}
+	if association, ok := s.associations[associationID]; ok {
+		if association.active || association.retired() {
+			return associationAdmitted
+		}
+		return associationUnknownOrClosed
+	}
+	liveAssociations := 0
+	for _, association := range s.associations {
+		if !association.retired() {
+			liveAssociations++
+		}
+	}
+	if liveAssociations >= s.maximumAssociations {
+		return associationLimitExceeded
+	}
+	return associationAdmitted
 }
 
 func udpErrorCodeForDatagramFailure(failure *DatagramError) UDPErrorCode {

@@ -101,17 +101,40 @@ Current protocol contents:
 - `internal/udp` — one-owner-goroutine association registry keyed by session
   generation, nonzero client ID, and an incarnation token. It admits bounded
   association/socket/logical-timer/pending-close state before descriptor
-  creation. Single-family use stays lazy; callers that require both families
-  use one atomic family-set transaction. Any family creation failure retires
-  all staged and already-owned association sockets exactly once, leaving no
-  partial association. Production sockets are nonblocking, close-on-exec,
-  unconnected, and deliberately unbound; a later bounded `sendto` call may let
-  the kernel choose an unprivileged ephemeral source port, while registry
-  creation never exposes a public UDP listener.
-- `internal/udp/registry_test.go` — controlled-socket and fake-monotonic-clock
-  coverage for duplicate IDs, every ceiling, partial creation failure,
-  rearm/expiry ABA ordering, crossed close, generation replacement/loss,
-  cancellation, real descriptor properties, and repeated baseline recovery.
+  creation. Domain work first obtains a socketless incarnation reservation;
+  resolver completion may attach a family socket only through that exact
+  token, so close, expiry, generation replacement, cancellation, or same-ID
+  reuse cannot revive stale work. Single-family use stays lazy; callers that
+  require both families use one atomic family-set transaction. Any family
+  creation failure retires all staged and already-owned association sockets
+  exactly once, leaving no partial association. Production sockets are
+  nonblocking, close-on-exec, unconnected, and deliberately unbound; a later
+  bounded `sendto` call may let the kernel choose an unprivileged ephemeral
+  source port, while registry creation never exposes a public UDP listener.
+- `internal/udp/io.go`, `resolver.go`, `resolver_scheduler.go`, and
+  `system_io.go` — bounded nonblocking
+  `sendto`/`recvmsg` operations through registry-owned descriptors; strict
+  ASCII DNS presentation validation; a fixed resolver worker pool with bounded
+  queued-job, copied-name, copied-payload, completion, deadline, inspected-result,
+  accepted-result, and result-byte credit; deterministic family policy; exact
+  response-source mapping; finite privacy-safe error/counter mapping; and
+  round-robin socket turns with datagram, byte, visit, and monotonic-time
+  budgets. Domain `Send` returns `pendingResolution` without waiting, and the
+  caller drains bounded completions through `NextSendCompletion`. Readiness
+  misses retain no retry buffer and never refresh idle activity. Reservation,
+  existing-association admission, and family attachment preserve the current
+  deadline; only a successful send or received datagram refreshes it. Scoped
+  IPv6 resolver results are discarded before accepted-result byte credit or
+  socket admission because protocol v1 cannot represent a zone. Callers may
+  retry a send only after a readiness transition.
+- `internal/udp/registry_test.go` and `io_test.go` — controlled-socket,
+  resolver, receiver-stall, and fake-monotonic-clock coverage for duplicate
+  IDs, every ceiling, partial creation failure, IPv4/IPv6/domain byte
+  integrity, source preservation, truncation, pressure, fair budgets,
+  cancellation, paused close/expiry/replacement/reuse races, fixed resolver
+  worker/queue baselines, exact activity deadlines/arm epochs, scoped-result
+  fallback, stale generations, real loopback I/O, descriptor properties, and
+  repeated baseline recovery.
 
 `scripts/tests/test-relay-protocol-go.sh` (invoked by
 `make relay-protocol-check`) vets and tests this package directly inside the

@@ -388,6 +388,32 @@ func TestSessionMaximumAssociationCreditBoundsUniqueIDsAndPermitsRetiredReuse(t 
 	}
 }
 
+func TestSessionAssociationCapacityPrecedesDatagramPayloadInspection(t *testing.T) {
+	relay := mustSessionWithMaximumAssociations(
+		t, 107, SessionPeerRelay, MaxUDPPayloadRelayDefault, 1, nil, nil,
+	)
+	opening := relay.Receive(107, Envelope{
+		Type: MessageTypeUDPDatagram, AssociationID: 1, Payload: validSessionDatagramPayload(t, nil),
+	})
+	if len(opening.Events) != 1 {
+		t.Fatalf("opening = %#v", opening)
+	}
+
+	malformed := []byte{0x00, 0x00, 0x07, 0x03, 0x00}
+	rejection := relay.Receive(107, Envelope{
+		Type: MessageTypeUDPDatagram, AssociationID: 2, Payload: malformed,
+	})
+	if len(rejection.Events) != 0 || len(rejection.Outbound) != 2 ||
+		rejection.Outbound[0].Type != MessageTypeUDPError ||
+		!bytes.Equal(rejection.Outbound[0].Payload, []byte{0, 4}) ||
+		rejection.Outbound[1].Type != MessageTypeCloseAssociation {
+		t.Fatalf("capacity did not precede payload inspection: %#v", rejection)
+	}
+	if metrics := relay.Metrics(); metrics.DatagramsAccepted != 1 || metrics.DatagramsRejected != 1 {
+		t.Fatalf("metrics = %#v", metrics)
+	}
+}
+
 func TestSessionQueueSaturationEdgeAndIdleExpiryOrdering(t *testing.T) {
 	payload := validSessionDatagramPayload(t, nil)
 	saturationRelay := mustSession(t, 110, SessionPeerRelay, MaxUDPPayloadRelayDefault, nil, nil)

@@ -55,6 +55,61 @@ func TestRegistryFamilySpecificLazyAdmissionAndDuplicateOwnership(t *testing.T) 
 	}
 }
 
+func TestRegistryReservationAndTokenScopedSocketAdmission(t *testing.T) {
+	registry, _, factory := newTestRegistry(t, 8, testLimits(1, 2, 1, 1))
+	reservation, failure := registry.Reserve(testContext(t), 8, 41)
+	if failure != nil || !reservation.AssociationCreated || reservation.Token.Incarnation == 0 {
+		t.Fatalf("reservation = %#v failure=%v", reservation, failure)
+	}
+	snapshot := mustSnapshot(t, registry)
+	if snapshot.Associations != 1 || snapshot.Sockets != 0 || snapshot.Timers != 1 || factory.openCount() != 0 {
+		t.Fatalf("socketless reservation = %#v opens=%d", snapshot, factory.openCount())
+	}
+	admission, failure := registry.EnsureTokenFamilies(
+		testContext(t), reservation.Token, AddressFamilyIPv6, AddressFamilyIPv4,
+	)
+	if failure != nil || admission.Token != reservation.Token || admission.SocketsCreated != 2 ||
+		len(admission.Families) != 2 || admission.Families[0] != AddressFamilyIPv4 || admission.Families[1] != AddressFamilyIPv6 {
+		t.Fatalf("token family admission = %#v failure=%v", admission, failure)
+	}
+	if got := factory.families(); len(got) != 2 || got[0] != AddressFamilyIPv4 || got[1] != AddressFamilyIPv6 {
+		t.Fatalf("opened families = %#v", got)
+	}
+	if closed, failure := registry.CloseAssociation(testContext(t), reservation.Token, CloseReasonLocal); failure != nil || !closed.Closed {
+		t.Fatalf("close = %#v failure=%v", closed, failure)
+	}
+	select {
+	case <-reservation.lifecycle.Done():
+	default:
+		t.Fatal("reservation lifecycle was not cancelled")
+	}
+}
+
+func TestRegistryTokenScopedAdmissionRejectsReusedID(t *testing.T) {
+	registry, _, factory := newTestRegistry(t, 9, testLimits(1, 2, 1, 1))
+	old, failure := registry.Reserve(testContext(t), 9, 1)
+	if failure != nil {
+		t.Fatalf("reserve old: %v", failure)
+	}
+	if closed, failure := registry.CloseAssociation(testContext(t), old.Token, CloseReasonRemote); failure != nil || !closed.Closed {
+		t.Fatalf("close old = %#v failure=%v", closed, failure)
+	}
+	current, failure := registry.Reserve(testContext(t), 9, 1)
+	if failure != nil || current.Token.Incarnation == old.Token.Incarnation {
+		t.Fatalf("reserve current = %#v failure=%v", current, failure)
+	}
+	if _, failure := registry.EnsureTokenFamilies(testContext(t), old.Token, AddressFamilyIPv4); failure == nil || failure.Code != ErrorStaleAssociation {
+		t.Fatalf("old token admission failure = %#v", failure)
+	}
+	if factory.openCount() != 0 {
+		t.Fatalf("stale token opened %d sockets", factory.openCount())
+	}
+	snapshot := mustSnapshot(t, registry)
+	if snapshot.Associations != 1 || snapshot.Sockets != 0 || snapshot.Timers != 1 {
+		t.Fatalf("current reservation mutated = %#v", snapshot)
+	}
+}
+
 func TestRegistryRejectsEveryCeilingBeforeDescriptorCreation(t *testing.T) {
 	tests := []struct {
 		name          string
@@ -825,6 +880,17 @@ func (c *fakeClock) activeTimers() int {
 		}
 	}
 	return count
+}
+
+func (c *fakeClock) activeDeadline() (time.Time, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	for _, timer := range c.timers {
+		if timer.active {
+			return timer.deadline, true
+		}
+	}
+	return time.Time{}, false
 }
 
 type fakeTimer struct {

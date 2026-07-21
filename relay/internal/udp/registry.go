@@ -107,6 +107,15 @@ type FamilySetAdmission struct {
 	SocketsCreated     uint32
 }
 
+// AssociationReservation admits lifecycle state without opening a socket.
+// The unexported lifecycle context is cancelled exactly once when this
+// incarnation is retired, replaced, or the registry stops.
+type AssociationReservation struct {
+	Token              AssociationToken
+	AssociationCreated bool
+	lifecycle          context.Context
+}
+
 type CloseReason string
 
 const (
@@ -229,6 +238,20 @@ func (r *Registry) Ensure(
 	}, failure
 }
 
+// Reserve admits association capacity and returns an incarnation-scoped token
+// without creating a descriptor. It is used before asynchronous destination
+// resolution so stale work can never attach to a reused association ID.
+func (r *Registry) Reserve(
+	ctx context.Context,
+	generation uint64,
+	associationID uint32,
+) (AssociationReservation, *RegistryError) {
+	response, failure := r.submit(ctx, request{
+		kind: requestReserve, generation: generation, associationID: associationID,
+	})
+	return response.reservation, failure
+}
+
 // EnsureFamilies atomically admits every requested descriptor family. All
 // required credits are checked before the first socket is opened. If any
 // family fails, every socket opened by the transaction and every socket
@@ -241,6 +264,20 @@ func (r *Registry) EnsureFamilies(
 ) (FamilySetAdmission, *RegistryError) {
 	response, failure := r.submit(ctx, request{
 		kind: requestEnsure, generation: generation, associationID: associationID,
+		families: append([]AddressFamily(nil), families...),
+	})
+	return response.familySetAdmission, failure
+}
+
+// EnsureTokenFamilies opens only the requested missing family sockets when the
+// exact generation and incarnation are still active.
+func (r *Registry) EnsureTokenFamilies(
+	ctx context.Context,
+	token AssociationToken,
+	families ...AddressFamily,
+) (FamilySetAdmission, *RegistryError) {
+	response, failure := r.submit(ctx, request{
+		kind: requestEnsureToken, token: token,
 		families: append([]AddressFamily(nil), families...),
 	})
 	return response.familySetAdmission, failure
@@ -260,7 +297,32 @@ func (r *Registry) UseSocket(
 	family AddressFamily,
 	operation func(descriptor int) error,
 ) *RegistryError {
-	_, failure := r.submit(ctx, request{kind: requestUse, token: token, family: family, operation: operation})
+	if operation == nil {
+		_, failure := r.submit(ctx, request{kind: requestUse, token: token, family: family})
+		return failure
+	}
+	return r.UseSocketOperation(ctx, token, family, func(descriptor int) (bool, error) {
+		if err := operation(descriptor); err != nil {
+			return false, err
+		}
+		return true, nil
+	})
+}
+
+// UseSocketOperation serializes one bounded nonblocking descriptor operation
+// with association close and generation replacement. The callback reports
+// whether actual datagram activity occurred. A readiness miss reports
+// activity=false and err=nil so it neither refreshes the idle deadline nor
+// becomes a socket failure.
+func (r *Registry) UseSocketOperation(
+	ctx context.Context,
+	token AssociationToken,
+	family AddressFamily,
+	operation func(descriptor int) (activity bool, err error),
+) *RegistryError {
+	_, failure := r.submit(ctx, request{
+		kind: requestUse, token: token, family: family, socketOperation: operation,
+	})
 	return failure
 }
 
@@ -355,7 +417,9 @@ func (r *Registry) run(parent context.Context, state *registryState) {
 type requestKind uint8
 
 const (
-	requestEnsure requestKind = iota
+	requestReserve requestKind = iota
+	requestEnsure
+	requestEnsureToken
 	requestActivity
 	requestUse
 	requestClose
@@ -366,21 +430,22 @@ const (
 )
 
 type request struct {
-	kind          requestKind
-	ctx           context.Context
-	generation    uint64
-	newGeneration uint64
-	associationID uint32
-	token         AssociationToken
-	family        AddressFamily
-	families      []AddressFamily
-	reason        CloseReason
-	timerArm      uint64
-	operation     func(int) error
-	response      chan response
+	kind            requestKind
+	ctx             context.Context
+	generation      uint64
+	newGeneration   uint64
+	associationID   uint32
+	token           AssociationToken
+	family          AddressFamily
+	families        []AddressFamily
+	reason          CloseReason
+	timerArm        uint64
+	socketOperation func(int) (bool, error)
+	response        chan response
 }
 
 type response struct {
+	reservation        AssociationReservation
 	familySetAdmission FamilySetAdmission
 	close              CloseResult
 	snapshot           Snapshot
@@ -404,9 +469,11 @@ type registryState struct {
 }
 
 type association struct {
-	token    AssociationToken
-	sockets  map[AddressFamily]Socket
-	deadline *deadlineEntry
+	token           AssociationToken
+	sockets         map[AddressFamily]Socket
+	deadline        *deadlineEntry
+	lifecycle       context.Context
+	cancelLifecycle context.CancelFunc
 }
 
 func (s *registryState) process(command request) (response, bool) {
@@ -414,14 +481,20 @@ func (s *registryState) process(command request) (response, bool) {
 		return response{failure: sessionError(ErrorCancelled)}, false
 	}
 	switch command.kind {
+	case requestReserve:
+		reservation, failure := s.reserve(command.generation, command.associationID)
+		return response{reservation: reservation, failure: failure}, false
 	case requestEnsure:
 		admission, failure := s.ensureFamilies(command.generation, command.associationID, command.families)
+		return response{familySetAdmission: admission, failure: failure}, false
+	case requestEnsureToken:
+		admission, failure := s.ensureTokenFamilies(command.token, command.families)
 		return response{familySetAdmission: admission, failure: failure}, false
 	case requestActivity:
 		failure := s.activity(command.token)
 		return response{failure: failure}, false
 	case requestUse:
-		failure := s.use(command.token, command.family, command.operation)
+		failure := s.use(command.token, command.family, command.socketOperation)
 		return response{failure: failure}, false
 	case requestClose:
 		result := s.close(command.token, command.reason)
@@ -444,6 +517,31 @@ func (s *registryState) process(command request) (response, bool) {
 	default:
 		return response{failure: sessionError(ErrorInvalidConfiguration)}, false
 	}
+}
+
+func (s *registryState) reserve(
+	generation uint64,
+	associationID uint32,
+) (AssociationReservation, *RegistryError) {
+	if generation != s.generation {
+		s.counters.StaleGenerationIgnored++
+		return AssociationReservation{}, associationError(ErrorStaleGeneration)
+	}
+	if associationID == 0 {
+		s.counters.InvalidAssociationRejected++
+		return AssociationReservation{}, associationError(ErrorInvalidAssociationID)
+	}
+	if existing := s.associations[associationID]; existing != nil {
+		s.counters.ExistingAssociationsUsed++
+		return AssociationReservation{Token: existing.token, lifecycle: existing.lifecycle}, nil
+	}
+	if failure := s.checkAssociationCapacity(); failure != nil {
+		return AssociationReservation{}, failure
+	}
+	entry := s.newAssociation(associationID)
+	return AssociationReservation{
+		Token: entry.token, AssociationCreated: true, lifecycle: entry.lifecycle,
+	}, nil
 }
 
 func (s *registryState) ensureFamilies(
@@ -474,22 +572,12 @@ func (s *registryState) ensureFamilies(
 	}
 	if existing != nil && len(missing) == 0 {
 		s.counters.ExistingAssociationsUsed++
-		s.touch(existing)
 		return FamilySetAdmission{Token: existing.token, Families: families}, nil
 	}
 
 	if existing == nil {
-		if uint32(len(s.associations)) >= s.limits.MaxAssociations {
-			s.counters.AssociationRejected++
-			return FamilySetAdmission{}, associationError(ErrorAssociationLimit)
-		}
-		if uint32(len(s.deadlines)) >= s.limits.MaxTimers {
-			s.counters.TimerLimitRejected++
-			return FamilySetAdmission{}, associationError(ErrorTimerLimit)
-		}
-		if uint32(len(s.associations)+len(s.events)) >= s.limits.MaxPendingCloses {
-			s.counters.PendingCloseLimitRejected++
-			return FamilySetAdmission{}, associationError(ErrorPendingCloseLimit)
+		if failure := s.checkAssociationCapacity(); failure != nil {
+			return FamilySetAdmission{}, failure
 		}
 	}
 	if s.socketCount > s.limits.MaxSockets ||
@@ -511,27 +599,99 @@ func (s *registryState) ensureFamilies(
 	entry := existing
 	created := entry == nil
 	if created {
-		s.nextIncarnation++
-		entry = &association{
-			token: AssociationToken{
-				Generation: s.generation, AssociationID: associationID, Incarnation: s.nextIncarnation,
-			},
-			sockets: make(map[AddressFamily]Socket, 2),
-		}
-		entry.deadline = &deadlineEntry{association: entry, index: -1}
-		s.associations[associationID] = entry
-		heap.Push(&s.deadlines, entry.deadline)
-		s.counters.AssociationsAdmitted++
+		entry = s.newAssociation(associationID)
 	}
 	for family, socket := range opened {
 		entry.sockets[family] = socket
 	}
 	s.socketCount += uint32(len(opened))
 	s.updateHighWater()
-	s.touch(entry)
 	return FamilySetAdmission{
-		Token: entry.token, Families: families, AssociationCreated: created, SocketsCreated: uint32(len(opened)),
+		Token: entry.token, Families: families, AssociationCreated: created,
+		SocketsCreated: uint32(len(opened)),
 	}, nil
+}
+
+func (s *registryState) ensureTokenFamilies(
+	token AssociationToken,
+	requested []AddressFamily,
+) (FamilySetAdmission, *RegistryError) {
+	families, valid := canonicalFamilies(requested)
+	if !valid {
+		s.counters.InvalidFamilyRejected++
+		return FamilySetAdmission{}, associationError(ErrorInvalidAddressFamily)
+	}
+	entry, failure := s.lookup(token)
+	if failure != nil {
+		return FamilySetAdmission{}, failure
+	}
+	missing := make([]AddressFamily, 0, len(families))
+	for _, family := range families {
+		if entry.sockets[family] == nil {
+			missing = append(missing, family)
+		}
+	}
+	if len(missing) == 0 {
+		s.counters.ExistingAssociationsUsed++
+		return FamilySetAdmission{Token: token, Families: families}, nil
+	}
+	if s.socketCount > s.limits.MaxSockets || uint32(len(missing)) > s.limits.MaxSockets-s.socketCount {
+		s.counters.SocketLimitRejected++
+		return FamilySetAdmission{}, associationError(ErrorSocketLimit)
+	}
+	opened := make(map[AddressFamily]Socket, len(missing))
+	for _, family := range missing {
+		socket, openFailure := s.openSocket(family)
+		if openFailure != nil {
+			s.rollbackAdmission(entry, opened)
+			return FamilySetAdmission{}, openFailure
+		}
+		opened[family] = socket
+	}
+	for family, socket := range opened {
+		entry.sockets[family] = socket
+	}
+	s.socketCount += uint32(len(opened))
+	s.updateHighWater()
+	return FamilySetAdmission{
+		Token: token, Families: families, SocketsCreated: uint32(len(opened)),
+	}, nil
+}
+
+func (s *registryState) checkAssociationCapacity() *RegistryError {
+	if uint32(len(s.associations)) >= s.limits.MaxAssociations {
+		s.counters.AssociationRejected++
+		return associationError(ErrorAssociationLimit)
+	}
+	if uint32(len(s.deadlines)) >= s.limits.MaxTimers {
+		s.counters.TimerLimitRejected++
+		return associationError(ErrorTimerLimit)
+	}
+	if uint32(len(s.associations)+len(s.events)) >= s.limits.MaxPendingCloses {
+		s.counters.PendingCloseLimitRejected++
+		return associationError(ErrorPendingCloseLimit)
+	}
+	return nil
+}
+
+func (s *registryState) newAssociation(associationID uint32) *association {
+	s.nextIncarnation++
+	lifecycle, cancel := context.WithCancel(context.Background())
+	entry := &association{
+		token: AssociationToken{
+			Generation: s.generation, AssociationID: associationID, Incarnation: s.nextIncarnation,
+		},
+		sockets: make(map[AddressFamily]Socket, 2), lifecycle: lifecycle, cancelLifecycle: cancel,
+	}
+	entry.deadline = &deadlineEntry{association: entry, index: -1}
+	s.associations[associationID] = entry
+	heap.Push(&s.deadlines, entry.deadline)
+	s.counters.AssociationsAdmitted++
+	// Admission establishes a bounded initial lifetime. Subsequent Reserve,
+	// Ensure, and family attachment calls deliberately leave this deadline
+	// unchanged; only observed datagram activity may refresh it.
+	s.touch(entry)
+	return entry
 }
 
 func canonicalFamilies(requested []AddressFamily) ([]AddressFamily, bool) {
@@ -595,7 +755,7 @@ func (s *registryState) activity(token AssociationToken) *RegistryError {
 func (s *registryState) use(
 	token AssociationToken,
 	family AddressFamily,
-	operation func(int) error,
+	operation func(int) (bool, error),
 ) *RegistryError {
 	if !family.valid() || operation == nil {
 		if !family.valid() {
@@ -613,11 +773,18 @@ func (s *registryState) use(
 	if socket == nil {
 		return associationError(ErrorUnknownAssociation)
 	}
-	if err := socket.UseDescriptor(operation); err != nil {
+	activity := false
+	if err := socket.UseDescriptor(func(descriptor int) error {
+		var err error
+		activity, err = operation(descriptor)
+		return err
+	}); err != nil {
 		s.counters.SocketOperationFailed++
 		return associationError(ErrorOperationFailure)
 	}
-	s.touch(entry)
+	if activity {
+		s.touch(entry)
+	}
 	return nil
 }
 
@@ -704,6 +871,7 @@ func (s *registryState) expire(arm uint64) {
 }
 
 func (s *registryState) retire(entry *association) {
+	entry.cancelLifecycle()
 	delete(s.associations, entry.token.AssociationID)
 	if entry.deadline.index >= 0 {
 		heap.Remove(&s.deadlines, entry.deadline.index)
