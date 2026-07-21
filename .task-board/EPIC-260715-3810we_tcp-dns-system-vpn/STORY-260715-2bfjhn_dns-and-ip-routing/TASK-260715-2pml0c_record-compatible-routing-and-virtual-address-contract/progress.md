@@ -8,11 +8,12 @@ backlog
 2026-07-15T01:17:04Z
 
 ## Last Update
-2026-07-16T21:08:19Z
+2026-07-21T04:43:43Z
 
 ## Blocked By
 - TASK-260715-1tnjlu
 - TASK-260715-30zng6
+- TASK-260721-33o8fc
 
 ## Blocks
 - TASK-260715-2tj2pb
@@ -30,7 +31,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-2pml0c_dns-policy-precondition.md](file://TASK-260715-2pml0c/TASK-260715-2pml0c_dns-policy-precondition.md) — Resolver validation, exit reachability, safe-DNS readiness, and fail-closed teardown policy
 
 ## Outcome Resources
 (none)

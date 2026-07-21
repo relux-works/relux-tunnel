@@ -8,12 +8,14 @@ backlog
 2026-07-15T02:37:23Z
 
 ## Last Update
-2026-07-15T02:48:44Z
+2026-07-21T04:43:43Z
 
 ## Blocked By
 - TASK-260715-29ws8l
 - TASK-260715-1gjxer
 - TASK-260715-32umrc
+- TASK-260715-1tnjlu
+- TASK-260721-3miqh4
 
 ## Blocks
 - TASK-260715-28bwf4
@@ -31,7 +33,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-2hhh7x_dns-policy-precondition.md](file://TASK-260715-2hhh7x/TASK-260715-2hhh7x_dns-policy-precondition.md) — Resolver profile fields, no-inference migration, and evidence-gated endpoint validation policy
 
 ## Outcome Resources
 - [TASK-260715-2hhh7x_credential-boundaries.puml](file://TASK-260715-2hhh7x/TASK-260715-2hhh7x_credential-boundaries.puml) — Solution-architecture component view of App Group, Keychain, manager, provider, and SSH trust boundaries

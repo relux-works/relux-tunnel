@@ -64,7 +64,7 @@ ordinary loss under a non-saturated nominal run.
 - Linux/macOS x86_64/arm64 build and smoke execution;
 - upload interruption, checksum mismatch, noexec/read-only home, missing hash
   tools, incompatible version, and atomic upgrade;
-- degraded TCP + DNS-over-TCP/DoH behavior when relay is unavailable.
+- degraded TCP + DNS-over-TCP behavior when relay is unavailable.
 
 ## Routing and leak tests
 

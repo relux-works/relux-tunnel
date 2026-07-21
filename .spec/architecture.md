@@ -100,7 +100,8 @@ with the same association identity.
 
 DNS uses a tunnel-controlled resolver path. It never falls back silently to the
 physical interface. In degraded mode it uses DNS-over-TCP through
-`direct-tcpip` or a configured DoH endpoint through the tunnel.
+`direct-tcpip` to an explicit numeric resolver endpoint configured by the user.
+DoH is not a baseline resolver kind and requires a separate trust/bootstrap ADR.
 
 ## Control and state ownership
 

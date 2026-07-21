@@ -1,10 +1,5 @@
-# Required M1 DNS handoff
+# Required M1 and M2 DNS handoff
 
-Consume accepted outcomes from:
+Consume accepted outcomes from TASK-260715-1tnjlu for resolver identity and structural semantics, TASK-260721-3miqh4 for every numeric policy default and ceiling, TASK-260715-1e0x1u for tunnel-owned UDP and TCP ingress, TASK-260715-5o6jqg for the generation-scoped SSH TCP manager, and TASK-260715-2hawz9 for cache and transaction behavior.
 
-- TASK-260715-1tnjlu — exit resolver decision
-- TASK-260715-1e0x1u — tunnel-owned UDP and TCP DNS listener
-- TASK-260715-5o6jqg — SSH DNS-over-TCP upstream
-- TASK-260715-2hawz9 — bounded cache, truncation, and fallback semantics
-
-M2 adds relay UDP as the full-mode upstream path and must not duplicate or contradict these contracts.
+M2 may make one relay UDP attempt at the active endpoint. It may request same-endpoint TCP only for TC=1, pre-response relay size inability, UDP timeout, or typed relay failure. M1 owns TCP reuse and later endpoint promotion. A logical query has at most one UDP plus one TCP attempt per configured endpoint under one deadline, accepts the first valid DNS response as terminal, delivers one visible result, and never touches a physical resolver.

@@ -1,0 +1,55 @@
+// TASK-260715-1tnjlu — baseline DNS bootstrap, connection epoch, and fail-closed query path
+// Render: dot -Tsvg diagrams/TASK-260715-1tnjlu_dns-policy-flow.dot -o diagrams/artefacts/TASK-260715-1tnjlu_dns-policy-flow.svg
+digraph dns_policy_flow {
+  rankdir=TB;
+  graph [fontname="Helvetica", fontsize=11, labelloc=t,
+         label="TASK-260715-1tnjlu — explicit resolver, coordinated retry, and no-fallback boundary"];
+  node [shape=box, style=rounded, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9];
+
+  subgraph cluster_bootstrap {
+    label="Before default routes";
+    style=rounded;
+    physicalDNS [label="Physical-path DNS\nSSH hostname only", color="#777777"];
+    ssh [label="Authenticated SSH session\nactual endpoint captured", color="#2b6cb0"];
+    profile [label="Validated profile + accepted policy\nordered numeric endpoints; injected bounds", color="#2f855a"];
+    readiness [label="Serial SSH direct-tcpip readiness\none generation-global active endpoint", color="#2f855a"];
+    settings [label="Apply tunnel routes +\ntunnel-owned DNS settings", color="#2b6cb0"];
+
+    physicalDNS -> ssh [label="bootstrap host"];
+    profile -> readiness [label="ordered endpoints"];
+    ssh -> readiness [label="SSH-only open"];
+    readiness -> settings [label="safe DNS ready"];
+  }
+
+  subgraph cluster_queries {
+    label="After routes apply";
+    style=rounded;
+    os [label="Device UDP/TCP DNS"];
+    ingress [label="VirtualDNSIngress\ntunnel address only", color="#2b6cb0"];
+    owner [label="Logical transaction owner\none terminal visible result", color="#2b6cb0"];
+    tcp [label="M1 TCP manager\none connection epoch; bounded pipeline", color="#2b6cb0"];
+    udp [label="M2 relay UDP\nat most one active-endpoint attempt", color="#805ad5"];
+    resolver [label="Active configured exit-side\nIPv4/IPv6 endpoint", color="#2f855a"];
+    retire [label="Connection-fatal event\natomically retire epoch + classify all in-flight", color="#dd6b20"];
+    promote [label="One coordinated promotion\nretry eligible batch at next endpoint", color="#dd6b20"];
+    failure [label="SERVFAIL + safeDNS=false\nstop admission + clear settings", color="#c53030"];
+    forbidden [label="Physical/system resolver\nFORBIDDEN for ordinary queries", shape=octagon, color="#c53030", fontcolor="#c53030"];
+
+    os -> ingress;
+    ingress -> owner;
+    owner -> tcp [label="M1 or client TCP"];
+    owner -> udp [label="eligible M2 client UDP"];
+    tcp -> resolver;
+    udp -> resolver [label="valid response ends query"];
+    udp -> tcp [label="TC=1 / size / UDP timeout / typed relay failure\nsame endpoint first", color="#805ad5"];
+    tcp -> retire [label="EOF / timeout / framing / correlation / SSH", color="#dd6b20"];
+    retire -> promote [label="terminal stay terminal; retry eligible batch", color="#dd6b20"];
+    promote -> tcp [label="one later endpoint; new epoch", color="#dd6b20"];
+    promote -> failure [label="explicit endpoints or deadline exhausted", color="#c53030"];
+    ingress -> forbidden [label="no policy edge", style=dashed, color="#c53030", arrowhead=tee];
+  }
+
+  settings -> os [label="query path enabled"];
+  failure -> settings [label="teardown", color="#c53030", style=dashed];
+}
