@@ -1,0 +1,1087 @@
+Command line invocation:
+    /Applications/Xcode_26_5.app/Contents/Developer/usr/bin/xcodebuild -scheme ReluxTunnelMacOSAdapter -destination generic/platform=macOS -derivedDataPath .temp/TASK-260715-15vkvz/DerivedData-macOS CODE_SIGNING_ALLOWED=NO build
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  ReluxTunnel: /Users/iv/Developer/relux-tunnel
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (4 targets)
+    Target 'ReluxTunnelMacOSAdapter' in project 'ReluxTunnel'
+        ➜ Explicit dependency on target 'ReluxTunnelMacOSAdapter' in project 'ReluxTunnel'
+        ➜ Explicit dependency on target 'ReluxTunnelCore' in project 'ReluxTunnel'
+        ➜ Explicit dependency on target 'ReluxTunnelNativeAdapter' in project 'ReluxTunnel'
+    Target 'ReluxTunnelMacOSAdapter' in project 'ReluxTunnel'
+        ➜ Explicit dependency on target 'ReluxTunnelCore' in project 'ReluxTunnel'
+        ➜ Explicit dependency on target 'ReluxTunnelNativeAdapter' in project 'ReluxTunnel'
+    Target 'ReluxTunnelNativeAdapter' in project 'ReluxTunnel'
+        ➜ Explicit dependency on target 'ReluxTunnelCore' in project 'ReluxTunnel'
+    Target 'ReluxTunnelCore' in project 'ReluxTunnel' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ReadFileContents /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/docc/features.json
+
+Build description signature: e8f820fe48c190270bfa711fee820144
+Build description path: /Users/iv/Developer/.build/Intermediates.noindex/XCBuildData/e8f820fe48c190270bfa711fee820144.xcbuilddata
+ClangStatCache /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache
+
+CreateBuildDirectory /Users/iv/Developer/.build/Products/Debug
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-create-build-directory /Users/iv/Developer/.build/Products/Debug
+
+CreateBuildDirectory /Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-create-build-directory /Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug
+
+CreateBuildDirectory /Users/iv/Developer/.build/Products/Debug/PackageFrameworks
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-create-build-directory /Users/iv/Developer/.build/Products/Debug/PackageFrameworks
+
+ProcessXCFramework /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxNativeFixture.xcframework /Users/iv/Developer/.build/Products/Debug/libCReluxNativeFixture.a macos
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-process-xcframework --xcframework /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/ReluxNativeFixture.xcframework --platform macos --target-path /Users/iv/Developer/.build/Products/Debug
+
+ProcessXCFramework /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework /Users/iv/Developer/.build/Products/Debug/libhev-socks5-tunnel.a macos
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-process-xcframework --xcframework /Users/iv/Developer/relux-tunnel/NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework --platform macos --target-path /Users/iv/Developer/.build/Products/Debug
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.DependencyMetadataFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.modulemap (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.modulemap
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_const_extract_protocols.json (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.DependencyStaticMetadataFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.LinkFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.LinkFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftConstValuesFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-OutputFileMap.json (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftConstValuesFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-OutputFileMap.json (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_const_extract_protocols.json (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.LinkFileList (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.LinkFileList
+
+Copy /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelCore.modulemap /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.modulemap (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.modulemap /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.DependencyMetadataFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.DependencyStaticMetadataFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.modulemap (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.modulemap
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_const_extract_protocols.json (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftConstValuesFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-OutputFileMap.json (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-OutputFileMap.json (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftConstValuesFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_const_extract_protocols.json (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.LinkFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.LinkFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.modulemap (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.modulemap
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.LinkFileList (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.LinkFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.DependencyStaticMetadataFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.DependencyMetadataFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.DependencyMetadataFileList
+
+Copy /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelNativeAdapter.modulemap /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.modulemap (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.modulemap /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftConstValuesFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.LinkFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.LinkFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-OutputFileMap.json (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_const_extract_protocols.json (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftConstValuesFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_const_extract_protocols.json (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.LinkFileList (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.LinkFileList
+
+WriteAuxiliaryFile /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-OutputFileMap.json (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    write-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-OutputFileMap.json
+
+Copy /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelMacOSAdapter.modulemap /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.modulemap (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.modulemap /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps
+
+SwiftDriver ReluxTunnelCore normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-SwiftDriver -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelCore -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver ReluxTunnelCore normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-SwiftDriver -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelCore -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_SwiftConcurrencyShims-2GVECEWJSZC8VIMO8UKJ11R1Y.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdarg-DHK11I35WV3EN11JWDCI4VD6U.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_AvailabilityInternal-5VTAT8KUT505AMXNA9CEIKC9L.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stddef-CIO11SV7FD0F8AH0ILZY3D3B8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/SwiftShims-ER4KXIICPFCKX565HL48ZHWPX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ptrauth-8ZF50S0Y4UP4TO7YT88MPE84Y.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdbool-BBVHWTDYCS23TJ50WPHTV09IR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ptrcheck-6RHEO311NDZIXTRA8DL8CGUWP.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_float-DJKYV6774DZZ5V5M1MSSEW5H7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_SwiftConcurrencyShims-A3AB88NM6YZT5CXQRRVEJ9JPY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdbool-EHEMA279ZN4JL3IAHF5VF3HYC.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_float-9XG7KP4LLI5VI5LA0EXU6T4AM.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ptrauth-YAKVS0L6ZDY5JX5PP7UFGA6H.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdarg-7086QN9T6S4QFMPRHTZ9OSIBY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stddef-BX0KXUQ9L9T45Z9JXA2LVOXXE.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/SwiftShims-DK0HWBUKZNO00BFG7BM0ETVEK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ptrcheck-CADYAL45O4FXK9Z3G8TNMHJVI.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_AvailabilityInternal-AKTVAGU1BX19R2Q8F473ZM7ZV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_DarwinFoundation1-3VW594P0XVOW62S06BOHGRHTO.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_DarwinFoundation1-ANMLHA118UYI37K59CWRKGPQO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_DarwinFoundation2-ENIYIEYT42G6L2AVNDN9EQO65.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_limits-71B1SAKE0CG5IR0SN6EOMH6CE.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_DarwinFoundation2-F0O6VZ9M3UELAZP2KZX4DHN4B.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_limits-53RKA7JG2G0IEX544C407ECUZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdint-AO2VM7GJWY3T0MTMHIY7VEOUM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/sys_types-AP5B3SIZE5V37YQV8OZZDRMU6.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/sys_types-40N46UNTQ7RH6WP4NWLLMQ3K7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdint-D4ZP25DC3JOLBNQHUOU2VJZF1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_DarwinFoundation3-20XSNZUT91F7X9UXB9JDYOPMS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/libDER-93F1C5YU5CMQDC7FFIP7A8I9C.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/libDER-53NI23KS63PM0SSBY1RTOYD7L.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_DarwinFoundation3-2GAP6YV6GTOGYK7ZS71MK5H4F.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_inttypes-BRO1H1RUSD1QVQ2DPGANA4C3N.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_inttypes-DAVG69RTIV7NUI52RMQUEG6V0.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_intrinsics-C1CM266JDLBQDY9DGY5QJDWQL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Darwin-E3V1D958SSJB77ZB559UTN451.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Darwin-329YLAKJFDV9YP8R5MXAZSODS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/launch-DEFTHGN950DME6W5V4GJL57S4.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/libkern-2E698J524LI3L5QE7ADYU2CLB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/MachO-72Z2GRM255IAKI4VUMMDJD3C8.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/libkern-82UE6KL3XP6HSTRUU5B4UETOR.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/MachO-6SIRZSYIJKIETD2DUYI83735P.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/launch-5QXJ3ENI7XO7TRVYUGHSBZ556.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ObjectiveC-AUABJB0XTHSW4OQJKDZXG30IS.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ObjectiveC-4OJD4O050SHVKVOOWN48GW35L.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/os_object-738YA4TC25YN80914OPWRJXA7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/os_object-9V8KQYPSDQLEYASJSYNY1QHDN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/os_workgroup-5HRKJINN33QGNKFCUR5VP2RKW.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/os_workgroup-87CJK46FKLPWE6I2G7Z8W7BAW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Dispatch-DJZPXT5CIT4MJCZLN3T17E9I2.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Dispatch-5N3J58G2VGC09I9BWPYZ3VZWX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/CoreFoundation-F5AYLO8N22HF64XFSX6P4B0TL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/XPC-9DW82QY7E2QKQ3N3LYW9QXESM.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/XPC-2DLHH9I584JY6OUBSDVNF8XJX.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/CoreFoundation-1WPTD4JL197720MOCXF3S3088.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/CFNetwork-236VTB9D42XWOCD74G72RWKVK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Security-CW3FSE5XBWGLPA420UGNZ99VV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/IOKit-CLJFWTN16JI5VLXHDAUPB4RWE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Security-F2T43IHI9BX115BJJO0D7DH4N.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/CFNetwork-9Q1F2BVXQV1SXXEH6SGHSK6T0.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/IOKit-833QCWAKQ68D2PLB1DUW7OVRW.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/DiskArbitration-4YNWVQWYY3113LP2ABGZLBJ27.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/DiskArbitration-EKPVVEYC3N24636L6W8FILWXJ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/CoreServices-32QN8ULFEFTN651FESTHMC9UC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/CoreServices-D62NNJ74ZK3AH08B962PO683U.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Foundation-EM8EJYHH89QCAAN3YCQ9KV6BL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Foundation-BI9EJWRDZPQ9M3Y30C260YAU.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/LocalAuthentication-533C6A03TM8MBBHT28DN6IDG5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/LocalAuthentication-E075YIDZCV2XHU9JL9VWIOU69.pcm
+
+SwiftCompile normal x86_64 Compiling\ SSHContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/SSHContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/SSHContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RuntimeContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RuntimeMessageModels.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeMessageModels.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeMessageModels.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ TunnelRuntimeCoordinator.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RuntimeDiagnostics.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RelaySession.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelaySession.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelaySession.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RelayHandshake.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayHandshake.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayHandshake.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RelayDatagramCodec.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayDatagramCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayDatagramCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RelayProtocolV1+Generated.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/Generated/RelayProtocolV1+Generated.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/Generated/RelayProtocolV1+Generated.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ ProviderLifecycle.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ProviderLifecycle.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ProviderLifecycle.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ PacketFlowBridgeContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridgeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridgeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ RelayByteCodec.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayByteCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayByteCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ PacketFlowBridge.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridge.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridge.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ VPNManagerRepository.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/VPNManagerRepository.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/VPNManagerRepository.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ ReluxTunnelCore (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+EmitSwiftModule normal x86_64 (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ PacketContracts.swift,\ PacketFlowAdapterBoundary.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowAdapterBoundary.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowAdapterBoundary.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ReluxTunnelCore (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+EmitSwiftModule normal arm64 (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RelayProtocolV1+Generated.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ RelayHandshake.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayHandshake.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayHandshake.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for ReluxTunnelCore (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation\ Requirements ReluxTunnelCore normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelCore -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ReluxTunnelCore (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation\ Requirements ReluxTunnelCore normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelCore -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ RuntimeDiagnostics.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftMergeGeneratedHeaders /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelCore-Swift.h /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-Swift.h /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-Swift.h (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-swiftHeaderTool -arch arm64 /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-Swift.h -arch x86_64 /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-Swift.h -o /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelCore-Swift.h
+
+SwiftDriverJobDiscovery normal x86_64 Compiling PacketContracts.swift, PacketFlowAdapterBoundary.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/x86_64-apple-macos.swiftmodule /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftmodule (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftmodule /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/x86_64-apple-macos.swiftmodule
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/x86_64-apple-macos.swiftdoc /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftdoc (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftdoc /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/x86_64-apple-macos.swiftdoc
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RelayDatagramCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/x86_64-apple-macos.abi.json /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.abi.json (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.abi.json /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/x86_64-apple-macos.abi.json
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftmodule /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftmodule
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RuntimeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftdoc /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftdoc (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftdoc /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftdoc
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.abi.json /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.abi.json (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.abi.json /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftsourceinfo (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftsourceinfo /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftsourceinfo (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftsourceinfo /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RelayByteCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ PacketFlowBridgeContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridgeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridgeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ RelayProtocolV1+Generated.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/Generated/RelayProtocolV1+Generated.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/Generated/RelayProtocolV1+Generated.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling PacketFlowBridgeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ RelaySession.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelaySession.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelaySession.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ ProviderLifecycle.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ProviderLifecycle.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ProviderLifecycle.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ RelayDatagramCodec.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayDatagramCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayDatagramCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ ComponentContracts.swift,\ DarwinPacketBridgeIO.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ComponentContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/DarwinPacketBridgeIO.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ComponentContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/DarwinPacketBridgeIO.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RelaySession.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ RuntimeContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling VPNManagerRepository.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ PacketFlowBridge.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridge.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowBridge.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ RelayByteCodec.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayByteCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayByteCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RelayHandshake.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ VPNManagerRepository.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/VPNManagerRepository.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/VPNManagerRepository.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling SSHContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ SSHContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/SSHContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/SSHContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling RuntimeMessageModels.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 Compiling\ ComponentContracts.swift,\ DarwinPacketBridgeIO.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ComponentContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/DarwinPacketBridgeIO.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/ComponentContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/DarwinPacketBridgeIO.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RelayProtocolV1+Generated.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ PacketContracts.swift,\ PacketFlowAdapterBoundary.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketContracts.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowAdapterBoundary.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/PacketFlowAdapterBoundary.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling ProviderLifecycle.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ TunnelRuntimeCoordinator.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling TunnelRuntimeCoordinator.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 Compiling\ RuntimeMessageModels.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeMessageModels.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelCore/RuntimeMessageModels.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ComponentContracts.swift, DarwinPacketBridgeIO.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RuntimeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriver ReluxTunnelNativeAdapter normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-SwiftDriver -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelNativeAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver ReluxTunnelNativeAdapter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-SwiftDriver -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelNativeAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PacketFlowBridgeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RelayHandshake.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RelayDatagramCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling ComponentContracts.swift, DarwinPacketBridgeIO.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling PacketFlowBridge.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation ReluxTunnelCore normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelCore -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/Binary/ReluxTunnelCore.o normal x86_64 (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-macos15.0 -r -isysroot /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -F/Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/iv/Developer/.build/Products/Debug -iframework /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.LinkFileList -nostdlib -Xlinker -object_path_lto -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_lto.o -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftmodule @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore-linker-args.resp -o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/Binary/ReluxTunnelCore.o
+
+SwiftDriverJobDiscovery normal arm64 Compiling PacketContracts.swift, PacketFlowAdapterBoundary.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RelaySession.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RelayByteCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules/HevSocks5Tunnel-E2T614H3AW3AMT4ZOA1DUEM5Q.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules/CReluxNativeFixture-7R3D6V52NRIJ7RU7XNC077U1X.pcm
+
+SwiftDriverJobDiscovery normal arm64 Compiling ProviderLifecycle.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling VPNManagerRepository.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules/HevSocks5Tunnel-4E7XM4SMKAU68NIAVNG2IMUQ5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules/CReluxNativeFixture-7SSWMIDJIKSA75TFZCXJQMWND.pcm
+
+SwiftCompile normal x86_64 Compiling\ HEVNoticeBundle.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVNoticeBundle.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVNoticeBundle.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ HEVSOCKSBoundary.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ HEVIntegration.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVIntegration.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVIntegration.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ NativeDependencyPackaging.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/NativeDependencyPackaging.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/NativeDependencyPackaging.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ ReluxTunnelNativeAdapter (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+EmitSwiftModule normal x86_64 (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ReluxTunnelNativeAdapter (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+EmitSwiftModule normal arm64 (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ HEVNoticeBundle.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVNoticeBundle.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVNoticeBundle.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ HEVIntegration.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVIntegration.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVIntegration.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ HEVSOCKSBoundary.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ NativeDependencyPackaging.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/NativeDependencyPackaging.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelNativeAdapter/NativeDependencyPackaging.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling HEVNoticeBundle.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for ReluxTunnelNativeAdapter (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation\ Requirements ReluxTunnelNativeAdapter normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelNativeAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativeDependencyPackaging.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling HEVNoticeBundle.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/x86_64-apple-macos.swiftmodule /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftmodule (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftmodule /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/x86_64-apple-macos.swiftmodule
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/x86_64-apple-macos.abi.json /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.abi.json (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.abi.json /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/x86_64-apple-macos.abi.json
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/x86_64-apple-macos.swiftdoc /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftdoc (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftdoc /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/x86_64-apple-macos.swiftdoc
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftsourceinfo (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftsourceinfo /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Compiling TunnelRuntimeCoordinator.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ReluxTunnelNativeAdapter (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation\ Requirements ReluxTunnelNativeAdapter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelNativeAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftMergeGeneratedHeaders /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelNativeAdapter-Swift.h /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-Swift.h /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-Swift.h (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-swiftHeaderTool -arch arm64 /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-Swift.h -arch x86_64 /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-Swift.h -o /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelNativeAdapter-Swift.h
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/arm64-apple-macos.swiftdoc /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftdoc (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftdoc /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/arm64-apple-macos.swiftdoc
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/arm64-apple-macos.abi.json /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.abi.json (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.abi.json /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/arm64-apple-macos.swiftmodule /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftmodule (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftmodule /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftsourceinfo (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftsourceinfo /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftDriver ReluxTunnelMacOSAdapter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-SwiftDriver -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelMacOSAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver ReluxTunnelMacOSAdapter normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-SwiftDriver -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelMacOSAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativeDependencyPackaging.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling SSHContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling HEVSOCKSBoundary.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling HEVSOCKSBoundary.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling RuntimeMessageModels.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PacketFlowBridge.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation ReluxTunnelCore normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelCore -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/Binary/ReluxTunnelCore.o normal arm64 (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos15.0 -r -isysroot /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -F/Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/iv/Developer/.build/Products/Debug -iframework /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.LinkFileList -nostdlib -Xlinker -object_path_lto -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_lto.o -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore-linker-args.resp -o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/Binary/ReluxTunnelCore.o
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ExtensionFoundation-2019UYOEORCKBGXFUXXC8JQMX.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/dnssd-8LYLJ3YOV676N618W99N9A99A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdatomic-38RDNQAC12VPSMO7LG285N3K5.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/_Builtin_stdatomic-40OAFVQHOOU6W8W9SRQSD0MYE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/ExtensionFoundation-DYS69R9988W6OORLJB6BJAGQ9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/dnssd-DWWVITLX60R2K3MR524XU34PQ.pcm
+
+CreateUniversalBinary /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.o normal arm64\ x86_64 (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/Binary/ReluxTunnelCore.o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/Binary/ReluxTunnelCore.o -output /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.o
+
+SwiftDriverJobDiscovery normal arm64 Compiling HEVIntegration.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation ReluxTunnelNativeAdapter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelNativeAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+ExtractAppIntentsMetadata (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ReluxTunnelCore --sdk-root /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F42 --platform-family macOS --deployment-target 15.0 --bundle-identifier relux-tunnel.ReluxTunnelCore --output /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.appintents --target-triple arm64-apple-macos15.0 --target-triple x86_64-apple-macos15.0 --binary-file /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.o --dependency-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore_dependency_info.dat --dependency-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore_dependency_info.dat --stringsdata-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftFileList --source-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftFileList --metadata-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.DependencyMetadataFileList --static-metadata-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/ReluxTunnelCore.DependencyStaticMetadataFileList --swift-const-vals-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.SwiftConstValuesFileList --swift-const-vals-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.SwiftConstValuesFileList --force --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-07-21 03:51:12.364 appintentsmetadataprocessor[8195:97775201] Starting appintentsmetadataprocessor export
+2026-07-21 03:51:12.373 appintentsmetadataprocessor[8195:97775201] Extracted no relevant App Intents symbols, skipping writing output
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/os-CVKOL12O7GVI1WO746X5GJG4Y.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/os-99BMLKKWVJGYI4PYYR6F5N5GO.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Network-8UZN5XO9OXHF60GVXH9UDGD91.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Network-CBMW59E7RF4YVG383X28THAG7.pcm
+
+SwiftDriverJobDiscovery normal x86_64 Compiling HEVIntegration.swift (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation ReluxTunnelNativeAdapter normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelNativeAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+RegisterExecutionPolicyException /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.o (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-RegisterExecutionPolicyException /Users/iv/Developer/.build/Products/Debug/ReluxTunnelCore.o
+
+Ld /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/Binary/ReluxTunnelNativeAdapter.o normal arm64 (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos15.0 -r -isysroot /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -F/Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F/Users/iv/Developer/.build/Products/Debug -iframework /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.LinkFileList -nostdlib -Xlinker -object_path_lto -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_lto.o -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.swiftmodule @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter-linker-args.resp -o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/Binary/ReluxTunnelNativeAdapter.o
+
+Ld /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/Binary/ReluxTunnelNativeAdapter.o normal x86_64 (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-macos15.0 -r -isysroot /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -F/Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F/Users/iv/Developer/.build/Products/Debug -iframework /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.LinkFileList -nostdlib -Xlinker -object_path_lto -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_lto.o -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.swiftmodule @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter-linker-args.resp -o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/Binary/ReluxTunnelNativeAdapter.o
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/OSLog-4Z32ARPY6OTF440RG9RQ6TO26.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/OSLog-E118L21USBIN78Q805HKLQX2W.pcm
+
+CreateUniversalBinary /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.o normal arm64\ x86_64 (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/Binary/ReluxTunnelNativeAdapter.o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/Binary/ReluxTunnelNativeAdapter.o -output /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.o
+
+ExtractAppIntentsMetadata (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ReluxTunnelNativeAdapter --sdk-root /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F42 --platform-family macOS --deployment-target 15.0 --bundle-identifier relux-tunnel.ReluxTunnelNativeAdapter --output /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.appintents --target-triple arm64-apple-macos15.0 --target-triple x86_64-apple-macos15.0 --binary-file /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.o --dependency-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter_dependency_info.dat --dependency-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter_dependency_info.dat --stringsdata-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftFileList --source-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftFileList --metadata-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.DependencyMetadataFileList --static-metadata-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/ReluxTunnelNativeAdapter.DependencyStaticMetadataFileList --swift-const-vals-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/arm64/ReluxTunnelNativeAdapter.SwiftConstValuesFileList --swift-const-vals-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelNativeAdapter.build/Objects-normal/x86_64/ReluxTunnelNativeAdapter.SwiftConstValuesFileList --force --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-07-21 03:51:12.428 appintentsmetadataprocessor[8207:97775254] Starting appintentsmetadataprocessor export
+2026-07-21 03:51:12.436 appintentsmetadataprocessor[8207:97775254] Extracted no relevant App Intents symbols, skipping writing output
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/NetworkExtension-DQKY6B2RIW8RLET4BVC4LY4ZZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/NetworkExtension-537KR90URW4YZ2530ENF58L2N.pcm
+
+RegisterExecutionPolicyException /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.o (in target 'ReluxTunnelNativeAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-RegisterExecutionPolicyException /Users/iv/Developer/.build/Products/Debug/ReluxTunnelNativeAdapter.o
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ ReluxTunnelMacOSAdapter (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+EmitSwiftModule normal x86_64 (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ MacOSProviderCompositionRoot.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSProviderCompositionRoot.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSProviderCompositionRoot.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ MacOSVPNManagerPreferences.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSVPNManagerPreferences.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSVPNManagerPreferences.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal x86_64 Compiling\ NativePackagingAnchor.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/NativePackagingAnchor.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal x86_64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/NativePackagingAnchor.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ReluxTunnelMacOSAdapter (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+EmitSwiftModule normal arm64 (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ MacOSVPNManagerPreferences.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSVPNManagerPreferences.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSVPNManagerPreferences.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ NativePackagingAnchor.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/NativePackagingAnchor.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/NativePackagingAnchor.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftCompile normal arm64 Compiling\ MacOSProviderCompositionRoot.swift /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSProviderCompositionRoot.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftCompile normal arm64 /Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSProviderCompositionRoot.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativePackagingAnchor.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativePackagingAnchor.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for ReluxTunnelMacOSAdapter (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation\ Requirements ReluxTunnelMacOSAdapter normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelMacOSAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/x86_64-apple-macos.abi.json /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.abi.json (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.abi.json /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/x86_64-apple-macos.abi.json
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/x86_64-apple-macos.swiftmodule /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftmodule (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftmodule /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/x86_64-apple-macos.swiftmodule
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/x86_64-apple-macos.swiftdoc /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftdoc (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftdoc /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/x86_64-apple-macos.swiftdoc
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftsourceinfo (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftsourceinfo /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ReluxTunnelMacOSAdapter (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation\ Requirements ReluxTunnelMacOSAdapter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelMacOSAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftMergeGeneratedHeaders /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelMacOSAdapter-Swift.h /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-Swift.h /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-Swift.h (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-swiftHeaderTool -arch arm64 /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-Swift.h -arch x86_64 /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-Swift.h -o /Users/iv/Developer/.build/Intermediates.noindex/GeneratedModuleMaps/ReluxTunnelMacOSAdapter-Swift.h
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/arm64-apple-macos.swiftmodule /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftmodule (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftmodule /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/arm64-apple-macos.abi.json /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.abi.json (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.abi.json /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftsourceinfo (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftsourceinfo /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/arm64-apple-macos.swiftdoc /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftdoc (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftdoc /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.swiftmodule/arm64-apple-macos.swiftdoc
+
+SwiftDriverJobDiscovery normal arm64 Compiling MacOSProviderCompositionRoot.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling MacOSProviderCompositionRoot.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriverJobDiscovery normal arm64 Compiling MacOSVPNManagerPreferences.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation ReluxTunnelMacOSAdapter normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelMacOSAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources-normal/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources/arm64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal x86_64 Compiling MacOSVPNManagerPreferences.swift (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+
+SwiftDriver\ Compilation ReluxTunnelMacOSAdapter normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel/.swiftpm/xcode
+    builtin-Swift-Compilation -- /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ReluxTunnelMacOSAdapter -Onone @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -DXcode -plugin-path /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos15.0 -g -module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/iv/Developer/.build/Products/Debug -Isystem /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F /Users/iv/Developer/.build/Products/Debug -F /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j16 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/SDKStatCaches.noindex/macosx26.5-25F70-b64f947cdd770e773f3848253724d71e.sdkstatcache -output-file-map /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/iv/Developer/.build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -sdk-module-cache-path /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/iv/Developer/relux-tunnel/.temp/TASK-260715-15vkvz/DerivedData-macOS/ModuleCache.noindex/Session.modulevalidation -package-name relux_tunnel -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_const_extract_protocols.json -Xcc -I/Users/iv/Developer/.build/Products/Debug/include -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources-normal/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources/x86_64 -Xcc -I/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-Swift.h -working-directory /Users/iv/Developer/relux-tunnel/.swiftpm/xcode -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/Binary/ReluxTunnelMacOSAdapter.o normal arm64 (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos15.0 -r -isysroot /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -F/Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F/Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F/Users/iv/Developer/.build/Products/Debug -iframework /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.LinkFileList -nostdlib -Xlinker -object_path_lto -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_lto.o -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.swiftmodule @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter-linker-args.resp -o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/Binary/ReluxTunnelMacOSAdapter.o
+
+Ld /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/Binary/ReluxTunnelMacOSAdapter.o normal x86_64 (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-macos15.0 -r -isysroot /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -F/Users/iv/Developer/.build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F/Users/iv/Developer/.build/Products/Debug/PackageFrameworks -F/Users/iv/Developer/.build/Products/Debug -iframework /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.LinkFileList -nostdlib -Xlinker -object_path_lto -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_lto.o -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.swiftmodule @/Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter-linker-args.resp -o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/Binary/ReluxTunnelMacOSAdapter.o
+
+CreateUniversalBinary /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.o normal arm64\ x86_64 (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/Binary/ReluxTunnelMacOSAdapter.o /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/Binary/ReluxTunnelMacOSAdapter.o -output /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.o
+
+ExtractAppIntentsMetadata (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ReluxTunnelMacOSAdapter --sdk-root /Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F42 --platform-family macOS --deployment-target 15.0 --bundle-identifier relux-tunnel.ReluxTunnelMacOSAdapter --output /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.appintents --target-triple arm64-apple-macos15.0 --target-triple x86_64-apple-macos15.0 --binary-file /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.o --dependency-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter_dependency_info.dat --dependency-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter_dependency_info.dat --stringsdata-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftFileList --source-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftFileList --metadata-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.DependencyMetadataFileList --static-metadata-file-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/ReluxTunnelMacOSAdapter.DependencyStaticMetadataFileList --swift-const-vals-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/arm64/ReluxTunnelMacOSAdapter.SwiftConstValuesFileList --swift-const-vals-list /Users/iv/Developer/.build/Intermediates.noindex/ReluxTunnel.build/Debug/ReluxTunnelMacOSAdapter.build/Objects-normal/x86_64/ReluxTunnelMacOSAdapter.SwiftConstValuesFileList --force --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-07-21 03:51:12.873 appintentsmetadataprocessor[8225:97775364] Starting appintentsmetadataprocessor export
+2026-07-21 03:51:12.881 appintentsmetadataprocessor[8225:97775364] Extracted no relevant App Intents symbols, skipping writing output
+
+RegisterExecutionPolicyException /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.o (in target 'ReluxTunnelMacOSAdapter' from project 'ReluxTunnel')
+    cd /Users/iv/Developer/relux-tunnel
+    builtin-RegisterExecutionPolicyException /Users/iv/Developer/.build/Products/Debug/ReluxTunnelMacOSAdapter.o
+
+** BUILD SUCCEEDED ** [9.008 sec]
+

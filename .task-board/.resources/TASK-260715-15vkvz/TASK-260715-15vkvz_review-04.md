@@ -1,0 +1,7 @@
+# TASK-260715-15vkvz review 04 — accepted
+
+Rework 03 closes the remaining P1 lost-notification race on both Apple seams. IOSVPNStatusObservation and MacOSVPNStatusObservation install NEVPNStatusDidChange before the authoritative status read; their locked registration and retirement handshake handles terminal-before-registration, terminal-during-registration, synchronous notification-before-token-return, notification-first, duplicate and late notification, cancellation, and deinitialization with exactly-once completion and token retirement. Prior FIFO operation serialization, exact NSNumber decoding, future-schema preservation, fresh-object authority, canonical least-data persistence, explicit enable behavior, and zero-write ownership guarantees remain intact.
+
+Independent validation: swift test --filter OwnedVPNManagerRepositoryTests passed 33 tests; the focused Thread Sanitizer run passed the same 33 tests with no sanitizer report; make validate-core passed 251 tests in 24 suites plus swift build; strict recursive Swift format lint, git diff check, and task-board validate passed. Attached current-code iOS Simulator and macOS generic build logs both end in BUILD SUCCEEDED. No blocking findings remain.
+
+Verdict: accepted; route TASK-260715-15vkvz Implement the owned NETunnelProviderManager repository to done.
