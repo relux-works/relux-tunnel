@@ -112,6 +112,9 @@ public enum RuntimeDiagnosticsSchema {
   public static let dnsLatencyBucketUpperBoundsMilliseconds: [UInt64] = [
     1, 5, 10, 25, 50, 100, 250, 500, 1_000, 2_500, 5_000, UInt64.max,
   ]
+  public static let tcpChannelOpenLatencyBucketUpperBoundsMilliseconds: [UInt64] = [
+    1, 5, 10, 25, 50, 100, 250, 500, 1_000, 2_500, 5_000, UInt64.max,
+  ]
 
   public static let counterNames: [String] = {
     let local = [
@@ -149,7 +152,11 @@ public enum RuntimeDiagnosticsSchema {
       "dns_drop_queue_full_total",
     ]
     let ssh = SSHMetricCounter.allCases.map(RuntimeDiagnosticsMetricMap.name)
-    return Array(Set(local + PacketBridgeMetricSchema.counters.keys + ssh)).sorted()
+    let tcp =
+      RuntimeTCPAdapterCounter.allCases.map(\.rawValue)
+      + TCPAdmissionPressureReason.allCases.map(RuntimeDiagnosticsMetricMap.tcpPressureCounter)
+      + TCPFlowTerminalReason.allCases.map(RuntimeDiagnosticsMetricMap.tcpTerminalCounter)
+    return Array(Set(local + PacketBridgeMetricSchema.counters.keys + ssh + tcp)).sorted()
   }()
 
   public static let gaugeNames: [String] = {
@@ -190,13 +197,102 @@ public enum RuntimeDiagnosticsSchema {
       "tcp_peak_flows",
     ]
     let ssh = SSHMetricGauge.allCases.map(RuntimeDiagnosticsMetricMap.name)
-    return Array(Set(local + PacketBridgeMetricSchema.gauges.keys + ssh)).sorted()
+    let tcp = RuntimeTCPAdapterGauge.allCases.map(\.rawValue)
+    return Array(Set(local + PacketBridgeMetricSchema.gauges.keys + ssh + tcp)).sorted()
   }()
 
-  public static let histogramNames = ["dns_latency_milliseconds"]
+  public static let histogramNames = [
+    "dns_latency_milliseconds", "tcp_channel_open_latency_milliseconds",
+  ]
 
   fileprivate static let counterNameSet = Set(counterNames)
   fileprivate static let gaugeNameSet = Set(gaugeNames)
+}
+
+/// A generation-scoped, fixed-size coalescing cell for authoritative TCP gauges.
+///
+/// The registry is the single writer for a generation. Publications use only
+/// atomics and never wait for the bounded diagnostics queue. Snapshot readers
+/// use the sequence as a seqlock so they never export a mixture of two registry
+/// states. A stale recorder owns a different cell and therefore cannot affect a
+/// later generation.
+private final class RuntimeTCPAdmissionGaugeReconciler: Sendable {
+  private let sequence = Atomic<UInt64>(0)
+  private let published = Atomic(false)
+  private let sessionHealthCode = Atomic<Int64>(0)
+  private let pendingHandshakes = Atomic<Int64>(0)
+  private let reservedFlows = Atomic<Int64>(0)
+  private let parsingFlows = Atomic<Int64>(0)
+  private let openingFlows = Atomic<Int64>(0)
+  private let streamingFlows = Atomic<Int64>(0)
+  private let halfClosedFlows = Atomic<Int64>(0)
+  private let openChannels = Atomic<Int64>(0)
+  private let reservedQueuedBytes = Atomic<Int64>(0)
+  private let adapterBufferedBytes = Atomic<Int64>(0)
+  private let localToSSHBufferedBytes = Atomic<Int64>(0)
+  private let sshToLocalBufferedBytes = Atomic<Int64>(0)
+  private let peakPendingHandshakes = Atomic<Int64>(0)
+  private let peakReservedFlows = Atomic<Int64>(0)
+  private let peakOpeningFlows = Atomic<Int64>(0)
+  private let peakOpenChannels = Atomic<Int64>(0)
+  private let peakReservedQueuedBytes = Atomic<Int64>(0)
+  private let peakAdapterBufferedBytes = Atomic<Int64>(0)
+
+  func publish(_ snapshot: TCPAdmissionGaugeSnapshot) {
+    _ = sequence.wrappingAdd(1, ordering: .acquiringAndReleasing)
+    sessionHealthCode.store(snapshot.sessionHealthCode, ordering: .relaxed)
+    pendingHandshakes.store(snapshot.pendingHandshakes, ordering: .relaxed)
+    reservedFlows.store(snapshot.reservedFlows, ordering: .relaxed)
+    parsingFlows.store(snapshot.parsingFlows, ordering: .relaxed)
+    openingFlows.store(snapshot.openingFlows, ordering: .relaxed)
+    streamingFlows.store(snapshot.streamingFlows, ordering: .relaxed)
+    halfClosedFlows.store(snapshot.halfClosedFlows, ordering: .relaxed)
+    openChannels.store(snapshot.openChannels, ordering: .relaxed)
+    reservedQueuedBytes.store(snapshot.reservedQueuedBytes, ordering: .relaxed)
+    adapterBufferedBytes.store(snapshot.adapterBufferedBytes, ordering: .relaxed)
+    localToSSHBufferedBytes.store(snapshot.localToSSHBufferedBytes, ordering: .relaxed)
+    sshToLocalBufferedBytes.store(snapshot.sshToLocalBufferedBytes, ordering: .relaxed)
+    peakPendingHandshakes.store(snapshot.peakPendingHandshakes, ordering: .relaxed)
+    peakReservedFlows.store(snapshot.peakReservedFlows, ordering: .relaxed)
+    peakOpeningFlows.store(snapshot.peakOpeningFlows, ordering: .relaxed)
+    peakOpenChannels.store(snapshot.peakOpenChannels, ordering: .relaxed)
+    peakReservedQueuedBytes.store(snapshot.peakReservedQueuedBytes, ordering: .relaxed)
+    peakAdapterBufferedBytes.store(snapshot.peakAdapterBufferedBytes, ordering: .relaxed)
+    published.store(true, ordering: .releasing)
+    _ = sequence.wrappingAdd(1, ordering: .releasing)
+  }
+
+  func load() -> TCPAdmissionGaugeSnapshot? {
+    guard published.load(ordering: .acquiring) else { return nil }
+    while true {
+      let before = sequence.load(ordering: .acquiring)
+      guard before.isMultiple(of: 2) else {
+        continue
+      }
+      let snapshot = TCPAdmissionGaugeSnapshot(
+        sessionHealthCode: sessionHealthCode.load(ordering: .relaxed),
+        pendingHandshakes: pendingHandshakes.load(ordering: .relaxed),
+        reservedFlows: reservedFlows.load(ordering: .relaxed),
+        parsingFlows: parsingFlows.load(ordering: .relaxed),
+        openingFlows: openingFlows.load(ordering: .relaxed),
+        streamingFlows: streamingFlows.load(ordering: .relaxed),
+        halfClosedFlows: halfClosedFlows.load(ordering: .relaxed),
+        openChannels: openChannels.load(ordering: .relaxed),
+        reservedQueuedBytes: reservedQueuedBytes.load(ordering: .relaxed),
+        adapterBufferedBytes: adapterBufferedBytes.load(ordering: .relaxed),
+        localToSSHBufferedBytes: localToSSHBufferedBytes.load(ordering: .relaxed),
+        sshToLocalBufferedBytes: sshToLocalBufferedBytes.load(ordering: .relaxed),
+        peakPendingHandshakes: peakPendingHandshakes.load(ordering: .relaxed),
+        peakReservedFlows: peakReservedFlows.load(ordering: .relaxed),
+        peakOpeningFlows: peakOpeningFlows.load(ordering: .relaxed),
+        peakOpenChannels: peakOpenChannels.load(ordering: .relaxed),
+        peakReservedQueuedBytes: peakReservedQueuedBytes.load(ordering: .relaxed),
+        peakAdapterBufferedBytes: peakAdapterBufferedBytes.load(ordering: .relaxed)
+      )
+      guard sequence.load(ordering: .acquiring) == before else { continue }
+      return snapshot
+    }
+  }
 }
 
 /// One generation-scoped update handle.
@@ -210,15 +306,18 @@ public final class RuntimeDiagnosticsRecorder: @unchecked Sendable, TunnelMetric
 
   private let store: RuntimeDiagnosticsStore
   private let droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
+  private let tcpAdmissionGauges: RuntimeTCPAdmissionGaugeReconciler
 
   fileprivate init(
     store: RuntimeDiagnosticsStore,
     runtimeGeneration: UInt64,
-    droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
+    droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter,
+    tcpAdmissionGauges: RuntimeTCPAdmissionGaugeReconciler
   ) {
     self.store = store
     self.runtimeGeneration = runtimeGeneration
     self.droppedUpdates = droppedUpdates
+    self.tcpAdmissionGauges = tcpAdmissionGauges
   }
 
   public func incrementCounter(named name: String, by amount: UInt64) async {
@@ -382,6 +481,61 @@ public final class RuntimeDiagnosticsRecorder: @unchecked Sendable, TunnelMetric
   }
 }
 
+extension RuntimeDiagnosticsRecorder: TCPAdmissionDiagnosticsSink {
+  public func recordTCPAdapterCounter(
+    _ counter: RuntimeTCPAdapterCounter,
+    by amount: UInt64
+  ) {
+    store.incrementCounter(
+      counter.rawValue,
+      by: amount,
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+  }
+
+  public func recordTCPAdmissionPressure(_ reason: TCPAdmissionPressureReason) {
+    store.incrementCounter(
+      RuntimeDiagnosticsMetricMap.tcpPressureCounter(reason),
+      by: 1,
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+  }
+
+  public func recordTCPFlowReserved() {
+    store.recordTCPFlowOpened(generation: runtimeGeneration, droppedUpdates: droppedUpdates)
+  }
+
+  public func recordTCPFlowReleased() {
+    store.recordTCPFlowClosed(generation: runtimeGeneration, droppedUpdates: droppedUpdates)
+  }
+
+  public func recordTCPFlowTerminal(_ reason: TCPFlowTerminalReason) {
+    store.incrementCounter(
+      RuntimeDiagnosticsMetricMap.tcpTerminalCounter(reason),
+      by: 1,
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+    if let aggregate = RuntimeDiagnosticsMetricMap.tcpTerminalAggregate(reason) {
+      recordTCPAdapterCounter(aggregate, by: 1)
+    }
+  }
+
+  public func recordTCPChannelOpenLatency(milliseconds: UInt64) {
+    store.recordTCPChannelOpenLatency(
+      milliseconds: milliseconds,
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+  }
+
+  public func publishTCPAdmissionGauges(_ snapshot: TCPAdmissionGaugeSnapshot) {
+    tcpAdmissionGauges.publish(snapshot)
+  }
+}
+
 extension RuntimeDiagnosticsRecorder: ProviderLifecycleDiagnosticsSink {
   public func recordProviderStopReason(rawValue: Int) {
     store.setGauge(
@@ -438,6 +592,7 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
     case tcpFlowOpened(UInt64)
     case tcpFlowClosed(UInt64)
     case dnsResult(RuntimeDNSResultClass, UInt64, UInt64)
+    case tcpChannelOpenLatency(UInt64, UInt64)
     case route(RuntimeRouteMode, Bool, UInt64)
     case memory(UInt64, UInt64, UInt64)
     case error(RuntimeDiagnosticErrorCode, UInt64)
@@ -450,6 +605,7 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
         .setGauge(_, _, let generation),
         .stateTransition(_, _, let generation),
         .dnsResult(_, _, let generation),
+        .tcpChannelOpenLatency(_, let generation),
         .route(_, _, let generation),
         .memory(_, _, let generation):
         generation
@@ -474,18 +630,25 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       repeating: UInt64.zero,
       count: RuntimeDiagnosticsSchema.dnsLatencyBucketUpperBoundsMilliseconds.count
     )
+    var tcpChannelOpenLatencyCounts = Array(
+      repeating: UInt64.zero,
+      count: RuntimeDiagnosticsSchema.tcpChannelOpenLatencyBucketUpperBoundsMilliseconds.count
+    )
     var errors: [RuntimeErrorDomain: RuntimeDiagnosticErrorCode] = [:]
     var hasAvailableMemorySample = false
     let droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
+    let tcpAdmissionGauges: RuntimeTCPAdmissionGaugeReconciler
 
     init(
       runtimeGeneration: UInt64,
       nextSnapshotSequence: UInt64 = 0,
-      droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter = .init()
+      droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter = .init(),
+      tcpAdmissionGauges: RuntimeTCPAdmissionGaugeReconciler = .init()
     ) {
       self.runtimeGeneration = runtimeGeneration
       self.nextSnapshotSequence = nextSnapshotSequence
       self.droppedUpdates = droppedUpdates
+      self.tcpAdmissionGauges = tcpAdmissionGauges
     }
   }
 
@@ -522,7 +685,8 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       RuntimeDiagnosticsRecorder(
         store: self,
         runtimeGeneration: state.runtimeGeneration,
-        droppedUpdates: state.droppedUpdates
+        droppedUpdates: state.droppedUpdates,
+        tcpAdmissionGauges: state.tcpAdmissionGauges
       )
     }
   }
@@ -542,7 +706,8 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       return RuntimeDiagnosticsRecorder(
         store: self,
         runtimeGeneration: runtimeGeneration,
-        droppedUpdates: state.droppedUpdates
+        droppedUpdates: state.droppedUpdates,
+        tcpAdmissionGauges: state.tcpAdmissionGauges
       )
     }
   }
@@ -556,6 +721,7 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
     return try stateQueue.sync {
       mergeDroppedUpdates()
       snapshotConstructionHook?()
+      reconcileTCPAdmissionGauges()
       guard let sequence = state.nextSnapshotSequence else {
         throw RuntimeDiagnosticsStoreError.snapshotSequenceExhausted(
           runtimeGeneration: state.runtimeGeneration
@@ -565,6 +731,10 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       let buckets = zip(
         RuntimeDiagnosticsSchema.dnsLatencyBucketUpperBoundsMilliseconds,
         state.dnsLatencyCounts
+      ).map(RuntimeDiagnosticBucket.init)
+      let tcpChannelOpenBuckets = zip(
+        RuntimeDiagnosticsSchema.tcpChannelOpenLatencyBucketUpperBoundsMilliseconds,
+        state.tcpChannelOpenLatencyCounts
       ).map(RuntimeDiagnosticBucket.init)
       return RuntimeDiagnosticsSnapshot(
         requestID: requestID,
@@ -576,7 +746,11 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
           "dns_latency_milliseconds": RuntimeDiagnosticHistogram(
             unit: .milliseconds,
             buckets: buckets
-          )
+          ),
+          "tcp_channel_open_latency_milliseconds": RuntimeDiagnosticHistogram(
+            unit: .milliseconds,
+            buckets: tcpChannelOpenBuckets
+          ),
         ],
         errors: state.errors.values
           .map(\.redactedError)
@@ -642,6 +816,17 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
     )
   }
 
+  fileprivate func recordTCPChannelOpenLatency(
+    milliseconds: UInt64,
+    generation: UInt64,
+    droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
+  ) {
+    enqueue(
+      .tcpChannelOpenLatency(milliseconds, generation),
+      droppedUpdates: droppedUpdates
+    )
+  }
+
   fileprivate func recordRoute(
     mode: RuntimeRouteMode,
     installed: Bool,
@@ -699,6 +884,7 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
           continuation.resume(returning: Self.emptyMetricsSnapshot())
           return
         }
+        reconcileTCPAdmissionGauges()
         continuation.resume(
           returning: TunnelMetricsSnapshot(
             schemaVersion: RuntimeDiagnosticsSchema.version,
@@ -755,6 +941,14 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       where latency <= RuntimeDiagnosticsSchema.dnsLatencyBucketUpperBoundsMilliseconds[index] {
         state.dnsLatencyCounts[index] = state.dnsLatencyCounts[index].saturatingAdding(1)
       }
+    case .tcpChannelOpenLatency(let latency, _):
+      for index in state.tcpChannelOpenLatencyCounts.indices
+      where latency
+        <= RuntimeDiagnosticsSchema.tcpChannelOpenLatencyBucketUpperBoundsMilliseconds[index]
+      {
+        state.tcpChannelOpenLatencyCounts[index] =
+          state.tcpChannelOpenLatencyCounts[index].saturatingAdding(1)
+      }
     case .route(let mode, let installed, _):
       state.gauges["route_mode_compatible"] = mode == .compatible ? 1 : 0
       state.gauges["route_mode_unknown"] = mode == .unknown ? 1 : 0
@@ -789,6 +983,12 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       "packet_bridge_reverse_datagram_max_bytes",
       "memory_physical_footprint_peak_bytes",
       "tcp_peak_flows",
+      RuntimeTCPAdapterGauge.peakPendingHandshakes.rawValue,
+      RuntimeTCPAdapterGauge.peakReservedFlows.rawValue,
+      RuntimeTCPAdapterGauge.peakOpeningFlows.rawValue,
+      RuntimeTCPAdapterGauge.peakOpenChannels.rawValue,
+      RuntimeTCPAdapterGauge.peakReservedQueuedBytes.rawValue,
+      RuntimeTCPAdapterGauge.peakAdapterBufferedBytes.rawValue,
       "hev_transmitted_packets",
       "hev_transmitted_bytes",
       "hev_received_packets",
@@ -809,6 +1009,42 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
   private func mergeDroppedUpdates() {
     let dropped = state.droppedUpdates.value.exchange(0, ordering: .relaxed)
     incrementKnownCounter("diagnostics_ingestion_drop_total", by: dropped)
+  }
+
+  private func reconcileTCPAdmissionGauges() {
+    guard let snapshot = state.tcpAdmissionGauges.load() else { return }
+    state.gauges[RuntimeTCPAdapterGauge.sessionHealthCode.rawValue] =
+      snapshot.sessionHealthCode
+    state.gauges[RuntimeTCPAdapterGauge.pendingHandshakes.rawValue] =
+      snapshot.pendingHandshakes
+    state.gauges[RuntimeTCPAdapterGauge.reservedFlows.rawValue] = snapshot.reservedFlows
+    state.gauges[RuntimeTCPAdapterGauge.parsingFlows.rawValue] = snapshot.parsingFlows
+    state.gauges[RuntimeTCPAdapterGauge.openingFlows.rawValue] = snapshot.openingFlows
+    state.gauges[RuntimeTCPAdapterGauge.streamingFlows.rawValue] = snapshot.streamingFlows
+    state.gauges[RuntimeTCPAdapterGauge.halfClosedFlows.rawValue] = snapshot.halfClosedFlows
+    state.gauges[RuntimeTCPAdapterGauge.openChannels.rawValue] = snapshot.openChannels
+    state.gauges[RuntimeTCPAdapterGauge.reservedQueuedBytes.rawValue] =
+      snapshot.reservedQueuedBytes
+    state.gauges[RuntimeTCPAdapterGauge.adapterBufferedBytes.rawValue] =
+      snapshot.adapterBufferedBytes
+    state.gauges[RuntimeTCPAdapterGauge.localToSSHBufferedBytes.rawValue] =
+      snapshot.localToSSHBufferedBytes
+    state.gauges[RuntimeTCPAdapterGauge.sshToLocalBufferedBytes.rawValue] =
+      snapshot.sshToLocalBufferedBytes
+    state.gauges[RuntimeTCPAdapterGauge.peakPendingHandshakes.rawValue] =
+      snapshot.peakPendingHandshakes
+    state.gauges[RuntimeTCPAdapterGauge.peakReservedFlows.rawValue] =
+      snapshot.peakReservedFlows
+    state.gauges[RuntimeTCPAdapterGauge.peakOpeningFlows.rawValue] =
+      snapshot.peakOpeningFlows
+    state.gauges[RuntimeTCPAdapterGauge.peakOpenChannels.rawValue] =
+      snapshot.peakOpenChannels
+    state.gauges[RuntimeTCPAdapterGauge.peakReservedQueuedBytes.rawValue] =
+      snapshot.peakReservedQueuedBytes
+    state.gauges[RuntimeTCPAdapterGauge.peakAdapterBufferedBytes.rawValue] =
+      snapshot.peakAdapterBufferedBytes
+    state.gauges["tcp_active_flows"] = snapshot.reservedFlows
+    state.gauges["tcp_peak_flows"] = snapshot.peakReservedFlows
   }
 
   private func incrementKnownCounter(_ name: String, by amount: UInt64) {
@@ -941,6 +1177,26 @@ private enum RuntimeDiagnosticsMetricMap {
     case .timeout: "dns_result_timeout_total"
     case .malformed: "dns_result_malformed_total"
     case .otherFailure: "dns_result_other_failure_total"
+    }
+  }
+
+  static func tcpPressureCounter(_ reason: TCPAdmissionPressureReason) -> String {
+    "tcp_pressure_reject_\(reason.rawValue)_total"
+  }
+
+  static func tcpTerminalCounter(_ reason: TCPFlowTerminalReason) -> String {
+    "tcp_terminal_\(reason.rawValue)_total"
+  }
+
+  static func tcpTerminalAggregate(
+    _ reason: TCPFlowTerminalReason
+  ) -> RuntimeTCPAdapterCounter? {
+    switch reason {
+    case .graceful: .flowsGracefulTotal
+    case .localReset, .remoteReset: .flowsResetTotal
+    case .cancelled: .flowsCancelledTotal
+    case .timeout: .flowsTimedOutTotal
+    default: nil
     }
   }
 }

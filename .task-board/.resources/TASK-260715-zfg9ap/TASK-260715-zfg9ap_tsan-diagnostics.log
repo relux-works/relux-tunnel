@@ -1,0 +1,32 @@
+Test Suite 'Selected tests' started at 2026-07-21 07:35:42.708.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 07:35:42.734.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 07:35:42.735.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 07:35:42.735.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.027) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Privacy-safe runtime diagnostics" started.
+􀟈  Test "maximum aggregate state remains well below the wire bound" started.
+􀟈  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" started.
+􀟈  Test "concurrent updates and requests return consistent bounded snapshots" started.
+􀟈  Test "typed sources project aggregate health flow DNS route memory SSH and errors" started.
+􀟈  Test "generation reset rejects stale handles and preserves monotonic counters" started.
+􀟈  Test "unknown high-cardinality labels are discarded without retention" started.
+􀟈  Test "schema v1 contains exactly the reviewed aggregate names" started.
+􀟈  Test "populated snapshot recursively contains only approved stable fields" started.
+􀟈  Test "populated output rejects prohibited nested values and identifiers" started.
+RUNTIME_DIAGNOSTICS_SCHEMA counters=138 gauges=75 histograms=2 errors=11
+􁁛  Test "schema v1 contains exactly the reviewed aggregate names" passed after 0.002 seconds.
+􁁛  Test "typed sources project aggregate health flow DNS route memory SSH and errors" passed after 0.003 seconds.
+􁁛  Test "generation reset rejects stale handles and preserves monotonic counters" passed after 0.004 seconds.
+􁁛  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" passed after 0.005 seconds.
+RUNTIME_DIAGNOSTICS_MAX_ENCODED_BYTES 13499
+􁁛  Test "populated snapshot recursively contains only approved stable fields" passed after 0.005 seconds.
+􁁛  Test "maximum aggregate state remains well below the wire bound" passed after 0.006 seconds.
+􁁛  Test "populated output rejects prohibited nested values and identifiers" passed after 0.014 seconds.
+􁁛  Test "concurrent updates and requests return consistent bounded snapshots" passed after 0.040 seconds.
+􁁛  Test "unknown high-cardinality labels are discarded without retention" passed after 0.185 seconds.
+􁁛  Suite "Privacy-safe runtime diagnostics" passed after 0.185 seconds.
+􁁛  Test run with 9 tests in 1 suite passed after 0.186 seconds.

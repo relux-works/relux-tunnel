@@ -1,0 +1,28 @@
+Test Suite 'Selected tests' started at 2026-07-21 07:35:28.307.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-07-21 07:35:28.335.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-07-21 07:35:28.335.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-21 07:35:28.335.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.028) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Bounded TCP admission and metrics" started.
+􀟈  Test "runtime snapshots reset by generation and contain aggregate TCP fields only" started.
+􀟈  Test "concurrent flow and opening races never exceed capacity" started.
+􀟈  Test "below at and above every independent ceiling reject deterministically" started.
+􀟈  Test "concurrent handshake and queued-byte races honor independent ceilings" started.
+􀟈  Test "pressure reject cannot open SSH or disturb an admitted flow" started.
+􀟈  Test "configuration validates every injectable evidence gate" started.
+􀟈  Test "open failure terminal race releases each reservation once" started.
+􀟈  Test "every terminal reason and repeated churn return exact baseline" started.
+􁁛  Test "pressure reject cannot open SSH or disturb an admitted flow" passed after 0.007 seconds.
+􁁛  Test "open failure terminal race releases each reservation once" passed after 0.007 seconds.
+􁁛  Test "configuration validates every injectable evidence gate" passed after 0.015 seconds.
+􁁛  Test "below at and above every independent ceiling reject deterministically" passed after 0.015 seconds.
+􁁛  Test "runtime snapshots reset by generation and contain aggregate TCP fields only" passed after 0.020 seconds.
+􁁛  Test "concurrent handshake and queued-byte races honor independent ceilings" passed after 0.020 seconds.
+􁁛  Test "concurrent flow and opening races never exceed capacity" passed after 0.021 seconds.
+􁁛  Test "every terminal reason and repeated churn return exact baseline" passed after 0.032 seconds.
+􁁛  Suite "Bounded TCP admission and metrics" passed after 0.033 seconds.
+􁁛  Test run with 8 tests in 1 suite passed after 0.033 seconds.

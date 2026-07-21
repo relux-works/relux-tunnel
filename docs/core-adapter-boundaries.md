@@ -38,6 +38,31 @@ and an exclusive endpoint-B borrow that is joined before B then A are closed.
 It uses the shared `PacketFlowAdapterBoundary` for the public
 `NEPacketTunnelFlow` callback transition and contains no utun discovery.
 
+## Implemented bounded TCP admission
+
+`ReluxTunnelCore` owns a generation-scoped `TCPAdmissionRegistry` with
+caller-injected handshake, reserved-flow, concurrent-open, and aggregate
+queued-byte ceilings. Flow configuration is rejected unless it remains under
+both the injected measured-safe flow ceiling and HEV session ceiling. Atomic
+reservation tokens account for parsing, opening, streaming, half-closed,
+channel, directional-buffer, byte-total, peak, pressure, and finite terminal
+state without choosing an SSH engine or implementing downstream close policy.
+Identifiers are never reused within a generation; allocation fails closed with
+a finite capacity reason before `UInt64` wrap can create an ABA collision.
+
+Admission is non-waiting and has no side queue. A pressure rejection carries
+the documented SOCKS5 general-failure reply (`REP=01`) and
+`shouldOpenSSHChannel=false`, so callers can fail quickly before invoking the
+SSH transport. Runtime snapshots use only fixed aggregate counters, gauges,
+terminal/pressure tokens, and channel-open latency buckets; the API accepts no
+hostname, address, port, payload, credential, flow ID, or destination label.
+Registry current-state gauges use one fixed-size generation-scoped atomic
+coalescer. Snapshot reconciliation therefore converges to the registry's latest
+absolute state even when the separately bounded event lane drops intermediate
+counter or histogram updates; the ingestion-drop counter remains observable.
+Counters and histogram buckets remain saturating monotonic totals of accepted
+ingestion events and may conservatively undercount when that signal increases.
+
 ## Deliberately deferred behavior
 
 - Real HEV startup/quit/join integration, MTU selection, and final socket-buffer

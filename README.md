@@ -33,7 +33,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
   bounded deterministic v1 runtime configuration/message codecs, and the
   injectable owned `NETunnelProviderManager` repository plus a generation-safe
   host session controller whose system status and provider capability authorities
-  remain separate behind thin public-API host seams; the module boundaries are mapped in
+  remain separate behind thin public-API host seams. Core also contains the
+  injectable, non-waiting TCP handshake/flow/open/queued-byte admission registry
+  and its fixed-cardinality aggregate diagnostics; the module boundaries are mapped in
   [`docs/core-adapter-boundaries.md`](docs/core-adapter-boundaries.md).
 - **Native dependencies**: pinned custom-build C graphs use source-rebuilt
   static XCFrameworks behind `ReluxTunnelNativeAdapter`; see

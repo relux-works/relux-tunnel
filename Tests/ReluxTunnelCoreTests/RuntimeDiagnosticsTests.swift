@@ -111,6 +111,17 @@ struct RuntimeDiagnosticsTests {
       "ssh_window_adjustments_total",
       "ssh_write_backpressure_waits_total",
     ]
+    let tcpCounters =
+      RuntimeTCPAdapterCounter.allCases.map(\.rawValue)
+      + [
+        "tcp_pressure_reject_flow_capacity_total",
+        "tcp_pressure_reject_handshake_capacity_total",
+        "tcp_pressure_reject_identifier_capacity_total",
+        "tcp_pressure_reject_opening_capacity_total",
+        "tcp_pressure_reject_queued_byte_capacity_total",
+        "tcp_pressure_reject_session_unavailable_total",
+      ]
+      + TCPFlowTerminalReason.allCases.map { "tcp_terminal_\($0.rawValue)_total" }
     let localGauges = [
       "component_coordinator_health_code",
       "component_dns_health_code",
@@ -174,24 +185,30 @@ struct RuntimeDiagnosticsTests {
       "ssh_queued_write_bytes",
       "ssh_remaining_receive_window_bytes",
     ]
+    let tcpGauges = RuntimeTCPAdapterGauge.allCases.map(\.rawValue)
 
     #expect(RuntimeDiagnosticsSchema.version == 1)
     #expect(
       RuntimeDiagnosticsSchema.counterNames
-        == (localCounters + packetCounters + sshCounters).sorted()
+        == (localCounters + packetCounters + sshCounters + tcpCounters).sorted()
     )
     #expect(
-      RuntimeDiagnosticsSchema.gaugeNames == (localGauges + packetGauges + sshGauges).sorted()
+      RuntimeDiagnosticsSchema.gaugeNames
+        == (localGauges + packetGauges + sshGauges + tcpGauges).sorted()
     )
-    #expect(RuntimeDiagnosticsSchema.histogramNames == ["dns_latency_milliseconds"])
+    #expect(
+      RuntimeDiagnosticsSchema.histogramNames == [
+        "dns_latency_milliseconds", "tcp_channel_open_latency_milliseconds",
+      ]
+    )
     #expect(
       RuntimeDiagnosticsSchema.dnsLatencyBucketUpperBoundsMilliseconds
         == [1, 5, 10, 25, 50, 100, 250, 500, 1_000, 2_500, 5_000, UInt64.max]
     )
     #expect(RuntimeDiagnosticsSchema.maximumErrors == 10)
     #expect(RuntimeDiagnosticsSchema.maximumPendingUpdates == 256)
-    #expect(RuntimeDiagnosticsSchema.counterNames.count == 97)
-    #expect(RuntimeDiagnosticsSchema.gaugeNames.count == 57)
+    #expect(RuntimeDiagnosticsSchema.counterNames.count == 139)
+    #expect(RuntimeDiagnosticsSchema.gaugeNames.count == 75)
     #expect(
       RuntimeDiagnosticsSchema.errorCodes.map { "\($0.domain.rawValue):\($0.rawValue)" } == [
         "configuration:configuration_invalid",
@@ -207,7 +224,7 @@ struct RuntimeDiagnosticsTests {
         "protocol:protocol_unsupported",
       ]
     )
-    print("RUNTIME_DIAGNOSTICS_SCHEMA counters=97 gauges=57 histograms=1 errors=11")
+    print("RUNTIME_DIAGNOSTICS_SCHEMA counters=139 gauges=75 histograms=2 errors=11")
     #expect(
       (RuntimeDiagnosticsSchema.counterNames + RuntimeDiagnosticsSchema.gaugeNames
         + RuntimeDiagnosticsSchema.histogramNames).allSatisfy {
@@ -244,7 +261,11 @@ struct RuntimeDiagnosticsTests {
     #expect(object["schemaVersion"] as? Int == 1)
 
     let histograms = try #require(object["histograms"] as? [String: Any])
-    #expect(Set(histograms.keys) == ["dns_latency_milliseconds"])
+    #expect(
+      Set(histograms.keys) == [
+        "dns_latency_milliseconds", "tcp_channel_open_latency_milliseconds",
+      ]
+    )
     let histogram = try #require(
       histograms["dns_latency_milliseconds"] as? [String: Any]
     )
@@ -394,8 +415,8 @@ struct RuntimeDiagnosticsTests {
     await recorder.setGauge(named: "ssh_pending_reads", to: -1)
 
     let snapshot = try store.snapshot()
-    #expect(snapshot.counters.count == 97)
-    #expect(snapshot.gauges.count == 57)
+    #expect(snapshot.counters.count == 139)
+    #expect(snapshot.gauges.count == 75)
     let rejected = try #require(
       snapshot.counters["diagnostics_rejected_metric_update_total"]
     )
