@@ -18,7 +18,9 @@ jobs:
     name: board + spec validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Validate workflow YAML
         run: |
@@ -67,3 +69,74 @@ jobs:
           print(f"checked {n} board elements")
           sys.exit(1 if bad or n == 0 else 0)
           PY
+
+  relay-toolchain:
+    name: pinned offline relay toolchain
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Verify checked-in pins and missing-input failure
+        run: make relay-toolchain-check relay-toolchain-negative-test
+
+      - name: Fetch the approved checksum-pinned Go input
+        run: |
+          mkdir -p .temp/relay-tools
+          read -r go_archive go_sha go_url <<EOF
+          $(python3 -c 'import json; d=json.load(open("relay/toolchain-manifest-v1.json")); x=next(v for v in d["hostToolArchives"] if v["host"] == "linux/amd64"); print(x["artifact"], x["sha256"], x["source"])')
+          EOF
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output ".temp/relay-tools/$go_archive" "$go_url"
+          printf '%s  %s\n' "$go_sha" ".temp/relay-tools/$go_archive" | sha256sum --check --strict
+          make relay-provision-go RELAY_GO_ARCHIVE=".temp/relay-tools/$go_archive"
+
+      - name: Test, vet, license-extract, and clean-build all four targets offline
+        run: |
+          source_date_epoch=$(git show -s --format=%ct HEAD)
+          make relay-toolchain-ci \
+            RELAY_VERSION=0.0.0 \
+            SOURCE_COMMIT="$GITHUB_SHA" \
+            SOURCE_DATE_EPOCH="$source_date_epoch" \
+            RELAY_BUILD_CLEAN_FLAG=--require-clean
+
+      - name: Smoke Linux amd64 natively as the unprivileged runner user
+        run: |
+          make relay-toolchain-native-linux-smoke \
+            RELAY_VERSION=0.0.0 \
+            SOURCE_COMMIT="$GITHUB_SHA"
+
+  relay-toolchain-linux-arm64-runtime:
+    name: native Linux arm64 relay runtime
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Verify checked-in pins and exact missing-input failures
+        run: make relay-toolchain-check relay-toolchain-negative-test
+
+      - name: Fetch the approved checksum-pinned arm64 Go input
+        run: |
+          mkdir -p .temp/relay-tools
+          read -r go_archive go_sha go_url <<EOF
+          $(python3 -c 'import json; d=json.load(open("relay/toolchain-manifest-v1.json")); x=next(v for v in d["hostToolArchives"] if v["host"] == "linux/arm64"); print(x["artifact"], x["sha256"], x["source"])')
+          EOF
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output ".temp/relay-tools/$go_archive" "$go_url"
+          printf '%s  %s\n' "$go_sha" ".temp/relay-tools/$go_archive" | sha256sum --check --strict
+          make relay-provision-go RELAY_GO_ARCHIVE=".temp/relay-tools/$go_archive"
+
+      - name: Clean-build and smoke Linux arm64 offline as an unprivileged user
+        run: |
+          source_date_epoch=$(git show -s --format=%ct HEAD)
+          make relay-build-linux-arm64 \
+            RELAY_VERSION=0.0.0 \
+            SOURCE_COMMIT="$GITHUB_SHA" \
+            SOURCE_DATE_EPOCH="$source_date_epoch" \
+            RELAY_BUILD_CLEAN_FLAG=--require-clean
+          make relay-toolchain-native-linux-smoke \
+            RELAY_VERSION=0.0.0 \
+            SOURCE_COMMIT="$GITHUB_SHA"

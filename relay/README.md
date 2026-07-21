@@ -4,6 +4,83 @@ Go implementation root for `relux-relay` (relay protocol v1). The authoritative
 module is pinned to Go 1.26.5, the standard library only, `CGO_ENABLED=0`, and
 `github.com/relux-works/relux-tunnel/relay`.
 
+## Pinned portable build toolchain
+
+`toolchain-manifest-v1.json` is the checked-in toolchain contract. It pins the
+official Go 1.26.5 `gc` compiler and internal linker, every supported host
+archive and SHA-256, the standard-library-only module lock, the absence of a C
+SDK/sysroot, all four target/CPU baselines, minimum runtimes, linkage policy,
+license identifiers and hashes, deterministic flags, CI action revision, and
+the isolated cache/credential policy. `make relay-toolchain-check` rejects
+manifest, `go.mod`, target, archive, license, or environment drift without
+needing a Go installation or network access.
+
+After downloading the one official Go archive for the build host, provision it
+with the matching command below. Provisioning verifies the manifest-owned
+archive name and SHA-256, retains the archive, compares the installed driver,
+compiler, linker, runtime, standard-library sources, permissions, and every other
+installed tree entry against the archive, and writes a path-free provenance
+receipt. Missing, added, changed, duplicate, traversing, link, device, or other
+unsafe entries fail closed. No build command downloads a toolchain or module.
+
+```sh
+make relay-provision-go \
+  RELAY_GO_ARCHIVE=.temp/relay-tools/go1.26.5.darwin-arm64.tar.gz
+```
+
+Set immutable source inputs once. `SOURCE_COMMIT` is the exact 40-character
+lowercase commit represented by the binary. Release/CI callers additionally set
+`RELAY_BUILD_CLEAN_FLAG=--require-clean`, which requires that value to equal
+`HEAD` and rejects any tracked or untracked source change. The example epoch is
+the selected commit time; the binary contains no timestamp.
+
+```sh
+export RELAY_VERSION=0.1.0
+export SOURCE_COMMIT=0123456789abcdef0123456789abcdef01234567
+export SOURCE_DATE_EPOCH=1784563200
+```
+
+There is one canonical clean command per target:
+
+```sh
+make relay-build-darwin-amd64 RELAY_VERSION="$RELAY_VERSION" SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" RELAY_BUILD_CLEAN_FLAG=--require-clean
+make relay-build-darwin-arm64 RELAY_VERSION="$RELAY_VERSION" SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" RELAY_BUILD_CLEAN_FLAG=--require-clean
+make relay-build-linux-amd64 RELAY_VERSION="$RELAY_VERSION" SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" RELAY_BUILD_CLEAN_FLAG=--require-clean
+make relay-build-linux-arm64 RELAY_VERSION="$RELAY_VERSION" SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" RELAY_BUILD_CLEAN_FLAG=--require-clean
+```
+
+Clean mode is the default and deletes only that target's output and workspace
+below `.build/relay/`. For local incremental iteration, append
+`RELAY_CACHE_MODE=incremental`; it reuses only the same target-scoped workspace.
+Both modes reject a workspace root or isolated environment child that is a
+symlink or another non-directory type. Each resolved child must remain below the
+resolved target workspace before it is exposed to the compiler.
+Every mode constructs an environment allowlist with repository-local `HOME`,
+`TMPDIR`, `GOCACHE`, `GOMODCACHE`, and `GOPATH`; sets `GOTOOLCHAIN=local`,
+`GOPROXY=off`, `GOSUMDB=off`, `GOVCS=off`, `GOENV=off`, `GOWORK=off`,
+`CGO_ENABLED=0`, `LC_ALL=C`, `LANG=C`, and `TZ=UTC`; and does not inherit SSH,
+cloud, workstation-home, credential-helper, or proxy configuration.
+
+Run the complete local/CI gate and extract dependency licenses with:
+
+```sh
+make relay-toolchain-ci RELAY_VERSION="$RELAY_VERSION" SOURCE_COMMIT="$SOURCE_COMMIT" SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH"
+make relay-toolchain-licenses
+```
+
+The CI gate verifies pins, deliberate missing-input failure, pinned tests and
+vet, offline dependency behavior, all four clean builds, binary metadata,
+linkage, and license extraction. Linux outputs are static ELF64 executables with
+no `PT_INTERP`, `PT_DYNAMIC`, libc, SDK, or sysroot. No Linux kernel-version
+floor is claimed from static linkage alone. CI instead clean-builds and executes
+native unprivileged smoke rows on the declared Ubuntu 24.04 x86_64 and arm64
+fixtures documented in the
+[GitHub-hosted runners reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
+Darwin outputs use no build SDK/sysroot, carry an exact macOS 12.0
+`LC_BUILD_VERSION`, and load only `libSystem.B.dylib` and
+`libresolv.9.dylib`. Signing, notarization, packaging, upload, and installation
+remain separate tasks.
+
 ## Target shells
 
 - `cmd/relux-relay` provides only `smoke`, a deterministic JSON metadata and
@@ -46,8 +123,9 @@ archive name for the current Darwin/Linux amd64/arm64 host, verify the pinned
 upstream SHA-256, retain the verified archive beside the installed tool, and
 write a canonical path-free provenance receipt. Release builds recheck the
 archive, compare the installed Go driver/compiler/linker and Syft executable
-against archive members, require `GOTOOLCHAIN=local`, and validate exact tool
-identity. Go is pinned to `go1.26.5`; Syft is pinned to 1.48.0 commit
+against archive members, compare the complete installed Go tree, require
+`GOTOOLCHAIN=local`, and validate exact tool identity. Go is pinned to
+`go1.26.5`; Syft is pinned to 1.48.0 commit
 `3e2bc6ed095f7ec1a415fb38cfe1c319e95dfed6`. The accepted checksums for all
 four provisioning hosts are declared in `scripts/relay_release.py`. Replace
 `darwin-arm64` / `darwin_arm64` in the example with the current supported host
@@ -61,9 +139,9 @@ platform is missing or mismatched.
 
 The default Apple bundle input is `.build/relay/apple-bundle-input`; query it
 with `make relay-print-apple-bundle-input`. Cross-built Linux binaries are not
-executed on macOS. Native Linux amd64, Linux arm64, macOS arm64, and Intel macOS
-runtime rows remain mandatory release-CI gates; Rosetta is recorded only as
-additional local evidence.
+executed on macOS. This repository CI owns native unprivileged Ubuntu 24.04
+amd64 and arm64 smoke rows. Native macOS arm64 and Intel macOS runtime rows
+remain release gates; Rosetta is recorded only as additional local evidence.
 
 Current protocol contents:
 

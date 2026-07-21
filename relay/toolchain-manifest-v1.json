@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "module": {
+    "path": "github.com/relux-works/relux-tunnel/relay",
+    "directory": "relay",
+    "goDirective": "1.26.0",
+    "toolchainDirective": "go1.26.5",
+    "lockFile": "relay/go.mod",
+    "lockFileSha256": "bd56300ba5f8e2263128ac97c6852ea42770644808a14d54a04113f23200deb6",
+    "dependencyPolicy": "standard-library-only"
+  },
+  "compiler": {
+    "distribution": "official-go",
+    "name": "gc",
+    "version": "go1.26.5",
+    "driver": "go",
+    "compilerExecutable": "pkg/tool/<host>/compile",
+    "linker": "Go internal linker",
+    "linkerExecutable": "pkg/tool/<host>/link",
+    "linkMode": "internal",
+    "cgoEnabled": false,
+    "sdk": "none",
+    "sysroot": "none"
+  },
+  "hostToolArchives": [
+    {
+      "host": "darwin/amd64",
+      "artifact": "go1.26.5.darwin-amd64.tar.gz",
+      "sha256": "6231d8d3b8f5552ec6cbf6d685bdd5482e1e703214b120e89b3bf0d7bf1ef725",
+      "source": "https://go.dev/dl/go1.26.5.darwin-amd64.tar.gz"
+    },
+    {
+      "host": "darwin/arm64",
+      "artifact": "go1.26.5.darwin-arm64.tar.gz",
+      "sha256": "efb87ff28af9a188d0536ef5d42e63dd52ba8263cd7344a993cc48dd11dedb6a",
+      "source": "https://go.dev/dl/go1.26.5.darwin-arm64.tar.gz"
+    },
+    {
+      "host": "linux/amd64",
+      "artifact": "go1.26.5.linux-amd64.tar.gz",
+      "sha256": "5c2c3b16caefa1d968a94c1daca04a7ca301a496d9b086e17ad77bb81393f053",
+      "source": "https://go.dev/dl/go1.26.5.linux-amd64.tar.gz"
+    },
+    {
+      "host": "linux/arm64",
+      "artifact": "go1.26.5.linux-arm64.tar.gz",
+      "sha256": "fe4789e92b1f33358680864bbe8704289e7bb5fc207d80623c308935bd696d49",
+      "source": "https://go.dev/dl/go1.26.5.linux-arm64.tar.gz"
+    }
+  ],
+  "buildOnlyTools": [
+    {
+      "name": "syft",
+      "version": "1.48.0",
+      "revision": "3e2bc6ed095f7ec1a415fb38cfe1c319e95dfed6",
+      "license": "Apache-2.0",
+      "purpose": "release SBOM generation only; not used by portable target builds",
+      "hostArchives": [
+        {
+          "host": "darwin/amd64",
+          "artifact": "syft_1.48.0_darwin_amd64.tar.gz",
+          "sha256": "dc7b2135fa5591003596df4ddb3408f499b68174f5e7dc1c77a373b753463182",
+          "source": "https://github.com/anchore/syft/releases/download/v1.48.0/syft_1.48.0_darwin_amd64.tar.gz"
+        },
+        {
+          "host": "darwin/arm64",
+          "artifact": "syft_1.48.0_darwin_arm64.tar.gz",
+          "sha256": "fef3e6d5df336a0a4c3e421e503119d1e221cf82a3ef5e426a791fcd81667e87",
+          "source": "https://github.com/anchore/syft/releases/download/v1.48.0/syft_1.48.0_darwin_arm64.tar.gz"
+        },
+        {
+          "host": "linux/amd64",
+          "artifact": "syft_1.48.0_linux_amd64.tar.gz",
+          "sha256": "6cef9a7f37220d9067eaf9cfaaa2fce986e9f320a8d42cbc36658c99af78ea04",
+          "source": "https://github.com/anchore/syft/releases/download/v1.48.0/syft_1.48.0_linux_amd64.tar.gz"
+        },
+        {
+          "host": "linux/arm64",
+          "artifact": "syft_1.48.0_linux_arm64.tar.gz",
+          "sha256": "6865a3d97c4e28b4b38571c17a2bf512da4494ef1d37613c3122fce0d67e63b0",
+          "source": "https://github.com/anchore/syft/releases/download/v1.48.0/syft_1.48.0_linux_arm64.tar.gz"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Go standard library",
+      "revision": "go1.26.5",
+      "sourceHashAuthority": "hostToolArchives[].sha256",
+      "license": "BSD-3-Clause",
+      "licenseFile": "GOROOT/LICENSE",
+      "licenseSha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+    },
+    {
+      "name": "Relux Tunnel relay source",
+      "revision": "SOURCE_COMMIT (required 40-character lowercase Git commit input)",
+      "sourceHashAuthority": "Git object database plus relay/go.mod lockFileSha256",
+      "license": "MIT",
+      "licenseFile": "LICENSE",
+      "licenseSha256": "b50c3ae8807afbaf21a331e3c91cf026c611b325c48a3b0bafc57856b48cc2b3"
+    }
+  ],
+  "targets": [
+    {
+      "canonicalTarget": "x86_64-apple-darwin",
+      "goTarget": "darwin/amd64",
+      "cpuBaseline": "GOAMD64=v1",
+      "minimumRuntime": "macOS 12.0",
+      "libc": "system libSystem ABI",
+      "dynamicLibraries": [
+        "/usr/lib/libSystem.B.dylib",
+        "/usr/lib/libresolv.9.dylib"
+      ],
+      "sdk": "none; Go internal linker emits LC_BUILD_VERSION minos/sdk 12.0",
+      "sysroot": "none"
+    },
+    {
+      "canonicalTarget": "aarch64-apple-darwin",
+      "goTarget": "darwin/arm64",
+      "cpuBaseline": "GOARM64=v8.0",
+      "minimumRuntime": "macOS 12.0",
+      "libc": "system libSystem ABI",
+      "dynamicLibraries": [
+        "/usr/lib/libSystem.B.dylib",
+        "/usr/lib/libresolv.9.dylib"
+      ],
+      "sdk": "none; Go internal linker emits LC_BUILD_VERSION minos/sdk 12.0",
+      "sysroot": "none"
+    },
+    {
+      "canonicalTarget": "x86_64-unknown-linux",
+      "goTarget": "linux/amd64",
+      "cpuBaseline": "GOAMD64=v1",
+      "minimumRuntime": "Ubuntu 24.04 native CI fixture; no kernel-version floor claimed",
+      "runtimeFixture": "GitHub Actions ubuntu-24.04 x86_64 runner",
+      "libc": "none",
+      "dynamicLibraries": [],
+      "sdk": "none",
+      "sysroot": "none"
+    },
+    {
+      "canonicalTarget": "aarch64-unknown-linux",
+      "goTarget": "linux/arm64",
+      "cpuBaseline": "GOARM64=v8.0",
+      "minimumRuntime": "Ubuntu 24.04 native CI fixture; no kernel-version floor claimed",
+      "runtimeFixture": "GitHub Actions ubuntu-24.04-arm arm64 runner",
+      "libc": "none",
+      "dynamicLibraries": [],
+      "sdk": "none",
+      "sysroot": "none"
+    }
+  ],
+  "build": {
+    "package": "./cmd/relux-relay",
+    "flags": [
+      "-mod=readonly",
+      "-trimpath",
+      "-buildvcs=false",
+      "-tags=netgo,osusergo",
+      "-ldflags=-s -w -buildid= -linkmode=internal -X <module>/internal/buildinfo.Version=<RELAY_VERSION> -X <module>/internal/buildinfo.Commit=<SOURCE_COMMIT>"
+    ],
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "CGO_ENABLED": "0",
+      "GOENV": "off",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOVCS": "off",
+      "LC_ALL": "C",
+      "LANG": "C",
+      "TZ": "UTC",
+      "SOURCE_DATE_EPOCH": "required non-negative integer command input"
+    },
+    "cachePolicy": "HOME, TMPDIR, GOCACHE, GOMODCACHE, and GOPATH are target-scoped below .build/relay/work; roots and children are no-follow checked directories whose resolved paths must remain below the target workspace; clean mode deletes that target workspace, incremental mode reuses only that workspace",
+    "credentialPolicy": "the build environment is an allowlist and never inherits workstation HOME, SSH_AUTH_SOCK, credential helpers, cloud credentials, or Go proxy settings"
+  },
+  "runtimeContract": {
+    "privilege": "unprivileged user",
+    "linuxLinkage": "static ELF with no PT_INTERP or PT_DYNAMIC",
+    "linuxRuntimeEvidence": "native smoke on declared Ubuntu 24.04 x86_64 and arm64 CI fixtures; no older kernel compatibility claim",
+    "darwinLinkage": "Mach-O with only libSystem and libresolv dynamic loads and minimum OS 12.0",
+    "codeSigning": "out of scope; binaries are later embedded in the signed Apple application bundle"
+  },
+  "ci": {
+    "runner": "ubuntu-24.04",
+    "checkoutAction": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "checkoutActionVersion": "v7.0.1",
+    "checkoutActionSource": "https://github.com/actions/checkout/releases/tag/v7.0.1",
+    "networkBoundary": "network is permitted only for the checksum-pinned host Go archive fetch; provisioning, tests, native smoke, and all four builds run with Go network resolution disabled",
+    "nativeRuntimeFixtures": [
+      {
+        "target": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "command": "make relay-toolchain-native-linux-smoke",
+        "source": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners"
+      },
+      {
+        "target": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "command": "make relay-toolchain-native-linux-smoke",
+        "source": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners"
+      }
+    ]
+  }
+}

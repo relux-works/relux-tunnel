@@ -7,7 +7,11 @@
 	relay-protocol-hostile-diagnostics relay-protocol-check \
 	relay-shell-test relay-shell-vet relay-shell-build relay-shell-release \
 	relay-shell-verify relay-shell-smoke relay-shell-reproducibility relay-shell-validate \
-	relay-provision-go relay-provision-syft relay-provision-tools relay-print-apple-bundle-input
+	relay-provision-go relay-provision-syft relay-provision-tools relay-print-apple-bundle-input \
+	relay-toolchain-check relay-toolchain-test relay-toolchain-negative-test \
+	relay-build-darwin-amd64 relay-build-darwin-arm64 relay-build-linux-amd64 \
+	relay-build-linux-arm64 relay-toolchain-build-all relay-toolchain-licenses \
+	relay-toolchain-native-linux-smoke relay-toolchain-ci
 
 LEGACY_ROOT ?= ../relux-proxy
 
@@ -86,10 +90,17 @@ RELAY_GO_ARCHIVE ?=
 RELAY_SYFT_ARCHIVE ?=
 RELAY_VERSION ?=
 SOURCE_COMMIT ?=
+SOURCE_DATE_EPOCH ?=
 RELAY_APPLE_BUNDLE_INPUT ?= .build/relay/apple-bundle-input
 RELAY_PROTOCOL_TEST_OUTPUT ?= .build/relay/protocol-tests
 RELAY_REPRO_BUNDLE_INPUT ?= .build/relay/repro/apple-bundle-input
 RELAY_REPRO_TEST_OUTPUT ?= .build/relay/repro/protocol-tests
+RELAY_PORTABLE_ROOT ?= .build/relay/portable
+RELAY_PORTABLE_WORK_ROOT ?= .build/relay/work/portable
+RELAY_TOOLCHAIN_LICENSE_OUTPUT ?= .build/relay/toolchain-licenses
+RELAY_CACHE_MODE ?= clean
+RELAY_BUILD_CLEAN_FLAG ?=
+RELAY_DEV_WORK ?= $(CURDIR)/.build/relay/work/development
 
 RELAY_BUILD_ARGUMENTS = \
 	--go "$(RELAY_GO)" \
@@ -97,21 +108,35 @@ RELAY_BUILD_ARGUMENTS = \
 	--syft "$(RELAY_SYFT)" \
 	--relay-version "$(RELAY_VERSION)" \
 	--source-commit "$(SOURCE_COMMIT)" \
+	--source-date-epoch "$(SOURCE_DATE_EPOCH)" \
 	--require-provenance
 
 RELAY_GO_ENV = \
 	GOROOT="$(RELAY_GOROOT)" \
 	GOTOOLCHAIN="$(RELAY_GO_TOOLCHAIN)" \
 	GOENV=off \
-	GOCACHE="$(CURDIR)/.temp/relay-go-cache" \
-	GOPATH="$(CURDIR)/.temp/relay-go-path" \
+	GOWORK=off \
+	GOPROXY=off \
+	GOSUMDB=off \
+	GOVCS=off \
+	HOME="$(RELAY_DEV_WORK)/home" \
+	TMPDIR="$(RELAY_DEV_WORK)/tmp" \
+	GOCACHE="$(RELAY_DEV_WORK)/go-build-cache" \
+	GOMODCACHE="$(RELAY_DEV_WORK)/go-module-cache" \
+	GOPATH="$(RELAY_DEV_WORK)/go-path" \
+	LC_ALL=C \
+	LANG=C \
+	TZ=UTC \
+	SOURCE_DATE_EPOCH="$${SOURCE_DATE_EPOCH:-0}" \
 	CGO_ENABLED=0
 
 relay-shell-test:
+	mkdir -p "$(RELAY_DEV_WORK)/home" "$(RELAY_DEV_WORK)/tmp" "$(RELAY_DEV_WORK)/go-build-cache" "$(RELAY_DEV_WORK)/go-module-cache" "$(RELAY_DEV_WORK)/go-path"
 	cd relay && RELUX_TUNNEL_REPO_ROOT="$(CURDIR)" $(RELAY_GO_ENV) "$(RELAY_GO)" test ./...
 	python3 -m unittest scripts/tests/test_relay_release.py
 
 relay-shell-vet:
+	mkdir -p "$(RELAY_DEV_WORK)/home" "$(RELAY_DEV_WORK)/tmp" "$(RELAY_DEV_WORK)/go-build-cache" "$(RELAY_DEV_WORK)/go-module-cache" "$(RELAY_DEV_WORK)/go-path"
 	cd relay && RELUX_TUNNEL_REPO_ROOT="$(CURDIR)" $(RELAY_GO_ENV) "$(RELAY_GO)" vet ./...
 
 relay-provision-go:
@@ -169,6 +194,37 @@ relay-shell-validate: relay-shell-test relay-shell-vet relay-shell-reproducibili
 
 relay-print-apple-bundle-input:
 	@echo "$(RELAY_APPLE_BUNDLE_INPUT)"
+
+relay-toolchain-check:
+	python3 scripts/relay_release.py toolchain-check
+
+relay-toolchain-test: relay-toolchain-check
+	python3 -m unittest scripts/tests/test_relay_release.py
+
+relay-toolchain-negative-test:
+	./scripts/tests/test-relay-toolchain-missing-input.sh
+
+relay-build-darwin-amd64:
+	python3 scripts/relay_release.py build-target --target darwin/amd64 --go "$(RELAY_GO)" --go-toolchain "$(RELAY_GO_TOOLCHAIN)" --relay-version "$(RELAY_VERSION)" --source-commit "$(SOURCE_COMMIT)" --source-date-epoch "$(SOURCE_DATE_EPOCH)" --cache-mode "$(RELAY_CACHE_MODE)" $(RELAY_BUILD_CLEAN_FLAG) --work-dir "$(RELAY_PORTABLE_WORK_ROOT)/darwin-amd64" --output "$(RELAY_PORTABLE_ROOT)/darwin-amd64/relux-relay-darwin-amd64"
+
+relay-build-darwin-arm64:
+	python3 scripts/relay_release.py build-target --target darwin/arm64 --go "$(RELAY_GO)" --go-toolchain "$(RELAY_GO_TOOLCHAIN)" --relay-version "$(RELAY_VERSION)" --source-commit "$(SOURCE_COMMIT)" --source-date-epoch "$(SOURCE_DATE_EPOCH)" --cache-mode "$(RELAY_CACHE_MODE)" $(RELAY_BUILD_CLEAN_FLAG) --work-dir "$(RELAY_PORTABLE_WORK_ROOT)/darwin-arm64" --output "$(RELAY_PORTABLE_ROOT)/darwin-arm64/relux-relay-darwin-arm64"
+
+relay-build-linux-amd64:
+	python3 scripts/relay_release.py build-target --target linux/amd64 --go "$(RELAY_GO)" --go-toolchain "$(RELAY_GO_TOOLCHAIN)" --relay-version "$(RELAY_VERSION)" --source-commit "$(SOURCE_COMMIT)" --source-date-epoch "$(SOURCE_DATE_EPOCH)" --cache-mode "$(RELAY_CACHE_MODE)" $(RELAY_BUILD_CLEAN_FLAG) --work-dir "$(RELAY_PORTABLE_WORK_ROOT)/linux-amd64" --output "$(RELAY_PORTABLE_ROOT)/linux-amd64/relux-relay-linux-amd64"
+
+relay-build-linux-arm64:
+	python3 scripts/relay_release.py build-target --target linux/arm64 --go "$(RELAY_GO)" --go-toolchain "$(RELAY_GO_TOOLCHAIN)" --relay-version "$(RELAY_VERSION)" --source-commit "$(SOURCE_COMMIT)" --source-date-epoch "$(SOURCE_DATE_EPOCH)" --cache-mode "$(RELAY_CACHE_MODE)" $(RELAY_BUILD_CLEAN_FLAG) --work-dir "$(RELAY_PORTABLE_WORK_ROOT)/linux-arm64" --output "$(RELAY_PORTABLE_ROOT)/linux-arm64/relux-relay-linux-arm64"
+
+relay-toolchain-build-all: relay-build-darwin-amd64 relay-build-darwin-arm64 relay-build-linux-amd64 relay-build-linux-arm64
+
+relay-toolchain-licenses:
+	python3 scripts/relay_release.py extract-licenses --go "$(RELAY_GO)" --go-toolchain "$(RELAY_GO_TOOLCHAIN)" --output "$(RELAY_TOOLCHAIN_LICENSE_OUTPUT)"
+
+relay-toolchain-native-linux-smoke:
+	./scripts/tests/test-relay-portable-native.sh "$(RELAY_PORTABLE_ROOT)" "$(RELAY_VERSION)" "$(SOURCE_COMMIT)"
+
+relay-toolchain-ci: relay-toolchain-test relay-toolchain-negative-test relay-shell-test relay-shell-vet relay-toolchain-build-all relay-toolchain-licenses
 
 relay-protocol-generate:
 	env $(RELAY_PROTOCOL_ENV) python3 scripts/relay-protocol-tool.py generate

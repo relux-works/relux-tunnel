@@ -3,7 +3,9 @@
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
+import struct
 import tarfile
 import tempfile
 import unittest
@@ -32,6 +34,89 @@ class RelayReleaseTests(unittest.TestCase):
                 info.size = len(contents)
                 info.mode = 0o755
                 bundle.addfile(info, io.BytesIO(contents))
+
+    def write_go_archive(self, path: Path) -> dict[str, bytes]:
+        files = {
+            "go/bin/go": b"verified-go-fixture",
+            "go/src/runtime/proc.go": b"package runtime\n",
+            "go/src/archive/tar/common.go": b"package tar\n",
+        }
+        directories = {
+            "go",
+            "go/bin",
+            "go/src",
+            "go/src/runtime",
+            "go/src/archive",
+            "go/src/archive/tar",
+        }
+        with tarfile.open(path, "w:gz") as bundle:
+            for name in sorted(
+                directories, key=lambda value: (value.count("/"), value)
+            ):
+                info = tarfile.TarInfo(name)
+                info.type = tarfile.DIRTYPE
+                info.mode = 0o755
+                bundle.addfile(info)
+            for name, contents in sorted(files.items()):
+                info = tarfile.TarInfo(name)
+                info.size = len(contents)
+                info.mode = 0o755 if name == "go/bin/go" else 0o644
+                bundle.addfile(info, io.BytesIO(contents))
+        return files
+
+    def install_go_fixture(self, directory: Path, archive: Path) -> None:
+        with tarfile.open(archive, "r:gz") as bundle:
+            bundle.extractall(directory, filter="data")
+
+    def write_raw_archive(
+        self, path: Path, members: list[tuple[tarfile.TarInfo, bytes | None]]
+    ) -> None:
+        with tarfile.open(path, "w:gz") as bundle:
+            for info, contents in members:
+                bundle.addfile(info, None if contents is None else io.BytesIO(contents))
+
+    def write_elf_fixture(
+        self, path: Path, machine: int, program_types: list[int]
+    ) -> None:
+        header = bytearray(64)
+        header[:6] = b"\x7fELF\x02\x01"
+        struct.pack_into("<H", header, 18, machine)
+        struct.pack_into("<Q", header, 32, 64)
+        struct.pack_into("<HH", header, 54, 56, len(program_types))
+        programs = bytearray(56 * len(program_types))
+        for index, program_type in enumerate(program_types):
+            struct.pack_into("<I", programs, index * 56, program_type)
+        path.write_bytes(header + programs)
+
+    def macho_dylib_command(self, name: str) -> bytes:
+        encoded = name.encode("ascii") + b"\0"
+        size = (24 + len(encoded) + 7) & ~7
+        return (
+            struct.pack("<IIIIII", 0xC, size, 24, 0, 0, 0)
+            + encoded
+            + bytes(size - 24 - len(encoded))
+        )
+
+    def write_macho_fixture(
+        self, path: Path, cpu_type: int, minimum: int = 0x000C0000
+    ) -> None:
+        commands = [
+            self.macho_dylib_command("/usr/lib/libSystem.B.dylib"),
+            self.macho_dylib_command("/usr/lib/libresolv.9.dylib"),
+            struct.pack("<IIIIII", 0x32, 24, 1, minimum, 0x000C0000, 0),
+        ]
+        header = struct.pack(
+            "<IIIIIIII",
+            0xFEEDFACF,
+            cpu_type,
+            0,
+            2,
+            len(commands),
+            sum(map(len, commands)),
+            0,
+            0,
+        )
+        path.write_bytes(header + b"".join(commands))
 
     def test_target_matrix_and_names_are_canonical(self) -> None:
         identities = [
@@ -67,12 +152,261 @@ class RelayReleaseTests(unittest.TestCase):
         ):
             with self.assertRaises(relay_release.ReleaseError):
                 relay_release.validate_release_inputs(version, commit)
+        self.assertEqual(relay_release.validate_source_date_epoch("0"), "0")
+        self.assertEqual(
+            relay_release.validate_source_date_epoch("1721491200"), "1721491200"
+        )
+        for invalid in ("", "-1", "+1", "01", "latest"):
+            with self.assertRaises(relay_release.ReleaseError):
+                relay_release.validate_source_date_epoch(invalid)
+
+    def test_toolchain_manifest_pins_module_compiler_linker_targets_and_licenses(
+        self,
+    ) -> None:
+        manifest = relay_release.verify_toolchain_manifest()
+        self.assertEqual(manifest["compiler"]["version"], "go1.26.5")
+        self.assertEqual(manifest["compiler"]["linker"], "Go internal linker")
+        self.assertEqual(manifest["compiler"]["sdk"], "none")
+        self.assertEqual(manifest["compiler"]["sysroot"], "none")
+        self.assertEqual(len(manifest["targets"]), 4)
+        self.assertEqual(
+            manifest["ci"]["checkoutAction"], relay_release.CHECKOUT_ACTION
+        )
+        self.assertEqual(
+            [fixture["target"] for fixture in manifest["ci"]["nativeRuntimeFixtures"]],
+            ["linux/amd64", "linux/arm64"],
+        )
+        self.assertEqual(
+            {dependency["license"] for dependency in manifest["dependencies"]},
+            {"BSD-3-Clause", "MIT"},
+        )
+
+    def test_toolchain_manifest_rejects_linker_pin_drift(self) -> None:
+        manifest = json.loads(
+            relay_release.TOOLCHAIN_MANIFEST_PATH.read_text(encoding="utf-8")
+        )
+        manifest["compiler"]["linker"] = "workstation linker"
+        with tempfile.TemporaryDirectory() as temporary:
+            altered = Path(temporary) / relay_release.TOOLCHAIN_MANIFEST_NAME
+            altered.write_bytes(relay_release.stable_json(manifest))
+            with mock.patch.object(relay_release, "TOOLCHAIN_MANIFEST_PATH", altered):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "compiler/linker pin drift"
+                ):
+                    relay_release.verify_toolchain_manifest()
+
+    def test_toolchain_manifest_rejects_cache_isolation_policy_drift(self) -> None:
+        manifest = json.loads(
+            relay_release.TOOLCHAIN_MANIFEST_PATH.read_text(encoding="utf-8")
+        )
+        manifest["build"]["cachePolicy"] = "incremental caches may be global"
+        with tempfile.TemporaryDirectory() as temporary:
+            altered = Path(temporary) / relay_release.TOOLCHAIN_MANIFEST_NAME
+            altered.write_bytes(relay_release.stable_json(manifest))
+            with mock.patch.object(relay_release, "TOOLCHAIN_MANIFEST_PATH", altered):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError,
+                    "toolchain manifest build environment drift",
+                ):
+                    relay_release.verify_toolchain_manifest()
+
+    def test_checkout_action_pin_must_match_manifest_and_workflow(self) -> None:
+        workflow = relay_release.CI_WORKFLOW_PATH.read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as temporary:
+            altered = Path(temporary) / "ci.yml"
+            altered.write_text(
+                workflow.replace(
+                    relay_release.CHECKOUT_ACTION,
+                    "actions/checkout@1111111111111111111111111111111111111111",
+                ),
+                encoding="utf-8",
+            )
+            with mock.patch.object(relay_release, "CI_WORKFLOW_PATH", altered):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError,
+                    "CI workflow checkout action pin drift",
+                ):
+                    relay_release.verify_toolchain_manifest()
+
+    def test_checkout_revision_must_match_source_commit(self) -> None:
+        completed = mock.Mock(stdout="0123456789abcdef0123456789abcdef01234567\n")
+        with mock.patch.object(relay_release, "run_checked", return_value=completed):
+            relay_release.verify_checkout_revision(
+                "0123456789abcdef0123456789abcdef01234567"
+            )
+            with self.assertRaisesRegex(relay_release.ReleaseError, "checkout HEAD"):
+                relay_release.verify_checkout_revision(
+                    "fedcba9876543210fedcba9876543210fedcba98"
+                )
+
+    def test_sanitized_environment_is_offline_and_credential_isolated(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            sandbox = Path(temporary)
+            with mock.patch.dict(
+                os.environ,
+                {
+                    "HOME": "/workstation/home",
+                    "SSH_AUTH_SOCK": "/workstation/agent.sock",
+                    "GOPROXY": "https://proxy.invalid",
+                    "AWS_SECRET_ACCESS_KEY": "secret",
+                },
+                clear=True,
+            ):
+                environment = relay_release.sanitized_environment(
+                    "local",
+                    relay_release.TARGETS[2],
+                    sandbox=sandbox,
+                    source_date_epoch="1721491200",
+                )
+            self.assertEqual(environment["HOME"], str(sandbox / "home"))
+            self.assertEqual(environment["GOPROXY"], "off")
+            self.assertEqual(environment["GOVCS"], "off")
+            self.assertEqual(environment["SOURCE_DATE_EPOCH"], "1721491200")
+            self.assertNotIn("SSH_AUTH_SOCK", environment)
+            self.assertNotIn("AWS_SECRET_ACCESS_KEY", environment)
+            self.assertNotIn("/workstation", json.dumps(environment))
+
+    def test_build_sandbox_rejects_symlink_and_non_directory_roots(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(
+            dir=relay_release.BUILD_ROOT
+        ) as temporary, tempfile.TemporaryDirectory() as external:
+            directory = Path(temporary)
+            symlinked = directory / "symlinked-workspace"
+            symlinked.symlink_to(external, target_is_directory=True)
+            regular_file = directory / "file-workspace"
+            regular_file.write_text("not a directory\n", encoding="utf-8")
+
+            for cache_mode in ("clean", "incremental"):
+                with self.subTest(kind="symlink", cache_mode=cache_mode):
+                    with self.assertRaises(relay_release.ReleaseError) as raised:
+                        relay_release.prepare_build_sandbox(symlinked, cache_mode)
+                    self.assertEqual(
+                        str(raised.exception),
+                        "build sandbox root must not be a symbolic link",
+                    )
+                with self.subTest(kind="file", cache_mode=cache_mode):
+                    with self.assertRaises(relay_release.ReleaseError) as raised:
+                        relay_release.prepare_build_sandbox(regular_file, cache_mode)
+                    self.assertEqual(
+                        str(raised.exception),
+                        "build sandbox root must be a directory",
+                    )
+
+            with self.assertRaises(relay_release.ReleaseError) as raised:
+                relay_release.sanitized_environment("local", sandbox=symlinked)
+            self.assertEqual(
+                str(raised.exception),
+                "build sandbox root must not be a symbolic link",
+            )
+            with self.assertRaises(relay_release.ReleaseError) as raised:
+                relay_release.sanitized_environment("local", sandbox=regular_file)
+            self.assertEqual(
+                str(raised.exception),
+                "build sandbox root must be a directory",
+            )
+
+    def test_sanitized_environment_rejects_every_symlinked_child(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        child_names = {
+            "HOME": "home",
+            "TMPDIR": "tmp",
+            "GOCACHE": "go-build-cache",
+            "GOMODCACHE": "go-module-cache",
+            "GOPATH": "go-path",
+        }
+        for variable, child_name in child_names.items():
+            with self.subTest(variable=variable), tempfile.TemporaryDirectory(
+                dir=relay_release.BUILD_ROOT
+            ) as temporary, tempfile.TemporaryDirectory() as external:
+                sandbox = Path(temporary) / "workspace"
+                sandbox.mkdir()
+                (sandbox / child_name).symlink_to(external, target_is_directory=True)
+                with self.assertRaises(relay_release.ReleaseError) as raised:
+                    relay_release.sanitized_environment("local", sandbox=sandbox)
+                self.assertEqual(
+                    str(raised.exception),
+                    f"build sandbox {variable} must not be a symbolic link",
+                )
+
+    def test_sanitized_environment_rejects_non_directory_child(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            sandbox = Path(temporary) / "workspace"
+            sandbox.mkdir()
+            (sandbox / "tmp").write_text("not a directory\n", encoding="utf-8")
+            with self.assertRaises(relay_release.ReleaseError) as raised:
+                relay_release.sanitized_environment("local", sandbox=sandbox)
+            self.assertEqual(
+                str(raised.exception),
+                "build sandbox TMPDIR must be a directory",
+            )
+
+    def test_isolated_child_must_resolve_below_sandbox(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(
+            dir=relay_release.BUILD_ROOT
+        ) as temporary, tempfile.TemporaryDirectory() as external:
+            sandbox = Path(temporary)
+            with self.assertRaises(relay_release.ReleaseError) as raised:
+                relay_release.resolve_isolated_child(
+                    Path(external), sandbox.resolve(strict=True), "build sandbox HOME"
+                )
+            self.assertEqual(
+                str(raised.exception),
+                "build sandbox HOME escapes build sandbox root",
+            )
+
+    def test_clean_recreates_and_incremental_reuses_only_safe_sandbox(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            sandbox = Path(temporary) / "workspace"
+            relay_release.prepare_build_sandbox(sandbox, "incremental")
+            environment = relay_release.sanitized_environment("local", sandbox=sandbox)
+            marker = Path(environment["GOCACHE"]) / "incremental-marker"
+            marker.write_text("preserved\n", encoding="utf-8")
+
+            relay_release.prepare_build_sandbox(sandbox, "incremental")
+            self.assertTrue(marker.is_file())
+
+            relay_release.prepare_build_sandbox(sandbox, "clean")
+            self.assertTrue(sandbox.is_dir())
+            self.assertFalse(marker.exists())
+
+    def test_linkage_contract_rejects_dynamic_linux_and_wrong_macos_floor(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            linux = directory / "relay-linux"
+            self.write_elf_fixture(linux, 62, [1])
+            relay_release.verify_binary_format(linux, relay_release.TARGETS[2])
+            relay_release.verify_linkage_contract(linux, relay_release.TARGETS[2])
+            self.write_elf_fixture(linux, 62, [1, 3])
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError, "PT_DYNAMIC or PT_INTERP"
+            ):
+                relay_release.verify_linkage_contract(linux, relay_release.TARGETS[2])
+
+            darwin = directory / "relay-darwin"
+            self.write_macho_fixture(darwin, 0x0100000C)
+            relay_release.verify_binary_format(darwin, relay_release.TARGETS[1])
+            relay_release.verify_linkage_contract(darwin, relay_release.TARGETS[1])
+            self.write_macho_fixture(darwin, 0x0100000C, minimum=0x000B0000)
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError, "minimum OS or SDK"
+            ):
+                relay_release.verify_linkage_contract(darwin, relay_release.TARGETS[1])
 
     def test_output_paths_cannot_escape_build_root(self) -> None:
         accepted = relay_release.validate_output_path(Path(".build/relay/test-output"))
         self.assertEqual(accepted, relay_release.BUILD_ROOT / "test-output")
         absolute_outside = Path(Path.cwd().anchor) / "privacy-test-output"
-        for rejected in (Path("."), Path(".build/relay"), Path("../outside"), absolute_outside):
+        for rejected in (
+            Path("."),
+            Path(".build/relay"),
+            Path("../outside"),
+            absolute_outside,
+        ):
             with self.assertRaises(relay_release.ReleaseError):
                 relay_release.validate_output_path(rejected)
 
@@ -89,7 +423,9 @@ class RelayReleaseTests(unittest.TestCase):
 
     def test_go_identity_rejects_missing_version_and_platform_drift(self) -> None:
         valid_platform = relay_release.host_platform()
-        other_platform = "linux/amd64" if valid_platform != "linux/amd64" else "darwin/arm64"
+        other_platform = (
+            "linux/amd64" if valid_platform != "linux/amd64" else "darwin/arm64"
+        )
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
             for name, identity in (
@@ -98,20 +434,23 @@ class RelayReleaseTests(unittest.TestCase):
                 ("wrong-platform", f"{relay_release.GO_VERSION} {other_platform}"),
             ):
                 with self.subTest(name=name):
-                    executable = self.write_executable(directory, name, f"go version {identity}\n")
+                    executable = self.write_executable(
+                        directory, name, f"go version {identity}\n"
+                    )
                     with self.assertRaises(relay_release.ReleaseError):
                         relay_release.verify_go_toolchain(str(executable), "local")
             with self.assertRaisesRegex(relay_release.ReleaseError, "not found"):
-                relay_release.verify_go_toolchain(str(directory / "missing-go"), "local")
+                relay_release.verify_go_toolchain(
+                    str(directory / "missing-go"), "local"
+                )
 
     def test_go_archive_checksum_provenance_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
             archive = directory / "go-fixture.tar.gz"
+            self.write_go_archive(archive)
+            self.install_go_fixture(directory, archive)
             installed = directory / "go" / "bin" / "go"
-            installed.parent.mkdir(parents=True)
-            installed.write_bytes(b"verified-go-fixture")
-            self.write_archive(archive, {"go/bin/go": installed.read_bytes()})
             contract = {
                 "artifact": archive.name,
                 "sha256": relay_release.sha256(archive),
@@ -122,7 +461,9 @@ class RelayReleaseTests(unittest.TestCase):
                 clear=True,
             ):
                 (directory / relay_release.PROVENANCE_NAME).write_bytes(
-                    relay_release.stable_json(relay_release.provenance_document("go", "darwin/arm64"))
+                    relay_release.stable_json(
+                        relay_release.provenance_document("go", "darwin/arm64")
+                    )
                 )
                 relay_release.verify_archive_provenance(
                     directory,
@@ -131,7 +472,9 @@ class RelayReleaseTests(unittest.TestCase):
                     (("go/bin/go", installed),),
                 )
                 archive.write_bytes(archive.read_bytes() + b"tamper")
-                with self.assertRaisesRegex(relay_release.ReleaseError, "archive checksum"):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "archive checksum"
+                ):
                     relay_release.verify_archive_provenance(
                         directory,
                         "go",
@@ -139,9 +482,165 @@ class RelayReleaseTests(unittest.TestCase):
                         (("go/bin/go", installed),),
                     )
 
-    def test_syft_identity_rejects_wrong_commit_platform_and_missing_fields(self) -> None:
+    def replace_runtime_with_symlink(self, root: Path) -> None:
+        runtime = root / "go/src/runtime/proc.go"
+        runtime.unlink()
+        runtime.symlink_to(root / "go/src/archive/tar/common.go")
+
+    def test_go_tree_provenance_rejects_every_installed_tree_drift(self) -> None:
+        cases = {
+            "runtime-content": (
+                "installed Go tree differs from archive: content mismatch go/src/runtime/proc.go",
+                lambda root: (root / "go/src/runtime/proc.go").write_text(
+                    "package substituted\n", encoding="utf-8"
+                ),
+            ),
+            "stdlib-content": (
+                "installed Go tree differs from archive: content mismatch go/src/archive/tar/common.go",
+                lambda root: (root / "go/src/archive/tar/common.go").write_text(
+                    "package substituted\n", encoding="utf-8"
+                ),
+            ),
+            "deleted": (
+                "installed Go tree differs from archive: missing path go/src/runtime/proc.go",
+                lambda root: (root / "go/src/runtime/proc.go").unlink(),
+            ),
+            "added": (
+                "installed Go tree differs from archive: unexpected path go/src/unapproved.go",
+                lambda root: (root / "go/src/unapproved.go").write_text(
+                    "package unapproved\n", encoding="utf-8"
+                ),
+            ),
+            "mode": (
+                "installed Go tree differs from archive: mode mismatch go/src/runtime/proc.go",
+                lambda root: (root / "go/src/runtime/proc.go").chmod(0o755),
+            ),
+            "symlink": (
+                "installed Go tree is unsafe: unsupported file type go/src/runtime/proc.go",
+                self.replace_runtime_with_symlink,
+            ),
+        }
+        for name, (diagnostic, mutate) in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)
+                archive = directory / "go-fixture.tar.gz"
+                self.write_go_archive(archive)
+                self.install_go_fixture(directory, archive)
+                mutate(directory)
+                contract = {
+                    "artifact": archive.name,
+                    "sha256": relay_release.sha256(archive),
+                }
+                with mock.patch.dict(
+                    relay_release.GO_ARCHIVES,
+                    {"darwin/arm64": contract},
+                    clear=True,
+                ):
+                    (directory / relay_release.PROVENANCE_NAME).write_bytes(
+                        relay_release.stable_json(
+                            relay_release.provenance_document("go", "darwin/arm64")
+                        )
+                    )
+                    with self.assertRaises(relay_release.ReleaseError) as raised:
+                        relay_release.verify_archive_provenance(
+                            directory,
+                            "go",
+                            "darwin/arm64",
+                            (("go/bin/go", directory / "go/bin/go"),),
+                        )
+                    self.assertEqual(str(raised.exception), diagnostic)
+
+    def test_go_archive_rejects_duplicate_traversal_links_and_devices(self) -> None:
+        def regular(name: str) -> tuple[tarfile.TarInfo, bytes]:
+            info = tarfile.TarInfo(name)
+            info.mode = 0o644
+            info.size = 1
+            return info, b"x"
+
+        def directory(name: str) -> tuple[tarfile.TarInfo, None]:
+            info = tarfile.TarInfo(name)
+            info.type = tarfile.DIRTYPE
+            info.mode = 0o755
+            return info, None
+
+        symlink = tarfile.TarInfo("go/link")
+        symlink.type = tarfile.SYMTYPE
+        symlink.linkname = "/tmp/outside"
+        symlink.mode = 0o777
+        device = tarfile.TarInfo("go/device")
+        device.type = tarfile.CHRTYPE
+        device.mode = 0o600
+        cases = {
+            "duplicate": (
+                [directory("go"), regular("go/file"), regular("go/file")],
+                "Go release archive layout is unsafe: duplicate path go/file",
+            ),
+            "traversal": (
+                [regular("go/../escape")],
+                "Go release archive layout is unsafe: non-canonical path go/../escape",
+            ),
+            "symlink": (
+                [directory("go"), (symlink, None)],
+                "Go release archive layout is unsafe: unsupported member type go/link",
+            ),
+            "device": (
+                [directory("go"), (device, None)],
+                "Go release archive layout is unsafe: unsupported member type go/device",
+            ),
+        }
+        for name, (members, diagnostic) in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                archive = Path(temporary) / "unsafe.tar.gz"
+                self.write_raw_archive(archive, members)
+                with tarfile.open(archive, "r:gz") as bundle:
+                    with self.assertRaises(relay_release.ReleaseError) as raised:
+                        relay_release.go_archive_tree(bundle)
+                    self.assertEqual(str(raised.exception), diagnostic)
+
+    def test_go_build_metadata_enforces_architecture_baseline(self) -> None:
+        for target in relay_release.TARGETS:
+            with self.subTest(target=target["canonicalTarget"]):
+                settings = {
+                    "GOOS": target["os"],
+                    "GOARCH": target["arch"],
+                    "CGO_ENABLED": "0",
+                    "-trimpath": "true",
+                    target["architectureVariable"]: target["architectureValue"],
+                }
+                valid = f"fixture: {relay_release.GO_VERSION}\n" + "".join(
+                    f"\tbuild\t{key}={value}\n" for key, value in settings.items()
+                )
+                with mock.patch.object(
+                    relay_release,
+                    "run_checked",
+                    return_value=mock.Mock(stdout=valid),
+                ):
+                    relay_release.verify_go_build_info(
+                        "go", "local", Path("fixture"), target
+                    )
+                wrong = valid.replace(
+                    f"{target['architectureVariable']}={target['architectureValue']}",
+                    f"{target['architectureVariable']}=unapproved",
+                )
+                with mock.patch.object(
+                    relay_release,
+                    "run_checked",
+                    return_value=mock.Mock(stdout=wrong),
+                ):
+                    with self.assertRaisesRegex(
+                        relay_release.ReleaseError, "unexpected Go build metadata"
+                    ):
+                        relay_release.verify_go_build_info(
+                            "go", "local", Path("fixture"), target
+                        )
+
+    def test_syft_identity_rejects_wrong_commit_platform_and_missing_fields(
+        self,
+    ) -> None:
         valid_platform = relay_release.host_platform()
-        other_platform = "linux/amd64" if valid_platform != "linux/amd64" else "darwin/arm64"
+        other_platform = (
+            "linux/amd64" if valid_platform != "linux/amd64" else "darwin/arm64"
+        )
         base = (
             "Application: syft\n"
             f"Version: {relay_release.SYFT_VERSION}\n"
@@ -152,8 +651,12 @@ class RelayReleaseTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
             cases = {
-                "wrong-commit": base.format(commit="wrong-unapproved-build", platform=valid_platform),
-                "wrong-platform": base.format(commit=relay_release.SYFT_COMMIT, platform=other_platform),
+                "wrong-commit": base.format(
+                    commit="wrong-unapproved-build", platform=valid_platform
+                ),
+                "wrong-platform": base.format(
+                    commit=relay_release.SYFT_COMMIT, platform=other_platform
+                ),
                 "version-only": f"Version: {relay_release.SYFT_VERSION}\n",
             }
             for name, output in cases.items():
@@ -179,7 +682,9 @@ class RelayReleaseTests(unittest.TestCase):
                 clear=True,
             ):
                 (directory / relay_release.PROVENANCE_NAME).write_bytes(
-                    relay_release.stable_json(relay_release.provenance_document("syft", "darwin/arm64"))
+                    relay_release.stable_json(
+                        relay_release.provenance_document("syft", "darwin/arm64")
+                    )
                 )
                 relay_release.verify_archive_provenance(
                     directory,
@@ -189,7 +694,9 @@ class RelayReleaseTests(unittest.TestCase):
                 )
                 archive_bytes = archive.read_bytes()
                 archive.write_bytes(archive_bytes + b"tamper")
-                with self.assertRaisesRegex(relay_release.ReleaseError, "archive checksum"):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "archive checksum"
+                ):
                     relay_release.verify_archive_provenance(
                         directory,
                         "syft",
@@ -198,7 +705,9 @@ class RelayReleaseTests(unittest.TestCase):
                     )
                 archive.write_bytes(archive_bytes)
                 installed.write_bytes(b"substituted-syft")
-                with self.assertRaisesRegex(relay_release.ReleaseError, "differs from archive"):
+                with self.assertRaisesRegex(
+                    relay_release.ReleaseError, "differs from archive"
+                ):
                     relay_release.verify_archive_provenance(
                         directory,
                         "syft",
@@ -206,8 +715,13 @@ class RelayReleaseTests(unittest.TestCase):
                         (("syft", installed),),
                     )
 
-    def test_provenance_contract_pins_all_supported_archives_without_host_paths(self) -> None:
-        for tool, contracts in (("go", relay_release.GO_ARCHIVES), ("syft", relay_release.SYFT_ARCHIVES)):
+    def test_provenance_contract_pins_all_supported_archives_without_host_paths(
+        self,
+    ) -> None:
+        for tool, contracts in (
+            ("go", relay_release.GO_ARCHIVES),
+            ("syft", relay_release.SYFT_ARCHIVES),
+        ):
             self.assertEqual(
                 set(contracts),
                 {"darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64"},
@@ -215,7 +729,10 @@ class RelayReleaseTests(unittest.TestCase):
             for tool_platform in contracts:
                 document = relay_release.provenance_document(tool, tool_platform)
                 self.assertRegex(document["sha256"], r"^[0-9a-f]{64}$")
-                self.assertNotIn(str(Path.home()), relay_release.stable_json(document).decode("utf-8"))
+                self.assertNotIn(
+                    str(Path.home()),
+                    relay_release.stable_json(document).decode("utf-8"),
+                )
 
     def test_manifest_field_names_are_stable_and_path_free(self) -> None:
         relay_release.verify_manifest_schema()
@@ -233,7 +750,9 @@ class RelayReleaseTests(unittest.TestCase):
         top_keys, toolchain_keys, artifact_keys = relay_release.expected_manifest_keys()
         self.assertEqual(set(manifest), top_keys)
         self.assertEqual(set(manifest["toolchain"]), toolchain_keys)
-        self.assertTrue(all(set(artifact) == artifact_keys for artifact in manifest["artifacts"]))
+        self.assertTrue(
+            all(set(artifact) == artifact_keys for artifact in manifest["artifacts"])
+        )
         encoded = relay_release.stable_json(manifest).decode("utf-8")
         self.assertNotIn(str(Path.home()), encoded)
         self.assertEqual(json.loads(encoded), manifest)

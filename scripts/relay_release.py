@@ -11,6 +11,7 @@ from pathlib import Path, PurePosixPath
 import platform
 import re
 import shutil
+import stat
 import struct
 import subprocess
 import sys
@@ -33,10 +34,14 @@ MANIFEST_NAME = "relux-relay-manifest-v1.json"
 CHECKSUMS_NAME = "relux-relay-SHA256SUMS"
 NOTICE_PATH = PurePosixPath("THIRD_PARTY_NOTICES/Go-BSD-3-Clause.txt")
 PROVENANCE_NAME = "relux-tool-provenance-v1.json"
+TOOLCHAIN_MANIFEST_NAME = "toolchain-manifest-v1.json"
+CHECKOUT_ACTION = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 
 ROOT = Path(__file__).resolve().parent.parent
 RELAY_ROOT = ROOT / "relay"
 BUILD_ROOT = ROOT / ".build" / "relay"
+TOOLCHAIN_MANIFEST_PATH = RELAY_ROOT / TOOLCHAIN_MANIFEST_NAME
+CI_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "ci.yml"
 
 GO_ARCHIVES: dict[str, dict[str, str]] = {
     "darwin/amd64": {
@@ -140,7 +145,9 @@ def host_platform() -> str:
 
 
 def archive_contract(tool: str, tool_platform: str) -> dict[str, str]:
-    contracts = GO_ARCHIVES if tool == "go" else SYFT_ARCHIVES if tool == "syft" else None
+    contracts = (
+        GO_ARCHIVES if tool == "go" else SYFT_ARCHIVES if tool == "syft" else None
+    )
     if contracts is None or tool_platform not in contracts:
         raise ReleaseError(f"unsupported {tool} release-tool platform")
     contract = dict(contracts[tool_platform])
@@ -200,9 +207,13 @@ def sha256_stream(stream: Any) -> str:
     return digest.hexdigest()
 
 
-def verify_archive_member_matches(archive: Path, member_name: str, installed: Path) -> None:
+def verify_archive_member_matches(
+    archive: Path, member_name: str, installed: Path
+) -> None:
     with tarfile.open(archive, "r:gz") as bundle:
-        matches = [member for member in bundle.getmembers() if member.name == member_name]
+        matches = [
+            member for member in bundle.getmembers() if member.name == member_name
+        ]
         if len(matches) != 1 or not matches[0].isfile():
             raise ReleaseError(f"release archive member mismatch: {member_name}")
         stream = bundle.extractfile(matches[0])
@@ -210,7 +221,141 @@ def verify_archive_member_matches(archive: Path, member_name: str, installed: Pa
             raise ReleaseError(f"release archive member unreadable: {member_name}")
         archived_sha256 = sha256_stream(stream)
     if not installed.is_file() or sha256(installed) != archived_sha256:
-        raise ReleaseError(f"installed release tool differs from archive: {installed.name}")
+        raise ReleaseError(
+            f"installed release tool differs from archive: {installed.name}"
+        )
+
+
+def go_archive_tree(bundle: tarfile.TarFile) -> dict[str, tuple[str, int, str | None]]:
+    entries: dict[str, tuple[str, int, str | None]] = {}
+    for member in bundle.getmembers():
+        member_path = PurePosixPath(member.name)
+        canonical = member_path.as_posix()
+        if (
+            not member_path.parts
+            or member_path.is_absolute()
+            or ".." in member_path.parts
+            or "\\" in member.name
+            or canonical != member.name
+            or member_path.parts[0] != "go"
+        ):
+            raise ReleaseError(
+                f"Go release archive layout is unsafe: non-canonical path {member.name}"
+            )
+        if canonical in entries:
+            raise ReleaseError(
+                f"Go release archive layout is unsafe: duplicate path {canonical}"
+            )
+        if member.mode & ~0o777:
+            raise ReleaseError(
+                f"Go release archive layout is unsafe: permissions {canonical}"
+            )
+        if member.isdir():
+            entries[canonical] = ("directory", member.mode, None)
+        elif member.isfile():
+            stream = bundle.extractfile(member)
+            if stream is None:
+                raise ReleaseError(
+                    f"Go release archive member is unreadable: {canonical}"
+                )
+            entries[canonical] = ("file", member.mode, sha256_stream(stream))
+        else:
+            raise ReleaseError(
+                f"Go release archive layout is unsafe: unsupported member type {canonical}"
+            )
+    if not entries or entries.get("go", (None,))[0] != "directory":
+        raise ReleaseError("Go release archive layout is unsafe: missing go root")
+    for name in entries:
+        if name == "go":
+            continue
+        parent = PurePosixPath(name).parent.as_posix()
+        if entries.get(parent, (None,))[0] != "directory":
+            raise ReleaseError(
+                f"Go release archive layout is unsafe: missing directory {parent}"
+            )
+    return entries
+
+
+def installed_go_tree(
+    directory: Path,
+) -> dict[str, tuple[str, int, str | None]]:
+    root = directory / "go"
+    try:
+        root_status = root.stat(follow_symlinks=False)
+    except OSError as error:
+        raise ReleaseError(
+            "installed Go tree differs from archive: missing path go"
+        ) from error
+    if not stat.S_ISDIR(root_status.st_mode):
+        raise ReleaseError("installed Go tree is unsafe: unsupported file type go")
+    entries: dict[str, tuple[str, int, str | None]] = {
+        "go": ("directory", stat.S_IMODE(root_status.st_mode), None)
+    }
+
+    def visit(path: Path, relative: PurePosixPath) -> None:
+        try:
+            children = sorted(os.scandir(path), key=lambda child: child.name)
+        except OSError as error:
+            raise ReleaseError(
+                f"installed Go tree is unreadable: {relative.as_posix()}"
+            ) from error
+        for child in children:
+            child_relative = relative / child.name
+            name = child_relative.as_posix()
+            try:
+                status = child.stat(follow_symlinks=False)
+            except OSError as error:
+                raise ReleaseError(
+                    f"installed Go tree is unreadable: {name}"
+                ) from error
+            mode = stat.S_IMODE(status.st_mode)
+            if stat.S_ISDIR(status.st_mode):
+                entries[name] = ("directory", mode, None)
+                visit(Path(child.path), child_relative)
+            elif stat.S_ISREG(status.st_mode):
+                if status.st_nlink != 1:
+                    raise ReleaseError(
+                        f"installed Go tree is unsafe: hard-linked file {name}"
+                    )
+                entries[name] = ("file", mode, sha256(Path(child.path)))
+            else:
+                raise ReleaseError(
+                    f"installed Go tree is unsafe: unsupported file type {name}"
+                )
+
+    visit(root, PurePosixPath("go"))
+    return entries
+
+
+def verify_installed_go_tree(archive: Path, directory: Path) -> None:
+    with tarfile.open(archive, "r:gz") as bundle:
+        expected = go_archive_tree(bundle)
+    actual = installed_go_tree(directory)
+    missing = sorted(set(expected) - set(actual))
+    if missing:
+        raise ReleaseError(
+            f"installed Go tree differs from archive: missing path {missing[0]}"
+        )
+    unexpected = sorted(set(actual) - set(expected))
+    if unexpected:
+        raise ReleaseError(
+            f"installed Go tree differs from archive: unexpected path {unexpected[0]}"
+        )
+    for name in sorted(expected):
+        expected_kind, expected_mode, expected_digest = expected[name]
+        actual_kind, actual_mode, actual_digest = actual[name]
+        if actual_kind != expected_kind:
+            raise ReleaseError(
+                f"installed Go tree differs from archive: type mismatch {name}"
+            )
+        if actual_mode != expected_mode:
+            raise ReleaseError(
+                f"installed Go tree differs from archive: mode mismatch {name}"
+            )
+        if actual_digest != expected_digest:
+            raise ReleaseError(
+                f"installed Go tree differs from archive: content mismatch {name}"
+            )
 
 
 def verify_archive_provenance(
@@ -225,7 +370,9 @@ def verify_archive_provenance(
         text = provenance_path.read_text(encoding="utf-8")
         provenance = json.loads(text)
     except (OSError, json.JSONDecodeError) as error:
-        raise ReleaseError(f"missing or invalid {tool} release-tool provenance") from error
+        raise ReleaseError(
+            f"missing or invalid {tool} release-tool provenance"
+        ) from error
     expected = provenance_document(tool, tool_platform)
     if text.encode("utf-8") != stable_json(expected) or provenance != expected:
         raise ReleaseError(f"{tool} release-tool provenance mismatch")
@@ -233,8 +380,11 @@ def verify_archive_provenance(
     archive = directory / contract["artifact"]
     if not archive.is_file() or sha256(archive) != contract["sha256"]:
         raise ReleaseError(f"{tool} release archive checksum mismatch")
-    for member_name, installed in installed_members:
-        verify_archive_member_matches(archive, member_name, installed)
+    if tool == "go":
+        verify_installed_go_tree(archive, directory)
+    else:
+        for member_name, installed in installed_members:
+            verify_archive_member_matches(archive, member_name, installed)
 
 
 def target_filename(target: dict[str, str]) -> str:
@@ -252,6 +402,12 @@ def validate_release_inputs(relay_version: str, source_commit: str) -> None:
         raise ReleaseError("source commit must be 40 lowercase hexadecimal characters")
 
 
+def validate_source_date_epoch(value: str) -> str:
+    if not re.fullmatch(r"0|[1-9][0-9]*", value):
+        raise ReleaseError("SOURCE_DATE_EPOCH must be a non-negative decimal integer")
+    return value
+
+
 def validate_output_path(path: Path) -> Path:
     candidate = path if path.is_absolute() else ROOT / path
     resolved_parent = candidate.parent.resolve()
@@ -262,6 +418,43 @@ def validate_output_path(path: Path) -> Path:
         raise ReleaseError("output paths must remain under .build/relay") from error
     if resolved == BUILD_ROOT:
         raise ReleaseError("output path must be task-scoped below .build/relay")
+    return resolved
+
+
+def validate_isolated_directory(path: Path, description: str, *, create: bool) -> Path:
+    try:
+        status = path.stat(follow_symlinks=False)
+    except FileNotFoundError:
+        if not create:
+            return path
+        try:
+            path.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            pass
+        except OSError as error:
+            raise ReleaseError(f"{description} cannot be created") from error
+        try:
+            status = path.stat(follow_symlinks=False)
+        except OSError as error:
+            raise ReleaseError(f"{description} cannot be inspected") from error
+    except OSError as error:
+        raise ReleaseError(f"{description} cannot be inspected") from error
+    if stat.S_ISLNK(status.st_mode):
+        raise ReleaseError(f"{description} must not be a symbolic link")
+    if not stat.S_ISDIR(status.st_mode):
+        raise ReleaseError(f"{description} must be a directory")
+    return path
+
+
+def resolve_isolated_child(
+    path: Path, resolved_sandbox_root: Path, description: str
+) -> Path:
+    validate_isolated_directory(path, description, create=True)
+    resolved = path.resolve(strict=True)
+    try:
+        resolved.relative_to(resolved_sandbox_root)
+    except ValueError as error:
+        raise ReleaseError(f"{description} escapes build sandbox root") from error
     return resolved
 
 
@@ -279,22 +472,47 @@ def clean_directory(path: Path) -> None:
     validated.mkdir(parents=True)
 
 
-def sanitized_environment(go_toolchain: str, target: dict[str, str] | None = None) -> dict[str, str]:
-    environment: dict[str, str] = {}
-    for key in ("HOME", "PATH", "TMPDIR"):
-        value = os.environ.get(key)
-        if value:
-            environment[key] = value
+def sanitized_environment(
+    go_toolchain: str,
+    target: dict[str, str] | None = None,
+    *,
+    sandbox: Path | None = None,
+    source_date_epoch: str = "0",
+) -> dict[str, str]:
+    epoch = validate_source_date_epoch(source_date_epoch)
+    sandbox_root = validate_output_path(
+        sandbox or (BUILD_ROOT / "work" / "verification")
+    )
+    validate_isolated_directory(sandbox_root, "build sandbox root", create=True)
+    resolved_sandbox_root = sandbox_root.resolve(strict=True)
+    paths = {
+        "HOME": sandbox_root / "home",
+        "TMPDIR": sandbox_root / "tmp",
+        "GOCACHE": sandbox_root / "go-build-cache",
+        "GOMODCACHE": sandbox_root / "go-module-cache",
+        "GOPATH": sandbox_root / "go-path",
+    }
+    for name, path in paths.items():
+        paths[name] = resolve_isolated_child(
+            path, resolved_sandbox_root, f"build sandbox {name}"
+        )
+    environment = {
+        "PATH": "/usr/bin:/bin",
+        **{key: str(value) for key, value in paths.items()},
+    }
     environment.update(
         {
             "GOTOOLCHAIN": go_toolchain,
             "GOENV": "off",
-            "GOCACHE": str(ROOT / ".temp" / "relay-go-cache"),
-            "GOPATH": str(ROOT / ".temp" / "relay-go-path"),
+            "GOWORK": "off",
+            "GOPROXY": "off",
+            "GOSUMDB": "off",
+            "GOVCS": "off",
             "CGO_ENABLED": "0",
             "LC_ALL": "C",
             "LANG": "C",
             "TZ": "UTC",
+            "SOURCE_DATE_EPOCH": epoch,
         }
     )
     if target is not None:
@@ -322,23 +540,39 @@ def run_checked(
             stderr=subprocess.PIPE if capture else None,
         )
     except subprocess.CalledProcessError as error:
-        raise ReleaseError(f"command failed: {Path(command[0]).name} {command[1]}") from error
+        raise ReleaseError(
+            f"command failed: {Path(command[0]).name} {command[1]}"
+        ) from error
 
 
-def verify_go_toolchain(go_command: str, go_toolchain: str, require_provenance: bool = False) -> str:
+def verify_go_toolchain(
+    go_command: str, go_toolchain: str, require_provenance: bool = False
+) -> str:
     if require_provenance and go_toolchain != "local":
         raise ReleaseError("release mode requires GOTOOLCHAIN=local")
     executable = resolve_executable(go_command)
     environment = sanitized_environment(go_toolchain)
-    version = run_checked([str(executable), "version"], cwd=RELAY_ROOT, environment=environment).stdout.strip()
-    match = re.fullmatch(r"go version (go[0-9.]+) (darwin|linux)/(amd64|arm64)", version)
+    version = run_checked(
+        [str(executable), "version"], cwd=RELAY_ROOT, environment=environment
+    ).stdout.strip()
+    match = re.fullmatch(
+        r"go version (go[0-9.]+) (darwin|linux)/(amd64|arm64)", version
+    )
     if match is None or match.group(1) != GO_VERSION:
         raise ReleaseError(f"required Go toolchain is {GO_VERSION}")
     tool_platform = f"{match.group(2)}/{match.group(3)}"
     if tool_platform != host_platform():
         raise ReleaseError("Go release-tool platform mismatch")
     values = run_checked(
-        [str(executable), "env", "GOROOT", "GOTOOLDIR", "GOHOSTOS", "GOHOSTARCH", "GOTOOLCHAIN"],
+        [
+            str(executable),
+            "env",
+            "GOROOT",
+            "GOTOOLDIR",
+            "GOHOSTOS",
+            "GOHOSTARCH",
+            "GOTOOLCHAIN",
+        ],
         cwd=RELAY_ROOT,
         environment=environment,
     ).stdout.splitlines()
@@ -357,17 +591,34 @@ def verify_go_toolchain(go_command: str, go_toolchain: str, require_provenance: 
         raise ReleaseError("Go executable must be the selected GOROOT binary")
     if require_provenance:
         tool_directory = Path(go_tool_dir).resolve()
-        expected_tool_directory = root_path / "pkg" / "tool" / tool_platform.replace("/", "_")
+        expected_tool_directory = (
+            root_path / "pkg" / "tool" / tool_platform.replace("/", "_")
+        )
         if tool_directory != expected_tool_directory.resolve():
             raise ReleaseError("Go tool directory does not match selected GOROOT")
         critical_members = (
             ("go/bin/go", root_path / "bin" / "go"),
             *(
-                (f"go/pkg/tool/{tool_platform.replace('/', '_')}/{name}", tool_directory / name)
+                (
+                    f"go/pkg/tool/{tool_platform.replace('/', '_')}/{name}",
+                    tool_directory / name,
+                )
                 for name in ("asm", "compile", "link")
             ),
         )
-        verify_archive_provenance(root_path.parent, "go", tool_platform, critical_members)
+        verify_archive_provenance(
+            root_path.parent, "go", tool_platform, critical_members
+        )
+    else:
+        tool_directory = Path(go_tool_dir).resolve()
+    for executable_name in ("compile", "link"):
+        identity = run_checked(
+            [str(tool_directory / executable_name), "-V=full"],
+            cwd=RELAY_ROOT,
+            environment=environment,
+        ).stdout.strip()
+        if identity != f"{executable_name} version {GO_VERSION}":
+            raise ReleaseError(f"Go {executable_name} identity mismatch")
     return str(root_path)
 
 
@@ -381,7 +632,256 @@ def verify_go_module_policy() -> None:
         raise ReleaseError("relay/go.mod must remain standard-library-only")
 
 
+def verify_checkout_action_pin() -> None:
+    try:
+        workflow = CI_WORKFLOW_PATH.read_text(encoding="utf-8")
+    except OSError as error:
+        raise ReleaseError("CI workflow checkout action pin is unreadable") from error
+    references = re.findall(r"(?m)^\s*-\s+uses:\s*(actions/checkout@[^\s#]+)", workflow)
+    if not references or any(reference != CHECKOUT_ACTION for reference in references):
+        raise ReleaseError("CI workflow checkout action pin drift")
+
+
+def verify_toolchain_manifest() -> dict[str, Any]:
+    try:
+        text = TOOLCHAIN_MANIFEST_PATH.read_text(encoding="utf-8")
+        manifest = json.loads(text)
+    except (OSError, json.JSONDecodeError) as error:
+        raise ReleaseError(f"{TOOLCHAIN_MANIFEST_NAME} is invalid") from error
+    if text.encode("utf-8") != stable_json(manifest):
+        raise ReleaseError(f"{TOOLCHAIN_MANIFEST_NAME} is not canonical JSON")
+    expected_top = {
+        "schemaVersion",
+        "module",
+        "compiler",
+        "hostToolArchives",
+        "buildOnlyTools",
+        "dependencies",
+        "targets",
+        "build",
+        "runtimeContract",
+        "ci",
+    }
+    if set(manifest) != expected_top or manifest.get("schemaVersion") != 1:
+        raise ReleaseError("toolchain manifest field set or schema version changed")
+    module = manifest.get("module", {})
+    if module != {
+        "path": "github.com/relux-works/relux-tunnel/relay",
+        "directory": "relay",
+        "goDirective": "1.26.0",
+        "toolchainDirective": GO_VERSION,
+        "lockFile": "relay/go.mod",
+        "lockFileSha256": sha256(RELAY_ROOT / "go.mod"),
+        "dependencyPolicy": "standard-library-only",
+    }:
+        raise ReleaseError("toolchain manifest module pin drift")
+    compiler = manifest.get("compiler", {})
+    expected_compiler = {
+        "distribution": "official-go",
+        "name": "gc",
+        "version": GO_VERSION,
+        "driver": "go",
+        "compilerExecutable": "pkg/tool/<host>/compile",
+        "linker": "Go internal linker",
+        "linkerExecutable": "pkg/tool/<host>/link",
+        "linkMode": "internal",
+        "cgoEnabled": False,
+        "sdk": "none",
+        "sysroot": "none",
+    }
+    if compiler != expected_compiler:
+        raise ReleaseError("toolchain manifest compiler/linker pin drift")
+    expected_archives = []
+    for tool_platform, contract in GO_ARCHIVES.items():
+        expected_archives.append(
+            {
+                "host": tool_platform,
+                "artifact": contract["artifact"],
+                "sha256": contract["sha256"],
+                "source": f"https://go.dev/dl/{contract['artifact']}",
+            }
+        )
+    if manifest.get("hostToolArchives") != expected_archives:
+        raise ReleaseError("toolchain manifest host archive pin drift")
+    syft_archives = []
+    for tool_platform, contract in SYFT_ARCHIVES.items():
+        syft_archives.append(
+            {
+                "host": tool_platform,
+                "artifact": contract["artifact"],
+                "sha256": contract["sha256"],
+                "source": (
+                    f"https://github.com/anchore/syft/releases/download/v{SYFT_VERSION}/"
+                    f"{contract['artifact']}"
+                ),
+            }
+        )
+    if manifest.get("buildOnlyTools") != [
+        {
+            "name": "syft",
+            "version": SYFT_VERSION,
+            "revision": SYFT_COMMIT,
+            "license": "Apache-2.0",
+            "purpose": "release SBOM generation only; not used by portable target builds",
+            "hostArchives": syft_archives,
+        }
+    ]:
+        raise ReleaseError("toolchain manifest build-only tool pin drift")
+    dependencies = manifest.get("dependencies")
+    if not isinstance(dependencies, list) or len(dependencies) != 2:
+        raise ReleaseError("toolchain manifest dependency set changed")
+    if (
+        dependencies[0].get("revision") != GO_VERSION
+        or dependencies[0].get("license") != "BSD-3-Clause"
+    ):
+        raise ReleaseError("toolchain manifest Go dependency pin drift")
+    if dependencies[0].get("licenseSha256") != GO_LICENSE_SHA256:
+        raise ReleaseError("toolchain manifest Go license hash drift")
+    if dependencies[1].get("license") != "MIT" or dependencies[1].get(
+        "licenseSha256"
+    ) != sha256(ROOT / "LICENSE"):
+        raise ReleaseError("toolchain manifest project license hash drift")
+    targets = manifest.get("targets")
+    expected_targets = [
+        {
+            "canonicalTarget": "x86_64-apple-darwin",
+            "goTarget": "darwin/amd64",
+            "cpuBaseline": "GOAMD64=v1",
+            "minimumRuntime": "macOS 12.0",
+            "libc": "system libSystem ABI",
+            "dynamicLibraries": [
+                "/usr/lib/libSystem.B.dylib",
+                "/usr/lib/libresolv.9.dylib",
+            ],
+            "sdk": "none; Go internal linker emits LC_BUILD_VERSION minos/sdk 12.0",
+            "sysroot": "none",
+        },
+        {
+            "canonicalTarget": "aarch64-apple-darwin",
+            "goTarget": "darwin/arm64",
+            "cpuBaseline": "GOARM64=v8.0",
+            "minimumRuntime": "macOS 12.0",
+            "libc": "system libSystem ABI",
+            "dynamicLibraries": [
+                "/usr/lib/libSystem.B.dylib",
+                "/usr/lib/libresolv.9.dylib",
+            ],
+            "sdk": "none; Go internal linker emits LC_BUILD_VERSION minos/sdk 12.0",
+            "sysroot": "none",
+        },
+        {
+            "canonicalTarget": "x86_64-unknown-linux",
+            "goTarget": "linux/amd64",
+            "cpuBaseline": "GOAMD64=v1",
+            "minimumRuntime": "Ubuntu 24.04 native CI fixture; no kernel-version floor claimed",
+            "runtimeFixture": "GitHub Actions ubuntu-24.04 x86_64 runner",
+            "libc": "none",
+            "dynamicLibraries": [],
+            "sdk": "none",
+            "sysroot": "none",
+        },
+        {
+            "canonicalTarget": "aarch64-unknown-linux",
+            "goTarget": "linux/arm64",
+            "cpuBaseline": "GOARM64=v8.0",
+            "minimumRuntime": "Ubuntu 24.04 native CI fixture; no kernel-version floor claimed",
+            "runtimeFixture": "GitHub Actions ubuntu-24.04-arm arm64 runner",
+            "libc": "none",
+            "dynamicLibraries": [],
+            "sdk": "none",
+            "sysroot": "none",
+        },
+    ]
+    if targets != expected_targets:
+        raise ReleaseError("toolchain manifest target, runtime, SDK, or linkage drift")
+    build = manifest.get("build", {})
+    required_environment = {
+        "GOTOOLCHAIN": "local",
+        "CGO_ENABLED": "0",
+        "GOENV": "off",
+        "GOWORK": "off",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOVCS": "off",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "SOURCE_DATE_EPOCH": "required non-negative integer command input",
+    }
+    expected_flags = [
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=false",
+        "-tags=netgo,osusergo",
+        "-ldflags=-s -w -buildid= -linkmode=internal -X <module>/internal/buildinfo.Version=<RELAY_VERSION> -X <module>/internal/buildinfo.Commit=<SOURCE_COMMIT>",
+    ]
+    expected_cache_policy = (
+        "HOME, TMPDIR, GOCACHE, GOMODCACHE, and GOPATH are target-scoped below "
+        ".build/relay/work; roots and children are no-follow checked directories "
+        "whose resolved paths must remain below the target workspace; clean mode "
+        "deletes that target workspace, incremental mode reuses only that workspace"
+    )
+    expected_credential_policy = (
+        "the build environment is an allowlist and never inherits workstation "
+        "HOME, SSH_AUTH_SOCK, credential helpers, cloud credentials, or Go proxy "
+        "settings"
+    )
+    if (
+        build.get("package") != "./cmd/relux-relay"
+        or build.get("flags") != expected_flags
+        or build.get("environment") != required_environment
+        or build.get("cachePolicy") != expected_cache_policy
+        or build.get("credentialPolicy") != expected_credential_policy
+    ):
+        raise ReleaseError("toolchain manifest build environment drift")
+    if manifest.get("runtimeContract") != {
+        "privilege": "unprivileged user",
+        "linuxLinkage": "static ELF with no PT_INTERP or PT_DYNAMIC",
+        "linuxRuntimeEvidence": "native smoke on declared Ubuntu 24.04 x86_64 and arm64 CI fixtures; no older kernel compatibility claim",
+        "darwinLinkage": "Mach-O with only libSystem and libresolv dynamic loads and minimum OS 12.0",
+        "codeSigning": "out of scope; binaries are later embedded in the signed Apple application bundle",
+    }:
+        raise ReleaseError("toolchain manifest runtime contract drift")
+    if manifest.get("ci") != {
+        "runner": "ubuntu-24.04",
+        "checkoutAction": CHECKOUT_ACTION,
+        "checkoutActionVersion": "v7.0.1",
+        "checkoutActionSource": "https://github.com/actions/checkout/releases/tag/v7.0.1",
+        "networkBoundary": "network is permitted only for the checksum-pinned host Go archive fetch; provisioning, tests, native smoke, and all four builds run with Go network resolution disabled",
+        "nativeRuntimeFixtures": [
+            {
+                "target": "linux/amd64",
+                "runner": "ubuntu-24.04",
+                "command": "make relay-toolchain-native-linux-smoke",
+                "source": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+            },
+            {
+                "target": "linux/arm64",
+                "runner": "ubuntu-24.04-arm",
+                "command": "make relay-toolchain-native-linux-smoke",
+                "source": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+            },
+        ],
+    }:
+        raise ReleaseError("toolchain manifest CI pin or runtime fixture drift")
+    verify_checkout_action_pin()
+    reject_host_paths(text, TOOLCHAIN_MANIFEST_NAME)
+    return manifest
+
+
+def verify_checkout_revision(source_commit: str) -> None:
+    environment = sanitized_environment("local")
+    revision = run_checked(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        environment=environment,
+    ).stdout.strip()
+    if revision != source_commit:
+        raise ReleaseError("source commit does not match checkout HEAD")
+
+
 def verify_clean_checkout(source_commit: str) -> None:
+    verify_checkout_revision(source_commit)
     environment = sanitized_environment("local")
     status = run_checked(
         ["git", "status", "--porcelain", "--untracked-files=all"],
@@ -390,13 +890,6 @@ def verify_clean_checkout(source_commit: str) -> None:
     ).stdout
     if status:
         raise ReleaseError("release mode requires a clean checkout")
-    revision = run_checked(
-        ["git", "rev-parse", "HEAD"],
-        cwd=ROOT,
-        environment=environment,
-    ).stdout.strip()
-    if revision != source_commit:
-        raise ReleaseError("source commit does not match checkout HEAD")
 
 
 def build_binary(
@@ -407,14 +900,23 @@ def build_binary(
     output: Path,
     relay_version: str,
     source_commit: str,
+    *,
+    sandbox: Path | None = None,
+    source_date_epoch: str = "0",
 ) -> None:
-    environment = sanitized_environment(go_toolchain, target)
+    environment = sanitized_environment(
+        go_toolchain,
+        target,
+        sandbox=sandbox,
+        source_date_epoch=source_date_epoch,
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     ldflags = " ".join(
         (
             "-s",
             "-w",
             "-buildid=",
+            "-linkmode=internal",
             "-X",
             f"github.com/relux-works/relux-tunnel/relay/internal/buildinfo.Version={relay_version}",
             "-X",
@@ -458,7 +960,9 @@ def verify_syft_toolchain(syft_command: str, require_provenance: bool = False) -
     executable = resolve_executable(syft_command)
     environment = sanitized_environment("local")
     environment["SYFT_CHECK_FOR_APP_UPDATE"] = "false"
-    output = run_checked([str(executable), "version"], cwd=ROOT, environment=environment).stdout
+    output = run_checked(
+        [str(executable), "version"], cwd=ROOT, environment=environment
+    ).stdout
     fields = parse_syft_version_output(output)
     expected = {
         "Application": "syft",
@@ -508,8 +1012,13 @@ def verify_spdx(path: Path) -> None:
     package_names = {package.get("name") for package in packages}
     if not package_names.issubset(allowed_names):
         raise ReleaseError(f"unreviewed dependency found in SBOM: {path.name}")
-    standard_library = [package for package in packages if package.get("name") == "stdlib"]
-    if len(standard_library) != 1 or standard_library[0].get("versionInfo") != GO_VERSION:
+    standard_library = [
+        package for package in packages if package.get("name") == "stdlib"
+    ]
+    if (
+        len(standard_library) != 1
+        or standard_library[0].get("versionInfo") != GO_VERSION
+    ):
         raise ReleaseError(f"Go standard-library provenance mismatch: {path.name}")
     if standard_library[0].get("licenseDeclared") != "BSD-3-Clause":
         raise ReleaseError(f"Go standard-library license mismatch: {path.name}")
@@ -547,7 +1056,9 @@ def verify_notice(output: Path, go_root: str) -> None:
         raise ReleaseError("license notice content mismatch")
 
 
-def build_manifest(relay_version: str, source_commit: str, output: Path) -> dict[str, Any]:
+def build_manifest(
+    relay_version: str, source_commit: str, output: Path
+) -> dict[str, Any]:
     artifacts: list[dict[str, Any]] = []
     for target in TARGETS:
         filename = target_filename(target)
@@ -610,29 +1121,143 @@ def verify_binary_format(path: Path, target: dict[str, str]) -> None:
         raise ReleaseError(f"unexpected architecture: {path.name}")
 
 
-def verify_go_build_info(go_command: str, go_toolchain: str, binary: Path, target: dict[str, str]) -> None:
+def packed_macho_version(value: int) -> str:
+    return f"{value >> 16}.{(value >> 8) & 0xff}.{value & 0xff}"
+
+
+def verify_linkage_contract(path: Path, target: dict[str, str]) -> None:
+    data = path.read_bytes()
+    if target["os"] == "linux":
+        if len(data) < 64 or data[:4] != b"\x7fELF" or data[4:6] != b"\x02\x01":
+            raise ReleaseError(
+                f"Linux artifact is not little-endian ELF64: {path.name}"
+            )
+        program_offset = struct.unpack_from("<Q", data, 32)[0]
+        program_entry_size, program_count = struct.unpack_from("<HH", data, 54)
+        if (
+            program_entry_size < 4
+            or program_offset + program_entry_size * program_count > len(data)
+        ):
+            raise ReleaseError(f"Linux program headers are invalid: {path.name}")
+        program_types = {
+            struct.unpack_from("<I", data, program_offset + index * program_entry_size)[
+                0
+            ]
+            for index in range(program_count)
+        }
+        if 2 in program_types or 3 in program_types:
+            raise ReleaseError(
+                f"Linux artifact must not contain PT_DYNAMIC or PT_INTERP: {path.name}"
+            )
+        return
+
+    if len(data) < 32 or data[:4] != b"\xcf\xfa\xed\xfe":
+        raise ReleaseError(
+            f"Darwin artifact is not little-endian Mach-O 64: {path.name}"
+        )
+    command_count, command_bytes = struct.unpack_from("<II", data, 16)
+    cursor = 32
+    command_end = cursor + command_bytes
+    if command_end > len(data):
+        raise ReleaseError(f"Darwin load commands are truncated: {path.name}")
+    dynamic_libraries: list[str] = []
+    build_versions: list[tuple[str, str]] = []
+    for _ in range(command_count):
+        if cursor + 8 > command_end:
+            raise ReleaseError(f"Darwin load command is truncated: {path.name}")
+        command, command_size = struct.unpack_from("<II", data, cursor)
+        if command_size < 8 or cursor + command_size > command_end:
+            raise ReleaseError(f"Darwin load command size is invalid: {path.name}")
+        if command == 0xC:
+            if command_size < 24:
+                raise ReleaseError(f"Darwin dylib command is invalid: {path.name}")
+            name_offset = struct.unpack_from("<I", data, cursor + 8)[0]
+            if name_offset >= command_size:
+                raise ReleaseError(f"Darwin dylib name offset is invalid: {path.name}")
+            raw_name = data[cursor + name_offset : cursor + command_size].split(
+                b"\0", 1
+            )[0]
+            try:
+                dynamic_libraries.append(raw_name.decode("ascii"))
+            except UnicodeDecodeError as error:
+                raise ReleaseError(
+                    f"Darwin dylib name is not ASCII: {path.name}"
+                ) from error
+        elif command == 0x32:
+            if command_size < 24:
+                raise ReleaseError(
+                    f"Darwin build-version command is invalid: {path.name}"
+                )
+            platform_value, minimum, sdk = struct.unpack_from("<III", data, cursor + 8)
+            if platform_value != 1:
+                raise ReleaseError(f"Darwin build platform is not macOS: {path.name}")
+            build_versions.append(
+                (packed_macho_version(minimum), packed_macho_version(sdk))
+            )
+        cursor += command_size
+    expected_libraries = ["/usr/lib/libSystem.B.dylib", "/usr/lib/libresolv.9.dylib"]
+    if dynamic_libraries != expected_libraries:
+        raise ReleaseError(f"Darwin dynamic library contract changed: {path.name}")
+    if build_versions != [("12.0.0", "12.0.0")]:
+        raise ReleaseError(f"Darwin minimum OS or SDK contract changed: {path.name}")
+
+
+def verify_go_build_info(
+    go_command: str, go_toolchain: str, binary: Path, target: dict[str, str]
+) -> None:
     environment = sanitized_environment(go_toolchain)
     output = run_checked(
         [go_command, "version", "-m", str(binary)],
         cwd=ROOT,
         environment=environment,
     ).stdout
-    required = (
-        GO_VERSION,
-        f"GOOS={target['os']}",
-        f"GOARCH={target['arch']}",
-        "CGO_ENABLED=0",
-        "-trimpath=true",
-    )
-    if any(value not in output for value in required):
+    settings: dict[str, str] = {}
+    for line in output.splitlines():
+        fields = line.split("\t")
+        if len(fields) != 3 or fields[1] != "build" or "=" not in fields[2]:
+            continue
+        key, value = fields[2].split("=", 1)
+        if key in settings:
+            raise ReleaseError(f"unexpected Go build metadata: {binary.name}")
+        settings[key] = value
+    required = {
+        "GOOS": target["os"],
+        "GOARCH": target["arch"],
+        "CGO_ENABLED": "0",
+        "-trimpath": "true",
+        target["architectureVariable"]: target["architectureValue"],
+    }
+    architecture_settings = {"GOAMD64", "GOARM64"}.intersection(settings)
+    if (
+        not any(line.endswith(f": {GO_VERSION}") for line in output.splitlines())
+        or any(settings.get(key) != value for key, value in required.items())
+        or architecture_settings != {target["architectureVariable"]}
+    ):
         raise ReleaseError(f"unexpected Go build metadata: {binary.name}")
 
 
 def expected_manifest_keys() -> tuple[set[str], set[str], set[str]]:
     return (
-        {"schemaVersion", "relayProtocolVersion", "relayVersion", "sourceCommit", "toolchain", "artifacts"},
+        {
+            "schemaVersion",
+            "relayProtocolVersion",
+            "relayVersion",
+            "sourceCommit",
+            "toolchain",
+            "artifacts",
+        },
         {"go", "cgoEnabled", "syft"},
-        {"os", "arch", "goTarget", "canonicalTarget", "filename", "size", "sha256", "sbom", "sbomSha256"},
+        {
+            "os",
+            "arch",
+            "goTarget",
+            "canonicalTarget",
+            "filename",
+            "size",
+            "sha256",
+            "sbom",
+            "sbomSha256",
+        },
     )
 
 
@@ -645,12 +1270,18 @@ def verify_manifest_schema() -> None:
     top_keys, toolchain_keys, artifact_keys = expected_manifest_keys()
     if set(schema.get("properties", {})) != top_keys:
         raise ReleaseError("manifest schema top-level field set changed")
-    if schema.get("additionalProperties") is not False or set(schema.get("required", [])) != top_keys:
+    if (
+        schema.get("additionalProperties") is not False
+        or set(schema.get("required", [])) != top_keys
+    ):
         raise ReleaseError("manifest schema must reject missing and unknown fields")
     toolchain_properties = schema["properties"]["toolchain"].get("properties", {})
     artifact_schema = schema.get("$defs", {}).get("artifact", {})
     artifact_properties = artifact_schema.get("properties", {})
-    if set(toolchain_properties) != toolchain_keys or set(artifact_properties) != artifact_keys:
+    if (
+        set(toolchain_properties) != toolchain_keys
+        or set(artifact_properties) != artifact_keys
+    ):
         raise ReleaseError("manifest schema nested field set changed")
     if (
         schema["properties"]["toolchain"].get("additionalProperties") is not False
@@ -678,12 +1309,24 @@ def verify_manifest(output: Path, go_command: str, go_toolchain: str) -> dict[st
         raise ReleaseError("relay manifest is invalid JSON") from error
     reject_host_paths(text, MANIFEST_NAME)
     top_keys, toolchain_keys, artifact_keys = expected_manifest_keys()
-    if set(manifest) != top_keys or set(manifest.get("toolchain", {})) != toolchain_keys:
+    if (
+        set(manifest) != top_keys
+        or set(manifest.get("toolchain", {})) != toolchain_keys
+    ):
         raise ReleaseError("relay manifest field set changed")
-    validate_release_inputs(manifest.get("relayVersion", ""), manifest.get("sourceCommit", ""))
-    if manifest.get("schemaVersion") != MANIFEST_SCHEMA_VERSION or manifest.get("relayProtocolVersion") != PROTOCOL_VERSION:
+    validate_release_inputs(
+        manifest.get("relayVersion", ""), manifest.get("sourceCommit", "")
+    )
+    if (
+        manifest.get("schemaVersion") != MANIFEST_SCHEMA_VERSION
+        or manifest.get("relayProtocolVersion") != PROTOCOL_VERSION
+    ):
         raise ReleaseError("relay manifest version changed")
-    if manifest["toolchain"] != {"go": GO_VERSION, "cgoEnabled": False, "syft": SYFT_VERSION}:
+    if manifest["toolchain"] != {
+        "go": GO_VERSION,
+        "cgoEnabled": False,
+        "syft": SYFT_VERSION,
+    }:
         raise ReleaseError("relay manifest toolchain changed")
     artifacts = manifest.get("artifacts")
     if not isinstance(artifacts, list) or len(artifacts) != len(TARGETS):
@@ -706,14 +1349,21 @@ def verify_manifest(output: Path, go_command: str, go_toolchain: str) -> dict[st
         sbom = output / artifact["sbom"]
         if artifact.get("size") != binary.stat().st_size or artifact["size"] <= 0:
             raise ReleaseError(f"artifact size mismatch: {filename}")
-        if artifact.get("sha256") != sha256(binary) or not SHA256_PATTERN.fullmatch(artifact["sha256"]):
+        if artifact.get("sha256") != sha256(binary) or not SHA256_PATTERN.fullmatch(
+            artifact["sha256"]
+        ):
             raise ReleaseError(f"artifact checksum mismatch: {filename}")
-        if artifact.get("sbomSha256") != sha256(sbom) or not SHA256_PATTERN.fullmatch(artifact["sbomSha256"]):
+        if artifact.get("sbomSha256") != sha256(sbom) or not SHA256_PATTERN.fullmatch(
+            artifact["sbomSha256"]
+        ):
             raise ReleaseError(f"SBOM checksum mismatch: {filename}")
         verify_spdx(sbom)
         verify_binary_format(binary, target)
+        verify_linkage_contract(binary, target)
         verify_go_build_info(go_command, go_toolchain, binary, target)
-    expected = build_manifest(manifest["relayVersion"], manifest["sourceCommit"], output)
+    expected = build_manifest(
+        manifest["relayVersion"], manifest["sourceCommit"], output
+    )
     if text.encode("utf-8") != stable_json(expected):
         raise ReleaseError("relay manifest is not canonical deterministic JSON")
     return manifest
@@ -747,20 +1397,25 @@ def verify_checksums(output: Path) -> None:
         raise ReleaseError("release artifact set changed")
 
 
-def verify_protocol_tests(test_output: Path, go_command: str, go_toolchain: str) -> None:
+def verify_protocol_tests(
+    test_output: Path, go_command: str, go_toolchain: str
+) -> None:
     expected_names: list[str] = []
     for target in TARGETS:
         name = protocol_test_filename(target)
         expected_names.append(name)
         binary = test_output / name
         verify_binary_format(binary, target)
+        verify_linkage_contract(binary, target)
         verify_go_build_info(go_command, go_toolchain, binary, target)
     actual_names = sorted(path.name for path in test_output.iterdir() if path.is_file())
     if actual_names != sorted(expected_names):
         raise ReleaseError("protocol-test artifact set changed")
 
 
-def validate_provisioning_archive(path: Path, tool: str, tool_platform: str) -> dict[str, str]:
+def validate_provisioning_archive(
+    path: Path, tool: str, tool_platform: str
+) -> dict[str, str]:
     contract = archive_contract(tool, tool_platform)
     if path.name != contract["artifact"]:
         raise ReleaseError(f"unexpected {tool} release archive name")
@@ -779,7 +1434,9 @@ def prepare_provision_destination(archive: Path, destination: Path) -> Path:
 
 
 def write_tool_provenance(destination: Path, tool: str, tool_platform: str) -> None:
-    (destination / PROVENANCE_NAME).write_bytes(stable_json(provenance_document(tool, tool_platform)))
+    (destination / PROVENANCE_NAME).write_bytes(
+        stable_json(provenance_document(tool, tool_platform))
+    )
 
 
 def provision_go(arguments: argparse.Namespace) -> None:
@@ -788,20 +1445,7 @@ def provision_go(arguments: argparse.Namespace) -> None:
     contract = validate_provisioning_archive(archive, "go", tool_platform)
     destination = prepare_provision_destination(archive, Path(arguments.destination))
     with tarfile.open(archive, "r:gz") as bundle:
-        members = bundle.getmembers()
-        unsafe = not members
-        for member in members:
-            member_path = PurePosixPath(member.name)
-            if (
-                not member_path.parts
-                or member_path.is_absolute()
-                or ".." in member_path.parts
-                or member_path.parts[0] != "go"
-            ):
-                unsafe = True
-                break
-        if unsafe:
-            raise ReleaseError("Go release archive layout is unsafe")
+        go_archive_tree(bundle)
         bundle.extractall(destination, filter="data")
     executable = destination / "go" / "bin" / "go"
     if not executable.is_file():
@@ -825,7 +1469,9 @@ def provision_syft(arguments: argparse.Namespace) -> None:
     with tarfile.open(archive, "r:gz") as bundle:
         matches = [member for member in bundle.getmembers() if member.name == "syft"]
         if len(matches) != 1 or not matches[0].isfile():
-            raise ReleaseError("Syft release archive does not contain one syft executable")
+            raise ReleaseError(
+                "Syft release archive does not contain one syft executable"
+            )
         stream = bundle.extractfile(matches[0])
         if stream is None:
             raise ReleaseError("Syft release executable is unreadable")
@@ -834,14 +1480,92 @@ def provision_syft(arguments: argparse.Namespace) -> None:
     installed.chmod(0o755)
     shutil.copyfile(archive, destination / contract["artifact"])
     write_tool_provenance(destination, "syft", tool_platform)
-    verify_archive_provenance(destination, "syft", tool_platform, (("syft", installed),))
+    verify_archive_provenance(
+        destination, "syft", tool_platform, (("syft", installed),)
+    )
     verify_syft_toolchain(str(installed), require_provenance=True)
+
+
+def target_for_name(name: str) -> dict[str, str]:
+    for target in TARGETS:
+        if name == f"{target['os']}/{target['arch']}":
+            return target
+    raise ReleaseError(f"unsupported relay target: {name}")
+
+
+def prepare_build_sandbox(path: Path, cache_mode: str) -> Path:
+    sandbox = validate_output_path(path)
+    if cache_mode == "clean":
+        validate_isolated_directory(sandbox, "build sandbox root", create=False)
+        clean_directory(sandbox)
+        validate_isolated_directory(sandbox, "build sandbox root", create=False)
+    elif cache_mode == "incremental":
+        validate_isolated_directory(sandbox, "build sandbox root", create=True)
+    else:
+        raise ReleaseError("cache mode must be clean or incremental")
+    return sandbox
+
+
+def build_portable_target(arguments: argparse.Namespace) -> None:
+    arguments.go = resolve_tool_command(arguments.go)
+    validate_release_inputs(arguments.relay_version, arguments.source_commit)
+    source_date_epoch = validate_source_date_epoch(arguments.source_date_epoch)
+    verify_checkout_revision(arguments.source_commit)
+    if arguments.require_clean:
+        verify_clean_checkout(arguments.source_commit)
+    verify_toolchain_manifest()
+    verify_go_module_policy()
+    verify_go_toolchain(arguments.go, arguments.go_toolchain, require_provenance=True)
+    target = target_for_name(arguments.target)
+    output = validate_output_path(Path(arguments.output))
+    if output.name != target_filename(target):
+        raise ReleaseError("portable target output name is not canonical")
+    sandbox = prepare_build_sandbox(Path(arguments.work_dir), arguments.cache_mode)
+    if output == sandbox or output in sandbox.parents or sandbox in output.parents:
+        raise ReleaseError("portable output and build sandbox must be separate")
+    if arguments.cache_mode == "clean":
+        clean_directory(output.parent)
+    else:
+        output.parent.mkdir(parents=True, exist_ok=True)
+    build_binary(
+        arguments.go,
+        arguments.go_toolchain,
+        target,
+        "./cmd/relux-relay",
+        output,
+        arguments.relay_version,
+        arguments.source_commit,
+        sandbox=sandbox,
+        source_date_epoch=source_date_epoch,
+    )
+    verify_binary_format(output, target)
+    verify_linkage_contract(output, target)
+    verify_go_build_info(arguments.go, arguments.go_toolchain, output, target)
+
+
+def extract_toolchain_licenses(arguments: argparse.Namespace) -> None:
+    arguments.go = resolve_tool_command(arguments.go)
+    verify_toolchain_manifest()
+    go_root = verify_go_toolchain(
+        arguments.go, arguments.go_toolchain, require_provenance=True
+    )
+    output = validate_output_path(Path(arguments.output))
+    clean_directory(output)
+    write_notice(output, go_root)
+    verify_notice(output, go_root)
+
+
+def check_toolchain(_: argparse.Namespace) -> None:
+    verify_go_module_policy()
+    verify_toolchain_manifest()
 
 
 def build_release(arguments: argparse.Namespace) -> None:
     arguments.go = resolve_tool_command(arguments.go)
     arguments.syft = resolve_tool_command(arguments.syft)
     validate_release_inputs(arguments.relay_version, arguments.source_commit)
+    source_date_epoch = validate_source_date_epoch(arguments.source_date_epoch)
+    verify_checkout_revision(arguments.source_commit)
     if arguments.require_clean:
         verify_clean_checkout(arguments.source_commit)
     output = validate_output_path(Path(arguments.output))
@@ -849,13 +1573,20 @@ def build_release(arguments: argparse.Namespace) -> None:
     if output == test_output:
         raise ReleaseError("release and protocol-test outputs must be separate")
     require_provenance = arguments.require_provenance or arguments.require_clean
-    go_root = verify_go_toolchain(arguments.go, arguments.go_toolchain, require_provenance)
+    go_root = verify_go_toolchain(
+        arguments.go, arguments.go_toolchain, require_provenance
+    )
     verify_syft_toolchain(arguments.syft, require_provenance)
     verify_go_module_policy()
+    verify_toolchain_manifest()
     verify_manifest_schema()
     clean_directory(output)
     clean_directory(test_output)
     for target in TARGETS:
+        target_work = prepare_build_sandbox(
+            BUILD_ROOT / "work" / "release" / f"{target['os']}-{target['arch']}",
+            "clean",
+        )
         build_binary(
             arguments.go,
             arguments.go_toolchain,
@@ -864,6 +1595,8 @@ def build_release(arguments: argparse.Namespace) -> None:
             output / target_filename(target),
             arguments.relay_version,
             arguments.source_commit,
+            sandbox=target_work / "relay",
+            source_date_epoch=source_date_epoch,
         )
         build_binary(
             arguments.go,
@@ -873,10 +1606,14 @@ def build_release(arguments: argparse.Namespace) -> None:
             test_output / protocol_test_filename(target),
             arguments.relay_version,
             arguments.source_commit,
+            sandbox=target_work / "protocol-test",
+            source_date_epoch=source_date_epoch,
         )
     for target in TARGETS:
         filename = target_filename(target)
-        generate_sbom(arguments.syft, output / filename, output / f"{filename}.spdx.json")
+        generate_sbom(
+            arguments.syft, output / filename, output / f"{filename}.spdx.json"
+        )
     write_notice(output, go_root)
     manifest = build_manifest(arguments.relay_version, arguments.source_commit, output)
     (output / MANIFEST_NAME).write_bytes(stable_json(manifest))
@@ -889,8 +1626,11 @@ def build_release(arguments: argparse.Namespace) -> None:
 
 def verify_release(arguments: argparse.Namespace) -> None:
     arguments.go = resolve_tool_command(arguments.go)
-    go_root = verify_go_toolchain(arguments.go, arguments.go_toolchain, arguments.require_provenance)
+    go_root = verify_go_toolchain(
+        arguments.go, arguments.go_toolchain, arguments.require_provenance
+    )
     verify_go_module_policy()
+    verify_toolchain_manifest()
     verify_manifest_schema()
     output = validate_output_path(Path(arguments.output))
     test_output = validate_output_path(Path(arguments.test_output))
@@ -922,25 +1662,32 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--go", default="go")
         command.add_argument("--go-toolchain", default="local")
 
-    build = subparsers.add_parser("build", help="build and verify all target-shell artifacts")
+    build = subparsers.add_parser(
+        "build", help="build and verify all target-shell artifacts"
+    )
     build.add_argument("--output", required=True)
     build.add_argument("--test-output", required=True)
     build.add_argument("--relay-version", required=True)
     build.add_argument("--source-commit", required=True)
+    build.add_argument("--source-date-epoch", default="")
     build.add_argument("--syft", required=True)
     build.add_argument("--require-clean", action="store_true")
     build.add_argument("--require-provenance", action="store_true")
     add_toolchain_options(build)
     build.set_defaults(action=build_release)
 
-    verify = subparsers.add_parser("verify", help="verify an existing target-shell artifact matrix")
+    verify = subparsers.add_parser(
+        "verify", help="verify an existing target-shell artifact matrix"
+    )
     verify.add_argument("--output", required=True)
     verify.add_argument("--test-output", required=True)
     verify.add_argument("--require-provenance", action="store_true")
     add_toolchain_options(verify)
     verify.set_defaults(action=verify_release)
 
-    compare = subparsers.add_parser("compare", help="compare reproducible executable bytes")
+    compare = subparsers.add_parser(
+        "compare", help="compare reproducible executable bytes"
+    )
     compare.add_argument("--first", required=True)
     compare.add_argument("--second", required=True)
     compare.add_argument("--first-tests", required=True)
@@ -962,6 +1709,41 @@ def parser() -> argparse.ArgumentParser:
     provision_syft_command.add_argument("--archive", required=True)
     provision_syft_command.add_argument("--destination", required=True)
     provision_syft_command.set_defaults(action=provision_syft)
+
+    build_target = subparsers.add_parser(
+        "build-target",
+        help="build one portable relay target from pinned offline inputs",
+    )
+    build_target.add_argument(
+        "--target",
+        required=True,
+        choices=[f"{target['os']}/{target['arch']}" for target in TARGETS],
+    )
+    build_target.add_argument("--output", required=True)
+    build_target.add_argument("--work-dir", required=True)
+    build_target.add_argument("--relay-version", required=True)
+    build_target.add_argument("--source-commit", required=True)
+    build_target.add_argument("--source-date-epoch", default="")
+    build_target.add_argument(
+        "--cache-mode", choices=("clean", "incremental"), default="clean"
+    )
+    build_target.add_argument("--require-clean", action="store_true")
+    add_toolchain_options(build_target)
+    build_target.set_defaults(action=build_portable_target)
+
+    licenses = subparsers.add_parser(
+        "extract-licenses",
+        help="extract the checksum-pinned project and Go license notice",
+    )
+    licenses.add_argument("--output", required=True)
+    add_toolchain_options(licenses)
+    licenses.set_defaults(action=extract_toolchain_licenses)
+
+    toolchain_check = subparsers.add_parser(
+        "toolchain-check",
+        help="verify checked-in toolchain, target, dependency, and license pins",
+    )
+    toolchain_check.set_defaults(action=check_toolchain)
     return result
 
 
