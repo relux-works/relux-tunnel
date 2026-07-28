@@ -8,10 +8,9 @@ backlog
 2026-07-15T00:46:59Z
 
 ## Last Update
-2026-07-21T07:54:38Z
+2026-07-27T21:52:57Z
 
 ## Blocked By
-- STORY-260715-2itwz7
 - STORY-260715-2xnj3v
 
 ## Blocks
@@ -31,9 +30,10 @@ backlog
 (empty)
 
 ## Notes
+2026-07-28 human scope decision: Gate A0 is decoupled from the prototype/macOS-client critical path. It remains a later distribution/compliance risk; Gate P0/provisioning remains separate for signed provider validation on the available Apple-silicon Mac.
 
 ## Precondition Resources
-(none)
+- [STORY-260715-l2i2oo_a0-decoupling-decision.md](file://STORY-260715-l2i2oo/STORY-260715-l2i2oo_a0-decoupling-decision.md) — Human decision: A0 is not a prototype critical-path gate
 
 ## Outcome Resources
 (none)
