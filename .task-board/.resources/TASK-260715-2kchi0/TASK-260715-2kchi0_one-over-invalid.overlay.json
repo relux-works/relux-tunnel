@@ -1,0 +1,12 @@
+{
+  "identity": {
+    "rowID": "M3V1-DNS16-02",
+    "matrixID": "M-DNS",
+    "workloadID": "DNS16"
+  },
+  "parameters": {
+    "dns": {
+      "aggregateLimitBytes": 8388609
+    }
+  }
+}

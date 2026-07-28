@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:46Z
 
 ## Last Update
-2026-07-16T21:08:39Z
+2026-07-21T21:47:43Z
 
 ## Blocked By
 - TASK-260715-38o3xg
@@ -29,7 +29,8 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-ixevcp_m3-evidence-protocol-v1.md](file://TASK-260715-ixevcp/TASK-260715-ixevcp_m3-evidence-protocol-v1.md)
+- [TASK-260715-ixevcp_m3-evidence-manifest-v1.schema.json](file://TASK-260715-ixevcp/TASK-260715-ixevcp_m3-evidence-manifest-v1.schema.json)
 
 ## Outcome Resources
 (none)

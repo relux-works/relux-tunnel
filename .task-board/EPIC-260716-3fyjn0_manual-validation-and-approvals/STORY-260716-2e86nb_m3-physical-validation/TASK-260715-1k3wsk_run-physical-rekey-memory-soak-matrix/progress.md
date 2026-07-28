@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:43Z
 
 ## Last Update
-2026-07-15T02:24:01Z
+2026-07-21T21:47:43Z
 
 ## Blocked By
 - TASK-260715-200jez
@@ -26,7 +26,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1k3wsk_m3-evidence-protocol-v1.md](file://TASK-260715-1k3wsk/TASK-260715-1k3wsk_m3-evidence-protocol-v1.md)
 
 ## Outcome Resources
 (none)

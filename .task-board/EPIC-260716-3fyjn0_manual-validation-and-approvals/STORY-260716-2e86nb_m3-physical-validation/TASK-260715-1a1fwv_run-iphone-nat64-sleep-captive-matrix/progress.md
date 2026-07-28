@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:45Z
 
 ## Last Update
-2026-07-15T02:24:02Z
+2026-07-21T21:47:43Z
 
 ## Blocked By
 - TASK-260715-npvvmd
@@ -28,7 +28,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1a1fwv_m3-evidence-protocol-v1.md](file://TASK-260715-1a1fwv/TASK-260715-1a1fwv_m3-evidence-protocol-v1.md)
 
 ## Outcome Resources
 (none)

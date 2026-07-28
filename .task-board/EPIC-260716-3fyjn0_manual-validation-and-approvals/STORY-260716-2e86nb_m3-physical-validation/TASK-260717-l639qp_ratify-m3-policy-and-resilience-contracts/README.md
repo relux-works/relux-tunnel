@@ -1,10 +1,10 @@
-# TASK-260717-l639qp: ratify-m3-policy-and-resilience-contracts
+# Ratify the M3 QUIC, route-mode, and reconnect policy contracts
 
 ## Description
-MANUAL batch ratification checkpoint for agent-drafted M3 governance contracts: QUIC/route-mode policy contract (TASK-260715-1je8v2) and reconnect-state ownership contract (1zikbu). These are binding user-affecting policies (fail-closed scope, route behavior) that require accountable human ratification. Drafts and agent review are autonomous; this is the human sign-off before the M3 matrix is accepted. AC: each contract ratified or returned with change requests.
+Perform the manual accountable ratification checkpoint for the independently reviewed M3 QUIC/route-mode policy contract TASK-260715-1je8v2 and reconnect ownership contract TASK-260715-1zikbu before the final physical M3 matrix can be accepted. Ratification may accept each immutable contract revision or return explicit change requests; it does not reinterpret benchmark rows or tune parameters.
 
 ## Scope
-(define task scope)
+In scope: identify the exact reviewed contract revisions and hashes; review fail-closed scope and documented Apple exceptions; QUIC Allow, Block and Auto outcomes; reconnect ownership, retry, reasserting, DNS and route behavior; record approver, timestamp, decision, rationale, conditions, superseded revision and downstream impact; preserve protocol red and unavailable rows. Out of scope: implementation, benchmark execution, selecting numeric performance values, changing TASK-260715-2kchi0 thresholds after results, waiving safety gates, absolute kill-switch claims, or accepting a draft that lacks independent review evidence.
 
 ## Acceptance Criteria
-(define acceptance criteria)
+1. The ratification record identifies exact immutable outcome resources, hashes and independent reviewer verdicts for TASK-260715-1je8v2 and TASK-260715-1zikbu. 2. Each contract receives an explicit accepted or changes-requested decision with accountable approver, timestamp, rationale, conditions and affected downstream task IDs; silence or partial approval is not acceptance. 3. Acceptance confirms the disclosed compatible/fail-closed platform scope, QUIC failure behavior, reconnect ownership, safe-DNS and route invariants without weakening TASK-260715-2kchi0 safety or red-row rules. 4. Changes requested route the owning contract back to analysis with exact required edits and keep TASK-260715-ixevcp blocked; no local workaround or threshold change is permitted. 5. The task attaches a TASK-ID-scoped ratification artifact and logbook entry containing no destinations, DNS names, credentials, user traffic or unredacted stable device identifiers.

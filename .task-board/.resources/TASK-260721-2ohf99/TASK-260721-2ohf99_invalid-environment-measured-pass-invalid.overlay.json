@@ -1,0 +1,13 @@
+{
+  "status": {
+    "primary": "invalid-environment",
+    "reasonCode": "measured-pass",
+    "reason": "Contradictory environmental invalidation claimed as measured pass.",
+    "exclusion": {
+      "excluded": true,
+      "reasonCode": "thermal-transition",
+      "evidenceReference": "evidence/thermal-transition.json",
+      "rerunRepetitionID": { "available": false, "reasonCode": "not-collected", "reason": "No rerun was scheduled.", "ownerTaskID": "TASK-260715-1ok93q" }
+    }
+  }
+}

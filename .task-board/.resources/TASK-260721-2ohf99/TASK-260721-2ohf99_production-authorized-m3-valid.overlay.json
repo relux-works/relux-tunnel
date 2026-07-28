@@ -1,0 +1,21 @@
+{
+  "authority": {
+    "provisional": false,
+    "productionAuthorized": true,
+    "blockers": [],
+    "authorizationTaskID": "TASK-260717-l639qp"
+  },
+  "policies": {
+    "dns": {
+      "productionAuthorizationPermitted": true
+    }
+  },
+  "review": {
+    "state": "accepted",
+    "reviewer": "independent-reviewer-02",
+    "reviewedAtUTC": "2026-07-22T12:00:00.000000000Z",
+    "classification": "neutral-pass",
+    "acceptedUpdateReference": "decisions/m3-update-v1.json",
+    "acceptedUpdateLineage": ["decisions/m3-parent-v0.json", "decisions/m3-update-v1.json"]
+  }
+}

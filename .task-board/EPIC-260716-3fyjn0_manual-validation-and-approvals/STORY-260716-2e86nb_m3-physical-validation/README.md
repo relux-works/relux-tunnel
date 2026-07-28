@@ -1,10 +1,10 @@
-# STORY-260716-2e86nb: m3-physical-validation
+# M3 physical resilience and performance validation
 
 ## Description
-Physical resilience matrices for M3: rekey/memory soak, QUIC route safety, multilane HOL/loss, path reconnect with real Wi-Fi/cellular transitions, NAT64/sleep/captive networks, untuned baselines and the final M3 matrix on named devices.
+Execute the TASK-260715-2kchi0 evidence protocol on named physical Macs and, when authorized hardware is available, schema-compatible iPhones to establish untuned baselines, exercise lane, rekey, memory, reconnect, NAT64, lifecycle, QUIC and route safety, tune only from accepted comparisons, and publish a locked final M3 matrix with explicit red and unavailable rows.
 
 ## Scope
-(define story scope)
+In scope: named Apple-silicon Mac baseline and supported macOS; deferred named iPhone slots; controlled SSH, relay, DNS, TCP, UDP and QUIC fixtures; workload, impairment, concurrency, lane, window, MTU, rekey, route, reconnect, NAT64, sleep, captive and pressure matrices; throughput, latency, CPU, energy, memory, packet, syscall, queue, drop, route, leak, failure and cleanup evidence; authorized captures; protocol-v1 manifests; immutable untuned and final baselines; human policy ratification. Out of scope: public-user traffic, unauthorized public networks, unsupported-platform extrapolation, tuning without before-and-after evidence, changing parameters within a row, hiding red or unavailable results, intentional device destabilization, absolute kill-switch claims, or release marketing benchmarks.
 
 ## Acceptance Criteria
-(define acceptance criteria)
+1. Every physical task uses the accepted TASK-260715-2kchi0 protocol and validator, names device/OS/toolchain/revisions/configuration/fixtures, and publishes content-addressed privacy-safe raw references plus pass, red, unavailable or invalid status for every required row. 2. The macOS-first baseline and supported Mac lifecycle/route rows execute without waiting for iPhone; iPhone rows remain explicit deferred-unavailable entries until authorized hardware and provisioning exist and are never inferred from Mac results. 3. Byte and protocol integrity, zero ordinary DNS fallback, no recursive or broad bypass routes, bounded queues and memory, truthful failure/capability behavior, nominal no-drop behavior and exact cleanup are non-tradeable gates across every matrix. 4. Any accepted tuning value has paired untuned before-and-after evidence meeting the fixed statistical and practical-effect rules, records rejected candidates and device/OS variance, and leaves all red rows visible. 5. The final locked matrix covers every supported packet, lane, rekey, pressure, reconnect, family, sleep, captive, QUIC and route-mode row or records a concrete unavailable/red owner, accepted regression baseline, policy ratification and reproducible evidence manifest.

@@ -1,0 +1,22 @@
+{
+  "comparison": {
+    "comparisonGroupID": "m3cmp-bbbbbbbbbbbbbbbbbbbbbbbb",
+    "candidateSet": {
+      "candidateIDs": [
+        "cand-111111111111111111111111",
+        "cand-222222222222222222222222",
+        "cand-333333333333333333333333"
+      ]
+    },
+    "multiplicity": {
+      "candidateCount": 3,
+      "coverage": { "numerator": 59, "denominator": 60 },
+      "intervalRanks": { "bootstrapCount": 10000, "lowerIndex": 83, "upperIndex": 9916 }
+    }
+  },
+  "review": {
+    "comparisonGroupID": "m3cmp-bbbbbbbbbbbbbbbbbbbbbbbb",
+    "candidateCount": 3,
+    "exactCoverage": { "numerator": 59, "denominator": 60 }
+  }
+}

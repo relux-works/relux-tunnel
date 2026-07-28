@@ -1,0 +1,24 @@
+{
+  "authority": {
+    "provisional": false,
+    "productionAuthorized": true,
+    "blockers": [],
+    "authorizationTaskID": "TASK-260717-l639qp"
+  },
+  "policies": {
+    "dns": {
+      "productionAuthorizationPermitted": true
+    }
+  },
+  "review": {
+    "state": "accepted",
+    "reviewer": { "available": false, "reasonCode": "not-collected", "reason": "No independent reviewer is recorded.", "ownerTaskID": "TASK-260717-l639qp" },
+    "reviewedAtUTC": { "available": false, "reasonCode": "not-collected", "reason": "No review timestamp is recorded.", "ownerTaskID": "TASK-260717-l639qp" },
+    "classification": { "available": false, "reasonCode": "not-collected", "reason": "No accepted classification is recorded.", "ownerTaskID": "TASK-260721-2ohf99" },
+    "comparisonGroupID": { "available": false, "reasonCode": "not-collected", "reason": "No stable comparison group is recorded.", "ownerTaskID": "TASK-260721-2ohf99" },
+    "candidateCount": { "available": false, "reasonCode": "not-collected", "reason": "No candidate count is recorded.", "ownerTaskID": "TASK-260721-2ohf99" },
+    "exactCoverage": { "available": false, "reasonCode": "not-collected", "reason": "No exact coverage is recorded.", "ownerTaskID": "TASK-260721-2ohf99" },
+    "acceptedUpdateReference": "decisions/m3-update-v1.json",
+    "acceptedUpdateLineage": []
+  }
+}

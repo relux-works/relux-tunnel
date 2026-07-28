@@ -1,0 +1,24 @@
+{
+  "identity": {
+    "rowID": "M3V1-DNS16-01",
+    "matrixID": "M-DNS",
+    "workloadID": "DNS16"
+  },
+  "parameters": {
+    "dns": {
+      "endpointLimit": 8,
+      "messageLimitBytes": 65535,
+      "liveOwnerLimit": 32,
+      "queuedWireLimitBytes": 1048576,
+      "aggregateLimitBytes": 8388608,
+      "channelOpenTimeoutMilliseconds": 5000,
+      "completeResponseTimeoutMilliseconds": 10000,
+      "relayUDPPhaseTimeoutMilliseconds": 10000,
+      "dispatchAllowanceMilliseconds": 2000,
+      "logicalQueryTimeoutMilliseconds": 135000,
+      "startupReadinessTimeoutMilliseconds": 45000,
+      "idleCloseMilliseconds": 30000,
+      "connectionBufferBytes": 65537
+    }
+  }
+}

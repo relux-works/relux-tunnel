@@ -8,12 +8,13 @@ backlog
 2026-07-15T02:12:45Z
 
 ## Last Update
-2026-07-15T02:24:01Z
+2026-07-21T21:47:43Z
 
 ## Blocked By
 - TASK-260715-2kchi0
 - TASK-260715-1r6k4t
 - TASK-260715-2y78ah
+- TASK-260721-2ohf99
 
 ## Blocks
 - TASK-260715-k5uxim
@@ -26,7 +27,9 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1ok93q_m3-evidence-protocol-v1.md](file://TASK-260715-1ok93q/TASK-260715-1ok93q_m3-evidence-protocol-v1.md)
+- [TASK-260715-1ok93q_m3-evidence-manifest-v1.schema.json](file://TASK-260715-1ok93q/TASK-260715-1ok93q_m3-evidence-manifest-v1.schema.json)
+- [TASK-260715-1ok93q_m3-measurement-evidence-flow.puml](file://TASK-260715-1ok93q/TASK-260715-1ok93q_m3-measurement-evidence-flow.puml)
 
 ## Outcome Resources
 (none)

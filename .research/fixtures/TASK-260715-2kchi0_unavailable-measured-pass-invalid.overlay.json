@@ -1,0 +1,8 @@
+{
+  "status": {
+    "primary": "unavailable",
+    "reasonCode": "measured-pass",
+    "reason": "Contradictory unavailable claimed as measured pass.",
+    "exclusion": { "excluded": false, "reason": "not-excluded" }
+  }
+}

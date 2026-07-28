@@ -1,0 +1,53 @@
+{
+  "authority": {
+    "provisional": true,
+    "productionAuthorized": true,
+    "blockers": ["TASK-260715-1gjxer"],
+    "authorizationTaskID": { "available": false, "reasonCode": "authority-unavailable", "reason": "No accepted production authority.", "ownerTaskID": "TASK-260717-l639qp" }
+  },
+  "timestamps": {
+    "utcStart": "2026-07-21T12:00:00.000000000Z",
+    "utcEnd": "2026-07-21T10:00:00.000000000Z",
+    "monotonicStartNanoseconds": 100,
+    "monotonicEndNanoseconds": 1
+  },
+  "device": {
+    "placeholder": "The pre-rework generic map accepted this field."
+  },
+  "gates": {
+    "byteCorrectness": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "dnsFailClosed": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "routeSafety": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "boundedResources": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "memory": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "failureBehavior": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "nominalDrops": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "cleanup": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] },
+    "statistics": { "passed": false, "reasonCode": "failed", "reason": "Hostile contradictory pass row.", "evidence": [] }
+  },
+  "artifacts": [
+    {
+      "kind": "packet-capture",
+      "logicalReference": "/Users/synthetic-fixture-account/private/capture.pcapng",
+      "sha256": "abababababababababababababababababababababababababababababababab",
+      "bytes": 4096,
+      "producer": "tcpdump",
+      "producerVersion": "fixture",
+      "captureAuthorization": { "required": true, "authorized": false, "reference": { "available": false, "reasonCode": "authority-unavailable", "reason": "Authorization was not obtained.", "ownerTaskID": "TASK-260715-1ok93q" } },
+      "custodian": "synthetic-fixture-account",
+      "privacyClass": "public-engineering",
+      "redaction": "none-generated-only",
+      "redactedDerivative": { "available": false, "reasonCode": "not-collected", "reason": "No redacted derivative exists.", "ownerTaskID": "TASK-260715-1ok93q" },
+      "retention": "project-lifetime",
+      "containsGeneratedTrafficOnly": true
+    }
+  ],
+  "privacy": {
+    "captureAuthorized": false,
+    "authorizationReference": { "available": false, "reasonCode": "authority-unavailable", "reason": "Authorization was not obtained.", "ownerTaskID": "TASK-260715-1ok93q" }
+  },
+  "review": {
+    "state": "accepted",
+    "acceptedUpdateReference": { "available": false, "reasonCode": "authority-unavailable", "reason": "No accepted update exists.", "ownerTaskID": "TASK-260717-l639qp" }
+  }
+}

@@ -1,0 +1,933 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:relux:task-260715-2kchi0:m3-evidence-manifest:v1",
+  "title": "Relux M3 evidence row manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "protocol", "identity", "status", "authority",
+    "timestamps", "device", "environment", "toolchain", "revisions",
+    "server", "algorithms", "profile", "policies", "parameters",
+    "traffic", "impairment", "schedule", "metrics", "counters",
+    "gates", "artifacts", "privacy", "comparison", "review"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "protocol": {
+      "type": "object", "additionalProperties": false,
+      "required": ["taskID", "revision", "documentSHA256", "schemaSHA256"],
+      "properties": {
+        "taskID": { "const": "TASK-260715-2kchi0" },
+        "revision": { "const": 1 },
+        "documentSHA256": { "$ref": "#/$defs/sha256" },
+        "schemaSHA256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rowID", "runID", "canonicalRowConfigSHA256", "repetitionID", "repetitionIndex", "seed", "matrixID", "workloadID", "executionClass", "pairRole", "baselineRunID", "candidateID"],
+      "properties": {
+        "rowID": { "type": "string", "pattern": "^M3V1-[A-Z0-9-]+-[0-9]{2}$" },
+        "runID": { "type": "string", "pattern": "^m3v1-[0-9a-f]{24}$" },
+        "canonicalRowConfigSHA256": { "$ref": "#/$defs/sha256" },
+        "repetitionID": { "type": "string", "pattern": "^m3v1-[0-9a-f]{24}-r(?:0[1-9]|[1-9][0-9]|100)$" },
+        "repetitionIndex": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "seed": { "enum": [104729, 130363, 155921, 196613, 262147, 327673, 393241, 524309, 786433, 1048583] },
+        "matrixID": { "enum": ["M-REF", "M-PACKET", "M-LANE", "M-SCALE", "M-REKEY", "M-DNS", "M-ROUTE-QUIC", "M-LIFECYCLE", "M-FINAL"] },
+        "workloadID": { "enum": ["WEB16", "BULK-DL", "BULK-UL", "BULK-BI", "IDLE-N", "DNS16", "UDP-BURST", "MIXED", "SCALE-N", "REKEY5G", "DNS-START-E1", "DNS-START-E4", "DNS-START-E8", "DNS-OPEN-COLD", "DNS-REUSE-WARM", "DNS-RETIRE", "ENERGY", "FAILURE", "LIFECYCLE"] },
+        "executionClass": { "enum": ["harness-controlled", "mac-provider-physical", "iphone-provider-physical", "analysis-only"] },
+        "pairRole": { "enum": ["baseline", "candidate", "unpaired"] },
+        "baselineRunID": { "$ref": "#/$defs/runIDOrUnavailable" },
+        "candidateID": { "oneOf": [{ "$ref": "#/$defs/candidateID" }, { "$ref": "#/$defs/unavailable" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "workloadID": { "enum": ["IDLE-N", "ENERGY", "REKEY5G"] } }, "required": ["workloadID"] },
+          "then": { "properties": { "seed": { "enum": [104729, 130363, 155921, 196613, 262147] } } }
+        },
+        {
+          "if": { "properties": { "workloadID": { "const": "LIFECYCLE" } }, "required": ["workloadID"] },
+          "then": { "properties": { "repetitionIndex": { "const": 1 }, "seed": { "const": 104729 } } }
+        },
+        {
+          "if": { "properties": { "pairRole": { "const": "baseline" } }, "required": ["pairRole"] },
+          "then": { "properties": { "candidateID": { "$ref": "#/$defs/unavailable" } } }
+        },
+        {
+          "if": { "properties": { "pairRole": { "const": "candidate" } }, "required": ["pairRole"] },
+          "then": { "properties": { "baselineRunID": { "type": "string", "pattern": "^m3v1-[0-9a-f]{24}$" }, "candidateID": { "$ref": "#/$defs/candidateID" } } }
+        }
+      ]
+    },
+    "status": {
+      "type": "object", "additionalProperties": false,
+      "required": ["primary", "reasonCode", "reason", "ownerTaskID", "exclusion"],
+      "properties": {
+        "primary": { "enum": ["pass", "red", "unavailable", "invalid-environment"] },
+        "reasonCode": { "enum": ["measured-pass", "safety-failure", "statistical-regression", "insufficient-precision", "missing-authority", "missing-device", "missing-network", "missing-authorization", "environment-invalidation"] },
+        "reason": { "$ref": "#/$defs/nonempty" },
+        "ownerTaskID": { "$ref": "#/$defs/taskID" },
+        "exclusion": { "$ref": "#/$defs/exclusion" }
+      }
+    },
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provisional", "productionAuthorized", "authorities", "blockers", "authorizationTaskID"],
+      "properties": {
+        "provisional": { "type": "boolean" },
+        "productionAuthorized": { "type": "boolean" },
+        "authorities": { "type": "array", "items": { "$ref": "#/$defs/taskOrADR" }, "uniqueItems": true },
+        "blockers": { "type": "array", "items": { "$ref": "#/$defs/taskOrADR" }, "uniqueItems": true },
+        "authorizationTaskID": { "$ref": "#/$defs/taskIDOrUnavailable" }
+      }
+    },
+    "timestamps": {
+      "type": "object", "additionalProperties": false,
+      "required": ["utcStart", "utcEnd", "monotonicStartNanoseconds", "monotonicEndNanoseconds", "clockSource", "clockSynchronized"],
+      "properties": {
+        "utcStart": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "utcEnd": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "monotonicStartNanoseconds": { "const": 0 },
+        "monotonicEndNanoseconds": { "type": "integer", "minimum": 1 },
+        "clockSource": { "enum": ["mach-continuous-time", "continuous-clock"] },
+        "clockSynchronized": { "type": "boolean" }
+      }
+    },
+    "device": {
+      "type": "object", "additionalProperties": false,
+      "required": ["alias", "platform", "modelIdentifier", "chip", "architecture", "installedMemoryBytes", "osVersion", "osBuild", "physical", "stableHardwareIdentifierRecorded"],
+      "properties": {
+        "alias": { "enum": ["mac-primary-01", "mac-minimum-01", "iphone-primary-01", "iphone-constrained-01"] },
+        "platform": { "enum": ["macOS", "iOS"] },
+        "modelIdentifier": { "$ref": "#/$defs/stringOrUnavailable" },
+        "chip": { "$ref": "#/$defs/stringOrUnavailable" },
+        "architecture": { "enum": ["arm64", "x86_64"] },
+        "installedMemoryBytes": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "osVersion": { "$ref": "#/$defs/nonempty" },
+        "osBuild": { "$ref": "#/$defs/nonempty" },
+        "physical": { "type": "boolean" },
+        "stableHardwareIdentifierRecorded": { "const": false }
+      }
+    },
+    "environment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["powerSource", "batteryPercentBasisPoints", "thermalState", "displayState", "interfaceKind", "addressFamily", "providerBuild", "harnessBuild", "entitlementsClass", "provisioningClass", "freeDiskBytes", "idleSettlingSeconds", "memoryPressure", "unrelatedWorkloadDetected", "isolationCheck"],
+      "properties": {
+        "powerSource": { "enum": ["ac", "battery"] },
+        "batteryPercentBasisPoints": { "$ref": "#/$defs/basisPointsOrUnavailable" },
+        "thermalState": { "enum": ["nominal", "fair", "serious", "critical"] },
+        "displayState": { "enum": ["on", "off", "locked"] },
+        "interfaceKind": { "enum": ["ethernet", "wifi", "cellular", "loopback", "controlled-virtual"] },
+        "addressFamily": { "enum": ["ipv4", "ipv6", "dual", "nat64"] },
+        "providerBuild": { "$ref": "#/$defs/stringOrUnavailable" },
+        "harnessBuild": { "$ref": "#/$defs/stringOrUnavailable" },
+        "entitlementsClass": { "enum": ["none", "development-network-extension", "distribution-network-extension"] },
+        "provisioningClass": { "enum": ["none", "development", "adhoc", "distribution"] },
+        "freeDiskBytes": { "type": "integer", "minimum": 1 },
+        "idleSettlingSeconds": { "type": "integer", "minimum": 300 },
+        "memoryPressure": { "enum": ["normal", "warning", "critical", "induced"] },
+        "unrelatedWorkloadDetected": { "type": "boolean" },
+        "isolationCheck": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "toolchain": {
+      "type": "object", "additionalProperties": false,
+      "required": ["xcodeVersion", "swiftVersion", "clangVersion", "instrumentsVersion", "shapingTool", "shapingToolVersion", "schemaValidatorVersion"],
+      "properties": {
+        "xcodeVersion": { "$ref": "#/$defs/nonempty" },
+        "swiftVersion": { "$ref": "#/$defs/nonempty" },
+        "clangVersion": { "$ref": "#/$defs/nonempty" },
+        "instrumentsVersion": { "$ref": "#/$defs/stringOrUnavailable" },
+        "shapingTool": { "$ref": "#/$defs/nonempty" },
+        "shapingToolVersion": { "$ref": "#/$defs/nonempty" },
+        "schemaValidatorVersion": { "$ref": "#/$defs/nonempty" }
+      }
+    },
+    "revisions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["gitCommit", "gitTreeDirty", "packageResolvedSHA256", "nativeDependenciesSHA256", "hevRevision", "sshRevision", "relayRevision", "schemaRevision", "vectorRevision"],
+      "properties": {
+        "gitCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "gitTreeDirty": { "type": "boolean" },
+        "packageResolvedSHA256": { "$ref": "#/$defs/sha256" },
+        "nativeDependenciesSHA256": { "$ref": "#/$defs/sha256" },
+        "hevRevision": { "$ref": "#/$defs/revisionOrUnavailable" },
+        "sshRevision": { "$ref": "#/$defs/revisionOrUnavailable" },
+        "relayRevision": { "$ref": "#/$defs/revisionOrUnavailable" },
+        "schemaRevision": { "const": "m3-evidence-manifest-v1" },
+        "vectorRevision": { "const": "m3-vectors-v1" }
+      }
+    },
+    "server": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixtureID", "hostAlias", "imageDigest", "binarySHA256", "configSHA256", "corpusSHA256", "hostKeySetSHA256", "ownedOrAuthorized", "publicServiceUsed"],
+      "properties": {
+        "fixtureID": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,63}$" },
+        "hostAlias": { "type": "string", "pattern": "^fixture-[a-z0-9-]+$" },
+        "imageDigest": { "$ref": "#/$defs/digestOrUnavailable" },
+        "binarySHA256": { "$ref": "#/$defs/sha256" },
+        "configSHA256": { "$ref": "#/$defs/sha256" },
+        "corpusSHA256": { "$ref": "#/$defs/sha256" },
+        "hostKeySetSHA256": { "$ref": "#/$defs/sha256" },
+        "ownedOrAuthorized": { "const": true },
+        "publicServiceUsed": { "const": false }
+      }
+    },
+    "algorithms": {
+      "type": "object", "additionalProperties": false,
+      "required": ["payloadGenerator", "payloadDigest", "canonicalJSON", "impairmentPRNG", "bootstrapPRNG", "statisticsRevision", "sshAlgorithms", "relayProtocol"],
+      "properties": {
+        "payloadGenerator": { "const": "relux-m3-payload-v1" },
+        "payloadDigest": { "const": "SHA-256" },
+        "canonicalJSON": { "const": "RFC8785-JCS" },
+        "impairmentPRNG": { "const": "SplitMix64-v1" },
+        "bootstrapPRNG": { "const": "SplitMix64-v1" },
+        "statisticsRevision": { "const": "m3-paired-bootstrap-v1" },
+        "sshAlgorithms": { "$ref": "#/$defs/nonempty" },
+        "relayProtocol": { "const": "relux-relay-v1" }
+      }
+    },
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["snapshotSHA256", "redactedReference", "containsSecret", "productionProfileUsed"],
+      "properties": {
+        "snapshotSHA256": { "$ref": "#/$defs/sha256" },
+        "redactedReference": { "$ref": "#/$defs/bundleReference" },
+        "containsSecret": { "const": false },
+        "productionProfileUsed": { "const": false }
+      }
+    },
+    "policies": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capability", "route", "quic", "dns"],
+      "properties": {
+        "capability": {
+          "type": "object", "additionalProperties": false,
+          "required": ["state", "generation", "fullReady", "degradedReason"],
+          "properties": {
+            "state": { "enum": ["starting", "full", "degraded", "reasserting", "failed", "stopping"] },
+            "generation": { "type": "integer", "minimum": 0 },
+            "fullReady": { "type": "boolean" },
+            "degradedReason": { "$ref": "#/$defs/stringOrUnavailable" }
+          }
+        },
+        "route": {
+          "type": "object", "additionalProperties": false,
+          "required": ["mode", "platformSupported", "sshEndpointExcluded", "ordinaryBypassAllowed", "exceptionReference"],
+          "properties": {
+            "mode": { "enum": ["compatible", "fail-closed"] },
+            "platformSupported": { "type": "boolean" },
+            "sshEndpointExcluded": { "type": "boolean" },
+            "ordinaryBypassAllowed": { "const": false },
+            "exceptionReference": { "$ref": "#/$defs/bundleReferenceOrUnavailable" }
+          }
+        },
+        "quic": {
+          "type": "object", "additionalProperties": false,
+          "required": ["mode", "autoThresholdPPM", "autoHysteresisPPM", "healthFreshnessMilliseconds", "decisionReason"],
+          "properties": {
+            "mode": { "enum": ["allow", "block-udp-443", "auto"] },
+            "autoThresholdPPM": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+            "autoHysteresisPPM": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+            "healthFreshnessMilliseconds": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+            "decisionReason": { "$ref": "#/$defs/nonempty" }
+          }
+        },
+        "dns": {
+          "type": "object", "additionalProperties": false,
+          "required": ["mode", "familyOrder", "ordinaryFallbackPermitted", "selectedSSHRequired", "productionAuthorizationPermitted", "policyArtifactSHA256", "authorityTaskID"],
+          "properties": {
+            "mode": { "enum": ["full", "degraded", "unavailable"] },
+            "familyOrder": { "enum": ["ipv6-then-ipv4", "ipv4-then-ipv6"] },
+            "ordinaryFallbackPermitted": { "const": false },
+            "selectedSSHRequired": { "const": true },
+            "productionAuthorizationPermitted": { "type": "boolean" },
+            "policyArtifactSHA256": { "$ref": "#/$defs/sha256" },
+            "authorityTaskID": { "const": "TASK-260721-3miqh4" }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mtuBytes", "hev", "socket", "packetBridge", "lanes", "windows", "rekey", "relay", "reconnect", "memory", "dns"],
+      "properties": {
+        "mtuBytes": { "enum": [1500, 4096, 8500] },
+        "hev": {
+          "type": "object", "additionalProperties": false,
+          "required": ["udpInTCP", "taskStackRequestedBytes", "tcpBufferRequestedBytes", "maxSessions", "udpCopyBufferCount", "cacheLimitBytes"],
+          "properties": {
+            "udpInTCP": { "const": true },
+            "taskStackRequestedBytes": { "type": "integer", "minimum": 1 },
+            "tcpBufferRequestedBytes": { "type": "integer", "minimum": 1 },
+            "maxSessions": { "type": "integer", "minimum": 1 },
+            "udpCopyBufferCount": { "type": "integer", "minimum": 1 },
+            "cacheLimitBytes": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "socket": {
+          "type": "object", "additionalProperties": false,
+          "required": ["requestedSendBytes", "effectiveSendBytes", "requestedReceiveBytes", "effectiveReceiveBytes"],
+          "properties": {
+            "requestedSendBytes": { "type": "integer", "minimum": 1 },
+            "effectiveSendBytes": { "type": "integer", "minimum": 1 },
+            "requestedReceiveBytes": { "type": "integer", "minimum": 1 },
+            "effectiveReceiveBytes": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "packetBridge": {
+          "type": "object", "additionalProperties": false,
+          "required": ["batchPacketLimit", "batchTimeNanoseconds", "maximumDatagramBytes", "queueLimitBytes"],
+          "properties": {
+            "batchPacketLimit": { "type": "integer", "minimum": 1 },
+            "batchTimeNanoseconds": { "type": "integer", "minimum": 1 },
+            "maximumDatagramBytes": { "type": "integer", "minimum": 1 },
+            "queueLimitBytes": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "lanes": {
+          "type": "object", "additionalProperties": false,
+          "required": ["count", "controlLaneIndex", "optionalAdmissionLimit", "pinningImmutable"],
+          "properties": {
+            "count": { "enum": [1, 2, 4] },
+            "controlLaneIndex": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "optionalAdmissionLimit": { "type": "integer", "minimum": 0, "maximum": 4 },
+            "pinningImmutable": { "const": true }
+          }
+        },
+        "windows": {
+          "type": "object", "additionalProperties": false,
+          "required": ["profile", "initialBytes", "capBytes", "advertisedCreditBytes", "pendingWriteLimitBytes", "globalReservationBytes", "bdpRTTNanoseconds", "bdpThroughputBitsPerSecond"],
+          "properties": {
+            "profile": { "enum": ["32-kib", "64-kib", "capped-bdp"] },
+            "initialBytes": { "type": "integer", "minimum": 32768 },
+            "capBytes": { "type": "integer", "minimum": 32768 },
+            "advertisedCreditBytes": { "type": "integer", "minimum": 0 },
+            "pendingWriteLimitBytes": { "type": "integer", "minimum": 1 },
+            "globalReservationBytes": { "type": "integer", "minimum": 1 },
+            "bdpRTTNanoseconds": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+            "bdpThroughputBitsPerSecond": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" }
+          }
+        },
+        "rekey": {
+          "type": "object", "additionalProperties": false,
+          "required": ["byteThreshold", "timeThresholdNanoseconds", "clientForced", "serverForced", "simultaneousForced"],
+          "properties": {
+            "byteThreshold": { "type": "integer", "minimum": 1 },
+            "timeThresholdNanoseconds": { "type": "integer", "minimum": 1 },
+            "clientForced": { "type": "boolean" },
+            "serverForced": { "type": "boolean" },
+            "simultaneousForced": { "type": "boolean" }
+          }
+        },
+        "relay": {
+          "type": "object", "additionalProperties": false,
+          "required": ["maxUDPPayloadBytes", "associationLimit", "perAssociationQueueBytes", "aggregateQueueBytes", "idleTimeoutMilliseconds"],
+          "properties": {
+            "maxUDPPayloadBytes": { "const": 1472 },
+            "associationLimit": { "type": "integer", "minimum": 1 },
+            "perAssociationQueueBytes": { "type": "integer", "minimum": 1 },
+            "aggregateQueueBytes": { "type": "integer", "minimum": 1 },
+            "idleTimeoutMilliseconds": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "reconnect": {
+          "type": "object", "additionalProperties": false,
+          "required": ["attemptLimit", "initialDelayMilliseconds", "multiplierPPM", "capDelayMilliseconds", "jitterPPM", "stableResetMilliseconds", "eventCoalescingMilliseconds", "oldNewOverlapBytes"],
+          "properties": {
+            "attemptLimit": { "type": "integer", "minimum": 0 },
+            "initialDelayMilliseconds": { "type": "integer", "minimum": 0 },
+            "multiplierPPM": { "type": "integer", "minimum": 1000000 },
+            "capDelayMilliseconds": { "type": "integer", "minimum": 0 },
+            "jitterPPM": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+            "stableResetMilliseconds": { "type": "integer", "minimum": 0 },
+            "eventCoalescingMilliseconds": { "type": "integer", "minimum": 0 },
+            "oldNewOverlapBytes": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "memory": {
+          "type": "object", "additionalProperties": false,
+          "required": ["ledgerRevision", "componentCeilingBytes", "aggregateCeilingBytes", "softWatermarkBytes", "pressureWatermarkBytes", "criticalWatermarkBytes", "recoveryWatermarkBytes", "samplingMilliseconds", "actionDeadlineMilliseconds"],
+          "properties": {
+            "ledgerRevision": { "$ref": "#/$defs/nonempty" },
+            "componentCeilingBytes": { "type": "integer", "minimum": 1 },
+            "aggregateCeilingBytes": { "type": "integer", "minimum": 1 },
+            "softWatermarkBytes": { "type": "integer", "minimum": 1 },
+            "pressureWatermarkBytes": { "type": "integer", "minimum": 1 },
+            "criticalWatermarkBytes": { "type": "integer", "minimum": 1 },
+            "recoveryWatermarkBytes": { "type": "integer", "minimum": 1 },
+            "samplingMilliseconds": { "type": "integer", "minimum": 1 },
+            "actionDeadlineMilliseconds": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "dns": {
+          "type": "object", "additionalProperties": false,
+          "required": ["endpointLimit", "messageLimitBytes", "liveOwnerLimit", "queuedWireLimitBytes", "aggregateLimitBytes", "channelOpenTimeoutMilliseconds", "completeResponseTimeoutMilliseconds", "relayUDPPhaseTimeoutMilliseconds", "dispatchAllowanceMilliseconds", "logicalQueryTimeoutMilliseconds", "startupReadinessTimeoutMilliseconds", "idleCloseMilliseconds", "connectionBufferBytes"],
+          "properties": {
+            "endpointLimit": { "type": "integer", "minimum": 1, "maximum": 8 },
+            "messageLimitBytes": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "liveOwnerLimit": { "type": "integer", "minimum": 1, "maximum": 32 },
+            "queuedWireLimitBytes": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+            "aggregateLimitBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 },
+            "channelOpenTimeoutMilliseconds": { "type": "integer", "minimum": 1, "maximum": 5000 },
+            "completeResponseTimeoutMilliseconds": { "type": "integer", "minimum": 1, "maximum": 10000 },
+            "relayUDPPhaseTimeoutMilliseconds": { "type": "integer", "minimum": 1, "maximum": 10000 },
+            "dispatchAllowanceMilliseconds": { "type": "integer", "minimum": 1, "maximum": 2000 },
+            "logicalQueryTimeoutMilliseconds": { "type": "integer", "minimum": 1, "maximum": 135000 },
+            "startupReadinessTimeoutMilliseconds": { "type": "integer", "minimum": 1, "maximum": 45000 },
+            "idleCloseMilliseconds": { "type": "integer", "minimum": 1, "maximum": 30000 },
+            "connectionBufferBytes": { "const": 65537 }
+          }
+        }
+      }
+    },
+    "traffic": {
+      "type": "object", "additionalProperties": false,
+      "required": ["generatorRevision", "corpusSHA256", "payloadSHA256", "directions", "payloadSizesBytes", "offeredRatePerSecond", "concurrency", "intendedFlows", "admittedFlows", "closedLoop", "syntheticOnly"],
+      "properties": {
+        "generatorRevision": { "const": "relux-m3-generator-v1" },
+        "corpusSHA256": { "$ref": "#/$defs/sha256" },
+        "payloadSHA256": { "$ref": "#/$defs/sha256" },
+        "directions": { "type": "array", "items": { "enum": ["upload", "download", "bidirectional", "dns-query", "dns-response"] }, "minItems": 1, "uniqueItems": true },
+        "payloadSizesBytes": { "type": "array", "items": { "type": "integer", "minimum": 0, "maximum": 65535 }, "minItems": 1, "uniqueItems": true },
+        "offeredRatePerSecond": { "type": "integer", "minimum": 0 },
+        "concurrency": { "type": "integer", "minimum": 1 },
+        "intendedFlows": { "type": "integer", "minimum": 0 },
+        "admittedFlows": { "type": "integer", "minimum": 0 },
+        "closedLoop": { "type": "boolean" },
+        "syntheticOnly": { "const": true }
+      }
+    },
+    "impairment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["profileID", "adapter", "hostAlias", "oneWayDelayNanoseconds", "jitterNanoseconds", "lossPartsPerMillion", "rateLimitBitsPerSecond", "queueLimitBytes", "faultWindowStartNanoseconds", "faultWindowEndNanoseconds", "observedMedianRTTNanoseconds", "observedLossPartsPerMillion", "preStateSHA256", "configuredStateSHA256", "restoredStateSHA256", "restorationGate"],
+      "properties": {
+        "profileID": { "enum": ["I0-CLEAN", "I1-WIFI-GOOD", "I2-WIFI-POOR", "I3-SEVERE", "I4-CONGESTED", "I5-BLACKHOLE"] },
+        "adapter": { "$ref": "#/$defs/nonempty" },
+        "hostAlias": { "type": "string", "pattern": "^fixture-[a-z0-9-]+$" },
+        "oneWayDelayNanoseconds": { "type": "integer", "minimum": 0 },
+        "jitterNanoseconds": { "type": "integer", "minimum": 0 },
+        "lossPartsPerMillion": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+        "rateLimitBitsPerSecond": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "queueLimitBytes": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "faultWindowStartNanoseconds": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "faultWindowEndNanoseconds": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "observedMedianRTTNanoseconds": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "observedLossPartsPerMillion": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "preStateSHA256": { "$ref": "#/$defs/sha256" },
+        "configuredStateSHA256": { "$ref": "#/$defs/sha256" },
+        "restoredStateSHA256": { "$ref": "#/$defs/sha256" },
+        "restorationGate": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "schedule": {
+      "type": "object", "additionalProperties": false,
+      "required": ["family", "warmupNanoseconds", "steadyNanoseconds", "cooldownNanoseconds", "faultAtNanoseconds", "repetitionsPlanned", "samplingIntervalNanoseconds", "operationSampling", "executionOrder"],
+      "properties": {
+        "family": { "enum": ["latency", "throughput", "idle", "scale", "failure", "energy", "lifecycle", "rekey"] },
+        "warmupNanoseconds": { "type": "integer", "minimum": 0 },
+        "steadyNanoseconds": { "type": "integer", "minimum": 1 },
+        "cooldownNanoseconds": { "type": "integer", "minimum": 0 },
+        "faultAtNanoseconds": { "$ref": "#/$defs/nonnegativeIntegerOrUnavailable" },
+        "repetitionsPlanned": { "enum": [1, 5, 10, 100] },
+        "samplingIntervalNanoseconds": { "const": 1000000000 },
+        "operationSampling": { "enum": ["every-operation", "one-per-second", "lossless-counter-delta"] },
+        "executionOrder": { "enum": ["baseline-candidate", "candidate-baseline", "unpaired"] }
+      }
+    },
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["throughputBitsPerSecond", "goodputBitsPerSecond", "ttfbNanoseconds", "dnsLatencyNanoseconds", "rttNanoseconds", "outageLatencyNanoseconds", "failureLatencyNanoseconds", "cpuBasisPoints", "energyMicrojoules", "physicalFootprintBytes", "peakFootprintBytes", "advisoryAvailableMemoryBytes", "packetRateMilliPerSecond", "syscallRateMilliPerSecond", "wakeupRateMilliPerSecond", "queueOccupancyBytes"],
+      "properties": {
+        "throughputBitsPerSecond": { "$ref": "#/$defs/metricBitsPerSecond" },
+        "goodputBitsPerSecond": { "$ref": "#/$defs/metricBitsPerSecond" },
+        "ttfbNanoseconds": { "$ref": "#/$defs/latencySummaryNanoseconds" },
+        "dnsLatencyNanoseconds": { "$ref": "#/$defs/latencySummaryNanoseconds" },
+        "rttNanoseconds": { "$ref": "#/$defs/latencySummaryNanoseconds" },
+        "outageLatencyNanoseconds": { "$ref": "#/$defs/latencySummaryNanoseconds" },
+        "failureLatencyNanoseconds": { "$ref": "#/$defs/latencySummaryNanoseconds" },
+        "cpuBasisPoints": { "$ref": "#/$defs/metricBasisPoints" },
+        "energyMicrojoules": { "$ref": "#/$defs/metricMicrojoules" },
+        "physicalFootprintBytes": { "$ref": "#/$defs/metricBytes" },
+        "peakFootprintBytes": { "$ref": "#/$defs/metricBytes" },
+        "advisoryAvailableMemoryBytes": { "$ref": "#/$defs/metricBytes" },
+        "packetRateMilliPerSecond": { "$ref": "#/$defs/metricMilliPerSecond" },
+        "syscallRateMilliPerSecond": { "$ref": "#/$defs/metricMilliPerSecond" },
+        "wakeupRateMilliPerSecond": { "$ref": "#/$defs/metricMilliPerSecond" },
+        "queueOccupancyBytes": { "$ref": "#/$defs/metricBytes" }
+      }
+    },
+    "counters": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bytesSent", "bytesReceived", "packetsSent", "packetsReceived", "syscalls", "wakeups", "dnsQueries", "dnsTerminalResults", "ordinaryDNSFallbacks", "dnsAttempts", "duplicateResults", "lateCallbacks", "routeLoops", "ordinaryRouteBypasses", "lanes", "channels", "windows", "rekeys", "sessions", "associations", "owners", "queueBytesPeak", "drops", "errors", "collectorOverflows", "descriptors", "tasks", "timers", "sockets", "cleanupLeaks"],
+      "properties": {
+        "bytesSent": { "$ref": "#/$defs/countOrUnavailable" },
+        "bytesReceived": { "$ref": "#/$defs/countOrUnavailable" },
+        "packetsSent": { "$ref": "#/$defs/countOrUnavailable" },
+        "packetsReceived": { "$ref": "#/$defs/countOrUnavailable" },
+        "syscalls": { "$ref": "#/$defs/countOrUnavailable" },
+        "wakeups": { "$ref": "#/$defs/countOrUnavailable" },
+        "dnsQueries": { "$ref": "#/$defs/countOrUnavailable" },
+        "dnsTerminalResults": { "$ref": "#/$defs/countOrUnavailable" },
+        "ordinaryDNSFallbacks": { "$ref": "#/$defs/countOrUnavailable" },
+        "dnsAttempts": { "$ref": "#/$defs/countOrUnavailable" },
+        "duplicateResults": { "$ref": "#/$defs/countOrUnavailable" },
+        "lateCallbacks": { "$ref": "#/$defs/countOrUnavailable" },
+        "routeLoops": { "$ref": "#/$defs/countOrUnavailable" },
+        "ordinaryRouteBypasses": { "$ref": "#/$defs/countOrUnavailable" },
+        "lanes": { "$ref": "#/$defs/countOrUnavailable" },
+        "channels": { "$ref": "#/$defs/countOrUnavailable" },
+        "windows": { "$ref": "#/$defs/countOrUnavailable" },
+        "rekeys": { "$ref": "#/$defs/countOrUnavailable" },
+        "sessions": { "$ref": "#/$defs/countOrUnavailable" },
+        "associations": { "$ref": "#/$defs/countOrUnavailable" },
+        "owners": { "$ref": "#/$defs/countOrUnavailable" },
+        "queueBytesPeak": { "$ref": "#/$defs/countOrUnavailable" },
+        "drops": { "$ref": "#/$defs/countOrUnavailable" },
+        "errors": { "$ref": "#/$defs/countOrUnavailable" },
+        "collectorOverflows": { "$ref": "#/$defs/countOrUnavailable" },
+        "descriptors": { "$ref": "#/$defs/countOrUnavailable" },
+        "tasks": { "$ref": "#/$defs/countOrUnavailable" },
+        "timers": { "$ref": "#/$defs/countOrUnavailable" },
+        "sockets": { "$ref": "#/$defs/countOrUnavailable" },
+        "cleanupLeaks": { "$ref": "#/$defs/countOrUnavailable" }
+      }
+    },
+    "gates": {
+      "type": "object", "additionalProperties": false,
+      "required": ["byteCorrectness", "dnsFailClosed", "routeSafety", "boundedResources", "memory", "failureBehavior", "nominalDrops", "cleanup", "statistics"],
+      "properties": {
+        "byteCorrectness": { "$ref": "#/$defs/gate" },
+        "dnsFailClosed": { "$ref": "#/$defs/gate" },
+        "routeSafety": { "$ref": "#/$defs/gate" },
+        "boundedResources": { "$ref": "#/$defs/gate" },
+        "memory": { "$ref": "#/$defs/gate" },
+        "failureBehavior": { "$ref": "#/$defs/gate" },
+        "nominalDrops": { "$ref": "#/$defs/gate" },
+        "cleanup": { "$ref": "#/$defs/gate" },
+        "statistics": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "artifacts": { "type": "array", "items": { "$ref": "#/$defs/artifact" }, "minItems": 1 },
+    "privacy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["captureAuthorized", "authorizationReference", "bundleClassification", "redactionVersion", "retentionPolicy", "privacyScan"],
+      "properties": {
+        "captureAuthorized": { "type": "boolean" },
+        "authorizationReference": { "$ref": "#/$defs/bundleReferenceOrUnavailable" },
+        "bundleClassification": { "enum": ["public-engineering", "internal-redacted", "restricted-local-raw"] },
+        "redactionVersion": { "const": "m3-redaction-v1" },
+        "retentionPolicy": { "enum": ["project-lifetime", "release-plus-2y", "custodian-controlled-restricted"] },
+        "privacyScan": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "comparison": { "$ref": "#/$defs/comparisonResultOrUnavailable" },
+    "review": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "reviewer", "reviewedAtUTC", "classification", "comparisonGroupID", "candidateCount", "bootstrapResamples", "exactCoverage", "acceptedUpdateReference", "acceptedUpdateLineage", "immutableManifestSHA256"],
+      "properties": {
+        "state": { "enum": ["pending", "accepted", "changes-requested", "rejected"] },
+        "reviewer": { "$ref": "#/$defs/stringOrUnavailable" },
+        "reviewedAtUTC": { "$ref": "#/$defs/dateTimeOrUnavailable" },
+        "classification": { "$ref": "#/$defs/classificationOrUnavailable" },
+        "comparisonGroupID": { "$ref": "#/$defs/comparisonGroupIDOrUnavailable" },
+        "candidateCount": { "$ref": "#/$defs/positiveIntegerOrUnavailable" },
+        "bootstrapResamples": { "const": 10000 },
+        "exactCoverage": { "$ref": "#/$defs/exactCoverageOrUnavailable" },
+        "acceptedUpdateReference": { "$ref": "#/$defs/bundleReferenceOrUnavailable" },
+        "acceptedUpdateLineage": { "type": "array", "items": { "$ref": "#/$defs/bundleReference" }, "uniqueItems": true },
+        "immutableManifestSHA256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "properties": { "primary": { "const": "pass" } }, "required": ["primary"] } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "gates": {
+            "properties": {
+              "byteCorrectness": { "properties": { "passed": { "const": true } } },
+              "dnsFailClosed": { "properties": { "passed": { "const": true } } },
+              "routeSafety": { "properties": { "passed": { "const": true } } },
+              "boundedResources": { "properties": { "passed": { "const": true } } },
+              "memory": { "properties": { "passed": { "const": true } } },
+              "failureBehavior": { "properties": { "passed": { "const": true } } },
+              "nominalDrops": { "properties": { "passed": { "const": true } } },
+              "cleanup": { "properties": { "passed": { "const": true } } },
+              "statistics": { "properties": { "passed": { "const": true } } }
+            }
+          },
+          "status": { "properties": { "reasonCode": { "const": "measured-pass" }, "exclusion": { "$ref": "#/$defs/notExcluded" } } }
+          ,"comparison": { "oneOf": [{ "$ref": "#/$defs/unavailable" }, { "allOf": [{ "$ref": "#/$defs/comparisonResult" }, { "properties": { "safetyStatus": { "const": "pass" } } }] }] }
+          ,"environment": { "properties": { "isolationCheck": { "properties": { "passed": { "const": true } } } } }
+          ,"impairment": { "properties": { "restorationGate": { "properties": { "passed": { "const": true } } } } }
+          ,"privacy": { "properties": { "privacyScan": { "properties": { "passed": { "const": true } } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "authority": { "properties": { "productionAuthorized": { "const": true } }, "required": ["productionAuthorized"] } }, "required": ["authority"] },
+      "then": {
+        "properties": {
+          "authority": { "properties": { "provisional": { "const": false }, "blockers": { "maxItems": 0 }, "authorizationTaskID": { "type": "string", "pattern": "^TASK-[0-9]{6}-[a-z0-9]{6}$" } } },
+          "status": { "properties": { "primary": { "const": "pass" } } },
+          "comparison": { "$ref": "#/$defs/productionComparisonResult" },
+          "review": {
+            "properties": {
+              "state": { "const": "accepted" },
+              "reviewer": { "$ref": "#/$defs/nonempty" },
+              "reviewedAtUTC": { "type": "string", "format": "date-time", "pattern": "Z$" },
+              "classification": { "enum": ["material-improvement", "neutral-pass"] },
+              "comparisonGroupID": { "$ref": "#/$defs/comparisonGroupID" },
+              "candidateCount": { "type": "integer", "minimum": 1 },
+              "exactCoverage": { "$ref": "#/$defs/exactCoverage" },
+              "acceptedUpdateReference": { "$ref": "#/$defs/bundleReference" },
+              "acceptedUpdateLineage": { "minItems": 1 }
+            }
+          },
+          "policies": { "properties": { "dns": { "properties": { "productionAuthorizationPermitted": { "const": true } } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "properties": { "primary": { "enum": ["red", "unavailable", "invalid-environment"] } }, "required": ["primary"] } }, "required": ["status"] },
+      "then": { "properties": { "authority": { "properties": { "productionAuthorized": { "const": false } } } } }
+    },
+    {
+      "if": { "properties": { "status": { "properties": { "primary": { "const": "red" } }, "required": ["primary"] } }, "required": ["status"] },
+      "then": { "properties": { "status": { "properties": { "reasonCode": { "enum": ["safety-failure", "statistical-regression", "insufficient-precision"] }, "exclusion": { "$ref": "#/$defs/notExcluded" } } } } }
+    },
+    {
+      "if": { "properties": { "status": { "properties": { "primary": { "const": "unavailable" } }, "required": ["primary"] } }, "required": ["status"] },
+      "then": { "properties": { "status": { "properties": { "reasonCode": { "enum": ["missing-authority", "missing-device", "missing-network", "missing-authorization"] }, "exclusion": { "$ref": "#/$defs/notExcluded" } } } } }
+    },
+    {
+      "if": { "properties": { "status": { "properties": { "primary": { "const": "invalid-environment" } }, "required": ["primary"] } }, "required": ["status"] },
+      "then": { "properties": { "status": { "properties": { "reasonCode": { "const": "environment-invalidation" }, "exclusion": { "properties": { "excluded": { "const": true } }, "required": ["excluded"] } } } } }
+    },
+    {
+      "if": { "properties": { "privacy": { "properties": { "captureAuthorized": { "const": false } }, "required": ["captureAuthorized"] } }, "required": ["privacy"] },
+      "then": { "properties": { "artifacts": { "not": { "contains": { "properties": { "kind": { "enum": ["packet-capture", "instruments-trace"] } }, "required": ["kind"] } } } } }
+    },
+    {
+      "if": { "properties": { "artifacts": { "contains": { "properties": { "kind": { "enum": ["packet-capture", "instruments-trace"] } }, "required": ["kind"] } } }, "required": ["artifacts"] },
+      "then": { "properties": { "privacy": { "properties": { "captureAuthorized": { "const": true }, "authorizationReference": { "$ref": "#/$defs/bundleReference" } } } } }
+    }
+  ],
+  "$defs": {
+    "nonempty": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "comparisonGroupID": { "type": "string", "pattern": "^m3cmp-[0-9a-f]{24}$" },
+    "comparisonGroupIDOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/comparisonGroupID" }, { "$ref": "#/$defs/unavailable" }] },
+    "candidateID": { "type": "string", "pattern": "^cand-[0-9a-f]{24}$" },
+    "pairID": { "type": "string", "pattern": "^pair-[0-9a-f]{24}$" },
+    "taskID": { "type": "string", "pattern": "^TASK-[0-9]{6}-[a-z0-9]{6}$" },
+    "taskOrADR": { "type": "string", "pattern": "^(?:TASK-[0-9]{6}-[a-z0-9]{6}|ADR-[0-9]{3})$" },
+    "custodian": { "type": "string", "pattern": "^(?:TASK-[0-9]{6}-[a-z0-9]{6}|role:[a-z0-9][a-z0-9-]{0,63})$" },
+    "bundleReference": { "type": "string", "pattern": "^(?:[A-Za-z0-9][A-Za-z0-9._-]*/)*[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "unavailable": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "reasonCode", "reason", "ownerTaskID"],
+      "properties": {
+        "available": { "const": false },
+        "reasonCode": { "enum": ["not-applicable", "not-collected", "platform-unavailable", "device-unavailable", "authority-unavailable", "deferred-iphone-physical", "zero-baseline"] },
+        "reason": { "$ref": "#/$defs/nonempty" },
+        "ownerTaskID": { "$ref": "#/$defs/taskID" }
+      }
+    },
+    "stringOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/nonempty" }, { "$ref": "#/$defs/unavailable" }] },
+    "idOrUnavailable": { "oneOf": [{ "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,63}$" }, { "$ref": "#/$defs/unavailable" }] },
+    "runIDOrUnavailable": { "oneOf": [{ "type": "string", "pattern": "^m3v1-[0-9a-f]{24}$" }, { "$ref": "#/$defs/unavailable" }] },
+    "taskIDOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/taskID" }, { "$ref": "#/$defs/unavailable" }] },
+    "bundleReferenceOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/bundleReference" }, { "$ref": "#/$defs/unavailable" }] },
+    "dateTimeOrUnavailable": { "oneOf": [{ "type": "string", "format": "date-time", "pattern": "Z$" }, { "$ref": "#/$defs/unavailable" }] },
+    "revisionOrUnavailable": { "oneOf": [{ "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._+/-]{0,127}$" }, { "$ref": "#/$defs/unavailable" }] },
+    "digestOrUnavailable": { "oneOf": [{ "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }, { "$ref": "#/$defs/unavailable" }] },
+    "nonnegativeIntegerOrUnavailable": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "$ref": "#/$defs/unavailable" }] },
+    "positiveIntegerOrUnavailable": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "$ref": "#/$defs/unavailable" }] },
+    "basisPointsOrUnavailable": { "oneOf": [{ "type": "integer", "minimum": 0, "maximum": 10000 }, { "$ref": "#/$defs/unavailable" }] },
+    "classificationOrUnavailable": { "oneOf": [{ "enum": ["material-improvement", "neutral-pass", "red-regression", "red-insufficient-precision", "red-safety"] }, { "$ref": "#/$defs/unavailable" }] },
+    "signedIntegerOrUnavailable": { "oneOf": [{ "type": "integer" }, { "$ref": "#/$defs/unavailable" }] },
+    "exactCoverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": { "type": "integer", "minimum": 19 },
+        "denominator": { "type": "integer", "minimum": 20 }
+      }
+    },
+    "exactCoverageOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/exactCoverage" }, { "$ref": "#/$defs/unavailable" }] },
+    "exclusion": {
+      "oneOf": [
+        { "$ref": "#/$defs/notExcluded" },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["excluded", "reasonCode", "evidenceReference", "rerunRepetitionID"],
+          "properties": {
+            "excluded": { "const": true },
+            "reasonCode": { "enum": ["thermal-transition", "unrelated-interruption", "fixture-crash", "impairment-preflight", "collector-overflow", "missing-required-artifact"] },
+            "evidenceReference": { "$ref": "#/$defs/bundleReference" },
+            "rerunRepetitionID": { "oneOf": [{ "type": "string", "pattern": "^m3v1-[0-9a-f]{24}-r(?:0[1-9]|[1-9][0-9]|100)$" }, { "$ref": "#/$defs/unavailable" }] }
+          }
+        }
+      ]
+    },
+    "notExcluded": {
+      "type": "object", "additionalProperties": false,
+      "required": ["excluded", "reason"],
+      "properties": { "excluded": { "const": false }, "reason": { "const": "not-excluded" } }
+    },
+    "gate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["passed", "reasonCode", "reason", "evidence"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "reasonCode": { "enum": ["verified", "failed", "not-evaluated"] },
+        "reason": { "$ref": "#/$defs/nonempty" },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/bundleReference" }, "uniqueItems": true }
+      },
+      "allOf": [
+        { "if": { "properties": { "passed": { "const": true } }, "required": ["passed"] }, "then": { "properties": { "reasonCode": { "const": "verified" }, "evidence": { "minItems": 1 } } } },
+        { "if": { "properties": { "passed": { "const": false } }, "required": ["passed"] }, "then": { "properties": { "reasonCode": { "enum": ["failed", "not-evaluated"] } } } }
+      ]
+    },
+    "availableCount": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "unit", "value"],
+      "properties": { "available": { "const": true }, "unit": { "const": "count" }, "value": { "type": "integer", "minimum": 0 } }
+    },
+    "countOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/availableCount" }, { "$ref": "#/$defs/unavailable" }] },
+    "metricBase": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "unit", "value", "aggregation", "sampleCount", "rawSamplesReference"],
+      "properties": {
+        "available": { "const": true },
+        "unit": { "type": "string" },
+        "value": { "type": "integer", "minimum": 0 },
+        "aggregation": { "enum": ["median", "p95", "p99", "mean", "maximum", "minimum", "sum", "last"] },
+        "sampleCount": { "type": "integer", "minimum": 1 },
+        "rawSamplesReference": { "$ref": "#/$defs/bundleReference" }
+      }
+    },
+    "availableLatencySummaryNanoseconds": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "unit", "median", "p95", "p99", "sampleCount", "rawSamplesReference"],
+      "properties": {
+        "available": { "const": true },
+        "unit": { "const": "nanoseconds" },
+        "median": { "type": "integer", "minimum": 0 },
+        "p95": { "type": "integer", "minimum": 0 },
+        "p99": { "type": "integer", "minimum": 0 },
+        "sampleCount": { "type": "integer", "minimum": 1 },
+        "rawSamplesReference": { "$ref": "#/$defs/bundleReference" }
+      }
+    },
+    "latencySummaryNanoseconds": { "oneOf": [{ "$ref": "#/$defs/availableLatencySummaryNanoseconds" }, { "$ref": "#/$defs/unavailable" }] },
+    "metricBitsPerSecond": { "oneOf": [{ "allOf": [{ "$ref": "#/$defs/metricBase" }, { "properties": { "unit": { "const": "bits-per-second" } } }] }, { "$ref": "#/$defs/unavailable" }] },
+    "metricNanoseconds": { "oneOf": [{ "allOf": [{ "$ref": "#/$defs/metricBase" }, { "properties": { "unit": { "const": "nanoseconds" } } }] }, { "$ref": "#/$defs/unavailable" }] },
+    "metricBasisPoints": { "oneOf": [{ "allOf": [{ "$ref": "#/$defs/metricBase" }, { "properties": { "unit": { "const": "basis-points" }, "value": { "maximum": 1000000 } } }] }, { "$ref": "#/$defs/unavailable" }] },
+    "metricMicrojoules": { "oneOf": [{ "allOf": [{ "$ref": "#/$defs/metricBase" }, { "properties": { "unit": { "const": "microjoules" } } }] }, { "$ref": "#/$defs/unavailable" }] },
+    "metricBytes": { "oneOf": [{ "allOf": [{ "$ref": "#/$defs/metricBase" }, { "properties": { "unit": { "const": "bytes" } } }] }, { "$ref": "#/$defs/unavailable" }] },
+    "metricMilliPerSecond": { "oneOf": [{ "allOf": [{ "$ref": "#/$defs/metricBase" }, { "properties": { "unit": { "const": "milli-per-second" } } }] }, { "$ref": "#/$defs/unavailable" }] },
+    "parameterName": {
+      "enum": [
+        "mtuBytes", "hev.taskStackRequestedBytes", "hev.tcpBufferRequestedBytes", "hev.maxSessions", "hev.udpCopyBufferCount", "hev.cacheLimitBytes",
+        "socket.requestedSendBytes", "socket.effectiveSendBytes", "socket.requestedReceiveBytes", "socket.effectiveReceiveBytes",
+        "packetBridge.batchPacketLimit", "packetBridge.batchTimeNanoseconds", "packetBridge.maximumDatagramBytes", "packetBridge.queueLimitBytes",
+        "lanes.count", "lanes.controlLaneIndex", "lanes.optionalAdmissionLimit", "windows.profile", "windows.initialBytes", "windows.capBytes", "windows.advertisedCreditBytes", "windows.pendingWriteLimitBytes", "windows.globalReservationBytes",
+        "rekey.byteThreshold", "rekey.timeThresholdNanoseconds", "rekey.clientForced", "rekey.serverForced", "rekey.simultaneousForced",
+        "relay.associationLimit", "relay.perAssociationQueueBytes", "relay.aggregateQueueBytes", "relay.idleTimeoutMilliseconds",
+        "reconnect.attemptLimit", "reconnect.initialDelayMilliseconds", "reconnect.multiplierPPM", "reconnect.capDelayMilliseconds", "reconnect.jitterPPM", "reconnect.stableResetMilliseconds", "reconnect.eventCoalescingMilliseconds", "reconnect.oldNewOverlapBytes",
+        "memory.ledgerRevision", "memory.componentCeilingBytes", "memory.aggregateCeilingBytes", "memory.softWatermarkBytes", "memory.pressureWatermarkBytes", "memory.criticalWatermarkBytes", "memory.recoveryWatermarkBytes", "memory.samplingMilliseconds", "memory.actionDeadlineMilliseconds",
+        "dns.endpointLimit", "dns.messageLimitBytes", "dns.liveOwnerLimit", "dns.queuedWireLimitBytes", "dns.aggregateLimitBytes", "dns.channelOpenTimeoutMilliseconds", "dns.completeResponseTimeoutMilliseconds", "dns.relayUDPPhaseTimeoutMilliseconds", "dns.dispatchAllowanceMilliseconds", "dns.logicalQueryTimeoutMilliseconds", "dns.startupReadinessTimeoutMilliseconds", "dns.idleCloseMilliseconds", "dns.connectionBufferBytes",
+        "policies.quic.mode", "policies.route.mode"
+      ]
+    },
+    "candidateSet": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baselineCandidateID", "candidateIDs", "parameterNames"],
+      "properties": {
+        "baselineCandidateID": { "$ref": "#/$defs/candidateID" },
+        "candidateIDs": { "type": "array", "items": { "$ref": "#/$defs/candidateID" }, "minItems": 1, "uniqueItems": true },
+        "parameterNames": { "type": "array", "items": { "$ref": "#/$defs/parameterName" }, "minItems": 1, "uniqueItems": true }
+      }
+    },
+    "pairedSample": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pairID", "candidateID", "repetitionIndex", "seed", "baselineRunID", "candidateRunID", "baselineSampleReference", "candidateSampleReference"],
+      "properties": {
+        "pairID": { "$ref": "#/$defs/pairID" },
+        "candidateID": { "$ref": "#/$defs/candidateID" },
+        "repetitionIndex": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "seed": { "enum": [104729, 130363, 155921, 196613, 262147, 327673, 393241, 524309, 786433, 1048583] },
+        "baselineRunID": { "type": "string", "pattern": "^m3v1-[0-9a-f]{24}$" },
+        "candidateRunID": { "type": "string", "pattern": "^m3v1-[0-9a-f]{24}$" },
+        "baselineSampleReference": { "$ref": "#/$defs/bundleReference" },
+        "candidateSampleReference": { "$ref": "#/$defs/bundleReference" }
+      }
+    },
+    "intervalRanks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bootstrapCount", "lowerIndex", "upperIndex"],
+      "properties": {
+        "bootstrapCount": { "const": 10000 },
+        "lowerIndex": { "type": "integer", "minimum": 0, "maximum": 9999 },
+        "upperIndex": { "type": "integer", "minimum": 0, "maximum": 9999 }
+      }
+    },
+    "multiplicity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidateCount", "coverage", "intervalRanks"],
+      "properties": {
+        "candidateCount": { "type": "integer", "minimum": 1 },
+        "coverage": { "$ref": "#/$defs/exactCoverage" },
+        "intervalRanks": { "$ref": "#/$defs/intervalRanks" }
+      }
+    },
+    "comparisonMetricBase": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "unit", "direction", "pointEffectAbsolute", "pointEffectPartsPerMillion", "bootstrapLowerAbsolute", "bootstrapUpperAbsolute", "bootstrapLowerPartsPerMillion", "bootstrapUpperPartsPerMillion", "pairedSampleIDs", "classification", "safetyStatus"],
+      "properties": {
+        "available": { "const": true },
+        "unit": { "type": "string" },
+        "direction": { "enum": ["higher-is-better", "lower-is-better"] },
+        "pointEffectAbsolute": { "type": "integer" },
+        "pointEffectPartsPerMillion": { "$ref": "#/$defs/signedIntegerOrUnavailable" },
+        "bootstrapLowerAbsolute": { "type": "integer" },
+        "bootstrapUpperAbsolute": { "type": "integer" },
+        "bootstrapLowerPartsPerMillion": { "$ref": "#/$defs/signedIntegerOrUnavailable" },
+        "bootstrapUpperPartsPerMillion": { "$ref": "#/$defs/signedIntegerOrUnavailable" },
+        "pairedSampleIDs": { "type": "array", "items": { "$ref": "#/$defs/pairID" }, "minItems": 2, "uniqueItems": true },
+        "classification": { "enum": ["material-improvement", "neutral-pass", "red-regression", "red-insufficient-precision", "red-safety"] },
+        "safetyStatus": { "enum": ["pass", "red"] }
+      }
+    },
+    "comparisonBitsPerSecond": { "allOf": [{ "$ref": "#/$defs/comparisonMetricBase" }, { "properties": { "unit": { "const": "bits-per-second" } } }] },
+    "comparisonNanoseconds": { "allOf": [{ "$ref": "#/$defs/comparisonMetricBase" }, { "properties": { "unit": { "const": "nanoseconds" } } }] },
+    "comparisonBasisPoints": { "allOf": [{ "$ref": "#/$defs/comparisonMetricBase" }, { "properties": { "unit": { "const": "basis-points" } } }] },
+    "comparisonMicrojoules": { "allOf": [{ "$ref": "#/$defs/comparisonMetricBase" }, { "properties": { "unit": { "const": "microjoules" } } }] },
+    "comparisonBytes": { "allOf": [{ "$ref": "#/$defs/comparisonMetricBase" }, { "properties": { "unit": { "const": "bytes" } } }] },
+    "comparisonMilliPerSecond": { "allOf": [{ "$ref": "#/$defs/comparisonMetricBase" }, { "properties": { "unit": { "const": "milli-per-second" } } }] },
+    "comparisonMetricOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/comparisonMetricBase" }, { "$ref": "#/$defs/unavailable" }] },
+    "comparisonMetrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["throughputBitsPerSecond", "goodputBitsPerSecond", "ttfbNanoseconds", "dnsLatencyNanoseconds", "rttNanoseconds", "outageLatencyNanoseconds", "failureLatencyNanoseconds", "cpuBasisPoints", "energyMicrojoules", "physicalFootprintBytes", "peakFootprintBytes", "advisoryAvailableMemoryBytes", "packetRateMilliPerSecond", "syscallRateMilliPerSecond", "wakeupRateMilliPerSecond", "queueOccupancyBytes"],
+      "properties": {
+        "throughputBitsPerSecond": { "oneOf": [{ "$ref": "#/$defs/comparisonBitsPerSecond" }, { "$ref": "#/$defs/unavailable" }] },
+        "goodputBitsPerSecond": { "oneOf": [{ "$ref": "#/$defs/comparisonBitsPerSecond" }, { "$ref": "#/$defs/unavailable" }] },
+        "ttfbNanoseconds": { "oneOf": [{ "$ref": "#/$defs/comparisonNanoseconds" }, { "$ref": "#/$defs/unavailable" }] },
+        "dnsLatencyNanoseconds": { "oneOf": [{ "$ref": "#/$defs/comparisonNanoseconds" }, { "$ref": "#/$defs/unavailable" }] },
+        "rttNanoseconds": { "oneOf": [{ "$ref": "#/$defs/comparisonNanoseconds" }, { "$ref": "#/$defs/unavailable" }] },
+        "outageLatencyNanoseconds": { "oneOf": [{ "$ref": "#/$defs/comparisonNanoseconds" }, { "$ref": "#/$defs/unavailable" }] },
+        "failureLatencyNanoseconds": { "oneOf": [{ "$ref": "#/$defs/comparisonNanoseconds" }, { "$ref": "#/$defs/unavailable" }] },
+        "cpuBasisPoints": { "oneOf": [{ "$ref": "#/$defs/comparisonBasisPoints" }, { "$ref": "#/$defs/unavailable" }] },
+        "energyMicrojoules": { "oneOf": [{ "$ref": "#/$defs/comparisonMicrojoules" }, { "$ref": "#/$defs/unavailable" }] },
+        "physicalFootprintBytes": { "oneOf": [{ "$ref": "#/$defs/comparisonBytes" }, { "$ref": "#/$defs/unavailable" }] },
+        "peakFootprintBytes": { "oneOf": [{ "$ref": "#/$defs/comparisonBytes" }, { "$ref": "#/$defs/unavailable" }] },
+        "advisoryAvailableMemoryBytes": { "oneOf": [{ "$ref": "#/$defs/comparisonBytes" }, { "$ref": "#/$defs/unavailable" }] },
+        "packetRateMilliPerSecond": { "oneOf": [{ "$ref": "#/$defs/comparisonMilliPerSecond" }, { "$ref": "#/$defs/unavailable" }] },
+        "syscallRateMilliPerSecond": { "oneOf": [{ "$ref": "#/$defs/comparisonMilliPerSecond" }, { "$ref": "#/$defs/unavailable" }] },
+        "wakeupRateMilliPerSecond": { "oneOf": [{ "$ref": "#/$defs/comparisonMilliPerSecond" }, { "$ref": "#/$defs/unavailable" }] },
+        "queueOccupancyBytes": { "oneOf": [{ "$ref": "#/$defs/comparisonBytes" }, { "$ref": "#/$defs/unavailable" }] }
+      }
+    },
+    "productionComparisonMetricBase": {
+      "allOf": [
+        { "$ref": "#/$defs/comparisonMetricBase" },
+        { "properties": { "classification": { "enum": ["material-improvement", "neutral-pass"] }, "safetyStatus": { "const": "pass" } } }
+      ]
+    },
+    "productionComparisonBitsPerSecond": { "allOf": [{ "$ref": "#/$defs/productionComparisonMetricBase" }, { "properties": { "unit": { "const": "bits-per-second" } } }] },
+    "productionComparisonNanoseconds": { "allOf": [{ "$ref": "#/$defs/productionComparisonMetricBase" }, { "properties": { "unit": { "const": "nanoseconds" } } }] },
+    "productionComparisonBasisPoints": { "allOf": [{ "$ref": "#/$defs/productionComparisonMetricBase" }, { "properties": { "unit": { "const": "basis-points" } } }] },
+    "productionComparisonMicrojoules": { "allOf": [{ "$ref": "#/$defs/productionComparisonMetricBase" }, { "properties": { "unit": { "const": "microjoules" } } }] },
+    "productionComparisonBytes": { "allOf": [{ "$ref": "#/$defs/productionComparisonMetricBase" }, { "properties": { "unit": { "const": "bytes" } } }] },
+    "productionComparisonMilliPerSecond": { "allOf": [{ "$ref": "#/$defs/productionComparisonMetricBase" }, { "properties": { "unit": { "const": "milli-per-second" } } }] },
+    "comparisonMetricsAvailable": {
+      "type": "object", "additionalProperties": false,
+      "required": ["throughputBitsPerSecond", "goodputBitsPerSecond", "ttfbNanoseconds", "dnsLatencyNanoseconds", "rttNanoseconds", "outageLatencyNanoseconds", "failureLatencyNanoseconds", "cpuBasisPoints", "energyMicrojoules", "physicalFootprintBytes", "peakFootprintBytes", "advisoryAvailableMemoryBytes", "packetRateMilliPerSecond", "syscallRateMilliPerSecond", "wakeupRateMilliPerSecond", "queueOccupancyBytes"],
+      "properties": {
+        "throughputBitsPerSecond": { "$ref": "#/$defs/productionComparisonBitsPerSecond" },
+        "goodputBitsPerSecond": { "$ref": "#/$defs/productionComparisonBitsPerSecond" },
+        "ttfbNanoseconds": { "$ref": "#/$defs/productionComparisonNanoseconds" },
+        "dnsLatencyNanoseconds": { "$ref": "#/$defs/productionComparisonNanoseconds" },
+        "rttNanoseconds": { "$ref": "#/$defs/productionComparisonNanoseconds" },
+        "outageLatencyNanoseconds": { "$ref": "#/$defs/productionComparisonNanoseconds" },
+        "failureLatencyNanoseconds": { "$ref": "#/$defs/productionComparisonNanoseconds" },
+        "cpuBasisPoints": { "$ref": "#/$defs/productionComparisonBasisPoints" },
+        "energyMicrojoules": { "$ref": "#/$defs/productionComparisonMicrojoules" },
+        "physicalFootprintBytes": { "$ref": "#/$defs/productionComparisonBytes" },
+        "peakFootprintBytes": { "$ref": "#/$defs/productionComparisonBytes" },
+        "advisoryAvailableMemoryBytes": { "$ref": "#/$defs/productionComparisonBytes" },
+        "packetRateMilliPerSecond": { "$ref": "#/$defs/productionComparisonMilliPerSecond" },
+        "syscallRateMilliPerSecond": { "$ref": "#/$defs/productionComparisonMilliPerSecond" },
+        "wakeupRateMilliPerSecond": { "$ref": "#/$defs/productionComparisonMilliPerSecond" },
+        "queueOccupancyBytes": { "$ref": "#/$defs/productionComparisonBytes" }
+      }
+    },
+    "comparisonResult": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "comparisonResultVersion", "comparisonGroupID", "parameterFamily", "candidateSet", "pairedSamples", "multiplicity", "metrics", "safetyStatus"],
+      "properties": {
+        "available": { "const": true },
+        "comparisonResultVersion": { "const": 1 },
+        "comparisonGroupID": { "$ref": "#/$defs/comparisonGroupID" },
+        "parameterFamily": { "enum": ["mtu", "hev-memory", "socket-buffer", "packet-bridge", "lane-window", "rekey", "relay", "quic-route", "reconnect", "memory-ledger", "dns-runtime", "reference"] },
+        "candidateSet": { "$ref": "#/$defs/candidateSet" },
+        "pairedSamples": { "type": "array", "items": { "$ref": "#/$defs/pairedSample" }, "minItems": 2 },
+        "multiplicity": { "$ref": "#/$defs/multiplicity" },
+        "metrics": { "$ref": "#/$defs/comparisonMetrics" },
+        "safetyStatus": { "enum": ["pass", "red"] }
+      }
+    },
+    "comparisonResultOrUnavailable": { "oneOf": [{ "$ref": "#/$defs/comparisonResult" }, { "$ref": "#/$defs/unavailable" }] },
+    "productionComparisonResult": {
+      "allOf": [
+        { "$ref": "#/$defs/comparisonResult" },
+        { "properties": { "metrics": { "$ref": "#/$defs/comparisonMetricsAvailable" }, "safetyStatus": { "const": "pass" } } }
+      ]
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "logicalReference", "sha256", "bytes", "producer", "producerVersion", "captureAuthorization", "custodian", "privacyClass", "redaction", "redactedDerivative", "retention", "containsGeneratedTrafficOnly"],
+      "properties": {
+        "kind": { "enum": ["manifest", "config", "raw-samples", "event-log", "counter-log", "packet-capture", "instruments-trace", "redacted-summary", "privacy-scan", "authorization-record", "cleanup-proof"] },
+        "logicalReference": { "$ref": "#/$defs/bundleReference" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "producer": { "$ref": "#/$defs/nonempty" },
+        "producerVersion": { "$ref": "#/$defs/nonempty" },
+        "captureAuthorization": {
+          "type": "object", "additionalProperties": false,
+          "required": ["required", "authorized", "reference"],
+          "properties": {
+            "required": { "type": "boolean" },
+            "authorized": { "type": "boolean" },
+            "reference": { "$ref": "#/$defs/bundleReferenceOrUnavailable" }
+          }
+        },
+        "custodian": { "$ref": "#/$defs/custodian" },
+        "privacyClass": { "enum": ["public-engineering", "internal-redacted", "restricted-local-raw"] },
+        "redaction": { "enum": ["none-generated-only", "m3-redaction-v1", "restricted-not-attached"] },
+        "redactedDerivative": { "$ref": "#/$defs/bundleReferenceOrUnavailable" },
+        "retention": { "enum": ["project-lifetime", "release-plus-2y", "custodian-controlled-restricted"] },
+        "containsGeneratedTrafficOnly": { "const": true }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "enum": ["packet-capture", "instruments-trace"] } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "captureAuthorization": { "properties": { "required": { "const": true }, "authorized": { "const": true }, "reference": { "$ref": "#/$defs/bundleReference" } } },
+              "privacyClass": { "const": "restricted-local-raw" },
+              "redaction": { "const": "restricted-not-attached" },
+              "redactedDerivative": { "$ref": "#/$defs/bundleReference" },
+              "retention": { "const": "custodian-controlled-restricted" }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

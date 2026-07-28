@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:45Z
 
 ## Last Update
-2026-07-15T02:24:02Z
+2026-07-21T21:47:43Z
 
 ## Blocked By
 - TASK-260715-1ok93q
@@ -32,7 +32,8 @@ backlog
 ## Notes
 
 ## Precondition Resources
-(none)
+- [TASK-260715-k5uxim_m3-evidence-protocol-v1.md](file://TASK-260715-k5uxim/TASK-260715-k5uxim_m3-evidence-protocol-v1.md)
+- [TASK-260715-k5uxim_m3-evidence-manifest-v1.schema.json](file://TASK-260715-k5uxim/TASK-260715-k5uxim_m3-evidence-manifest-v1.schema.json)
 
 ## Outcome Resources
 (none)

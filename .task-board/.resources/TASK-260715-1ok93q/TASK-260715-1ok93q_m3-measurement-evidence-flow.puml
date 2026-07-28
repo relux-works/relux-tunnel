@@ -1,0 +1,93 @@
+@startuml
+!theme plain
+
+title TASK-260715-2kchi0 — M3 measurement and evidence gate flow
+
+skinparam activity {
+  BackgroundColor #F7F7F7
+  BorderColor #333333
+}
+skinparam activityDiamond {
+  BackgroundColor #FFF2CC
+  BorderColor #8A6D1D
+}
+
+|Protocol authority|
+start
+:Lock protocol revision, row config,
+seed, baseline pair, and authority state;
+if (Required device, fixture, and authorization available?) then (yes)
+else (no)
+  :Preserve unavailable row,
+  reason, evidence, and owner;
+  stop
+endif
+
+|Harness / provider|
+:Verify isolation, clean owners,
+routes, DNS sentinels, and impairment;
+if (Environment preflight valid?) then (yes)
+else (no)
+  :Preserve invalid-environment row
+  and raw preflight evidence;
+  stop
+endif
+:Run fixed warmup;
+:Generate synthetic payloads
+and record expected hashes;
+:Run steady workload and declared fault;
+
+|Bounded instrumentation|
+:Sample counters, clocks, resource gauges,
+latencies, footprint, CPU, and energy;
+:Record raw artifact hashes and privacy class;
+
+|Harness / provider|
+:Run fixed cooldown and cleanup;
+:Restore impairment and fixture state;
+
+|Evidence validator|
+:Validate manifest schema, revisions,
+hashes, redaction, and artifact references;
+if (Byte, DNS, route, resource, memory, failure, drop, and cleanup gates pass?) then (yes)
+else (no)
+  :Preserve red row and every raw reference;
+  :Do not trade safety for performance;
+  stop
+endif
+
+|Statistical reporter|
+:Build the closed parameter-family/candidate set;
+:Derive one stable comparisonGroupID
+across all paired seeds and repetitions;
+:Bind baseline/candidate run IDs,
+sample references, and all 16 metric results;
+:Compute fixed paired bootstrap,
+exact rational coverage and integer ranks,
+practical effect, and multiplicity rule;
+if (Material regression ruled out?) then (yes)
+  if (Material improvement established?) then (yes)
+    :Classify material-improvement;
+  else (no)
+    :Classify neutral-pass;
+  endif
+else (no)
+  :Classify red-regression or
+  red-insufficient-precision;
+endif
+
+|Independent review|
+:Review all pass, red, unavailable,
+invalid, restricted, and excluded rows;
+if (Production authority requested?) then (yes)
+  :Require concrete reviewer/time,
+  per-metric classifications, stable group,
+  candidate count, lineage, and all safety gates;
+else (no)
+  :Preserve provisional/non-authoritative state;
+endif
+:Accept only a new immutable baseline/config
+revision with accountable task/ADR links;
+stop
+
+@enduml

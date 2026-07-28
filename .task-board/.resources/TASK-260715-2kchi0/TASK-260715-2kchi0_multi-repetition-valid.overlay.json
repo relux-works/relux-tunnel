@@ -1,0 +1,74 @@
+{
+  "comparison": {
+    "available": true,
+    "comparisonResultVersion": 1,
+    "comparisonGroupID": "m3cmp-aaaaaaaaaaaaaaaaaaaaaaaa",
+    "parameterFamily": "mtu",
+    "candidateSet": {
+      "baselineCandidateID": "cand-000000000000000000000000",
+      "candidateIDs": ["cand-111111111111111111111111"],
+      "parameterNames": ["mtuBytes"]
+    },
+    "pairedSamples": [
+      {
+        "pairID": "pair-111111111111111111111111",
+        "candidateID": "cand-111111111111111111111111",
+        "repetitionIndex": 1,
+        "seed": 104729,
+        "baselineRunID": "m3v1-111111111111111111111111",
+        "candidateRunID": "m3v1-211111111111111111111111",
+        "baselineSampleReference": "raw/baseline-r01.json",
+        "candidateSampleReference": "raw/candidate-r01.json"
+      },
+      {
+        "pairID": "pair-222222222222222222222222",
+        "candidateID": "cand-111111111111111111111111",
+        "repetitionIndex": 2,
+        "seed": 130363,
+        "baselineRunID": "m3v1-122222222222222222222222",
+        "candidateRunID": "m3v1-222222222222222222222222",
+        "baselineSampleReference": "raw/baseline-r02.json",
+        "candidateSampleReference": "raw/candidate-r02.json"
+      },
+      {
+        "pairID": "pair-333333333333333333333333",
+        "candidateID": "cand-111111111111111111111111",
+        "repetitionIndex": 3,
+        "seed": 155921,
+        "baselineRunID": "m3v1-133333333333333333333333",
+        "candidateRunID": "m3v1-233333333333333333333333",
+        "baselineSampleReference": "raw/baseline-r03.json",
+        "candidateSampleReference": "raw/candidate-r03.json"
+      }
+    ],
+    "multiplicity": {
+      "candidateCount": 1,
+      "coverage": { "numerator": 19, "denominator": 20 },
+      "intervalRanks": { "bootstrapCount": 10000, "lowerIndex": 250, "upperIndex": 9749 }
+    },
+    "metrics": {
+      "throughputBitsPerSecond": { "available": true, "unit": "bits-per-second", "direction": "higher-is-better", "pointEffectAbsolute": 1000000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1000000, "bootstrapUpperAbsolute": 3000000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "goodputBitsPerSecond": { "available": true, "unit": "bits-per-second", "direction": "higher-is-better", "pointEffectAbsolute": 1000000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1000000, "bootstrapUpperAbsolute": 3000000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "ttfbNanoseconds": { "available": true, "unit": "nanoseconds", "direction": "lower-is-better", "pointEffectAbsolute": 100000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -100000, "bootstrapUpperAbsolute": 300000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "dnsLatencyNanoseconds": { "available": true, "unit": "nanoseconds", "direction": "lower-is-better", "pointEffectAbsolute": 100000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -100000, "bootstrapUpperAbsolute": 300000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "rttNanoseconds": { "available": true, "unit": "nanoseconds", "direction": "lower-is-better", "pointEffectAbsolute": 100000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -100000, "bootstrapUpperAbsolute": 300000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "outageLatencyNanoseconds": { "available": true, "unit": "nanoseconds", "direction": "lower-is-better", "pointEffectAbsolute": 100000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -100000, "bootstrapUpperAbsolute": 300000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "failureLatencyNanoseconds": { "available": true, "unit": "nanoseconds", "direction": "lower-is-better", "pointEffectAbsolute": 100000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -100000, "bootstrapUpperAbsolute": 300000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "cpuBasisPoints": { "available": true, "unit": "basis-points", "direction": "lower-is-better", "pointEffectAbsolute": 10, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -10, "bootstrapUpperAbsolute": 30, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "energyMicrojoules": { "available": true, "unit": "microjoules", "direction": "lower-is-better", "pointEffectAbsolute": 1000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1000, "bootstrapUpperAbsolute": 3000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "physicalFootprintBytes": { "available": true, "unit": "bytes", "direction": "lower-is-better", "pointEffectAbsolute": 1024, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1024, "bootstrapUpperAbsolute": 3072, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "peakFootprintBytes": { "available": true, "unit": "bytes", "direction": "lower-is-better", "pointEffectAbsolute": 1024, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1024, "bootstrapUpperAbsolute": 3072, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "advisoryAvailableMemoryBytes": { "available": true, "unit": "bytes", "direction": "higher-is-better", "pointEffectAbsolute": 1024, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1024, "bootstrapUpperAbsolute": 3072, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "packetRateMilliPerSecond": { "available": true, "unit": "milli-per-second", "direction": "lower-is-better", "pointEffectAbsolute": 1000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1000, "bootstrapUpperAbsolute": 3000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "syscallRateMilliPerSecond": { "available": true, "unit": "milli-per-second", "direction": "lower-is-better", "pointEffectAbsolute": 1000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1000, "bootstrapUpperAbsolute": 3000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "wakeupRateMilliPerSecond": { "available": true, "unit": "milli-per-second", "direction": "lower-is-better", "pointEffectAbsolute": 1000, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1000, "bootstrapUpperAbsolute": 3000, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" },
+      "queueOccupancyBytes": { "available": true, "unit": "bytes", "direction": "lower-is-better", "pointEffectAbsolute": 1024, "pointEffectPartsPerMillion": 10000, "bootstrapLowerAbsolute": -1024, "bootstrapUpperAbsolute": 3072, "bootstrapLowerPartsPerMillion": -10000, "bootstrapUpperPartsPerMillion": 30000, "pairedSampleIDs": ["pair-111111111111111111111111", "pair-222222222222222222222222", "pair-333333333333333333333333"], "classification": "neutral-pass", "safetyStatus": "pass" }
+    },
+    "safetyStatus": "pass"
+  },
+  "review": {
+    "comparisonGroupID": "m3cmp-aaaaaaaaaaaaaaaaaaaaaaaa",
+    "candidateCount": 1,
+    "exactCoverage": { "numerator": 19, "denominator": 20 }
+  }
+}
