@@ -1,0 +1,52 @@
+# TASK-260715-ypo7yo r10 validation — reviewer verdict 08 F1
+# host: macOS 26.5 (25F71); Xcode 26.5
+# date: 2026-07-28
+
+=== 1. floor evidence attempt (why F1 is MODELLED, not measured) ===
+$ sw_vers -productVersion  -> 26.5
+$ ls /Volumes -> Macintosh HD 
+$ which tart UTM prlctl VBoxManage -> tart not found UTM not found prlctl not found VBoxManage not found 
+$ ls .../MacOSX.platform/.../SDKs -> MacOSX.sdk MacOSX26.5.sdk MacOSX26.sdk 
+$ find /Applications/Xcode*.app -name application.sb -> 0 results
+CONCLUSION: no macOS 15 host, VM, installer, or SDK-resident sandbox profile. Floor unreadable here.
+
+=== 2. cited macOS 26.5 evidence, re-read ===
+$ sed -n '792,793p' /System/Library/Sandbox/Profiles/application.sb
+(when (entitlement "com.apple.developer.networking.networkextension")
+      (allow file-read* file-write* (subpath "/Library/Keychains")))
+$ sed -n '655,656p' /System/Library/Sandbox/Profiles/application.sb
+       (global-name "com.apple.securityd.xpc")
+       (global-name "com.apple.SecurityServer")
+
+=== 3. shipping providers: minimum OS vs keychain entitlement ===
+minOS=10.15 | keychain-access-groups=['4H849Z7V2K.com.purevpn.app.mac'] | com.purevpn.app.mac.wireguard-packet-tunnel
+minOS=10.15 | com.apple.security.temporary-exception.files.absolute-path.read-write=['/private/var/db/mds/', '/Library/Keychains/', '/private/var/root/Lib | com.surfshark.vpnclient.macos.direct.PacketTunnel-WireGuard
+minOS=12.4 | NONE | io.tailscale.ipn.macsys.network-extension
+minOS=10.15 | keychain-access-groups=['4H849Z7V2K.com.purevpn.app.mac'] | com.purevpn.mac.packet-tunnel
+minOS=12.4 | NONE | io.tailscale.ipn.macsys.network-extension
+
+=== 4. gates (real exit codes) ===
+--- validate-matrix.py
+checks run: 2654
+PASS — every rule holds
+exit=0
+--- mutate.py
+exit=0 / 220/220 negative gates hold
+--- check-portal-consumer.py --repo .
+exit=0 / PASS — every pinned board consumer matches this contract
+--- preserve.py (r8 -> r9)  [r8 input now attached as an outcome]
+assertions run: 122
+PASS — everything r8 established is byte-for-byte unchanged
+exit=0
+--- preserve-r10.py (r9 -> r10)
+assertions run: 201
+PASS — everything r9 established is byte-for-byte unchanged
+exit=0
+--- reviewer-gates.sh (zsh; it is a zsh script)
+exit=0 / rule D1 flips r8 false -> r9 true: true exit=0
+--- scripts/check-legacy-preservation.sh
+exit=0
+--- task-board validate
+exit=0
+--- swift test
+exit=0 / 􁁛  Test run with 335 tests in 29 suites passed after 7.474 seconds.

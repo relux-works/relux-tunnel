@@ -1,0 +1,130 @@
+# TASK-260728-7ii1xz — rework evidence 04 (system-domain resolution + lifecycle docs)
+# Machine: this Apple-silicon Mac. Generated for reviewer findings F1 and F2.
+
+$ sw_vers
+ProductName:		macOS
+ProductVersion:		26.5
+BuildVersion:		25F71
+exit=0
+
+$ uname -m
+arm64
+exit=0
+
+$ id -u
+502
+exit=0
+
+$ xcrun --sdk macosx --show-sdk-path
+/Applications/Xcode_26_5.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk
+exit=0
+
+############################################################
+# F2 — is the system-domain resolution API present in the shipping SDK?
+############################################################
+
+$ iconv -f ISO-8859-1 -t UTF-8 $SDK/.../Security.framework/Headers/SecKeychain.h | grep -n 'SecKeychainCopyDomain'
+425:	kSecPreferencesDomainSystem,		/* system (daemon) domain */
+430:OSStatus SecKeychainCopyDomainDefault(SecPreferencesDomain domain, SecKeychainRef * __nonnull CF_RETURNS_RETAINED keychain)
+438:OSStatus SecKeychainCopyDomainSearchList(SecPreferencesDomain domain, CFArrayRef * __nonnull CF_RETURNS_RETAINED searchList)
+exit=0
+
+# NOTE: SecKeychain.h is ISO-8859 encoded; a plain UTF-8 grep silently
+# returns exit=1 with no output. iconv is required to read it.
+
+$ grep -n -A2 'extern const CFStringRef kSecUseKeychain' SecItem.utf8.h
+1045:extern const CFStringRef kSecUseKeychain
+1046-    API_AVAILABLE(macos(10.7), ios(NA));
+1047-extern const CFStringRef kSecUseOperationPrompt
+exit=0
+
+$ grep -n -A2 'extern const CFStringRef kSecMatchSearchList' SecItem.utf8.h
+900:extern const CFStringRef kSecMatchSearchList
+901-    API_AVAILABLE(macos(10.6), ios(2.0));
+902-extern const CFStringRef kSecMatchIssuers
+exit=0
+
+$ sed -n '840,842p' SecItem.utf8.h    # kSecMatchSearchList semantics
+         @constant kSecMatchSearchList Specifies a dictionary key whose value is a
+         CFArray of SecKeychainRef items. If provided, the search will be limited
+         to the keychains contained in this list.
+exit=0
+
+############################################################
+# E8/E9/E10 — physical run of the system-domain resolution probe
+############################################################
+
+$ swiftc -O -o kcdomain kcdomain.swift    # deprecation warnings only
+exit=0
+
+$ ./kcdomain
+context: uid=502 euid=502
+
+== E8: SecKeychainCopyDomainDefault(domain) -> resolved path ==
+E8 kSecPreferencesDomainUser: OSStatus=0 path=/Users/iv/Library/Keychains/login.keychain-db
+E8 kSecPreferencesDomainSystem: OSStatus=0 path=/Library/Keychains/System.keychain
+E8 kSecPreferencesDomainCommon: OSStatus=0 path=/Library/Keychains/System.keychain
+
+== E9: SecKeychainCopyDomainSearchList(domain) -> resolved paths ==
+E9 kSecPreferencesDomainUser: OSStatus=0 count=2
+E9 kSecPreferencesDomainUser:   /Users/iv/Library/Keychains/login.keychain-db
+E9 kSecPreferencesDomainUser:   /Users/iv/Library/Keychains/duet-signing.keychain-db
+E9 kSecPreferencesDomainSystem: OSStatus=0 count=1
+E9 kSecPreferencesDomainSystem:   /Library/Keychains/System.keychain
+E9 kSecPreferencesDomainCommon: OSStatus=0 count=1
+E9 kSecPreferencesDomainCommon:   /Library/Keychains/System.keychain
+
+== E10: contract round-trip against a throwaway file-based keychain ==
+E10 throwaway keychain: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/TASK-260728-7ii1xz-82582/probe.keychain-db
+E10 SecKeychainCreate: OSStatus=0 (No error.)
+E10 SecItemAdd (kSecUseKeychain): OSStatus=0 (No error.)
+E10 SecItemCopyMatching (kSecMatchSearchList): OSStatus=0 (No error.)
+E10 value: bytes=18 matchesPlaceholder=true
+E10 negative control (search list = user default): OSStatus=-25300 (The specified item could not be found in the keychain.)
+E10 SecItemDelete (kSecMatchSearchList): OSStatus=0 (No error.)
+E10 SecKeychainDelete: OSStatus=0 (No error.)
+E10 cleanup: throwaway keychain deleted
+exit=0
+
+############################################################
+# F1 — the documented sendProviderMessage / handleAppMessage lifecycle
+############################################################
+
+# The macOS 26.5 SDK header for sendProviderMessage says nothing about
+# extension launch. Apple's published API reference does. Both are quoted.
+
+$ curl -sS .../netunnelprovidersession/sendprovidermessage(_:responsehandler:).json
+http=200
+exit=0
+QUOTE: Send a message to the Tunnel Provider extension. If the extension is not running, it should be launched to handle the message. If this method can’t start sending the message it reports an error in the para
+exit=0
+
+$ curl -sS .../netunnelprovider/handleappmessage(_:completionhandler:).json
+http=200
+exit=0
+QUOTE: The Tunnel Provider’s containing app may not always be running at the same time as the Tunnel Provider extension. For example, the Tunnel Provider extension may have been started manually from the system’s network settings app or via Connect On Demand. Therefore, you should not rely on this communication channel with the containing app for basic Tunnel Provider operation (start, stop, etc.). Handl
+exit=0
+
+$ sed -n '41,51p' $SDK/.../NETunnelProviderSession.h   # documented error set
+/*!
+ * @method sendProviderMessage:responseHandler:
+ * @discussion This function sends a message to the NETunnelProvider and provides a way to receive a response.
+ * @param messageData An NSData object containing the message to be sent.
+ * @param error If the message was sent successfully, this parameter is set to nil. Otherwise this parameter is set to the error that occurred. Possible errors include:
+ *    1. NEVPNErrorConfigurationInvalid
+ *    2. NEVPNErrorConfigurationDisabled
+ * @param responseHandler A block that handles the response. Can be set to nil if no response is expected.
+ * @return YES if the message was sent successfully, NO if an error occurred.
+ */
+- (BOOL)sendProviderMessage:(NSData *)messageData returnError:(NSError **)error responseHandler:(nullable void (^)( NSData * __nullable responseData))responseHandler API_AVAILABLE(macos(10.11), ios(9.0), tvos(17.0)) API_UNAVAILABLE(watchos);
+exit=0
+
+# CONCLUSION F1: an app-originated message is documented to launch a
+# non-running extension, and the documented failure set is exactly
+# NEVPNErrorConfigurationInvalid / NEVPNErrorConfigurationDisabled.
+# The reverse is NOT true: the provider must not depend on the app.
+# => app->provider revoke is synchronous when the config is installed
+#    and enabled; provider->app is never relied upon.
+# LIMITATION: not executed here. No signed/approved provider exists
+# before Ceremony C1. Physical confirmation is verification V4 on
+# TASK-260715-9yp8to.

@@ -1,0 +1,466 @@
+# TASK-260715-ypo7yo r6 (2026-07-28.r6) — gate transcript
+
+Rework against TASK-260715-ypo7yo_reviewer-verdict-05.md (CHANGES REQUESTED, F1 + F2).
+Run 2026-07-28 on macOS 26.5 (25F71). Every command below was run from the board
+resource layout (.task-board/.resources/TASK-260715-ypo7yo) unless noted.
+
+==============================================================================
+GATE 1 — reviewer verdict-05 F1 targeted jq gate (was false / exit 1 on r5)
+==============================================================================
+$ jq -e ((.crossPlatformRules | map(select(test("Keychain access group")))[0] | (contains("macOS host") | not)) and ([.targets[] | select(.entitlements["keychain-access-groups"].status == "required") | .key] == ["ios.host","ios.provider"])) matrix.json
+--- against r5 (baseline, for the record) ---
+false
+r5 exit=1
+--- against r6 ---
+true
+r6 exit=0
+
+==============================================================================
+GATE 2 — contract self-check, R1-R33
+==============================================================================
+$ python3 TASK-260715-ypo7yo_validate-matrix.py
+checks run: 975
+PASS — every rule holds
+exit=0
+
+==============================================================================
+GATE 3 — negative gate harness (each mutation must exit 1 naming its rule)
+==============================================================================
+$ python3 TASK-260715-ypo7yo_mutate.py
+--- positive gate ---
+checks run: 975
+PASS — every rule holds
+positive exit=0
+
+--- negative gates (each mutation must exit 1 naming its rule) ---
+[F1] macOS development channel gets the -systemextension value (the r1 defect)
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.host/development NE value ['packet-tunnel-provider-systemextension'] != ['packet-tunnel-provider']
+[F1] provider NE value collapses to a single channel-independent value (r1 shape)
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.provider carries a channel-independent NE value; NE values must be keyed by channel
+[F1] Developer ID channel drops the suffix
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.provider/developer-id NE value ['packet-tunnel-provider'] != ['packet-tunnel-provider-systemextension']
+[F1] Mac Development profile authorizes the suffixed value
+    expect R23 -> exit=1 named=True OK
+    - R23: macos.host/development profile authorizes ['packet-tunnel-provider-systemextension'] but the entitlement needs ['packet-tunnel-provider']
+[F1] Ceremony C1 authorizes the -systemextension value
+    expect R22 -> exit=1 named=True OK
+    - R22: C1 NE values ['packet-tunnel-provider-systemextension'] != provisioned development values ['packet-tunnel-provider']
+[F1] the probe claims a Developer ID channel it has no profile for
+    expect R19 -> exit=1 named=True OK
+    - R7: macos.probe.host valueByChannel keys ['development'] != channels ['developer-id', 'development']
+[F2] macOS App Group literal is team-prefixed (the r1 defect)
+    expect R9 -> exit=1 named=True OK
+    - R9: production/macOS group literal $(TeamIdentifierPrefix)group.works.relux.tunnel is not iOS-style
+[F2] macOS target claims a team-prefixed group literal directly
+    expect R9 -> exit=1 named=True OK
+    - R9: macos.provider carries an App Group value while the row is not granted
+[F2] portal record no longer equals the entitlement literal
+    expect R18 -> exit=1 named=True OK
+    - R18: production iOS literal does not equal the portal record it claims
+[F2] a second App Group record duplicates production's portal identifier
+    expect R18 -> exit=1 named=True OK
+    - R18: duplicate App Group records: ['group.works.relux.tunnel', 'group.works.relux.tunnel']
+[F3] the macOS signing-generated allowlist is emptied
+    expect R20 -> exit=1 named=True OK
+    - R20: macOS signing-generated classification is empty
+[F3] the project authors a key the toolchain generates
+    expect R20 -> exit=1 named=True OK
+    - R20: macos.host authors a key the toolchain generates: ['com.apple.application-identifier']
+[F3] get-task-allow is reclassified as always-present
+    expect R20 -> exit=1 named=True OK
+    - R20: macos.host/developer-id development-only signing keys present=True
+[F4] host sandboxing is attributed to an Apple rule (the r1 defect)
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.host com.apple.security.app-sandbox requirementSource apple-requirement != project-architecture
+[F4] provider sandboxing is downgraded to a project choice
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.provider com.apple.security.app-sandbox requirementSource project-architecture != apple-requirement
+[F4] a sandbox requirement loses its basis citation
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.provider com.apple.security.app-sandbox has no requirementBasis
+[r1] a bundle identifier drifts into the legacy namespace
+    expect R4 -> exit=1 named=True OK
+    - R1: macos.provider works.relux.tunnel.mac.tunnel is not works.relux.proxy.mac.tunnel
+[r1] provider identifier is no longer host + .tunnel
+    expect R1 -> exit=1 named=True OK
+    - R1: macos.provider works.relux.tunnel.mactunnel is not works.relux.tunnel.mac.tunnel
+[r1] the withheld keychain group is silently granted
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.provider keychain-access-groups status required != prohibited
+[r1] an iOS target becomes provisioned
+    expect R14 -> exit=1 named=True OK
+    - R14: ios.host provisioned=True for iOS
+[r1] a distribution profile becomes C1-authorized
+    expect R17 -> exit=1 named=True OK
+    - R17: macos.host distribution profile is C1-authorized
+[r1] system-extension.install is granted to a provider
+    expect R8 -> exit=1 named=True OK
+    - R8: macos.provider com.apple.developer.system-extension.install status required != prohibited
+[r1] a forbidden provider value is granted
+    expect R24 -> exit=1 named=True OK
+    - R7: macos.provider/development NE value ['dns-proxy-provider'] != ['packet-tunnel-provider']
+[F1-v02] the Sparkle Mach lookup exception is missing entirely (the r2 defect)
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host does not declare com.apple.security.temporary-exception.mach-lookup.global-name; the sandboxed Sparkle host requires it (.spec/platf
+[F1-v02] the exception drops -spki and keeps only -spks
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name value ['$(PRODUCT_BUNDLE_IDENTIFIER)-spks'] != ['$(PRODUCT_BUNDLE_IDE
+[F1-v02] the exception names the wrong Sparkle endpoint suffix
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name value ['$(PRODUCT_BUNDLE_IDENTIFIER)-spkd', '$(PRODUCT_BUNDLE_IDENTIF
+[F1-v02] resolvedValue does not expand the build variable, so no bundle check can use it
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name resolvedValue ['$(PRODUCT_BUNDLE_IDENTIFIER)-spks', '$(PRODUCT_BUNDLE
+[F1-v02] resolvedValue is pinned to a different host identifier
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name resolvedValue ['works.relux.tunnel.mac.tunnel-spks', 'works.relux.tun
+[F1-v02] the exception is granted to the packet-tunnel provider as well
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.provider is granted com.apple.security.temporary-exception.mach-lookup.global-name; only macos.host links Sparkle
+[F1-v02] the exception is granted to an iOS target, which never links Sparkle
+    expect R25 -> exit=1 named=True OK
+    - R25: ios.host is granted com.apple.security.temporary-exception.mach-lookup.global-name; only macos.host links Sparkle
+[F1-v02] the exception is downgraded to a generic sandbox consequence
+    expect R25 -> exit=1 named=True OK
+    - R25: com.apple.security.temporary-exception.mach-lookup.global-name requirementSource sandbox-consequence != project-architecture
+[F1-v02] the exception claims a portal capability it does not have
+    expect R25 -> exit=1 named=True OK
+    - R25: com.apple.security.temporary-exception.mach-lookup.global-name is not a portal capability and must not claim one
+[X1] the reviewed-exception register is emptied while the grant stays
+    expect R26 -> exit=1 named=True OK
+    - R26: authored temporary exceptions [('com.apple.security.temporary-exception.mach-lookup.global-name', 'macos.host')] do not match the X1 register [
+[X1] the register disagrees with the entitlement row it claims to review
+    expect R26 -> exit=1 named=True OK
+    - R26: X1 register values for macos.host/com.apple.security.temporary-exception.mach-lookup.global-name disagree with the entitlement row
+[X1] a Hardened Runtime relaxation is authored on the host
+    expect R26 -> exit=1 named=True OK
+    - R26: macos.host authors a prohibited relaxation: ['com.apple.security.cs.disable-library-validation']
+[X1] the prohibited relaxation set is emptied
+    expect R26 -> exit=1 named=True OK
+    - R26: rule X1 bans nothing, so it constrains nothing
+[X1] get-task-allow is banned by X1, contradicting the development channel
+    expect R26 -> exit=1 named=True OK
+    - R26: macOS classifies a prohibited key as signing-generated: ['com.apple.security.get-task-allow']
+[A-set] assertion A14 is deleted, so nothing checks the exception at build time
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A15', 'A16', 'A17', 'A18', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7
+[A-set] assertion A10e is deleted, so required-adjacent keys need not be present
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7'
+[A-set] assertion A15 is deleted, so the X1 prohibited set is never enforced
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A16', 'A17', 'A18', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7
+[A-set] an assertion is emptied instead of removed
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion A1 has no text
+[F1-v03] the macOS host App Group is re-granted (the r3 defect verdict 03 caught)
+    expect R28 -> exit=1 named=True OK
+    - R9: macos.host is granted an App Group but no record names it as a consumer
+[F1-v03] the macOS provider App Group is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: macos.provider is granted an App Group but no record names it as a consumer
+[F1-v03] the same defect one row over — the macOS probe host is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: macos.probe.host is granted an App Group but no record names it as a consumer
+[F1-v03] the over-correction — an iOS row is withheld too, where the group does work
+    expect R28 -> exit=1 named=True OK
+    - R9: ios.host carries an App Group value while the row is not granted
+[F1-v03] a withheld macOS row keeps the group literal it is not entitled to
+    expect R9 -> exit=1 named=True OK
+    - R9: macos.provider carries an App Group value while the row is not granted
+[F1-v03] a withheld macOS row drops the condition that would reopen it
+    expect R28 -> exit=1 named=True OK
+    - R28: macos.host withholds com.apple.security.application-groups without stating what would reopen it
+[F1-v03] a withheld macOS row still claims the App Groups portal capability
+    expect R28 -> exit=1 named=True OK
+    - R28: macos.provider withholds com.apple.security.application-groups but still claims a portal capability
+[F1-v03] a granted iOS row stops naming the function it serves
+    expect R28 -> exit=1 named=True OK
+    - R28: ios.provider is granted com.apple.security.application-groups without naming the function it serves
+[F1-v03] rule G2 reverts to r3's future-conditional macOS purpose
+    expect R28 -> exit=1 named=True OK
+    - R28: rule G2's macOS purpose is still conditional ['will use', 'need not be repeated']; verdict 03 rejected exactly that
+[F1-v03] the G4 survey concedes the selected design does use an App Group grant
+    expect R28 -> exit=1 named=True OK
+    - R28: a G4 survey row says the selected design DOES use an App Group grant on macOS, so the macOS rows cannot be withheld on least-privilege grounds 
+[F1-v03] the G4 survey is trimmed to the group container, hiding the system-wide grants
+    expect R28 -> exit=1 named=True OK
+    - R28: rule G4 surveys only 3 grants; the macOS entitlement confers six
+[F1-v03] Ceremony C1 re-enables the App Groups capability nothing needs
+    expect R30 -> exit=1 named=True OK
+    - R30: C1 capability list still carries App Groups while 0 C1-authorized targets require the entitlement
+[F1-v03] Ceremony C1 re-authorizes an App Group record nothing consumes
+    expect R30 -> exit=1 named=True OK
+    - R30: C1 authorizes App Group records ['group.works.relux.tunnel'] but its App IDs require []
+[F1-v03] an App Group record claims C1 authorization it no longer has
+    expect R30 -> exit=1 named=True OK
+    - R30: production c1Authorized=True but C1 requirement is False
+[F1-v03] a deferred App Group record stops naming who allocates it and when
+    expect R30 -> exit=1 named=True OK
+    - R30: production is not created at C1 and does not say who creates it, or when
+[A-set] assertion A16 is deleted, so no build check enforces the macOS absence
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A17', 'A18', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7
+[M1] the settled keychain row keeps the resolutionOwner that held it open
+    expect R13 -> exit=1 named=True OK
+    - R13: macos.provider/keychain-access-groups is settled (prohibited) but still names a resolutionOwner
+[M1] the settled keychain row keeps the amendmentRule that re-grants it on refuted reasoning
+    expect R13 -> exit=1 named=True OK
+    - R13: macos.provider/keychain-access-groups is settled (prohibited) but still carries a row-level amendmentRule; a settled row states a reopening con
+[M1] the keychain row slides back to pending after the decision was made
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.provider keychain-access-groups status prohibited-pending-decision != prohibited
+[M1] the provider is granted a keychain group the file-based keychain cannot honour
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.provider keychain-access-groups status required != prohibited
+[M1] the settled keychain row stops saying what would reopen it
+    expect R29 -> exit=1 named=True OK
+    - R29: the settled macos.provider keychain row states no reopening condition
+[M5] rule K1 drops the Apple note that distinguishes the two keychain implementations
+    expect R29 -> exit=1 named=True OK
+    - R29: rule K1 does not cite the Apple note that distinguishes the two keychain implementations, which is the whole basis of the rule
+[M2] OC-1 is reopened after its owning task delivered a decision
+    expect R29 -> exit=1 named=True OK
+    - R29: OC-1 is open without a resolution owner
+[M2] OC-1 is closed without naming the task that resolved it
+    expect R29 -> exit=1 named=True OK
+    - R29: OC-1 is closed without naming a resolver
+[M2] a closed constraint keeps a pending resolutionOwner, reading as still open
+    expect R29 -> exit=1 named=True OK
+    - R29: OC-1 is closed but still names a pending resolutionOwner
+[F1-v04] the r4 defect itself — the macOS host keychain group is re-granted
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.host keychain-access-groups status required != prohibited
+[F1-v04] the macOS host is re-granted the group without a matching record consumer
+    expect R31 -> exit=1 named=True OK
+    - R12: macos.host keychain-access-groups status required != prohibited
+[F1-v04] a withheld keychain row keeps the group literal it is not entitled to
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.host carries a keychain value while not granted
+[F1-v04] the over-correction — an iOS row is withheld too, where the group IS shared
+    expect R31 -> exit=1 named=True OK
+    - R12: ios.provider keychain-access-groups status prohibited != required
+[F1-v04] the keychain record stops naming the targets that consume it
+    expect R31 -> exit=1 named=True OK
+    - R31: the keychain access group record names no consumers
+[F1-v04] the keychain record names a consumer that is not granted the group
+    expect R31 -> exit=1 named=True OK
+    - R31: keychain record consumers ['ios.host', 'ios.provider', 'macos.probe.host'] != the targets actually granted the group ['ios.host', 'ios.provider
+[F1-v04] the keychain record silently re-widens to macOS
+    expect R31 -> exit=1 named=True OK
+    - R31: the keychain record claims platforms ['iOS', 'macOS']; after rule K2 the group is consumed on iOS only
+[F1-v04] a withheld keychain row drops the condition that would reopen it
+    expect R31 -> exit=1 named=True OK
+    - R31: macos.host withholds keychain-access-groups without stating what would reopen it
+[F1-v04] a probe keychain row goes back to being settled by silence
+    expect R31 -> exit=1 named=True OK
+    - R31: ios.probe.provider withholds keychain-access-groups without stating what would reopen it
+[F1-v04] the macOS host stops recording the default group it falls back to
+    expect R31 -> exit=1 named=True OK
+    - R31: the macos.host keychain row does not record the default access group it falls back to, which is the whole reason withholding the entitlement co
+[F1-v04] the recorded default group is the shared one, not the app identifier
+    expect R31 -> exit=1 named=True OK
+    - R31: macos.host records default access group 262RZ595FP.works.relux.tunnel.shared, but K2's ordering law gives 262RZ595FP.works.relux.tunnel.mac
+[F1-v04] rule K2 loses the ordering law that makes withholding provably safe
+    expect R31 -> exit=1 named=True OK
+    - R31: rule K2 has no defaultAccessGroupLaw
+[F1-v04] rule K2 drops its Apple basis and rests on internal judgement
+    expect R31 -> exit=1 named=True OK
+    - R31: rule K2 does not cite both Apple sources it rests on: the note that the app identifier IS the default access group, and the note that macOS bui
+[F1-v04] rule K1 stops admitting that it never governed the host
+    expect R31 -> exit=1 named=True OK
+    - R29: rule K1 has no hostScope
+[A-set] assertion A17 is deleted, so nothing enforces the macOS keychain absence
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A18', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7
+[F3-v04] the r4 defect itself — the iOS probe host App Group is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: ios.probe.host is granted an App Group but no record names it as a consumer
+[F3-v04] the same defect one row over — the iOS probe provider is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: ios.probe.provider is granted an App Group but no record names it as a consumer
+[F3-v04] the deleted probe record is restored with no consumer to read it
+    expect R11 -> exit=1 named=True OK
+    - R11: rule G3 claims 1 App Group records but 2 are declared
+[F3-v04] a record is restored still naming the probe targets that lost the grant
+    expect R9 -> exit=1 named=True OK
+    - R9: ios.probe.host is not granted an App Group, but a record still names it as a consumer; a record whose consumers all lost the grant is deleted, n
+[F3-v04] a withheld iOS probe row keeps the group literal it is not entitled to
+    expect R9 -> exit=1 named=True OK
+    - R9: ios.probe.host carries an App Group value while the row is not granted
+[F3-v04] a withheld iOS probe row still claims the App Groups portal capability
+    expect R28 -> exit=1 named=True OK
+    - R28: ios.probe.provider withholds com.apple.security.application-groups but still claims a portal capability
+[F3-v04] a withheld iOS probe row drops the condition that would reopen it
+    expect R28 -> exit=1 named=True OK
+    - R28: ios.probe.host withholds com.apple.security.application-groups without stating what would reopen it
+[F3-v04] rule G4 loses the probe rule, so a probe can inherit a grant again
+    expect R28 -> exit=1 named=True OK
+    - R28: rule G4 does not say how a probe row is tested, which is what let the iOS probe pair inherit a grant from the production rows it resembles
+[F3-v04] rule G3 miscounts the records it claims to govern
+    expect R11 -> exit=1 named=True OK
+    - R11: rule G3 claims 2 App Group records but 1 are declared
+[F3-v04] rule G3 forgets that the probe family carried a record at all
+    expect R11 -> exit=1 named=True OK
+    - R11: rule G3 has no history
+[A-set] assertion A18 is deleted, so nothing enforces the iOS probe absence
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7
+[F1-v05] the r5 defect itself — the summary re-asserts the r4 macOS host Keychain grant
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 grantClause is not present verbatim in the sentence it claims to summarise, so the sentence states a grant nothing checks
+[F1-v05] the grant clause survives but a stale grantee is appended after it
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 names ['macos.host'] without granting them and without declaring the mention; that is exactly how the r4 macOS host claim survived into r5
+[F1-v05] the structured claim is widened to a target the rows do not grant
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 grantedTargets ['ios.host', 'ios.provider', 'macos.host'] != the targets the rows actually grant ['ios.host', 'ios.provider']
+[F1-v05] the grant clause drops one of the two real grantees
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 grantClause names ['ios.host'] but the rows grant ['ios.host', 'ios.provider']
+[F1-v05] the App Group summary resurrects the record r5 deleted
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-2 names App Group literal group.works.relux.tunnel.probe, which is not a record this contract declares; a deleted record may not survive in 
+[F1-v05] the record list in the summary drifts from the records declared
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-2 records ['group.works.relux.tunnel.probe'] != the records this contract declares ['group.works.relux.tunnel']
+[F1-v05] the Sparkle summary is widened to the packet-tunnel provider
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-5 grantedTargets ['macos.host', 'macos.provider'] != the targets the rows actually grant ['macos.host']
+[F1-v05] a universal grant is relabelled enumerated, so its target list goes unchecked
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-4 grantClause names [] but the rows grant ['ios.host', 'ios.probe.host', 'ios.probe.provider', 'ios.provider', 'macos.host', 'macos.probe.ho
+[F1-v05] an enumerated grant is relabelled universal, hiding which targets it names
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-2 claims a universal grant but only ['ios.host', 'ios.provider'] carry it
+[F1-v05] a rendered sentence loses its structured rule and becomes unchecked prose
+    expect R32 -> exit=1 named=True OK
+    - R32: 5 structured cross-platform rules for 6 rendered sentences; every sentence needs exactly one, or an unchecked sentence exists
+[F1-v05] two structured rules claim the same sentence, leaving another unchecked
+    expect R32 -> exit=1 named=True OK
+    - R32: renderedIndex is not a bijection onto the rendered sentences
+[F1-v05] a grantee is re-labelled as a non-grantee contrast mention
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 declares ios.host as a non-grantee, but the rows grant it
+[F1-v05] a declared contrast clause is reworded in the register but not in the sentence
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 declares a mention of macos.provider whose clause is not in the sentence
+[F1-v05] the summary claims an entitlement key no target row grants
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-5 names entitlement com.apple.developer.associated-domains that no target row grants
+[F1-v05] an unregistered sentence starts counting App Group records again
+    expect R32 -> exit=1 named=True OK
+    - R32: appGroupStyleRule.statement states an App Group record count but is not a registered count claim; register it so R32 checks the number, or drop
+[F1-v05] a registered count claim states r4's two records
+    expect R32 -> exit=1 named=True OK
+    - R32: crossPlatformRules[1] claims two App Group record(s) but 1 are declared
+[F1-v05] a registered count-claim path stops stating a count, so the register rots
+    expect R32 -> exit=1 named=True OK
+    - R32: registered count-claim path crossPlatformRules[1] no longer states a count, so the register has drifted from the prose it governs
+[F1-v05] the historical exclusion list gains a path that does not exist
+    expect R32 -> exit=1 named=True OK
+    - R32: rule S1 excludes path appGroupLeastPrivilegeRule.legacyNotes from the count scan, but no such path exists
+[F2-v05] the pin stops naming one of the four C1-authorized App IDs
+    expect R32 -> exit=1 named=True OK
+    - R32: rule P1 does not name C1-authorized App ID works.relux.tunnel.mac, so the unattended task could provision a different set than the human author
+[F2-v05] the board gate drops the phrase that negates the provider-only defect
+    expect R32 -> exit=1 named=True OK
+    - R32: P1's boardGate does not require the phrase that negates the removed 'only on provider identifiers' clause, so the provider-only defect could re
+[F2-v05] the banned pre-r5 wording register is emptied
+    expect R32 -> exit=1 named=True OK
+    - R32: rule P1 has an empty bannedContractPhrases
+[F2-v05] the pin points at a task this matrix does not authorize
+    expect R32 -> exit=1 named=True OK
+    - R32: portalMutationTaskContract pins TASK-260728-q5kjta, but this matrix authorizes portal mutation by TASK-260715-3jloqy
+[F2-v05] the pin stops forbidding the App Groups capability nothing needs
+    expect R32 -> exit=1 named=True OK
+    - R32: rule P1 does not forbid the App Groups capability while no C1-authorized target needs it, which is the over-provisioning verdict 05 F2 named
+
+--- rationale-document gates (r6, R33) ---
+[F1-v05] the rationale document keeps the r5 Keychain grant after the JSON is fixed
+    expect R33 -> exit=1 named=True OK
+    - R33: XP-3 grant clause is not rendered in the rationale document, so the prose and the contract can state different grants
+[F1-v05] the rationale document is left at the superseded revision
+    expect R33 -> exit=1 named=True OK
+    - R33: the rationale document does not carry revision 2026-07-28.r6
+
+117/117 negative gates hold
+exit=0
+
+==============================================================================
+GATE 4 — r5 preservation assertions (r5 -> r6 diff is exactly the two findings)
+==============================================================================
+$ python3 preserve.py <r5.json> <r6.json>
+preservation assertions run: 53
+PASS — every r5 decision verdict 05 accepted is preserved
+exit=0
+
+==============================================================================
+GATE 5 — verdict-05 F2 board-contract gate (rule P1 vs the live board record)
+==============================================================================
+Reviewer verdict 05 F2 ran this by hand: task-board q 'get(TASK-260715-3jloqy)'
+followed by an eyeball rejection of three pre-r5 phrases. It is now a script.
+
+--- BEFORE the correction (replayed against the pre-r6 board text) ---
+14 failures over 20 checks, exit 1:
+  pre-r5 phrase is back on the board: 'shared groups'
+  pre-r5 phrase is back on the board: 'App Group, and Keychain capabilities'
+  pre-r5 phrase is back on the board: 'only on provider identifiers'
+  required phrase absent: works.relux.tunnel.mac / .mac.tunnel / .probe.mac / .probe.mac.tunnel
+  required phrase absent: 'Network Extensions', 'hosts included', 'packet-tunnel-provider'
+  C1-authorized App ID not named: all four
+
+--- AFTER the correction ---
+$ python3 TASK-260715-ypo7yo_check-portal-consumer.py --repo <repo root>
+task: TASK-260715-3jloqy
+fields checked: description, scope, ac (+ checklist for banned phrases)
+checks run: 20
+PASS — the portal task's board contract matches rule P1 and c1AuthorizationScope
+exit=0
+
+$ task-board q "get(TASK-260715-3jloqy) { id status }"
+{"id":"TASK-260715-3jloqy","status":"backlog"}
+exit=0
+
+==============================================================================
+GATE 6 — repository gates
+==============================================================================
+$ ./scripts/check-legacy-preservation.sh
+PASS: generated workspace does not claim legacy-owned path: scripts/build-app.sh
+PASS: generated workspace does not claim legacy-owned path: scripts/create-dmg.sh
+Legacy preservation contract satisfied for /Users/iv/Developer/relux-proxy
+exit=0
+
+$ task-board validate
+Board is valid. No issues found.
+exit=0
+
+$ swift test
+􁁛  Test run with 335 tests in 29 suites passed after 3.108 seconds.
+exit=0
+
+==============================================================================
+SUMMARY
+==============================================================================
+reviewer verdict-05 F1 jq gate : r5 false/exit 1  ->  r6 true/exit 0
+contract self-check R1-R33     : 975 checks, exit 0  (r5: 846 over R1-R31)
+negative gates                 : 117/117 hold, exit 0  (r5: 92)
+r5 preservation assertions     : 53/53 hold, exit 0
+board-contract gate (rule P1)  : 14 failures before -> 20 checks, exit 0 after
+check-legacy-preservation.sh   : exit 0
+task-board validate            : exit 0
+swift test                     : 335 tests in 29 suites, exit 0
+
+No product source, spec file, or generated project was modified by this revision.
+No board element was created, deleted, or re-parented; TASK-260715-3jloqy's
+description, scope, AC and checklist were corrected, as verdict 05 F2 required.
+
+Note on two exit codes above: the first transcription of the legacy-preservation and
+swift test lines used ${PIPESTATUS[0]}, which is bash-only, and this shell is zsh, so
+both printed blank. Both were re-run without a pipeline and both exited 0:
+  $ ./scripts/check-legacy-preservation.sh   -> exit 0
+  $ swift test                               -> exit 0, 335 tests in 29 suites passed
+No failing gate was relabelled; the blanks were a transcription defect, not a result.

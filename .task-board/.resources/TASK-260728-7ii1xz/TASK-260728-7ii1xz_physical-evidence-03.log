@@ -1,0 +1,174 @@
+=== TASK-260728-7ii1xz physical evidence (host)
+
+$ sw_vers
+ProductName:		macOS
+ProductVersion:		26.5
+BuildVersion:		25F71
+exit=0
+
+$ uname -m
+arm64
+exit=0
+
+### P1 — a macOS NE system extension runs as root
+
+$ systemextensionsctl list | sed -n '1,8p'
+5 extension(s)
+--- com.apple.system_extension.network_extension (Go to 'System Settings > General > Login Items & Extensions > Network Extensions' to modify these system extension(s))
+enabled	active	teamID	bundleID (version)	name	[state]
+*	*	W5364U7YZB	io.tailscale.ipn.macsys.network-extension (1.98.5/101.98.5)	Tailscale Network Extension	[activated enabled]
+		W5364U7YZB	io.tailscale.ipn.macsys.network-extension (1.98.2/101.98.2)	Tailscale Network Extension	[terminated waiting to uninstall on reboot]
+	*	YHUG37CKN8	com.surfshark.vpnclient.macos.direct.PacketTunnel-WireGuard (4.5.1/1442)	Surfshark. WireGuard	[activated disabled]
+*	*	4H849Z7V2K	com.purevpn.app.mac.wireguard-packet-tunnel (2.0/29)	PacketTunnelWireGuardMac	[activated enabled]
+*	*	4H849Z7V2K	com.purevpn.mac.packet-tunnel (1.0/29)	PacketTunnelMac	[activated enabled]
+exit=0
+
+$ ps -axo user,uid,pid,comm | grep 'network-extension' | grep -v grep
+root                 0  2702 /Library/SystemExtensions/279BAB77-1C5A-4713-9E97-46DF38CE591C/io.tailscale.ipn.macsys.network-extension.systemextension/Contents/MacOS/io.tailscale.ipn.macsys.network-extension
+exit=0
+
+### P2 — shipping NE sysex entitlements (public code-signing metadata)
+
+$ codesign -d --entitlements :- --xml '/Library/SystemExtensions/279BAB77-1C5A-4713-9E97-46DF38CE591C/io.tailscale.ipn.macsys.network-extension.systemextension' | plutil -convert json -o - -
+{
+    "com.apple.security.network.client": true,
+    "com.apple.security.temporary-exception.files.absolute-path.read-write": [
+        "/Library/Tailscale/",
+        "/private/var/root/Library/Group Containers/",
+        "/private/var/db/mds/"
+    ],
+    "com.apple.developer.team-identifier": "W5364U7YZB",
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.app-sandbox": true,
+    "com.apple.security.network.server": true,
+    "com.apple.security.application-groups": [
+        "W5364U7YZB.io.tailscale.ipn.macsys"
+    ],
+    "com.apple.application-identifier": "W5364U7YZB.io.tailscale.ipn.macsys.network-extension",
+    "com.apple.developer.networking.networkextension": [
+        "packet-tunnel-provider-systemextension"
+    ]
+}
+exit=0
+
+$ codesign -d --entitlements :- --xml '/Library/SystemExtensions/384C9DE8-8B83-4C51-8EB5-8B5FB855D932/io.tailscale.ipn.macsys.network-extension.systemextension' | plutil -convert json -o - -
+{
+    "com.apple.security.network.client": true,
+    "com.apple.security.temporary-exception.files.absolute-path.read-write": [
+        "/Library/Tailscale/",
+        "/private/var/root/Library/Group Containers/",
+        "/private/var/db/mds/"
+    ],
+    "com.apple.developer.team-identifier": "W5364U7YZB",
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.app-sandbox": true,
+    "com.apple.security.network.server": true,
+    "com.apple.security.application-groups": [
+        "W5364U7YZB.io.tailscale.ipn.macsys"
+    ],
+    "com.apple.application-identifier": "W5364U7YZB.io.tailscale.ipn.macsys.network-extension",
+    "com.apple.developer.networking.networkextension": [
+        "packet-tunnel-provider-systemextension"
+    ]
+}
+exit=0
+
+$ codesign -d --entitlements :- --xml '/Library/SystemExtensions/476C125E-0D10-44B7-9FA7-C00A1914AD8D/com.surfshark.vpnclient.macos.direct.PacketTunnel-WireGuard.systemextension' | plutil -convert json -o - -
+{
+    "com.apple.security.network.client": true,
+    "com.apple.security.temporary-exception.files.absolute-path.read-write": [
+        "/private/var/db/mds/",
+        "/Library/Keychains/",
+        "/private/var/root/Library/Group Containers/YHUG37CKN8.com.surfshark.vpn.direct/"
+    ],
+    "com.apple.developer.team-identifier": "YHUG37CKN8",
+    "com.apple.security.app-sandbox": true,
+    "com.apple.security.network.server": true,
+    "com.apple.application-identifier": "YHUG37CKN8.com.surfshark.vpnclient.macos.direct.PacketTunnel-WireGuard",
+    "com.apple.developer.networking.networkextension": [
+        "packet-tunnel-provider-systemextension"
+    ]
+}
+exit=0
+
+$ codesign -d --entitlements :- --xml '/Library/SystemExtensions/6F7042E7-5790-410E-9B35-B30B3007126A/com.purevpn.mac.packet-tunnel.systemextension' | plutil -convert json -o - -
+{
+    "com.apple.security.network.client": true,
+    "keychain-access-groups": [
+        "4H849Z7V2K.com.purevpn.app.mac"
+    ],
+    "com.apple.developer.team-identifier": "4H849Z7V2K",
+    "com.apple.security.app-sandbox": true,
+    "com.apple.security.application-groups": [
+        "4H849Z7V2K.com.purevpn.app.mac"
+    ],
+    "com.apple.application-identifier": "4H849Z7V2K.com.purevpn.mac.packet-tunnel",
+    "com.apple.developer.networking.networkextension": [
+        "packet-tunnel-provider-systemextension"
+    ]
+}
+exit=0
+
+$ codesign -d --entitlements :- --xml '/Library/SystemExtensions/77852759-78E2-4E4C-BE35-3E433E6538D1/com.purevpn.app.mac.wireguard-packet-tunnel.systemextension' | plutil -convert json -o - -
+{
+    "com.apple.security.network.client": true,
+    "keychain-access-groups": [
+        "4H849Z7V2K.com.purevpn.app.mac"
+    ],
+    "com.apple.developer.team-identifier": "4H849Z7V2K",
+    "com.apple.security.app-sandbox": true,
+    "com.apple.security.network.server": true,
+    "com.apple.security.application-groups": [
+        "4H849Z7V2K.com.purevpn.app.mac"
+    ],
+    "com.apple.application-identifier": "4H849Z7V2K.com.purevpn.app.mac.wireguard-packet-tunnel",
+    "com.apple.developer.networking.networkextension": [
+        "packet-tunnel-provider-systemextension"
+    ]
+}
+exit=0
+
+### P3 — App Sandbox grants /Library/Keychains to any NE-entitled process
+
+$ shasum -a 256 /System/Library/Sandbox/Profiles/application.sb
+2e711078a64627c860ff35daa74c4c97a6e8471f99a6c8669650afbe84089218  /System/Library/Sandbox/Profiles/application.sb
+exit=0
+
+$ grep -n -A1 'when (entitlement "com.apple.developer.networking.networkextension")' /System/Library/Sandbox/Profiles/application.sb | tail -4
+792:(when (entitlement "com.apple.developer.networking.networkextension")
+793-      (allow file-read* file-write* (subpath "/Library/Keychains")))
+exit=0
+
+$ grep -n 'com.apple.SecurityServer\|com.apple.securityd.xpc' /System/Library/Sandbox/Profiles/application.sb
+655:       (global-name "com.apple.securityd.xpc")
+656:       (global-name "com.apple.SecurityServer")
+exit=0
+
+$ sed -n '543,546p' /System/Library/Sandbox/Profiles/application.sb
+(deny file-read* file-write* (home-subpath "/Library/Keychains/${ANY_UUID}"))
+(allow file-read* (subpath "/private/var/db/mds"))
+(when (equal? (param "_UID") "0")
+      (allow file-write* (subpath "/private/var/db/mds")))
+exit=0
+
+### P4 — keychain file layout and unlock key
+
+$ ls -l /Library/Keychains/System.keychain /private/var/db/SystemKey
+-rw-r--r--@ 1 root  wheel  378216 Jul 26 15:21 /Library/Keychains/System.keychain
+-r--------  1 root  wheel      48 Mar 15  2021 /private/var/db/SystemKey
+exit=0
+
+$ ls -d $HOME/Library/Keychains/*/keychain-2.db
+/Users/iv/Library/Keychains/5B8CB751-3081-5CE0-B51F-C789A652449F/keychain-2.db
+/Users/iv/Library/Keychains/896DDC91-C802-5238-948A-600879862BC5/keychain-2.db
+exit=0
+
+$ ls -ld /private/var/root
+drwxr-x---  5 root  wheel  160 Jan 17  2025 /private/var/root
+exit=0
+
+$ ls -ld '/private/var/root/Library/Group Containers'
+ls: /private/var/root/Library/Group Containers: Permission denied
+exit=1
+
+=== end

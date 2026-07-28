@@ -1,0 +1,35 @@
+### mach-lookup / securityd in app sandbox
+537:(allow mach-lookup (global-name "com.apple.ocspd"))
+655:       (global-name "com.apple.securityd.xpc")
+656:       (global-name "com.apple.SecurityServer")
+
+### Group Containers rules
+303:  "com.apple.security.application-groups"
+460:  "com.apple.security.application-groups"
+
+### SystemKey
+-r--------  1 root  wheel  48 Mar 15  2021 /private/var/db/SystemKey
+exit=0
+
+### System.keychain readable as user?
+keychain: "/Library/Keychains/System.keychain"
+version: 256
+class: 0x0000000F 
+attributes:
+    0x00000000 <uint32>=0x0000000F 
+    0x00000001 <blob>="com.apple.systemdefault"
+    0x00000002 <blob>=<NULL>
+    0x00000003 <uint32>=0x00000001 
+    0x00000004 <uint32>=0x00000000 
+    0x00000005 <uint32>=0x00000000 
+    0x00000006 <blob>=0x84C8A07F0829A8E4F7F1E47397331D7AF27EC80E  "\204\310\240\177\010)\250\344\367\361\344s\2273\035z\362~\310\016"
+    0x00000007 <blob>=<NULL>
+dump exit=
+### can a normal user read System.keychain item DATA?
+$ security dump-keychain -d /Library/Keychains/System.keychain
+### E7 (recorded): security dump-keychain -d /Library/Keychains/System.keychain as uid 502
+result: no output, blocked on interactive authorization; killed by 120s timeout (exit 143). No secret value was read or printed.
+
+### metadata-only dump item count
+192
+exit=0

@@ -1,0 +1,136 @@
+=== TASK-260728-7ii1xz keychain reachability experiment
+
+$ sw_vers -productVersion; sw_vers -buildVersion
+26.5
+25F71
+exit=0
+
+$ id -un; id -u
+iv
+502
+exit=0
+
+### E0 baseline: is this shell a GUI login session?
+
+$ launchctl managername
+Aqua
+exit=0
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost 'launchctl managername'
+Background
+exit=0
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost 'id -u; echo non-gui-session-uid-above'
+502
+non-gui-session-uid-above
+exit=0
+
+### E1 data-protection keychain, GUI user session, uid 502
+
+$ /Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe add e1-gui
+context: uid=502 euid=502 keychain=data-protection group=-
+SecItemAdd: OSStatus=-34018 (A required entitlement isn't present.)
+exit=0
+
+$ /Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe read e1-gui
+context: uid=502 euid=502 keychain=data-protection group=-
+SecItemCopyMatching: OSStatus=-25300 (The specified item could not be found in the keychain.)
+exit=0
+
+### E2 data-protection keychain, NON-GUI session (ssh localhost), same uid 502
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost '/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe add e2-nongui'
+context: uid=502 euid=502 keychain=data-protection group=-
+SecItemAdd: OSStatus=-34018 (A required entitlement isn't present.)
+exit=0
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost '/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe read e2-nongui'
+context: uid=502 euid=502 keychain=data-protection group=-
+SecItemCopyMatching: OSStatus=-25300 (The specified item could not be found in the keychain.)
+exit=0
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost '/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe read e1-gui'
+context: uid=502 euid=502 keychain=data-protection group=-
+SecItemCopyMatching: OSStatus=-25300 (The specified item could not be found in the keychain.)
+exit=0
+
+### E3 file-based keychain, GUI user session (default = login keychain)
+
+$ /Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe add e3-gui --file
+context: uid=502 euid=502 keychain=file-based group=-
+SecItemAdd: OSStatus=0 (No error.)
+exit=0
+
+$ /Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe read e3-gui --file
+context: uid=502 euid=502 keychain=file-based group=-
+SecItemCopyMatching: OSStatus=0 (No error.)
+value: bytes=18 matchesPlaceholder=true
+exit=0
+
+### E4 file-based keychain, NON-GUI session (ssh localhost)
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost '/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe add e4-nongui --file'
+context: uid=502 euid=502 keychain=file-based group=-
+SecItemAdd: OSStatus=-25308 (User interaction is not allowed.)
+exit=0
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost '/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe read e3-gui --file'
+context: uid=502 euid=502 keychain=file-based group=-
+SecItemCopyMatching: OSStatus=-25308 (User interaction is not allowed.)
+exit=0
+
+### E5 System keychain (file-based, root-owned) as the logged-in user
+
+$ ls -l /Library/Keychains/System.keychain
+-rw-r--r--@ 1 root  wheel  378216 Jul 26 15:21 /Library/Keychains/System.keychain
+exit=0
+
+$ security add-generic-password -s works.relux.tunnel.probe.7ii1xz -a e5-sys -w PROBE-NOT-A-SECRET /Library/Keychains/System.keychain
+security: SecKeychainItemCreateFromContent (/Library/Keychains/System.keychain): Write permissions error.
+exit=195
+
+$ security find-generic-password -s works.relux.tunnel.probe.7ii1xz /Library/Keychains/System.keychain
+security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.
+exit=44
+
+$ security dump-keychain /Library/Keychains/System.keychain > /dev/null
+exit=0
+
+### E6 per-user data-protection keychain storage is per-$HOME
+
+$ ls -d ~/Library/Keychains/*/keychain-2.db
+/Users/iv/Library/Keychains/5B8CB751-3081-5CE0-B51F-C789A652449F/keychain-2.db
+/Users/iv/Library/Keychains/896DDC91-C802-5238-948A-600879862BC5/keychain-2.db
+exit=0
+
+$ ls -ld /private/var/root
+drwxr-x---  5 root  wheel  160 Jan 17  2025 /private/var/root
+exit=0
+
+$ ls -ld '/private/var/root/Library/Group Containers'
+ls: /private/var/root/Library/Group Containers: Permission denied
+exit=1
+
+### cleanup
+
+$ /Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe delete e1-gui
+context: uid=502 euid=502 keychain=data-protection group=-
+SecItemDelete: OSStatus=-34018 (A required entitlement isn't present.)
+exit=0
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost '/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe delete e2-nongui'
+context: uid=502 euid=502 keychain=data-protection group=-
+SecItemDelete: OSStatus=-34018 (A required entitlement isn't present.)
+exit=0
+
+$ /Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe delete e3-gui --file
+context: uid=502 euid=502 keychain=file-based group=-
+SecItemDelete: OSStatus=0 (No error.)
+exit=0
+
+$ ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/known_hosts -o ConnectTimeout=5 localhost '/Users/iv/Developer/relux-tunnel/.temp/TASK-260728-7ii1xz/kcprobe delete e4-nongui --file'
+context: uid=502 euid=502 keychain=file-based group=-
+SecItemDelete: OSStatus=-25300 (The specified item could not be found in the keychain.)
+exit=0
+
+=== end

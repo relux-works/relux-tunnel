@@ -1,0 +1,87 @@
+# TASK-260715-ypo7yo — r11 gate transcript
+
+Recorded 2026-07-28T09:21:34Z. Shell: zsh — every command run WITHOUT a
+pipeline, because zsh carries no PIPESTATUS and a piped exit code would be the pipe's.
+Working copy: .temp/TASK-260715-ypo7yo/r11/ (board resources are never edited in place).
+
+## 1. The finding, reproduced against r10 and closed in r11
+
+Each mutation below moves BOTH copies of the field — the register entry and its mirror
+on the target row — which is what verdict 09 did and what an equality check cannot see.
+The r10 column runs the r10 validator over the r10 contract and r10 rationale; the r11
+column runs r11 over r11. Judging old data with the new gate would prove nothing.
+
+mutation (both copies moved)                              r10   r11   r11 failure
+verdict 09 #1  path widened to /                         exit 0  exit 1  [OK] R39: conditional entry X1-C1 declares banned path '/'
+verdict 09 #2  developer-id dropped from channels        exit 0  exit 1  [OK] R39: conditional entry X1-C1 arms on ['development'] while macos.provider signs on ['development
+verdict 09 #3  armedBy moved to a real other consumer    exit 0  exit 1  [OK] R39: conditional entry X1-C1 is armed by TASK-260715-9yp8to, but rule K3's resolution owner is T
+sweep      #4  entry AND row moved to macos.host         exit 0  exit 1  [OK] R39: conditional entry X1-C1 targets macos.host, but the K3 version scope it answers is on macos
+sweep      #5  key drifted to the read-only exception    exit 1  exit 1  [OK] R39: conditional entry X1-C1 registers com.apple.security.temporary-exception.files.absolute-pat
+sweep      #6  reviewedIn names a revision never issued  exit 0  exit 1  [OK] R39: conditional entry X1-C1 claims review in revision '2026-07-28.r99', which this contract has
+
+Rows 1-3 are the verdict's own mutations: CONFIRMED, r10 exits 0 where a negative
+control must exit 1. Rows 4 and 6 are two more of the same class the sweep required by
+item 3 found and the verdict had not named. Row 5 already exited 1 under r10 — but
+under R35's assertion-scope partition, not under the rule that owns the register; r11
+reports it under R39.
+
+## 2. Gates
+
+--- validate-matrix.py (positive) ---
+exit=0
+checks run: 2805
+PASS — every rule holds
+
+--- mutate.py (negative gates, and the declared harness count vs the harness) ---
+exit=0
+    R39: declared 39, harness holds 39 OK
+253/253 negative gates hold
+
+--- check-portal-consumer.py (rules A1/P1/D1 against the LIVE board) ---
+exit=0
+matrix revision: 2026-07-28.r11
+  checks run: 27
+  PASS — the board contract matches rule A1
+  checks run: 20
+  PASS — the board contract matches rule P1
+  checks run: 41
+  PASS — the board contract matches rule D1
+PASS — every pinned board consumer matches this contract
+
+--- preserve.py (r8 -> r9) ---
+exit=0
+assertions run: 122
+PASS — everything r8 established is byte-for-byte unchanged
+
+--- preserve-r10.py (r9 -> r10) ---
+exit=0
+assertions run: 201
+PASS — everything r9 established is byte-for-byte unchanged
+
+--- preserve-r11.py (r10 -> r11) ---
+exit=0
+assertions run: 143
+PASS — everything r10 established is byte-for-byte unchanged
+
+--- reviewer-gates.sh (independent, imports no project harness; baseline = r10) ---
+exit=0
+rule D1 flips r8 false -> r9 true: true exit=0
+baseline  X1-C1 derivable-not-mirrored: false exit=1 - the derivation does not cover all eight fields
+current   X1-C1 derivable-not-mirrored: true exit=0 - every field is derived
+negative  path widened to /: gate=false exit=1 OK - a path lies outside the reviewed subtree
+negative  developer-id channel dropped: gate=false exit=1 OK - armed channels are not the target's own channel set, in full
+negative  arming owner moved to another real consumer: gate=false exit=1 OK - arming owner is not the governing rule's owner
+negative  entry and row moved to macos.host: gate=false exit=1 OK - target is not the unique row carrying the governing version scope
+ALL INDEPENDENT GATES HOLD
+
+--- scripts/check-legacy-preservation.sh ---
+exit=0
+Legacy preservation contract satisfied for /Users/iv/Developer/relux-proxy
+
+--- task-board validate (run from the repository root) ---
+exit=0
+Board is valid. No issues found.
+
+--- swift test ---
+exit=0
+􁁛  Test run with 335 tests in 29 suites passed after 4.024 seconds.

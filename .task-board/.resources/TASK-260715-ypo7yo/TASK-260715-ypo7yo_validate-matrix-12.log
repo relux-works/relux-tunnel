@@ -1,0 +1,2028 @@
+TASK-260715-ypo7yo r12 gate transcript
+Run in place from the board resource layout: /Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-ypo7yo
+Every exit code below is the process's real status, captured without a pipeline.
+
+$ python3 TASK-260715-ypo7yo_validate-matrix.py
+checks run: 2862
+PASS — every rule holds
+exit=0
+
+$ python3 TASK-260715-ypo7yo_check-portal-consumer.py --repo /Users/iv/Developer/relux-tunnel
+matrix revision: 2026-07-28.r12
+
+rule A1 — TASK-260728-q5kjta
+  fields checked: description, scope, ac
+  checks run: 28
+  PASS — the board contract matches rule A1
+
+rule P1 — TASK-260715-3jloqy
+  fields checked: description, scope, ac
+  checks run: 20
+  PASS — the board contract matches rule P1
+
+rule D1 — 20 declared consumers
+  fields checked: blockedBy (tasks and bugs)
+  checks run: 41
+  PASS — the board contract matches rule D1
+
+PASS — every pinned board consumer matches this contract
+exit=0
+
+$ python3 TASK-260715-ypo7yo_preserve.py TASK-260715-ypo7yo_r8-baseline.json TASK-260715-ypo7yo_r9-baseline.json
+assertions run: 122
+PASS — everything r8 established is byte-for-byte unchanged
+exit=0
+
+$ python3 TASK-260715-ypo7yo_preserve-r10.py TASK-260715-ypo7yo_r9-baseline.json TASK-260715-ypo7yo_r10-baseline.json
+assertions run: 201
+PASS — everything r9 established is byte-for-byte unchanged
+exit=0
+
+$ python3 TASK-260715-ypo7yo_preserve-r11.py TASK-260715-ypo7yo_r10-baseline.json TASK-260715-ypo7yo_r11-baseline.json
+assertions run: 143
+PASS — everything r10 established is byte-for-byte unchanged
+exit=0
+
+$ python3 TASK-260715-ypo7yo_preserve-r12.py TASK-260715-ypo7yo_r11-baseline.json TASK-260715-ypo7yo_apple-identifier-entitlement-matrix.json
+assertions run: 245
+PASS — everything r11 established is byte-for-byte unchanged
+exit=0
+
+$ zsh TASK-260715-ypo7yo_reviewer-gates.sh TASK-260715-ypo7yo_r11-baseline.json
+=== 1. verdict 07 gates ===
+baseline  A5 target-consistency gate: true exit=0
+baseline  A9 profile-device-scope gate: true exit=0
+current   A5 target-consistency gate: true exit=0
+current   A9 profile-device-scope gate: true exit=0
+current   A5/A18 partition (structural): true exit=0
+current   A9 scope vs declared devices (structural): true exit=0
+
+=== 2. rule D1 (r9): does every declared consumer run after this contract? ===
+live board          : 20 declared, 1 exempt, 0 unreachable []
+                      exit=0 true
+r8 state (r9 edge removed): 3 unreachable ['TASK-260715-1o9wjz', 'TASK-260715-29ws8l', 'TASK-260715-3f4lxy']
+                      exit=1 false
+rule D1 flips r8 false -> r9 true: true exit=0
+
+=== 3. verdict 09 F1 (r11) + verdict 10 F1 (r12): is the register DERIVED, and is
+        reviewedIn the revision the entry actually entered in? ===
+snapshot chain      : ['2026-07-28.r8', '2026-07-28.r9', '2026-07-28.r10', '2026-07-28.r11'] digests verify
+baseline  X1-C1 derivable-not-mirrored: false exit=1 - reviewedIn is not the derived introducing revision: reviewedExceptions: no snapshot chain to derive from
+current   X1-C1 derivable-not-mirrored: true exit=0 - every field is derived
+negative  path widened to /: gate=false exit=1 OK - a path lies outside the reviewed subtree
+negative  developer-id channel dropped: gate=false exit=1 OK - armed channels are not the target's own channel set, in full
+negative  arming owner moved to another real consumer: gate=false exit=1 OK - arming owner is not the governing rule's owner
+negative  entry and row moved to macos.host: gate=false exit=1 OK - target is not the unique row carrying the governing version scope
+negative  verdict 10's control: reviewedIn r10 -> r2: gate=false exit=1 OK - reviewedIn is not the derived introducing revision: conditionalExceptions claims review in '2026-07-28.r2', but it entered in '2026-07-28.r10' (snapshot-proven (absent at 2026-07-28.r8))
+negative  reviewedIn r10 -> r2 with the introduction record moved too: gate=false exit=1 OK - reviewedIn is not the derived introducing revision: conditionalExceptions claims review in '2026-07-28.r2', but it entered in '2026-07-28.r10' (snapshot-proven (absent at 2026-07-28.r8))
+negative  ACTIVE register reviewedIn r3 -> r2: gate=false exit=1 OK - reviewedIn is not the derived introducing revision: reviewedExceptions claims review in '2026-07-28.r2', but it entered in '2026-07-28.r3' (summary-attested)
+negative  the chain is narrowed past the absence that proves the introduction: gate=false exit=1 OK - reviewedIn is not the derived introducing revision: conditionalExceptions: no revisionLog summary names the key
+verdict 09 F1 derivation gate and its negative controls: true exit=0
+
+ALL INDEPENDENT GATES HOLD
+exit=0
+
+$ python3 TASK-260715-ypo7yo_mutate.py
+--- positive gate ---
+checks run: 2862
+PASS — every rule holds
+positive exit=0
+--- declared harness counts versus this harness (r11, rule N1) ---
+    R39: declared 64, harness holds 64 OK
+
+--- negative gates (each mutation must exit 1 naming its rule) ---
+[F1] macOS development channel gets the -systemextension value (the r1 defect)
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.host/development NE value ['packet-tunnel-provider-systemextension'] != ['packet-tunnel-provider']
+[F1] provider NE value collapses to a single channel-independent value (r1 shape)
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.provider carries a channel-independent NE value; NE values must be keyed by channel
+[F1] Developer ID channel drops the suffix
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.provider/developer-id NE value ['packet-tunnel-provider'] != ['packet-tunnel-provider-systemextension']
+[F1] Mac Development profile authorizes the suffixed value
+    expect R23 -> exit=1 named=True OK
+    - R23: macos.host/development profile authorizes ['packet-tunnel-provider-systemextension'] but the entitlement needs ['packet-tunnel-provider']
+[F1] Ceremony C1 authorizes the -systemextension value
+    expect R22 -> exit=1 named=True OK
+    - R22: C1 NE values ['packet-tunnel-provider-systemextension'] != provisioned development values ['packet-tunnel-provider']
+[F1] the probe claims a Developer ID channel it has no profile for
+    expect R19 -> exit=1 named=True OK
+    - R7: macos.probe.host valueByChannel keys ['development'] != channels ['developer-id', 'development']
+[F2] macOS App Group literal is team-prefixed (the r1 defect)
+    expect R9 -> exit=1 named=True OK
+    - R9: production/macOS group literal $(TeamIdentifierPrefix)group.works.relux.tunnel is not iOS-style
+[F2] macOS target claims a team-prefixed group literal directly
+    expect R9 -> exit=1 named=True OK
+    - R9: macos.provider carries an App Group value while the row is not granted
+[F2] portal record no longer equals the entitlement literal
+    expect R18 -> exit=1 named=True OK
+    - R18: production iOS literal does not equal the portal record it claims
+[F2] a second App Group record duplicates production's portal identifier
+    expect R18 -> exit=1 named=True OK
+    - R18: duplicate App Group records: ['group.works.relux.tunnel', 'group.works.relux.tunnel']
+[F3] the macOS signing-generated allowlist is emptied
+    expect R20 -> exit=1 named=True OK
+    - R20: macOS signing-generated classification is empty
+[F3] the project authors a key the toolchain generates
+    expect R20 -> exit=1 named=True OK
+    - R20: macos.host authors a key the toolchain generates: ['com.apple.application-identifier']
+[F3] get-task-allow is reclassified as always-present
+    expect R20 -> exit=1 named=True OK
+    - R20: macos.host/developer-id development-only signing keys present=True
+[F4] host sandboxing is attributed to an Apple rule (the r1 defect)
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.host com.apple.security.app-sandbox requirementSource apple-requirement != project-architecture
+[F4] provider sandboxing is downgraded to a project choice
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.provider com.apple.security.app-sandbox requirementSource project-architecture != apple-requirement
+[F4] a sandbox requirement loses its basis citation
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.provider com.apple.security.app-sandbox has no requirementBasis
+[r1] a bundle identifier drifts into the legacy namespace
+    expect R4 -> exit=1 named=True OK
+    - R1: macos.provider works.relux.tunnel.mac.tunnel is not works.relux.proxy.mac.tunnel
+[r1] provider identifier is no longer host + .tunnel
+    expect R1 -> exit=1 named=True OK
+    - R1: macos.provider works.relux.tunnel.mactunnel is not works.relux.tunnel.mac.tunnel
+[r1] the withheld keychain group is silently granted
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.provider keychain-access-groups status required != prohibited
+[r1] an iOS target becomes provisioned
+    expect R14 -> exit=1 named=True OK
+    - R14: ios.host provisioned=True for iOS
+[r1] a distribution profile becomes C1-authorized
+    expect R17 -> exit=1 named=True OK
+    - R17: macos.host distribution profile is C1-authorized
+[r1] system-extension.install is granted to a provider
+    expect R8 -> exit=1 named=True OK
+    - R8: macos.provider com.apple.developer.system-extension.install status required != prohibited
+[r1] a forbidden provider value is granted
+    expect R24 -> exit=1 named=True OK
+    - R7: macos.provider/development NE value ['dns-proxy-provider'] != ['packet-tunnel-provider']
+[F1-v02] the Sparkle Mach lookup exception is missing entirely (the r2 defect)
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host does not declare com.apple.security.temporary-exception.mach-lookup.global-name; the sandboxed Sparkle host requires it (.spec/platf
+[F1-v02] the exception drops -spki and keeps only -spks
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name value ['$(PRODUCT_BUNDLE_IDENTIFIER)-spks'] != ['$(PRODUCT_BUNDLE_IDE
+[F1-v02] the exception names the wrong Sparkle endpoint suffix
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name value ['$(PRODUCT_BUNDLE_IDENTIFIER)-spkd', '$(PRODUCT_BUNDLE_IDENTIF
+[F1-v02] resolvedValue does not expand the build variable, so no bundle check can use it
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name resolvedValue ['$(PRODUCT_BUNDLE_IDENTIFIER)-spks', '$(PRODUCT_BUNDLE
+[F1-v02] resolvedValue is pinned to a different host identifier
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.host com.apple.security.temporary-exception.mach-lookup.global-name resolvedValue ['works.relux.tunnel.mac.tunnel-spks', 'works.relux.tun
+[F1-v02] the exception is granted to the packet-tunnel provider as well
+    expect R25 -> exit=1 named=True OK
+    - R25: macos.provider is granted com.apple.security.temporary-exception.mach-lookup.global-name; only macos.host links Sparkle
+[F1-v02] the exception is granted to an iOS target, which never links Sparkle
+    expect R25 -> exit=1 named=True OK
+    - R25: ios.host is granted com.apple.security.temporary-exception.mach-lookup.global-name; only macos.host links Sparkle
+[F1-v02] the exception is downgraded to a generic sandbox consequence
+    expect R25 -> exit=1 named=True OK
+    - R25: com.apple.security.temporary-exception.mach-lookup.global-name requirementSource sandbox-consequence != project-architecture
+[F1-v02] the exception claims a portal capability it does not have
+    expect R25 -> exit=1 named=True OK
+    - R25: com.apple.security.temporary-exception.mach-lookup.global-name is not a portal capability and must not claim one
+[X1] the reviewed-exception register is emptied while the grant stays
+    expect R26 -> exit=1 named=True OK
+    - R26: authored temporary exceptions [('com.apple.security.temporary-exception.mach-lookup.global-name', 'macos.host')] do not match the X1 register [
+[X1] the register disagrees with the entitlement row it claims to review
+    expect R26 -> exit=1 named=True OK
+    - R26: X1 register values for macos.host/com.apple.security.temporary-exception.mach-lookup.global-name disagree with the entitlement row
+[X1] a Hardened Runtime relaxation is authored on the host
+    expect R26 -> exit=1 named=True OK
+    - R26: macos.host authors a prohibited relaxation: ['com.apple.security.cs.disable-library-validation']
+[X1] the prohibited relaxation set is emptied
+    expect R26 -> exit=1 named=True OK
+    - R26: rule X1 bans nothing, so it constrains nothing
+[X1] get-task-allow is banned by X1, contradicting the development channel
+    expect R26 -> exit=1 named=True OK
+    - R26: macOS classifies a prohibited key as signing-generated: ['com.apple.security.get-task-allow']
+[A-set] assertion A14 is deleted, so nothing checks the exception at build time
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A15', 'A16', 'A17', 'A18', 'A19', 'A2', 'A3', 'A4', 'A5', 'A
+[A-set] assertion A10e is deleted, so required-adjacent keys need not be present
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A19', 'A2', 'A3', 'A4', 'A5', 'A6
+[A-set] assertion A15 is deleted, so the X1 prohibited set is never enforced
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A16', 'A17', 'A18', 'A19', 'A2', 'A3', 'A4', 'A5', 'A
+[A-set] an assertion is emptied instead of removed
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion A1 has no text
+[F1-v03] the macOS host App Group is re-granted (the r3 defect verdict 03 caught)
+    expect R28 -> exit=1 named=True OK
+    - R9: macos.host is granted an App Group but no record names it as a consumer
+[F1-v03] the macOS provider App Group is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: macos.provider is granted an App Group but no record names it as a consumer
+[F1-v03] the same defect one row over — the macOS probe host is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: macos.probe.host is granted an App Group but no record names it as a consumer
+[F1-v03] the over-correction — an iOS row is withheld too, where the group does work
+    expect R28 -> exit=1 named=True OK
+    - R9: ios.host carries an App Group value while the row is not granted
+[F1-v03] a withheld macOS row keeps the group literal it is not entitled to
+    expect R9 -> exit=1 named=True OK
+    - R9: macos.provider carries an App Group value while the row is not granted
+[F1-v03] a withheld macOS row drops the condition that would reopen it
+    expect R28 -> exit=1 named=True OK
+    - R28: macos.host withholds com.apple.security.application-groups without stating what would reopen it
+[F1-v03] a withheld macOS row still claims the App Groups portal capability
+    expect R28 -> exit=1 named=True OK
+    - R28: macos.provider withholds com.apple.security.application-groups but still claims a portal capability
+[F1-v03] a granted iOS row stops naming the function it serves
+    expect R28 -> exit=1 named=True OK
+    - R28: ios.provider is granted com.apple.security.application-groups without naming the function it serves
+[F1-v03] rule G2 reverts to r3's future-conditional macOS purpose
+    expect R28 -> exit=1 named=True OK
+    - R28: rule G2's macOS purpose is still conditional ['will use', 'need not be repeated']; verdict 03 rejected exactly that
+[F1-v03] the G4 survey concedes the selected design does use an App Group grant
+    expect R28 -> exit=1 named=True OK
+    - R28: a G4 survey row says the selected design DOES use an App Group grant on macOS, so the macOS rows cannot be withheld on least-privilege grounds 
+[F1-v03] the G4 survey is trimmed to the group container, hiding the system-wide grants
+    expect R28 -> exit=1 named=True OK
+    - R28: rule G4 surveys only 3 grants; the macOS entitlement confers six
+[F1-v03] Ceremony C1 re-enables the App Groups capability nothing needs
+    expect R30 -> exit=1 named=True OK
+    - R30: C1 capability list still carries App Groups while 0 C1-authorized targets require the entitlement
+[F1-v03] Ceremony C1 re-authorizes an App Group record nothing consumes
+    expect R30 -> exit=1 named=True OK
+    - R30: C1 authorizes App Group records ['group.works.relux.tunnel'] but its App IDs require []
+[F1-v03] an App Group record claims C1 authorization it no longer has
+    expect R30 -> exit=1 named=True OK
+    - R30: production c1Authorized=True but C1 requirement is False
+[F1-v03] a deferred App Group record stops naming who allocates it and when
+    expect R30 -> exit=1 named=True OK
+    - R30: production is not created at C1 and does not say who creates it, or when
+[A-set] assertion A16 is deleted, so no build check enforces the macOS absence
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A17', 'A18', 'A19', 'A2', 'A3', 'A4', 'A5', 'A
+[M1] the settled keychain row keeps the resolutionOwner that held it open
+    expect R13 -> exit=1 named=True OK
+    - R13: macos.provider/keychain-access-groups is settled (prohibited) but still names a resolutionOwner
+[M1] the settled keychain row keeps the amendmentRule that re-grants it on refuted reasoning
+    expect R13 -> exit=1 named=True OK
+    - R13: macos.provider/keychain-access-groups is settled (prohibited) but still carries a row-level amendmentRule; a settled row states a reopening con
+[M1] the keychain row slides back to pending after the decision was made
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.provider keychain-access-groups status prohibited-pending-decision != prohibited
+[M1] the provider is granted a keychain group the file-based keychain cannot honour
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.provider keychain-access-groups status required != prohibited
+[M1] the settled keychain row stops saying what would reopen it
+    expect R29 -> exit=1 named=True OK
+    - R29: the settled macos.provider keychain row states no reopening condition
+[M5] rule K1 drops the Apple note that distinguishes the two keychain implementations
+    expect R29 -> exit=1 named=True OK
+    - R29: rule K1 does not cite the Apple note that distinguishes the two keychain implementations, which is the whole basis of the rule
+[M2] OC-1 is reopened after its owning task delivered a decision
+    expect R29 -> exit=1 named=True OK
+    - R29: OC-1 is open without a resolution owner
+[M2] OC-1 is closed without naming the task that resolved it
+    expect R29 -> exit=1 named=True OK
+    - R29: OC-1 is closed without naming a resolver
+[M2] a closed constraint keeps a pending resolutionOwner, reading as still open
+    expect R29 -> exit=1 named=True OK
+    - R29: OC-1 is closed but still names a pending resolutionOwner
+[F1-v04] the r4 defect itself — the macOS host keychain group is re-granted
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.host keychain-access-groups status required != prohibited
+[F1-v04] the macOS host is re-granted the group without a matching record consumer
+    expect R31 -> exit=1 named=True OK
+    - R12: macos.host keychain-access-groups status required != prohibited
+[F1-v04] a withheld keychain row keeps the group literal it is not entitled to
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.host carries a keychain value while not granted
+[F1-v04] the over-correction — an iOS row is withheld too, where the group IS shared
+    expect R31 -> exit=1 named=True OK
+    - R12: ios.provider keychain-access-groups status prohibited != required
+[F1-v04] the keychain record stops naming the targets that consume it
+    expect R31 -> exit=1 named=True OK
+    - R31: the keychain access group record names no consumers
+[F1-v04] the keychain record names a consumer that is not granted the group
+    expect R31 -> exit=1 named=True OK
+    - R31: keychain record consumers ['ios.host', 'ios.provider', 'macos.probe.host'] != the targets actually granted the group ['ios.host', 'ios.provider
+[F1-v04] the keychain record silently re-widens to macOS
+    expect R31 -> exit=1 named=True OK
+    - R31: the keychain record claims platforms ['iOS', 'macOS']; after rule K2 the group is consumed on iOS only
+[F1-v04] a withheld keychain row drops the condition that would reopen it
+    expect R31 -> exit=1 named=True OK
+    - R31: macos.host withholds keychain-access-groups without stating what would reopen it
+[F1-v04] a probe keychain row goes back to being settled by silence
+    expect R31 -> exit=1 named=True OK
+    - R31: ios.probe.provider withholds keychain-access-groups without stating what would reopen it
+[F1-v04] the macOS host stops recording the default group it falls back to
+    expect R31 -> exit=1 named=True OK
+    - R31: the macos.host keychain row does not record the default access group it falls back to, which is the whole reason withholding the entitlement co
+[F1-v04] the recorded default group is the shared one, not the app identifier
+    expect R31 -> exit=1 named=True OK
+    - R31: macos.host records default access group 262RZ595FP.works.relux.tunnel.shared, but K2's ordering law gives 262RZ595FP.works.relux.tunnel.mac
+[F1-v04] rule K2 loses the ordering law that makes withholding provably safe
+    expect R31 -> exit=1 named=True OK
+    - R31: rule K2 has no defaultAccessGroupLaw
+[F1-v04] rule K2 drops its Apple basis and rests on internal judgement
+    expect R31 -> exit=1 named=True OK
+    - R31: rule K2 does not cite both Apple sources it rests on: the note that the app identifier IS the default access group, and the note that macOS bui
+[F1-v04] rule K1 stops admitting that it never governed the host
+    expect R31 -> exit=1 named=True OK
+    - R29: rule K1 has no hostScope
+[A-set] assertion A17 is deleted, so nothing enforces the macOS keychain absence
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A18', 'A19', 'A2', 'A3', 'A4', 'A5', 'A
+[F3-v04] the r4 defect itself — the iOS probe host App Group is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: ios.probe.host is granted an App Group but no record names it as a consumer
+[F3-v04] the same defect one row over — the iOS probe provider is re-granted
+    expect R28 -> exit=1 named=True OK
+    - R9: ios.probe.provider is granted an App Group but no record names it as a consumer
+[F3-v04] the deleted probe record is restored with no consumer to read it
+    expect R11 -> exit=1 named=True OK
+    - R11: rule G3 claims 1 App Group records but 2 are declared
+[F3-v04] a record is restored still naming the probe targets that lost the grant
+    expect R9 -> exit=1 named=True OK
+    - R9: ios.probe.host is not granted an App Group, but a record still names it as a consumer; a record whose consumers all lost the grant is deleted, n
+[F3-v04] a withheld iOS probe row keeps the group literal it is not entitled to
+    expect R9 -> exit=1 named=True OK
+    - R9: ios.probe.host carries an App Group value while the row is not granted
+[F3-v04] a withheld iOS probe row still claims the App Groups portal capability
+    expect R28 -> exit=1 named=True OK
+    - R28: ios.probe.provider withholds com.apple.security.application-groups but still claims a portal capability
+[F3-v04] a withheld iOS probe row drops the condition that would reopen it
+    expect R28 -> exit=1 named=True OK
+    - R28: ios.probe.host withholds com.apple.security.application-groups without stating what would reopen it
+[F3-v04] rule G4 loses the probe rule, so a probe can inherit a grant again
+    expect R28 -> exit=1 named=True OK
+    - R28: rule G4 does not say how a probe row is tested, which is what let the iOS probe pair inherit a grant from the production rows it resembles
+[F3-v04] rule G3 miscounts the records it claims to govern
+    expect R11 -> exit=1 named=True OK
+    - R11: rule G3 claims 2 App Group records but 1 are declared
+[F3-v04] rule G3 forgets that the probe family carried a record at all
+    expect R11 -> exit=1 named=True OK
+    - R11: rule G3 has no history
+[A-set] assertion A18 is deleted, so nothing enforces the iOS probe absence
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A19', 'A2', 'A3', 'A4', 'A5', 'A
+[F1-v05] the r5 defect itself — the summary re-asserts the r4 macOS host Keychain grant
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 grantClause is not present verbatim in the sentence it claims to summarise, so the sentence states a grant nothing checks
+[F1-v05] the grant clause survives but a stale grantee is appended after it
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 names ['macos.host'] without granting them and without declaring the mention; that is exactly how the r4 macOS host claim survived into r5
+[F1-v05] the structured claim is widened to a target the rows do not grant
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 grantedTargets ['ios.host', 'ios.provider', 'macos.host'] != the targets the rows actually grant ['ios.host', 'ios.provider']
+[F1-v05] the grant clause drops one of the two real grantees
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 grantClause names ['ios.host'] but the rows grant ['ios.host', 'ios.provider']
+[F1-v05] the App Group summary resurrects the record r5 deleted
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-2 names App Group literal group.works.relux.tunnel.probe, which is not a record this contract declares; a deleted record may not survive in 
+[F1-v05] the record list in the summary drifts from the records declared
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-2 records ['group.works.relux.tunnel.probe'] != the records this contract declares ['group.works.relux.tunnel']
+[F1-v05] the Sparkle summary is widened to the packet-tunnel provider
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-5 grantedTargets ['macos.host', 'macos.provider'] != the targets the rows actually grant ['macos.host']
+[F1-v05] a universal grant is relabelled enumerated, so its target list goes unchecked
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-4 grantClause names [] but the rows grant ['ios.host', 'ios.probe.host', 'ios.probe.provider', 'ios.provider', 'macos.host', 'macos.probe.ho
+[F1-v05] an enumerated grant is relabelled universal, hiding which targets it names
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-2 claims a universal grant but only ['ios.host', 'ios.provider'] carry it
+[F1-v05] a rendered sentence loses its structured rule and becomes unchecked prose
+    expect R32 -> exit=1 named=True OK
+    - R32: 5 structured cross-platform rules for 6 rendered sentences; every sentence needs exactly one, or an unchecked sentence exists
+[F1-v05] two structured rules claim the same sentence, leaving another unchecked
+    expect R32 -> exit=1 named=True OK
+    - R32: renderedIndex is not a bijection onto the rendered sentences
+[F1-v05] a grantee is re-labelled as a non-grantee contrast mention
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 declares ios.host as a non-grantee, but the rows grant it
+[F1-v05] a declared contrast clause is reworded in the register but not in the sentence
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-3 declares a mention of macos.provider whose clause is not in the sentence
+[F1-v05] the summary claims an entitlement key no target row grants
+    expect R32 -> exit=1 named=True OK
+    - R32: XP-5 names entitlement com.apple.developer.associated-domains that no target row grants
+[F1-v05] an unregistered sentence starts counting App Group records again
+    expect R32 -> exit=1 named=True OK
+    - R32: appGroupStyleRule.statement states an App Group record count but is not a registered count claim; register it so R32 checks the number, or drop
+[F1-v05] a registered count claim states r4's two records
+    expect R32 -> exit=1 named=True OK
+    - R32: crossPlatformRules[1] claims two App Group record(s) but 1 are declared
+[F1-v05] a registered count-claim path stops stating a count, so the register rots
+    expect R32 -> exit=1 named=True OK
+    - R32: registered count-claim path crossPlatformRules[1] no longer states a count, so the register has drifted from the prose it governs
+[F1-v05] the historical exclusion list gains a path that does not exist
+    expect R32 -> exit=1 named=True OK
+    - R32: rule S1 excludes path appGroupLeastPrivilegeRule.legacyNotes from the count scan, but no such path exists
+[F2-v05] the pin stops naming one of the four C1-authorized App IDs
+    expect R32 -> exit=1 named=True OK
+    - R32: rule P1 does not name C1-authorized App ID works.relux.tunnel.mac, so the unattended task could provision a different set than the human author
+[F2-v05] the board gate drops the phrase that negates the provider-only defect
+    expect R32 -> exit=1 named=True OK
+    - R32: P1's boardGate does not require the phrase that negates the removed 'only on provider identifiers' clause, so the provider-only defect could re
+[F2-v05] the banned pre-r5 wording register is emptied
+    expect R32 -> exit=1 named=True OK
+    - R32: rule P1 has an empty bannedContractPhrases
+[F2-v05] the pin points at a task this matrix does not authorize
+    expect R32 -> exit=1 named=True OK
+    - R32: portalMutationTaskContract pins TASK-260728-q5kjta, but this matrix authorizes portal mutation by TASK-260715-3jloqy
+[F2-v05] the pin stops forbidding the App Groups capability nothing needs
+    expect R32 -> exit=1 named=True OK
+    - R32: rule P1 does not forbid the App Groups capability while no C1-authorized target needs it, which is the over-provisioning verdict 05 F2 named
+[F1-v07] A5's r7 text is restored verbatim — the reported defect
+    expect R35 -> exit=1 named=True OK
+    - R27: no assertion restricts the iOS App Group grant to the two production rows, so the verdict-07 F1 over-entitlement of both disposable probes coul
+[F1-v07] an iOS probe row is granted the App Group, moving the derived present set
+    expect R35 -> exit=1 named=True OK
+    - R9: ios.probe.host is granted an App Group but no record names it as a consumer
+[F1-v07] A5's scope is widened to the probe pair by hand
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-3 scopeTargets ['ios.host', 'ios.probe.host', 'ios.probe.provider', 'ios.provider'] != the rows its predicates select ['ios.host', 'ios.prov
+[F1-v07] A5's predicate is widened to every iOS row
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-3 scopeTargets ['ios.host', 'ios.provider'] != the rows its predicates select ['ios.host', 'ios.probe.host', 'ios.probe.provider', 'ios.prov
+[F1-v07] A5's predicate carries a typo that silently selects nothing
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-3 predicate field family='prod' matches no target row, so the predicate silently selects a smaller set than it reads as
+[F1-v07] the probe-absence scope is deleted, leaving the two rows unspoken for
+    expect R35 -> exit=1 named=True OK
+    - R35: the scopes for com.apple.security.application-groups say nothing about ['ios.probe.host', 'ios.probe.provider'], so an entitlement check has no
+[F1-v07] the probe-absence scope is flipped to present, contradicting the rows
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-5 claims com.apple.security.application-groups is present on ios.probe.host, but the row's status is prohibited
+[F1-v07] A18 is deleted while its scope entry still points at it
+    expect R35 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A19', 'A2', 'A3', 'A4', 'A5', 'A
+[F1-v07] A5's scope clause is reworded, so the text states an unchecked scope
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-3 scopeClause is not present verbatim in assertion A5, so the assertion states a scope that nothing checks
+[F1-v07] the macOS App Group absence scope is dropped, breaking the partition
+    expect R35 -> exit=1 named=True OK
+    - R35: the scopes for com.apple.security.application-groups say nothing about ['macos.host', 'macos.probe.host', 'macos.probe.provider', 'macos.provid
+[F1-v07] A4 loses the 'only' that discharges its complement
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-2 is present-exclusive but its exclusivityMarker 'exclusively' is not in assertion A4; 'present on X' alone says nothing about the other row
+[F1-v07] A4's exclusivity is demoted to a plain present claim
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-2 is present yet declares an exclusivityMarker
+[F1-v07] the probe pair is named in A5 without being declared a contrast
+    expect R35 -> exit=1 named=True OK
+    - R35: assertion A5 names ['ios.probe.host', 'ios.probe.provider'] without scoping them and without declaring the mention; that is how A5 went on clai
+[F1-v07] a target A5 actually scopes is declared out of scope
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-3 declares ios.host as out of scope, but assertion A5 scopes it
+[F1-v07] a new assertion names an entitlement key and registers no scope
+    expect R35 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A19', 'A2', 'A3', 
+[F1-v07] a scope is registered against an assertion that no longer names its key
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-9 claims keychain-access-groups is present on macos.host, but the row's status is prohibited
+[F1-v07] rule S2 stops recording the stale claims it exists to prevent
+    expect R35 -> exit=1 named=True OK
+    - R35: rule S2 records no stale claim, so the defect it exists to prevent is undocumented
+[F1-v07] rule S2 loses the partition rule that both findings turned on
+    expect R35 -> exit=1 named=True OK
+    - R35: rule S2 has no partitionRule
+[F2-v07] A9's r7 text is restored verbatim — the reported defect
+    expect R36 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A19', 'A2', 'A3', 'A4', '
+[F2-v07] an iOS development profile is given a concrete device, moving the rows
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-2 claims ios.host's devices are deferred, but the row declares ['this Apple-silicon Mac']; a deferred entry must name both 'deferred' and 'A
+[F2-v07] the deferred scope is widened over a macOS profile
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-2 scopeProfiles ['ios.host', 'ios.probe.host', 'ios.probe.provider', 'ios.provider'] != the profile rows its predicates select ['ios.host', 
+[F2-v07] the macOS profile scope is widened to every profile row
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-1 scopeProfiles ['macos.host', 'macos.probe.host', 'macos.probe.provider', 'macos.provider'] != the profile rows its predicates select ['ios
+[F2-v07] the iOS deferred scope is deleted, leaving four profiles unspoken for
+    expect R36 -> exit=1 named=True OK
+    - R36: the development profile scopes say nothing about ['ios.host', 'ios.probe.host', 'ios.probe.provider', 'ios.provider']
+[F2-v07] the macOS profiles are relabelled deferred, contradicting their device list
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-1 claims macos.host's devices are deferred, but the row declares ['this Apple-silicon Mac']; a deferred entry must name both 'deferred' and 
+[F2-v07] a C1-authorized profile is unmarked, splitting A9a from the ceremony scope
+    expect R36 -> exit=1 named=True OK
+    - R17: macos.probe.host development c1Authorized does not match platform provisioning
+[F2-v07] the deferral basis is changed, so a parked device set names no decision
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-2 claims ios.host's devices are deferred, but the row declares ['deferred — ADR-024']; a deferred entry must name both 'deferred' and 'ADR-9
+[F2-v07] the Developer ID scope is moved onto the development channel
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-3 scopes macos.host on channel development, but its distribution channel is developer-id
+[F2-v07] A9b's scope clause is reworded, so the text states an unchecked scope
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-2 scopeClause is not present verbatim in assertion A9b
+[F2-v07] A9c is deleted while its profile scope still points at it
+    expect R36 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A19', 'A2', 'A3', 'A4', '
+[D1-r9] a consumer named in OC-1.affects is dropped back out of the consumers list — the r8 state for four elements
+    expect R37 -> exit=1 named=True OK
+    - R37: named in this contract but neither a declared consumer nor an exemption: ['TASK-260715-29ws8l']
+[D1-r9] an obligation owner assigned only from a prose field is dropped, which is how TASK-260717-xempiv stayed off the list for five revisions
+    expect R37 -> exit=1 named=True OK
+    - R37: named in this contract but neither a declared consumer nor an exemption: ['TASK-260717-xempiv']
+[D1-r9] a phantom consumer is declared that the contract never mentions, so nothing says what it consumes
+    expect R37 -> exit=1 named=True OK
+    - R37: declared as a consumer but named nowhere outside the consumer list and rule D1's own register, so nothing says what it consumes: ['TASK-260715-
+[D1-r9] `done` is admitted as an exemption basis, which would exempt any consumer that had already run against an unaccepted matrix
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 allows exemption bases ['upstream', 'done']; only 'upstream' is a basis, because `done` is evidence a consumer RAN, which is the failur
+[D1-r9] an exemption keeps its element but loses the reason that justifies it
+    expect R37 -> exit=1 named=True OK
+    - R37: exemption TASK-260728-7ii1xz has no reason
+[D1-r9] an exemption claims a basis the rule does not allow
+    expect R37 -> exit=1 named=True OK
+    - R37: exemption TASK-260728-7ii1xz claims basis 'already-done', which is not allowed
+[D1-r9] the record that three consumers had no path here is quietly dropped, so the fix reads as a contract that was always right
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 records fewer than the seven defects r9 found
+[D1-r9] the board change shrinks to two of the three gaps it closed
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 boardChange no longer closes exactly the three reachability gaps
+[D1-r9] the cycle check behind the new edge is dropped
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 boardChange has no cycleCheck
+[D1-r9] selfReference stops naming this contract's owner, which would exempt an arbitrary element from reachability
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 selfReference TASK-260715-3jloqy is not this contract's owner TASK-260715-ypo7yo
+[D1-r9] the graph query stops reading bugs, so the closure runs over a subgraph
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 reads only tasks; a bug can carry an edge, so a closure over that subgraph is wrong in both directions
+[D1-r9] rule D1 stops naming the gate that reads the board
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 does not name the gate that reads the board
+[D1-r9] the rule that a mention is an obligation is deleted
+    expect R37 -> exit=1 named=True OK
+    - R37: rule D1 has no mentionCoverageRule
+[N1-r9] a macos.host row is withdrawn and every prose count in both artifacts is left where r8 put it — the r5 event replayed
+    expect R38 -> exit=1 named=True OK
+    - R21: macos.host/com.apple.security.network.client claims sandbox-consequence but the target is not sandboxed
+[N1-r9] a macos.host row is ADDED and nobody re-renders the counts
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-1 (json): the derived text 'six authored keys plus three injected' is not present, so the prose count disagrees with the rows
+[N1-r9] the injected development-only key is dropped, which changes the development total but not the developer-id one
+    expect R38 -> exit=1 named=True OK
+    - R20: macos.host/development development-only signing keys present=False
+[N1-r9] the JSON's own downstream count is hand-edited away from the rows
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-1 (json): the derived text 'five authored keys plus three injected' is not present, so the prose count disagrees with the rows
+[N1-r9] a registered claim is de-registered while its sentence stays in the prose
+    expect R38 -> exit=1 named=True OK
+    - R38: unregistered allowlist-size claim in the rationale document, section 9: '**eight** keys' — register it under rule N1 or exclude it with a reaso
+[N1-r9] an unregistered count claim is added to the contract
+    expect R38 -> exit=1 named=True OK
+    - R38: unregistered allowlist-size claim in the contract at namespaces.forbiddenReason: 'three keys' — register it under rule N1 or it is a number not
+[N1-r9] a registered N1 path is aimed at a count rule S1 already owns, so one number would have two derivations
+    expect R38 -> exit=1 named=True OK
+    - R38: rules S1 and N1 both own the count at ['crossPlatformRules[1]']
+[N1-r9] the scan's stated bound is deleted, so it reads as a completeness claim
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1's coverage scan states no bound, so it reads as a completeness claim
+[N1-r9] rule N1 points at the wrong gate
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 names gate R37, not R38
+[N1-r9] an exclusion is retained for a phrase the document no longer contains
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 excludes the phrase 'the allowlist holds four keys', which is not in the rationale document; a vestigial exclusion hides whatever repla
+[N1-r9] history is widened until a live section stops being scanned
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 excludes document sections ['9', '10', '13']; only §13 is history, and widening this list disables the scan rather than the section
+[F1-v08] rule K1 loses the osFloorScope clause, so its sandbox-grant reasoning reads as version-independent again — the verdict-08 defect restored
+    expect R29 -> exit=1 named=True OK
+    - R29: rule K1 has no osFloorScope
+[F1-v08] rule K1's floor clause stops pointing at the rule that owns the scope, leaving a recorded gap with no owner
+    expect R29 -> exit=1 named=True OK
+    - R29: rule K1's osFloorScope does not point at the rule that owns the version scope, so the clause records a gap with no owner
+[F1-v08] the provider keychain row drops its osVersionScope, so the row and the rule disagree about whether the floor is covered
+    expect R39 -> exit=1 named=True OK
+    - R39: the settled macos.provider keychain row states no OS-version scope, so its sandbox-grant reasoning reads as version-independent
+[F1-v08] the floor is declared covered by the version the evidence was actually read on — the exact conflation verdict 08 named
+    expect R39 -> exit=1 named=True OK
+    - R39: rule K3 does not name the macOS 15.0 deployment floor its evidence does not cover
+[F1-v08] rule K3 loses its resolution owner, so the floor gap belongs to nobody and reads as closed by having been written down
+    expect R39 -> exit=1 named=True OK
+    - R39: rule K3 states no resolution owner element, so the floor gap belongs to nobody
+[F1-v08] the row's version scope is re-pointed at a different owner than the rule, so two artifacts name two owners and neither is accountable
+    expect R39 -> exit=1 named=True OK
+    - R39: the row version scope owner TASK-260715-9yp8to is not rule K3's owner TASK-260715-1uxx3i
+[F1-v08] the keychain row's reopening condition drops rule K3, so the floor case reads as excluded by a condition that never considered it
+    expect R39 -> exit=1 named=True OK
+    - R39: the macos.provider keychain reopening condition does not mention rule K3, so the floor case reads as covered by a condition that excludes it
+[F1-v08] the floor instruction re-grants the access group instead of arming the file exception — rule K1's deleted row returning through the back door
+    expect R39 -> exit=1 named=True OK
+    - R39: the row's floor instruction does not name the conditional register entry it arms, so the floor case has a rule but no mechanism
+[F1-v08] the conditional register is deleted, so a floor-required exception has nowhere to be reviewed and arrives as unreviewed drift
+    expect R39 -> exit=1 named=True OK
+    - R39: the row's floor instruction does not name the conditional register entry it arms, so the floor case has a rule but no mechanism
+[F1-v08] the exception is armed in the contract instead of on the owner's floor evidence — least privilege lost to a field edit
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional exception X1-C1 is armed in the contract; arming is an amendment under section 11 carrying the owner's floor evidence, not a field 
+[F1-v08] the unarmed conditional row is quietly authored, so an exception nobody has justified enters the generated allowlist
+    expect R39 -> exit=1 named=True OK
+    - R13: macos.provider/com.apple.security.temporary-exception.files.absolute-path.read-write is settled (required-adjacent) but still names a resolutio
+[F1-v08] the conditional entry is copied into the ACTIVE reviewed register, so the same exception is simultaneously granted and pending
+    expect R39 -> exit=1 named=True OK
+    - R26: authored temporary exceptions [('com.apple.security.temporary-exception.mach-lookup.global-name', 'macos.host')] do not match the X1 register [
+[F1-v08] the arming condition is widened until a shipping third-party bundle would arm it — the reasoning rule K1 exists to refute
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional exception X1-C1 states no exclusion clause, so any evidence loosely about keychains would arm it; rule K1 already ruled a key in a 
+[F1-v08] the exception loses its value bound, so arming it would grant an unbounded path exception rather than the one path reviewed
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional exception X1-C1 declares no values, so arming it would grant an unbounded path exception
+[F1-v08] arming is claimed to cost the ceremony a portal record, which would drag a signing-time entitlement into the human authorization scope
+    expect R39 -> exit=1 named=True OK
+    - R39: rule K3 claims Ceremony C1 impact 'one App ID'; a temporary file exception has no portal record, so arming it cannot move the ceremony
+[F1-v08] the pre-authorization is withdrawn, so a floor-required exception is unreviewed at the moment it becomes necessary and rule X1 rejects it
+    expect R39 -> exit=1 named=True OK
+    - R39: rule K3 does not pre-authorize the exception, so an absent floor grant would still be an unreviewed relaxation under rule X1 — the defect uncha
+[F1-v08] assertion A19 is dropped, so nothing at build time notices an unarmed exception appearing in a signed bundle
+    expect R27 -> exit=1 named=True OK
+    - R27: assertion ids ['A1', 'A10a', 'A10b', 'A10c', 'A10d', 'A10e', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A2', 'A3', 'A4', 'A5', 'A
+[F1-v08] A19's scope shrinks to the one target that might later carry the key, leaving the other rows uninstructed
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-11 scopeTargets ['macos.provider'] != the rows its predicates select ['ios.host', 'ios.probe.host', 'ios.probe.provider', 'ios.provider', 'm
+[F1-v09] the reviewed path is widened to the filesystem root in BOTH the register and the row, so arming grants everything rather than the keychain store
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 declares banned path '/'
+[F1-v09] the path is widened one level to /Library/ in both copies — an ANCESTOR of the reviewed path, so a banned-value list alone would miss it
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 declares banned path '/Library/'
+[F1-v09] the path is moved OUT of the reviewed subtree in both copies, so the exception grants a path the review never considered
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 declares path '/private/var/db/mds/', which is outside the reviewed subtree '/Library/Keychains/'
+[F1-v09] a second path is appended to both copies, so one reviewed exception silently becomes two
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 declares 2 values; the reviewed exception is one path
+[F1-v09] developer-id is dropped from the armed channels in both copies, so the shipping provider stays broken on the OS the exception exists to fix
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 arms on ['development'] while macos.provider signs on ['development', 'developer-id']; the floor question is about the 
+[F1-v09] a channel the provider does not sign on is added to both copies
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional exception X1-C1 names channel app-store, which macos.provider does not sign on
+[F1-v09] the arming owner drifts to an unrelated but REAL declared consumer, which is why a shape check on the element id could not see it
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 is armed by TASK-260715-9yp8to, but rule K3's resolution owner is TASK-260715-1uxx3i; a different arming owner severs t
+[F1-v09] the arming owner drifts to an element that is not a declared consumer, so rule D1 never checks that it exists on the board or runs after this contract
+    expect R39 -> exit=1 named=True OK
+    - R37: named in this contract but neither a declared consumer nor an exemption: ['TASK-260715-000000']
+[F1-v09] rule K3's resolution owner moves while the register keeps the old one, so the evidence would be produced by one task and spent by another
+    expect R39 -> exit=1 named=True OK
+    - R39: the row version scope owner TASK-260715-1uxx3i is not rule K3's owner TASK-260715-9yp8to
+[F1-v09] the entry and its row move together to macos.host, pre-authorizing a filesystem exception on a target nobody reviewed
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 targets macos.host, but the K3 version scope it answers is on macos.provider; a coordinated move of the entry and its r
+[F1-v09] a SECOND row claims the K3 version scope, so the entry's target stops being derivable from one place
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 is governed by K3, whose version scope appears on 2 rows; the entry's target is derived from that row and cannot be der
+[F1-v09] the exception family drifts to read-only in both copies, which would not reach the read-write transport the row exists for
+    expect R39 -> exit=1 named=True OK
+    - R35: AS-11 scopes entitlement com.apple.security.temporary-exception.files.absolute-path.read-write, which no target row declares
+[F1-v09] rule K3's arming instruction stops naming the key it authorises, so the rule and the register would authorise different exceptions
+    expect R39 -> exit=1 named=True OK
+    - R39: rule K3's arming instruction does not name com.apple.security.temporary-exception.files.absolute-path.read-write, so the rule and the register 
+[F1-v09] rule K3's arming instruction stops naming the reviewed path, so it would authorise whatever path the register happened to hold
+    expect R39 -> exit=1 named=True OK
+    - R39: rule K3's arming instruction does not name the reviewed path, so the rule would authorise whatever the register happened to say
+[F1-v09] the entry claims review in a revision this contract never issued
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 claims review in revision '2026-07-28.r99', which this contract has never issued
+[F1-v09] the scope sentence is widened to a second target while the fields stay narrow, so the prose describes a grant the register does not
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 does not state its derived scope 'macos.provider only, on its two macOS channels'; the prose could otherwise describe a
+[F1-v09] the scope sentence keeps the target and drifts the channel count
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 does not state its derived scope 'macos.provider only, on its two macOS channels'; the prose could otherwise describe a
+[F1-v09] the derivation contract is deleted, so every field falls back to agreeing with its own mirror on the row — r10 restored
+    expect R39 -> exit=1 named=True OK
+    - R39: rule X1 states no derivation contract for its conditional register, so every field is established only by agreeing with its own mirror on the t
+[F1-v09] one field loses its derivation, so it is constrained by nothing while the contract still reads as complete
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation contract covers ['armedBy', 'channelsIfArmed', 'governedBy', 'key', 'reviewedIn', 'scopeIfArmed', 'target']; every field of a co
+[F1-v09] a field's derivation is redefined as agreement with the target row, which is the check verdict 09 rejected, re-entering as a declaration
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation of channelsIfArmed declares bound 'equals-the-row-copy', which this gate does not implement; the implemented set is ['derived-in
+[F1-v09] the reviewed path is widened in the DERIVATION only, so the declared bound and the reviewed bound part company
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation declares reviewed path '/Library/', but this gate reviewed '/Library/Keychains/'; widening the declaration alone grants more fil
+[F1-v09] the derivation raises the value ceiling, so a second path could be armed under a review that covered one
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation permits 2 values; the reviewed exception is one path, and a second value is a second review
+[F1-v09] the derivation stops banning the filesystem root
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation does not ban the filesystem root outright
+[F1-v09] a second entry is registered on the same row, able to shadow the reviewed one on exactly the field under review
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: register entry X1-C2 (conditionalExceptions) has no provenance entry, so its `reviewedIn` is unconstrained while the rule reads as coveri
+[F1-v09] the row stops naming the register entry, so a reader of the row alone cannot find the review that authorises it
+    expect R39 -> exit=1 named=True OK
+    - R39: the row for conditional entry X1-C1 does not name the register entry, so a reader of the row alone cannot find the review
+[v09-4] the declared harness count drifts from the harness, so the prose states a number no longer standing behind the gate
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-5 (rationale): the derived text 'gate **R39** now stands on **9** negative mutations' is not present, so the prose count disagrees 
+[v09-4] the harness-count register is deleted, so a mutation count goes back to being written by hand
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 carries no harnessCounts register, so a mutation count goes back to being a number written by hand in a document
+[v09-4] the declared harness-count shape is narrowed so it stops matching the sentences it exists for, while the rule still reads as covering them
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1's declared harness-count shape is not the pattern the gate compiles; the declaration would let a reader believe a narrower or wider sca
+[v09-4] the preamble is excluded from the scan again, which is where the stale count verdict 09 found had been sitting
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 excludes document sections ['13', 'preamble']; only §13 is history, and widening this list disables the scan rather than the section
+[v09-4] the rule stops saying why the preamble is scanned, so a later revision reads the removed exclusion as an oversight
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 does not say why the preamble is scanned, so a later revision would read the removed exclusion as an oversight and restore it
+[v09-4] the singular shape field returns alongside the plural one, so one scan has two declarations to drift apart
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 still carries the singular `shape` field alongside `shapes`; two declarations of one thing is how they drift apart
+[v09-4] rule N1 stops naming the harness that recomputes its counts, so the numbers are hand-written again with an extra step
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 does not name the harness that recomputes its declared counts, so the numbers are hand-written again with an extra step
+[v09-4] a historical figure's exclusion is dropped, so the scan reports it as an unregistered live claim
+    expect R38 -> exit=1 named=True OK
+    - R38: unregistered harness-count claim in the rationale document, section 9: '**130 negative gates' — register it under rule N1 or exclude it with a 
+[F1-v10] the reviewer's control — the conditional entry's review revision is moved to r2, which predates the conditional register entirely
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 claims review in '2026-07-28.r2', but it first entered this contract in '2026-07-28.r10'; pointing reviewedIn at an old
+[F1-v10] the review revision is moved to another real older revision, r3, in which the entry did not exist
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 claims review in '2026-07-28.r3', but it first entered this contract in '2026-07-28.r10'; pointing reviewedIn at an old
+[F1-v10] the review revision is moved FORWARD to the current one, claiming this revision reviewed an exception it inherited
+    expect R39 -> exit=1 named=True OK
+    - R39: conditional entry X1-C1 claims review in '2026-07-28.r12', but it first entered this contract in '2026-07-28.r10'; pointing reviewedIn at an ol
+[F1-v10] a COORDINATED edit moves the label, the declared introduction and the introduction record together — the evidence is the chain, not the file
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: X1-C1 declares introducedIn '2026-07-28.r2', but the evidence derives '2026-07-28.r10'
+[F1-v10] the conditional entry's introduction record is dropped, so no revision claims to have introduced it
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: the revision log records X1-C1 as introduced in None, but the evidence derives '2026-07-28.r10'
+[F1-v10] two revisions claim to introduce the same entry, so the record has an answer for every label a drifted entry could carry
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: X1-C1 is claimed by more than one revision's `introduces`
+[F1-v10] a revision claims to introduce an entry that is in neither register
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: revisionLog 2026-07-28.r7 claims to introduce X1-C9, which is in neither register; an introduction record for nothing is a claim nothing 
+[F1-v10] a revisionLog entry stops declaring `introduces` at all, leaving a hole exactly where a drifted entry would hide
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: revisionLog entry 2026-07-28.r10 declares no `introduces`, so the introduction record has a hole exactly where a drifted entry would hide
+[F1-v10] the provenance rule is deleted, so reviewedIn falls back to whatever the entry says it is — r11 restored
+    expect R39 -> exit=1 named=True OK
+    - R26: X1 active register entry 'X1-A1' has no provenance entry under rule X1-P, so its reviewedIn is whatever it says it is
+[F1-v10] the snapshot chain is emptied, so the only remaining evidence is the file making the claim
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: the provenance rule declares no snapshot chain, so an introduction could only ever be self-attested by the file making the claim
+[F1-v10] the snapshot in which the entry is ABSENT is dropped from the chain, which would make it undecidable and demote it to attestation
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: baselines ['TASK-260715-ypo7yo_r8-baseline.json', 'TASK-260715-ypo7yo_r9-baseline.json'] sit beside this contract and are not in the snap
+[F1-v10] the chain stops at an older revision than the one this contract supersedes, so a bump could shorten the evidence without anyone noticing
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: baselines ['TASK-260715-ypo7yo_r11-baseline.json'] sit beside this contract and are not in the snapshot chain; evidence that exists and i
+[F1-v10] a snapshot's pinned digest is changed, so the chain would accept a baseline edited to manufacture an introduction
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: snapshot 2026-07-28.r9 does not match its pinned digest, so it is not the revision this contract claims it is — an edited baseline can ma
+[F1-v10] a declared snapshot points at a file that is not there; a chain that cannot be read must fail, never skip
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: baselines ['TASK-260715-ypo7yo_r9-baseline.json'] sit beside this contract and are not in the snapshot chain; evidence that exists and is
+[F1-v10] the entry is downgraded to the weaker attested class although the chain can decide it, which is how prose would replace a digest-pinned file
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: X1-C1 is decidable from the snapshot chain — it is absent from 2026-07-28.r8 — but claims the weaker 'summary-attested' class; the gate r
+[F1-v10] the conditional entry loses its provenance entry, so it is unconstrained while rule X1-P still reads as covering both registers
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: register entry X1-C1 (conditionalExceptions) has no provenance entry, so its `reviewedIn` is unconstrained while the rule reads as coveri
+[F1-v10] reviewedIn's declared bound reverts to r11's known-revision, the bound verdict 10 rejected, re-entering as a declaration
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation of reviewedIn declares bound 'known-revision', which this gate does not implement; the implemented set is ['derived-introducing-
+[F1-v10] the derivation prose stops pointing reviewedIn at rule X1-P, so the stated bound and the implemented one part company
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation of reviewedIn does not point at rule X1-P, so the prose and the gate would describe different bounds — the defect verdict 10's r
+[F1-v10] the record of the bound r11 used and r12 rejected is dropped, so a reader finding known-revision in a diff cannot tell it was refused
+    expect R39 -> exit=1 named=True OK
+    - R39: the derivation of reviewedIn does not record the bound r11 used and r12 rejected, so a reader who finds known-revision in a diff cannot tell it
+[F1-v10] rule X1-P names a gate for the conditional register that is not the rule verdict 10 required the control to land under
+    expect R39 -> exit=1 named=True OK
+    - R39: rule X1-P does not name R39 as the gate for the conditional register, so the control verdict 10 supplied would be reported under a rule nobody 
+[F1-v10] rule X1-P declares an evidence class this gate does not implement, which is a promise nothing keeps
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: the provenance rule declares evidence classes ['owner-asserted', 'snapshot-proven', 'summary-attested']; this gate implements snapshot-pr
+[F1-v10] the ACTIVE register entry's review revision is moved to r2, a real revision in which the Sparkle exception did not exist
+    expect R26 -> exit=1 named=True OK
+    - R26: X1 active register entry X1-A1 claims review in '2026-07-28.r2', but it first entered this contract in '2026-07-28.r3'; naming an older revisio
+[F1-v10] the ACTIVE register entry claims review in a revision this contract has never issued — accepted outright before r12
+    expect R26 -> exit=1 named=True OK
+    - R26: X1 active register entry X1-A1 claims review in '2026-07-28.r99', but it first entered this contract in '2026-07-28.r3'; naming an older revisi
+[F1-v10] the ACTIVE register entry loses its id, so no introduction record can name it
+    expect R26 -> exit=1 named=True OK
+    - R26: X1 active register entry for macos.host/com.apple.security.temporary-exception.mach-lookup.global-name has no id, so no introduction record can
+[F1-v10] the ACTIVE register entry's introduction record is dropped
+    expect R26 -> exit=1 named=True OK
+    - R26: X1-P: the revision log records X1-A1 as introduced in None, but the evidence derives '2026-07-28.r3'
+[F1-v10] the ACTIVE entry attests on a literal that is not its own key, which could be chosen to match a convenient revision
+    expect R26 -> exit=1 named=True OK
+    - R26: X1-P: X1-A1 attests on 'reviewed-exception register', which is not its own key; a literal chosen freely can be chosen to match a convenient rev
+[F1-v10] the ACTIVE entry claims the strong snapshot class although it predates the oldest attached snapshot and the chain cannot decide it
+    expect R26 -> exit=1 named=True OK
+    - R26: X1-P: X1-A1 claims 'snapshot-proven', but it is present in the oldest attached snapshot, so the chain cannot decide when it entered
+[F1-v10] the ACTIVE entry loses its provenance entry entirely
+    expect R26 -> exit=1 named=True OK
+    - R26: X1 active register entry 'X1-A1' has no provenance entry under rule X1-P, so its reviewedIn is whatever it says it is
+
+--- rationale-document gates (r6, R33) ---
+[F1-v05] the rationale document keeps the r5 Keychain grant after the JSON is fixed
+    expect R33 -> exit=1 named=True OK
+    - R33: XP-3 grant clause is not rendered in the rationale document, so the prose and the contract can state different grants
+[F1-v05] the rationale document is left at the superseded revision
+    expect R33 -> exit=1 named=True OK
+    - R33: the rationale document does not carry revision 2026-07-28.r12
+[F1-v07] the document's A6 row reverts to the r4 grant that still named macos.host
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-6 scope clause for assertion A6 is not rendered in the rationale document, so the prose can state a different scope than the contract
+[F1-v07] the document drops A5's corrected scope clause
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-3 scope clause for assertion A5 is not rendered in the rationale document, so the prose can state a different scope than the contract
+[F1-v07] the document drops A18's scope clause, the half A5 hands off to
+    expect R35 -> exit=1 named=True OK
+    - R35: AS-5 scope clause for assertion A18 is not rendered in the rationale document, so the prose can state a different scope than the contract
+[F2-v07] the document drops A9b's deferral clause
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-2 scope clause for assertion A9b is not rendered in the rationale document, so the prose can state a different scope than the contract
+[F2-v07] the document drops A9a's macOS device clause
+    expect R36 -> exit=1 named=True OK
+    - R36: PS-1 scope clause for assertion A9a is not rendered in the rationale document, so the prose can state a different scope than the contract
+[N1-r9] the §9.1 development count is bumped off the derived allowlist size
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-3 (rationale): the derived text 'the allowlist resolves to exactly **eight** keys — **five authored** plus **three** the toolchain 
+[N1-r9] the §9.1 developer-id count drifts
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-3 (rationale): the derived text 'the same list applies minus `get-task-allow`: **seven**' is not present, so the prose count disagr
+[N1-r9] the §10.1 traceability row keeps a count the rows no longer support
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-2 (rationale): the derived text 'The `macos.host` allowlist is **eight** keys on `development`, **seven** on `developer-id`' is not
+[N1-r9] a key r5 withdrew is left rendered in the §9.1 list while the count stays right — the r3 defect shape exactly
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-3 key list does not equal the derived allowlist; rendered-only ['keychain-access-groups'], missing []
+[N1-r9] a key the rows DO author is dropped from the §9.1 list
+    expect R38 -> exit=1 named=True OK
+    - R38: N1 claim N1-3 key list does not equal the derived allowlist; rendered-only [], missing ['com.apple.security.network.client']
+[N1-r9] an unregistered count claim is added to a scanned section
+    expect R38 -> exit=1 named=True OK
+    - R38: unregistered allowlist-size claim in the rationale document, section 7: 'four keys' — register it under rule N1 or exclude it with a reason
+[N1-r9] the r3 correction paragraph is 'fixed' to the current number, so the excluded phrase silently stops existing
+    expect R38 -> exit=1 named=True OK
+    - R38: rule N1 excludes the phrase 'r3\'s prose claimed "exactly seven keys" while the list beneath it held ten', which is not in the rationale docume
+
+--- snapshot-evidence gates (r12, rule X1-P) ---
+[F1-v10] the r9 baseline is edited to contain the conditional entry, so the chain would derive an introduction two revisions early
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: snapshot 2026-07-28.r9 does not match its pinned digest, so it is not the revision this contract claims it is — an edited baseline can ma
+[F1-v10] the r10 baseline is edited to REMOVE the conditional entry, so the entry the chain proves was introduced in r10 would appear to arrive later
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: snapshot 2026-07-28.r10 does not match its pinned digest, so it is not the revision this contract claims it is — an edited baseline can m
+[F1-v10] the r9 baseline is relabelled as a different revision, so a snapshot could stand in for one it is not
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: snapshot 2026-07-28.r9 does not match its pinned digest, so it is not the revision this contract claims it is — an edited baseline can ma
+[F1-v10] the r9 baseline gains the conditional entry AND its pinned digest is recomputed to match, so only the derivation is left to notice
+    expect R39 -> exit=1 named=True OK
+    - R39: X1-P: X1-C1 declares introducedIn '2026-07-28.r10', but the evidence derives '2026-07-28.r9'
+
+--- board gates (r7 rules A1/P1 over records, r9 rule D1 over the graph) ---
+positive board gate exit=0
+[F1-v06] the r6 defect itself — the ceremony's scope is left at the superseded revision
+    expect A1 -> exit=1 named=True OK
+    - the authorization node does not name the current matrix revision ('revision 2026-07-28.r12'); it would ask the operator to approve a revision other 
+[F1-v06] the ceremony names a revision older than the one it was corrected from
+    expect A1 -> exit=1 named=True OK
+    - the authorization node does not name the current matrix revision ('revision 2026-07-28.r12'); it would ask the operator to approve a revision other 
+[F1-v06] the revision label is dropped entirely rather than made stale
+    expect A1 -> exit=1 named=True OK
+    - the authorization node does not name the current matrix revision ('revision 2026-07-28.r12'); it would ask the operator to approve a revision other 
+[F1-v06] the ceremony carries the current revision AND a superseded one
+    expect A1 -> exit=1 named=True OK
+    - the authorization node names superseded revision 2026-07-28.r11; a revision this contract has replaced authorizes nothing, and r5 was rejected outri
+[F1-v06] the ceremony stops naming one of the four C1-authorized App IDs
+    expect A1 -> exit=1 named=True OK
+    - required phrase absent from description/scope/ac: 'works.relux.tunnel.probe.mac.tunnel'
+[F1-v06] an excluded iOS App ID is turned into an authorized one
+    expect A1 -> exit=1 named=True OK
+    - works.relux.tunnel.ios is named in a clause of the authorization node that carries no negation, so the operator could read it as authorized
+[F1-v06] the legacy identity keeps its clause but loses its negation
+    expect A1 -> exit=1 named=True OK
+    - works.relux.proxy is named in a clause of the authorization node that carries no negation, so the operator could read it as authorized
+[F1-v06] the Network Extensions capability stops being named
+    expect A1 -> exit=1 named=True OK
+    - required phrase absent from description/scope/ac: 'Network Extensions'
+[F1-v06] the ADR-024 iOS deferral reference is dropped
+    expect A1 -> exit=1 named=True OK
+    - required phrase absent from description/scope/ac: 'ADR-024'
+[F1-v06] the profile class is widened past Mac Development
+    expect A1 -> exit=1 named=True OK
+    - required phrase absent from description/scope/ac: 'Mac Development'
+[F2-v05] the portal task loses the phrase that negates the provider-only defect
+    expect P1 -> exit=1 named=True OK
+    - required phrase absent from description/scope/ac: 'hosts included'
+[F2-v05] a pre-r5 phrase returns to the portal task
+    expect P1 -> exit=1 named=True OK
+    - pre-r5 phrase is back on the board: 'only on provider identifiers'
+[F2-v05] the portal task names an unauthorized iOS App ID as something to create, at the end of a sentence — the boundary case r6 could not see
+    expect P1 -> exit=1 named=True OK
+    - unauthorized identifier named in the portal contract: works.relux.tunnel.ios
+[D1-r9] the r9 defect itself — the edge added in r9 is removed, so the credential resolver, the snapshot loader and the profile-trust contract are all free to run before this matrix is accepted
+    expect D1 -> exit=1 named=True OK
+    - declared consumer TASK-260715-1o9wjz has NO dependency path to TASK-260715-ypo7yo, so the scheduler may run it before this contract is accepted and 
+[D1-r9] the authorization node's own edge is cut, so the human ceremony is no longer ordered after the contract it authorizes
+    expect D1 -> exit=1 named=True OK
+    - declared consumer TASK-260728-q5kjta has NO dependency path to TASK-260715-ypo7yo, so the scheduler may run it before this contract is accepted and 
+[D1-r9] both edges carrying the portal chain are cut, orphaning the twelve consumers that reach this contract through it
+    expect D1 -> exit=1 named=True OK
+    - declared consumer TASK-260728-q5kjta has NO dependency path to TASK-260715-ypo7yo, so the scheduler may run it before this contract is accepted and 
+[D1-r9] an edge is cut in the MIDDLE of a chain, so consumers with a direct-looking path lose it transitively
+    expect D1 -> exit=1 named=True OK
+    - declared consumer TASK-260715-1r0fxv has NO dependency path to TASK-260715-ypo7yo, so the scheduler may run it before this contract is accepted and 
+[D1-r9] the exemption stops being upstream, so an unchecked consumer would be exempted on a claim nothing verifies
+    expect D1 -> exit=1 named=True OK
+    - exemption TASK-260728-7ii1xz claims to be UPSTREAM, but TASK-260715-ypo7yo does not transitively depend on it; an exemption that is not upstream is 
+[D1-r9] the exemption is inverted — the upstream decision is made to depend on this contract instead
+    expect D1 -> exit=1 named=True OK
+    - exemption TASK-260728-7ii1xz claims to be UPSTREAM, but TASK-260715-ypo7yo does not transitively depend on it; an exemption that is not upstream is 
+[D1-r9] a declared consumer stops being a live board element
+    expect D1 -> exit=1 named=True OK
+    - declared consumer TASK-260715-3f4lxy is not a live board element
+
+285/285 negative gates hold
+exit=0
+
+$ bash scripts/check-legacy-preservation.sh
+PASS: legacy product is in an independent repository
+PASS: v0.1.0 resolves to shipped commit 2557aba1c030d0643d76e0bc3b185f6d5fd172e1
+PASS: v0.1.0 is an annotated tag
+PASS: v0.1.0 retains its signed release lineage
+PASS: legacy file exists: Package.swift
+PASS: v0.1.0 bytes preserved: Package.swift
+PASS: legacy file exists: Sources/ReluxProxy/ReluxProxyApp.swift
+PASS: v0.1.0 bytes preserved: Sources/ReluxProxy/ReluxProxyApp.swift
+PASS: legacy file exists: Sources/ReluxProxy/MenuContentView.swift
+PASS: v0.1.0 bytes preserved: Sources/ReluxProxy/MenuContentView.swift
+PASS: legacy file exists: Sources/ReluxProxy/TunnelConfiguration.swift
+PASS: v0.1.0 bytes preserved: Sources/ReluxProxy/TunnelConfiguration.swift
+PASS: legacy file exists: Sources/ReluxProxy/SSHCommandBuilder.swift
+PASS: v0.1.0 bytes preserved: Sources/ReluxProxy/SSHCommandBuilder.swift
+PASS: legacy file exists: Sources/ReluxProxy/TunnelController.swift
+PASS: v0.1.0 bytes preserved: Sources/ReluxProxy/TunnelController.swift
+PASS: legacy file exists: Tests/ReluxProxyTests/TunnelConfigurationTests.swift
+PASS: v0.1.0 bytes preserved: Tests/ReluxProxyTests/TunnelConfigurationTests.swift
+PASS: legacy file exists: Resources/Info.plist
+PASS: v0.1.0 bytes preserved: Resources/Info.plist
+PASS: legacy file exists: Makefile
+PASS: v0.1.0 bytes preserved: Makefile
+PASS: legacy file exists: scripts/build-app.sh
+PASS: v0.1.0 bytes preserved: scripts/build-app.sh
+PASS: legacy file exists: scripts/create-dmg.sh
+PASS: v0.1.0 bytes preserved: scripts/create-dmg.sh
+PASS: legacy file exists: scripts/generate-icon.swift
+PASS: v0.1.0 bytes preserved: scripts/generate-icon.swift
+PASS: legacy file exists: .github/workflows/ci.yml
+PASS: v0.1.0 bytes preserved: .github/workflows/ci.yml
+PASS: legacy file exists: .github/workflows/release.yml
+PASS: v0.1.0 bytes preserved: .github/workflows/release.yml
+PASS: SwiftPM package/target identity remains ReluxProxy
+PASS: SwiftPM deployment target remains macOS 14
+PASS: SwiftPM executable product remains ReluxProxy
+PASS: SwiftPM test target remains ReluxProxyTests
+PASS: sshHost default remains relux
+PASS: sshAccount default remains administrator
+PASS: localPort default remains 1080
+PASS: system SSH executable remains /usr/bin/ssh
+PASS: SSH command retains argument -N
+PASS: SSH command retains argument -C
+PASS: SSH command retains argument -D
+PASS: SSH command retains argument ExitOnForwardFailure=yes
+PASS: SSH command retains argument ServerAliveInterval=30
+PASS: SSH command retains argument ServerAliveCountMax=3
+PASS: SSH command retains argument ConnectTimeout=15
+PASS: SSH command retains argument BatchMode=yes
+PASS: SSH command retains argument LogLevel=ERROR
+PASS: system-SSH command-construction regression test remains present
+PASS: system-SSH default target assertion remains present
+PASS: Info.plist CFBundleExecutable=ReluxProxy
+PASS: Info.plist CFBundleIdentifier=works.relux.proxy
+PASS: Info.plist CFBundleShortVersionString=0.1.0
+PASS: Info.plist LSMinimumSystemVersion=14.0
+PASS: Info.plist LSUIElement=true
+PASS: make test still delegates to swift test
+PASS: make build still delegates to swift build
+PASS: make app still delegates to the legacy app packager
+PASS: make dmg still delegates to the legacy DMG packager
+PASS: legacy app product remains ReluxProxy.app
+PASS: universal app build remains the default
+PASS: universal app retains arm64 and x86_64 slices
+PASS: Developer ID identity remains Relux Works, LLC (262RZ595FP)
+PASS: versioned universal DMG naming remains intact
+PASS: legacy CI retains swift test
+PASS: legacy CI retains credential-free app packaging
+PASS: release retains stable ReluxProxy.dmg artifact
+PASS: release publication retains stable ReluxProxy.dmg
+PASS: generated workspace does not claim legacy-owned path: Sources/ReluxProxy
+PASS: generated workspace does not claim legacy-owned path: Tests/ReluxProxyTests
+PASS: generated workspace does not claim legacy-owned path: Resources/Info.plist
+PASS: generated workspace does not claim legacy-owned path: scripts/build-app.sh
+PASS: generated workspace does not claim legacy-owned path: scripts/create-dmg.sh
+Legacy preservation contract satisfied for /Users/iv/Developer/relux-proxy
+exit=0
+
+$ task-board validate
+Board is valid. No issues found.
+exit=0
+
+$ swift test
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/9] Emitting module ReluxTunnelIOSAdapter
+[3/9] Emitting module ReluxTunnelMacOSAdapter
+[4/9] Emitting module ReluxTunnelHarnessSupport
+[5/9] Emitting module ReluxTunnelHarnessTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[5/8] Linking ReluxTunnelHarness
+[6/8] Applying ReluxTunnelHarness
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[7/8] Linking ReluxTunnelPackageTests
+Build complete! (1.82s)
+Test Suite 'All tests' started at 2026-07-28 14:09:08.046.
+Test Suite 'All tests' passed at 2026-07-28 14:09:08.053.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.008) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "RelayProtocol v1 HEV datagram codec" started.
+􀟈  Suite "Private HEV UDP datagram adapter" started.
+􀟈  Suite "Legacy provider version compatibility" started.
+􀟈  Suite "Versioned runtime message codecs" started.
+􀟈  Suite "PacketFlow adapter read lifecycle" started.
+􀟈  Suite "ReluxTunnelHarness" started.
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Suite "Native dependency packaging" started.
+􀟈  Suite "PacketFlowBridge bounded execution" started.
+􀟈  Suite "RelayProtocol v1 envelope codec" started.
+􀟈  Suite "Bounded full-duplex byte pump" started.
+􀟈  Suite "Tunnel runtime coordinator" started.
+􀟈  Suite "Packet frame deterministic fuzz and allocation bounds" started.
+􀟈  Suite "RelayProtocol v1 session semantics" started.
+􀟈  Suite "PacketFlowBridge lifecycle fault matrix" started.
+􀟈  Suite "VPN session controller" started.
+􀟈  Test "Public server-KEX observation symbols and typed states are exported" started.
+􀟈  Suite "RelayProtocol v1 deterministic hostile input" started.
+􀟈  Suite "RelayProtocol generated constants" started.
+􀟈  Suite "RelayProtocol v1 client handshake" started.
+􀟈  Test "Public reply-correlated global-request symbol and bounds are exported" started.
+􀟈  Suite "Candidate-neutral SSH transport contract" started.
+􀟈  Suite "Provider adapter contracts" started.
+􀟈  Suite "Bounded TCP admission and metrics" started.
+􀟈  Suite "PacketFlowBridge explicit prohibitions" started.
+􀟈  Suite "PacketFlowBridge public socket pair" started.
+􀟈  Suite "RelayProtocol v1 canonical conformance vectors" started.
+􀟈  Suite "PacketFlowBridge deterministic fault injection" started.
+􀟈  Suite "Client UDP association registry" started.
+􀟈  Suite "Owned VPN manager repository" started.
+􀟈  Test "Public client-rekey symbol is exported by the XCFramework module" started.
+􀟈  Suite "Privacy-safe runtime diagnostics" started.
+􀟈  Test "invalid HEV address types, header lengths, and ports never admit an association" started.
+􀟈  Test "nonterminal relay errors preserve the original idle deadline" started.
+􀟈  Test "structural validation precedes bounded oversize skip and malformed input retires once" started.
+􀟈  Test "terminal relay errors and close orderings clean each association exactly once" started.
+􀟈  Test "response encoding preserves the relay-observed source endpoint" started.
+􀟈  Test "missing required fields and encoded or decoded oversize payloads reject" started.
+􀟈  Test "configuration rejects invalid time and queue limits" started.
+􀟈  Test "invalid codec limits are session-fatal configuration errors" started.
+􀟈  Test "encoder size arithmetic and endpoint validation are bounded and typed" started.
+􀟈  Test "bounded HEV header validation does not require declared DATA bytes" started.
+􀟈  Test "relay pressure and lowered-cap errors preserve same-ID bidirectional traffic" started.
+􀟈  Test "unknown object fields are ignored and omitted when re-encoded" started.
+􀟈  Test "legacy messages reject additive fields duplicates and oversize input" started.
+􀟈  Test "SOCKS admission rejects CONNECT and stalled pre-admission channels time out or cancel" started.
+􀟈  Test "maximum domain and DATA lengths produce the generated maximum record width" started.
+􀟈  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" started.
+􀟈  Test "relay and stalled HEV backpressure drop newest within both byte ceilings" started.
+􀟈  Test "configuration shapes cannot carry private-key or passphrase bytes" started.
+􀟈  Test "snapshot ordering rejects lower generations and non-increasing sequences" started.
+􀟈  Test "AF_INET maps only an IPv4 payload" started.
+􀟈  Test "argument parser rejects missing and unknown subcommands" started.
+􀟈  Test "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test "malformed inner lengths, address forms, and ports fail before materialization" started.
+􀟈  Test "split and coalesced records preserve families, domains, bytes, and association identity" started.
+􀟈  Test "stale generation loss and cancellation cannot close current admitted or pending owners" started.
+􀟈  Test "domain bytes are opaque and preserved without IDNA or DNS normalization" started.
+􀟈  Test "old and future protocol and schema versions reject with stable errors" started.
+􀟈  Test "unsupported families are reported without retaining payload" started.
+􀟈  Test "writes preserve packet order and use public Darwin families" started.
+􀟈  Test "configuration schema versions fail closed" started.
+􀟈  Test "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test "every permitted DATA size round-trips for every address form" started.
+􀟈  Test "pinned binary fixture is callable beside core contracts" started.
+􀟈  Test "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test "HEV structure is validated before local and protocol DATA limits" started.
+􀟈  Test "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test "write rejection is the same typed error on both adapters" started.
+􀟈  Test "only one callback registration can be outstanding" started.
+􀟈  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" started.
+􀟈  Test "argument parser requires exactly one structured configuration input" started.
+􀟈  Test "configuration rejects a non-opaque runtime profile reference" started.
+􀟈  Test "forward count budget includes malformed work and retains only the current batch" started.
+􀟈  Test "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test "reply local-cap drops survive while wire-oversize and invalid endpoints retire" started.
+􀟈  Test "a valid wire record over a lowered local cap is dropped without materialization" started.
+􀟈  Test "smoke output is deterministic, versioned, and privacy safe" started.
+􀟈  Test "unknown output modes and lifecycle values project all capabilities false" started.
+􀟈  Test "every prefix and body boundary of a maximum accepted frame is deterministic" started.
+􀟈  Test "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test "all v1 provider and message models round-trip deterministically" started.
+􀟈  Test "HEV IPv4, IPv6, and domain vectors are byte exact at zero, typical, and maximum DATA" started.
+􀟈  Test "redacted runtime errors accept finite codes and reject free-form text" started.
+􀟈  Test "diagnostics default absent aggregates to empty while position remains required" started.
+􀟈  Test "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test "signals map to shell-standard exit codes" started.
+􀟈  Test "subcommands receive every packet and SSH experiment seam" started.
+􀟈  Test "normal exit cleans files, sockets, and managed tasks" started.
+􀟈  Test "relay errors, close, expiry, session loss, and stale callbacks close only their owner" started.
+􀟈  Test "reverse time budget checks the fake monotonic clock before a second receive" started.
+􀟈  Test "relay-to-client metadata direction accepts only relay messages" started.
+􀟈  Test "forward and reverse count slices yield deterministically" started.
+􀟈  Test "random fragmented bidirectional transfer preserves exact bytes and hashes" started.
+􀟈  Test "forward elapsed-time slices use the injected monotonic clock" started.
+􀟈  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" started.
+􀟈  Test "legacy request and response keep the exact two-field v1 encoding" started.
+􀟈  Test "read write and remote closure failures map to finite directional reasons" started.
+􀟈  Test "reverse count budget includes invalid datagrams and flushes one bounded batch" started.
+􀟈  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" started.
+􀟈  Test "failure diagnostics contain only finite protocol metadata" started.
+􀟈  Test "twelve deterministic seeds preserve ordering under changing fragmentation" started.
+􀟈  Test "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test "one hundred cancelled runs restore the shared resource baseline" started.
+􀟈  Test "encoder emits exact network-order bytes and write slices" started.
+􀟈  Test "unknown commands and provider-input values reject before decoding" started.
+􀟈  Test "latest snapshot store rejects older generations and sequences" started.
+􀟈  Test "every stream split and coalesced sequence preserves ordered frames" started.
+􀟈  Test "sorted-key golden output is stable" started.
+􀟈  Test "mandatory health loss during startup completion owns cleanup" started.
+􀟈  Test "stop wins a concurrent pre-start ordering and cannot be revived" started.
+􀟈  Test "metadata hook is bounded and hook text stays private" started.
+􀟈  Test "a positive completion arriving after cancellation cannot revive or duplicate work" started.
+􀟈  Test "stale health events cannot mutate the active generation" started.
+􀟈  Test "SSH credit suspension retains one local chunk and resumes partial writes in order" started.
+􀟈  Test "caller cancellation during startup completion owns cleanup" started.
+􀟈  Test "every legal payload size encodes without truncation" started.
+􀟈  Test "cancellation wakes every suspending pump seam" started.
+􀟈  Test "stop before start consumes the generation and releases configuration" started.
+􀟈  Test "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "configuration and aggregate reservations enforce fixed checked ceilings" started.
+􀟈  Test "EOF cancellation reset and malformed post-EOF state are deterministic" started.
+􀟈  Test "settings apply error dispositions preserve failure and clear exactly when required" started.
+􀟈  Test "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" started.
+􀟈  Test "clear failure preserves truthful route state and no capability" started.
+􀟈  Test "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test "hostile metadata and exact-boundary post-handshake RLXR close both peers" started.
+􀟈  Test "graceful abrupt duplicate and stale session termination is once per generation" started.
+􀟈  Test "fairness slices yield while continuous work still has bytes pending" started.
+􀟈  Test "decoder rejects framing and metadata violations terminally" started.
+􀟈  Test "caller task cancellation is propagated and cleanup remains shielded" started.
+􀟈  Test "startup gates settings and publishes M1 usability only after reads" started.
+􀟈  Test "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test "concurrent starts create exactly one usable runtime" started.
+􀟈  Test "cardinality metrics expose counts but no packet data" started.
+􀟈  Test "seed manifest covers required frame classes and prior regressions" started.
+􀟈  Test "invalid first datagrams do not admit association state" started.
+􀟈  Test "repeated concurrent stop joins one reverse-order cleanup" started.
+􀟈  Test "diagnostics never reflect remote payloads or unknown error numbers" started.
+􀟈  Test "paired peers exchange datagrams PING PONG and finite UDP errors" started.
+􀟈  Test "live associations clean up once for every abrupt session termination" started.
+􀟈  Test "one hundred generations return all owned resources to baseline" started.
+􀟈  Test "outbound datagrams are structurally and locally bounded for both peers" started.
+􀟈  Test "duplicate start and concurrent stop calls have no duplicate side effects" started.
+􀟈  Test "runtime readiness failure is a single persistent socket fatal" started.
+􀟈  Test "queue saturation is edge-triggered and idle expiry is error retire close" started.
+􀟈  Test "repeated stop and health races clean exactly one generation" started.
+􀟈  Test "PONG and UDP_ERROR are emitted only by bounded response APIs" started.
+􀟈  Test "duplicate crossed association closes clean up once and permit ordered reuse" started.
+􀟈  Test "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "every non-connected system status clears provider capability" started.
+􀟈  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" started.
+􀟈  Test "initial observer registration race reads authoritative status and retirement releases it" started.
+􀟈  Test "cancelling start at a startup barrier performs normal ordered cleanup" started.
+􀟈  Test "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test "provider message timeout cancellation and late response cannot publish capability" started.
+􀟈  Test "association ownership rejects unsolicited and unknown relay replies" started.
+􀟈  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test "encoder arithmetic and negotiated cap checks are explicit" started.
+􀟈  Test "connected projection recovers only from matching current provider snapshots" started.
+􀟈  Test "deterministic chunk properties reconcile byte and frame metrics" started.
+􀟈  Test "start-stop race uses one system stop and converges from fresh status" started.
+􀟈  Test "transition table covers every generated v1 message" started.
+􀟈  Test "start timeout stops once and never projects connected" started.
+􀟈  Test "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test "concurrent starts are rejected and stop cancels an in-flight generation" started.
+􀟈  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" started.
+􀟈  Test "a newer provider generation resets the sequence baseline" started.
+􀟈  Test "max association credit bounds unique IDs and permits retired reuse" started.
+􀟈  Test "terminal start fetches and maps the last disconnect error exactly once" started.
+􀟈  Test "shared regression seeds preserve semantic and resource bounds" started.
+􀟈  Test "recreated controller accepts a fresh response without app-owned history" started.
+􀟈  Test "start sends exactly one bounded v1 request matching the stored reference" started.
+􀟈  Test "client hello uses the frozen 12-byte big-endian layout" started.
+􀟈  Test "zero progress and invalid peer lengths terminate with stable directional reasons" started.
+􀟈  Test "controller deallocation releases its exact-session observer without stopping" started.
+􀟈  Test "controller retirement cancels start wait without stopping the tunnel" started.
+􀟈  Test "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "duplicate hello detection respects the exact-boundary ownership contract" started.
+􀟈  Test "non-running provider lifecycle facts suppress every capability claim" started.
+􀟈  Test "stop timeout never claims cleanup and cancellation does not issue another stop" started.
+􀟈  Test "magic version features and maximum-frame violations fail closed" started.
+􀟈  Test "all public system and provider disconnect codes map exactly" started.
+􀟈  Test "start preflight maps every system status without duplicate start calls" started.
+􀟈  Test "every split boundary and a coalesced frame produce the same result" started.
+􀟈  Test "a fresh generation readmits provider failure after the previous handoff" started.
+􀟈  Test "readiness installation failure closes both endpoints without borrowing" started.
+􀟈  Test "async failures cancel reset and close the generation" started.
+􀟈  Test "window snapshots and adjustments enforce immutable caps" started.
+􀟈  Test "caller cancellation after accepted start stops once" started.
+􀟈  Test "last disconnect timeout and cancellation supplement but never change system status" started.
+􀟈  Test "synchronous start errors use stable mappings" started.
+􀟈  Test "reserved masks exclude exactly the allocated bits" started.
+􀟈  Test "concurrent and reentrant provider failures cancel exactly once" started.
+􀟈  Test "limit bounds are ordered and fit their declared widths" started.
+􀟈  Test "schema-v1 metrics contain exactly the reviewed counters and gauges" started.
+􀟈  Test "configuration rejects every out-of-policy field" started.
+􀟈  Test "message metadata covers every message type case exactly once" started.
+􀟈  Test "parity lines re-derived from typed metadata match the embedded fingerprint" started.
+􀟈  Test "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test "all public-key authentication outcomes map without losing their category" started.
+􀟈  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test "stop maps every status and never duplicates the stop call" started.
+􀟈  Test "runtime snapshots reset by generation and contain aggregate TCP fields only" started.
+􀟈  Test "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test "exec upload is typed as bounded exec stdin with no subsystem surface" started.
+􀟈  Test "server status values map to finite local reasons" started.
+􀟈  Test "late buffer and byte callbacks racing terminal cleanup cannot leak" started.
+􀟈  Test "fifty sequential double failures always deliver the first call error" started.
+􀟈  Test "platform adapters use the public readPackets/writePackets boundary" started.
+􀟈  Test "queued-byte accumulation overflow rejects and returns exact baseline" started.
+􀟈  Test "frozen v1 wire values match the accepted binding and limit decisions" started.
+􀟈  Test "host evidence is canonical and acceptance gates credential lookup" started.
+􀟈  Test "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test "configuration validates every injectable evidence gate" started.
+􀟈  Test "concurrent flow and opening races never exceed capacity" started.
+􀟈  Test "hello and envelope layouts are contiguous with frozen exact widths" started.
+􀟈  Test "caller-owned policies reject invalid bounds and durations" started.
+􀟈  Test "duplicate finish release and late callbacks never release capacity twice" started.
+􀟈  Test "async channel exchange handles partial IO and preserves coalesced bytes" started.
+􁁛  Test "Public server-KEX observation symbols and typed states are exported" passed after 0.002 seconds.
+􀟈  Test "concurrent handshake and queued-byte races honor independent ceilings" started.
+􀟈  Test "byte, time, explicit, server rekey and keepalive share typed events" started.
+􀟈  Test "connection state transitions reject lifecycle shortcuts" started.
+􁁛  Test "Public reply-correlated global-request symbol and bounds are exported" passed after 0.002 seconds.
+􀟈  Test "channel protocols preserve endpoints, partial writes, stream EOF, and exit results" started.
+􀟈  Test "stale and out-of-order provider facts clear capability" started.
+􀟈  Test "events, metrics, errors, and typed logs exclude sensitive contract inputs" started.
+􀟈  Test "local-only limits use lower injected caps and cannot exceed schema baselines" started.
+􀟈  Test "every terminal reason and repeated churn return exact baseline" started.
+􀟈  Test "handshake flow and opening deinit rollback recover all capacity" started.
+􀟈  Test "session-health changes racing admission linearize without leaks" started.
+􀟈  Test "exact decoder rejects truncated and extended standalone hellos" started.
+􀟈  Test "every public Apple stop reason maps identically" started.
+􀟈  Test "pressure reject cannot open SSH or disturb an admitted flow" started.
+􀟈  Test "below at and above every independent ceiling reject deterministically" started.
+􀟈  Test "metric schema is exact and every run starts from zero" started.
+􀟈  Test "both provider adapters link the pinned native fixture" started.
+􀟈  Test "normal stop preserves flags, joins the borrow, and closes B before A once" started.
+􀟈  Test "bridge contains no retry queue, side buffer, wall clock, or arbitrary sleep" started.
+􀟈  Test "diagnostics never reflect attacker-controlled bytes or numeric statuses" started.
+􀟈  Test "open failure terminal race releases each reservation once" started.
+􀟈  Test "sustained reject pressure cannot starve an admitted flow or create SSH work" started.
+􀟈  Test "startup configuration failure closes both owned endpoints without borrowing" started.
+􀟈  Test "factories erase candidate types behind one dependency shape" started.
+􀟈  Test "first persistent socket error wins over a later HEV return" started.
+􀟈  Test "explicit release versus last-reference drop remains exactly once" started.
+􀟈  Test "bridge and adapters contain no private utun or descriptor-discovery mechanism" started.
+􀟈  Test "release and channel-open completion race without double accounting" started.
+􀟈  Test "bounded diagnostics drops still reconcile every current TCP gauge" started.
+􀟈  Test "would-block and ENOBUFS drop once; EMSGSIZE is the one fatal transition" started.
+􀟈  Test "one hundred restart cycles restore descriptor and task ownership baselines" started.
+􀟈  Test "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test "identifier exhaustion fails closed without wrap reuse or ABA" started.
+􀟈  Test "reserved message type ranges exclude every allocated type" started.
+􀟈  Test "stable errors expose every common code and no engine payload" started.
+􀟈  Test case passing 1 argument code → .queueSaturated to "nonterminal relay errors preserve the original idle deadline" started.
+􀟈  Test case passing 1 argument code → .datagramTooLarge to "nonterminal relay errors preserve the original idle deadline" started.
+􀟈  Test "reverse framing covers every malformed length and family/version rule" started.
+􀟈  Test "shared budget rejects excess concurrent flow capacity without queuing" started.
+􀟈  Test "permanently pressured peers suspend without spin and cancellation releases once" started.
+􀟈  Test "Swift codecs consume every canonical vector" started.
+􀟈  Test "reverse MSG_TRUNC reports the full observed size and fails before write" started.
+􀟈  Test "reverse framing drops malformed datagrams and writes valid packets in order" started.
+􀟈  Test "strict loader validates schema, provenance, coverage, and limit references" started.
+􀟈  Test "counters and maxima are monotonic within a run and reset for the next run" started.
+􀟈  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" started.
+􀟈  Test "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test "timeout EOF cancellation duplicate trailing and stale events are deterministic" started.
+􀟈  Test case passing 1 argument platform → iOS to "AF_INET maps only an IPv4 payload" started.
+􀟈  Test case passing 1 argument platform → macOS to "AF_INET maps only an IPv4 payload" started.
+􀟈  Test "strict loader reports the exact vector identifier without payload bytes" started.
+􀟈  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test "all bridge logs expose only public privacy-safe fields" started.
+􀟈  Test "concurrent stops join one fresh load one system stop and one terminal wait" started.
+􀟈  Test "forward framing derives SDK families and preserves each payload" started.
+􀟈  Test "unclassified forward errno is one fatal transition without retry" started.
+􀟈  Test "unexpected HEV return is peer EOF and remains the primary error" started.
+􀟈  Test case passing 1 argument platform → iOS to "unsupported families are reported without retaining payload" started.
+􀟈  Test "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test "run counters saturate at UInt64.max and log saturation once" started.
+􀟈  Test case passing 1 argument platform → iOS to "writes preserve packet order and use public Darwin families" started.
+􀟈  Test case passing 1 argument platform → macOS to "unsupported families are reported without retaining payload" started.
+􀟈  Test case passing 1 argument platform → iOS to "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback/shutdown races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument platform → macOS to "writes preserve packet order and use public Darwin families" started.
+􀟈  Test case passing 1 argument platform → iOS to "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test "readiness peer close is exact peer EOF and closes only after borrow return" started.
+􀟈  Test "PacketFlow read errors are fatal and do not schedule another read" started.
+􀟈  Test case passing 1 argument platform → macOS to "empty payloads and family/version mismatches are typed malformed packets" started.
+􀟈  Test "reverse EMSGSIZE errno is fatal without retry" started.
+􀟈  Test case passing 1 argument platform → iOS to "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test case passing 1 argument platform → macOS to "AF_INET6 maps only an IPv6 payload" started.
+􀟈  Test "metric schema has the exact names and units" started.
+􀟈  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" started.
+􀟈  Test "drop summaries are window-limited and flush unsummarized drops at stop" started.
+􀟈  Test "forward malformed packets count as work and preserve the valid boundary" started.
+􀟈  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" started.
+􀟈  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" started.
+􀟈  Test case passing 1 argument platform → macOS to "shutdown-first resumes once, retires a late callback, and prevents new reads" started.
+􀟈  Test case passing 1 argument platform → macOS to "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test case passing 1 argument platform → macOS to "only one callback registration can be outstanding" started.
+􀟈  Test case passing 1 argument platform → macOS to "write rejection is the same typed error on both adapters" started.
+􀟈  Test case passing 1 argument platform → iOS to "only one callback registration can be outstanding" started.
+􀟈  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" started.
+􀟈  Test case passing 1 argument platform → iOS to "packet/protocol cardinality mismatch is a typed batch anomaly" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback-first preserves callback order and packet boundaries" started.
+􀟈  Test case passing 1 argument platform → iOS to "write rejection is the same typed error on both adapters" started.
+􀟈  Test case passing 1 argument platform → iOS to "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument platform → macOS to "callback/cancellation races resume exactly once and restore registration baseline" started.
+􀟈  Test case passing 1 argument site → .sshRead to "read write and remote closure failures map to finite directional reasons" started.
+􀟈  Test case passing 1 argument site → .sshWrite to "read write and remote closure failures map to finite directional reasons" started.
+􀟈  Test case passing 1 argument site → .localRead to "read write and remote closure failures map to finite directional reasons" started.
+􀟈  Test case passing 1 argument site → .localWrite to "read write and remote closure failures map to finite directional reasons" started.
+􀟈  Test case passing 1 argument site → .sshRemoteClosure to "read write and remote closure failures map to finite directional reasons" started.
+􀟈  Test case passing 1 argument platform → iOS to "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test case passing 1 argument platform → macOS to "cancellation-first resumes once and ignores its late callback" started.
+􀟈  Test "repeated activity churn retains exactly one real sleeper" started.
+􀟈  Test "session loss cancellation and provider stop return all owned resources to baseline" started.
+􀟈  Test "expiry activity and remote-close race has one terminal cleanup" started.
+􀟈  Test case passing 1 argument site → .localReadable to "cancellation wakes every suspending pump seam" started.
+􀟈  Test "concurrent admission never exceeds the configured bound" started.
+􀟈  Test case passing 1 argument site → .sshRead to "cancellation wakes every suspending pump seam" started.
+􀟈  Test case passing 1 argument site → .localWritable to "cancellation wakes every suspending pump seam" started.
+􀟈  Test case passing 1 argument site → .sshWrite to "cancellation wakes every suspending pump seam" started.
+􀟈  Test "old-generation timer reply error and close cannot resolve a reused numeric id" started.
+􀟈  Test case passing 1 argument site → .fairnessYield to "cancellation wakes every suspending pump seam" started.
+􁁛  Test "Public client-rekey symbol is exported by the XCFramework module" passed after 0.006 seconds.
+􀟈  Test case passing 1 argument point → .beforeSSH to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeDNS to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforePacketPreparation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "inactive duplicate repair removes exact owned managers only and recreates one" started.
+􀟈  Test "duplicate and crossed close paths invoke HEV and relay cleanup once" started.
+􀟈  Test case passing 1 argument point → .beforeTCP to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringSettingsApply to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringConfiguration to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringFinalHealth to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument boundary → .beforeConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .tcp to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .dns to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .afterConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .packetPrepare to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .beforeSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "admission is unique nonzero idempotent and rejects before wire at the cap" started.
+􀟈  Test "wraparound and collision search are bounded and closing ids are not reused" started.
+􀟈  Test case passing 1 argument point → .settingsPlan to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .afterSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "cancelled observation unregisters once and ignores late notification" started.
+􀟈  Test case passing 1 argument point → .settingsApplyNotCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .beforeTCP to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument stopCase → .startupFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test case passing 1 argument point → .ssh to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .afterTCP to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "a completed stale timer arm cannot displace the refreshed timer" started.
+􀟈  Test case passing 1 argument point → .settingsApplyCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test "configuration and lifecycle table cover every bounded state transition" started.
+􀟈  Test case passing 1 argument stopCase → .providerFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test "concurrent zero-manager ensure saves one canonical manager" started.
+􀟈  Test case passing 1 argument point → .settingsApplyUncertain to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .afterDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "exact ownership predicate never mutates unrelated or wrong-type managers" started.
+􀟈  Test case passing 1 argument boundary → .beforeDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .duringPacketActivation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .finalHealth to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test "production identities fail closed while both injected host seams compile" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .packetActivation to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .beforeSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketReads to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketReads to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .configuration to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test "deterministic property sequences preserve uniqueness and exactly-once cleanup" started.
+􀟈  Test "notification before registration returns resolves once and retires its token" started.
+􀟈  Test case passing 1 argument boundary → .afterSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument component → .dns to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test "activity rearms the fake-clock timer and expiry retains id until close ack" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument component → .tcp to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test "control observation validates identity and state without refreshing activity" started.
+􀟈  Test "already enabled still follows explicit save and fresh reload verification" started.
+􀟈  Test "enable rejects every active session transition without writes" started.
+􀟈  Test "every positive future manager version is preserved without writes" started.
+􀟈  Test case passing 1 argument component → .packetPlane to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument stage → configurationValidated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → descriptorsConfigured to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → readinessInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument component → .ssh to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument stage → borrowAccepted to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → supervisorInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument control → .startWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument stage → running to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument control → .startWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "active duplicate and future duplicate repair paths perform zero writes" started.
+􀟈  Test case passing 1 argument control → .startAfterStopped to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .startWhileStarting to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .healthyAndStaleWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .callbackWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument input → sendBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument control → .startAfterFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument input → mtu to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument stage → socketPairCreated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument control → .stopWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .callbackWhileFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument input → receiveBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → receiveBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument control → .callbackWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument stage → packetReadsStopped to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test "typed sources project aggregate health flow DNS route memory SSH and errors" started.
+􀟈  Test case passing 1 argument input → workTime to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test "fresh session handoff reuses exact ownership and current-schema validation" started.
+􀟈  Test case passing 1 argument stage → readinessCancelled to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument input → diagnosticsWindow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument stage → pumpsJoined to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument input → datagramOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument stage → borrowStopRequested to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → hevDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → bridgeDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument failure → socketPair to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument input → workCount to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument failure → setSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument stage → borrowReturned to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument failure → getReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test "unknown high-cardinality labels are discarded without retention" started.
+􀟈  Test "resolved observation ignores duplicate and late notifications" started.
+􀟈  Test "concurrent updates and requests return consistent bounded snapshots" started.
+􀟈  Test "authorization and saved-but-reload-failed results are stable" started.
+􀟈  Test "enable is explicit and reports the enterprise VPN system effect" started.
+􀟈  Test "a second stale save maps to concurrent modification" started.
+􀟈  Test "generation reset rejects stale handles and preserves monotonic counters" started.
+􀟈  Test case passing 1 argument seam → iOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" started.
+􀟈  Test case passing 1 argument seam → macOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test case passing 1 argument failure → getStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test "save verification uses a distinct reload and rejects noncanonical persistence" started.
+􀟈  Test "maximum aggregate state remains well below the wire bound" started.
+􀟈  Test "disable and removal stop active sessions before preference writes" started.
+􀟈  Test "populated snapshot recursively contains only approved stable fields" started.
+􀟈  Test "schema v1 contains exactly the reviewed aggregate names" started.
+􀟈  Test "unmarked and type-confused provider lookalikes are zero-write conflicts" started.
+􀟈  Test case passing 1 argument seam → iOS to "a fresh generation readmits provider failure after the previous handoff" started.
+􀟈  Test "populated output rejects prohibited nested values and identifiers" started.
+􀟈  Test case passing 1 argument seam → macOS to "a fresh generation readmits provider failure after the previous handoff" started.
+􀟈  Test case passing 1 argument input → sendBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test "timeout retires a load token and ignores its late callback" started.
+􀟈  Test "cancellation retires a load token and ignores its late callback" started.
+􀟈  Test case passing 1 argument seam → macOS to "concurrent and reentrant provider failures cancel exactly once" started.
+􀟈  Test "iOS seam decodes NSNumber manager versions exactly and preserves invalid values" started.
+􀟈  Test "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" started.
+􀟈  Test "ensure preserves an existing enabled state while replacing all noncanonical fields" started.
+􀟈  Test "nil manager collection fails closed without constructing or writing" started.
+􀟈  Test case passing 1 argument seam → iOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 1 argument seam → macOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 1 argument seam → iOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test "stale enable retries revalidate unrelated unmarked and future replacements" started.
+􀟈  Test case passing 1 argument seam → iOS to "concurrent and reentrant provider failures cancel exactly once" started.
+􀟈  Test "provider configuration contains only the marker version and bounded opaque reference" started.
+􀟈  Test case passing 1 argument seam → iOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → macOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 1 argument seam → macOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test "terminal status present before registration resolves without waiting" started.
+􀟈  Test "terminal transition during registration is caught by the authoritative recheck" started.
+􀟈  Test case passing 1 argument seam → iOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument seam → iOS to "fifty sequential double failures always deliver the first call error" started.
+􀟈  Test case passing 1 argument seam → macOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test "zero and one owned ensure converge without enabling" started.
+􀟈  Test "a stale save retries once with a freshly loaded manager" started.
+􀟈  Test case passing 1 argument seam → macOS to "fifty sequential double failures always deliver the first call error" started.
+􀟈  Test "macOS seam decodes NSNumber manager versions exactly and preserves invalid values" started.
+􀟈  Test "future owned configuration is preserved and corruption is repaired only by ensure" started.
+􀟈  Test case passing 1 argument seam → iOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument seam → macOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test "operation gate queues every repository entry point behind an active callback" started.
+􀟈  Test "notification-first terminal completion wins exactly once" started.
+􀟈  Test "stop timeout prevents disable and preference save" started.
+􀟈  Test case passing 1 argument seam → iOS to "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → macOS to "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → iOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 1 argument seam → macOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􁁛  Test "response encoding preserves the relay-observed source endpoint" passed after 0.015 seconds.
+􁁛  Test "invalid codec limits are session-fatal configuration errors" passed after 0.016 seconds.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􁁛  Test "configuration rejects invalid time and queue limits" passed after 0.016 seconds.
+􁁛  Test "encoder size arithmetic and endpoint validation are bounded and typed" passed after 0.016 seconds.
+􁁛  Test "unknown object fields are ignored and omitted when re-encoded" passed after 0.016 seconds.
+􁁛  Test "bounded HEV header validation does not require declared DATA bytes" passed after 0.016 seconds.
+􁁛  Test "legacy messages reject additive fields duplicates and oversize input" passed after 0.017 seconds.
+􁁛  Test "maximum domain and DATA lengths produce the generated maximum record width" passed after 0.017 seconds.
+􁁛  Test "argument parser rejects missing and unknown subcommands" passed after 0.017 seconds.
+􀟈  Test case passing 1 argument actualBytes → 0 to "zero and positive short datagram sends are fatal and never retried" started.
+􁁛  Test "domain bytes are opaque and preserved without IDNA or DNS normalization" passed after 0.017 seconds.
+􀟈  Test case passing 1 argument actualBytes → 2 to "zero and positive short datagram sends are fatal and never retried" started.
+􁁛  Test "writes preserve packet order and use public Darwin families" with 2 test cases passed after 0.017 seconds.
+􁁛  Test "malformed inner lengths, address forms, and ports fail before materialization" passed after 0.017 seconds.
+􁁛  Test "pinned binary fixture is callable beside core contracts" passed after 0.017 seconds.
+􁁛  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" passed after 0.017 seconds.
+􁁛  Test "configuration schema versions fail closed" passed after 0.017 seconds.
+􁁛  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" passed after 0.017 seconds.
+􁁛  Test "argument parser requires exactly one structured configuration input" passed after 0.017 seconds.
+􁁛  Test "configuration rejects a non-opaque runtime profile reference" passed after 0.017 seconds.
+􁁛  Test "old and future protocol and schema versions reject with stable errors" passed after 0.018 seconds.
+􁁛  Test "snapshot ordering rejects lower generations and non-increasing sequences" passed after 0.016 seconds.
+􁁛  Test "HEV structure is validated before local and protocol DATA limits" passed after 0.018 seconds.
+􁁛  Test "diagnostics default absent aggregates to empty while position remains required" passed after 0.018 seconds.
+􁁛  Test "signals map to shell-standard exit codes" passed after 0.018 seconds.
+􁁛  Test "unknown output modes and lifecycle values project all capabilities false" passed after 0.018 seconds.
+􁁛  Test "relay-to-client metadata direction accepts only relay messages" passed after 0.018 seconds.
+􁁛  Test "legacy request and response keep the exact two-field v1 encoding" passed after 0.018 seconds.
+􁁛  Test "latest snapshot store rejects older generations and sequences" passed after 0.018 seconds.
+􁁛  Test "failure diagnostics contain only finite protocol metadata" passed after 0.018 seconds.
+􁁛  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" passed after 0.018 seconds.
+􁁛  Test "write rejection is the same typed error on both adapters" with 2 test cases passed after 0.017 seconds.
+􁁛  Test "a valid wire record over a lowered local cap is dropped without materialization" passed after 0.018 seconds.
+􁁛  Test "sorted-key golden output is stable" passed after 0.018 seconds.
+􁁛  Test "redacted runtime errors accept finite codes and reject free-form text" passed after 0.018 seconds.
+􁁛  Test "metadata hook is bounded and hook text stays private" passed after 0.018 seconds.
+􁁛  Test "unknown commands and provider-input values reject before decoding" passed after 0.018 seconds.
+􁁛  Test "encoder emits exact network-order bytes and write slices" passed after 0.018 seconds.
+􁁛  Test "HEV IPv4, IPv6, and domain vectors are byte exact at zero, typical, and maximum DATA" passed after 0.018 seconds.
+􁁛  Test "configuration and aggregate reservations enforce fixed checked ceilings" passed after 0.018 seconds.
+􀟈  Test case passing 1 argument platform → iOS to "cancelled observation unregisters once and ignores late notification" started.
+􀟈  Test case passing 1 argument platform → macOS to "cancelled observation unregisters once and ignores late notification" started.
+􁁛  Test "all v1 provider and message models round-trip deterministically" passed after 0.018 seconds.
+􁁛  Test "hostile metadata and exact-boundary post-handshake RLXR close both peers" passed after 0.018 seconds.
+􁁛  Test "EOF cancellation reset and malformed post-EOF state are deterministic" passed after 0.018 seconds.
+􁁛  Test "graceful abrupt duplicate and stale session termination is once per generation" passed after 0.019 seconds.
+􀟈  Test case passing 1 argument seed → 305419896 to "deterministic property sequences preserve uniqueness and exactly-once cleanup" started.
+􀟈  Test case passing 1 argument seed → 1 to "deterministic property sequences preserve uniqueness and exactly-once cleanup" started.
+􀟈  Test case passing 1 argument seed → 18446744073709551614 to "deterministic property sequences preserve uniqueness and exactly-once cleanup" started.
+􀟈  Test case passing 1 argument platform → iOS to "notification before registration returns resolves once and retires its token" started.
+􀟈  Test case passing 1 argument platform → macOS to "notification before registration returns resolves once and retires its token" started.
+􁁛  Test "decoder rejects framing and metadata violations terminally" passed after 0.020 seconds.
+􁁛  Test "invalid first datagrams do not admit association state" passed after 0.019 seconds.
+􁁛  Test "diagnostics never reflect remote payloads or unknown error numbers" passed after 0.019 seconds.
+􁁛  Test "every stream split and coalesced sequence preserves ordered frames" passed after 0.020 seconds.
+􁁛  Test "seed manifest covers required frame classes and prior regressions" passed after 0.019 seconds.
+􁁛  Test "paired peers exchange datagrams PING PONG and finite UDP errors" passed after 0.019 seconds.
+􁁛  Test "queue saturation is edge-triggered and idle expiry is error retire close" passed after 0.021 seconds.
+􁁛  Test "cardinality metrics expose counts but no packet data" passed after 0.021 seconds.
+􁁛  Test "PONG and UDP_ERROR are emitted only by bounded response APIs" passed after 0.022 seconds.
+􁁛  Test "live associations clean up once for every abrupt session termination" passed after 0.022 seconds.
+􁁛  Test "outbound datagrams are structurally and locally bounded for both peers" passed after 0.022 seconds.
+􁁛  Test "every invalid configuration branch fails before descriptor creation" with 9 test cases passed after 0.023 seconds.
+􁁛  Test "transition table covers every generated v1 message" passed after 0.024 seconds.
+􁁛  Test "encoder arithmetic and negotiated cap checks are explicit" passed after 0.024 seconds.
+􁁛  Test "every socket setup errno closes exactly the descriptors that were created" with 9 test cases passed after 0.024 seconds.
+􁁛  Test "duplicate crossed association closes clean up once and permit ordered reuse" passed after 0.025 seconds.
+􁁛  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" passed after 0.025 seconds.
+􀟈  Test case passing 1 argument platform → iOS to "resolved observation ignores duplicate and late notifications" started.
+􀟈  Test case passing 1 argument platform → macOS to "resolved observation ignores duplicate and late notifications" started.
+􁁛  Test "association ownership rejects unsolicited and unknown relay replies" passed after 0.027 seconds.
+􁁛  Test "max association credit bounds unique IDs and permits retired reuse" passed after 0.028 seconds.
+􁁛  Test "client hello uses the frozen 12-byte big-endian layout" passed after 0.028 seconds.
+􁁛  Test "non-running provider lifecycle facts suppress every capability claim" passed after 0.028 seconds.
+􁁛  Test "all public system and provider disconnect codes map exactly" passed after 0.029 seconds.
+RUNTIME_DIAGNOSTICS_SCHEMA counters=139 gauges=75 histograms=2 errors=11
+􁁛  Test "configuration shapes cannot carry private-key or passphrase bytes" passed after 0.031 seconds.
+􁁛  Test "window snapshots and adjustments enforce immutable caps" passed after 0.030 seconds.
+􁁛  Test "magic version features and maximum-frame violations fail closed" passed after 0.030 seconds.
+􁁛  Test "reserved masks exclude exactly the allocated bits" passed after 0.031 seconds.
+􀟈  Test case passing 1 argument seam → iOS to "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" started.
+􀟈  Test case passing 1 argument seam → macOS to "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" started.
+RUNTIME_DIAGNOSTICS_MAX_ENCODED_BYTES 13568
+􁁛  Test "duplicate hello detection respects the exact-boundary ownership contract" passed after 0.031 seconds.
+􁁛  Test "limit bounds are ordered and fit their declared widths" passed after 0.031 seconds.
+􁁛  Test "message metadata covers every message type case exactly once" passed after 0.031 seconds.
+􁁛  Test "configuration rejects every out-of-policy field" passed after 0.031 seconds.
+􁁛  Test "every split boundary and a coalesced frame produce the same result" passed after 0.031 seconds.
+􁁛  Test "readiness installation failure closes both endpoints without borrowing" passed after 0.031 seconds.
+􁁛  Test "parity lines re-derived from typed metadata match the embedded fingerprint" passed after 0.032 seconds.
+􁁛  Test "schema-v1 metrics contain exactly the reviewed counters and gauges" passed after 0.032 seconds.
+􁁛  Test "exec upload is typed as bounded exec stdin with no subsystem surface" passed after 0.031 seconds.
+􀟈  Test case passing 1 argument platform → iOS to "terminal status present before registration resolves without waiting" started.
+􀟈  Test case passing 1 argument platform → macOS to "terminal status present before registration resolves without waiting" started.
+􀟈  Test case passing 1 argument platform → iOS to "terminal transition during registration is caught by the authoritative recheck" started.
+􀟈  Test case passing 1 argument platform → macOS to "terminal transition during registration is caught by the authoritative recheck" started.
+􁁛  Test "all public-key authentication outcomes map without losing their category" passed after 0.032 seconds.
+􁁛  Test "frozen v1 wire values match the accepted binding and limit decisions" passed after 0.032 seconds.
+􁁛  Test "server status values map to finite local reasons" passed after 0.032 seconds.
+􁁛  Test "deterministic chunk properties reconcile byte and frame metrics" passed after 0.034 seconds.
+􁁛  Test "hello and envelope layouts are contiguous with frozen exact widths" passed after 0.033 seconds.
+􀟈  Test case passing 1 argument platform → iOS to "notification-first terminal completion wins exactly once" started.
+􀟈  Test case passing 1 argument platform → macOS to "notification-first terminal completion wins exactly once" started.
+􁁛  Test "byte, time, explicit, server rekey and keepalive share typed events" passed after 0.035 seconds.
+􁁛  Test "connection state transitions reject lifecycle shortcuts" passed after 0.035 seconds.
+􁁛  Test "platform adapters use the public readPackets/writePackets boundary" passed after 0.037 seconds.
+􁁛  Test "queued-byte accumulation overflow rejects and returns exact baseline" passed after 0.037 seconds.
+􁁛  Test "exact decoder rejects truncated and extended standalone hellos" passed after 0.037 seconds.
+􁁛  Test "host evidence is canonical and acceptance gates credential lookup" passed after 0.037 seconds.
+􁁛  Test "configuration validates every injectable evidence gate" passed after 0.037 seconds.
+􁁛  Test "duplicate finish release and late callbacks never release capacity twice" passed after 0.037 seconds.
+􁁛  Test "local-only limits use lower injected caps and cannot exceed schema baselines" passed after 0.037 seconds.
+relay-hostile-seed language=swift id=zero-state value=0x0000000000000000 semanticDigest=00a2ef92f18dcee7
+relay-hostile-seed language=swift id=ascending-bits value=0x0123456789abcdef semanticDigest=79cdb508a6fbb5f1
+relay-hostile-seed language=swift id=alternating-bits value=0xaaaaaaaa55555555 semanticDigest=8a739291891be7cb
+􁁛  Test "channel protocols preserve endpoints, partial writes, stream EOF, and exit results" passed after 0.084 seconds.
+􁁛  Test "below at and above every independent ceiling reject deterministically" passed after 0.084 seconds.
+􁁛  Test "open failure terminal race releases each reservation once" passed after 0.084 seconds.
+relay-hostile-seed language=swift id=task-regression value=0x2607152976c0ffee semanticDigest=930395cb54e2a3ed
+relay-hostile-summary language=swift seeds=4 cases=2096 inputBytes=28577 peakRetainedBytes=20 peakAllocatedBodyBytes=4096 maximumBodyAllocations=2 maximumProcessingIterations=42 maximumProcessingIterationCeiling=43 maximumChunkCount=5 maximumDiagnosticBytes=96 terminalRetainedBytes=0 terminalOutstandingBodyBytes=0 resetRetainedBytes=0 resetOutstandingBodyBytes=0 durationMilliseconds=87
+􁁛  Test "pressure reject cannot open SSH or disturb an admitted flow" passed after 0.111 seconds.
+􁁛  Test "startup configuration failure closes both owned endpoints without borrowing" passed after 0.111 seconds.
+􁁛  Test "caller-owned policies reject invalid bounds and durations" passed after 0.111 seconds.
+􁁛  Test "factories erase candidate types behind one dependency shape" passed after 0.111 seconds.
+􁁛  Test "events, metrics, errors, and typed logs exclude sensitive contract inputs" passed after 0.112 seconds.
+􁁛  Test "identifier exhaustion fails closed without wrap reuse or ABA" passed after 0.112 seconds.
+􁁛  Test "reserved message type ranges exclude every allocated type" passed after 0.112 seconds.
+􁁛  Test "stable errors expose every common code and no engine payload" passed after 0.112 seconds.
+􁁛  Test "both provider adapters link the pinned native fixture" passed after 0.112 seconds.
+􁁛  Test "diagnostics never reflect attacker-controlled bytes or numeric statuses" passed after 0.113 seconds.
+􁁛  Test "timeout EOF cancellation duplicate trailing and stale events are deterministic" passed after 0.113 seconds.
+􁁛  Test "handshake flow and opening deinit rollback recover all capacity" passed after 0.113 seconds.
+􁁛  Test "metric schema has the exact names and units" passed after 0.111 seconds.
+􁁛  Test "strict loader reports the exact vector identifier without payload bytes" passed after 0.113 seconds.
+􁁛  Test "runtime snapshots reset by generation and contain aggregate TCP fields only" passed after 0.114 seconds.
+􁁛  Test "every legal payload size encodes without truncation" passed after 0.115 seconds.
+􁁛  Test "missing required fields and encoded or decoded oversize payloads reject" passed after 0.116 seconds.
+􁁛  Test "inactive duplicate repair removes exact owned managers only and recreates one" passed after 0.110 seconds.
+􁁛  Test "cancelled observation unregisters once and ignores late notification" with 2 test cases passed after 0.111 seconds.
+􁁛  Test "configuration and lifecycle table cover every bounded state transition" passed after 0.109 seconds.
+􁁛  Test "every terminal reason and repeated churn return exact baseline" passed after 0.115 seconds.
+􁁛  Test "exact ownership predicate never mutates unrelated or wrong-type managers" passed after 0.110 seconds.
+􁁛  Test "notification before registration returns resolves once and retires its token" with 2 test cases passed after 0.109 seconds.
+􁁛  Test "already enabled still follows explicit save and fresh reload verification" passed after 0.109 seconds.
+􁁛  Test "every positive future manager version is preserved without writes" passed after 0.109 seconds.
+􁁛  Test "enable rejects every active session transition without writes" passed after 0.109 seconds.
+􁁛  Test "production identities fail closed while both injected host seams compile" passed after 0.112 seconds.
+􁁛  Test "typed sources project aggregate health flow DNS route memory SSH and errors" passed after 0.109 seconds.
+􁁛  Test "resolved observation ignores duplicate and late notifications" with 2 test cases passed after 0.107 seconds.
+􁁛  Test "active duplicate and future duplicate repair paths perform zero writes" passed after 0.119 seconds.
+􁁛  Test "authorization and saved-but-reload-failed results are stable" passed after 0.117 seconds.
+􁁛  Test "enable is explicit and reports the enterprise VPN system effect" passed after 0.117 seconds.
+􁁛  Test "save verification uses a distinct reload and rejects noncanonical persistence" passed after 0.117 seconds.
+􁁛  Test "disable and removal stop active sessions before preference writes" passed after 0.117 seconds.
+􁁛  Test "schema v1 contains exactly the reviewed aggregate names" passed after 0.117 seconds.
+􁁛  Test "a second stale save maps to concurrent modification" passed after 0.118 seconds.
+􁁛  Test "deterministic property sequences preserve uniqueness and exactly-once cleanup" with 3 test cases passed after 0.121 seconds.
+􁁛  Test "bridge and adapters contain no private utun or descriptor-discovery mechanism" passed after 0.127 seconds.
+􁁛  Test "unmarked and type-confused provider lookalikes are zero-write conflicts" passed after 0.118 seconds.
+􁁛  Test "bridge contains no retry queue, side buffer, wall clock, or arbitrary sleep" passed after 0.128 seconds.
+􁁛  Test "populated snapshot recursively contains only approved stable fields" passed after 0.118 seconds.
+􁁛  Test "ensure preserves an existing enabled state while replacing all noncanonical fields" passed after 0.117 seconds.
+􁁛  Test "maximum aggregate state remains well below the wire bound" passed after 0.118 seconds.
+􁁛  Test "provider configuration contains only the marker version and bounded opaque reference" passed after 0.118 seconds.
+􁁛  Test "terminal status present before registration resolves without waiting" with 2 test cases passed after 0.117 seconds.
+􁁛  Test "nil manager collection fails closed without constructing or writing" passed after 0.118 seconds.
+􁁛  Test "terminal transition during registration is caught by the authoritative recheck" with 2 test cases passed after 0.117 seconds.
+􁁛  Test "zero and one owned ensure converge without enabling" passed after 0.117 seconds.
+􁁛  Test "a stale save retries once with a freshly loaded manager" passed after 0.117 seconds.
+􁁛  Test "generation reset rejects stale handles and preserves monotonic counters" passed after 0.120 seconds.
+􁁛  Test "iOS and macOS start adapters normalize public NEVPN errors and preserve unknown errors" with 2 test cases passed after 0.118 seconds.
+􁁛  Test "stale enable retries revalidate unrelated unmarked and future replacements" passed after 0.118 seconds.
+􁁛  Test "future owned configuration is preserved and corruption is repaired only by ensure" passed after 0.118 seconds.
+􁁛  Test "notification-first terminal completion wins exactly once" with 2 test cases passed after 0.117 seconds.
+􁁛  Test "strict loader validates schema, provenance, coverage, and limit references" passed after 0.128 seconds.
+􁁛  Test "iOS seam decodes NSNumber manager versions exactly and preserves invalid values" passed after 0.119 seconds.
+􁁛  Test "macOS seam decodes NSNumber manager versions exactly and preserves invalid values" passed after 0.118 seconds.
+􁁛  Test "populated output rejects prohibited nested values and identifiers" passed after 0.119 seconds.
+􁁛  Test "Swift codecs consume every canonical vector" passed after 0.129 seconds.
+􁁛  Test "unknown high-cardinality labels are discarded without retention" passed after 0.121 seconds.
+􁁛  Test "shared regression seeds preserve semantic and resource bounds" passed after 0.130 seconds.
+􁁛  Suite "Legacy provider version compatibility" passed after 0.133 seconds.
+􁁛  Suite "Native dependency packaging" passed after 0.133 seconds.
+􁁛  Test "stop before start consumes the generation and releases configuration" passed after 0.132 seconds.
+􁁛  Suite "RelayProtocol v1 session semantics" passed after 0.134 seconds.
+􁁛  Test "initial observer registration race reads authoritative status and retirement releases it" passed after 0.132 seconds.
+􁁛  Test "connected projection recovers only from matching current provider snapshots" passed after 0.132 seconds.
+􁁛  Test "controller deallocation releases its exact-session observer without stopping" passed after 0.132 seconds.
+􁁛  Suite "Candidate-neutral SSH transport contract" passed after 0.135 seconds.
+􁁛  Suite "RelayProtocol generated constants" passed after 0.135 seconds.
+􁁛  Suite "PacketFlowBridge explicit prohibitions" passed after 0.136 seconds.
+􁁛  Suite "RelayProtocol v1 canonical conformance vectors" passed after 0.137 seconds.
+􁁛  Suite "Versioned runtime message codecs" passed after 0.138 seconds.
+􁁛  Test "fresh session handoff reuses exact ownership and current-schema validation" passed after 0.132 seconds.
+􁁛  Test "timeout retires a load token and ignores its late callback" passed after 0.130 seconds.
+􁁛  Test "stop timeout prevents disable and preference save" passed after 0.129 seconds.
+􁁛  Suite "RelayProtocol v1 deterministic hostile input" passed after 0.144 seconds.
+􁁛  Test "AF_INET maps only an IPv4 payload" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "unsupported families are reported without retaining payload" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "empty payloads and family/version mismatches are typed malformed packets" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "AF_INET6 maps only an IPv6 payload" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "shutdown-first resumes once, retires a late callback, and prevents new reads" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "only one callback registration can be outstanding" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "packet/protocol cardinality mismatch is a typed batch anomaly" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "callback-first preserves callback order and packet boundaries" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "read write and remote closure failures map to finite directional reasons" with 5 test cases passed after 0.143 seconds.
+􁁛  Test "every partial startup acquisition rolls back only acquired resources" with 11 test cases passed after 0.143 seconds.
+􁁛  Test "subcommands receive every packet and SSH experiment seam" passed after 0.143 seconds.
+􁁛  Test "failure before and after every ownership boundary rolls back once" with 14 test cases passed after 0.143 seconds.
+􁁛  Test "stale health events cannot mutate the active generation" passed after 0.143 seconds.
+􁁛  Test "mandatory health loss during startup completion owns cleanup" passed after 0.143 seconds.
+􁁛  Test "failure stop reasons map exactly and revoke capability before one cleanup" with 2 test cases passed after 0.143 seconds.
+􁁛  Test "mandatory dependency health loss revokes capability before cleanup" with 4 test cases passed after 0.143 seconds.
+􀟈  Test "coalesced arbitrary bytes split deterministically without declared-length allocation" started.
+􁁛  Test "startup gates settings and publishes M1 usability only after reads" passed after 0.143 seconds.
+􁁛  Test "cancelling start at a startup barrier performs normal ordered cleanup" passed after 0.143 seconds.
+􁁛  Test "terminal start fetches and maps the last disconnect error exactly once" passed after 0.142 seconds.
+􁁛  Test "recreated controller accepts a fresh response without app-owned history" passed after 0.143 seconds.
+􁁛  Test "clear failure preserves truthful route state and no capability" passed after 0.143 seconds.
+􁁛  Test "start sends exactly one bounded v1 request matching the stored reference" passed after 0.143 seconds.
+􁁛  Test "async channel exchange handles partial IO and preserves coalesced bytes" passed after 0.142 seconds.
+􁁛  Test "normal stop preserves flags, joins the borrow, and closes B before A once" passed after 0.142 seconds.
+􁁛  Test "metric schema is exact and every run starts from zero" passed after 0.142 seconds.
+􁁛  Test "concurrent handshake and queued-byte races honor independent ceilings" passed after 0.142 seconds.
+􁁛  Test "would-block and ENOBUFS drop once; EMSGSIZE is the one fatal transition" passed after 0.142 seconds.
+􁁛  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" passed after 0.140 seconds.
+􁁛  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" passed after 0.141 seconds.
+􁁛  Test "structural validation precedes bounded oversize skip and malformed input retires once" passed after 0.145 seconds.
+􁁛  Test "duplicate and crossed close paths invoke HEV and relay cleanup once" passed after 0.139 seconds.
+􁁛  Test "admission is unique nonzero idempotent and rejects before wire at the cap" passed after 0.138 seconds.
+􁁛  Test "control observation validates identity and state without refreshing activity" passed after 0.137 seconds.
+􁁛  Test "concurrent flow and opening races never exceed capacity" passed after 0.143 seconds.
+􁁛  Test "a newer provider generation resets the sequence baseline" passed after 0.144 seconds.
+􁁛  Test "cancellation retires a load token and ignores its late callback" passed after 0.133 seconds.
+􁁛  Test "first persistent socket error wins over a later HEV return" passed after 0.143 seconds.
+􁁛  Test "stale and out-of-order provider facts clear capability" passed after 0.144 seconds.
+􁁛  Test "unexpected HEV return is peer EOF and remains the primary error" passed after 0.143 seconds.
+􁁛  Test "readiness peer close is exact peer EOF and closes only after borrow return" passed after 0.142 seconds.
+􁁛  Test "repeated concurrent stop joins one reverse-order cleanup" passed after 0.145 seconds.
+􁁛  Test "runtime readiness failure is a single persistent socket fatal" passed after 0.145 seconds.
+􁁛  Test "a positive completion arriving after cancellation cannot revive or duplicate work" passed after 0.146 seconds.
+􁁛  Test "invalid HEV address types, header lengths, and ports never admit an association" passed after 0.147 seconds.
+􁁛  Test "PacketFlow read errors are fatal and do not schedule another read" passed after 0.144 seconds.
+􁁛  Test "normal exit cleans files, sockets, and managed tasks" passed after 0.147 seconds.
+􁁛  Test "expiry activity and remote-close race has one terminal cleanup" passed after 0.142 seconds.
+􁁛  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" passed after 0.147 seconds.
+􁁛  Test "zero and positive short datagram sends are fatal and never retried" with 2 test cases passed after 0.144 seconds.
+􁁛  Test "cancellation wakes every suspending pump seam" with 5 test cases passed after 0.147 seconds.
+􁁛  Test "reverse MSG_TRUNC reports the full observed size and fails before write" passed after 0.145 seconds.
+􁁛  Test "a completed stale timer arm cannot displace the refreshed timer" passed after 0.140 seconds.
+􁁛  Test "controller retirement cancels start wait without stopping the tunnel" passed after 0.146 seconds.
+􁁛  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" passed after 0.144 seconds.
+􁁛  Test "cancellation-first resumes once and ignores its late callback" with 2 test cases passed after 0.148 seconds.
+􁁛  Test "unclassified forward errno is one fatal transition without retry" passed after 0.145 seconds.
+􁁛  Test "reverse EMSGSIZE errno is fatal without retry" passed after 0.145 seconds.
+􁁛  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" passed after 0.146 seconds.
+􁁛  Test "stop wins a concurrent pre-start ordering and cannot be revived" passed after 0.148 seconds.
+􁁛  Test "all bridge logs expose only public privacy-safe fields" passed after 0.145 seconds.
+􁁛  Test "legal and illegal coordinator controls follow the transition table" with 10 test cases passed after 0.147 seconds.
+􁁛  Test "caller task cancellation is propagated and cleanup remains shielded" passed after 0.148 seconds.
+􁁛  Test "nonterminal relay errors preserve the original idle deadline" with 2 test cases passed after 0.149 seconds.
+􁁛  Test "caller cancellation during startup completion owns cleanup" passed after 0.148 seconds.
+􁁛  Test "reverse framing drops malformed datagrams and writes valid packets in order" passed after 0.146 seconds.
+􁁛  Test "reverse framing covers every malformed length and family/version rule" passed after 0.146 seconds.
+􁁛  Test "run counters saturate at UInt64.max and log saturation once" passed after 0.146 seconds.
+􁁛  Test "forward malformed packets count as work and preserve the valid boundary" passed after 0.145 seconds.
+􁁛  Test "forward framing derives SDK families and preserves each payload" passed after 0.146 seconds.
+􁁛  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" passed after 0.145 seconds.
+􁁛  Test "activity rearms the fake-clock timer and expiry retains id until close ack" passed after 0.142 seconds.
+􁁛  Test "duplicate start and concurrent stop calls have no duplicate side effects" passed after 0.148 seconds.
+􁁛  Test "wraparound and collision search are bounded and closing ids are not reused" passed after 0.144 seconds.
+􁁛  Test "cancellation at every startup stage restores all observable resources" with 7 test cases passed after 0.148 seconds.
+􁁛  Test "reverse time budget checks the fake monotonic clock before a second receive" passed after 0.149 seconds.
+􁁛  Test "reverse count budget includes invalid datagrams and flushes one bounded batch" passed after 0.149 seconds.
+􁁛  Test "caller cancellation after accepted start stops once" passed after 0.148 seconds.
+􁁛  Test "every non-connected system status clears provider capability" passed after 0.149 seconds.
+􁁛  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" with 7 test cases passed after 0.149 seconds.
+􁁛  Test "concurrent starts are rejected and stop cancels an in-flight generation" passed after 0.149 seconds.
+􁁛  Test "start timeout stops once and never projects connected" passed after 0.149 seconds.
+􁁛  Test "concurrent starts create exactly one usable runtime" passed after 0.149 seconds.
+􁁛  Test "stop during start completes start before stop and maps startup Apple reasons" with 4 test cases passed after 0.148 seconds.
+􁁛  Test "old-generation timer reply error and close cannot resolve a reused numeric id" passed after 0.144 seconds.
+􁁛  Test "SSH credit suspension retains one local chunk and resumes partial writes in order" passed after 0.150 seconds.
+􁁛  Test "relay and stalled HEV backpressure drop newest within both byte ceilings" passed after 0.151 seconds.
+􁁛  Test "start-stop race uses one system stop and converges from fresh status" passed after 0.149 seconds.
+􁁛  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" passed after 0.139 seconds.
+􁁛  Test "the injected 60-second startup budget cancels and joins rollback" with 2 test cases passed after 0.149 seconds.
+􁁛  Test "signal cancellation uses signal exit code and cleans all resources" passed after 0.150 seconds.
+􁁛  Test "concurrent and reentrant provider failures cancel exactly once" with 2 test cases passed after 0.149 seconds.
+􁁛  Test "shared budget rejects excess concurrent flow capacity without queuing" passed after 0.148 seconds.
+􁁛  Test "cleanup expiry force-closes handles and records redacted evidence" with 2 test cases passed after 0.148 seconds.
+􁁛  Test "concurrent stops join one fresh load one system stop and one terminal wait" passed after 0.147 seconds.
+􁁛  Test "forward elapsed-time slices use the injected monotonic clock" passed after 0.150 seconds.
+􁁛  Test "forward count budget includes malformed work and retains only the current batch" passed after 0.151 seconds.
+􁁛  Suite "PacketFlowBridge lifecycle fault matrix" passed after 0.152 seconds.
+􁁛  Test "zero progress and invalid peer lengths terminate with stable directional reasons" passed after 0.149 seconds.
+􁁛  Test "cancellation after each startup acquisition rolls back in reverse order" with 8 test cases passed after 0.150 seconds.
+􁁛  Test "provider failure cancels once and later system stop joins cleanup" with 2 test cases passed after 0.149 seconds.
+􁁛  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" passed after 0.148 seconds.
+􁁛  Test "settings apply error dispositions preserve failure and clear exactly when required" passed after 0.150 seconds.
+􁁛  Test "smoke output is deterministic, versioned, and privacy safe" passed after 0.151 seconds.
+􁁛  Test "provider message timeout cancellation and late response cannot publish capability" passed after 0.150 seconds.
+􁁛  Test "counters and maxima are monotonic within a run and reset for the next run" passed after 0.149 seconds.
+􁁛  Test "drop summaries are window-limited and flush unsummarized drops at stop" passed after 0.149 seconds.
+􁁛  Test "last disconnect timeout and cancellation supplement but never change system status" passed after 0.150 seconds.
+􁁛  Test "forward and reverse count slices yield deterministically" passed after 0.151 seconds.
+􁁛  Suite "ReluxTunnelHarness" passed after 0.153 seconds.
+􁁛  Test "a fresh generation readmits provider failure after the previous handoff" with 2 test cases passed after 0.151 seconds.
+􁁛  Suite "PacketFlowBridge deterministic fault injection" passed after 0.153 seconds.
+􁁛  Suite "PacketFlowBridge bounded execution" passed after 0.153 seconds.
+􁁛  Test "session loss cancellation and provider stop return all owned resources to baseline" passed after 0.148 seconds.
+􁁛  Test "synchronous start errors use stable mappings" passed after 0.152 seconds.
+􁁛  Test "stop timeout never claims cleanup and cancellation does not issue another stop" passed after 0.152 seconds.
+􁁛  Test "start preflight maps every system status without duplicate start calls" passed after 0.152 seconds.
+􁁛  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" with 2 test cases passed after 0.151 seconds.
+􁁛  Test "stop maps every status and never duplicates the stop call" passed after 0.152 seconds.
+􁁛  Test "async failures cancel reset and close the generation" passed after 0.153 seconds.
+􁁛  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" passed after 0.153 seconds.
+􁁛  Test "malformed future mutating and missing-request inputs receive one bounded error" with 2 test cases passed after 0.153 seconds.
+􁁛  Suite "VPN session controller" passed after 0.156 seconds.
+􁁛  Suite "RelayProtocol v1 client handshake" passed after 0.156 seconds.
+􁁛  Test "concurrent zero-manager ensure saves one canonical manager" passed after 0.149 seconds.
+􁁛  Test "every public Apple stop reason maps identically" with 2 test cases passed after 0.164 seconds.
+􁁛  Test "permanently pressured peers suspend without spin and cancellation releases once" passed after 0.164 seconds.
+􁁛  Test "fairness slices yield while continuous work still has bytes pending" passed after 0.167 seconds.
+􁁛  Test "repeated activity churn retains exactly one real sleeper" passed after 0.164 seconds.
+􁁛  Test "operation gate queues every repository entry point behind an active callback" passed after 0.157 seconds.
+􁁛  Suite "Owned VPN manager repository" passed after 0.172 seconds.
+􁁛  Test "repeated stop and health races clean exactly one generation" passed after 0.173 seconds.
+􁁛  Test "SOCKS admission rejects CONNECT and stalled pre-admission channels time out or cancel" passed after 0.178 seconds.
+􀢄  Test "stale generation loss and cancellation cannot close current admitted or pending owners" recorded an issue at HEVUDPDatagramAdapterTests.swift:646:5: Expectation failed: (snapshot.activeConnections → 1) == 0
+􀢄  Test "stale generation loss and cancellation cannot close current admitted or pending owners" failed after 0.178 seconds with 1 issue.
+􁁛  Test "callback/cancellation races resume exactly once and restore registration baseline" with 2 test cases passed after 0.182 seconds.
+􁁛  Test "callback/shutdown races resume exactly once and restore registration baseline" with 2 test cases passed after 0.184 seconds.
+􁁛  Suite "PacketFlow adapter read lifecycle" passed after 0.185 seconds.
+􁁛  Test "concurrent updates and requests return consistent bounded snapshots" passed after 0.176 seconds.
+􁁛  Suite "Privacy-safe runtime diagnostics" passed after 0.187 seconds.
+􁁛  Test "bounded diagnostics drops still reconcile every current TCP gauge" passed after 0.187 seconds.
+􁁛  Test "fifty sequential double failures always deliver the first call error" with 2 test cases passed after 0.189 seconds.
+􁁛  Test "one hundred cycles release every runtime and callback gate" with 2 test cases passed after 0.189 seconds.
+􁁛  Test "concurrent admission never exceeds the configured bound" passed after 0.186 seconds.
+􁁛  Suite "Client UDP association registry" passed after 0.193 seconds.
+􁁛  Test "both roots route exactly the four read-only v1 commands" with 2 test cases passed after 0.197 seconds.
+􁁛  Suite "Provider adapter contracts" passed after 0.199 seconds.
+􁁛  Test "session-health changes racing admission linearize without leaks" passed after 0.198 seconds.
+􁁛  Test "one hundred cancelled runs restore the shared resource baseline" passed after 0.204 seconds.
+􁁛  Test "sustained reject pressure cannot starve an admitted flow or create SSH work" passed after 0.204 seconds.
+􁁛  Test "one hundred restart cycles restore descriptor and task ownership baselines" passed after 0.205 seconds.
+􁁛  Suite "PacketFlowBridge public socket pair" passed after 0.208 seconds.
+􁁛  Test "explicit release versus last-reference drop remains exactly once" passed after 0.210 seconds.
+􁁛  Test "terminal relay errors and close orderings clean each association exactly once" passed after 0.214 seconds.
+􁁛  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" passed after 0.214 seconds.
+􀟈  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" started.
+􁁛  Test "random fragmented bidirectional transfer preserves exact bytes and hashes" passed after 0.218 seconds.
+􁁛  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" passed after 0.004 seconds.
+􀟈  Test "a stalled real HEV path accounts every bridge send or bounded drop" started.
+􁁛  Test "twelve deterministic seeds preserve ordering under changing fragmentation" passed after 0.220 seconds.
+􁁛  Suite "Bounded full-duplex byte pump" passed after 0.221 seconds.
+􁁛  Test "release and channel-open completion race without double accounting" passed after 0.222 seconds.
+􁁛  Test "late buffer and byte callbacks racing terminal cleanup cannot leak" passed after 0.227 seconds.
+􁁛  Suite "Bounded TCP admission and metrics" passed after 0.230 seconds.
+􁁛  Test "relay errors, close, expiry, session loss, and stale callbacks close only their owner" passed after 0.240 seconds.
+􁁛  Test "one hundred generations return all owned resources to baseline" passed after 0.266 seconds.
+􁁛  Suite "Tunnel runtime coordinator" passed after 0.268 seconds.
+􁁛  Test "coalesced arbitrary bytes split deterministically without declared-length allocation" passed after 0.189 seconds.
+􀟈  Test "fixture minimization preserves a replayable invariant violation" started.
+􁁛  Test "fixture minimization preserves a replayable invariant violation" passed after 0.001 seconds.
+􀟈  Test "reverse parser replays hostile corpus with bounded runtime, allocation, and counters" started.
+􁁛  Test "a stalled real HEV path accounts every bridge send or bounded drop" passed after 0.146 seconds.
+􀟈  Test "bridge write failure while real HEV is active tears every boundary down" started.
+PACKET_FRAME_FUZZ_REPORT direction=reverse seed=353398966579 iterations=512 duration_ms=7 peak_allocation_bytes=34368 revision=unspecified shortHeader=134 emptyPayload=34 unknownFamily=65 payloadVersionMismatch=180
+􁁛  Test "reverse parser replays hostile corpus with bounded runtime, allocation, and counters" passed after 0.089 seconds.
+􀟈  Test "forward framing rejects hostile typed packets before bounded datagram allocation" started.
+􁁛  Test "every prefix and body boundary of a maximum accepted frame is deterministic" passed after 0.434 seconds.
+􁁛  Suite "RelayProtocol v1 envelope codec" passed after 0.436 seconds.
+􁁛  Test "bridge write failure while real HEV is active tears every boundary down" passed after 0.099 seconds.
+􀟈  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" started.
+PACKET_FRAME_FUZZ_REPORT direction=forward seed=353398966579 iterations=512 duration_ms=3 peak_allocation_bytes=28016 revision=unspecified malformed=506
+􁁛  Test "forward framing rejects hostile typed packets before bounded datagram allocation" passed after 0.121 seconds.
+􀟈  Test "over-MTU replay fixtures are fatal before forwarding or packet writes" started.
+􁁛  Test "over-MTU replay fixtures are fatal before forwarding or packet writes" passed after 0.001 seconds.
+􀟈  Test "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 1 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 68 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 576 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 1280 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 1500 to "boundary MTUs preserve exact frames" started.
+􀟈  Test case passing 1 argument mtu → 9000 to "boundary MTUs preserve exact frames" started.
+􁁛  Test "boundary MTUs preserve exact frames" with 6 test cases passed after 0.001 seconds.
+􁁛  Suite "Packet frame deterministic fuzz and allocation bounds" passed after 0.548 seconds.
+􁁛  Test "every permitted DATA size round-trips for every address form" passed after 0.666 seconds.
+􁁛  Suite "RelayProtocol v1 HEV datagram codec" passed after 0.667 seconds.
+􁁛  Test "relay pressure and lowered-cap errors preserve same-ID bidirectional traffic" passed after 0.757 seconds.
+􁁛  Test "reply local-cap drops survive while wire-oversize and invalid endpoints retire" passed after 1.240 seconds.
+􁁛  Test "split and coalesced records preserve families, domains, bytes, and association identity" passed after 1.487 seconds.
+􀢄  Suite "Private HEV UDP datagram adapter" failed after 1.488 seconds with 1 issue.
+􁁛  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" passed after 3.109 seconds.
+􀟈  Test "approved low-memory configuration is emitted exactly" started.
+􁁛  Test "approved low-memory configuration is emitted exactly" passed after 0.001 seconds.
+􀟈  Test "configuration rejects a stack request that upstream would silently raise" started.
+􁁛  Test "configuration rejects a stack request that upstream would silently raise" passed after 0.001 seconds.
+􀟈  Test "external no-auth ingress is rejected before the adapter seam" started.
+􁁛  Test "external no-auth ingress is rejected before the adapter seam" passed after 0.001 seconds.
+􀟈  Test "SOCKS boundary stop waits for listener close and is idempotent" started.
+􁁛  Test "SOCKS boundary stop waits for listener close and is idempotent" passed after 0.001 seconds.
+􀟈  Test "borrow passes only endpoint B and quit joins without closing it" started.
+􁁛  Test "borrow passes only endpoint B and quit joins without closing it" passed after 0.001 seconds.
+􀟈  Test "quit is never sent after HEV main returns in either stop ordering" started.
+􁁛  Test "quit is never sent after HEV main returns in either stop ordering" passed after 0.001 seconds.
+􀟈  Test "startup failure stops listener state and releases the process lease" started.
+􁁛  Test "startup failure stops listener state and releases the process lease" passed after 0.001 seconds.
+􀟈  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" started.
+􁁛  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" passed after 0.001 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 3.579 seconds.
+􀢄  Test run with 335 tests in 29 suites failed after 3.580 seconds with 1 issue.
+exit=1
+
+--------------------------------------------------------------------------------
+NOTE ON THE swift test RUNS, recorded rather than smoothed over.
+
+`swift test` is INTERMITTENT on this tree and the flake is unrelated to this task.
+Measured rather than asserted: 3 failures in 24 full runs on 2026-07-28, every one of
+them the same assertion shape in one suite -
+
+  Tests/ReluxTunnelNativeAdapterTests/HEVUDPDatagramAdapterTests.swift
+    :646  "stale generation loss and cancellation cannot close current admitted or
+           pending owners"                                              (2 failures)
+    :333  "relay errors, close, expiry, session loss, and stale callbacks close only
+           their owner"                                                 (1 failure)
+  both: Expectation failed: (snapshot.activeConnections -> 1) == 0
+
+Not caused by r12:
+  * `git status --porcelain -- Sources Tests Package.swift Protocol relay scripts .spec`
+    was EMPTY for this entire session. r12 touches board resources only.
+  * the targeted suite passed three consecutive runs on its own; the full suite passed
+    21 of 24 runs at 335 tests in 29 suites.
+  * both assertions read `await adapter.snapshot()` immediately after `receiveEOF`
+    returns on the affected peers, while the adapter decrements activeConnections in
+    its own task - so they race adapter-internal state against a peer-observable event.
+    It is a shared pattern in the suite, not one assertion.
+
+Raised on the board as BUG-260728-2j25tu (stabilize-udp-adapter-cancellation-snapshot-race)
+under STORY-260715-1nsw9p rather than fixed here: it is outside this task's scope and its
+acceptance criteria, and fixing product tests from a decision-artifact task would be the
+scope creep the workflow exists to prevent.
+--------------------------------------------------------------------------------
+$ swift test  (repeat 1)
+exit=0
+$ swift test  (repeat 2)
+exit=0
+$ swift test  (repeat 3)
+exit=0
+$ swift test  (repeat 4)
+exit=1
+$ swift test  (repeat 5)
+exit=0
+
+$ swift test  (18 further runs, 8 + 10, characterizing the flake)
+exit=0 x 17, exit=1 x 1  (the exit=1 was HEVUDPDatagramAdapterTests.swift:333)
+
+Summary of this transcript, all exit codes real:
+  validate-matrix.py             2862 checks                              exit 0
+  mutate.py                      285/285 negative gates                   exit 0
+  check-portal-consumer.py       A1 28, P1 20, D1 41                      exit 0
+  preserve.py       r8  -> r9    122 assertions                           exit 0
+  preserve-r10.py   r9  -> r10   201 assertions                           exit 0
+  preserve-r11.py   r10 -> r11   143 assertions                           exit 0
+  preserve-r12.py   r11 -> r12   245 assertions                           exit 0
+  reviewer-gates.sh              all gates and 8 negative controls hold   exit 0
+  check-legacy-preservation.sh   legacy identity preserved                exit 0
+  task-board validate            no issues                                exit 0
+  swift test                     335 tests, 29 suites, 21 of 24 runs      exit 0
+                                 3 of 24 runs flaked on BUG-260728-2j25tu exit 1

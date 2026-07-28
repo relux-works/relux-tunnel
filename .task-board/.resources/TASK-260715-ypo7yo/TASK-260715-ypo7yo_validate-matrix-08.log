@@ -1,0 +1,56 @@
+TASK-260715-ypo7yo — r8 (2026-07-28.r8) gate transcript
+Closes reviewer verdict 07 findings F1 (A5 scope) and F2 (A9 platform scope).
+Every command below was run WITHOUT a pipeline so the exit code is the command's own
+(zsh does not carry bash PIPESTATUS; r6 recorded the same trap).
+
+=== 1. contract self-check, in place from the board resource layout ===
+checks run: 1331
+PASS — every rule holds
+exit=0
+
+=== 2. negative gates (each mutation must exit 1 naming its rule) ===
+    - unauthorized identifier named in the portal contract: works.relux.tunnel.ios
+
+164/164 negative gates hold
+exit=0
+
+=== 3. board-contract gate vs the two live pinned consumers ===
+matrix revision: 2026-07-28.r8
+
+rule A1 — TASK-260728-q5kjta
+  fields checked: description, scope, ac
+  checks run: 24
+  PASS — the board contract matches rule A1
+
+rule P1 — TASK-260715-3jloqy
+  fields checked: description, scope, ac
+  checks run: 20
+  PASS — the board contract matches rule P1
+
+PASS — both pinned board consumers match this contract
+exit=0
+
+=== 4. r7 -> r8 preservation assertions ===
+assertions run: 94
+PASS — everything verdict 07 accepted is byte-for-byte unchanged
+exit=0
+
+=== 5. the reviewer's own two gates, r7 baseline vs r8 ===
+r7  A5 target-consistency gate: false exit=1
+r7  A9 profile-device-scope gate: false exit=1
+r8  A5 target-consistency gate: true exit=0
+r8  A9 profile-device-scope gate: true exit=0
+
+r8  A5/A18 partition (structural): true exit=0
+r8  A9 scope vs declared devices (structural): true exit=0
+
+=== 6. project gates ===
+check-legacy-preservation.sh exit=0
+task-board validate exit=0
+swift test: 335 tests in 29 suites passed, exit=0
+
+=== 7. r9 note (appended, not rewritten) ===
+This transcript is SUPERSEDED by validate-matrix-09.log. It is retained because r9's own
+transcript cites it: before any r9 edit, the r8 artifact was re-run untouched and every
+gate above reproduced exactly, so nothing in r9 is credited to repairing drift that had
+already appeared.

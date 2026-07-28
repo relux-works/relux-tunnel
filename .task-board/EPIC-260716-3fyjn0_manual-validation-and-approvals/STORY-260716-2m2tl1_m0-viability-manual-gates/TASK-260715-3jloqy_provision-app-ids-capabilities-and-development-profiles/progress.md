@@ -8,7 +8,7 @@ backlog
 2026-07-15T00:58:01Z
 
 ## Last Update
-2026-07-28T01:47:11Z
+2026-07-28T06:09:21Z
 
 ## Blocked By
 - TASK-260715-ypo7yo
@@ -23,6 +23,10 @@ backlog
 - [ ] Portal identifiers and capabilities match the approved matrix
 - [ ] Downloaded profiles pass privacy-safe entitlement and validity inspection
 - [ ] Reproduction metadata is attached without any signing secret
+- [ ] Network Extensions enabled on all four macOS App IDs, hosts included
+- [ ] No App Group record, no App Groups capability, no Keychain access-group portal mutation
+- [ ] Every profile authorizes the unsuffixed packet-tunnel-provider value on host and provider alike
+- [ ] The four iOS App IDs and every distribution profile are untouched
 
 ## Notes
 2026-07-28 replan (TASK-260728-3a2dnr): this task belongs to Ceremony C1, the single up-front human permission session on the current arm64 Mac. See the wave plan and ceremony script attached to TASK-260728-3a2dnr. Never request, echo, or persist secret values, key paths, or credential contents in board, repo, or logs.

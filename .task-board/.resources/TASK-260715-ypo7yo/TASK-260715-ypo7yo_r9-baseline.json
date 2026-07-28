@@ -1,0 +1,2180 @@
+{
+  "schemaVersion": 2,
+  "contract": "apple-identifier-entitlement-matrix",
+  "owner": "TASK-260715-ypo7yo",
+  "revision": "2026-07-28.r9",
+  "supersedes": "2026-07-28.r8",
+  "status": "pending-independent-architecture-review",
+  "authorizesPortalMutationBy": "TASK-260715-3jloqy",
+  "humanAuthorizationNode": "TASK-260728-q5kjta",
+  "revisionLog": [
+    {
+      "revision": "2026-07-28.r9",
+      "closes": [
+        "D1 (self-found, reported by no verdict)",
+        "N1 (self-found, the other half of the r6 count class)"
+      ],
+      "verdict": "none — this revision was not requested by a reviewer verdict. It is a self-audit run after the r8 handoff, and it reports what the audit found rather than what a reviewer asked for.",
+      "summary": "Two contract-versus-board consistency rules, no entitlement decision touched. Rule D1: every board element this contract names as an obligation owner is a DECLARED CONSUMER, must appear in `consumers`, and must transitively depend on this task on the live board. Three declared consumers — TASK-260715-1o9wjz, TASK-260715-3f4lxy and TASK-260715-29ws8l — had NO dependency path to this task, so a max_parallel=1 scheduler could have run them while this matrix was still in analysis under its eighth changes-requested verdict; four more elements the contract assigns obligations to were missing from `consumers` entirely. One board edge closes all three reachability gaps and rule D1 plus gate R37 and the new check-portal-consumer.py D1 block make a missing edge fail closed. Rule N1: entitlement-allowlist counts and the rendered key list are derived from the rows in both artifacts, closing the half of the count class r6 left open. No target row, entitlement decision, record, profile row, assertion or C1 mutation set changed.",
+      "verifiedIndependently": "Nothing here was taken from a verdict, so everything was derived from the live board and the rows before being written. Reachability was computed as a transitive closure over every task and bug record on the board, not spot-checked: 19 declared consumers, 16 reachable, 3 not. The three unreachable ones were then read for whether the edge is semantically real rather than merely convenient — TASK-260715-29ws8l AC2 and AC4 require it to specify 'App Group and providerConfiguration data' and 'Keychain accessibility, access group', which are exactly what rules G4 and K2 decide, and it already blocks TASK-260715-1o9wjz and TASK-260715-3f4lxy, so one edge is both correct and sufficient. The new edge was checked for cycles over the whole graph before being added. For N1 the counts were RECOMPUTED rather than trusted: macos.host authors five keys (NE, system-extension.install, app-sandbox, network.client, the Sparkle mach-lookup exception) and the toolchain injects three on development and two on developer-id, so eight and seven are correct at r9 — but §9.1's own text records this number reading 'seven' over a list of ten at r3 and 'nine' at r4, which is why it is now derived instead of written."
+    },
+    {
+      "revision": "2026-07-28.r8",
+      "closes": [
+        "F1 (verdict 07)",
+        "F2 (verdict 07)"
+      ],
+      "verdict": "TASK-260715-ypo7yo_reviewer-verdict-07.md",
+      "summary": "A5 is rescoped to the two production iOS rows and hands the probe pair to A18, which it had been contradicting since r5. A9 is split into A9a (the four macOS Mac Development profiles, device list compared against the rows), A9b (the four iOS development profiles, deferred under ADR-024 and not created at C1) and A9c (the two Developer ID profiles, ProvisionsAllDevices). Neither fix is left as a corrected string: rule S2 gives every scope-bearing assertion a structured scope derived three ways from the authoritative rows, R35 and R36 recompute and compare them, and the partition check that A5 and A18 were violating is now run for every registered entitlement key. No entitlement decision, identifier, record, profile row or C1 authorization changed.",
+      "verifiedIndependently": "Both findings were re-derived from the rows before being accepted rather than taken on trust. F1: the application-groups status of ios.probe.host and ios.probe.provider is 'prohibited', so A5's 'every iOS bundle' and A18's 'ABSENT from both iOS probe bundles' cannot both hold. CONFIRMED. F2: all four iOS profile rows declare development.devices as ['deferred — ADR-024'] while the four macOS rows declare ['this Apple-silicon Mac'], so A9's universal claim is false for half the rows. CONFIRMED. Registering A6's scope then exposed a third instance of the same class that no verdict had reported — the rationale document's A6 row still granting macos.host the keychain group r5 removed — which is recorded in S2.staleClaimsFound and fixed here."
+    },
+    {
+      "revision": "2026-07-28.r7",
+      "closes": [
+        "F1 (verdict 06)"
+      ],
+      "verdict": "TASK-260715-ypo7yo_reviewer-verdict-06.md",
+      "summary": "One authorization-contract correction. No entitlement decision changed, no target row moved, and the authorized mutation set is identical to r6. F1: Ceremony C1's board scope named the superseded revision 2026-07-28.r5, which verdict 05 had rejected, so the human authorization node named by AC5 and by humanAuthorizationNode asked the operator to approve a rejected revision. The board scope now names the current revision, and the DEFECT CLASS is closed rather than the label patched: new object authorizationNodeContract (rule A1) pins the authorization edge the way rule P1 pins the mutation edge, its revisionPinRule derives the banned superseded set from revisionLog so it cannot fall behind a bump, the r6 board gate is extended from one live consumer to BOTH consumers this contract names, new gate R34 checks the A1 pin and the revision bookkeeping, and amendmentRule now requires every future amendment to re-point both pinned board consumers. The gate gained board-level negative gates driven by a simulated board record, so a stale revision, a dropped App ID and a lost exclusion are each proven to fail closed without mutating the board. The rationale's stale check-portal-consumer.sh reference is corrected to .py.",
+      "verifiedIndependently": "The finding was re-checked before being accepted, and then widened. The reviewer's jq freshness gate was re-run against r6 and returned false, exit 1, exactly as reported. The C1 record was then checked field by field against c1AuthorizationScope independently of the reviewer's claim that it matched: all four authorized App IDs are named with a right boundary, the Network Extensions and Mac Development wording is present, and all four iOS App IDs plus works.relux.proxy appear only inside a negation - so the revision label was indeed the only defect, and the mutation set must be preserved, not rewritten. CONFIRMED. The class was then swept rather than assumed bounded: all 402 live board elements were scanned for a matrix revision label, which found exactly two - TASK-260728-q5kjta's scope, the reviewer's finding, and this task's own notes field, which the reviewer did not report. The second is NOT a defect: notes is append-only progress history where 'r5 (2026-07-28.r5) closes all three verdict-04 findings' is a true historical statement, the same reason rule S1 excludes revisionLog from its count scan. That distinction is why A1's boardGate declares excludedFields rather than scanning every field, and the sweep is why A1 can state that no third live consumer carries a revision label."
+    },
+    {
+      "revision": "2026-07-28.r6",
+      "closes": [
+        "F1 (verdict 05)",
+        "F2 (verdict 05)"
+      ],
+      "verdict": "TASK-260715-ypo7yo_reviewer-verdict-05.md",
+      "summary": "Two contract-consistency corrections. No entitlement decision changed and no target row moved. F1: crossPlatformRules[2] still asserted the superseded r4 Keychain contract - the shared access group granted to the macOS host - while the target rows, rule K2, the record's consumedByTargets, assertions A6/A17 and the r5 revision log all said iOS-only. The sentence is corrected, and the DEFECT CLASS is closed rather than the string patched: new object crossPlatformSharingContract (rule S1) gives every cross-platform sentence a structured rule, and new gate R32 derives each grant set from the target rows, cross-checks it against the record's own consumer list, then requires the prose grantClause verbatim, requires the display names inside it to equal the derived set, and requires every other target named anywhere in the sentence to be a DECLARED non-grantee mention carrying its own clause. R33 requires the same grant clauses to appear in the human-readable rationale document, so the two artifacts cannot drift either. The second half of the class - a stale record COUNT - is closed by a scan for App Group count claims, each of which must sit at a registered path and agree with the record list; appGroupStyleRule's 'one record per family' was the surviving instance and is rewritten. F2: TASK-260715-3jloqy, the unattended task that spends the C1 authorization, still carried the pre-r5 capability contract - create shared groups, provision App Group and Keychain capabilities, AC1 requiring shared groups to exist, and AC2 requiring the packet-tunnel entitlement only on provider identifiers. Its description, scope, acceptance criteria and checklist are corrected on the board to c1AuthorizationScope exactly, and the requirement is pinned here as portalMutationTaskContract (rule P1) with a durable gate script, so the check verdict 05 ran by hand is reproducible.",
+      "verifiedIndependently": "Both findings were re-checked against the r5 artifact before being accepted, not taken on trust. F1: the reviewer's jq gate was re-run against r5 and returned false, exit 1; a sweep of EVERY string in the r5 JSON for stale-r4 grant or count claims then found exactly two survivors - crossPlatformRules[2] and appGroupStyleRule.statement's 'per family' - which is why the fix is a rule over all six sentences plus a count scan rather than two string edits. CONFIRMED. F2: TASK-260715-3jloqy's board record was read in full and all four quoted statements are present verbatim; its dependency edges confirm it is blocked by this matrix and by TASK-260728-q5kjta, so it executes after Ceremony C1 with exactly this contract in hand. The AC2 half was checked independently of the r5 changes: this contract's own target rows require com.apple.developer.networking.networkextension on all eight targets, hosts included, and R7 has enforced that since r2 - so 'only on provider identifiers' contradicted r1 as much as it contradicts r6, and would have under-provisioned both macOS host App IDs. CONFIRMED."
+    },
+    {
+      "revision": "2026-07-28.r5",
+      "closes": [
+        "F1 (verdict 04)",
+        "F2 (verdict 04)",
+        "F3 (verdict 04)"
+      ],
+      "verdict": "TASK-260715-ypo7yo_reviewer-verdict-04.md",
+      "summary": "Two least-privilege corrections and one board-metadata correction. F1: keychain-access-groups is now PROHIBITED on macos.host and therefore on all four macOS targets. New rule K2 states the test K1 did not cover - the entitlement's only function is sharing, and the macOS host has no second member to share with, because rule K1 excludes the root/system-domain provider and neither probe touches the Data Protection Keychain. The host keeps full access to its own items through the default access group the injected com.apple.application-identifier provides. K2 also records the ordering law that makes withholding safe and its one real consequence: the macOS default group moves from the shared literal to the app-ID literal, which TASK-260715-379cpk must be authored against. F3: com.apple.security.application-groups is now PROHIBITED on ios.probe.host and ios.probe.provider, because TASK-260715-1jckn0 scopes the probe to the NETunnelProviderManager lifecycle and versioned app messaging and names no shared container; G4 gains an explicit probeRule saying a probe inherits identifiers and profile classes but never entitlements. That left group.works.relux.tunnel.probe with no consumer, so the record is DELETED and G3 is restated as the stronger property that no probe carries a group at all. One App Group record remains. F2: TASK-260728-q5kjta's scope and AC4 were corrected on the board to name the same four macOS App IDs, Network Extensions only, zero App Group records and capabilities, no Keychain portal mutation, the Mac Development profile class, and all four excluded iOS App IDs. Every r2/r3/r4 decision the reviewer listed as acceptable is preserved.",
+      "verifiedIndependently": "Both findings were re-checked before being accepted. F1: the claim that withholding costs the host nothing was verified against Apple's own text rather than assumed. 'Sharing access to keychain items among a collection of apps' states that the application identifier entitlement is added to every app at signing, that the system recognizes it as the app's default keychain access group, that items stored in it are private to the app, and that 'if you don't specify any keychain access groups, then the app ID is the default'. TN3137 states that macOS builds the access-group list from code signing entitlements authorized by a provisioning profile, and macos.host is provisioned on both channels, so the default group is available. The same source also yields the one genuine consequence the reviewer did not name: the default group MOVES when the entitlement is withdrawn, which is now recorded as a downstream requirement rather than discovered at first build. F3: TASK-260715-1jckn0's scope and acceptance criteria were read in full; they name NETunnelProviderManager save/load/enable/start/status/app-message/stop, one versioned provider response, and clean stop, and no shared container, UserDefaults suite, or snapshot anywhere. The r4 rationale's claim that the probe exercises the production shared-container path is not supported by that contract. BOTH CONFIRMED."
+    },
+    {
+      "revision": "2026-07-28.r4",
+      "closes": [
+        "F1 (verdict 03)",
+        "OC-1",
+        "TASK-260728-7ii1xz amendment packet M1-M7"
+      ],
+      "verdict": "TASK-260715-ypo7yo_reviewer-verdict-03.md",
+      "summary": "com.apple.security.application-groups is now PROHIBITED on all four macOS targets and required on iOS only (new rule G4). The macOS credential transport question is closed: TASK-260728-7ii1xz selected the file-based system-domain keychain seeded over the NE app-message channel, with the non-secret snapshot travelling in providerConfiguration, and rejected the XPC candidate. None of the six grants the App Group entitlement actually confers on macOS is used by that design, so the capability has no current function on any macOS target and is withheld. Ceremony C1 no longer creates any App Group record or enables the App Groups capability on any macOS App ID. keychain-access-groups on macos.provider moves from prohibited-pending-decision to a settled prohibited, and loses the resolutionOwner and amendmentRule that existed only to keep it open; rule K1 replaces that amendmentRule with the correct, narrow reopening condition. OC-1 is closed; OC-4 is downgraded. Every accepted r2/r3 decision - the four production identifiers and their containment, channel-keyed Network Extension values, the registered iOS-style App Group literals, the legacy no-migration rule, the Sparkle Mach lookup exception and rule X1, profile classes, and C1's iOS exclusions - is preserved.",
+      "verifiedIndependently": "The finding was re-checked before being accepted, not taken on trust. The macOS App Group grant set was read directly out of /System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71): lines 302-330 and 459-465 are the only two places the entitlement appears, and they confer exactly six grants (recorded field-by-field in appGroupLeastPrivilegeRule.survey). Three are home-relative and therefore break across the root/user boundary; three are system-wide and are used by no candidate the transport decision kept. The claim that a root provider needs no keychain entitlement was likewise re-verified locally: application.sb:792-793 grants /Library/Keychains read+write to any com.apple.developer.networking.networkextension holder, and application.sb:655-656 grant the securityd/SecurityServer Mach lookups to every sandboxed process, exactly as TASK-260728-7ii1xz reported. CONFIRMED."
+    },
+    {
+      "revision": "2026-07-28.r3",
+      "closes": [
+        "F1 (verdict 02)"
+      ],
+      "verdict": "TASK-260715-ypo7yo_reviewer-verdict-02.md",
+      "summary": "The macos.host entitlement set now carries com.apple.security.temporary-exception.mach-lookup.global-name with Sparkle's $(PRODUCT_BUNDLE_IDENTIFIER)-spks / -spki values, attributed to project-architecture and owned by TASK-260715-uyju7n. Rule X1 adds a reviewed-exception register and an explicit prohibited set for Hardened Runtime relaxations, which is the same spec clause the finding exposed. Assertions A10e, A14 and A15 make all of it machine-checkable, and the r2 assertion set is pinned so it cannot silently shrink again. Every r2 decision — four production identifiers and containment, channel-keyed Network Extension values, identical registered iOS-style App Group literals, Keychain withholding on macos.provider, the legacy no-migration rule, C1 scope, the gap task, and dependencies — is preserved byte-for-byte.",
+      "verifiedIndependently": "The finding was re-checked before being accepted, not taken on trust: .spec/platform-distribution.md:103-105 mandates the two exceptions; .research/260721_macos-self-update.md:111-113 records the same two-value set; and six shipping applications on this Mac were read with codesign -d --entitlements :- and carry exactly the <bundle-id>-spks / -spki pattern. CONFIRMED."
+    },
+    {
+      "revision": "2026-07-28.r2",
+      "closes": [
+        "F1",
+        "F2",
+        "F3",
+        "F4"
+      ],
+      "verdict": "TASK-260715-ypo7yo_reviewer-verdict-01.md",
+      "summary": "Network Extension values are now modelled per signing channel; App Group identifiers moved to the iOS style on both platforms; the blanket 'no key outside the matrix union' assertion was replaced with explicit authored/signing-generated allowlists; App Sandbox rationale is attributed per requirement source. Identity, legacy, probe, environment, and dependency decisions from r1 are preserved unchanged."
+    }
+  ],
+  "team": {
+    "organization": "Relux Works, LLC",
+    "teamIdentifier": "262RZ595FP",
+    "expectedAppIdentifierPrefix": "262RZ595FP",
+    "evidence": "local codesigning identity 'Developer ID Application: Relux Works, LLC (262RZ595FP)' and 'Apple Development: Ivan Oparin (FSPBF3QRXT)' OU=262RZ595FP, valid to 2027-07-27",
+    "secret": false,
+    "buildVariables": {
+      "appIdentifierPrefix": "$(AppIdentifierPrefix)",
+      "teamIdentifierPrefix": "$(TeamIdentifierPrefix)"
+    },
+    "rule": "Entitlement files, Info.plists, and source MUST use the build variables. The literal 262RZ595FP appears only in this contract and in verification expectations.",
+    "prefixEqualityAssertion": "AppIdentifierPrefix == TeamIdentifierPrefix == '262RZ595FP.'",
+    "prefixAssertionOwner": "TASK-260715-3jloqy",
+    "prefixMismatchPolicy": "blocker"
+  },
+  "signingChannels": {
+    "development": {
+      "id": "development",
+      "platforms": [
+        "macOS",
+        "iOS"
+      ],
+      "signingIdentityClass": {
+        "macOS": "Apple Development: Ivan Oparin (FSPBF3QRXT)",
+        "iOS": "Apple Development (Relux Works team)"
+      },
+      "profileClass": {
+        "macOS": "Mac Development",
+        "iOS": "iOS App Development"
+      },
+      "profileDeviceModel": "explicit ProvisionedDevices list",
+      "networkExtensionSuffix": false,
+      "getTaskAllow": true,
+      "c1Authorized": {
+        "macOS": true,
+        "iOS": false
+      }
+    },
+    "developer-id": {
+      "id": "developer-id",
+      "platforms": [
+        "macOS"
+      ],
+      "signingIdentityClass": {
+        "macOS": "Developer ID Application: Relux Works, LLC (262RZ595FP)"
+      },
+      "profileClass": {
+        "macOS": "Developer ID Application"
+      },
+      "profileDeviceModel": "ProvisionsAllDevices = true, no ProvisionedDevices key",
+      "networkExtensionSuffix": true,
+      "getTaskAllow": false,
+      "c1Authorized": {
+        "macOS": false
+      },
+      "owner": "TASK-260715-3gkwn0"
+    },
+    "app-store": {
+      "id": "app-store",
+      "platforms": [
+        "iOS"
+      ],
+      "signingIdentityClass": {
+        "iOS": "Apple Distribution (Relux Works team)"
+      },
+      "profileClass": {
+        "iOS": "App Store Distribution"
+      },
+      "profileDeviceModel": "no ProvisionedDevices key",
+      "networkExtensionSuffix": false,
+      "getTaskAllow": false,
+      "c1Authorized": {
+        "iOS": false
+      },
+      "owner": "TASK-260715-3661ps"
+    }
+  },
+  "networkExtensionRule": {
+    "id": "NE1",
+    "statement": "The com.apple.developer.networking.networkextension entitlement is carried by BOTH the containing app and the embedded provider. Its value depends on the SIGNING CHANNEL, not on the role and not on the packaging alone: direct Developer ID signing uses the values with the '-systemextension' suffix; every other channel — App Store distribution AND development signing — uses the values without that suffix.",
+    "source": "Apple DTS, https://developer.apple.com/forums/thread/800887 — 'When you build an app with an embedded NE extension, both the app and the extension must be signed with the com.apple.developer.networking.networkextension entitlement. This is a restricted entitlement, that is, it must be authorised by a provisioning profile.' and 'The value of this entitlement is an array, and the values in that array differ depend on your distribution channel: If you distribute your app directly with Developer ID signing, use the values with the -systemextension suffix. Otherwise - including when you distribute the app on the App Store and when signing for development - use the values without that suffix.'",
+    "profileWarning": "Apple DTS, same source: 'Make sure you authorise these values with your provisioning profile. If, for example, you use an App Store distribution profile with a Developer ID signed app, things won't work because the profile doesn't authorise the right values.' The profile class and the entitlement value must therefore agree, which is why every value in this contract is keyed by channel.",
+    "baseValue": "packet-tunnel-provider",
+    "suffix": "-systemextension",
+    "restrictedEntitlement": true,
+    "empiricalEvidence": "Observed 2026-07-28 on this Mac with `codesign -d --entitlements :-`. Three shipping Developer-ID-distributed packet-tunnel products carry the suffixed value on BOTH the containing app and the embedded system extension: Tailscale (io.tailscale.ipn.macsys and .network-extension), PureVPN (com.purevpn.app.mac with .wireguard-packet-tunnel and com.purevpn.mac.packet-tunnel), Surfshark (com.surfshark.vpnclient.macos.direct and .PacketTunnel-WireGuard). No development-signed counterpart was available locally, so the development-channel value rests on the DTS statement above and is re-verified by assertion A3 at first signed build."
+  },
+  "namespaces": {
+    "reserved": "works.relux.tunnel",
+    "reservedBy": "TASK-260715-ypo7yo",
+    "forbidden": [
+      "works.relux.proxy",
+      "works.relux.proxy.*"
+    ],
+    "forbiddenReason": "works.relux.proxy is the shipped legacy menu-bar SOCKS app identity. This contract neither claims, extends, renames, nor retires it."
+  },
+  "legacy": {
+    "bundleIdentifier": "works.relux.proxy",
+    "product": "ReluxProxy (SwiftPM menu-bar SOCKS app)",
+    "guard": "scripts/check-legacy-preservation.sh (require_plist_value CFBundleIdentifier works.relux.proxy)",
+    "collisionRisk": "The generated target NAMES are ReluxProxyMac / ReluxProxyIOS. A generator that derives a bundle identifier from the target name would produce works.relux.proxy.mac, which is inside the legacy identity namespace. Target name and bundle identifier are decoupled by this contract.",
+    "migration": "none-in-this-contract",
+    "migrationDecisionOwner": "TASK-260715-35nc5m",
+    "releaseIdentityContractOwner": "TASK-260715-1tzaed"
+  },
+  "appGroups": [
+    {
+      "key": "production",
+      "style": "iOS-style",
+      "portalRecordIdentifier": "group.works.relux.tunnel",
+      "entitlementLiteral": {
+        "iOS": "group.works.relux.tunnel",
+        "macOS": "group.works.relux.tunnel"
+      },
+      "resolvedLiteral": {
+        "iOS": "group.works.relux.tunnel",
+        "macOS": "group.works.relux.tunnel"
+      },
+      "c1Authorized": false,
+      "consumedByTargets": [
+        "ios.host",
+        "ios.provider"
+      ],
+      "allocationOwner": "TASK-260715-3661ps",
+      "allocationTiming": "Allocated on the Developer website when iOS re-arms under ADR-024, together with the four iOS App IDs that are this record's only consumers. Not created at Ceremony C1: no C1-authorized App ID needs the App Groups capability (rule G4), and creating a record no authorized identifier consumes is portal mutation without a function.",
+      "styleSurvivesDeferral": "The record stays iOS-style (G1) and its literal stays pinned here, so the iOS row re-arms unchanged and any macOS reopening under G4 finds the identifier already decided."
+    }
+  ],
+  "appGroupStyleRule": {
+    "id": "G1",
+    "chosenStyle": "iOS-style",
+    "statement": "Every App Group record this contract declares is allocated on the Developer website and claimed by the IDENTICAL literal on both platforms. The entitlement literal equals the portal record identifier exactly, on iOS and on macOS. No team prefix is added on macOS. How MANY records exist is not stated here: that count lives in appGroupDisjointnessRule.recordCount, which R11 checks against the record list, and in the two registered summary sentences R32 checks. r5 deleted the probe record and this sentence still said 'one record per family', which is the stale-summary class reviewer verdict 05 F1 named.",
+    "rationale": "Apple distinguishes two App Group ID styles. An iOS-style ID begins 'group.', is allocated on the Developer website, and is authorised by a provisioning profile. A macOS-style ID begins with the Team ID and CANNOT be explicitly allocated on the Developer website. Since 21 Feb 2025 iOS-style App Group IDs are fully supported on macOS for all product types, and Xcode 16.3 and later make the iOS style the macOS default. This project is new and builds with Xcode 26.5, so it takes the current, registrable style on both platforms. A team-prefixed macOS literal would not identify the portal record this contract says it consumes, which is the defect this revision closes.",
+    "source": "Apple DTS, https://developer.apple.com/forums/thread/721701 — 'Starting in Feb 2025, iOS-style app group IDs are fully supported on macOS for all product types.' / 'On 21 Feb 2025 we rolled out a change to the Developer website that completes the support for iOS-style app group IDs on the Mac. Specifically, it's now possible to create a Mac provisioning profile that authorises the use of an iOS-style app group ID.' / 'With Xcode 16.3, it's now the default for macOS as well.' / on macOS-style IDs: 'It can't be explicitly allocated on the Developer website.' / 'If you're writing new code that uses app groups, use an iOS-style app group ID.'",
+    "buildSetting": "Xcode's Register App Groups build setting governs this behaviour for existing projects; the generated targets are new, so the Xcode 16.3+ default applies. TASK-260715-uyju7n must not override it back to the macOS style.",
+    "contingency": "OC-4"
+  },
+  "appGroupPurposeRule": {
+    "id": "G2",
+    "statement": "The App Group literal is identical across platforms (G1), but the entitlement is not granted on both. What the group is FOR exists on iOS and does not exist on macOS.",
+    "iOS": "A genuinely shared filesystem container and UserDefaults suite. The host publishes the non-secret profile snapshot; the appex reads it. Host and appex run as the same user in the same context. Granted to the two PRODUCTION iOS targets, ios.host and ios.provider. Consumer: TASK-260715-3f4lxy.",
+    "macOS": "No function, therefore no grant. The provider runs as root, so its group container resolves under /private/var/root while the host's resolves under the logged-in user's home; the two never meet. The macOS host-to-provider channel selected by TASK-260728-7ii1xz is providerConfiguration for non-secret state plus a sendProviderMessage seed into a provider-owned system-domain keychain item, and the XPC candidate that would have needed a group-prefixed Mach name was rejected. com.apple.security.application-groups is prohibited on all four macOS targets under rule G4.",
+    "prohibition": "No macOS design may depend on group-container files as a host-to-provider channel. TASK-260715-3f4lxy (profile snapshot loader) must read the macOS snapshot from providerConfiguration.",
+    "evidence": "Observed 2026-07-28 on this Mac: Tailscale's and Surfshark's packet-tunnel system extensions both ship com.apple.security.temporary-exception.files.absolute-path.read-write entries for /private/var/root/Library/Group Containers/, which is direct evidence that a root provider's group container is not the user's. The full grant survey behind the macOS verdict is in appGroupLeastPrivilegeRule.",
+    "iOSProbe": "Not granted. r5, on reviewer verdict 04 F3: TASK-260715-1jckn0 scopes the disposable probe to the NETunnelProviderManager lifecycle and versioned app messaging and names no shared container, so under G4 the probe has no App Group function of its own. Withholding it left the probe App Group record with no consumer, so the record is deleted too (rule G3) - a portal record no target reads is surface without a function."
+  },
+  "appGroupDisjointnessRule": {
+    "id": "G3",
+    "statement": "No probe target carries an App Group at all, on either platform. This is strictly stronger than the r4 property that the production and probe records were disjoint: with no probe grant there is no probe state that could reach production state, so the probe stays genuinely disposable by construction rather than by careful naming.",
+    "recordCount": 1,
+    "history": "r1-r4 declared a second record, group.works.relux.tunnel.probe, disjoint from production's and consumed by ios.probe.host and ios.probe.provider. r5 withheld the entitlement from both under rule G4 (reviewer verdict 04 F3), which left that record with no consumer, so it is deleted rather than carried as deferred portal surface.",
+    "ifReintroduced": "If a probe target ever regains an App Group under G4's reopening condition, its record MUST be a distinct iOS-style 'group.' literal disjoint from every production record, and this rule reverts to a disjointness test over two records."
+  },
+  "keychainAccessGroups": [
+    {
+      "key": "production",
+      "name": "works.relux.tunnel.shared",
+      "entitlementLiteral": "$(AppIdentifierPrefix)works.relux.tunnel.shared",
+      "resolvedLiteral": "262RZ595FP.works.relux.tunnel.shared",
+      "portalCapability": false,
+      "portalNote": "Keychain sharing is not a separate portal App ID record. The group must fall inside the generated profile's keychain-access-groups allowlist. Verified 2026-07-28 on this Mac: a Mac Development profile's Entitlements dict carries keychain-access-groups = ['<TEAMID>.*'], a team-wide wildcard, so 262RZ595FP.works.relux.tunnel.shared is authorised without a dedicated portal record. r5: this remains true and remains iOS-scoped in effect - no macOS target claims the group, so no macOS profile has to authorize it.",
+      "platforms": [
+        "iOS"
+      ],
+      "consumedByTargets": [
+        "ios.host",
+        "ios.provider"
+      ],
+      "scopeNote": "iOS only since r5. r1-r4 also placed this group on macos.host; rule K2 withdrew it because no second macOS target reads it. The record itself survives because the two iOS targets that consume it are a genuine sharing pair - the host writes the credential and the appex reads it in the same user context. There is still no portal record to create: keychain sharing is authorized by the profile's team-wide keychain-access-groups wildcard, as portalNote records."
+    }
+  ],
+  "entitlementClassification": {
+    "purpose": "A signed bundle carries more entitlement keys than this matrix authors. A containment assertion must separate keys this project declares from keys the signing toolchain injects, or it will reject a legitimate build.",
+    "authoredStatuses": [
+      "required",
+      "required-adjacent"
+    ],
+    "nonAuthoredStatuses": [
+      "prohibited",
+      "prohibited-pending-decision",
+      "not-applicable"
+    ],
+    "signingGenerated": {
+      "macOS": {
+        "always": [
+          "com.apple.application-identifier",
+          "com.apple.developer.team-identifier"
+        ],
+        "developmentChannelOnly": [
+          "com.apple.security.get-task-allow"
+        ]
+      },
+      "iOS": {
+        "always": [
+          "application-identifier",
+          "com.apple.developer.team-identifier"
+        ],
+        "developmentChannelOnly": [
+          "get-task-allow"
+        ]
+      }
+    },
+    "evidence": {
+      "macOS": "Observed 2026-07-28 on this Mac. Every signed macOS bundle inspected carries com.apple.application-identifier and com.apple.developer.team-identifier, injected at signing from the provisioning profile: the Tailscale, PureVPN and Surfshark hosts and their packet-tunnel system extensions, plus /System/Applications/Notes.app. A local Mac Development profile's Entitlements dict contains com.apple.application-identifier = '<TEAMID>.<bundleid>' and com.apple.developer.team-identifier. Xcode injects com.apple.security.get-task-allow into debug builds and strips it on distribution export, so it is expected on the development channel only.",
+      "iOS": "Not observed locally — iOS is deferred by ADR-024 and no iOS bundle was built here. The iOS spellings 'application-identifier' and 'get-task-allow' carry no com.apple. prefix, unlike their macOS counterparts.",
+      "iOSConfidence": "medium",
+      "iOSVerificationOwner": "TASK-260715-3dno4w"
+    },
+    "policy": "A consumer computes the per-target, per-channel allowlist as: authored keys (status in authoredStatuses) UNION signingGenerated[platform].always UNION, only when the channel is development, signingGenerated[platform].developmentChannelOnly. Keys with a non-authored status are never in the allowlist.",
+    "unknownKeyPolicy": "fail-closed — an unexpected key is a finding for TASK-260715-3jloqy or TASK-260715-uyju7n to resolve against this contract, never a silent local exception."
+  },
+  "exceptionEntitlementRule": {
+    "id": "X1",
+    "statement": "An App Sandbox temporary exception or a Hardened Runtime relaxation may appear in a signed bundle ONLY if it is an authored row in this matrix AND is listed in reviewedExceptions below. Being listed here IS the review the spec demands; nothing else is a reviewed exception.",
+    "source": ".spec/platform-distribution.md — 'Hardened Runtime remains enabled on all executable code. Distribution has no get-task-allow, disabled library validation, unsigned/JIT executable-memory, or unreviewed exception entitlement.'",
+    "reviewedExceptions": [
+      {
+        "key": "com.apple.security.temporary-exception.mach-lookup.global-name",
+        "target": "macos.host",
+        "values": [
+          "$(PRODUCT_BUNDLE_IDENTIFIER)-spks",
+          "$(PRODUCT_BUNDLE_IDENTIFIER)-spki"
+        ],
+        "reason": "Sparkle installer-launcher endpoints for the sandboxed host (ADR-018).",
+        "reviewedIn": "2026-07-28.r3",
+        "scope": "macos.host only; it is not granted to any provider, any iOS target, or any probe target, because no other target links Sparkle."
+      }
+    ],
+    "prohibitedKeys": [
+      "com.apple.security.cs.disable-library-validation",
+      "com.apple.security.cs.allow-unsigned-executable-memory",
+      "com.apple.security.cs.allow-jit",
+      "com.apple.security.cs.disable-executable-page-protection",
+      "com.apple.security.cs.allow-dyld-environment-variables",
+      "com.apple.security.cs.debugger"
+    ],
+    "prohibitedKeyPolicy": "None of these may be authored by any target or appear in any signed bundle on any channel. A future need is an amendment to this contract under rule 11, never a local build setting.",
+    "getTaskAllowNote": "com.apple.security.get-task-allow / get-task-allow are deliberately NOT in prohibitedKeys: they are injected by the toolchain on the development channel and stripped on distribution export. They are governed by entitlementClassification.signingGenerated and assertion A10d instead.",
+    "sparkleNestedCodeNote": "Sparkle's own nested code — Sparkle.framework, Installer.xpc, Downloader.xpc, Autoupdate, Updater.app — carries entitlements authored by Sparkle, not by this matrix. Rule X1 and assertions A10a-A10e apply to this project's four production targets and its probe targets, never to third-party nested code. Re-signing that nested code on Developer ID export is owned by TASK-260715-3gkwn0 and TASK-260717-xempiv."
+  },
+  "targets": [
+    {
+      "key": "macos.host",
+      "platform": "macOS",
+      "role": "host",
+      "family": "production",
+      "generatedTargetName": "ReluxProxyMac",
+      "bundleIdentifier": "works.relux.tunnel.mac",
+      "packaging": "application",
+      "embeds": "macos.provider",
+      "embeddedIn": null,
+      "embedPath": "Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension",
+      "runtimeUser": "logged-in user",
+      "provisioned": true,
+      "channels": [
+        "development",
+        "developer-id"
+      ],
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ],
+            "developer-id": [
+              "packet-tunnel-provider-systemextension"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "The host manages NETunnelProviderManager configurations, and Apple requires the containing app to carry the entitlement alongside the provider. The value follows rule NE1: unsuffixed on the Mac Development channel, suffixed on the Developer ID channel."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "required",
+          "value": true,
+          "portalCapability": false,
+          "rationale": "Only the containing app calls OSSystemExtensionManager to activate and replace the embedded provider. Host-to-extension embedding on macOS is impossible without it. Observed on all three shipping Developer ID hosts inspected on this Mac."
+        },
+        "com.apple.security.application-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Withheld under least privilege (rule G4): no grant this entitlement confers on macOS is used by the selected design. The six grants were read out of the system App Sandbox profile rather than assumed - three are home-relative and break across the root/user boundary, three are system-wide and belong to mechanisms this project does not use (Mac App Store group content, a group-prefixed XPC Mach service, group-prefixed POSIX IPC). The host-to-provider channel selected by TASK-260728-7ii1xz is providerConfiguration plus a sendProviderMessage seed into a provider-owned system-domain keychain item, and its XPC candidate - the only one that would have needed a group-prefixed Mach name - was rejected. A private group container is redundant with the container every sandboxed target already gets unconditionally (application.sb:107-108).",
+          "evidence": "/System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71): the entitlement appears at lines 302-330 and 459-465 and nowhere else. Full per-grant survey in appGroupLeastPrivilegeRule.survey.",
+          "reopensOnly": "This row reopens if, and only if, one of three things becomes true, each of which is a grant in the survey above rather than a general appeal to App Groups: (a) the macOS host-to-provider channel becomes a group-prefixed Mach service, i.e. the XPC candidate is revived; (b) it becomes a group-prefixed POSIX IPC object; or (c) the provider is moved out of root into a user context, which would make the group container genuinely shared. It does NOT reopen because a spec sentence mentions App Groups, because a shipping third-party product carries the key, or to spare a portal sitting. Reopening is an amendment under section 11, naming which of (a), (b) or (c) became true.",
+          "decidedBy": "TASK-260715-ypo7yo r4, on TASK-260728-7ii1xz"
+        },
+        "keychain-access-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Withheld under least privilege (rule K2). keychain-access-groups is a SHARING construct, and on macOS this contract has no second member to share with. The host's own Data Protection Keychain vault (TASK-260715-379cpk) does not need it: the com.apple.application-identifier entitlement that the signing toolchain injects into every provisioned macOS target is itself an access group, items stored in it are private to the app, and it becomes the default access group when no keychain-access-groups entitlement is present. The macOS provider cannot be the second member - it runs as root against the file-based system-domain keychain, which has no access groups at all (rule K1) - and neither probe target touches the Data Protection Keychain. The r4 rationale rested on a host-owned pre-seed staging item held across system-extension approval; that item is written and read by the host alone, so the default group serves it. Persistence across an interrupted approval flow is a property of the keychain, not of a shared access group.",
+          "evidence": "Apple, Sharing access to keychain items among a collection of apps (https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps): 'Xcode automatically adds the application-identifier entitlement (or the com.apple.application-identifier entitlement in macOS) to every app during code signing, formed as the team identifier (team ID) plus the bundle identifier (bundle ID).' / 'The system recognizes this app ID as the name of your app's default keychain access group by including it in your access group array ... Any keychain items stored with this access group are private to App One.' / 'If you don't specify any keychain access groups, then the app ID is the default.' Apple TN3137, On Mac keychain APIs and implementations (https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains): 'macOS builds the list of data protection keychain access groups available to your program from its code signing entitlements. These entitlements must be authorized by a provisioning profile.' macos.host is provisioned on both channels (rule R14), so its injected com.apple.application-identifier is profile-authorized and the default group is available on both. Both documents fetched 2026-07-28 from developer.apple.com.",
+          "defaultAccessGroup": "262RZ595FP.works.relux.tunnel.mac",
+          "reopensOnly": "This row reopens if, and only if, a SECOND macOS target in this contract must read or write the same Data Protection Keychain item as the host. Today that would mean the provider moving out of root into a user context, because rule K1 excludes a root/system-domain provider from membership on technical grounds rather than policy ones. It does NOT reopen because the host wants a stable item name, because the iOS rows carry the group, because a shipping third-party macOS product declares the key (rule K1's shippingProductsAreNotEvidence clause applies here too), or to keep one cross-platform code path. Reopening is an amendment under section 11 that names the second member.",
+          "decidedBy": "TASK-260715-ypo7yo r5, on reviewer verdict 04 F1"
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "required-adjacent",
+          "value": true,
+          "portalCapability": false,
+          "owner": "TASK-260715-uyju7n",
+          "requirementSource": "project-architecture",
+          "requirementBasis": ".spec/platform-distribution.md — 'Link and embed Sparkle only in the sandboxed, hardened-runtime ReluxProxyMac host'; the sandboxed host enables SUEnableInstallerLauncherService and the documented <host-bundle-id>-spks / -spki Mach lookup exceptions. ADR-018 assumes this shape.",
+          "rationale": "Apple does NOT require the containing app of a Network Extension provider to be sandboxed for direct Developer ID distribution. Verified 2026-07-28 on this Mac: all three shipping Developer ID packet-tunnel hosts inspected carry com.apple.security.app-sandbox = false (Tailscale, PureVPN, Surfshark). Sandboxing this host is therefore an accepted project architecture decision driven by the Sparkle design, not an Apple rule.",
+          "verifyAtFirstBuild": "OC-2"
+        },
+        "com.apple.security.network.client": {
+          "status": "required-adjacent",
+          "value": true,
+          "portalCapability": false,
+          "owner": "TASK-260715-uyju7n",
+          "requirementSource": "sandbox-consequence",
+          "requirementBasis": "Follows from the project-architecture host sandbox above; a sandboxed process has no outbound network access without it.",
+          "rationale": "Sparkle appcast fetch over HTTPS (ADR-018)."
+        },
+        "com.apple.security.temporary-exception.mach-lookup.global-name": {
+          "status": "required-adjacent",
+          "value": [
+            "$(PRODUCT_BUNDLE_IDENTIFIER)-spks",
+            "$(PRODUCT_BUNDLE_IDENTIFIER)-spki"
+          ],
+          "resolvedValue": [
+            "works.relux.tunnel.mac-spks",
+            "works.relux.tunnel.mac-spki"
+          ],
+          "portalCapability": false,
+          "owner": "TASK-260715-uyju7n",
+          "requirementSource": "project-architecture",
+          "requirementBasis": ".spec/platform-distribution.md — 'The sandboxed host enables SUEnableInstallerLauncherService and Sparkle's documented <host-bundle-id>-spks / <host-bundle-id>-spki Mach lookup exceptions. Because the host has outbound network-client access, Downloader, Installer Connection, and Installer Status XPC services stay disabled.' Same two-value set in .research/260721_macos-self-update.md and ADR-018. Sparkle's own sandboxing guidance requires exactly com.apple.security.temporary-exception.mach-lookup.global-name with $(PRODUCT_BUNDLE_IDENTIFIER)-spks and -spki: https://sparkle-project.org/documentation/sandboxing/ . Apple documents the key as the App Sandbox temporary exception that permits lookup of named global Mach services: https://developer.apple.com/library/archive/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AppSandboxTemporaryExceptionEntitlements.html .",
+          "rationale": "A sandboxed host cannot reach Sparkle's bundled Installer.xpc (CFBundleIdentifier org.sparkle-project.InstallerLauncher) without a global-name Mach lookup exception. Sparkle derives its per-app endpoint names by suffixing the host bundle identifier, so the value is authored with the $(PRODUCT_BUNDLE_IDENTIFIER) build variable and resolves to the macos.host identifier at signing.",
+          "attributionNote": "Attributed to project-architecture, NOT sandbox-consequence. Two independent project decisions must both hold before this key is needed: ADR-018's choice of Sparkle with SUEnableInstallerLauncherService, and the project-architecture decision to sandbox the host. It is therefore NOT derivable from 'the target is sandboxed' the way com.apple.security.network.client is — an unsandboxed Sparkle host needs no exception, and a sandboxed host without Sparkle needs no exception. Rule X1 governs it as a reviewed exception.",
+          "empiricalEvidence": "Observed 2026-07-28 on this Mac with `codesign -d --entitlements :-`. Six shipping applications carry this key with exactly the <bundle-id>-spks / <bundle-id>-spki pattern: Mimestream (com.mimestream.Mimestream, sandboxed, exactly these two values and nothing else), WhatsApp (net.whatsapp.WhatsApp, sandboxed, exactly these two), Slipbox (ai.slipbox.macos.app, sandboxed, exactly these two), BoltAI and AdGuard Mini (sandboxed, these two plus unrelated product endpoints), and Tailscale (io.tailscale.ipn.macsys). Tailscale is the same Developer ID packet-tunnel host cited in the App Sandbox row: it carries the Sparkle exception while com.apple.security.app-sandbox is false, which is consistent — the exception is inert without the sandbox, and this project's host IS sandboxed. Sparkle 2's framework binary in Mimestream.app contains three endpoint suffixes, -spks, -spki and -spkp; only the first two are entitled here, matching the spec's decision to leave the Downloader, Installer Connection, and Installer Status services disabled. The two-value set is therefore deliberate, not a truncation.",
+          "notAnEntitlement": "SUEnableInstallerLauncherService is an Info.plist key, not an entitlement, so it is out of this contract's scope. TASK-260715-uyju7n owns setting it on the generated macos.host target, and TASK-260717-xempiv owns the Sparkle integration that consumes it."
+        }
+      }
+    },
+    {
+      "key": "macos.provider",
+      "platform": "macOS",
+      "role": "provider",
+      "family": "production",
+      "generatedTargetName": "ReluxProxyMacTunnel",
+      "bundleIdentifier": "works.relux.tunnel.mac.tunnel",
+      "packaging": "systemextension",
+      "embeds": null,
+      "embeddedIn": "macos.host",
+      "runtimeUser": "root",
+      "provisioned": true,
+      "channels": [
+        "development",
+        "developer-id"
+      ],
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ],
+            "developer-id": [
+              "packet-tunnel-provider-systemextension"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "NEPacketTunnelProvider delivered as a system extension, which is what a directly distributed macOS packet-tunnel provider requires. The value follows rule NE1 and is identical to the host's on the same channel."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "The provider never installs an extension. Granting it would be privilege with no function. Confirmed against all three shipping Developer ID providers inspected on this Mac: none carries it."
+        },
+        "com.apple.security.application-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Withheld under least privilege (rule G4): no grant this entitlement confers on macOS is used by the selected design. The six grants were read out of the system App Sandbox profile rather than assumed - three are home-relative and break across the root/user boundary, three are system-wide and belong to mechanisms this project does not use (Mac App Store group content, a group-prefixed XPC Mach service, group-prefixed POSIX IPC). The host-to-provider channel selected by TASK-260728-7ii1xz is providerConfiguration plus a sendProviderMessage seed into a provider-owned system-domain keychain item, and its XPC candidate - the only one that would have needed a group-prefixed Mach name - was rejected. A private group container is redundant with the container every sandboxed target already gets unconditionally (application.sb:107-108).",
+          "evidence": "/System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71): the entitlement appears at lines 302-330 and 459-465 and nowhere else. Full per-grant survey in appGroupLeastPrivilegeRule.survey.",
+          "reopensOnly": "This row reopens if, and only if, one of three things becomes true, each of which is a grant in the survey above rather than a general appeal to App Groups: (a) the macOS host-to-provider channel becomes a group-prefixed Mach service, i.e. the XPC candidate is revived; (b) it becomes a group-prefixed POSIX IPC object; or (c) the provider is moved out of root into a user context, which would make the group container genuinely shared. It does NOT reopen because a spec sentence mentions App Groups, because a shipping third-party product carries the key, or to spare a portal sitting. Reopening is an amendment under section 11, naming which of (a), (b) or (c) became true.",
+          "decidedBy": "TASK-260715-ypo7yo r4, on TASK-260728-7ii1xz"
+        },
+        "keychain-access-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Settled by TASK-260728-7ii1xz. The selected transport is the file-based system-domain keychain, whose access-control model is per-item SecAccess ACLs, not access groups (Apple TN3137: 'The file-based keychain uses access control lists (SecAccess). The data protection keychain uses keychain access groups.'). The entitlement is therefore INAPPLICABLE to the mechanism actually used, not merely unnecessary. The provider needs no keychain entitlement at all: application.sb:792-793 already grants /Library/Keychains read+write to any process holding com.apple.developer.networking.networkextension, and application.sb:655-656 grant the securityd/SecurityServer Mach lookups to every sandboxed process. No new entitlement, no new App ID, no new portal capability, no change to Ceremony C1.",
+          "evidence": "Observed 2026-07-28 on this Mac via codesign -d --entitlements :- on the installed system extensions: PureVPN's providers carry keychain-access-groups, Surfshark's carries a temporary-exception path for /Library/Keychains/. Both observations stand and neither is a requirement argument - see rule K1. Re-verified independently for r4 at /System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71): application.sb:792-793 (NE-entitled processes get /Library/Keychains read+write) and application.sb:655-656 (com.apple.securityd.xpc and com.apple.SecurityServer Mach lookups allowed unconditionally). Checks E8-E10 in TASK-260728-7ii1xz_macos-credential-transport-decision.md.",
+          "decidedBy": "TASK-260715-ypo7yo r4, on TASK-260728-7ii1xz",
+          "reopensOnly": "Only if the macOS provider is ever moved out of root into a user context, where the Data Protection Keychain exists and access groups mean something. Touching a keychain is not a reopening condition - see rule K1."
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "required-adjacent",
+          "value": true,
+          "portalCapability": false,
+          "owner": "TASK-260715-uyju7n",
+          "requirementSource": "apple-requirement",
+          "requirementBasis": "Apple requires the Network Extension provider system extension to be sandboxed.",
+          "rationale": "Unlike the host, the provider's sandbox is not a project choice. Verified 2026-07-28 on this Mac: all three shipping Developer ID packet-tunnel system extensions inspected carry com.apple.security.app-sandbox = true (Tailscale, PureVPN, Surfshark), while their containing apps carry false.",
+          "portalCapabilityNote": "App Sandbox is a build-time entitlement, not a portal App ID capability; it is excluded from the Ceremony C1 scope."
+        },
+        "com.apple.security.network.client": {
+          "status": "required-adjacent",
+          "value": true,
+          "portalCapability": false,
+          "owner": "TASK-260715-uyju7n",
+          "requirementSource": "sandbox-consequence",
+          "requirementBasis": "Follows from the Apple-required provider sandbox above.",
+          "rationale": "Outbound SSH to the user-controlled exit host."
+        },
+        "com.apple.security.network.server": {
+          "status": "required-adjacent",
+          "value": true,
+          "portalCapability": false,
+          "owner": "TASK-260715-uyju7n",
+          "requirementSource": "sandbox-consequence",
+          "requirementBasis": "Follows from the Apple-required provider sandbox above.",
+          "rationale": "The internal HEV SOCKS boundary binds a loopback listener inside the provider; a sandboxed process cannot bind without it. It is not a user-reachable proxy."
+        }
+      }
+    },
+    {
+      "key": "ios.host",
+      "platform": "iOS",
+      "role": "host",
+      "family": "production",
+      "generatedTargetName": "ReluxProxyIOS",
+      "bundleIdentifier": "works.relux.tunnel.ios",
+      "packaging": "application",
+      "embeds": "ios.provider",
+      "embeddedIn": null,
+      "embedPath": "PlugIns/works.relux.tunnel.ios.tunnel.appex",
+      "runtimeUser": "mobile",
+      "provisioned": false,
+      "channels": [
+        "development",
+        "app-store"
+      ],
+      "deferral": "ADR-024 — iOS is deferred; identifiers are DEFINED so the branch resumes without renaming. Not authorized for portal creation at Ceremony C1.",
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ],
+            "app-store": [
+              "packet-tunnel-provider"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "The host manages NETunnelProviderManager configurations on iOS. Neither iOS channel is direct Developer ID signing, so rule NE1 gives the unsuffixed value on both."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "rationale": "System extensions do not exist on iOS."
+        },
+        "com.apple.security.application-groups": {
+          "status": "required",
+          "value": [
+            "group.works.relux.tunnel"
+          ],
+          "portalCapability": true,
+          "portalCapabilityName": "App Groups",
+          "rationale": "Granted: on iOS the host and the appex run as the same user in the same context, so the registered iOS-style record (rule G1) is a genuinely shared filesystem container and UserDefaults suite. That is the concrete, current function rule G4 requires - the host publishes the non-secret profile snapshot and the appex reads it (.spec/architecture.md:111; consumer TASK-260715-3f4lxy). Provisioning is deferred with the rest of iOS under ADR-024; the contract is not.",
+          "functionOnThisPlatform": "shared group container and UserDefaults suite"
+        },
+        "keychain-access-groups": {
+          "status": "required",
+          "value": [
+            "$(AppIdentifierPrefix)works.relux.tunnel.shared"
+          ],
+          "portalCapability": false,
+          "rationale": "Data Protection Keychain vault owner.",
+          "defaultAccessGroup": "262RZ595FP.works.relux.tunnel.shared"
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "requirementSource": "platform-inherent",
+          "requirementBasis": "iOS apps are always sandboxed; the entitlement does not exist as an opt-in.",
+          "rationale": "Not an authored key on iOS."
+        }
+      }
+    },
+    {
+      "key": "ios.provider",
+      "platform": "iOS",
+      "role": "provider",
+      "family": "production",
+      "generatedTargetName": "ReluxProxyIOSTunnel",
+      "bundleIdentifier": "works.relux.tunnel.ios.tunnel",
+      "packaging": "appex",
+      "embeds": null,
+      "embeddedIn": "ios.host",
+      "runtimeUser": "mobile",
+      "provisioned": false,
+      "channels": [
+        "development",
+        "app-store"
+      ],
+      "deferral": "ADR-024 — defined, not provisioned.",
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ],
+            "app-store": [
+              "packet-tunnel-provider"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "NEPacketTunnelProvider delivered as an app extension; rule NE1 gives the unsuffixed value on both iOS channels."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "rationale": "System extensions do not exist on iOS."
+        },
+        "com.apple.security.application-groups": {
+          "status": "required",
+          "value": [
+            "group.works.relux.tunnel"
+          ],
+          "portalCapability": true,
+          "portalCapabilityName": "App Groups",
+          "rationale": "Granted: on iOS the host and the appex run as the same user in the same context, so the registered iOS-style record (rule G1) is a genuinely shared filesystem container and UserDefaults suite. That is the concrete, current function rule G4 requires - the host publishes the non-secret profile snapshot and the appex reads it (.spec/architecture.md:111; consumer TASK-260715-3f4lxy). Provisioning is deferred with the rest of iOS under ADR-024; the contract is not.",
+          "functionOnThisPlatform": "shared group container and UserDefaults suite"
+        },
+        "keychain-access-groups": {
+          "status": "required",
+          "value": [
+            "$(AppIdentifierPrefix)works.relux.tunnel.shared"
+          ],
+          "portalCapability": false,
+          "rationale": "Resolves opaque credential references inside the extension (TASK-260715-1o9wjz). Functional on iOS because the appex runs as the same user as its host.",
+          "defaultAccessGroup": "262RZ595FP.works.relux.tunnel.shared"
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "requirementSource": "platform-inherent",
+          "requirementBasis": "iOS app extensions are always sandboxed.",
+          "rationale": "Not an authored key on iOS."
+        }
+      }
+    },
+    {
+      "key": "macos.probe.host",
+      "platform": "macOS",
+      "role": "host",
+      "family": "probe",
+      "generatedTargetName": "ReluxTunnelProbeMac",
+      "bundleIdentifier": "works.relux.tunnel.probe.mac",
+      "packaging": "application",
+      "embeds": "macos.probe.provider",
+      "embeddedIn": null,
+      "embedPath": "Contents/Library/SystemExtensions/works.relux.tunnel.probe.mac.tunnel.systemextension",
+      "runtimeUser": "logged-in user",
+      "provisioned": true,
+      "disposable": true,
+      "channels": [
+        "development"
+      ],
+      "consumer": "TASK-260715-1r0fxv / TASK-260715-9yp8to",
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "Same macOS system-extension packaging as production, development-signed only, so rule NE1 gives the unsuffixed value. The probe therefore proves the DEVELOPMENT entitlement shape; it cannot prove the Developer ID shape, which TASK-260715-3gkwn0 owns."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "required",
+          "value": true,
+          "portalCapability": false,
+          "rationale": "Activates the probe provider."
+        },
+        "com.apple.security.application-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Withheld under least privilege (rule G4): no grant this entitlement confers on macOS is used by the selected design. The six grants were read out of the system App Sandbox profile rather than assumed - three are home-relative and break across the root/user boundary, three are system-wide and belong to mechanisms this project does not use (Mac App Store group content, a group-prefixed XPC Mach service, group-prefixed POSIX IPC). The host-to-provider channel selected by TASK-260728-7ii1xz is providerConfiguration plus a sendProviderMessage seed into a provider-owned system-domain keychain item, and its XPC candidate - the only one that would have needed a group-prefixed Mach name - was rejected. A private group container is redundant with the container every sandboxed target already gets unconditionally (application.sb:107-108).",
+          "evidence": "/System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71): the entitlement appears at lines 302-330 and 459-465 and nowhere else. Full per-grant survey in appGroupLeastPrivilegeRule.survey.",
+          "reopensOnly": "This row reopens if, and only if, one of three things becomes true, each of which is a grant in the survey above rather than a general appeal to App Groups: (a) the macOS host-to-provider channel becomes a group-prefixed Mach service, i.e. the XPC candidate is revived; (b) it becomes a group-prefixed POSIX IPC object; or (c) the provider is moved out of root into a user context, which would make the group container genuinely shared. It does NOT reopen because a spec sentence mentions App Groups, because a shipping third-party product carries the key, or to spare a portal sitting. Reopening is an amendment under section 11, naming which of (a), (b) or (c) became true.",
+          "decidedBy": "TASK-260715-ypo7yo r4, on TASK-260728-7ii1xz"
+        },
+        "keychain-access-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "The probe handles no credentials (TASK-260715-1r0fxv scope excludes SSH).",
+          "reopensOnly": "This row reopens if, and only if, TASK-260715-1r0fxv gains a deliverable that stores a credential the probe must read back, AND a second macOS probe target must read the same item. Neither holds: the macOS probe exercises the NETunnelProviderManager lifecycle and a versioned app message, it stores no credential, and rule K1 excludes its root-context provider from Data Protection Keychain membership in any case. It does NOT reopen so that the probe can rehearse the production keychain shape - production carries no macOS keychain group either after rule K2, so there is no shape to rehearse.",
+          "decidedBy": "TASK-260715-ypo7yo r5, on reviewer verdict 04 F1 (rule K2, applied to every withheld row rather than only the one the finding named)"
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "required-adjacent",
+          "value": true,
+          "portalCapability": false,
+          "owner": "TASK-260715-1r0fxv",
+          "requirementSource": "project-architecture",
+          "requirementBasis": "Mirrors the production host's project-architecture sandbox decision so the probe's evidence transfers.",
+          "rationale": "Not an Apple requirement for a containing app; matched deliberately so Gate P0 evidence describes the shape that ships."
+        }
+      }
+    },
+    {
+      "key": "macos.probe.provider",
+      "platform": "macOS",
+      "role": "provider",
+      "family": "probe",
+      "generatedTargetName": "ReluxTunnelProbeMacTunnel",
+      "bundleIdentifier": "works.relux.tunnel.probe.mac.tunnel",
+      "packaging": "systemextension",
+      "embeds": null,
+      "embeddedIn": "macos.probe.host",
+      "runtimeUser": "root",
+      "provisioned": true,
+      "disposable": true,
+      "channels": [
+        "development"
+      ],
+      "consumer": "TASK-260715-1r0fxv / TASK-260715-9yp8to",
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "Probe provider, development-signed only; rule NE1 gives the unsuffixed value."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Providers never install extensions."
+        },
+        "com.apple.security.application-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Withheld under least privilege (rule G4): no grant this entitlement confers on macOS is used by the selected design. The six grants were read out of the system App Sandbox profile rather than assumed - three are home-relative and break across the root/user boundary, three are system-wide and belong to mechanisms this project does not use (Mac App Store group content, a group-prefixed XPC Mach service, group-prefixed POSIX IPC). The host-to-provider channel selected by TASK-260728-7ii1xz is providerConfiguration plus a sendProviderMessage seed into a provider-owned system-domain keychain item, and its XPC candidate - the only one that would have needed a group-prefixed Mach name - was rejected. A private group container is redundant with the container every sandboxed target already gets unconditionally (application.sb:107-108).",
+          "evidence": "/System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71): the entitlement appears at lines 302-330 and 459-465 and nowhere else. Full per-grant survey in appGroupLeastPrivilegeRule.survey.",
+          "reopensOnly": "This row reopens if, and only if, one of three things becomes true, each of which is a grant in the survey above rather than a general appeal to App Groups: (a) the macOS host-to-provider channel becomes a group-prefixed Mach service, i.e. the XPC candidate is revived; (b) it becomes a group-prefixed POSIX IPC object; or (c) the provider is moved out of root into a user context, which would make the group container genuinely shared. It does NOT reopen because a spec sentence mentions App Groups, because a shipping third-party product carries the key, or to spare a portal sitting. Reopening is an amendment under section 11, naming which of (a), (b) or (c) became true.",
+          "decidedBy": "TASK-260715-ypo7yo r4, on TASK-260728-7ii1xz"
+        },
+        "keychain-access-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "The probe handles no credentials.",
+          "reopensOnly": "This row reopens if, and only if, TASK-260715-1r0fxv gains a deliverable that stores a credential the probe must read back, AND a second macOS probe target must read the same item. Neither holds: the macOS probe exercises the NETunnelProviderManager lifecycle and a versioned app message, it stores no credential, and rule K1 excludes its root-context provider from Data Protection Keychain membership in any case. It does NOT reopen so that the probe can rehearse the production keychain shape - production carries no macOS keychain group either after rule K2, so there is no shape to rehearse.",
+          "decidedBy": "TASK-260715-ypo7yo r5, on reviewer verdict 04 F1 (rule K2, applied to every withheld row rather than only the one the finding named)"
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "required-adjacent",
+          "value": true,
+          "portalCapability": false,
+          "owner": "TASK-260715-1r0fxv",
+          "requirementSource": "apple-requirement",
+          "requirementBasis": "Apple requires the Network Extension provider system extension to be sandboxed; the probe provider is one.",
+          "rationale": "Same Apple requirement as the production provider."
+        }
+      }
+    },
+    {
+      "key": "ios.probe.host",
+      "platform": "iOS",
+      "role": "host",
+      "family": "probe",
+      "generatedTargetName": "ReluxTunnelProbeIOS",
+      "bundleIdentifier": "works.relux.tunnel.probe.ios",
+      "packaging": "application",
+      "embeds": "ios.probe.provider",
+      "embeddedIn": null,
+      "embedPath": "PlugIns/works.relux.tunnel.probe.ios.tunnel.appex",
+      "runtimeUser": "mobile",
+      "provisioned": false,
+      "disposable": true,
+      "channels": [
+        "development"
+      ],
+      "deferral": "ADR-024 — defined for TASK-260715-1jckn0, not provisioned.",
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "Probe host, development-signed only."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "rationale": "No system extensions on iOS."
+        },
+        "com.apple.security.application-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Withheld under rule G4: the probe's own contract names no shared-container function. TASK-260715-1jckn0 scopes the disposable iOS probe to NETunnelProviderManager save, load, enable, start, status, app-message and stop, one provider protocol and a versioned response, and a clean stop; its AC3 puts the entire host-to-provider exchange on app messaging, which needs no App Group. The r4 rationale said the probe 'exercises the same shared-container path production depends on', but the path the probe actually exercises is sendProviderMessage, and G4 tests a mechanism currently selected on THIS target, never one inherited from the target it resembles. Granting it would make a disposable probe carry an entitlement it never calls and would put an App Group record into circulation with no reader.",
+          "reopensOnly": "This row reopens if, and only if, TASK-260715-1jckn0 gains a concrete shared-container deliverable - a named snapshot or UserDefaults exchange that the probe writes on one side and reads on the other - carrying its own acceptance criterion and its own archive or runtime evidence. It does NOT reopen because the production iOS rows carry the group, nor to keep the probe target shaped like production, nor because iOS re-arms under ADR-024. Reopening is an amendment under section 11 that names the new probe acceptance criterion and re-creates the probe App Group record deleted in r5.",
+          "decidedBy": "TASK-260715-ypo7yo r5, on reviewer verdict 04 F3"
+        },
+        "keychain-access-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "The probe handles no credentials.",
+          "reopensOnly": "This row reopens if, and only if, TASK-260715-1jckn0 gains a deliverable in which the probe host writes a credential that the probe appex must read back, with its own acceptance criterion and evidence. Today the probe stores no credential: its scope is the NETunnelProviderManager lifecycle and a versioned app message, and its provider protocol carries no secret. It does NOT reopen merely because the production iOS pair shares a group - under rule G4's probeRule a probe inherits identifiers and profile classes, never entitlements.",
+          "decidedBy": "TASK-260715-ypo7yo r5, on reviewer verdict 04 F1 (rule K2, applied to every withheld row rather than only the one the finding named)"
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "requirementSource": "platform-inherent",
+          "requirementBasis": "iOS apps are always sandboxed.",
+          "rationale": "Not an authored key on iOS."
+        }
+      }
+    },
+    {
+      "key": "ios.probe.provider",
+      "platform": "iOS",
+      "role": "provider",
+      "family": "probe",
+      "generatedTargetName": "ReluxTunnelProbeIOSTunnel",
+      "bundleIdentifier": "works.relux.tunnel.probe.ios.tunnel",
+      "packaging": "appex",
+      "embeds": null,
+      "embeddedIn": "ios.probe.host",
+      "runtimeUser": "mobile",
+      "provisioned": false,
+      "disposable": true,
+      "channels": [
+        "development"
+      ],
+      "deferral": "ADR-024 — defined, not provisioned.",
+      "entitlements": {
+        "com.apple.developer.networking.networkextension": {
+          "status": "required",
+          "valueByChannel": {
+            "development": [
+              "packet-tunnel-provider"
+            ]
+          },
+          "portalCapability": true,
+          "portalCapabilityName": "Network Extensions",
+          "rationale": "Probe provider, development-signed only."
+        },
+        "com.apple.developer.system-extension.install": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "rationale": "No system extensions on iOS."
+        },
+        "com.apple.security.application-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "Withheld under rule G4: the probe's own contract names no shared-container function. TASK-260715-1jckn0 scopes the disposable iOS probe to NETunnelProviderManager save, load, enable, start, status, app-message and stop, one provider protocol and a versioned response, and a clean stop; its AC3 puts the entire host-to-provider exchange on app messaging, which needs no App Group. The r4 rationale said the probe 'exercises the same shared-container path production depends on', but the path the probe actually exercises is sendProviderMessage, and G4 tests a mechanism currently selected on THIS target, never one inherited from the target it resembles. Granting it would make a disposable probe carry an entitlement it never calls and would put an App Group record into circulation with no reader.",
+          "reopensOnly": "This row reopens if, and only if, TASK-260715-1jckn0 gains a concrete shared-container deliverable - a named snapshot or UserDefaults exchange that the probe writes on one side and reads on the other - carrying its own acceptance criterion and its own archive or runtime evidence. It does NOT reopen because the production iOS rows carry the group, nor to keep the probe target shaped like production, nor because iOS re-arms under ADR-024. Reopening is an amendment under section 11 that names the new probe acceptance criterion and re-creates the probe App Group record deleted in r5.",
+          "decidedBy": "TASK-260715-ypo7yo r5, on reviewer verdict 04 F3"
+        },
+        "keychain-access-groups": {
+          "status": "prohibited",
+          "portalCapability": false,
+          "rationale": "The probe handles no credentials.",
+          "reopensOnly": "This row reopens if, and only if, TASK-260715-1jckn0 gains a deliverable in which the probe host writes a credential that the probe appex must read back, with its own acceptance criterion and evidence. Today the probe stores no credential: its scope is the NETunnelProviderManager lifecycle and a versioned app message, and its provider protocol carries no secret. It does NOT reopen merely because the production iOS pair shares a group - under rule G4's probeRule a probe inherits identifiers and profile classes, never entitlements.",
+          "decidedBy": "TASK-260715-ypo7yo r5, on reviewer verdict 04 F1 (rule K2, applied to every withheld row rather than only the one the finding named)"
+        },
+        "com.apple.security.app-sandbox": {
+          "status": "not-applicable",
+          "portalCapability": false,
+          "requirementSource": "platform-inherent",
+          "requirementBasis": "iOS app extensions are always sandboxed.",
+          "rationale": "Not an authored key on iOS."
+        }
+      }
+    }
+  ],
+  "allowedNetworkExtensionValues": [
+    "packet-tunnel-provider",
+    "packet-tunnel-provider-systemextension"
+  ],
+  "forbiddenNetworkExtensionValues": [
+    "app-proxy-provider",
+    "app-proxy-provider-systemextension",
+    "content-filter-provider",
+    "content-filter-provider-systemextension",
+    "dns-proxy-provider",
+    "dns-proxy-provider-systemextension",
+    "dns-settings",
+    "relay"
+  ],
+  "profiles": [
+    {
+      "target": "macos.host",
+      "development": {
+        "channel": "development",
+        "class": "Mac Development",
+        "signingIdentity": "Apple Development: Ivan Oparin (FSPBF3QRXT)",
+        "devices": [
+          "this Apple-silicon Mac"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": true
+      },
+      "distribution": {
+        "channel": "developer-id",
+        "class": "Developer ID Application (macOS)",
+        "signingIdentity": "Developer ID Application: Relux Works, LLC (262RZ595FP)",
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider-systemextension"
+        ],
+        "c1Authorized": false,
+        "owner": "TASK-260715-3gkwn0"
+      }
+    },
+    {
+      "target": "macos.provider",
+      "development": {
+        "channel": "development",
+        "class": "Mac Development",
+        "signingIdentity": "Apple Development: Ivan Oparin (FSPBF3QRXT)",
+        "devices": [
+          "this Apple-silicon Mac"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": true
+      },
+      "distribution": {
+        "channel": "developer-id",
+        "class": "Developer ID Application (macOS)",
+        "signingIdentity": "Developer ID Application: Relux Works, LLC (262RZ595FP)",
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider-systemextension"
+        ],
+        "c1Authorized": false,
+        "owner": "TASK-260715-3gkwn0"
+      }
+    },
+    {
+      "target": "macos.probe.host",
+      "development": {
+        "channel": "development",
+        "class": "Mac Development",
+        "signingIdentity": "Apple Development: Ivan Oparin (FSPBF3QRXT)",
+        "devices": [
+          "this Apple-silicon Mac"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": true
+      },
+      "distribution": null
+    },
+    {
+      "target": "macos.probe.provider",
+      "development": {
+        "channel": "development",
+        "class": "Mac Development",
+        "signingIdentity": "Apple Development: Ivan Oparin (FSPBF3QRXT)",
+        "devices": [
+          "this Apple-silicon Mac"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": true
+      },
+      "distribution": null
+    },
+    {
+      "target": "ios.host",
+      "development": {
+        "channel": "development",
+        "class": "iOS App Development",
+        "signingIdentity": "Apple Development (Relux Works team)",
+        "devices": [
+          "deferred — ADR-024"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": false
+      },
+      "distribution": {
+        "channel": "app-store",
+        "class": "App Store Distribution (iOS)",
+        "signingIdentity": "Apple Distribution (Relux Works team)",
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": false,
+        "owner": "TASK-260715-3661ps"
+      }
+    },
+    {
+      "target": "ios.provider",
+      "development": {
+        "channel": "development",
+        "class": "iOS App Development",
+        "signingIdentity": "Apple Development (Relux Works team)",
+        "devices": [
+          "deferred — ADR-024"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": false
+      },
+      "distribution": {
+        "channel": "app-store",
+        "class": "App Store Distribution (iOS)",
+        "signingIdentity": "Apple Distribution (Relux Works team)",
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": false,
+        "owner": "TASK-260715-3661ps"
+      }
+    },
+    {
+      "target": "ios.probe.host",
+      "development": {
+        "channel": "development",
+        "class": "iOS App Development",
+        "signingIdentity": "Apple Development (Relux Works team)",
+        "devices": [
+          "deferred — ADR-024"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": false
+      },
+      "distribution": null
+    },
+    {
+      "target": "ios.probe.provider",
+      "development": {
+        "channel": "development",
+        "class": "iOS App Development",
+        "signingIdentity": "Apple Development (Relux Works team)",
+        "devices": [
+          "deferred — ADR-024"
+        ],
+        "authorizesNetworkExtensionValues": [
+          "packet-tunnel-provider"
+        ],
+        "c1Authorized": false
+      },
+      "distribution": null
+    }
+  ],
+  "environmentRules": {
+    "identifierPerConfiguration": false,
+    "forbiddenIdentifierSuffixes": [
+      ".debug",
+      ".dev",
+      ".staging",
+      ".beta",
+      ".internal",
+      ".release"
+    ],
+    "statement": "One bundle identifier per target across every build configuration. Debug and release are distinguished ONLY by signing channel — signing identity class, profile class, hardened-runtime state, get-task-allow, and the channel-keyed Network Extension entitlement value — never by identifier.",
+    "rationale": [
+      "macOS system-extension user approval is keyed to team identifier + extension bundle identifier; a per-configuration suffix multiplies physical approval friction on Hold H2 and H3.",
+      "TASK-260715-9yp8to must exercise the same identity that ships.",
+      "Fewer App IDs and Network Extension profiles to keep valid."
+    ],
+    "exception": "The disposable probe family is a distinct identity, development-signed only, never Developer ID signed, never notarized, never uploaded. It exists precisely so the production identity is not burned on throwaway approvals. A consequence of rule NE1 is that the probe can only ever prove the development-channel entitlement shape.",
+    "versionRule": "Host and its embedded provider MUST carry identical CFBundleShortVersionString and CFBundleVersion; the monotonic build sequence is owned by ADR-018 / TASK-260715-1tzaed."
+  },
+  "crossPlatformRules": [
+    "Bundle identifiers are NOT shared across platforms. There is no multiplatform/universal-purchase App ID; four production identifiers, one per target.",
+    "ONE App Group record exists in this contract, group.works.relux.tunnel, and its iOS-style literal is identical on both platforms (rule G1) - but the ENTITLEMENT is granted to the iOS host and the iOS provider only (rule G4). On macOS the root provider and the user-context host resolve different containers and the selected transport uses no App Group mechanism, so all four macOS targets are prohibited. The iOS probe host and the iOS probe provider are prohibited too, because TASK-260715-1jckn0 names no shared container of its own (rule G4 probeRule). The record stays defined here so the iOS production row re-arms unchanged under ADR-024.",
+    "One Keychain access group NAME, works.relux.tunnel.shared, granted to the iOS host and the iOS provider only, and to NO macOS target on either channel, in either family (rules K1 and K2). Never the macOS provider, which reads the system-domain keychain, where access groups do not apply (rule K1). Every macOS target uses the default access group its injected application identifier provides; see rule K2 for why that costs it nothing.",
+    "The Network Extension entitlement VALUE is a function of the signing channel, not the platform (rule NE1). Every target on both platforms requires the entitlement; only the value differs. macOS development signing and both iOS channels use the unsuffixed value; only direct Developer ID signing uses the suffixed value.",
+    "The Sparkle Mach lookup exception is NOT shared at all (rule X1). It is granted to the macOS host alone, because Sparkle is linked into that target alone; iOS updates through the App Store and no packet-tunnel target updates anything.",
+    "ReluxTunnelCore MUST NOT hardcode any identifier. Values are injected through PlatformVPNIdentity (Sources/ReluxTunnelCore/VPNManagerRepository.swift:8); PlatformVPNIdentity.production(for:) stays throwing until TASK-260715-1tzaed binds these values."
+  ],
+  "crossPlatformSharingContract": {
+    "id": "S1",
+    "statement": "A cross-platform summary sentence carries NO independent authority. Every grant it states is DERIVED from the target rows and from the record lists, and rule R32 recomputes the derivation and compares it against the sentence before the contract is allowed to pass. A summary may not name a target as a grantee unless the target row grants it, and may not name a target at all unless the mention is registered below as a declared non-grantee contrast.",
+    "history": "Reviewer verdict 05 F1. Through r5 the cross-platform summary was six free-text strings that nothing checked. r5 corrected eight target rows, two rules, two assertions and the C1 scope, and left crossPlatformRules[2] asserting the superseded r4 contract - that the shared Keychain access group is granted to the macOS host. The 846-check r5 validator passed, because no rule looked at the summary at all. The defect class is a prose summary that ASSERTS a grant set instead of RENDERING one; the fix is to make every such sentence a checked projection of the data rather than a second, unsynchronised statement of it.",
+    "mechanism": "Each entry in crossPlatformRules has exactly one structured rule here, addressed by renderedIndex. The structured rule names the entitlement key it summarises; R32 derives the granted target set from the target rows, compares it with grantedTargets, compares that in turn with the record's own consumedByTargets, and then checks the prose: the grantClause must appear VERBATIM in the rendered sentence, the display names inside the grantClause must be exactly the granted targets, and every other target named anywhere in the sentence must appear in nonGranteeMentions with its own clause present verbatim. A stale sentence therefore fails on the clause, on the mention, or on both.",
+    "displayNameDerivation": "A target's display name is derived from its own row - platform label ('iOS' or 'macOS'), then ' probe' for the probe family, then the role. macos.host is 'macOS host', ios.probe.provider is 'iOS probe provider'. R32 also treats the raw target key as a mention, so 'macos.host' and 'the macOS host' are both caught. No display name is a substring of another, so the scan cannot mis-attribute a mention.",
+    "authorityNote": "grantClause is normative and machine-checked. The remaining prose in a rendered sentence is explanatory and carries no grant: it may not introduce a target that is not either a grantee or a declared non-grantee mention, which is the only way explanatory prose could smuggle a grant back in.",
+    "recordCountClaimRule": "A sentence that states how many App Group records exist is a count claim. R32 scans every string in this contract for one, and every hit must sit at a path listed in recordCountClaimPaths with a number equal to the actual record count. That is what closes the second half of the class: r5 deleted the probe record and left two sentences still saying 'one record per family', which was true of r4's two-record world and false of r5's one-record world.",
+    "historicalPaths": [
+      "revisionLog",
+      "appGroupDisjointnessRule.history",
+      "crossPlatformSharingContract.history",
+      "crossPlatformSharingContract.recordCountClaimRule"
+    ],
+    "historicalPathsNote": "These paths describe the state of an EARLIER revision on purpose and are pinned to it, so a count they mention is not a claim about the current data. Everything else is scanned. The exclusion list is declared here rather than hard-coded in the validator, so widening it is a visible edit to the contract.",
+    "recordCountClaimPaths": [
+      "crossPlatformRules[1]",
+      "c1AuthorizationScope.appGroupNote"
+    ],
+    "source": "TASK-260715-ypo7yo_reviewer-verdict-05.md finding F1, required rework items 1-4.",
+    "rules": [
+      {
+        "id": "XP-1",
+        "renderedIndex": 0,
+        "topic": "bundle identifiers",
+        "entitlementKey": null,
+        "mentionStyle": "none",
+        "grantedTargets": null,
+        "grantClause": null,
+        "nonGranteeMentions": [],
+        "records": null,
+        "recordSource": null,
+        "derivation": "No entitlement is summarised, so there is no grant set to derive. The identifier claims themselves are checked by R1-R5."
+      },
+      {
+        "id": "XP-2",
+        "renderedIndex": 1,
+        "topic": "App Group",
+        "entitlementKey": "com.apple.security.application-groups",
+        "mentionStyle": "enumerated",
+        "grantedTargets": [
+          "ios.host",
+          "ios.provider"
+        ],
+        "grantClause": "granted to the iOS host and the iOS provider only (rule G4)",
+        "nonGranteeMentions": [
+          {
+            "target": "ios.probe.host",
+            "role": "contrast",
+            "clause": "The iOS probe host and the iOS probe provider are prohibited too, because TASK-260715-1jckn0 names no shared container of its own (rule G4 probeRule)."
+          },
+          {
+            "target": "ios.probe.provider",
+            "role": "contrast",
+            "clause": "The iOS probe host and the iOS probe provider are prohibited too, because TASK-260715-1jckn0 names no shared container of its own (rule G4 probeRule)."
+          }
+        ],
+        "records": [
+          "group.works.relux.tunnel"
+        ],
+        "recordSource": "appGroups",
+        "derivation": "grantedTargets is the set of target rows whose com.apple.security.application-groups status is an authored status; it must equal the union of consumedByTargets over appGroups (R32), which R9 and R30 already check from the other direction. records is the portalRecordIdentifier list of appGroups, so the sentence cannot name a record that was deleted."
+      },
+      {
+        "id": "XP-3",
+        "renderedIndex": 2,
+        "topic": "Keychain access group",
+        "entitlementKey": "keychain-access-groups",
+        "mentionStyle": "enumerated",
+        "grantedTargets": [
+          "ios.host",
+          "ios.provider"
+        ],
+        "grantClause": "granted to the iOS host and the iOS provider only, and to NO macOS target on either channel, in either family (rules K1 and K2)",
+        "nonGranteeMentions": [
+          {
+            "target": "macos.provider",
+            "role": "contrast",
+            "clause": "Never the macOS provider, which reads the system-domain keychain, where access groups do not apply (rule K1)."
+          }
+        ],
+        "records": null,
+        "recordSource": "keychainAccessGroups",
+        "derivation": "This is the sentence verdict 05 F1 caught: through r5 it read 'the iOS host and appex, and the macOS host', which was the r4 contract. grantedTargets is derived from the target rows and must equal keychainAccessGroups[0].consumedByTargets, which R31 independently ties back to the rows.",
+        "whyTheMacOSHostIsNotNamed": "Deliberate. The exclusion is stated universally - no macOS target - rather than target by target, because NAMING the macOS host in this sentence is exactly what produced the r5 defect: r4 named it as a grantee, r5 moved the row, and the name stayed. A universal clause has nothing to go stale, and R32 derives it from all eight rows rather than from a list someone has to remember to edit. The host-specific reasoning belongs to rule K2 and to D-8 in the rationale document, which is where a reader who wants it will look. The reviewer's own verdict-05 gate asserts the same thing textually - that this sentence no longer contains 'macOS host' - and it now passes."
+      },
+      {
+        "id": "XP-4",
+        "renderedIndex": 3,
+        "topic": "Network Extension value",
+        "entitlementKey": "com.apple.developer.networking.networkextension",
+        "mentionStyle": "universal",
+        "grantedTargets": [
+          "ios.host",
+          "ios.probe.host",
+          "ios.probe.provider",
+          "ios.provider",
+          "macos.host",
+          "macos.probe.host",
+          "macos.probe.provider",
+          "macos.provider"
+        ],
+        "grantClause": "Every target on both platforms requires the entitlement; only the value differs.",
+        "nonGranteeMentions": [],
+        "records": null,
+        "recordSource": null,
+        "derivation": "Universal: grantedTargets must be every target row, so the sentence names none of them individually and R32 rejects a summary that starts enumerating. The per-channel VALUES are R7's and R23's job, not this rule's."
+      },
+      {
+        "id": "XP-5",
+        "renderedIndex": 4,
+        "topic": "Sparkle Mach lookup exception",
+        "entitlementKey": "com.apple.security.temporary-exception.mach-lookup.global-name",
+        "mentionStyle": "enumerated",
+        "grantedTargets": [
+          "macos.host"
+        ],
+        "grantClause": "It is granted to the macOS host alone",
+        "nonGranteeMentions": [],
+        "records": null,
+        "recordSource": null,
+        "derivation": "The key is declared on one target row only, so the derived set has one member. R25 checks the same fact from the entitlement side and R26 checks it against the X1 register; R32 checks that the summary sentence still says so."
+      },
+      {
+        "id": "XP-6",
+        "renderedIndex": 5,
+        "topic": "identifier injection",
+        "entitlementKey": null,
+        "mentionStyle": "none",
+        "grantedTargets": null,
+        "grantClause": null,
+        "nonGranteeMentions": [],
+        "records": null,
+        "recordSource": null,
+        "derivation": "A source-code constraint, not an entitlement grant. Owned by TASK-260715-1tzaed and checked at that task's build, not here."
+      }
+    ]
+  },
+  "authorizationNodeContract": {
+    "id": "A1",
+    "task": "TASK-260728-q5kjta",
+    "statement": "The human authorization node names the matrix revision it authorizes, and that name must be the CURRENT revision of this contract. A revision that was reviewed and rejected is not an authorization for the revision that replaced it, even when the two happen to enumerate the same mutations. Rule P1 pins the task that SPENDS the authorization; rule A1 pins the task that GRANTS it.",
+    "history": "Reviewer verdict 06 F1. r5 corrected TASK-260728-q5kjta's mutation set and stamped its scope with 'revision 2026-07-28.r5'. r6 then superseded r5 without re-pointing that stamp, so the authorization node named by AC5 and by humanAuthorizationNode asked the operator to approve the revision verdict 05 had rejected. r6 had added a board gate, but aimed it only at TASK-260715-3jloqy - the unattended consumer - so the authorization edge itself was the one live consumer nothing checked.",
+    "revisionPinRule": "The node's live contract fields must contain the rendered revisionPhrase for the current revision, and must contain NO superseded revision label. The superseded set is DERIVED from revisionLog rather than hand-listed, so it cannot fall behind a bump. Append-only history fields are excluded: notes is a progress log where a past revision label is a true historical statement, exactly as revisionLog is excluded from rule S1's count scan.",
+    "revisionPhraseTemplate": "revision {revision}",
+    "digestAlternativeRejected": "Verdict 06 offered a content digest plus revision as an alternative pin. Rejected, with reasoning: a digest changes on every edit to this JSON including edits that change nothing the operator is asked to approve, so it would force a board write per revision without pinning anything the revision label does not already pin, and a stale digest fails identically to a stale revision. The label plus a derived banned-revision set and a gate that fails closed is the same guarantee at lower maintenance cost. The gate, not the pin format, is what closes the defect.",
+    "requiredAuthorizations": [
+      "Create exactly four macOS App IDs: works.relux.tunnel.mac, works.relux.tunnel.mac.tunnel, works.relux.tunnel.probe.mac, works.relux.tunnel.probe.mac.tunnel.",
+      "Enable the Network Extensions capability on those four and no other capability.",
+      "Generate one Mac Development profile per App ID with this Apple-silicon Mac registered as a device.",
+      "Name the current matrix revision the sitting authorizes."
+    ],
+    "forbiddenAuthorizations": [
+      "Any App Group record, including group.works.relux.tunnel.",
+      "The App Groups capability on any App ID.",
+      "Any Keychain access-group portal mutation; keychain sharing has no portal record.",
+      "Any of the four iOS App IDs, which are deferred under ADR-024.",
+      "Any Developer ID, App Store, or other distribution profile.",
+      "Any change to the legacy works.relux.proxy identity."
+    ],
+    "boardGate": {
+      "fields": [
+        "description",
+        "scope",
+        "ac"
+      ],
+      "excludedFields": [
+        "notes"
+      ],
+      "requiredPhrases": [
+        "works.relux.tunnel.mac",
+        "works.relux.tunnel.mac.tunnel",
+        "works.relux.tunnel.probe.mac",
+        "works.relux.tunnel.probe.mac.tunnel",
+        "Network Extensions",
+        "Mac Development",
+        "ADR-024"
+      ],
+      "requiredPhraseNote": "Each phrase is matched with a right boundary, so works.relux.tunnel.mac is NOT satisfied by the occurrence inside works.relux.tunnel.mac.tunnel. The four App IDs are additionally required as a DERIVED set from c1AuthorizationScope, so this hand-written list cannot silently authorize a different set.",
+      "negationScope": "clause",
+      "clauseBoundaries": "[.;:]\\s+  or  ,\\s+(and|but|nor)\\s+",
+      "negationMarkers": [
+        "no",
+        "not",
+        "never",
+        "without",
+        "excluded",
+        "deferred",
+        "nor"
+      ],
+      "negationNote": "Identifiers the ceremony must NOT touch do appear in the node's text - that is how an exclusion is stated - so the gate requires every CLAUSE that mentions one to carry a negation marker, rather than requiring absence. Attribution is per clause, not per character window: AC4 states its exclusion AFTER the identifiers it excludes, so a preceding-context check would miss the real text, while a window wide enough to reach backwards over a list of four App IDs is also wide enough to let a neighbouring clause's 'NOT' cover an identifier that has quietly become authorized. An r7 board negative gate demonstrated exactly that against a 220-character symmetric window, which is why the window was replaced by clause attribution. Clause splitting is safe despite these identifiers being full of dots, because a dot INSIDE an identifier is never followed by whitespace.",
+      "negatedPhraseSource": "DERIVED: c1AuthorizationScope.explicitlyNotAuthorized identifiers, every appGroups[].portalRecordIdentifier, and legacy.bundleIdentifier."
+    },
+    "gate": "TASK-260715-ypo7yo_check-portal-consumer.py checks BOTH live consumers named by this contract - the authorization node (rule A1) and the portal mutation task (rule P1) - and exits non-zero on drift in either. validate_matrix.py cannot read the board; R34 only checks that this pin is complete and agrees with c1AuthorizationScope and with the revision bookkeeping.",
+    "source": "TASK-260715-ypo7yo_reviewer-verdict-06.md finding F1; c1AuthorizationScope and revisionLog in this contract; ADR-028."
+  },
+  "portalMutationTaskContract": {
+    "id": "P1",
+    "task": "TASK-260715-3jloqy",
+    "statement": "The unattended portal mutation task consumes the human authorization granted at Ceremony C1, so its board contract must state the SAME mutation set as c1AuthorizationScope. Correcting the authorization node alone does not correct the task that spends the authorization.",
+    "history": "Reviewer verdict 05 F2. r5 corrected TASK-260728-q5kjta - the human ceremony - to the post-G4/K2 scope, and left TASK-260715-3jloqy, the task that actually performs the mutations, carrying the pre-r5 contract: create 'shared groups', provision 'packet-tunnel, App Group, and Keychain capabilities', AC1 requiring that 'shared groups exist', and AC2 requiring the packet-tunnel entitlement 'only on provider identifiers'. The last of those is a material defect independent of App Groups: Apple requires com.apple.developer.networking.networkextension on the containing app as well as the embedded provider, so a provider-only rule would under-provision both macOS host App IDs and fail the build this matrix exists to make possible.",
+    "requiredMutations": [
+      "Create exactly four macOS App IDs: works.relux.tunnel.mac, works.relux.tunnel.mac.tunnel, works.relux.tunnel.probe.mac, works.relux.tunnel.probe.mac.tunnel.",
+      "Enable the Network Extensions capability on all four, hosts included.",
+      "Generate one Mac Development profile per App ID with this Apple-silicon Mac registered.",
+      "Inspect every downloaded profile and assert the unsuffixed packet-tunnel-provider value on HOST and PROVIDER profiles alike."
+    ],
+    "forbiddenMutations": [
+      "Any App Group record, including group.works.relux.tunnel, which is allocated at the later iOS sitting under ADR-024, and including the deleted probe record.",
+      "The App Groups capability on any App ID.",
+      "Any Keychain access-group portal mutation; keychain sharing has no portal record at all.",
+      "Any of the four iOS App IDs.",
+      "Any Developer ID, App Store, or other distribution profile.",
+      "Any change to the legacy works.relux.proxy identity."
+    ],
+    "requiredNegativeAssertions": [
+      "A16 - no macOS bundle and no Mac Development profile Entitlements dict declares com.apple.security.application-groups.",
+      "A17 - no macOS bundle declares keychain-access-groups. Asserted against the BUNDLE, not the profile: a Mac Development profile legitimately carries the team-wide keychain-access-groups = ['<TEAMID>.*'] wildcard and that wildcard is not a finding."
+    ],
+    "bannedContractPhrases": [
+      "shared groups",
+      "App Group, and Keychain capabilities",
+      "only on provider identifiers"
+    ],
+    "bannedPhraseNote": "These three phrases are the exact pre-r5 wording. They are listed so that the board-contract gate can assert their ABSENCE mechanically, and so that a future editor who reintroduces one is contradicting a named rule rather than an unwritten intent.",
+    "boardGate": {
+      "fields": [
+        "description",
+        "scope",
+        "ac"
+      ],
+      "requiredPhrases": [
+        "works.relux.tunnel.mac",
+        "works.relux.tunnel.mac.tunnel",
+        "works.relux.tunnel.probe.mac",
+        "works.relux.tunnel.probe.mac.tunnel",
+        "Network Extensions",
+        "hosts included",
+        "packet-tunnel-provider",
+        "ADR-024"
+      ],
+      "requiredPhraseNote": "Each phrase is matched with a right boundary, so works.relux.tunnel.mac is NOT satisfied by the occurrence inside works.relux.tunnel.mac.tunnel. 'hosts included' is the phrase that has to survive: it is the direct negation of the removed AC2 clause 'only on provider identifiers', and it is the one whose loss would silently under-provision both host App IDs."
+    },
+    "gate": "TASK-260715-ypo7yo_check-portal-consumer.py reads this object and the live board record for the task and exits non-zero on any drift. It is the durable form of the ad-hoc consistency check reviewer verdict 05 F2 ran by hand. Since r7 the same script also checks the authorization node under rule A1, so both live consumers this contract names are gated by one harness. It is a BOARD gate, not a contract gate: validate_matrix.py cannot read the board, and only checks that this pin is complete and agrees with c1AuthorizationScope.",
+    "source": "TASK-260715-ypo7yo_reviewer-verdict-05.md finding F2; c1AuthorizationScope in this contract; Apple, Configuring Network Extension capability - the containing app and the embedded provider each carry the entitlement."
+  },
+  "verification": {
+    "entitlements": "codesign -d --entitlements :- --xml <bundle> | plutil -convert json -o - -",
+    "profile": "security cms -D -i <profile>.provisionprofile",
+    "nested": "codesign --verify --deep --strict --verbose=4 <bundle>",
+    "embeddedExtension": "ls <host>.app/Contents/Library/SystemExtensions",
+    "channelBinding": "Every assertion that mentions a channel MUST be evaluated against the channel the artifact was actually signed on, determined from the embedded profile class, never assumed.",
+    "assertions": [
+      {
+        "id": "A1",
+        "text": "target bundle identifier equals the matrix value exactly"
+      },
+      {
+        "id": "A2",
+        "text": "provider bundle identifier equals host bundle identifier + '.tunnel'"
+      },
+      {
+        "id": "A3",
+        "text": "com.apple.developer.networking.networkextension equals entitlements[key].valueByChannel[<channel actually signed>] exactly — no extra provider values, and the '-systemextension' suffix appears if and only if that channel is developer-id"
+      },
+      {
+        "id": "A4",
+        "text": "com.apple.developer.system-extension.install present on macOS hosts only"
+      },
+      {
+        "id": "A5",
+        "text": "com.apple.security.application-groups is PRESENT on the two PRODUCTION iOS bundles — the iOS host and the iOS provider — with exactly the matrix array and no team prefix; the App Group record literals are iOS-style on both platforms. The iOS probe host and the iOS probe provider are NOT in scope here: rule G4's probeRule withholds the key from them and A18 requires it absent, so a probe bundle that carries it fails A18 rather than passing A5"
+      },
+      {
+        "id": "A16",
+        "text": "LEAST PRIVILEGE (rule G4) — com.apple.security.application-groups is ABSENT from every macOS bundle on every channel, production and probe alike, and no macOS provisioning profile's Entitlements dict carries the key or names an App Group. A macOS bundle or profile that carries it is a portal or build-setting drift finding for TASK-260715-3jloqy or TASK-260715-uyju7n, never a local exception"
+      },
+      {
+        "id": "A17",
+        "text": "LEAST PRIVILEGE (rule K2) — keychain-access-groups is ABSENT from every macOS bundle on every channel, production and probe alike. The macOS host reads and writes its own Data Protection Keychain items through its default access group 262RZ595FP.works.relux.tunnel.mac, which the injected com.apple.application-identifier entitlement provides, so a macOS bundle declaring keychain-access-groups is a build-setting drift finding for TASK-260715-uyju7n or a portal finding for TASK-260715-3jloqy, never a local exception. Asserted against the signed BUNDLE only: a Mac Development profile's team-wide keychain-access-groups = ['<TEAMID>.*'] wildcard is a profile property and is not a finding"
+      },
+      {
+        "id": "A18",
+        "text": "LEAST PRIVILEGE (rule G4) — com.apple.security.application-groups is ABSENT from both iOS probe bundles and no probe profile names an App Group. The iOS probe's host-to-provider exchange is NETunnelProviderSession.sendProviderMessage (TASK-260715-1jckn0 AC3), which needs no group; the probe App Group record was deleted in r5. This is the negative half of that task's AC5 archive inspection"
+      },
+      {
+        "id": "A6",
+        "text": "keychain-access-groups present only where status == required, which after r5 is ios.host and ios.provider alone; ABSENT from every macOS target, production and probe alike, and from the iOS probe pair. r5, rule K2: macos.host lost the group because no second macOS target reads it, so a macOS bundle carrying the key is drift for TASK-260715-uyju7n or TASK-260715-3jloqy, never a local exception"
+      },
+      {
+        "id": "A7",
+        "text": "the profile's Entitlements dict authorises every required key, and the profile's authorizesNetworkExtensionValues is a superset of the channel's entitlement value"
+      },
+      {
+        "id": "A8",
+        "text": "profile TeamIdentifier == 262RZ595FP and ApplicationIdentifierPrefix == ['262RZ595FP']"
+      },
+      {
+        "id": "A9a",
+        "text": "every macOS development profile — the four Mac Development profiles, which are exactly the profiles Ceremony C1 authorizes — carries ProvisionedDevices containing this Mac, and that list equals the device set this contract declares for the same target at profiles[].development.devices. This is the macOS branch only; it is never inherited by an iOS profile"
+      },
+      {
+        "id": "A9b",
+        "text": "NO iOS development profile is created or checked at Ceremony C1: all four declare profiles[].development.devices as deferred under ADR-024, so there is no declared device set to compare a profile against yet. When an iOS development profile is later created, its ProvisionedDevices is compared against the device set this contract declares for that target AT THAT TIME — never against the macOS device set, and never by falling through to A9a"
+      },
+      {
+        "id": "A9c",
+        "text": "every Developer ID profile carries ProvisionsAllDevices == true and no ProvisionedDevices key. This is a distribution-channel assertion over the two Developer ID profiles and says nothing about any development profile, on either platform"
+      },
+      {
+        "id": "A10a",
+        "text": "COMPLETENESS — every entitlement key with status 'required' for the target is present in the signed bundle"
+      },
+      {
+        "id": "A10b",
+        "text": "CONTAINMENT — every entitlement key present in the signed bundle is in the computed allowlist: authored keys (status required or required-adjacent) UNION entitlementClassification.signingGenerated[platform].always UNION, on the development channel only, entitlementClassification.signingGenerated[platform].developmentChannelOnly"
+      },
+      {
+        "id": "A10c",
+        "text": "EXCLUSION — no key with status prohibited, prohibited-pending-decision, or not-applicable is present"
+      },
+      {
+        "id": "A10d",
+        "text": "CHANNEL HYGIENE — the development-only signing-generated keys are absent from any bundle signed on the developer-id or app-store channel"
+      },
+      {
+        "id": "A10e",
+        "text": "COMPLETENESS (project architecture) — every entitlement key with status 'required-adjacent' is also present in the signed bundle, on every channel the target declares. A10a covers 'required'; this covers the rows the project itself mandates, so a build that silently drops App Sandbox, a network client/server row, or the Sparkle Mach lookup exception fails closed"
+      },
+      {
+        "id": "A14",
+        "text": "com.apple.security.temporary-exception.mach-lookup.global-name is present on the macOS host bundle with exactly the two values in entitlements[key].resolvedValue — <host-bundle-id>-spks then <host-bundle-id>-spki — and is ABSENT from the macOS provider, from every iOS bundle, and from every probe bundle. The authored form uses $(PRODUCT_BUNDLE_IDENTIFIER); a signed bundle carries the resolved form, so compare against resolvedValue, not value"
+      },
+      {
+        "id": "A15",
+        "text": "no key in exceptionEntitlementRule.prohibitedKeys appears in any signed bundle on any channel, and every com.apple.security.temporary-exception.* key present is listed in exceptionEntitlementRule.reviewedExceptions for that exact target (rule X1)"
+      },
+      {
+        "id": "A11",
+        "text": "no bundle identifier matches ^works\\.relux\\.proxy(\\.|$)"
+      },
+      {
+        "id": "A12",
+        "text": "production and probe App Groups are disjoint"
+      },
+      {
+        "id": "A13",
+        "text": "no value from forbiddenNetworkExtensionValues appears in any bundle entitlement or profile"
+      }
+    ],
+    "driftPolicy": "fail-closed",
+    "assertionScopeContract": {
+      "id": "S2",
+      "statement": "An assertion carries NO independent authority over WHICH targets or profiles it applies to. Every scope an assertion states is DERIVED from the authoritative rows — the target rows for an entitlement claim, the profile rows for a profile claim — and rules R35 and R36 recompute the derivation three ways and compare it against the assertion's own words before the contract is allowed to pass. An assertion may not claim a target it does not hold, may not omit one it does, and may not name a target at all unless the mention is registered below.",
+      "history": "Reviewer verdict 07. r6 closed exactly this defect class for the cross-platform summary (rule S1) and left the assertion list — the OTHER prose projection of the same rows — unchecked. Two assertions had already gone stale under it. A5 said application-groups is present on every iOS bundle, which r5 had made false for the iOS probe pair and which A18 directly contradicted; following A5 would have over-entitled both disposable probes. A9 said every development profile carries this Mac, which is false for the four iOS development profiles whose devices are deferred under ADR-024. The 1024-check r7 validator passed because R27 checked assertion MEMBERSHIP and substrings, never semantic scope against the rows. A third instance was found while fixing these two and is recorded in staleClaimsFound.",
+      "mechanism": "Each scope-bearing assertion has one entry here per polarity. Each entry declares classPredicates over the authoritative rows, and the SET those predicates select must equal the entry's declared scopeTargets, which must in turn equal the set the row STATUSES imply for that entitlement key and polarity. Three independent derivations of the same set: a predicate typo, a stale hand-written list, and a moved row each break a different one. The entry's scopeClause must then appear VERBATIM in the assertion text and again in the rationale document, and every target named anywhere in the assertion text must be either inside that assertion's scope or a declared nonScopeMention with its own clause present.",
+      "polarityNote": "present — the clause asserts the key is present on scopeTargets. absent — the clause asserts it is absent from scopeTargets. present-exclusive — the clause asserts presence on scopeTargets AND, through an explicit exclusivityMarker that must appear in the text, absence everywhere else; it therefore discharges the complement on its own and needs no paired absent entry. Choosing present-exclusive without the marker in the text is a failure, because 'present on X' alone says nothing about the rest.",
+      "partitionRule": "For every entitlement key registered here, the union of the present scopes must equal the set of target rows whose status for that key is an authored status, the union of the absent scopes (plus the complement discharged by any present-exclusive entry) must equal every remaining target row, and the two must be disjoint. A5 and A18 failed exactly this: their scopes OVERLAPPED on the two iOS probe rows, one claiming presence and the other absence, and nothing computed the union.",
+      "coverageRule": "Every entitlement key that appears literally in ANY assertion text must have at least one entry here, and every registered key must appear in the text of the assertion it is registered against. That is what makes the class fail closed rather than this one pair: a future assertion that names an entitlement key without registering its scope cannot pass R35, and a registered scope whose assertion stopped mentioning the key cannot either.",
+      "profileScopeRule": "A profile assertion is scoped the same way, over profiles[] rather than targets[]. deviceBinding declares what the profile rows must say about devices for the scope to be honest: 'enumerated' requires a concrete device list on every profile in scope, 'deferred' requires every device entry on every profile in scope to carry both the deferral marker and the deferral basis, and 'all-devices' is the distribution-channel form that provisions every device instead of listing any. The development-channel entries must partition the profile rows, and the enumerated set must equal the set of profiles Ceremony C1 authorizes — which is the tie that keeps A9a and the C1 scope from drifting apart.",
+      "deferredDeviceMarker": "deferred",
+      "deferralBasis": "ADR-024",
+      "deferredMarkerNote": "A device entry is deferred if and only if it contains BOTH strings. Requiring the basis as well as the word means a device set cannot be quietly parked without naming the decision that parked it.",
+      "authorityNote": "scopeClause is normative and machine-checked in both artifacts. The remaining prose in an assertion is explanatory and carries no scope: it may not introduce a target that is neither in scope nor a declared mention, which is the only way explanatory prose could smuggle a scope back in.",
+      "staleClaimsFound": [
+        {
+          "where": "verification.assertions[A5]",
+          "reportedBy": "reviewer verdict 07 F1",
+          "wrongSince": "2026-07-28.r5",
+          "claim": "application-groups is present on every iOS bundle",
+          "truth": "r5 prohibited it on both iOS probe rows under rule G4's probeRule",
+          "consequence": "an entitlement check following A5 would over-entitle both probes"
+        },
+        {
+          "where": "verification.assertions[A9]",
+          "reportedBy": "reviewer verdict 07 F2",
+          "wrongSince": "2026-07-28.r1",
+          "claim": "every development profile carries ProvisionedDevices containing this Mac",
+          "truth": "the four iOS development profiles declare devices deferred under ADR-024",
+          "consequence": "a profile check following A9 would fail every iOS development profile the moment one existed, or would silently pass by treating the deferral sentinel as a device name"
+        },
+        {
+          "where": "the rationale document's assertion table, row A6",
+          "reportedBy": "found by this revision while registering A6's scope, not reported by any verdict",
+          "wrongSince": "2026-07-28.r5",
+          "claim": "keychain-access-groups present where status is required — ios.host, ios.provider, macos.host; absent from macos.provider and the whole probe family",
+          "truth": "r5 removed the group from macos.host under rule K2, so the grant set is ios.host and ios.provider alone and every macOS row is prohibited",
+          "consequence": "the prose artifact still granted the macOS host a keychain group the JSON prohibits — the verdict-05 F1 defect, one revision later and one file over. R33 did not catch it because R33 renders grantClauses, not assertions; R35's rationale-document check is what closes that half."
+        }
+      ],
+      "source": "TASK-260715-ypo7yo_reviewer-verdict-07.md findings F1 and F2, required rework items 1-5.",
+      "entitlementScopes": [
+        {
+          "id": "AS-1",
+          "assertion": "A3",
+          "entitlementKey": "com.apple.developer.networking.networkextension",
+          "polarity": "present-exclusive",
+          "exclusivityMarker": "no extra provider values",
+          "classPredicates": [
+            {}
+          ],
+          "scopeTargets": [
+            "ios.host",
+            "ios.provider",
+            "ios.probe.host",
+            "ios.probe.provider",
+            "macos.host",
+            "macos.provider",
+            "macos.probe.host",
+            "macos.probe.provider"
+          ],
+          "scopeClause": "com.apple.developer.networking.networkextension equals entitlements[key].valueByChannel[<channel actually signed>] exactly",
+          "nonScopeMentions": [],
+          "derivation": "The empty predicate selects every target row. Every row's status for the Network Extension key is 'required' (R7 has required that since r2), so the authored set is all eight and the complement is empty. Registering the universal case is not decoration: if a later revision withheld the key from one row, A3 would silently keep claiming it."
+        },
+        {
+          "id": "AS-2",
+          "assertion": "A4",
+          "entitlementKey": "com.apple.developer.system-extension.install",
+          "polarity": "present-exclusive",
+          "exclusivityMarker": "only",
+          "classPredicates": [
+            {
+              "platform": "macOS",
+              "role": "host"
+            }
+          ],
+          "scopeTargets": [
+            "macos.host",
+            "macos.probe.host"
+          ],
+          "scopeClause": "com.apple.developer.system-extension.install present on macOS hosts only",
+          "nonScopeMentions": [],
+          "derivation": "platform macOS AND role host selects the production macOS host and the macOS probe host; both are 'required'. The two macOS providers are 'prohibited' and all four iOS rows are 'not-applicable', and the word 'only' in the assertion discharges that complement."
+        },
+        {
+          "id": "AS-3",
+          "assertion": "A5",
+          "entitlementKey": "com.apple.security.application-groups",
+          "polarity": "present",
+          "classPredicates": [
+            {
+              "platform": "iOS",
+              "family": "production"
+            }
+          ],
+          "scopeTargets": [
+            "ios.host",
+            "ios.provider"
+          ],
+          "scopeClause": "PRESENT on the two PRODUCTION iOS bundles — the iOS host and the iOS provider —",
+          "nonScopeMentions": [
+            {
+              "target": "ios.probe.host",
+              "role": "contrast",
+              "clause": "The iOS probe host and the iOS probe provider are NOT in scope here: rule G4's probeRule withholds the key from them and A18 requires it absent"
+            },
+            {
+              "target": "ios.probe.provider",
+              "role": "contrast",
+              "clause": "The iOS probe host and the iOS probe provider are NOT in scope here: rule G4's probeRule withholds the key from them and A18 requires it absent"
+            }
+          ],
+          "derivation": "platform iOS AND family production selects exactly the two rows whose application-groups status is 'required'. The probe pair is prohibited under rule G4's probeRule and is covered by AS-5, so it is named here only as a declared contrast. This is reviewer verdict 07 F1: the r7 text said 'every iOS bundle', which the predicate would have had to select four rows to support, and the rows grant two."
+        },
+        {
+          "id": "AS-4",
+          "assertion": "A16",
+          "entitlementKey": "com.apple.security.application-groups",
+          "polarity": "absent",
+          "classPredicates": [
+            {
+              "platform": "macOS"
+            }
+          ],
+          "scopeTargets": [
+            "macos.host",
+            "macos.provider",
+            "macos.probe.host",
+            "macos.probe.provider"
+          ],
+          "scopeClause": "com.apple.security.application-groups is ABSENT from every macOS bundle on every channel, production and probe alike",
+          "nonScopeMentions": [],
+          "derivation": "platform macOS selects all four macOS rows, every one of them 'prohibited' under rule G4 since r4. Together with AS-5 this discharges the complement of AS-3."
+        },
+        {
+          "id": "AS-5",
+          "assertion": "A18",
+          "entitlementKey": "com.apple.security.application-groups",
+          "polarity": "absent",
+          "classPredicates": [
+            {
+              "platform": "iOS",
+              "family": "probe"
+            }
+          ],
+          "scopeTargets": [
+            "ios.probe.host",
+            "ios.probe.provider"
+          ],
+          "scopeClause": "com.apple.security.application-groups is ABSENT from both iOS probe bundles and no probe profile names an App Group",
+          "nonScopeMentions": [],
+          "derivation": "platform iOS AND family probe selects the two probe rows, both 'prohibited' under rule G4's probeRule since r5. AS-3 ∪ AS-4 ∪ AS-5 is now a partition of the eight rows; before this revision AS-3's assertion overlapped this one."
+        },
+        {
+          "id": "AS-6",
+          "assertion": "A6",
+          "entitlementKey": "keychain-access-groups",
+          "polarity": "present",
+          "classPredicates": [
+            {
+              "platform": "iOS",
+              "family": "production"
+            }
+          ],
+          "scopeTargets": [
+            "ios.host",
+            "ios.provider"
+          ],
+          "scopeClause": "keychain-access-groups present only where status == required, which after r5 is ios.host and ios.provider alone",
+          "nonScopeMentions": [],
+          "derivation": "platform iOS AND family production selects the only two rows whose keychain-access-groups status is 'required' after r5's rule K2."
+        },
+        {
+          "id": "AS-7",
+          "assertion": "A6",
+          "entitlementKey": "keychain-access-groups",
+          "polarity": "absent",
+          "classPredicates": [
+            {
+              "platform": "macOS"
+            },
+            {
+              "platform": "iOS",
+              "family": "probe"
+            }
+          ],
+          "scopeTargets": [
+            "ios.probe.host",
+            "ios.probe.provider",
+            "macos.host",
+            "macos.provider",
+            "macos.probe.host",
+            "macos.probe.provider"
+          ],
+          "scopeClause": "ABSENT from every macOS target, production and probe alike, and from the iOS probe pair",
+          "nonScopeMentions": [],
+          "derivation": "The union of two predicates — every macOS row, and the iOS probe pair — is the complement of AS-6, and every row in it is 'prohibited'. A6 states both polarities in one sentence, so it carries two entries."
+        },
+        {
+          "id": "AS-8",
+          "assertion": "A17",
+          "entitlementKey": "keychain-access-groups",
+          "polarity": "absent",
+          "classPredicates": [
+            {
+              "platform": "macOS"
+            }
+          ],
+          "scopeTargets": [
+            "macos.host",
+            "macos.provider",
+            "macos.probe.host",
+            "macos.probe.provider"
+          ],
+          "scopeClause": "keychain-access-groups is ABSENT from every macOS bundle on every channel, production and probe alike",
+          "nonScopeMentions": [],
+          "derivation": "A17 restates the macOS half of AS-7 with the reason the macOS host does not need the key. Overlapping absent scopes are allowed and are not double counting: the partition check unions them."
+        },
+        {
+          "id": "AS-9",
+          "assertion": "A14",
+          "entitlementKey": "com.apple.security.temporary-exception.mach-lookup.global-name",
+          "polarity": "present",
+          "classPredicates": [
+            {
+              "platform": "macOS",
+              "role": "host",
+              "family": "production"
+            }
+          ],
+          "scopeTargets": [
+            "macos.host"
+          ],
+          "scopeClause": "com.apple.security.temporary-exception.mach-lookup.global-name is present on the macOS host bundle with exactly the two values in entitlements[key].resolvedValue",
+          "nonScopeMentions": [],
+          "derivation": "The Sparkle Mach lookup exception is authored on the production macOS host alone (rule X1, r3). The macOS PROBE host does not self-update, so the three predicate fields together select exactly one row."
+        },
+        {
+          "id": "AS-10",
+          "assertion": "A14",
+          "entitlementKey": "com.apple.security.temporary-exception.mach-lookup.global-name",
+          "polarity": "absent",
+          "classPredicates": [
+            {
+              "platform": "macOS",
+              "role": "provider"
+            },
+            {
+              "platform": "iOS"
+            },
+            {
+              "family": "probe"
+            }
+          ],
+          "scopeTargets": [
+            "ios.host",
+            "ios.provider",
+            "ios.probe.host",
+            "ios.probe.provider",
+            "macos.provider",
+            "macos.probe.host",
+            "macos.probe.provider"
+          ],
+          "scopeClause": "is ABSENT from the macOS provider, from every iOS bundle, and from every probe bundle",
+          "nonScopeMentions": [],
+          "derivation": "The three predicates union to the seven rows that do not declare the key at all. A row that does not declare a key is absent for it, which the partition check treats the same as an explicit prohibition."
+        }
+      ],
+      "profileScopes": [
+        {
+          "id": "PS-1",
+          "assertion": "A9a",
+          "channel": "development",
+          "deviceBinding": "enumerated",
+          "classPredicates": [
+            {
+              "platform": "macOS"
+            }
+          ],
+          "scopeProfiles": [
+            "macos.host",
+            "macos.provider",
+            "macos.probe.host",
+            "macos.probe.provider"
+          ],
+          "scopeClause": "every macOS development profile — the four Mac Development profiles, which are exactly the profiles Ceremony C1 authorizes — carries ProvisionedDevices containing this Mac",
+          "derivation": "platform macOS selects the four Mac Development profiles. Each declares a concrete device list containing this Mac, and each is the C1-authorized development profile for its App ID — R36 checks that the enumerated set and the c1Authorized set are the same four, so A9a and the C1 scope cannot drift."
+        },
+        {
+          "id": "PS-2",
+          "assertion": "A9b",
+          "channel": "development",
+          "deviceBinding": "deferred",
+          "classPredicates": [
+            {
+              "platform": "iOS"
+            }
+          ],
+          "scopeProfiles": [
+            "ios.host",
+            "ios.provider",
+            "ios.probe.host",
+            "ios.probe.provider"
+          ],
+          "scopeClause": "NO iOS development profile is created or checked at Ceremony C1: all four declare profiles[].development.devices as deferred under ADR-024",
+          "derivation": "platform iOS selects the four iOS development profiles. Every device entry on all four carries both the deferral marker and ADR-024, so there is no device set to compare against and none of the four is created at C1. This is reviewer verdict 07 F2: r7's A9 claimed this Mac on all eight."
+        },
+        {
+          "id": "PS-3",
+          "assertion": "A9c",
+          "channel": "developer-id",
+          "deviceBinding": "all-devices",
+          "classPredicates": [
+            {
+              "platform": "macOS",
+              "family": "production"
+            }
+          ],
+          "scopeProfiles": [
+            "macos.host",
+            "macos.provider"
+          ],
+          "scopeClause": "every Developer ID profile carries ProvisionsAllDevices == true and no ProvisionedDevices key",
+          "derivation": "The only two profile rows whose distribution channel is developer-id are the two production macOS ones; the probes have no distribution profile and iOS distributes through the App Store. A Developer ID profile provisions all devices instead of listing any, which is why it is a separate assertion from A9a rather than a branch of it."
+        }
+      ]
+    }
+  },
+  "openConstraints": [
+    {
+      "id": "OC-1",
+      "severity": "closed-was-architecture-blocking-for-macOS-credentials",
+      "statement": "The macOS packet-tunnel system extension runs as root in a non-user context. The Data Protection Keychain is available only to code running in a user context, and keychain access groups share items between programs running as the SAME user. The .spec/security-privacy.md design — private keys and passphrases in the Data Protection Keychain shared through one access group with the packet tunnel extension — therefore CANNOT work between the macOS host and the macOS provider. It works unchanged on iOS.",
+      "corroboration": "Observed 2026-07-28 on this Mac. (a) Two shipping Developer ID packet-tunnel system extensions ship com.apple.security.temporary-exception.files.absolute-path.read-write entries for /private/var/root/Library/Group Containers/ (Tailscale, Surfshark) — direct evidence that a root provider's group container is not the user's. (b) Surfshark's provider carries a temporary-exception path for /Library/Keychains/, i.e. the FILE-BASED System keychain, not the Data Protection Keychain. (c) PureVPN's providers carry keychain-access-groups outright. Together these indicate the real-world macOS pattern is a file-based/System keychain or an IPC seed, not a shared Data Protection Keychain access group.",
+      "affects": [
+        "TASK-260715-1o9wjz",
+        "TASK-260715-379cpk",
+        "TASK-260715-29ws8l",
+        "TASK-260715-2hhh7x",
+        "TASK-260715-3f4lxy"
+      ],
+      "matrixEffect": "closed. macos.provider keychain-access-groups is prohibited and settled; no other row is affected.",
+      "status": "closed",
+      "resolvedBy": "TASK-260728-7ii1xz",
+      "resolvedIn": "2026-07-28.r4",
+      "resolution": "Confirmed as stated and then resolved: the .spec/security-privacy.md shared Data-Protection-Keychain-access-group design does not work between the macOS host and a root provider, and works unchanged on iOS. The replacement is candidate D - the provider owns a file-based system-domain keychain item, seeded once from the host over NETunnelProviderSession.sendProviderMessage. Matrix consequence: macos.provider keychain-access-groups is settled prohibited (rule K1), not pending. Downstream tasks 379cpk, 1o9wjz, 29ws8l, 2hhh7x and 3f4lxy each revise the assumption named in TASK-260728-7ii1xz_macos-credential-transport-decision.md section 8."
+    },
+    {
+      "id": "OC-2",
+      "severity": "verify-at-first-build",
+      "statement": "A sandboxed containing app carrying com.apple.developer.system-extension.install is reported working; the common failure mode is an invalid (not expired) provisioning profile producing a spurious 'would like to access data from other apps' prompt. Treat an invalid profile as the first hypothesis, not a sandbox incompatibility.",
+      "corroboration": "All three shipping Developer ID hosts inspected on this Mac are NOT sandboxed, so none exercises this combination. The sandboxed-host plus system-extension.install shape is this project's own, from .spec/platform-distribution.md, and has no local precedent to lean on.",
+      "affects": [
+        "TASK-260715-1r0fxv",
+        "TASK-260715-9yp8to"
+      ],
+      "resolutionOwner": "TASK-260715-9yp8to",
+      "matrixEffect": "none"
+    },
+    {
+      "id": "OC-3",
+      "severity": "verify-at-portal",
+      "statement": "The team's App ID Prefix is assumed equal to the Team ID 262RZ595FP. Legacy teams can differ. TASK-260715-3jloqy must record the observed prefix and raise a blocker on mismatch rather than adapting silently.",
+      "affects": [
+        "TASK-260715-3jloqy"
+      ],
+      "resolutionOwner": "TASK-260715-3jloqy",
+      "matrixEffect": "every $(AppIdentifierPrefix) resolvedLiteral"
+    },
+    {
+      "id": "OC-4",
+      "severity": "verify-only-if-XPC-is-ever-selected",
+      "statement": "If a sandboxed XPC Mach service is EVER selected as the macOS host-to-provider channel, the endpoint name must be prefixed by an App Group ID the sandboxed process is entitled to. TASK-260728-7ii1xz evaluated that channel as candidate C and rejected it, and rule G4 now prohibits com.apple.security.application-groups on every macOS target, so no macOS target holds a group prefix today and the question is dormant rather than pending. Every Apple example of the pattern found, and all three shipping products inspected on this Mac, use a macOS-style Team-ID-prefixed group for the prefix - and all of those predate the Feb 2025 change.",
+      "affects": [
+        "TASK-260715-uyju7n",
+        "TASK-260715-3f4lxy"
+      ],
+      "resolutionOwner": "TASK-260715-ypo7yo",
+      "matrixEffect": "none - dormant. macOS App Groups are prohibited under rule G4, so no macOS target carries a group prefix. If XPC is ever revived, that is a G4 reopening case (a) and this matrix is amended under section 11; only then does the iOS-style-prefix question need settling, and if an iOS-style prefix were rejected the amendment would add a SEPARATE, unregistrable macOS-style identifier for that single purpose, leaving the registered iOS-style records untouched.",
+      "newEvidenceR4": "Read at /System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71): application.sb:326-328 builds the authorized prefix as (global-name-prefix (string-append suite \".\")) where suite is the literal entitlement value, whatever its style. On the SANDBOX side the mechanism is therefore style-agnostic, and an iOS-style group.works.relux.tunnel would yield the prefix 'group.works.relux.tunnel.'. This is evidence, not proof: the launchd bootstrap-registration side and the profile-authorization side were not exercised, and nothing was signed. Recorded so a future revival of the XPC channel starts from what is known rather than from the r3 statement that no source addressed it at all.",
+      "notAStopTheLine": "The question is only reachable if a rejected candidate is revived, it has a named owner, and it does not block Ceremony C1 - C1 no longer grants the App Groups capability at all."
+    }
+  ],
+  "c1AuthorizationScope": {
+    "authorizedAppIds": [
+      "works.relux.tunnel.mac",
+      "works.relux.tunnel.mac.tunnel",
+      "works.relux.tunnel.probe.mac",
+      "works.relux.tunnel.probe.mac.tunnel"
+    ],
+    "authorizedAppGroups": [],
+    "authorizedCapabilities": [
+      "Network Extensions capability on the four macOS App IDs"
+    ],
+    "authorizedProfiles": [
+      "one Mac Development profile per macOS App ID, with this Apple-silicon Mac registered"
+    ],
+    "authorizedChannels": [
+      "development"
+    ],
+    "authorizedNetworkExtensionValues": [
+      "packet-tunnel-provider"
+    ],
+    "capabilityValueNote": "The portal capability is enabled per App ID by NAME ('Network Extensions'); the entitlement VALUES that end up authorized are a property of the profile class then generated. Because C1 creates Mac Development profiles only, the values C1 puts in circulation are the unsuffixed ones. The '-systemextension' values enter only with the Developer ID profiles owned by TASK-260715-3gkwn0, outside C1. The operator is therefore never asked to select an entitlement value at C1.",
+    "explicitlyNotAuthorized": [
+      "works.relux.tunnel.ios",
+      "works.relux.tunnel.ios.tunnel",
+      "works.relux.tunnel.probe.ios",
+      "works.relux.tunnel.probe.ios.tunnel",
+      "any Developer ID or App Store distribution profile",
+      "any change to works.relux.proxy",
+      "the App Groups capability on any App ID",
+      "any App Group record — group.works.relux.tunnel is deferred to the iOS sitting under ADR-024, and the probe record group.works.relux.tunnel.probe was deleted in r5 and must not be created at all"
+    ],
+    "appGroupNote": "r5: Ceremony C1 creates NO App Group record and enables the App Groups capability on NO App ID. Rule G4 prohibits com.apple.security.application-groups on every macOS target, so no C1-authorized App ID needs it. Only ONE App Group record now exists in this contract, group.works.relux.tunnel, whose consumers are the two production iOS App IDs that C1 explicitly does not authorize; it is allocated when iOS re-arms under ADR-024. The probe record was deleted in r5 when the iOS probe pair lost the entitlement (verdict 04 F3).",
+    "keychainNote": "r5: C1 authorizes NO Keychain access group mutation, and never did require one - keychain sharing has no portal record (keychainAccessGroups[].portalNote). Rule K2 additionally removes the group from macos.host, so no C1-authorized App ID declares keychain-access-groups at all. An operator asked to 'create the Keychain access group' at C1 is being asked for a mutation that does not exist."
+  },
+  "amendmentRule": "This matrix is amended only by TASK-260715-ypo7yo (or a successor task that explicitly assumes ownership), on the strength of a named resolving task. An amendment MUST update this JSON, bump revision, append to revisionLog, RE-POINT every live board consumer this contract pins - the authorization node TASK-260728-q5kjta under rule A1, whose scope names the revision it authorizes, and the portal mutation task TASK-260715-3jloqy under rule P1 - keep validate_matrix.py and check-portal-consumer.py passing, and state which open constraint it closes. Naming a revision that this contract has superseded is the verdict-06 defect and the board gate fails closed on it. Downstream tasks do not locally reinterpret a row; they raise a blocker against the owner.",
+  "consumers": [
+    "TASK-260728-q5kjta — Ceremony C1 authorization scope",
+    "TASK-260715-3jloqy — portal mutation and verification",
+    "TASK-260715-1r0fxv / TASK-260715-9yp8to — macOS probe and Gate P0",
+    "TASK-260715-1jckn0 — iOS probe entitlements (D-9)",
+    "TASK-260715-uyju7n / TASK-260715-33oofa — generated targets",
+    "TASK-260715-379cpk / TASK-260715-1o9wjz — keychain vault and extension resolver",
+    "TASK-260715-3f4lxy — profile snapshot loader",
+    "TASK-260715-1tzaed — macOS release identity contract",
+    "TASK-260715-3gkwn0 — Developer ID / notary environment",
+    "TASK-260715-3661ps — iOS TestFlight / App Store",
+    "TASK-260715-3dno4w — iOS profile inspection",
+    "TASK-260728-7ii1xz — macOS credential transport (OC-1, OC-4)",
+    "TASK-260715-29ws8l — profile trust and credential contract (OC-1; its AC2 and AC4 specify the App Group snapshot and the Keychain access group that rules G4 and K2 decide)",
+    "TASK-260715-2hhh7x — profile key and ownership contract (OC-1)",
+    "TASK-260715-35nc5m — legacy migration decision owner, and the .spec/architecture.md:111 amendment",
+    "TASK-260717-xempiv — Sparkle integration; consumes the rule X1 reviewed exception and owns the nested-code re-signing obligation with TASK-260715-3gkwn0"
+  ],
+  "appGroupLeastPrivilegeRule": {
+    "id": "G4",
+    "statement": "com.apple.security.application-groups is granted only to a target whose OWN currently selected design uses one of the grants the entitlement actually confers on that platform. A possible future transport, a spec sentence, the shape of a target it resembles, and the cost of a second portal sitting are none of them a function. On iOS the two production targets qualify. The iOS probe pair does not: its own contract names no shared-container function, and G4 tests the target's own design, never an inherited one. On macOS no target qualifies today, so the key is prohibited on every macOS target, production and probe alike.",
+    "surveyBasis": "The entitlement's macOS effect is not a matter of opinion: it is two sandbox-array-entitlement blocks in the system App Sandbox profile. Both were read in full at /System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71) rather than inferred from documentation. They are the only two occurrences of the key in that profile.",
+    "survey": [
+      {
+        "grant": "file-read-data on (application-group-literal suite \"\") and read-write-and-issue-extensions plus file-ioctl/mknod/revoke/search/mount/unmount on (application-group-regex suite \"/\")",
+        "sandboxProfileLines": "application.sb:305-315",
+        "namespace": "home-relative",
+        "worksAcrossRootAndUserContexts": false,
+        "usedBySelectedDesign": false,
+        "note": "The group container itself. The host resolves it under the logged-in user's home, the root provider under /private/var/root, so it is not a shared container on macOS. Directly corroborated: two shipping packet-tunnel system extensions on this Mac ship temporary-exception.files.absolute-path.read-write entries for /private/var/root/Library/Group Containers/, which is what you author when you need to cross that boundary."
+      },
+      {
+        "grant": "network-bind and network-outbound on (application-group-regex suite \"/\")",
+        "sandboxProfileLines": "application.sb:307-314",
+        "namespace": "home-relative",
+        "worksAcrossRootAndUserContexts": false,
+        "usedBySelectedDesign": false,
+        "note": "UNIX-domain sockets inside the group container. Same home-relative defect. It is also redundant for private use: application.sb:754-756 already allows network-bind and network-outbound on the target's OWN container with no entitlement at all."
+      },
+      {
+        "grant": "file-read* and process-exec on /Library/Application Support/AppStore/GroupContent/<suite>",
+        "sandboxProfileLines": "application.sb:316-321",
+        "namespace": "system-wide",
+        "worksAcrossRootAndUserContexts": true,
+        "usedBySelectedDesign": false,
+        "note": "App Store-delivered group content. This project ships development and Developer ID on macOS and never the Mac App Store (.spec/platform-distribution.md), so the path is never populated."
+      },
+      {
+        "grant": "mach-lookup and mach-register on (global-name-prefix (string-append suite \".\"))",
+        "sandboxProfileLines": "application.sb:326-328",
+        "namespace": "system-wide",
+        "worksAcrossRootAndUserContexts": true,
+        "usedBySelectedDesign": false,
+        "note": "The XPC channel, and the only grant that ever made the macOS App Group look load-bearing. TASK-260728-7ii1xz evaluated a custom XPC Mach service as candidate C and REJECTED it: it requires an exception entitlement that rule X1 puts under review, and it is dominated by the selected candidate D. With no XPC service there is no prefix to authorize."
+      },
+      {
+        "grant": "ipc-posix* on (ipc-posix-name-prefix (string-append suite \"/\"))",
+        "sandboxProfileLines": "application.sb:329",
+        "namespace": "system-wide",
+        "worksAcrossRootAndUserContexts": true,
+        "usedBySelectedDesign": false,
+        "note": "POSIX shared memory and semaphores in a group-prefixed namespace. This one does cross the root/user boundary and is easy to miss. No candidate transport proposed it, the accepted M1 lifecycle contract does not use it, and it is named here so that a future design cannot claim the entitlement was withheld without the option being seen."
+      },
+      {
+        "grant": "read-only-and-issue-extensions and process-exec on ~/Library/Application Scripts/<suite>",
+        "sandboxProfileLines": "application.sb:459-465",
+        "namespace": "home-relative",
+        "worksAcrossRootAndUserContexts": false,
+        "usedBySelectedDesign": false,
+        "note": "Scripting support. Home-relative, and this project ships no user scripts."
+      }
+    ],
+    "privateContainerFinding": "TASK-260728-7ii1xz amendment M6 left the rows granted on the grounds that 'a private root-context container may still have uses this task did not survey'. Surveyed here, and the answer is no. (appsandbox-container-common) and (appsandbox-container-macos) at application.sb:107-108 are UNCONDITIONAL - they are not inside any (when (entitlement ...)) form - so a sandboxed target already has its own private container, derived from the application_container_id sandbox parameter, without any App Group entitlement. The only thing a group container adds over the container the provider already has is SHARING, and sharing is precisely what the root/user split breaks. A private group container is therefore strictly redundant, not merely unused.",
+    "selectedTransport": "TASK-260728-7ii1xz selected candidate D: the provider owns a file-based system-domain keychain item, seeded once from the containing app over NETunnelProviderSession.sendProviderMessage, with the non-secret profile snapshot carried in providerConfiguration. Keychain, NE app message, providerConfiguration - none of the three is an App Group mechanism.",
+    "iOSUnaffected": "On iOS the host and the appex run as the same user in the same context, so the group container and UserDefaults suite are genuinely shared and the .spec/architecture.md:111 design holds unchanged for PRODUCTION. ios.host and ios.provider keep the entitlement as required.",
+    "reopensOnly": "This row reopens if, and only if, one of three things becomes true, each of which is a grant in the survey above rather than a general appeal to App Groups: (a) the macOS host-to-provider channel becomes a group-prefixed Mach service, i.e. the XPC candidate is revived; (b) it becomes a group-prefixed POSIX IPC object; or (c) the provider is moved out of root into a user context, which would make the group container genuinely shared. It does NOT reopen because a spec sentence mentions App Groups, because a shipping third-party product carries the key, or to spare a portal sitting. Reopening is an amendment under section 11, naming which of (a), (b) or (c) became true.",
+    "ceremonyCostIsZero": "Withholding introduces no new human ceremony, which removes the operational argument verdict 03 rejected. The four iOS App IDs are already in c1AuthorizationScope.explicitlyNotAuthorized under ADR-024, so iOS provisioning already requires a later portal sitting that C1 does not cover. The App Group record is allocated at that sitting, alongside the iOS App IDs that are its only consumers. Nothing that C1 could have granted today is needed today. (r6: this sentence counted r4's two records until rule S1's count scan caught it - the third instance of the stale-summary class reviewer verdict 05 F1 named, and the one neither the reviewer nor r5 had spotted.)",
+    "source": "/System/Library/Sandbox/Profiles/application.sb on macOS 26.5 (25F71), read in full at lines 302-330 and 459-465. TASK-260728-7ii1xz_macos-credential-transport-decision.md sections 4, 5 and 6. Apple, Configuring app groups: https://developer.apple.com/documentation/xcode/configuring-app-groups",
+    "probeRule": "r5, reviewer verdict 04 F3. A probe inherits identifiers and profile classes from the production shape it rehearses, but it does NOT inherit entitlements. Each probe row is tested against the probe task's own scope and acceptance criteria. TASK-260715-1jckn0 (iOS) and TASK-260715-1r0fxv (macOS) both scope their probe to the NETunnelProviderManager lifecycle plus a versioned app message, and neither names a shared container, so no probe target on either platform is granted an App Group. If a probe is meant to prove that a capability can be provisioned at all, that is a VERIFICATION deliverable and must be written into the probe task as an acceptance criterion first; the entitlement then follows the criterion, not the other way round."
+  },
+  "keychainScopeRule": {
+    "id": "K1",
+    "statement": "On macOS the file-based (system-domain) keychain is controlled by per-item SecAccess ACLs. keychain-access-groups applies only to the Data Protection Keychain, which is unavailable outside a user context. A root-context provider targeting the system-domain keychain therefore never needs this entitlement, and the presence of the key in a shipping third-party provider is not evidence that it functions.",
+    "replaces": "The amendmentRule formerly carried on targets[macos.provider].entitlements[keychain-access-groups]. That rule said the row would be amended to required if the resolved transport gave the provider direct keychain access. Its antecedent is now TRUE - candidate D does give the provider direct keychain access - while its consequent is FALSE, because the file-based keychain has no access groups. Left in place it was a live instruction to re-grant the row on exactly the reasoning TASK-260728-7ii1xz refutes.",
+    "reopeningCondition": "The macos.provider row reopens only if the provider is moved into a user context, not merely because it touches a keychain.",
+    "shippingProductsAreNotEvidence": "PureVPN's packet-tunnel system extensions carry keychain-access-groups. Under this rule that observation may not be used to argue the row back open: a key present in a signed bundle is not proof that the mechanism it names is the one the process uses.",
+    "source": "Apple TN3137 'On Mac keychain APIs and implementations'; TASK-260728-7ii1xz_macos-credential-transport-decision.md sections 4-5 and 7.",
+    "hostScope": "K1 governs the macOS PROVIDER only. It says nothing about the macOS host, which does run in a user context and does use the Data Protection Keychain, and that silence is what let r4 keep a shared access group on macos.host with no second member to share with. Rule K2 closes it: sharing is the entitlement's only function, so a host with no co-member is served by its default access group. Reviewer verdict 04 F1."
+  },
+  "downstreamConsequences": [
+    {
+      "owner": "TASK-260728-q5kjta",
+      "consequence": "Ceremony C1 shrinks, and its board text was corrected in r5 to match this scope (verdict 04 F2). The sitting authorizes exactly four macOS App IDs - works.relux.tunnel.mac, works.relux.tunnel.mac.tunnel, works.relux.tunnel.probe.mac, works.relux.tunnel.probe.mac.tunnel - the Network Extensions capability on those four, and one Mac Development profile each with this Mac registered. It creates NO App Group record, enables the App Groups capability on NO App ID, and performs NO Keychain access group mutation (there is no such portal record). All four iOS App IDs are explicitly excluded under ADR-024. Fewer portal mutations, same single sitting. r7, verdict 06 F1: the sitting's board scope named the SUPERSEDED revision 2026-07-28.r5 - the revision verdict 05 rejected - while enumerating r6's mutations correctly. The scope now names the current revision, and rule A1 plus the extended board gate make a stale label fail closed instead of surviving as prose nothing reads. The authorized mutation set is unchanged."
+    },
+    {
+      "owner": "TASK-260715-3jloqy",
+      "consequence": "r6, verdict 05 F2: this task's own board contract was corrected, because it is the task that spends the C1 authorization unattended. Its description, scope, AC and checklist now state exactly portalMutationTaskContract (rule P1) - four macOS App IDs, Network Extensions on all four INCLUDING both hosts, one Mac Development profile each, no App Group record, no App Groups capability, no Keychain portal mutation, no iOS App ID, no distribution profile. The removed AC2 clause 'the packet-tunnel entitlement appears only on provider identifiers' was a material defect: Apple requires the entitlement on the containing app as well as the embedded provider, and R7 has required it on all eight target rows since r2, so provider-only verification would have passed a portal state that cannot build. Portal verification must also assert two NEGATIVES. App Groups: none of the four macOS App IDs has the capability enabled and no Mac Development profile's Entitlements dict carries com.apple.security.application-groups (assertion A16). Keychain: no macOS bundle declares keychain-access-groups (assertion A17). A17 is asserted against the signed BUNDLE, not the profile - a Mac Development profile legitimately carries the team-wide keychain-access-groups = ['<TEAMID>.*'] wildcard, and that wildcard is not a finding."
+    },
+    {
+      "owner": "TASK-260715-uyju7n",
+      "consequence": "Generated macOS targets must declare NEITHER com.apple.security.application-groups NOR keychain-access-groups, and neither the App Groups nor the Keychain Sharing capability may be added to them in Xcode. G1's instruction about the Register App Groups build setting now applies to iOS targets only. A macOS .entitlements file carrying either key fails A16 or A17. The macos.host development allowlist is consequently five authored keys plus three injected, and seven keys on developer-id (section 9.1)."
+    },
+    {
+      "owner": "TASK-260715-33oofa",
+      "consequence": "r9: recorded because rule D1 exposed that this task was a DECLARED consumer the contract never explained — its obligation was stated inside TASK-260715-uyju7n's entry, which is the macOS task. It is the iOS half and it carries the opposite instruction: both generated iOS production targets MUST declare com.apple.security.application-groups with the registered iOS-style literal and keychain-access-groups with the shared group (rules G1, G4, K2 - iOS is where all three are real), and rule G1's Register App Groups build setting applies HERE and only here. The two iOS PROBE targets must declare neither (G4 probeRule, assertion A18). Nothing is provisioned at Ceremony C1: all four iOS App IDs are deferred under ADR-024, so this task authors entitlements against identifiers that have no portal record yet, and assertion A9b is the check that no iOS development profile is expected."
+    },
+    {
+      "owner": "TASK-260715-1r0fxv",
+      "consequence": "The macOS probe pair carries no App Group and no keychain group. Its entitlement inspection (its AC5) gains A16 and A17 as negative checks. The probe's app-message path is unaffected - sendProviderMessage needs no App Group and no keychain group."
+    },
+    {
+      "owner": "TASK-260715-3f4lxy",
+      "consequence": "The macOS profile snapshot loader cannot read an App Group container and cannot fall back to one. On macOS the non-secret snapshot arrives in providerConfiguration; on iOS the App Group container remains correct. This is the same revision TASK-260728-7ii1xz section 8 already assigns."
+    },
+    {
+      "owner": "TASK-260715-1tzaed",
+      "consequence": "PlatformVPNIdentity (Sources/ReluxTunnelCore/VPNManagerRepository.swift:17) declares appGroupIdentifier as a non-optional String for both platforms, and production(for:) still throws. When that binding is authored there is no macOS App Group value to supply. The shape must change - most plainly to an optional or a platform-keyed identity - and this matrix is the input that forces it. No product source was changed by this revision."
+    },
+    {
+      "owner": "spec amendment, owner TASK-260715-35nc5m",
+      "consequence": ".spec/architecture.md:111 ('Shared mutable state is limited to an App Group configuration snapshot and Keychain references') and .spec/threat-model.md DF-02 / M-02 state an iOS property as if it were cross-platform. On macOS neither half holds: the group container is not shared and the secret lives in the root-unlocked system-domain keychain rather than the user's password-protected Data Protection Keychain. TASK-260728-7ii1xz already flags security-claims.md and threat-model.md M-02; architecture.md:111 is added here. This matrix records the divergence; it does not edit the spec."
+    },
+    {
+      "owner": "TASK-260715-1jckn0",
+      "consequence": "r5, verdict 04 F3: the iOS probe pair carries NO App Group and NO keychain group. Its host-to-provider exchange is NETunnelProviderSession.sendProviderMessage only, which is exactly what its AC3 already specifies, so no acceptance criterion changes and no scope is added. Its AC5 archive inspection gains assertion A18 as a negative check: neither probe bundle may declare com.apple.security.application-groups. If this task ever gains a real shared-container deliverable, that is the amendment path in the probe rows' reopensOnly - the acceptance criterion is written first and the entitlement follows it."
+    },
+    {
+      "owner": "TASK-260715-379cpk",
+      "consequence": "r5, verdict 04 F1: the macOS Keychain vault must NOT pass kSecAttrAccessGroup. On macOS the host's items live in its default access group, 262RZ595FP.works.relux.tunnel.mac, which the injected com.apple.application-identifier provides; naming the shared group would return errSecMissingEntitlement because macos.host no longer declares keychain-access-groups. On iOS the vault continues to name 262RZ595FP.works.relux.tunnel.shared explicitly, because there the group is real and shared with the appex. This is a platform branch in the vault, not a shared constant. Note that the macOS default group MOVED in r5 (rule K2 defaultAccessGroupLaw): under r4 an unqualified macOS write would have landed in the shared group, under r5 it lands in the app-ID group. No item has been written yet, so there is nothing to migrate - but the vault must not be authored against the r4 default."
+    },
+    {
+      "owner": "TASK-260715-1o9wjz",
+      "consequence": "r5: unchanged in substance and now unambiguous. The macOS extension credential resolver reads the provider-owned file-based system-domain keychain item seeded over the app-message channel (TASK-260728-7ii1xz candidate D); it never reads a Data Protection Keychain access group, and after r5 there is no macOS access group for it to read. On iOS the resolver reads 262RZ595FP.works.relux.tunnel.shared as before."
+    }
+  ],
+  "keychainLeastPrivilegeRule": {
+    "id": "K2",
+    "statement": "keychain-access-groups is granted only to a target that must share a Data Protection Keychain item with a NAMED second target in this contract. A target that only reads and writes its own items is already served by the default access group the signing toolchain gives it, so the entitlement would add signed authority with no consumer. On iOS the host and the appex are two such members and both are granted. On macOS there is no second member today, so the key is prohibited on all four macOS targets.",
+    "defaultAccessGroupLaw": "The system forms each app's access-group array as the keychain-access-groups entitlement array first, then the application identifier, then the app groups; the FIRST element is the default group that keychain services uses when a caller names none. Two consequences this contract depends on. (a) A target with no keychain-access-groups entitlement still has a private default group equal to <TeamID>.<bundle id>, so withholding never costs a target access to its own items. (b) Withholding MOVES the default: macos.host's default group changes from 262RZ595FP.works.relux.tunnel.shared under r4 to 262RZ595FP.works.relux.tunnel.mac under r5. A consumer must not paper that over with an explicit kSecAttrAccessGroup naming the shared group - on macOS the correct call names no access group at all, and naming the shared one returns errSecMissingEntitlement.",
+    "sharingIsTheOnlyFunction": "The entitlement confers exactly one thing beyond the default group: membership of a group that another target can also join. It does not unlock the Data Protection Keychain, does not change item durability, and does not survive anything the default group does not. Any argument for granting it that does not name a second reading target is therefore an argument for something the entitlement does not do.",
+    "relationToK1": "K1 explains why the macOS PROVIDER can never be a member: the file-based system-domain keychain it uses has no access groups. K2 is the rule K1 did not cover - why the macOS HOST, which does use the Data Protection Keychain, still gets no custom group. Reviewer verdict 04 F1 named exactly that gap: the provider-side test was applied and the host-side one was not.",
+    "reopeningCondition": "Per-row, in targets[].entitlements['keychain-access-groups'].reopensOnly. A row reopens only on a named second member, never on convenience or cross-platform symmetry.",
+    "source": "Apple, Sharing access to keychain items among a collection of apps (https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps); Apple TN3137, On Mac keychain APIs and implementations (https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains). Both fetched 2026-07-28.",
+    "settledByDecisionNotOmission": "Every withheld keychain row states its own reopening condition, on both platforms and in both families. r1-r4 left the four probe rows prohibited with no such condition, which made them settled by omission - indistinguishable from an oversight, and reopenable by anyone who read the silence as 'nobody considered it'. Rule R31 now rejects a withheld row that states no reopening condition, which is the same discipline rule G4 already applies to App Groups."
+  },
+  "consumerDependencyContract": {
+    "id": "D1",
+    "statement": "Every board element this contract names as an obligation owner or an affected task is a DECLARED CONSUMER. A declared consumer must (a) appear in `consumers` and (b) transitively depend on TASK-260715-ypo7yo on the live board. Rules A1 and P1 pin the two consumers that carry a revision label, because a label can go stale. Every other consumer carries no label, so the only thing standing between it and being authored against an unaccepted matrix is the dependency edge — and a missing edge fails silently, because nothing reads a prose consumer list.",
+    "history": "Found by this task in r9 during a self-audit after the r8 handoff; no reviewer verdict reported it. r1 wrote the `consumers` list as prose and r4–r8 grew it while the board DAG was never compared against it. Three declared consumers had no dependency path to this task at all, and four elements carrying obligations were absent from the list. This is the verdict-05 F2 class one field over: verdict 05 checked what a consumer SAYS, rules A1 and P1 check which revision it names, and nothing checked WHEN it runs.",
+    "declaredConsumerSources": [
+      "consumers[] — every element id in each entry",
+      "openConstraints[].affects[] — each entry is an element id",
+      "openConstraints[].resolutionOwner — an element id",
+      "downstreamConsequences[].owner — every element id in the owner string; the spec-amendment owner is written as prose wrapped around an id",
+      "any other string in this contract — see mentionCoverageRule"
+    ],
+    "mentionCoverageRule": "The derived set is NOT those named paths alone. Rule D1 scans EVERY string in this contract for an element id, because an obligation can be assigned in a sentence rather than in a list: TASK-260717-xempiv owned the Sparkle nested-code re-signing obligation for five revisions from inside two prose fields and appeared in no list, and TASK-260715-35nc5m owned the legacy migration decision from `legacy.migrationDecisionOwner` for eight. Every id found anywhere must be a declared consumer, a registered exemption, or this contract's own owner. There is no mention-only class: a contract that names a task names it for a reason.",
+    "reachabilityRule": "TRANSITIVE, not direct. A declared consumer satisfies D1 if any chain of blockedBy edges from it reaches TASK-260715-ypo7yo. Requiring a direct edge from each of nineteen consumers would flatten a DAG the board already orders correctly — thirteen of them reach this task through TASK-260715-3jloqy, which is the honest shape, because they consume the matrix through the portal state it produces.",
+    "whyNotAStatusCheck": "A `done` consumer is not automatically exempt. Being finished is not evidence that it ran with this contract in hand — it is evidence that it ran, which is the failure mode this rule exists to catch. Only an UPSTREAM element is exempt, and the board gate verifies the upstream claim rather than accepting it.",
+    "selfReference": "TASK-260715-ypo7yo",
+    "exemptions": [
+      {
+        "element": "TASK-260728-7ii1xz",
+        "basis": "upstream",
+        "reason": "It BLOCKS this task: the macOS credential transport decision is an input to rules K1, K2 and G4, and its r2 amendment packet M1–M7 was applied here in r4. Requiring it to depend on this task would be a cycle. It is also `done`, but that is not the basis — the basis is the direction of the edge.",
+        "boardFact": "TASK-260715-ypo7yo.blockedBy contains TASK-260728-7ii1xz."
+      }
+    ],
+    "exemptionBasisAllowed": [
+      "upstream"
+    ],
+    "boardChange": {
+      "revision": "2026-07-28.r9",
+      "edge": "TASK-260715-29ws8l blockedBy TASK-260715-ypo7yo",
+      "closes": [
+        "TASK-260715-29ws8l",
+        "TASK-260715-1o9wjz",
+        "TASK-260715-3f4lxy"
+      ],
+      "why": "One edge, three gaps. TASK-260715-29ws8l already blocks TASK-260715-1o9wjz and TASK-260715-3f4lxy, so ordering it after this contract orders all three. The edge is semantically real, not a scheduling trick: 29ws8l AC2 requires it to specify what travels in 'App Group and providerConfiguration data' and AC4 requires it to specify 'Keychain accessibility, access group' — on macOS rule G4 prohibits the App Group on every target and rule K2 prohibits the keychain access group on every target, so authoring 29ws8l without this matrix reproduces exactly the iOS-only assumption OC-1 was raised against.",
+      "cycleCheck": "The whole blockedBy graph was checked for cycles with this edge added before it was written: none. TASK-260715-ypo7yo depends only on TASK-260728-7ii1xz, which depends on nothing.",
+      "footprint": "One dependency edge added. No board element created, deleted, re-parented, or re-scoped by this rule."
+    },
+    "staleClaimsFound": [
+      "REACHABILITY — TASK-260715-1o9wjz: declared in `consumers` since r1 and assigned a downstream consequence in r5. Its two blockers were the credential-transport decision and TASK-260715-29ws8l, neither of which reached this task, so it had no path here.",
+      "REACHABILITY — TASK-260715-3f4lxy: declared in `consumers`, assigned a downstream consequence, and named in OC-4.affects. Its three blockers were the credential-transport decision, TASK-260715-29ws8l, and one unrelated task, so it had no path here.",
+      "REACHABILITY — TASK-260715-29ws8l: named in OC-1.affects. Its two blockers were the credential-transport decision and one unrelated task, so it had no path here — and it blocks the other two, which is why one edge closes all three.",
+      "LIST — TASK-260715-29ws8l: named in OC-1.affects, absent from `consumers`.",
+      "LIST — TASK-260715-2hhh7x: named in OC-1.affects, absent from `consumers` (reachable, so the list was the only defect).",
+      "LIST — TASK-260715-35nc5m: `legacy.migrationDecisionOwner` and a downstreamConsequences owner, absent from `consumers` (reachable).",
+      "LIST — TASK-260717-xempiv: assigned the Sparkle nested-code re-signing obligation in two prose fields, absent from `consumers` (reachable)."
+    ],
+    "boardGate": {
+      "graphQueries": [
+        "list(type=task) { id blockedBy }",
+        "list(type=bug) { id blockedBy }"
+      ],
+      "graphNote": "Both element types are read. A bug can carry a dependency edge, so reading tasks alone would compute a closure over a subgraph and could call a consumer unreachable — or reachable — on incomplete data.",
+      "requires": [
+        "every declared consumer resolves to a live board element",
+        "every declared consumer that is not a registered exemption transitively depends on TASK-260715-ypo7yo",
+        "every registered exemption is genuinely UPSTREAM: this task transitively depends on it",
+        "the derived mention set equals the declared consumer set plus the exemptions plus this contract's own owner, in both directions"
+      ]
+    },
+    "gate": "TASK-260715-ypo7yo_check-portal-consumer.py adds a third block, rule D1, which reads the live dependency graph and computes the transitive closure. validate_matrix.py cannot read the board; R37 checks only that this pin is well formed, that the mention set and the consumer list agree, and that every exemption carries an allowed basis and a reason.",
+    "source": "Self-audit, r9. The consumer list in this contract, openConstraints, downstreamConsequences, and the live board dependency graph. ADR-027 (deferral is `blocked`, never an unlinked backlog item) is the same principle applied to deferral rather than to consumption.",
+    "whyBlockersAreNotNamed": "The two unrelated blockers that stood in these chains are described rather than named. Naming them would make them mentions, and rule D1's own mentionCoverageRule would then require them to be declared consumers of a contract they do not consume — a rule that manufactures its own violations by describing them. The board gate reads the real edges, so nothing is lost by not spelling the ids here."
+  },
+  "numericClaimContract": {
+    "id": "N1",
+    "statement": "A count, or an enumerated key list, stated in prose about an entitlement allowlist is a PROJECTION of the target rows plus the signing-generated table. Each one is registered here and recomputed by the gate in both artifacts. A number written out by hand is a claim nothing checks.",
+    "history": "Found by this task in r9. §9.1 records the class biting once already: r3's prose said the macos.host development allowlist was 'exactly seven keys' over a list of ten, and r4 corrected it by hand to nine. r5 then moved it again to eight, when rule K2 withdrew keychain-access-groups from every macOS target. Three revisions, three different numbers, corrected by hand each time. r6 built a count scan for App Group RECORD counts (rule S1's recordCountClaimRule) after verdict 05 exposed a stale one, and stopped there — so the other live count class stayed unchecked in both artifacts for three more revisions.",
+    "derivation": "allowlist(target, channel) = { entitlement keys whose status is in entitlementClassification.authoredStatuses } ∪ signingGenerated[platform].always ∪ (channel == development ? signingGenerated[platform].developmentChannelOnly : ∅). This is the same expression §9.1 renders and the same one assertions A10a–A10d apply; N1 makes the prose numbers agree with it instead of restating it.",
+    "spelling": "Every live claim spells its number as an English word, which is why the gate owns a word table rather than matching digits: 'eight' and '8' are the same number and only one of them appears in these artifacts.",
+    "claims": [
+      {
+        "id": "N1-1",
+        "artifact": "json",
+        "path": "downstreamConsequences[owner=TASK-260715-uyju7n].consequence",
+        "target": "macos.host",
+        "renderedClaims": [
+          {
+            "kind": "authoredPlusInjected",
+            "channel": "development",
+            "template": "{0} authored keys plus {1} injected"
+          },
+          {
+            "kind": "total",
+            "channel": "developer-id",
+            "template": "{0} keys on developer-id"
+          }
+        ]
+      },
+      {
+        "id": "N1-2",
+        "artifact": "rationale",
+        "section": "10.1",
+        "target": "macos.host",
+        "renderedClaims": [
+          {
+            "kind": "totalPair",
+            "channels": [
+              "development",
+              "developer-id"
+            ],
+            "template": "The `macos.host` allowlist is **{0}** keys on `development`, **{1}** on `developer-id`"
+          }
+        ]
+      },
+      {
+        "id": "N1-3",
+        "artifact": "rationale",
+        "section": "9.1",
+        "target": "macos.host",
+        "renderedClaims": [
+          {
+            "kind": "totalAuthoredInjected",
+            "channel": "development",
+            "template": "the allowlist resolves to exactly **{0}** keys — **{1} authored** plus **{2}** the toolchain injects"
+          },
+          {
+            "kind": "total",
+            "channel": "developer-id",
+            "template": "the same list applies minus `get-task-allow`: **{0}**"
+          }
+        ],
+        "keyList": {
+          "channel": "development",
+          "openFence": "```",
+          "note": "The fenced block immediately after the N1-3 development claim enumerates the allowlist one key per line. The gate compares the SET of keys in that block against the derived allowlist in both directions, so a row added to macos.host that nobody rendered, or a key left rendered after its row was withdrawn, both fail. This is the check that would have caught the r3 defect at the time: the number and the list disagreed, and only a human noticed."
+        }
+      },
+      {
+        "id": "N1-4",
+        "artifact": "rationale",
+        "section": "13",
+        "target": "macos.host",
+        "renderedClaims": [
+          {
+            "kind": "authored",
+            "channel": "development",
+            "template": "`macos.host` authors {0} keys"
+          }
+        ],
+        "note": "§13 is excluded from the coverage SCAN because it quotes numbers that were wrong at the time and must stay wrong. The r9 entry states a live derived count anyway, so it is registered instead of hidden behind the section exclusion. A registered claim is recomputed wherever it lives; the section exclusions govern the scan, not the derivation."
+      }
+    ],
+    "coverageScan": {
+      "shape": "(?:\\*\\*)?(<number-word>|\\d+)(?:\\*\\*)?\\s+(?:(?:\\*\\*)?authored(?:\\*\\*)?\\s+)?keys?\\b",
+      "artifacts": [
+        "json",
+        "rationale"
+      ],
+      "requires": "every hit must fall inside a registered claim's rendered text, or be listed in excludedPhrases with a reason. An unregistered count fails closed.",
+      "excludedJsonPathPrefixes": [
+        "revisionLog",
+        "numericClaimContract.history",
+        "numericClaimContract.claims",
+        "numericClaimContract.coverageScan",
+        "consumerDependencyContract.history",
+        "consumerDependencyContract.staleClaimsFound",
+        "verification.assertionScopeContract.staleClaimsFound",
+        "crossPlatformSharingContract.history"
+      ],
+      "excludedJsonNote": "Two kinds. Append-only history — revisionLog and the `history` / `staleClaimsFound` fields — where a past count is a true historical statement, exactly as rule A1 excludes `notes` and rule S1 excludes revisionLog from its own scan. And this rule's own register, because `claims` and `coverageScan` necessarily contain the templates and the excluded phrases the scan is looking for; a rule that flagged its own definition could never pass.",
+      "excludedDocSections": [
+        "13"
+      ],
+      "excludedDocSectionNote": "§13 records how each verdict was verified and necessarily quotes the numbers that were wrong at the time; they must NOT be updated to the current allowlist size. Excluding a whole section opens a hole for a LIVE count written into it, which is why the r9 entry's own derived count is registered as N1-4 rather than left to the exclusion.",
+      "excludedPhrases": [
+        {
+          "phrase": "r3's prose claimed \"exactly seven keys\" while the list beneath it held ten",
+          "section": "9.1",
+          "reason": "The §9.1 paragraph that records the r3 defect. Quoting a wrong number is how the correction is documented; deriving it would erase the correction."
+        }
+      ],
+      "knownBound": "The scan is shape-specific: it finds `<number> keys`. The developer-id claims in §9.1 and in downstreamConsequences render the number without the word 'keys' adjacent in one case, so the scan alone would not have found them — REGISTRATION found them, because the gate requires each registered rendered claim to be present verbatim. Stated rather than left as an implied completeness claim: N1 does not guarantee that no unregistered count of any shape exists anywhere, it guarantees that every registered one is derived and that no `<number> keys` claim is unregistered.",
+      "excludedDocPreamble": "Everything before the first '## ' heading is the document's change-history preamble, the prose twin of revisionLog. Each revision's blockquote describes what it changed, including numbers that were correct then and are not now."
+    },
+    "relationToS1": "Complementary, not overlapping. Rule S1's recordCountClaimRule owns App Group RECORD counts at registered paths; N1 owns entitlement ALLOWLIST counts and the rendered key list. Neither scans the other's shape, and R38 checks that N1's registered paths do not collide with S1's recordCountClaimPaths, so a count cannot end up owned twice with two derivations.",
+    "gate": "R38",
+    "source": "Self-audit, r9. §9.1 of the rationale document, which records the r3 and r4 instances; the macos.host target row; entitlementClassification.signingGenerated."
+  }
+}

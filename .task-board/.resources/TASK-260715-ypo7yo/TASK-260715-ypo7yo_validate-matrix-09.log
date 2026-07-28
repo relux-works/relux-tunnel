@@ -1,0 +1,114 @@
+TASK-260715-ypo7yo — r9 (2026-07-28.r9) gate transcript
+
+r9 answers NO reviewer verdict. There is no verdict 08: r8 was handed off to review and this
+revision is a self-audit of the artifact in that interval. Two defect classes were found and
+closed — rule D1 (a declared consumer that never runs after this contract) and rule N1 (a
+prose count that is not derived from the rows).
+
+Every command below was run WITHOUT a pipeline so the exit code is the command's own
+(zsh does not carry bash PIPESTATUS; r6 recorded the same trap).
+
+Working directory for 1-4: the board resource layout,
+.task-board/.resources/TASK-260715-ypo7yo/ — all four harnesses run in place.
+Working directory for 5-8: the repo root (the board gate's --repo defaults to '.').
+
+=== 0. baseline r8 was intact BEFORE any r9 edit ===
+The r8 artifact was re-run before it was touched, so nothing below is credited to fixing
+drift that had already appeared:
+  validate_matrix.py                  1331 checks   exit=0
+  mutate.py                           164/164       exit=0
+  check-portal-consumer.py (A1, P1)   44 checks     exit=0
+r8 snapshot taken to /tmp/r8-baseline.json and /tmp/r8-baseline.md for the preservation
+harness and the reviewer gates.
+
+=== 1. contract self-check, in place from the board resource layout ===
+rules: 37 (R2-R38; R37 = rule D1, R38 = rule N1)
+checks run: 2483
+PASS — every rule holds
+exit=0
+
+=== 2. negative gates (each mutation must exit 1 naming its rule) ===
+202/202 negative gates hold
+exit=0
+  38 of them are new for r9: 20 for rule D1, 18 for rule N1.
+  Split by harness: JSON->validator, document->validator, board record->board gate,
+  dependency GRAPH->board gate (the graph harness is new in r9; D1's reachability half
+  cannot be tested by corrupting the contract, which is why eight revisions of a
+  1331-check validator never saw the defect).
+
+  Three defects in the NEW gates were found by their own negative mutations and fixed
+  rather than worked around:
+    a) R37's "declared but explained nowhere" check was TAUTOLOGICAL. It compared the
+       declared set against ids mentioned anywhere in the contract — and the consumers
+       list is itself a string in the contract, so the question answered itself. A
+       mutation that appended a consumer id appearing nowhere else PASSED. Fixed by
+       reading mentions from everywhere ELSE (excluding `consumers` and rule D1's own
+       register), in both the validator and the board gate.
+    b) A graph mutation premised on cutting TASK-260715-3jloqy's edge orphaned NOTHING,
+       because TASK-260728-q5kjta also blocks 3jloqy and carries its own edge here. The
+       premise was wrong, not the gate. Replaced by two accurate mutations: cutting the
+       authorization node's own edge (orphans 1), and cutting BOTH edges carrying the
+       portal chain (orphans 12). This is also the argument for a transitive CLOSURE
+       rather than an edge check — the DAG has redundant paths.
+    c) A document mutation did not apply because the target sentence is hard-wrapped;
+       the replacement now spans the real line break instead of a normalised form.
+
+=== 3. board-contract gate vs the live pinned consumers ===
+matrix revision: 2026-07-28.r9
+
+rule A1 — TASK-260728-q5kjta      24 -> 25 checks   PASS
+rule P1 — TASK-260715-3jloqy      20 checks         PASS
+rule D1 — 19 declared consumers   39 checks         PASS   (new in r9)
+
+PASS — every pinned board consumer matches this contract
+exit=0
+
+=== 4. r8 -> r9 preservation assertions ===
+assertions run: 122
+PASS — everything r8 established is byte-for-byte unchanged
+exit=0
+  Top-level keys ADDED: consumerDependencyContract, numericClaimContract.
+  Top-level keys CHANGED: revision, supersedes, revisionLog, consumers,
+  downstreamConsequences. Nothing else differs — every target row, profile row, record,
+  rule, assertion, assertion scope and the whole c1AuthorizationScope is byte-identical,
+  and `verification` is compared in full because r8's entire subject was that object.
+
+=== 5. independent reviewer gates (no project harness imported) ===
+Invoke as `zsh TASK-260715-ypo7yo_reviewer-gates.sh [BASELINE.json]`, not `./`. The board
+resource store does not preserve the executable bit, so a direct `./` run of a re-registered
+script exits 126. Recorded rather than silently worked around: the first final-verification
+pass hit exactly that and the exit code was 126, not 0.
+
+verdict 07's two gates and their structural forms, r8 baseline and r9:
+  baseline  A5 target-consistency gate:            true  exit=0
+  baseline  A9 profile-device-scope gate:           true  exit=0
+  current   A5 target-consistency gate:             true  exit=0
+  current   A9 profile-device-scope gate:           true  exit=0
+  current   A5/A18 partition (structural):          true  exit=0
+  current   A9 scope vs declared devices:           true  exit=0
+
+rule D1, reachability recomputed from scratch against the LIVE board:
+  live board                : 19 declared, 1 exempt, 0 unreachable    true  exit=0
+  r8 state (r9 edge removed): 3 unreachable                          false  exit=1
+      TASK-260715-1o9wjz, TASK-260715-29ws8l, TASK-260715-3f4lxy
+  rule D1 flips r8 false -> r9 true:                                  true  exit=0
+exit=0
+
+=== 6. project gates ===
+scripts/check-legacy-preservation.sh   exit=0
+task-board validate                    exit=0   ("Board is valid. No issues found.")
+swift test                             exit=0   (335 tests in 29 suites passed)
+
+=== 7. board and repo footprint ===
+ONE dependency edge added:
+  link(TASK-260715-29ws8l, blocked_by=TASK-260715-ypo7yo)
+  Cycle-checked over the whole blockedBy graph before it was written: none.
+  Closes all three reachability gaps, because 29ws8l already blocks 1o9wjz and 3f4lxy.
+
+ONE field changed on one element:
+  TASK-260728-q5kjta.scope — revision label r8 -> r9, character delta 0, verified
+  byte-exact against the intended text after the write. Required by amendmentRule, which
+  since r7 obliges every amendment to re-point the pinned consumers.
+
+No board element created, deleted, re-parented or re-scoped. No portal mutation. No
+product source, spec file, or generated project touched.

@@ -1,0 +1,83 @@
+TASK-260715-ypo7yo — matrix self-check, revision 2026-07-28.r2
+run 2026-07-28T03:29:37Z on macOS 26.5 (25F71), python3 3.14.4
+harness verified to run both from the working copy and from the TASK-ID-prefixed board resource layout
+
+--- positive gate ---
+checks run: 537
+PASS — every rule holds
+positive exit=0
+
+--- negative gates (each mutation must exit 1 naming its rule) ---
+[F1] macOS development channel gets the -systemextension value (the r1 defect)
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.host/development NE value ['packet-tunnel-provider-systemextension'] != ['packet-tunnel-provider']
+[F1] provider NE value collapses to a single channel-independent value (r1 shape)
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.provider carries a channel-independent NE value; NE values must be keyed by channel
+[F1] Developer ID channel drops the suffix
+    expect R7 -> exit=1 named=True OK
+    - R7: macos.provider/developer-id NE value ['packet-tunnel-provider'] != ['packet-tunnel-provider-systemextension']
+[F1] Mac Development profile authorizes the suffixed value
+    expect R23 -> exit=1 named=True OK
+    - R23: macos.host/development profile authorizes ['packet-tunnel-provider-systemextension'] but the entitlement needs ['packet-tunnel-provider']
+[F1] Ceremony C1 authorizes the -systemextension value
+    expect R22 -> exit=1 named=True OK
+    - R22: C1 NE values ['packet-tunnel-provider-systemextension'] != provisioned development values ['packet-tunnel-provider']
+[F1] the probe claims a Developer ID channel it has no profile for
+    expect R19 -> exit=1 named=True OK
+    - R7: macos.probe.host valueByChannel keys ['development'] != channels ['developer-id', 'development']
+[F2] macOS App Group literal is team-prefixed (the r1 defect)
+    expect R9 -> exit=1 named=True OK
+    - R9: macos.host group ['group.works.relux.tunnel'] != $(TeamIdentifierPrefix)group.works.relux.tunnel
+[F2] macOS target claims a team-prefixed group literal directly
+    expect R9 -> exit=1 named=True OK
+    - R9: macos.provider group ['262RZ595FP.group.works.relux.tunnel'] != group.works.relux.tunnel
+[F2] portal record no longer equals the entitlement literal
+    expect R18 -> exit=1 named=True OK
+    - R18: production iOS literal does not equal the portal record it claims
+[F2] probe and production collapse to one App Group record
+    expect R18 -> exit=1 named=True OK
+    - R18: probe iOS literal does not equal the portal record it claims
+[F3] the macOS signing-generated allowlist is emptied
+    expect R20 -> exit=1 named=True OK
+    - R20: macOS signing-generated classification is empty
+[F3] the project authors a key the toolchain generates
+    expect R20 -> exit=1 named=True OK
+    - R20: macos.host authors a key the toolchain generates: ['com.apple.application-identifier']
+[F3] get-task-allow is reclassified as always-present
+    expect R20 -> exit=1 named=True OK
+    - R20: macos.host/developer-id development-only signing keys present=True
+[F4] host sandboxing is attributed to an Apple rule (the r1 defect)
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.host com.apple.security.app-sandbox requirementSource apple-requirement != project-architecture
+[F4] provider sandboxing is downgraded to a project choice
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.provider com.apple.security.app-sandbox requirementSource project-architecture != apple-requirement
+[F4] a sandbox requirement loses its basis citation
+    expect R21 -> exit=1 named=True OK
+    - R21: macos.provider com.apple.security.app-sandbox has no requirementBasis
+[r1] a bundle identifier drifts into the legacy namespace
+    expect R4 -> exit=1 named=True OK
+    - R1: macos.provider works.relux.tunnel.mac.tunnel is not works.relux.proxy.mac.tunnel
+[r1] provider identifier is no longer host + .tunnel
+    expect R1 -> exit=1 named=True OK
+    - R1: macos.provider works.relux.tunnel.mactunnel is not works.relux.tunnel.mac.tunnel
+[r1] the withheld keychain group is silently granted
+    expect R12 -> exit=1 named=True OK
+    - R12: macos.provider keychain-access-groups status required != prohibited-pending-decision
+[r1] an iOS target becomes provisioned
+    expect R14 -> exit=1 named=True OK
+    - R14: ios.host provisioned=True for iOS
+[r1] a distribution profile becomes C1-authorized
+    expect R17 -> exit=1 named=True OK
+    - R17: macos.host distribution profile is C1-authorized
+[r1] system-extension.install is granted to a provider
+    expect R8 -> exit=1 named=True OK
+    - R8: macos.provider com.apple.developer.system-extension.install status required != prohibited
+[r1] a forbidden provider value is granted
+    expect R24 -> exit=1 named=True OK
+    - R7: macos.provider/development NE value ['dns-proxy-provider'] != ['packet-tunnel-provider']
+
+23/23 negative gates hold
+
+mutate.py exit=0

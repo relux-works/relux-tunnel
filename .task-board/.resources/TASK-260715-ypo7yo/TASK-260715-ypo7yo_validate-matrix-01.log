@@ -1,0 +1,17 @@
+checks run: 247
+PASS — every rule holds
+positive exit=0
+--- negative gates (each mutation must exit 1) ---
+mutation s/"works.relux.tunnel.mac.tunnel"/"works.relux.tunnel.mactunnel"/g     [applied] exit=1 :: FAIL (1)   - R1: macos.provider works.relux.tunnel.mactunnel is not works.relux.tunnel.mac.tunnel 
+mutation s/"works.relux.tunnel.mac"/"works.relux.proxy.mac"/g                   [applied] exit=1 :: FAIL (3)   - R1: macos.provider works.relux.tunnel.mac.tunnel is not works.relux.proxy.mac.tunnel 
+mutation s/"packet-tunnel-provider-systemextension"\]/"packet-tunnel-provider"] [applied] exit=1 :: FAIL (4)   - R7: macos.host NE value ['packet-tunnel-provider'] != ['packet-tunnel-provider-systemextension'] 
+mutation s/"prohibited-pending-decision"/"required"/g                           [applied] exit=1 :: FAIL (2)   - R12: macos.provider keychain-access-groups status required != prohibited-pending-decision 
+mutation s/\$\(TeamIdentifierPrefix\)group.works.relux.tunnel"/group.works.relu [applied] exit=1 :: FAIL (4)   - R9: macos.host macOS group is not team-prefixed 
+mutation s/group\.works\.relux\.tunnel\.probe/group.works.relux.tunnel/g        [applied] exit=1 :: FAIL (2)   - R18: duplicate App Group records: ['group.works.relux.tunnel', 'group.works.relux.tunnel'] 
+mutation s/"c1Authorized": false/"c1Authorized": true/g                         [applied] exit=1 :: FAIL (8)   - R17: macos.host distribution profile is C1-authorized 
+mutation s/"provisioned": false/"provisioned": true/g                           [applied] exit=1 :: FAIL (5)   - R14: ios.host provisioned=True for iOS 
+mutation s/"status": "prohibited",\s*
+(\s*)"portalCapability": false,
+\s*"rationale": "The provider never installs an extension[^"]*"/"statu
+$1"portalCapability": false,
+$1"rationale": "x"/ [applied] exit=1 :: FAIL (1)   - R8: macos.provider com.apple.developer.system-extension.install status required != prohibited 
