@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:17Z
 
 ## Last Update
-2026-07-21T06:16:46Z
+2026-07-21T21:47:43Z
 
 ## Blocked By
 - TASK-260715-3ikonq
@@ -35,6 +35,7 @@ backlog
 
 ## Precondition Resources
 - [TASK-260715-1gjxer_dns-policy-selected-ssh-evidence-gate.md](file://TASK-260715-1gjxer/TASK-260715-1gjxer_dns-policy-selected-ssh-evidence-gate.md) — DNS policy requires selected-engine direct-tcpip timing memory and cleanup rows
+- [TASK-260715-1gjxer_m3-evidence-protocol-v1.md](file://TASK-260715-1gjxer/TASK-260715-1gjxer_m3-evidence-protocol-v1.md)
 
 ## Outcome Resources
 (none)
