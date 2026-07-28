@@ -1,0 +1,10 @@
+# TASK-260728-3a2dnr: replan-macos-prototype-autonomous-critical-path
+
+## Description
+Reconcile the board with the owner-approved macOS prototype strategy before any further product implementation: SSH Option A with libssh2 primary; A0/App Review opinion not a prototype gate; iOS deferred; current Apple-silicon Mac is the physical target; Relux Works Apple Development and Developer ID/notary assets are available; Linux CI is deferred; Sparkle key ceremony may be performed locally. Repair the execution graph and produce the longest safe serial autonomous path plus one up-front human permission ceremony.
+
+## Scope
+Board/spec/goal/dependency/status repair and planning evidence only. May remove obsolete A0, iPhone, and Linux-CI dependencies from the macOS prototype path and re-scope P0 to macOS. Must not weaken host-key-before-auth, Keychain-only secrets, fail-closed DNS, bounded memory, public PacketFlow bridge, rootless exec/stdio relay, or signed/notarized release requirements. No tunnel product code.
+
+## Acceptance Criteria
+1. Canonical goal/spec/board encode SSH Option A and libssh2 primary, A0 deferred outside the prototype critical path, iOS deferred, macOS-only physical P0 on this arm64 Mac, Linux CI nonblocking, and Relux Works signing/notary availability. 2. TASK-260715-1ozsb6 is resumable under the approved M0 viability scope; exact M3 observability remains tracked, and NIOSSH evidence is retained without blocking the working-client path. 3. Obsolete A0/iPhone/Linux dependencies are removed only where they contradict the approved macOS prototype path; real provisioning, Keychain, physical-provider, DNS-leak, signing, notarization, and release gates remain. 4. task-board validate is valid=true: dependency cycle, parent-status mismatches, and unsupported container links are repaired without deleting task evidence. 5. A serial wave plan identifies the longest autonomous path to a working macOS client and the exact first human permission ceremony, with secrets never copied to repo/board/logs. 6. Diff checks and focused policy/invariant scans pass; no tunnel product implementation is included.

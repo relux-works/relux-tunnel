@@ -1,7 +1,7 @@
 # Run the physical rekey, memory-pressure, and soak matrix
 
 ## Description
-Execute named physical iPhone and Mac trials with active multi-lane direct-tcpip and relay traffic, automatic and server rekeys, staged channel counts, pressure conditions, and reconnect overlap to prove resource behavior and establish tuning inputs.
+Execute named physical Apple-silicon Mac trials, with the physical-iPhone rows deferred with iOS under ADR-024 and never inferred from Mac results, with active multi-lane direct-tcpip and relay traffic, automatic and server rekeys, staged channel counts, pressure conditions, and reconnect overlap to prove resource behavior and establish tuning inputs.
 
 ## Scope
 In scope: at least 5 GiB mixed TCP and UDP relay traffic; byte, time, and server rekey; one, two, and four lanes; 32 KiB, 64 KiB, and capped BDP windows; staged 100, 250, 500, and configuration-limit flows when budget permits; memory warnings and controlled allocation pressure; HEV sessions and buffers; DNS cache; reconnect reservation; physical footprint; peak; available-memory samples; CPU; energy; queues; drops; descriptors; cleanup. Out of scope: intentional device destabilization, public-user traffic, claiming a universal jetsam limit, changing parameters mid-row, or waiving red rows.

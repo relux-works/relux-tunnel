@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:17Z
 
 ## Last Update
-2026-07-15T01:04:31Z
+2026-07-28T00:47:14Z
 
 ## Blocked By
 - TASK-260715-3ikonq
@@ -16,7 +16,7 @@ backlog
 - TASK-260715-2jatnd
 
 ## Blocks
-- TASK-260715-1gjxer
+- (none)
 
 ## Checklist
 - [ ] Both viable candidates use identical scale and impairment inputs

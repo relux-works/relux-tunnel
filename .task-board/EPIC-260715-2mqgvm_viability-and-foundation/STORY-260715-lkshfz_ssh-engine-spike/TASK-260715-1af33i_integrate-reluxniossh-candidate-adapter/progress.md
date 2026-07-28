@@ -8,7 +8,7 @@ blocked
 2026-07-15T01:03:15Z
 
 ## Last Update
-2026-07-20T06:26:07Z
+2026-07-28T01:18:28Z
 
 ## Blocked By
 - TASK-260715-nzdzv3
@@ -20,7 +20,6 @@ blocked
 - TASK-260720-34d4du
 
 ## Blocks
-- TASK-260715-2d3g5e
 - TASK-260715-3ikonq
 
 ## Checklist
@@ -51,6 +50,13 @@ STOP-THE-LINE 2026-07-20 round 2: accepted core and fork APIs still do not compo
 agent completed: [implementer] developer (codex) (exit=0)
 spawn run completed: codex (run=RUN-260720-c15d42, pid=46407, exit=0)
 ORCHESTRATOR DEFERRAL (2026-07-20): NIOSSH adapter blocked on round-2 composition gaps (see fork-api-blocker + adapter-api-blocker): (Gap 1) fork returns receive credit at frame-delivery, contract requires consumer-driven credit after read(maximumBytes:) — proper backpressure; (Gap 2) neutral byte-seam SSHTCPConnection (fakeable, E-INJECTION) conflicts with NIOSSH channel-ownership (needs connected-socket/NIO pipeline). Resolving these requires BOTH a neutral-contract seam revision (connected-socket-lease/engine-bootstrap that stays fakeable) AND further fork surgery (consumer-driven credit + intake bound). This is the 3rd round of NIOSSH-specific gaps. DECISION: rather than keep bending contract+fork around NIOSSH, first prove the contract with libssh2 (TASK-260715-1ozsb6, whose callback transport fits the byte-seam) and gather comparative evidence. The accumulating NIOSSH fork/contract cost is recorded viability evidence for the engine selection (TASK-260715-1gjxer, gated on P0). RESUME 1af33i only after: (a) 1ozsb6 validates the contract, and (b) 1gjxer either selects NIOSSH (then invest the seam+fork changes) or selects libssh2 (then close 1af33i). Not escalating to human yet — libssh2 evidence needed first.
+2026-07-28 replan (TASK-260728-3a2dnr): human decision makes libssh2 the primary M0 candidate. ReluxNIOSSH stays recorded comparative evidence and receives no further fork work unless new evidence invalidates libssh2. This task is off the macOS prototype critical path; it no longer blocks TASK-260715-2d3g5e. Prior blocker evidence is retained. Reactivate only on an explicit decision.
+DEFERRED 2026-07-28 by TASK-260728-3a2dnr under ADR-014 + ADR-027.
+Constraint: ADR-014 selected libssh2 as the primary SSH engine and states ReluxNIOSSH receives no further fork work unless new evidence invalidates libssh2. This adapter integration IS further fork work.
+Evidence: three rounds of pinned-source analysis recorded on TASK-260715-1ozsb6 and TASK-260715-1gjxer; prior blocker evidence on this task is retained unchanged.
+Why blocked and not backlog: with its blockers satisfied this task became schedulable and a previous plan placed it in Wave 1 of the autonomous run, i.e. prohibited work would have re-entered the critical path. blocked status is the only board mechanism that prevents that while preserving all evidence and the downstream 3ikonq -> 2xx2tk comparative chain.
+Alternatives considered: (a) leave in backlog and rely on the plan document to exclude it - rejected, the scheduler reads the board, not the document; (b) close it - rejected, deferral is reversible and the comparative evidence has value.
+Exact input needed to resume: an owner decision that new evidence invalidates libssh2 as primary engine, which would reopen ADR-014.
 
 ## Precondition Resources
 - [TASK-260715-1af33i_ssh-transport-conformance-contract.md](file://TASK-260715-1af33i/TASK-260715-1af33i_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport contract from TASK-260715-2ny6z4; consume after blocker review acceptance

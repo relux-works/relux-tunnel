@@ -1,5 +1,5 @@
 ## Status
-blocked
+to-dev
 
 ## Assigned To
 [implementer] developer (codex)
@@ -8,7 +8,7 @@ blocked
 2026-07-15T01:44:09Z
 
 ## Last Update
-2026-07-21T18:25:39Z
+2026-07-28T00:49:38Z
 
 ## Blocked By
 - TASK-260715-2ywde4
@@ -16,6 +16,8 @@ blocked
 ## Blocks
 - TASK-260715-1ue4oy
 - TASK-260715-vtot05
+- TASK-260715-1c4l9v
+- TASK-260715-1tzaed
 
 ## Checklist
 - [x] Produce and inspect exactly four uniquely named target executables

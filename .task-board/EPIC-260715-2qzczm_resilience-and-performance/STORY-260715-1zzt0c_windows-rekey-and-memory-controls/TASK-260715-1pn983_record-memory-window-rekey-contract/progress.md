@@ -8,13 +8,11 @@ backlog
 2026-07-15T02:12:43Z
 
 ## Last Update
-2026-07-21T21:47:43Z
+2026-07-28T00:47:22Z
 
 ## Blocked By
 - TASK-260715-2jatnd
 - TASK-260715-1gjxer
-- TASK-260715-z37ay7
-- TASK-260715-30ugfm
 
 ## Blocks
 - TASK-260715-3kimon
@@ -22,6 +20,7 @@ backlog
 - TASK-260715-1zikbu
 - TASK-260715-1r6k4t
 - TASK-260721-3miqh4
+- TASK-260715-z37ay7
 
 ## Checklist
 - [ ] Attach the task-scoped consumer ledger, formulas, pressure table, and state diagrams

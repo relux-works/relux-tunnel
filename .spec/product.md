@@ -93,7 +93,12 @@ single-host `relux` prototype.
 - iOS cannot launch `/usr/bin/ssh`; SSH runs in-process in the packet tunnel
   extension.
 - iOS extension memory and lifecycle behavior are binding constraints. A
-  physical iPhone is required for milestone gates.
+  physical iPhone is required for iOS milestone gates. **Deferred (ADR-024):**
+  iOS is out of scope for the macOS-first goal, so no milestone gate on that
+  goal may require a physical iPhone; the physical Apple-silicon Mac is the only
+  physical baseline that gates it. Every iPhone row stays recorded as a named
+  deferred gap — never a pass, never a waiver, never inferred from Mac results —
+  and becomes mandatory again when iOS resumes.
 - The initial remote relay MUST run without root and MUST NOT listen on an
   external port.
 - The product MUST comply with Apple's VPN privacy rules and disclose any system

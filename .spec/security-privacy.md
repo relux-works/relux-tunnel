@@ -86,9 +86,12 @@ and requires a threat-model update.
 
 ## App Store privacy commitments
 
-Before enabling the VPN, the iOS app MUST present what data is processed, where
+Before enabling the VPN, the app MUST present what data is processed, where
 traffic exits, that the user controls the SSH host, and that the exit host can
-observe destination metadata. The privacy policy MUST state that Relux Works
+observe destination metadata. This applies to **every** Relux Tunnel client: the
+macOS client must satisfy it on the macOS-first goal, and the iOS client must
+satisfy it unchanged when iOS resumes (ADR-024). Only the App Store submission
+artifacts built on top of this disclosure are deferred (ADR-013). The privacy policy MUST state that Relux Works
 does not sell, use, or disclose VPN traffic data to third parties and describe
 retention/deletion for profile and support data.
 

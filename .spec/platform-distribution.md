@@ -45,8 +45,12 @@ New generated Apple targets use iOS 18.0 and macOS 15.0. The shipped legacy
 until its migration/retirement decision says otherwise. The baseline MUST
 support:
 
-- a current iOS release on a physical iPhone used for memory/lifecycle gates;
-- a current macOS release on Apple silicon;
+- a current iOS release on a physical iPhone used for memory/lifecycle gates —
+  **deferred for the macOS-first goal (ADR-024)**: while iOS is deferred this row
+  is a named deferred gap, never a pass, never inferred from Mac results, and it
+  is re-armed unchanged and becomes mandatory again before any iOS release;
+- a current macOS release on Apple silicon — this is the **only** physical
+  baseline that gates the macOS prototype goal;
 - the oldest iOS/macOS versions for which all selected Network Extension,
   Network.framework, Swift concurrency, signing, and dependency requirements can
   be tested in CI.

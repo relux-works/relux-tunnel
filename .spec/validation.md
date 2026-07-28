@@ -4,8 +4,10 @@
 
 The riskiest assumptions are proven before broad UI work. Packet, SSH, relay,
 and lifecycle components are testable in `ReluxTunnelCore` or a macOS CLI
-harness; only Apple-specific packetFlow, entitlement, lifecycle, and jetsam
-behavior require a physical iPhone loop.
+harness; only Apple-specific packetFlow, entitlement, and lifecycle behavior
+require a signed provider on real hardware. Per ADR-024 that hardware is the
+current Apple-silicon Mac; physical-iPhone and jetsam rows are deferred with
+iOS and are recorded as named deferred gaps, never as passes.
 
 Tests MUST record device/OS, source revision, dependency revisions, configuration,
 duration, traffic shape, loss/latency conditions, peak physical footprint,
@@ -13,16 +15,17 @@ available-memory samples, channel/association counts, and drop/error counters.
 
 ## Architecture gates
 
-| Gate | Pass condition |
-| --- | --- |
-| A0 Platform intent | Evidence supports the architecture's Network Extension entitlement/App Store use, or the data plane is revised |
-| P0 Provisioning | Relux Works host and packet-tunnel App IDs install and launch on physical iPhone and Mac |
-| M0 Bridge | Public packetFlow/socketpair bridge passes IPv4/IPv6, MTU, backpressure, cleanup, and physical-device memory tests |
-| M0 SSH | One engine passes host-key, auth, direct-tcpip, exec, window, rekey, compatibility, cancellation, and memory gates |
-| M1 TCP/DNS | Full-device TCP and leak-free DNS work through one SSH host across representative apps |
-| M2 UDP | Relay protocol, deployment, UDP/DNS, resource limits, and degraded mode pass |
-| M3 Resilience | Lanes, HoL mitigation, QUIC policies, path changes, NAT64, sleep/wake, and route safety pass |
-| M4 Release | UX, accessibility, privacy, signing, CI, TestFlight, and App Review package pass |
+| Gate | Pass condition | Path |
+| --- | --- | --- |
+| A0 Platform intent | Evidence supports the architecture's Network Extension entitlement/App Store use, or the data plane is revised | **Release path only** (ADR-013). Not a gate for the macOS prototype; mandatory before iOS submission and before dependent public distribution claims |
+| P0 Provisioning | Relux Works host and packet-tunnel App IDs install and launch on the physical Apple-silicon Mac | Prototype. macOS-only (ADR-024); the physical-iPhone row is deferred with iOS |
+| M0 Bridge | Public packetFlow/socketpair bridge passes IPv4/IPv6, MTU, backpressure, cleanup, and physical memory tests on the Apple-silicon Mac | Prototype |
+| M0 SSH | The selected engine passes every Tier-1 M0-viability row in `ssh-transport.md`; Tier-2 semantics are surfaced as explicit not-reported/unsupported states | Prototype (ADR-023) |
+| M1 TCP/DNS | Full-device TCP and leak-free DNS work through one SSH host across representative apps on macOS | Prototype |
+| M2 UDP | Relay protocol, deployment, UDP/DNS, resource limits, and degraded mode pass | Prototype |
+| M3 Resilience | Lanes, HoL mitigation, QUIC policies, path changes, NAT64, sleep/wake, route safety, and the four deferred SSH Tier-2 semantics pass | Post-prototype |
+| M4 Release | UX, accessibility, privacy, signing, notarization, CI, and the macOS distribution matrix pass | Release path |
+| M5 App Store | TestFlight and App Review package pass | Deferred with iOS |
 
 ## Packet-plane matrix
 
@@ -96,5 +99,8 @@ bottleneck and validated regression coverage.
 - log/support-export redaction tests;
 - dependency licenses, notices, SBOM, pinned revisions, and relay hash manifest;
 - exact entitlements and nested code signatures in archived apps;
-- macOS notarization/stapling/Gatekeeper and iOS/TestFlight install;
-- privacy disclosure and App Review notes checked against actual behavior.
+- macOS notarization/stapling/Gatekeeper install; iOS/TestFlight install is
+  **deferred with iOS (ADR-024)** and is not a gate for the macOS-first goal;
+- privacy disclosure checked against actual behavior; the App Review notes check
+  is **deferred with the App Store branch (ADR-013)** and re-arms unchanged
+  before any submission.

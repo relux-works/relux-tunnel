@@ -1,5 +1,5 @@
 ## Status
-to-dev
+backlog
 
 ## Assigned To
 [analyst] solution-architect (codex)
@@ -8,16 +8,14 @@ to-dev
 2026-07-15T00:46:31Z
 
 ## Last Update
-2026-07-21T06:52:21Z
+2026-07-28T00:51:43Z
 
 ## Blocked By
 - EPIC-260715-2mqgvm
-- EPIC-260715-2qzczm
 
 ## Blocks
 - EPIC-260715-2lz67t
 - EPIC-260715-21g2pi
-- EPIC-260716-3fyjn0
 
 ## Checklist
 - [x] All five existing stories have complete description scope and acceptance criteria

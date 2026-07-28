@@ -1,7 +1,7 @@
 # Record the NAT64, sleep, captive, and lifecycle device matrix
 
 ## Description
-Produce the executable evidence plan for named iPhone and Mac configurations across IPv4, IPv6, dual-stack, IPv6-only NAT64, interface changes, sleep and wake, captive networks, route modes, app termination, provider stops, and repeated lifecycle.
+Produce the executable evidence plan for the named Apple-silicon Mac configuration, with the named iPhone configurations deferred with iOS under ADR-024, across IPv4, IPv6, dual-stack, IPv6-only NAT64, interface changes, sleep and wake, captive networks, route modes, app termination, provider stops, and repeated lifecycle.
 
 ## Scope
 In scope: minimum supported and current OS rows; named baseline and constrained-memory devices; iPhone Wi-Fi and cellular; Mac Wi-Fi and Ethernet where supported; address-family and NAT64 fixtures; compatible and fail-closed modes; full and degraded capability; sleep duration classes; captive negotiation; app termination; cancellation during start; stop reasons; start and stop loops; traffic fixtures; authorized access and exit captures; required metrics, metadata, evidence naming, pass or red rules, and API-change detection. Out of scope: executing tests, implementation, unsupported device promises, public captive networks without authorization, production traffic, or converting unavailable rows into passes.

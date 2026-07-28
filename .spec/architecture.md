@@ -118,13 +118,24 @@ claiming packet traffic and proxying it through another interface. Relux's
 local TCP termination followed by SSH `direct-tcpip` may be interpreted as that
 discouraged model even though SSH is the custom tunnel and the exit is remote.
 
-**Gate A0:** before product implementation proceeds beyond a disposable spike,
-obtain evidence that this architecture is acceptable for the intended Network
-Extension entitlement and App Store distribution. Evidence may be a written
-Apple Developer Technical Support response, successful entitlement/review
-feedback for an accurately disclosed prototype, or an architecture change that
-sends packet semantics to a remote VPN endpoint. This is a release viability
-gate, not a hidden implementation assumption.
+**Gate A0:** obtain evidence that this architecture is acceptable for the
+intended Network Extension entitlement and App Store distribution. Evidence may
+be a written Apple Developer Technical Support response, successful
+entitlement/review feedback for an accurately disclosed prototype, or an
+architecture change that sends packet semantics to a remote VPN endpoint. This
+is a release viability gate, not a hidden implementation assumption.
+
+**Scope of Gate A0 (re-scoped 2026-07-28 by ADR-013/ADR-024).** A0 is an App
+Store / App Review release gate. It is **deferred** for the macOS prototype goal
+and does **not** gate product implementation on that path: the goal ships a
+Developer ID-signed, notarized, directly-distributed macOS build, which does not
+pass through App Review. A0 stays **mandatory** before iOS submission and before
+any public macOS distribution claim that depends on App Store acceptance. Its
+task branch (`TASK-260715-1o3q6l` → `TASK-260715-1i6bh7` → `TASK-260715-1828xy`)
+carries `blocked` status with an evidence packet per ADR-027, so no scheduler can
+pull A0 research onto the prototype critical path. Nothing about the deferral
+weakens the architecture question itself; it is re-armed unchanged when App
+Store distribution resumes.
 
 Primary Apple references are recorded in
 [`../.research/260715_platform-upstream-verification.md`](../.research/260715_platform-upstream-verification.md).

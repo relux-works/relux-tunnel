@@ -1,5 +1,5 @@
 ## Status
-to-dev
+backlog
 
 ## Assigned To
 (none)
@@ -8,7 +8,7 @@ to-dev
 2026-07-15T00:47:17Z
 
 ## Last Update
-2026-07-15T02:51:08Z
+2026-07-28T00:51:07Z
 
 ## Blocked By
 - STORY-260715-tx1tbz
@@ -20,8 +20,6 @@ to-dev
 ## Blocks
 - STORY-260715-3tds7d
 - STORY-260715-n5dt84
-- STORY-260715-243sh0
-- STORY-260715-c1qsc6
 
 ## Checklist
 (empty)

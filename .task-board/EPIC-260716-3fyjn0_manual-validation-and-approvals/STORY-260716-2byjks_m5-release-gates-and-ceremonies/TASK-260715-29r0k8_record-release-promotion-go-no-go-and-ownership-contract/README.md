@@ -1,7 +1,7 @@
 # Record the release promotion, go or no-go, and ownership contract
 
 ## Description
-Define the cross-platform release control model that identifies candidate artifacts, required gates, role separation, approvals, promotion order, abort criteria, rollback authority, communications, evidence retention, and handoff to App Review.
+Define the cross-platform release control model that identifies candidate artifacts, required gates, role separation, approvals, promotion order, abort criteria, rollback authority, communications, evidence retention, and handoff to App Review, whose rows stay defined but are deferred with the App Store branch under ADR-013.
 
 ## Scope
 In scope: source and version manifest, relay staging bundle, macOS and iOS candidate IDs, required CI and acceptance verdicts, product, security, privacy, legal, release and App Review roles, separation of duties, GitHub and App Store channel order, release windows, go or no-go quorum, exception policy, abort and resume, rollback authority, evidence index, retention, and post-release ownership. Out of scope: implementing workflows, making legal decisions, issuing credentials, approving a candidate without evidence, and product feature changes.

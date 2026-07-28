@@ -8,7 +8,7 @@ backlog
 2026-07-15T02:12:45Z
 
 ## Last Update
-2026-07-21T21:47:43Z
+2026-07-28T01:23:08Z
 
 ## Blocked By
 - TASK-260715-1ok93q
@@ -16,7 +16,6 @@ backlog
 - TASK-260715-1k3wsk
 - TASK-260715-3hvz8n
 - TASK-260715-gfptap
-- TASK-260715-1a1fwv
 - TASK-260715-2wnw59
 
 ## Blocks

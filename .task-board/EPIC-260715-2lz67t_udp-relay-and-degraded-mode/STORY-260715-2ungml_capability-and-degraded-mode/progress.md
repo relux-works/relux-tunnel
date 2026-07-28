@@ -8,7 +8,7 @@ backlog
 2026-07-15T00:47:08Z
 
 ## Last Update
-2026-07-21T10:24:18Z
+2026-07-28T00:47:23Z
 
 ## Blocked By
 - STORY-260715-2etfkl
@@ -22,11 +22,9 @@ backlog
 - STORY-260715-1zzt0c
 - STORY-260715-2txwb7
 - STORY-260715-21c23x
-- STORY-260715-3ao1u9
 - STORY-260715-19ii11
 - STORY-260715-309t4z
 - STORY-260715-3tds7d
-- STORY-260715-n5dt84
 
 ## Checklist
 (empty)

@@ -1,7 +1,7 @@
 # Run the physical Wi-Fi, cellular, loss, and endpoint reconnect matrix
 
 ## Description
-Execute the reconnect acceptance matrix on named physical iPhone and Mac devices across Wi-Fi and cellular transitions where supported, transport and lane failures, server-address changes, and repeated stops, with route, DNS, capability, memory, and cleanup evidence.
+Execute the reconnect acceptance matrix on the named physical Apple-silicon Mac, with the physical-iPhone rows deferred with iOS under ADR-024, across Wi-Fi and cellular transitions where supported, transport and lane failures, server-address changes, and repeated stops, with route, DNS, capability, memory, and cleanup evidence.
 
 ## Scope
 In scope: iPhone Wi-Fi to cellular and cellular to Wi-Fi; Mac supported interface changes; path unavailable and recovery; lane-A and server loss; cached endpoint success and failure; server address change; IPv4 and IPv6 native rows; full and degraded restoration; compatible mode baseline; controlled DNS and traffic sentinels; authorized captures; outage, retry, route, memory, queue, and cleanup metrics. Out of scope: final NAT64, sleep or captive rows, fail-closed route acceptance owned separately, public-user traffic, host-key auto-replacement, or waiver of unavailable platform rows.

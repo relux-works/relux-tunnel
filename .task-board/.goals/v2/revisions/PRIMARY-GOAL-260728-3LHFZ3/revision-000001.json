@@ -1,0 +1,42 @@
+{
+  "contract_version": "board-goal-v2",
+  "goal_id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 1,
+  "expected_previous_revision": 0,
+  "owner": {
+    "kind": "parent",
+    "id": "primary"
+  },
+  "kind": "alignment",
+  "objective": "Deliver a working, signed and notarized macOS-first Relux Tunnel client that presents as a full-tunnel NEPacketTunnelProvider VPN and uses authenticated SSH with libssh2 as the primary external transport to a user-controlled host. Complete all gate-free SPM core, packet bridge/HEV, SSH viability, TCP/DNS runtime, rootless exec/stdio relay, UDP/degraded mode, macOS UI/provider, self-update, threat-model, CI, signing and release work through tracked producer-reviewer-rework-accepted cycles. iOS, App Store A0 policy research, and native Linux runner evidence are deferred and must not block the macOS prototype. Preserve host-key verification before auth, Keychain-only secret custody, bounded memory, fail-closed DNS, no user-exposed SOCKS, no SFTP, no utun-FD discovery, injectable physical tuning, and stop at real Keychain/Apple provisioning/system-VPN/physical validation/notary or product-decision gates with exact evidence. Execute serially with Codex Sol high as primary orchestrator, Claude Opus 5 as producer, Codex Sol high as independent reviewer, max_parallel 1, lite context, and signed pushed synchronized commits after every accepted task.",
+  "scope": {
+    "requested_ids": null,
+    "resolved_leaf_items": null
+  },
+  "mutation_authority": "agent_discretion",
+  "success_predicate": "alignment_handled",
+  "provider_condition": "The bound parent session has handled this exact alignment revision.",
+  "native_reflection": "required",
+  "state": "active",
+  "legacy_refs": [
+    {
+      "contract": "primary-goal-v1",
+      "id": "PRIMARY-GOAL-260728-3lhfz3",
+      "revision": 1
+    }
+  ],
+  "role_policy": {},
+  "mutation": {
+    "kind": "created",
+    "reason": "Owner explicitly activated the macOS working-client goal and approved SSH Option A with libssh2 primary, macOS-only physical validation, Relux Works signing/notary, local Sparkle generation, iOS/A0/Linux-CI deferral.",
+    "actor_context": {
+      "kind": "agent",
+      "actor_id": "iv"
+    },
+    "authority": "agent_discretion"
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-07-28T01:09:19.195521Z",
+  "created_by": "iv",
+  "reason": "Owner explicitly activated the macOS working-client goal and approved SSH Option A with libssh2 primary, macOS-only physical validation, Relux Works signing/notary, local Sparkle generation, iOS/A0/Linux-CI deferral."
+}

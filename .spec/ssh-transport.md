@@ -25,35 +25,56 @@ bounded writes/backpressure, per-channel window policy, server-initiated rekey,
 client-initiated rekey by byte/time threshold, keepalive, cancellation, and
 connection metrics. SFTP is intentionally excluded.
 
-## Engine decision gate
+## Engine decision (ADR-014, ADR-023)
 
 Vanilla SwiftNIO SSH is not an acceptable production engine at the inspected
 upstream commit because child channel receive windows are hard-coded to 16 MiB
-and client-initiated rekey is internal/test-only. The first spike compares:
+and client-initiated rekey is internal/test-only. Three rounds of pinned-source
+analysis then showed that the original full-fidelity contract also exceeded the
+public surface of *every* candidate, including `libssh2`.
 
-1. a minimal `ReluxNIOSSH` fork that makes receive windows configurable and
-   exposes safe automatic byte/time rekey; and
-2. `libssh2`, including custom channel windows, rekey behavior, algorithm
-   compatibility, cancellation, and Network Extension integration.
+**libssh2 is the selected primary engine** (ADR-014). The minimal `ReluxNIOSSH`
+fork is retained as recorded comparative evidence and receives no further fork
+work unless new evidence invalidates libssh2.
 
-The selected engine MUST pass all of these gates:
+The contract is therefore split into two tiers. Both are binding; they differ
+only in *when* the evidence is owed.
+
+### Tier 1 — M0-viability-mandatory
+
+The selected engine MUST pass every row before the working macOS client path
+proceeds. A red row routes to the alternate engine or back to analysis; it is
+never a reason to weaken a row.
 
 | Gate | Required evidence |
 | --- | --- |
-| Apple targets | Static or source integration works in iOS and macOS packet-tunnel extensions |
-| Host verification | Raw host key/fingerprint is available before authentication acceptance |
+| Apple targets | Static or source integration works in the macOS harness and the macOS packet-tunnel extension (iOS deferred, ADR-024) |
+| Host verification | Raw host key/fingerprint is available **before** authentication acceptance |
 | Authentication | Ed25519 and at least one broadly deployed fallback key type work against target servers |
-| Direct TCP | Hundreds of concurrent `direct-tcpip` channels can open, backpressure, and close independently |
-| Exec | Bidirectional stdio exec channel supports relay bootstrap and long-lived framing |
-| Windows | Initial receive window and adjustment policy are configurable per channel |
-| Rekey | Client byte/time thresholds and server requests survive active multi-gigabyte TCP and UDP traffic |
+| Direct TCP | Concurrent `direct-tcpip` channels open, backpressure, and close independently at the counts the macOS harness can drive |
+| Exec | Bidirectional stdio exec channel supports relay bootstrap, exec/stdin upload, and long-lived framing |
+| Client rekey | Client-initiated rekey by byte and time threshold succeeds under active traffic |
 | Algorithms | The real `relux` server and a documented compatibility matrix pass |
-| Memory | Channel count and buffered-data tests remain inside the extension budget |
-| Lifecycle | Cancellation, network loss, and reconnect do not leak channels, tasks, or descriptors |
+| Bounded memory | Buffers, queues, and advertised credit stay bounded and inside the recorded harness budget |
+| Lifecycle | Cancellation, network loss, and reconnect do not leak channels, tasks, sockets, or descriptors |
+| Errors | Failures map to privacy-safe categories with no host, credential, or path leakage |
 
-The engine choice is recorded as an architecture decision only after this
-matrix has evidence. A red result triggers the alternate engine; it is not a
-reason to weaken the gates.
+### Tier 2 — M3 evidence-gated (deferred, not waived)
+
+M0 adapters MUST surface each of these as an explicit not-reported or
+unsupported state. Fabricating a value, or silently substituting a weaker
+behavior, fails the adapter.
+
+| Deferred semantic | Why it is deferred | Owner |
+| --- | --- | --- |
+| Consumer-driven receive-window credit with an immutable per-channel cap | `libssh2_channel_read` auto-adjusts credit on read entry, before consumer delivery; NIOSSH has the equivalent frame-delivery problem | `TASK-260728-3cveay` |
+| RFC 4254 channel-open rejection reason taxonomy | libssh2 collapses the RFC reason codes | `TASK-260728-3cveay` |
+| Exact exec-exit metadata: `status(0)` vs `notReported`, and `coreDumped` | The public surface cannot distinguish absent metadata from status 0 | `TASK-260728-3cveay` |
+| Deep rekey/keepalive observability: server-initiated KEX lifecycle and generation, reply-correlated keepalive RTT/timeout/miss | No server-KEX lifecycle or reply-correlated global-request result is exposed | `TASK-260728-3cveay` |
+
+Multi-gigabyte rekey soak, staged hundreds-of-channels scale, and extension
+memory-budget numbers are M3 physical evidence
+(`TASK-260715-2xx2tk`, `TASK-260715-1k3wsk`), not M0 selection inputs.
 
 ## Lane pool
 

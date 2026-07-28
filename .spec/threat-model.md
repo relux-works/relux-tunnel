@@ -299,7 +299,10 @@ to describe the current component-only repository as a shipped VPN.
   privacy verification exists.
 - Apple platform-intent gate A0 and provisioning gate P0 remain release
   boundaries; implementation evidence does not imply entitlement or review
-  acceptance.
+  acceptance. Scope (ADR-013/ADR-024): P0 gates the macOS-first goal and is
+  recorded from macOS evidence alone; A0 gates App Store distribution and iOS
+  submission and is deferred for the Developer ID-signed, notarized
+  direct-distribution macOS release, which does not pass through App Review.
 
 ## 12. Change control
 

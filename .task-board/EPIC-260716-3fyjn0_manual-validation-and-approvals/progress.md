@@ -8,14 +8,10 @@ backlog
 2026-07-16T10:52:52Z
 
 ## Last Update
-2026-07-20T11:29:55Z
+2026-07-28T02:42:51Z
 
 ## Blocked By
-- EPIC-260715-21g2pi
-- EPIC-260715-3810we
-- EPIC-260715-2qzczm
-- EPIC-260715-w5gzf4
-- EPIC-260715-2mqgvm
+- (none)
 
 ## Blocks
 - EPIC-260715-w5gzf4

@@ -1,5 +1,5 @@
 ## Status
-blocked
+backlog
 
 ## Assigned To
 [reviewer] reviewer (codex)
@@ -8,7 +8,7 @@ blocked
 2026-07-21T04:36:58Z
 
 ## Last Update
-2026-07-21T18:34:22Z
+2026-07-28T00:49:52Z
 
 ## Blocked By
 - TASK-260715-1tnjlu
@@ -67,6 +67,7 @@ Independent re-review 02 changes requested. Reproduced 65,535/65,537 max-wire su
 agent completed: [reviewer] reviewer (codex) (exit=0)
 spawn run completed: codex (run=RUN-260721-6c4f3d, pid=15331, exit=0)
 Orchestrator disposition after accepted BUG-260721-17f093: all bounded validator, authority-structure, reliability assertion, artifact, and privacy defects are independently reviewer-accepted. This parent cannot enter to-review because the board correctly enforces unfinished TASK-260715-1gjxer selected SSH engine evidence and TASK-260715-1pn983 accepted ADR-009 residual DNS budget. productionAuthorization remains false, ADR-022 remains Proposed, candidate values remain injectable, and later physical provider evidence remains a manual gate. Marked blocked on exact dependencies; no workaround or premature acceptance.
+2026-07-28 replan (TASK-260728-3a2dnr): the TASK-260715-1pn983 blocker link is removed as the cycle-closing edge (1pn983 was itself blocked by TASK-260715-30ugfm, which this task gates). The ADR-009 residual-ledger obligation is preserved in the opposite direction: TASK-260715-1pn983 is now recorded from accepted contracts and macOS harness baselines and governs TASK-260715-z37ay7. This task remains gated on TASK-260715-1gjxer selected-engine direct-tcpip evidence; productionAuthorization stays false until the residual ledger and physical provider evidence are accepted.
 
 ## Precondition Resources
 - [TASK-260721-3miqh4_dns-policy-precondition.md](file://TASK-260721-3miqh4/TASK-260721-3miqh4_dns-policy-precondition.md) — ADR-022 invariant boundary and exact numeric evidence still required

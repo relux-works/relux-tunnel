@@ -1,0 +1,10 @@
+# TASK-260728-yx2fca: rescope-ssh-transport-contract-to-m0-viability
+
+## Description
+Revise the candidate-neutral SSH transport conformance contract and its implemented neutral seams from the full-fidelity M0 contract to the human-approved M0 viability scope so a working macOS client path exists on public libssh2 APIs. Keep every mandatory viability requirement binding and re-express the four deferred semantics as explicitly evidence-gated M3 obligations instead of silent waivers.
+
+## Scope
+In scope: revising the TASK-260715-2ny6z4 contract document and the TASK-260720-100wu6 candidate-neutral seam types/protocols; splitting requirements into M0-viability-mandatory and M3-deferred tiers; recording the exact deferred semantics (consumer-driven receive-window credit with immutable cap, RFC channel-open rejection reason taxonomy, exact exec-exit status/coreDumped metadata, deep rekey and keepalive observability) with their M3 owner task; updating consumer mapping for TASK-260715-1ozsb6, TASK-260715-2d3g5e, and TASK-260715-1u2vpc; updating precondition resources on affected tasks. Out of scope: weakening pre-auth host-key verification, approved authentication, direct-tcpip, exec/stdin upload, client-rekey trigger, bounded buffers, cancellation, lifecycle, Keychain-only secrets, or privacy-safe errors; adapter or engine implementation; NIOSSH fork work.
+
+## Acceptance Criteria
+1. The revised contract states, per requirement, whether it is M0-viability-mandatory or M3-deferred, and no mandatory requirement is removed or softened. 2. The four deferred semantics are individually named with the pinned-source evidence that justified deferral and are linked to the M3 owner task. 3. The candidate-neutral seam types compile and expose the deferred semantics as explicit not-reported/unsupported states rather than fabricated values. 4. Consumer tasks TASK-260715-1ozsb6, TASK-260715-2d3g5e, and TASK-260715-1u2vpc carry the revised contract as a precondition resource and their acceptance criteria reference the viability tier. 5. Existing NIOSSH and libssh2 blocker evidence is retained and referenced, not deleted.

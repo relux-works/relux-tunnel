@@ -1,5 +1,5 @@
 ## Status
-blocked
+to-dev
 
 ## Assigned To
 [implementer] developer (codex)
@@ -8,7 +8,7 @@ blocked
 2026-07-15T01:03:15Z
 
 ## Last Update
-2026-07-27T21:48:11Z
+2026-07-28T00:48:48Z
 
 ## Blocked By
 - TASK-260715-28ok1k
@@ -19,6 +19,7 @@ blocked
 - TASK-260720-100wu6
 - TASK-260720-3vwls7
 - TASK-260720-2sltje
+- TASK-260728-yx2fca
 
 ## Blocks
 - TASK-260715-2d3g5e

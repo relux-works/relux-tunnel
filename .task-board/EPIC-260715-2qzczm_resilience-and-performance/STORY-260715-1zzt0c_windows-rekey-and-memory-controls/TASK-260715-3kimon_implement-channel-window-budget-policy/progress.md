@@ -8,13 +8,14 @@ backlog
 2026-07-15T02:12:43Z
 
 ## Last Update
-2026-07-15T02:23:55Z
+2026-07-28T00:48:26Z
 
 ## Blocked By
 - TASK-260715-1pn983
 
 ## Blocks
 - TASK-260715-318m1v
+- TASK-260728-3cveay
 
 ## Checklist
 - [ ] Implement pure bounded initial and adjustment window calculations with ledger reservations
