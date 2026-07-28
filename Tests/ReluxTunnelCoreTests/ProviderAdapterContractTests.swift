@@ -339,6 +339,83 @@ struct ProviderAdapterContractTests {
   }
 
   @Test(
+    "fifty sequential double failures always deliver the first call error",
+    arguments: AdapterSeam.allCases
+  )
+  func providerFailureFirstCallOrdering(seam: AdapterSeam) async throws {
+    for _ in 0..<50 {
+      let fixture = try await ProviderFixture.make(seam: seam)
+      try await fixture.root.start(configuration: testConfiguration)
+
+      let cancellation = CallbackProbe<NSError>()
+      fixture.root.providerDidFail(.runtimeStartupFailed) { cancellation.record($0) }
+      fixture.root.providerDidFail(.internalInvariant) { cancellation.record($0) }
+      let error = await cancellation.next()
+      #expect(error.code == ProviderNSErrorCode.runtimeStartupFailed.rawValue)
+
+      await stop(root: fixture.root, rawReason: 2)
+      #expect(cancellation.count == 1)
+      #expect(await fixture.root.lifecyclePhase() == .idle)
+    }
+  }
+
+  @Test(
+    "concurrent and reentrant provider failures cancel exactly once",
+    arguments: AdapterSeam.allCases
+  )
+  func providerFailureConcurrentAdmission(seam: AdapterSeam) async throws {
+    let runtime = TestRuntime()
+    let fixture = try await ProviderFixture.make(
+      seam: seam,
+      runtimeFactory: TestRuntimeFactory { runtime }
+    )
+    try await fixture.root.start(configuration: testConfiguration)
+
+    let root = fixture.root
+    let cancellation = CallbackProbe<NSError>()
+    await withTaskGroup(of: Void.self) { group in
+      for _ in 0..<16 {
+        group.addTask {
+          root.providerDidFail(.runtimeStartupFailed) { error in
+            // A reentrant callback must neither deadlock nor reopen admission.
+            root.providerDidFail(.internalInvariant) { cancellation.record($0) }
+            cancellation.record(error)
+          }
+        }
+      }
+    }
+
+    let error = await cancellation.next()
+    #expect(error.code == ProviderNSErrorCode.runtimeStartupFailed.rawValue)
+    await runtime.waitUntilStopEntered()
+
+    await stop(root: fixture.root, rawReason: 2)
+    #expect(cancellation.count == 1)
+    #expect(await runtime.stopReason() == .providerFailure)
+    #expect(await fixture.root.lifecyclePhase() == .idle)
+  }
+
+  @Test(
+    "a fresh generation readmits provider failure after the previous handoff",
+    arguments: AdapterSeam.allCases
+  )
+  func providerFailureAdmissionResetsPerGeneration(seam: AdapterSeam) async throws {
+    let fixture = try await ProviderFixture.make(seam: seam)
+
+    for expected in [ProviderNSErrorCode.runtimeStartupFailed, .networkSettingsFailed] {
+      try await fixture.root.start(configuration: testConfiguration)
+      let cancellation = CallbackProbe<NSError>()
+      fixture.root.providerDidFail(expected) { cancellation.record($0) }
+      let error = await cancellation.next()
+      #expect(error.code == expected.rawValue)
+
+      await stop(root: fixture.root, rawReason: 2)
+      #expect(cancellation.count == 1)
+      #expect(await fixture.root.lifecyclePhase() == .idle)
+    }
+  }
+
+  @Test(
     "one hundred cycles release every runtime and callback gate", arguments: AdapterSeam.allCases)
   func repeatedLifecycleBaseline(seam: AdapterSeam) async throws {
     let ledger = LifetimeLedger()

@@ -452,6 +452,29 @@ private final class ProviderRetirementSignal: @unchecked Sendable {
   }
 }
 
+/// Synchronous, exactly-once admission for provider-failure callbacks.
+///
+/// `providerDidFail` hands its work to the actor through an unstructured task,
+/// and those tasks are not ordered against one another. Claiming admission on
+/// the caller's thread keeps the first call the one that cancels the tunnel,
+/// and drops every later or concurrent call before it can reach the actor.
+private final class ProviderFailureAdmission: @unchecked Sendable {
+  private let lock = NSLock()
+  private var isClaimed = false
+
+  func claim() -> Bool {
+    lock.withLock {
+      guard !isClaimed else { return false }
+      isClaimed = true
+      return true
+    }
+  }
+
+  func releaseForNewGeneration() {
+    lock.withLock { isClaimed = false }
+  }
+}
+
 private struct UnavailableProviderSnapshotSource: ProviderRuntimeSnapshotSource {
   func latestProviderSnapshot() async -> TunnelRuntimePublishedSnapshot? { nil }
 }
@@ -504,6 +527,7 @@ public actor TunnelProviderAdapter: TunnelProviderLifecycle {
   private let lifecycleDiagnostics: (any ProviderLifecycleDiagnosticsSink)?
   private let startBudget: Duration
   private let cleanupBudget: Duration
+  private let failureAdmission = ProviderFailureAdmission()
 
   private var activeGeneration: ActiveGeneration?
   private var latestGeneration: UInt64 = 0
@@ -512,7 +536,6 @@ public actor TunnelProviderAdapter: TunnelProviderLifecycle {
   private var cleanupGeneration: UInt64?
   private var pendingStartGate: ProviderOnceGate<NSError?>?
   private var awaitingSystemStopAfterProviderFailure = false
-  private var cancelTunnelIssuedGeneration: UInt64?
 
   private var requestLedgerGeneration: UInt64?
   private var activeRequestIDs: Set<UUID> = []
@@ -606,6 +629,7 @@ public actor TunnelProviderAdapter: TunnelProviderLifecycle {
 
     latestGeneration += 1
     let generation = latestGeneration
+    failureAdmission.releaseForNewGeneration()
     let registry = ProviderCleanupRegistry()
     if let controllable = packetFlow as? any ProviderCleanupControllable {
       registry.register(controllable)
@@ -880,6 +904,7 @@ public actor TunnelProviderAdapter: TunnelProviderLifecycle {
     _ errorCode: ProviderNSErrorCode,
     cancelTunnelWithError: @escaping ProviderCancelTunnelHandler
   ) {
+    guard failureAdmission.claim() else { return }
     Task { [weak self] in
       await self?.handleProviderFailure(
         errorCode,
@@ -893,10 +918,7 @@ public actor TunnelProviderAdapter: TunnelProviderLifecycle {
     cancelTunnelWithError: ProviderCancelTunnelHandler
   ) async {
     let generation = activeGeneration?.identifier ?? latestGeneration
-    if cancelTunnelIssuedGeneration != generation {
-      cancelTunnelIssuedGeneration = generation
-      cancelTunnelWithError(errorCode.nsError)
-    }
+    cancelTunnelWithError(errorCode.nsError)
 
     awaitingSystemStopAfterProviderFailure = true
     guard activeGeneration?.identifier == generation else {
