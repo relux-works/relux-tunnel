@@ -32,12 +32,13 @@ numbers.
 ## Execution model
 Board-driven via `task-board` in `/Users/iv/Developer/relux-tunnel`. The
 orchestrator plans from the critical path and delegates every task to tracked
-background children per `docs/spawn-policy.md` — **Fable-5 orchestrator; Codex
-`gpt-5.6-sol` at `high` as executor #1; `max_parallel` 1** (one executor at a
-time). Each task runs producer → reviewer → rework → accepted `done`; never stop
-at `to-review`. Respect dependency links; sequence dependent work. **After each
-accepted task: clean worktree, push to remote, sync local.** Current entry
-points:
+background children per `docs/spawn-policy.md` — **Codex `gpt-5.6-sol` at `high`
+as primary orchestrator; Claude `claude-opus-5` as producer; Codex
+`gpt-5.6-sol` at `high` as independent reviewer; `max_parallel` 1** (one tracked
+child at a time). Each task runs producer → reviewer → rework → accepted `done`;
+never stop at `to-review`. Respect dependency links; sequence dependent work.
+**After each accepted task: clean worktree, commit inside the policy window,
+push to remote, verify local `HEAD` equals origin.** Current entry points:
 `1fv4z1` (project inventory), `uopycx` (HEV baseline), `28ok1k` (SSH engine
 audit), plus always-free `3ujeip` (threat model), `2uyfn5` (self-update),
 `1s2eiz` (CI), `1tnjlu` (DNS policy), `2kchi0` (perf protocol).

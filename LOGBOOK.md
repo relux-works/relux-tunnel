@@ -3,6 +3,20 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-07-28
+
+### 0421 — Security-testing review now routes to the provider that previously filter-failed on it (TASK-260728-1glezz)
+- FINDING: The new serial policy makes review Codex-owned and marks security, networking, DNS, parsers, signing, and release tasks `review=required`. The superseded `docs/spawn-policy.md` section it replaced recorded that Codex `gpt-5.6-sol` trips OpenAI's cybersecurity content filter on legitimate defensive security-testing work (fuzzing, hostile-input corpora, DNS/route leak tests, redaction tests) and exits non-zero mid-run.
+- ANOMALY: Removing that section was required by the task AC, so the highest-risk review categories are now routed to the provider with the known failure mode. Whether the filter still reproduces on `gpt-5.6-sol` is unverified — no security-testing review has run under the new policy yet.
+- STATUS: Pending an owner decision. Recommended remedy is a narrow reviewer exception to `--agent claude --model claude-opus-5` for security-testing tasks only; independence is preserved because spawn already gives producer and reviewer separate Claude instances. Flagged in `TASK-260728-1glezz_results.md`, not implemented.
+
+### 0418 — Serial two-model agent policy is effective and verified by preflight (TASK-260728-1glezz)
+- DECISION: Codex `gpt-5.6-sol` high as primary orchestrator, Claude `claude-opus-5` as producer, Codex `gpt-5.6-sol` high as independent reviewer, `max_parallel: 1`. Replaces the Fable-orchestrator policy and the 2026-07-20 out-of-credits Claude-only fallback.
+- FINDING: `task-board q 'project_config(view=spawn-preflight, role=…, agent=…)'` is the authority for agent policy, not the config file. It resolves the role ceiling, allowed providers, `max_parallel`, and context profile in one call, and refuses an out-of-policy provider (`qwen`, exit 1) before task lookup or any launch side effect.
+- FINDING: `max_parallel: 1` is workdir-local. It does not coordinate a second worktree or a second client against the same board — recorded in `docs/spawn-policy.md:57` so it is not mistaken for a global serial guarantee. The orchestrator model likewise cannot be enforced by board config; it is a primary-session launch property.
+- SCOPE: `task-board.config.json`, `docs/spawn-policy.md`, `README.md:90`, `.spec/goal-macos-v1.md:35`, `.gitignore`. Commit policy (20:00–09:00 MSK window, `+04:00` timestamps, strictly monotonic ≥1min in accepted-task order, push, local-origin equality) lives in `version_control.desired_commit_time` and is mirrored as a numbered procedure in the doc. Git identity and SSH signing untouched — no local overrides introduced.
+- NOTE: `spawn.execution_policy` (producer/reviewer continuity) is absent by design and the prohibition is documented; it is not in task-board `0.23.0`.
+
 ## 2026-07-22
 
 ### 0153 — M3 JCS regression now fails closed over its numeric domain (TASK-260715-2kchi0 rework-04)

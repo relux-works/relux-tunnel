@@ -1,76 +1,124 @@
 # Spawn policy — relux-tunnel
 
-Two-tier execution: a **Claude/Fable orchestrator** delegates to a **Codex/Sol
-executor**. The per-agent models are pinned in `task-board.config.json` via spawn
-ceilings (`model_criterion: equal`), so an explicit spawn request is coerced to
-the configured model even if mis-specified.
+Serial two-model execution: a **Codex/Sol primary orchestrator** delegates
+implementation to **Claude/Opus 5** and routes independent review to
+**Codex/Sol**. `max_parallel: 1` permits one tracked child at a time in this
+workdir. Per-provider models are pinned in `task-board.config.json` with
+`model_criterion: equal`.
 
 ## Roles → models
 
 | Role | Agent | Model | Effort | Set by |
 |---|---|---|---|---|
-| Orchestrator (this session) | claude | `claude-fable-5` | max | `/model` (session, not board config) |
-| Executor #1 | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
-| Any Claude spawn (sub-orchestrator / reviewer) | claude | `claude-fable-5` | — | `spawn.ceilings.claude` |
+| Orchestrator (primary session) | codex | `gpt-5.6-sol` | `high` | primary-session launch |
+| Producer / implementer | claude | `claude-opus-5` | — | `spawn.ceilings.claude` |
+| Independent reviewer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
 
 Notes:
-- The orchestrator is the primary session, **not** a spawned child, so its model
-  (`claude-fable-5`) and effort (`max`) are set with `/model`, not the board
-  config. The `claude` ceiling only governs spawned Claude children.
+- The orchestrator is the primary session, **not** a spawned child. Its Sol
+  model is selected when launching or resuming the primary session; spawn
+  ceilings cannot enforce the primary model.
+- The Claude ceiling governs spawned Claude children and pins them to Opus 5.
 - Claude spawns do not accept a reasoning-effort flag (`claude_reasoning_effort_supported: false`).
 - Codex spawns require an effort; the ceiling pins it to `high` for `gpt-5.6-sol`.
+- Explicit provider policy permits only Claude and Codex; Qwen is out of policy.
+- `agent_context.profile: lite` keeps task contracts and safety gates while
+  removing repeated generic context and materializing large preconditions.
 
 ## Canonical spawn commands
 
 ```bash
-# executor (developer / tester) — Codex Sol high
-task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+# producer (developer / tester / researcher) — Claude Opus 5
+task-board spawn TASK-… --role developer --background --agent claude --model claude-opus-5
 
-# reviewer — independent Codex Sol review (or --agent claude for a Fable review)
+# reviewer — independent Codex Sol high
 task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
 
-# sub-orchestrator / decomposition — Claude Fable
-task-board spawn TASK-… --role solution-architect --background --agent claude --model claude-fable-5
+# architecture producer — Claude Opus 5
+task-board spawn TASK-… --role solution-architect --background --agent claude --model claude-opus-5
 ```
 
 ## Config (`task-board.config.json`)
 
 ```json
+"agent_context": { "profile": "lite" },
 "spawn": {
   "enabled": true,
   "max_parallel": 1,
+  "preferred_agentic_system": { "mixed": ["claude", "codex"] },
+  "launch_composition": { "enabled": true },
   "ceilings": {
     "codex":  { "model": "gpt-5.6-sol",   "model_criterion": "equal", "reasoning_effort": "high" },
-    "claude": { "model": "claude-fable-5", "model_criterion": "equal" }
+    "claude": { "model": "claude-opus-5", "model_criterion": "equal" }
   }
-}
+},
+"session_manager": {
+  "providers": {
+    "codex": {
+      "auto_continue": { "enabled": true, "delay_seconds": 20, "max_nudges_per_turn": 2, "prompt": "…" }
+    }
+  }
+},
+"version_control": { "confirm": true, "desired_commit_time": "…" }
+```
+
+Verify the effective policy — the config file is input, these views are truth:
+
+```bash
+task-board q 'project_config(view=spawn-preflight, role=developer, agent=claude)'
+task-board q 'project_config(view=spawn-preflight, role=reviewer, agent=codex)'
+task-board q 'project_config()'
 ```
 
 `max_parallel: 1` means a single tracked background executor runs at a time
 (orchestrator session + one executor); further spawns queue and start as the slot
-frees. `model_criterion: equal` coerces any spawn on that agent to the configured
-model; it cannot allowlist two models or disable an agent (only
-`spawn.enabled: false` is a global kill). To change a tier, edit the ceiling and
-redeploy.
+frees. This limit is local to the workdir and does not coordinate a second
+worktree or client. `model_criterion: equal` coerces an in-policy provider spawn
+to its configured model.
 
-## History
+## Review routing
 
-Superseded the earlier Claude-only (fable/opus, no Codex) policy: the executor
-tier is now Codex `gpt-5.6-sol` at `high`, orchestration stays on Fable.
+- Security, networking, concurrency, DNS, parsers, signing, update, and release
+  tasks use `review=required`.
+- Low-risk documentation, deterministic code generation, and board maintenance
+  may use `review=light`.
+- `review=none` is reserved for deterministic evidence wiring where the
+  orchestrator can verify every acceptance criterion mechanically.
+- Rework remains producer-owned; review remains independent and Codex-owned.
 
-## Security-testing tasks -> Claude
+## Commit and synchronization policy
 
-Codex (`gpt-5.6-sol`) trips OpenAI's cybersecurity content filter on legitimate
-defensive security-testing tasks (fuzzing, adversarial/hostile-input corpora,
-exploit-adjacent, leak tests) and exits non-zero mid-run. Route these to
-`--agent claude --model claude-fable-5` instead (authorized defensive context).
-Examples: packet/protocol/UDP fuzz + allocation-bounds, DNS/route leak tests,
-security/redaction tests. Everyday non-security executor work stays on codex-sol.
+After every accepted task:
 
-## Temporary: Codex out of credits -> claude-fable executor (2026-07-20)
+1. Commit the accepted task scope.
+2. Use a commit timestamp inside **20:00-09:00 Europe/Moscow**, equivalent to
+   **21:00-10:00 Asia/Tbilisi**.
+3. Record timestamps using the Tbilisi `+04:00` offset. Synthetic future
+   timestamps are allowed.
+4. Preserve accepted-task order: every timestamp must be strictly later than
+   the previous commit, with at least a one-minute interval.
+5. Push and verify local `HEAD` equals the remote branch.
 
-Codex (`gpt-5.6-sol`) hit its account usage limit (resets ~2026-07-26, or top up
-credits). Until credits are restored, run BOTH producers and reviewers on
-`--agent claude --model claude-fable-5` (independent instances for producer vs
-reviewer keep context separation). Switch executors back to codex-sol once credits
-are available. Orchestrator stays Fable.
+The repository's current Git identity and signing configuration remain in
+force; task-board does not replace them. `version_control.confirm: true` keeps
+the commit acknowledgement gate on, scoped to the agent's own work
+(`commit_ack=scope_committed`); foreign uncommitted work does not block a
+handoff.
+
+Task-board writes local runtime state under `.task-board/` that is not board
+content and must stay untracked:
+
+```gitignore
+.task-board/.progress-pair-generation
+.task-board/.progress-pair-journal.json
+```
+
+## Context and autonomy
+
+`agent_context.profile: lite` is enabled. Codex primary-session
+`auto_continue` is enabled with two bounded nudges per turn. It does not bypass
+real ambiguity, approval, secret, platform, or external-input gates.
+
+Persistent producer/reviewer continuity is not part of task-board `0.23.0`.
+Do not add `spawn.execution_policy` until the continuity branch is independently
+audited, rebased, released, and proven against real provider resume paths.
