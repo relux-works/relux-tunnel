@@ -1,5 +1,5 @@
 ## Status
-backlog
+analysis
 
 ## Review
 required
@@ -28,6 +28,8 @@ Spec requirement it serves: .spec/goal-macos-v1.md stop-the-line section — "Ce
 The gap: C1 existed only as prose. In the live DAG the four grant-bearing tasks (apc34w, 3jloqy, dveo1o, ziprhs) were ordered apc34w -> {3jloqy, dveo1o}, so a max_parallel=1 scheduler produced TWO human stops with a full producer-reviewer cycle in between. Independent review round 2 item 1 rejected exactly that. No existing element owned the human sitting itself.
 Out-of-scope check before creation: searched STORY-260716-2m2tl1 and STORY-260716-2byjks for an existing ceremony/permission-session element — none exists; the four tasks each own evidence for one grant, not the sitting. No duplicate created.
 This task holds the human input; the four downstream tasks keep their full evidence obligations and now run unattended.
+C1 started 2026-07-28 on current Apple-silicon Mac. Privacy-safe preflight: login Keychain accessible; Apple Development and Developer ID Application signing identities present; Xcode account metadata present; notarization source context present but no named notarytool profile detected; official Sparkle 2.9.4 release digest verified and generate_keys prepared in an ephemeral directory. No secret value, path, key ID, issuer ID, or credential was recorded. Current authoritative scope is matrix revision 2026-07-28.r12: four macOS App IDs, Network Extensions only, four Mac Development profiles; no App Groups, no Keychain Sharing, no iOS mutation.
+C1 credential steps completed: temporary codesign probes succeeded for the Relux Works Apple Development identity and Developer ID Application identity using /usr/bin/codesign; no Keychain prompt was required. Named notarytool profile relux-works-notary was stored in login Keychain and validated successfully against the notary service. Official Sparkle 2.9.4 generate_keys completed and stored its private EdDSA key in login Keychain; public output remains ephemeral for the unattended evidence task. Source notarization key disposition remains awaiting explicit owner choice. Apple Developer account page was opened for manual sign-in/2FA confirmation; no portal mutation has begun.
 
 ## Precondition Resources
 (none)
@@ -39,4 +41,4 @@ This task holds the human input; the four downstream tasks keep their full evide
 2026-07-28T01:45:49Z
 
 ## Last Update
-2026-07-28T01:47:23Z
+2026-07-28T10:37:20Z
