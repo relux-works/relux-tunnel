@@ -15,6 +15,7 @@ accepted design, and planned/evidence-gated behavior.
 | [`architecture.md`](architecture.md) | System boundaries, components, and trust boundaries |
 | [`packet-plane.md`](packet-plane.md) | Packet bridge, HEV/lwIP integration, buffering, and memory |
 | [`ssh-transport.md`](ssh-transport.md) | SSH engine gates, channels, lane pool, windows, and rekeying |
+| [`ssh-transport-conformance-contract.md`](ssh-transport-conformance-contract.md) | Candidate-neutral M0 viability requirements, explicit M3 deferred semantics, blocker evidence, and consumer mapping |
 | [`relay-protocol.md`](relay-protocol.md) | Rootless remote relay lifecycle and wire protocol |
 | [`routing-dns-lifecycle.md`](routing-dns-lifecycle.md) | Routes, DNS, reconnect, and kill-switch behavior |
 | [`security-privacy.md`](security-privacy.md) | Threat model, credential handling, and privacy controls |

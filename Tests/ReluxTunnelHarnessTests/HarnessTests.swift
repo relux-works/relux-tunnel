@@ -494,16 +494,27 @@ private actor TestSSHTransport: SSHTransport {
 
   func requestRekey(reason: SSHClientRekeyReason) async throws {}
 
-  func sendKeepalive() async throws -> Duration { .zero }
+  func sendKeepalive() async throws -> SSHDeferredSemanticReport<Duration> { .unsupported }
 
   func snapshot() -> SSHTransportSnapshot {
     SSHTransportSnapshot(
       lane: lane,
       connectionState: .idle,
       negotiatedAlgorithms: nil,
-      keyExchangeGeneration: 0,
-      counters: SSHTransportCounters(),
-      gauges: SSHTransportGauges()
+      keyExchangeGeneration: .unsupported,
+      counters: SSHTransportCounters(
+        windowAdjustments: .unsupported,
+        windowAdjustmentBytes: .unsupported,
+        serverRekeys: .unsupported,
+        keepalivesAcknowledged: .unsupported,
+        keepalivesTimedOut: .unsupported
+      ),
+      gauges: SSHTransportGauges(
+        remainingReceiveWindowBytes: .unsupported,
+        activeKeyExchange: .unsupported,
+        consecutiveKeepaliveMisses: .unsupported,
+        lastKeepaliveRTTNanoseconds: .unsupported
+      )
     )
   }
 

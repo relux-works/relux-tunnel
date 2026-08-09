@@ -104,6 +104,90 @@ public enum SSHContractValidationError: Error, Equatable, Sendable {
   case invalidAddressByteCount(expected: Int, actual: Int)
   case invalidWindowSnapshot
   case invalidWindowAdjustment
+  case initialReceiveWindowPolicyMismatch
+  case channelOpenReasonRequired
+  case channelOpenReasonUnexpected
+}
+
+// MARK: - Conformance tiers and deferred evidence
+
+public enum SSHConformanceTier: Equatable, Sendable {
+  case m0ViabilityMandatory
+  case m3Deferred(ownerTaskID: String)
+}
+
+/// Exhaustive candidate-neutral classification of the SSH transport contract.
+///
+/// M3 entries remain binding obligations. Their evidence may be unavailable at
+/// M0, but adapters must report that state instead of inventing a value.
+public enum SSHConformanceRequirement: String, CaseIterable, Hashable, Sendable {
+  case appleTargetIntegration
+  case candidateNeutralInjection
+  case hostKeyBeforeAuthentication
+  case approvedPublicKeyAuthentication
+  case approvedAlgorithmPolicy
+  case directTCPIP
+  case execAndStdinUpload
+  case clientInitiatedRekey
+  case serverInitiatedRekeyHandling
+  case boundedBuffersAndBackpressure
+  case deterministicCancellation
+  case boundedLifecycle
+  case keychainOnlySecrets
+  case privacySafeErrors
+  case connectionKeepalive
+  case availableObservability
+  case consumerDrivenReceiveWindowCredit
+  case rfcChannelOpenFailureReasons
+  case exactExecExitMetadata
+  case deepRekeyAndKeepaliveObservability
+
+  public var tier: SSHConformanceTier {
+    switch self {
+    case .consumerDrivenReceiveWindowCredit,
+      .rfcChannelOpenFailureReasons,
+      .exactExecExitMetadata,
+      .deepRekeyAndKeepaliveObservability:
+      .m3Deferred(ownerTaskID: "TASK-260728-3cveay")
+    default:
+      .m0ViabilityMandatory
+    }
+  }
+}
+
+/// Evidence state for a semantic whose exact reporting is deferred to M3.
+public enum SSHDeferredSemanticReport<Value: Sendable>: Sendable {
+  case reported(Value)
+  case notReported
+  case unsupported
+}
+
+extension SSHDeferredSemanticReport: Equatable where Value: Equatable {}
+
+public enum SSHDeferredSemanticAvailability: String, Equatable, Sendable {
+  case reported
+  case notReported
+  case unsupported
+}
+
+/// Factory-level disclosure for all four M3-deferred semantics.
+public struct SSHDeferredSemanticCapabilities: Equatable, Sendable {
+  public let consumerDrivenReceiveWindowCredit: SSHDeferredSemanticAvailability
+  public let rfcChannelOpenFailureReasons: SSHDeferredSemanticAvailability
+  public let exactExecExitMetadata: SSHDeferredSemanticAvailability
+  public let deepRekeyAndKeepaliveObservability: SSHDeferredSemanticAvailability
+
+  public init(
+    consumerDrivenReceiveWindowCredit: SSHDeferredSemanticAvailability,
+    rfcChannelOpenFailureReasons: SSHDeferredSemanticAvailability,
+    exactExecExitMetadata: SSHDeferredSemanticAvailability,
+    deepRekeyAndKeepaliveObservability: SSHDeferredSemanticAvailability
+  ) {
+    self.consumerDrivenReceiveWindowCredit = consumerDrivenReceiveWindowCredit
+    self.rfcChannelOpenFailureReasons = rfcChannelOpenFailureReasons
+    self.exactExecExitMetadata = exactExecExitMetadata
+    self.deepRekeyAndKeepaliveObservability = deepRekeyAndKeepaliveObservability
+  }
 }
 
 // MARK: - Network and injected dependencies
@@ -621,12 +705,13 @@ public struct SSHConnectionConfiguration: Equatable, Sendable {
 }
 
 public enum SSHAdapterFeature: String, CaseIterable, Hashable, Sendable {
+  case hostKeyBeforeAuthentication
   case publicKeyAuthentication
   case directTCPIP
   case exec
   case execStdinUpload
   case boundedPartialWrites
-  case perChannelReceiveWindows
+  case boundedReceiveBuffers
   case clientByteRekey
   case clientTimeRekey
   case explicitRekey
@@ -637,6 +722,7 @@ public enum SSHAdapterFeature: String, CaseIterable, Hashable, Sendable {
 /// Common, harness-facing capability data with no adapter identity or handles.
 public struct SSHAdapterCapabilities: Equatable, Sendable {
   public let features: Set<SSHAdapterFeature>
+  public let deferredSemantics: SSHDeferredSemanticCapabilities
   public let keyExchangeAlgorithms: Set<String>
   public let hostKeyAlgorithms: Set<String>
   public let cipherAlgorithms: Set<String>
@@ -645,6 +731,7 @@ public struct SSHAdapterCapabilities: Equatable, Sendable {
 
   public init(
     features: Set<SSHAdapterFeature>,
+    deferredSemantics: SSHDeferredSemanticCapabilities,
     keyExchangeAlgorithms: Set<String>,
     hostKeyAlgorithms: Set<String>,
     cipherAlgorithms: Set<String>,
@@ -652,6 +739,7 @@ public struct SSHAdapterCapabilities: Equatable, Sendable {
     publicKeyAuthenticationAlgorithms: Set<String>
   ) {
     self.features = features
+    self.deferredSemantics = deferredSemantics
     self.keyExchangeAlgorithms = keyExchangeAlgorithms
     self.hostKeyAlgorithms = hostKeyAlgorithms
     self.cipherAlgorithms = cipherAlgorithms
@@ -764,13 +852,13 @@ public struct SSHSession: Equatable, Sendable {
   public let acceptedHostKey: SSHHostKeyEvidence
   public let hostDecision: SSHHostDecisionOutcome
   public let negotiatedAlgorithms: SSHNegotiatedAlgorithms
-  public let keyExchangeGeneration: UInt64
+  public let keyExchangeGeneration: SSHDeferredSemanticReport<UInt64>
 
   public init(
     identity: SSHSessionIdentity,
     acceptedHost: SSHHostKeyAcceptance,
     negotiatedAlgorithms: SSHNegotiatedAlgorithms,
-    keyExchangeGeneration: UInt64
+    keyExchangeGeneration: SSHDeferredSemanticReport<UInt64>
   ) {
     self.identity = identity
     self.lane = acceptedHost.lane
@@ -783,27 +871,56 @@ public struct SSHSession: Equatable, Sendable {
 
 public struct SSHChannelPolicy: Equatable, Sendable {
   public let initialReceiveWindowBytes: Int
-  public let maximumAdvertisedReceiveWindowBytes: Int
-  public let windowAdjustThresholdBytes: Int
+  public let consumerReceiveWindowCredit: SSHDeferredSemanticReport<SSHConsumerReceiveWindowPolicy>
   public let maximumBufferedReadBytes: Int
   public let maximumQueuedWriteBytes: Int
   public let maximumWriteCallBytes: Int
 
   public init(
     initialReceiveWindowBytes: Int,
-    maximumAdvertisedReceiveWindowBytes: Int,
-    windowAdjustThresholdBytes: Int,
+    consumerReceiveWindowCredit: SSHDeferredSemanticReport<SSHConsumerReceiveWindowPolicy>,
     maximumBufferedReadBytes: Int,
     maximumQueuedWriteBytes: Int,
     maximumWriteCallBytes: Int
   ) throws {
     let positiveValues: [(Int, SSHValidationField)] = [
       (initialReceiveWindowBytes, .initialReceiveWindowBytes),
-      (maximumAdvertisedReceiveWindowBytes, .maximumAdvertisedReceiveWindowBytes),
-      (windowAdjustThresholdBytes, .windowAdjustThresholdBytes),
       (maximumBufferedReadBytes, .maximumBufferedReadBytes),
       (maximumQueuedWriteBytes, .maximumQueuedWriteBytes),
       (maximumWriteCallBytes, .maximumWriteCallBytes),
+    ]
+    for (value, field) in positiveValues where value <= 0 {
+      throw SSHContractValidationError.nonPositive(field)
+    }
+    if case .reported(let policy) = consumerReceiveWindowCredit,
+      policy.initialReceiveWindowBytes != initialReceiveWindowBytes
+    {
+      throw SSHContractValidationError.initialReceiveWindowPolicyMismatch
+    }
+    self.initialReceiveWindowBytes = initialReceiveWindowBytes
+    self.consumerReceiveWindowCredit = consumerReceiveWindowCredit
+    self.maximumBufferedReadBytes = maximumBufferedReadBytes
+    self.maximumQueuedWriteBytes = maximumQueuedWriteBytes
+    self.maximumWriteCallBytes = maximumWriteCallBytes
+  }
+}
+
+/// Exact consumer-earned receive-credit policy. Adapters that cannot suppress
+/// engine-owned automatic adjustment use an explicit deferred state instead.
+public struct SSHConsumerReceiveWindowPolicy: Equatable, Sendable {
+  public let initialReceiveWindowBytes: Int
+  public let maximumAdvertisedReceiveWindowBytes: Int
+  public let windowAdjustThresholdBytes: Int
+
+  public init(
+    initialReceiveWindowBytes: Int,
+    maximumAdvertisedReceiveWindowBytes: Int,
+    windowAdjustThresholdBytes: Int
+  ) throws {
+    let positiveValues: [(Int, SSHValidationField)] = [
+      (initialReceiveWindowBytes, .initialReceiveWindowBytes),
+      (maximumAdvertisedReceiveWindowBytes, .maximumAdvertisedReceiveWindowBytes),
+      (windowAdjustThresholdBytes, .windowAdjustThresholdBytes),
     ]
     for (value, field) in positiveValues where value <= 0 {
       throw SSHContractValidationError.nonPositive(field)
@@ -817,9 +934,6 @@ public struct SSHChannelPolicy: Equatable, Sendable {
     self.initialReceiveWindowBytes = initialReceiveWindowBytes
     self.maximumAdvertisedReceiveWindowBytes = maximumAdvertisedReceiveWindowBytes
     self.windowAdjustThresholdBytes = windowAdjustThresholdBytes
-    self.maximumBufferedReadBytes = maximumBufferedReadBytes
-    self.maximumQueuedWriteBytes = maximumQueuedWriteBytes
-    self.maximumWriteCallBytes = maximumWriteCallBytes
   }
 }
 
@@ -922,9 +1036,9 @@ public enum SSHExecSignalName: Equatable, Sendable {
 
 public struct SSHExecSignal: Equatable, Sendable {
   public let name: SSHExecSignalName
-  public let coreDumped: Bool
+  public let coreDumped: SSHDeferredSemanticReport<Bool>
 
-  public init(name: SSHExecSignalName, coreDumped: Bool) {
+  public init(name: SSHExecSignalName, coreDumped: SSHDeferredSemanticReport<Bool>) {
     self.name = name
     self.coreDumped = coreDumped
   }
@@ -934,6 +1048,7 @@ public enum SSHExecExit: Equatable, Sendable {
   case status(Int32)
   case signal(SSHExecSignal)
   case notReported
+  case unsupported
 }
 
 public protocol SSHUploadSource: Sendable {
@@ -985,6 +1100,15 @@ public enum SSHChannelOpenFailureReason: String, Equatable, Sendable {
   case unknownChannelType
   case resourceShortage
   case other
+}
+
+/// Evidence for the RFC channel-open rejection reason, including the explicit
+/// not-applicable state used by every other transport error code.
+public enum SSHChannelOpenReasonReport: Equatable, Sendable {
+  case notApplicable
+  case reported(SSHChannelOpenFailureReason)
+  case notReported
+  case unsupported
 }
 
 public enum SSHTransportErrorCode: String, CaseIterable, Equatable, Sendable {
@@ -1065,7 +1189,7 @@ public struct SSHTransportError: Error, Equatable, Sendable {
   public let scope: SSHTransportErrorScope
   public let retryDisposition: SSHRetryDisposition
   public let requiresTeardown: Bool
-  public let channelOpenReason: SSHChannelOpenFailureReason?
+  public let channelOpenReason: SSHChannelOpenReasonReport
 
   public init(
     code: SSHTransportErrorCode,
@@ -1073,7 +1197,33 @@ public struct SSHTransportError: Error, Equatable, Sendable {
     scope: SSHTransportErrorScope,
     retryDisposition: SSHRetryDisposition,
     requiresTeardown: Bool,
-    channelOpenReason: SSHChannelOpenFailureReason? = nil
+    channelOpenReason: SSHChannelOpenReasonReport
+  ) throws {
+    switch (code == .channelOpenRejected, channelOpenReason) {
+    case (true, .notApplicable):
+      throw SSHContractValidationError.channelOpenReasonRequired
+    case (false, .reported), (false, .notReported), (false, .unsupported):
+      throw SSHContractValidationError.channelOpenReasonUnexpected
+    default:
+      break
+    }
+    self.init(
+      validatedCode: code,
+      phase: phase,
+      scope: scope,
+      retryDisposition: retryDisposition,
+      requiresTeardown: requiresTeardown,
+      channelOpenReason: channelOpenReason
+    )
+  }
+
+  private init(
+    validatedCode code: SSHTransportErrorCode,
+    phase: SSHTransportPhase,
+    scope: SSHTransportErrorScope,
+    retryDisposition: SSHRetryDisposition,
+    requiresTeardown: Bool,
+    channelOpenReason: SSHChannelOpenReasonReport
   ) {
     self.code = code
     self.phase = phase
@@ -1101,11 +1251,12 @@ public struct SSHTransportError: Error, Equatable, Sendable {
       code = .hostKeyRejected
     }
     return SSHTransportError(
-      code: code,
+      validatedCode: code,
       phase: .hostDecision,
       scope: .lane(lane),
       retryDisposition: .afterConfigurationChange,
-      requiresTeardown: true
+      requiresTeardown: true,
+      channelOpenReason: .notApplicable
     )
   }
 
@@ -1154,11 +1305,12 @@ public struct SSHTransportError: Error, Equatable, Sendable {
       (code, phase, retry) = (.timedOut, cancellationPhase, .newConnection)
     }
     return SSHTransportError(
-      code: code,
+      validatedCode: code,
       phase: phase,
       scope: .lane(lane),
       retryDisposition: retry,
-      requiresTeardown: true
+      requiresTeardown: true,
+      channelOpenReason: .notApplicable
     )
   }
 }
@@ -1245,17 +1397,17 @@ public struct SSHTransportCounters: Equatable, Sendable {
   public var protectedBytesSent: UInt64
   public var protectedBytesReceived: UInt64
   public var writeBackpressureWaits: UInt64
-  public var windowAdjustments: UInt64
-  public var windowAdjustmentBytes: UInt64
+  public var windowAdjustments: SSHDeferredSemanticReport<UInt64>
+  public var windowAdjustmentBytes: SSHDeferredSemanticReport<UInt64>
   public var clientByteRekeys: UInt64
   public var clientTimeRekeys: UInt64
   public var explicitRekeys: UInt64
-  public var serverRekeys: UInt64
+  public var serverRekeys: SSHDeferredSemanticReport<UInt64>
   public var rekeysSucceeded: UInt64
   public var rekeysFailed: UInt64
   public var keepalivesSent: UInt64
-  public var keepalivesAcknowledged: UInt64
-  public var keepalivesTimedOut: UInt64
+  public var keepalivesAcknowledged: SSHDeferredSemanticReport<UInt64>
+  public var keepalivesTimedOut: SSHDeferredSemanticReport<UInt64>
 
   public init(
     connectAttempts: UInt64 = 0,
@@ -1282,17 +1434,17 @@ public struct SSHTransportCounters: Equatable, Sendable {
     protectedBytesSent: UInt64 = 0,
     protectedBytesReceived: UInt64 = 0,
     writeBackpressureWaits: UInt64 = 0,
-    windowAdjustments: UInt64 = 0,
-    windowAdjustmentBytes: UInt64 = 0,
+    windowAdjustments: SSHDeferredSemanticReport<UInt64>,
+    windowAdjustmentBytes: SSHDeferredSemanticReport<UInt64>,
     clientByteRekeys: UInt64 = 0,
     clientTimeRekeys: UInt64 = 0,
     explicitRekeys: UInt64 = 0,
-    serverRekeys: UInt64 = 0,
+    serverRekeys: SSHDeferredSemanticReport<UInt64>,
     rekeysSucceeded: UInt64 = 0,
     rekeysFailed: UInt64 = 0,
     keepalivesSent: UInt64 = 0,
-    keepalivesAcknowledged: UInt64 = 0,
-    keepalivesTimedOut: UInt64 = 0
+    keepalivesAcknowledged: SSHDeferredSemanticReport<UInt64>,
+    keepalivesTimedOut: SSHDeferredSemanticReport<UInt64>
   ) {
     self.connectAttempts = connectAttempts
     self.connectSucceeded = connectSucceeded
@@ -1340,10 +1492,10 @@ public struct SSHTransportGauges: Equatable, Sendable {
   public var pendingWrites: Int64
   public var queuedWriteBytes: Int64
   public var bufferedReadBytes: Int64
-  public var remainingReceiveWindowBytes: Int64
-  public var activeKeyExchange: Int64
-  public var consecutiveKeepaliveMisses: Int64
-  public var lastKeepaliveRTTNanoseconds: Int64
+  public var remainingReceiveWindowBytes: SSHDeferredSemanticReport<Int64>
+  public var activeKeyExchange: SSHDeferredSemanticReport<Int64>
+  public var consecutiveKeepaliveMisses: SSHDeferredSemanticReport<Int64>
+  public var lastKeepaliveRTTNanoseconds: SSHDeferredSemanticReport<Int64>
 
   public init(
     openDirectChannels: Int64 = 0,
@@ -1353,10 +1505,10 @@ public struct SSHTransportGauges: Equatable, Sendable {
     pendingWrites: Int64 = 0,
     queuedWriteBytes: Int64 = 0,
     bufferedReadBytes: Int64 = 0,
-    remainingReceiveWindowBytes: Int64 = 0,
-    activeKeyExchange: Int64 = 0,
-    consecutiveKeepaliveMisses: Int64 = 0,
-    lastKeepaliveRTTNanoseconds: Int64 = 0
+    remainingReceiveWindowBytes: SSHDeferredSemanticReport<Int64>,
+    activeKeyExchange: SSHDeferredSemanticReport<Int64>,
+    consecutiveKeepaliveMisses: SSHDeferredSemanticReport<Int64>,
+    lastKeepaliveRTTNanoseconds: SSHDeferredSemanticReport<Int64>
   ) {
     self.openDirectChannels = openDirectChannels
     self.openExecChannels = openExecChannels
@@ -1420,7 +1572,7 @@ public struct SSHTransportSnapshot: Equatable, Sendable {
   public let lane: SSHLaneIdentity
   public let connectionState: SSHConnectionState
   public let negotiatedAlgorithms: SSHNegotiatedAlgorithms?
-  public let keyExchangeGeneration: UInt64
+  public let keyExchangeGeneration: SSHDeferredSemanticReport<UInt64>
   public let counters: SSHTransportCounters
   public let gauges: SSHTransportGauges
 
@@ -1428,7 +1580,7 @@ public struct SSHTransportSnapshot: Equatable, Sendable {
     lane: SSHLaneIdentity,
     connectionState: SSHConnectionState,
     negotiatedAlgorithms: SSHNegotiatedAlgorithms?,
-    keyExchangeGeneration: UInt64,
+    keyExchangeGeneration: SSHDeferredSemanticReport<UInt64>,
     counters: SSHTransportCounters,
     gauges: SSHTransportGauges
   ) {
@@ -1485,8 +1637,9 @@ public protocol SSHTransport: AnyObject, Sendable {
   /// Uses the same production rekey path as automatic and server triggers.
   func requestRekey(reason: SSHClientRekeyReason) async throws
 
-  /// Uses the configured reply-requiring keepalive path and returns monotonic RTT.
-  func sendKeepalive() async throws -> Duration
+  /// Sends through the configured keepalive path. Exact reply RTT is explicitly
+  /// reported only when the adapter exposes the M3 observability semantic.
+  func sendKeepalive() async throws -> SSHDeferredSemanticReport<Duration>
   func snapshot() async -> SSHTransportSnapshot
 
   /// Idempotent, non-cancellable cleanup of channels, engine session, and socket.
@@ -1506,7 +1659,9 @@ public protocol SSHByteChannel: AnyObject, Sendable {
 
   /// Idempotently sends EOF after accepted bytes and preserves the read half.
   func finishWriting() async throws
-  func receiveWindow() async -> SSHReceiveWindowSnapshot
+  /// Exact consumer-credit accounting is an M3 semantic and must never be
+  /// synthesized from engine intake or auto-adjust behavior.
+  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot>
 
   /// Cancels this channel only and fails its pending operations as cancelled.
   func cancel() async

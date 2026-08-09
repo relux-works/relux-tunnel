@@ -38,7 +38,9 @@ fork is retained as recorded comparative evidence and receives no further fork
 work unless new evidence invalidates libssh2.
 
 The contract is therefore split into two tiers. Both are binding; they differ
-only in *when* the evidence is owed.
+only in *when* the evidence is owed. The exhaustive normative classification,
+neutral seam mapping, pinned blocker evidence, and consumer mapping live in
+[`ssh-transport-conformance-contract.md`](ssh-transport-conformance-contract.md).
 
 ### Tier 1 — M0-viability-mandatory
 
@@ -54,10 +56,14 @@ never a reason to weaken a row.
 | Direct TCP | Concurrent `direct-tcpip` channels open, backpressure, and close independently at the counts the macOS harness can drive |
 | Exec | Bidirectional stdio exec channel supports relay bootstrap, exec/stdin upload, and long-lived framing |
 | Client rekey | Client-initiated rekey by byte and time threshold succeeds under active traffic |
+| Server rekey handling | Inbound server KEX preserves active channel traffic and bounded buffers; deep lifecycle/generation telemetry is Tier 2 |
 | Algorithms | The real `relux` server and a documented compatibility matrix pass |
 | Bounded memory | Buffers, queues, and advertised credit stay bounded and inside the recorded harness budget |
 | Lifecycle | Cancellation, network loss, and reconnect do not leak channels, tasks, sockets, or descriptors |
 | Errors | Failures map to privacy-safe categories with no host, credential, or path leakage |
+| Keychain-only secrets | The seam carries opaque credential references and external signing only; private keys/passphrases stay in the approved Keychain-backed provider |
+| Keepalive | Configured bounded SSH keepalive transmission and available failure behavior remain operational |
+| Available observability | Cheaply available typed metrics/events remain privacy-safe; unavailable deep fields use explicit deferred states |
 
 ### Tier 2 — M3 evidence-gated (deferred, not waived)
 

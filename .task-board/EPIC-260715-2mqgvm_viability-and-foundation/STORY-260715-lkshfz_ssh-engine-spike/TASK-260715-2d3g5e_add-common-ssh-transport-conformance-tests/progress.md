@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:16Z
 
 ## Last Update
-2026-07-28T00:48:26Z
+2026-08-09T23:12:32Z
 
 ## Blocked By
 - TASK-260715-2ny6z4
@@ -29,7 +29,7 @@ backlog
 ## Notes
 
 ## Precondition Resources
-- [TASK-260715-2d3g5e_ssh-transport-conformance-contract.md](file://TASK-260715-2d3g5e/TASK-260715-2d3g5e_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport contract from TASK-260715-2ny6z4; consume after blocker review acceptance
+- [TASK-260715-2d3g5e_ssh-transport-conformance-contract.md](file://TASK-260715-2d3g5e/TASK-260715-2d3g5e_ssh-transport-conformance-contract.md) — Revised M0-viability conformance tiers and explicit M3 deferred-state contract
 
 ## Outcome Resources
 (none)

@@ -826,8 +826,8 @@ private final class RandomizedSSHByteChannel: SSHByteChannel, @unchecked Sendabl
 
   func finishWriting() async throws {}
 
-  func receiveWindow() async -> SSHReceiveWindowSnapshot {
-    fixtureReceiveWindow()
+  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
+    .reported(fixtureReceiveWindow())
   }
 
   func cancel() async {
@@ -945,7 +945,9 @@ private final class ControllableSSHByteChannel: SSHByteChannel, @unchecked Senda
   }
 
   func finishWriting() async throws {}
-  func receiveWindow() async -> SSHReceiveWindowSnapshot { fixtureReceiveWindow() }
+  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
+    .reported(fixtureReceiveWindow())
+  }
 
   func cancel() async {
     let suspended = lock.withLock { () -> CheckedContinuation<Int, Error>? in
@@ -1142,7 +1144,9 @@ private final class StallSSHByteChannel: SSHByteChannel, @unchecked Sendable {
   }
 
   func finishWriting() async throws {}
-  func receiveWindow() async -> SSHReceiveWindowSnapshot { fixtureReceiveWindow() }
+  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
+    .reported(fixtureReceiveWindow())
+  }
 
   func cancel() async {
     let pending = lock.withLock {
@@ -1307,12 +1311,13 @@ private enum PumpFixtureError: Error {
 }
 
 private func fixtureSSHClosedError(identity: SSHChannelIdentity) -> SSHTransportError {
-  SSHTransportError(
+  try! SSHTransportError(
     code: .channelClosed,
     phase: .channelRead,
     scope: .channel(identity),
     retryDisposition: .never,
-    requiresTeardown: false
+    requiresTeardown: false,
+    channelOpenReason: .notApplicable
   )
 }
 

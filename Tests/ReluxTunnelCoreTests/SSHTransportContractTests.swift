@@ -4,6 +4,31 @@ import Testing
 
 @Suite("Candidate-neutral SSH transport contract")
 struct SSHTransportContractTests {
+  @Test("every SSH requirement has an explicit M0 or M3 tier")
+  func conformanceTiers() {
+    let deferred = SSHConformanceRequirement.allCases.filter {
+      if case .m3Deferred = $0.tier { return true }
+      return false
+    }
+
+    #expect(
+      deferred == [
+        .consumerDrivenReceiveWindowCredit,
+        .rfcChannelOpenFailureReasons,
+        .exactExecExitMetadata,
+        .deepRekeyAndKeepaliveObservability,
+      ])
+    #expect(
+      deferred.allSatisfy {
+        $0.tier == .m3Deferred(ownerTaskID: "TASK-260728-3cveay")
+      }
+    )
+    #expect(
+      SSHConformanceRequirement.allCases.filter { $0.tier == .m0ViabilityMandatory }.count
+        == 16
+    )
+  }
+
   @Test("connection state transitions reject lifecycle shortcuts")
   func connectionStateTransitions() {
     let validPath: [(SSHConnectionState, SSHConnectionState)] = [
@@ -38,28 +63,36 @@ struct SSHTransportContractTests {
     #expect(throws: SSHContractValidationError.nonPositive(.initialReceiveWindowBytes)) {
       _ = try SSHChannelPolicy(
         initialReceiveWindowBytes: 0,
-        maximumAdvertisedReceiveWindowBytes: 8,
-        windowAdjustThresholdBytes: 4,
+        consumerReceiveWindowCredit: .unsupported,
         maximumBufferedReadBytes: 8,
         maximumQueuedWriteBytes: 4,
         maximumWriteCallBytes: 8
       )
     }
     #expect(throws: SSHContractValidationError.initialReceiveWindowExceedsCap) {
-      _ = try SSHChannelPolicy(
+      _ = try SSHConsumerReceiveWindowPolicy(
         initialReceiveWindowBytes: 9,
         maximumAdvertisedReceiveWindowBytes: 8,
-        windowAdjustThresholdBytes: 4,
-        maximumBufferedReadBytes: 8,
-        maximumQueuedWriteBytes: 4,
-        maximumWriteCallBytes: 8
+        windowAdjustThresholdBytes: 4
       )
     }
     #expect(throws: SSHContractValidationError.windowAdjustThresholdExceedsCap) {
-      _ = try SSHChannelPolicy(
+      _ = try SSHConsumerReceiveWindowPolicy(
         initialReceiveWindowBytes: 8,
         maximumAdvertisedReceiveWindowBytes: 8,
-        windowAdjustThresholdBytes: 9,
+        windowAdjustThresholdBytes: 9
+      )
+    }
+    let reportedReceiveWindow = try SSHConsumerReceiveWindowPolicy(
+      initialReceiveWindowBytes: 8,
+      maximumAdvertisedReceiveWindowBytes: 8,
+      windowAdjustThresholdBytes: 4
+    )
+    #expect(reportedReceiveWindow.initialReceiveWindowBytes == 8)
+    #expect(throws: SSHContractValidationError.initialReceiveWindowPolicyMismatch) {
+      _ = try SSHChannelPolicy(
+        initialReceiveWindowBytes: 9,
+        consumerReceiveWindowCredit: .reported(reportedReceiveWindow),
         maximumBufferedReadBytes: 8,
         maximumQueuedWriteBytes: 4,
         maximumWriteCallBytes: 8
@@ -108,6 +141,22 @@ struct SSHTransportContractTests {
     #expect(throws: SSHContractValidationError.empty(.execCommand)) {
       _ = try SSHExecRequest(command: "")
     }
+    let viabilityPolicy = try SSHChannelPolicy(
+      initialReceiveWindowBytes: 8,
+      consumerReceiveWindowCredit: .unsupported,
+      maximumBufferedReadBytes: 8,
+      maximumQueuedWriteBytes: 4,
+      maximumWriteCallBytes: 8
+    )
+    #expect(viabilityPolicy.consumerReceiveWindowCredit == .unsupported)
+    let unreportedPolicy = try SSHChannelPolicy(
+      initialReceiveWindowBytes: 9,
+      consumerReceiveWindowCredit: .notReported,
+      maximumBufferedReadBytes: 8,
+      maximumQueuedWriteBytes: 4,
+      maximumWriteCallBytes: 8
+    )
+    #expect(unreportedPolicy.consumerReceiveWindowCredit == .notReported)
   }
 
   @Test("host evidence is canonical and acceptance gates credential lookup")
@@ -156,16 +205,15 @@ struct SSHTransportContractTests {
         SSHTrustRecordReference(rawValue: "")
       ).acceptance(for: input)
     }
-    #expect(
-      SSHTransportError.hostDecisionFailure(.rejectChanged, lane: lane)
-        == SSHTransportError(
-          code: .hostKeyChanged,
-          phase: .hostDecision,
-          scope: .lane(lane),
-          retryDisposition: .afterConfigurationChange,
-          requiresTeardown: true
-        )
+    let expectedError = try SSHTransportError(
+      code: .hostKeyChanged,
+      phase: .hostDecision,
+      scope: .lane(lane),
+      retryDisposition: .afterConfigurationChange,
+      requiresTeardown: true,
+      channelOpenReason: .notApplicable
     )
+    #expect(SSHTransportError.hostDecisionFailure(.rejectChanged, lane: lane) == expectedError)
   }
 
   @Test("all public-key authentication outcomes map without losing their category")
@@ -255,7 +303,7 @@ struct SSHTransportContractTests {
     #expect(try await openedDirect.writeSome(Data("12345678".utf8)) == 4)
     #expect(try await openedDirect.writeSome(Data("5678".utf8)) == 4)
     #expect(await direct.writtenBytes() == Data("12345678".utf8))
-    #expect(await openedDirect.receiveWindow() == directWindow)
+    #expect(await openedDirect.receiveWindow() == .reported(directWindow))
 
     try await openedDirect.finishWriting()
     try await openedDirect.finishWriting()
@@ -274,7 +322,7 @@ struct SSHTransportContractTests {
       try await openedExec.readStandardError(maximumBytes: 6) == Data("stderr".utf8)
     )
     #expect(try await openedExec.waitForExit() == .status(23))
-    #expect(await openedExec.receiveWindow() == execWindow)
+    #expect(await openedExec.receiveWindow() == .reported(execWindow))
     #expect(directWindow.maximumAdvertisedReceiveWindowBytes == 8)
     #expect(execWindow.maximumAdvertisedReceiveWindowBytes == 4)
   }
@@ -319,6 +367,12 @@ struct SSHTransportContractTests {
     )
     #expect(adjustment.after <= adjustment.cap)
     #expect(adjustment.before + adjustment.amount == adjustment.after)
+    #expect(
+      SSHDeferredSemanticReport<SSHReceiveWindowSnapshot>.notReported == .notReported
+    )
+    #expect(
+      SSHDeferredSemanticReport<SSHReceiveWindowSnapshot>.unsupported == .unsupported
+    )
   }
 
   @Test("exec upload is typed as bounded exec stdin with no subsystem surface")
@@ -376,10 +430,14 @@ struct SSHTransportContractTests {
     #expect(events.allSatisfy { $0.schemaVersion == 1 })
     #expect(try fixtureConnectionConfiguration().rekey.protectedByteThresholdPerDirection == 64)
     #expect(try fixtureConnectionConfiguration().keepalive.allowedConsecutiveMisses == 2)
+    #expect(
+      SSHExecSignal(name: .terminate, coreDumped: .notReported).coreDumped == .notReported
+    )
+    #expect(SSHExecExit.unsupported == .unsupported)
   }
 
   @Test("stable errors expose every common code and no engine payload")
-  func stableErrors() {
+  func stableErrors() throws {
     let expectedCodes = [
       "cancelled", "timedOut", "invalidArgument", "invalidState", "operationInProgress",
       "unsupportedCapability", "resolutionFailed", "networkUnavailable", "connectionLost",
@@ -394,15 +452,53 @@ struct SSHTransportContractTests {
     ]
     #expect(SSHTransportErrorCode.allCases.map(\.rawValue) == expectedCodes)
 
-    let rejection = SSHTransportError(
+    let rejection = try SSHTransportError(
       code: .channelOpenRejected,
       phase: .channelOpen,
       scope: .channel(fixtureChannelID(3)),
       retryDisposition: .never,
       requiresTeardown: false,
-      channelOpenReason: .administrativelyProhibited
+      channelOpenReason: .reported(.administrativelyProhibited)
     )
-    #expect(rejection.channelOpenReason == .administrativelyProhibited)
+    #expect(rejection.channelOpenReason == .reported(.administrativelyProhibited))
+    let unsupported = try SSHTransportError(
+      code: .channelOpenRejected,
+      phase: .channelOpen,
+      scope: .channel(fixtureChannelID(4)),
+      retryDisposition: .never,
+      requiresTeardown: false,
+      channelOpenReason: .unsupported
+    )
+    #expect(unsupported.channelOpenReason == .unsupported)
+    let notReported = try SSHTransportError(
+      code: .channelOpenRejected,
+      phase: .channelOpen,
+      scope: .channel(fixtureChannelID(5)),
+      retryDisposition: .never,
+      requiresTeardown: false,
+      channelOpenReason: .notReported
+    )
+    #expect(notReported.channelOpenReason == .notReported)
+    #expect(throws: SSHContractValidationError.channelOpenReasonRequired) {
+      _ = try SSHTransportError(
+        code: .channelOpenRejected,
+        phase: .channelOpen,
+        scope: .channel(fixtureChannelID(6)),
+        retryDisposition: .never,
+        requiresTeardown: false,
+        channelOpenReason: .notApplicable
+      )
+    }
+    #expect(throws: SSHContractValidationError.channelOpenReasonUnexpected) {
+      _ = try SSHTransportError(
+        code: .authenticationRejected,
+        phase: .authentication,
+        scope: .lane(fixtureLane()),
+        retryDisposition: .never,
+        requiresTeardown: true,
+        channelOpenReason: .notReported
+      )
+    }
     #expect(!rejection.requiresTeardown)
     #expect(!String(reflecting: rejection).contains("underlying"))
   }
@@ -434,9 +530,9 @@ struct SSHTransportContractTests {
         lane: fixtureLane(),
         connectionState: .idle,
         negotiatedAlgorithms: nil,
-        keyExchangeGeneration: 0,
-        counters: SSHTransportCounters(),
-        gauges: SSHTransportGauges()
+        keyExchangeGeneration: .notReported,
+        counters: fixtureCounters(),
+        gauges: fixtureGauges()
       ).schemaVersion == 1
     )
     #expect(
@@ -448,11 +544,11 @@ struct SSHTransportContractTests {
     #expect(SSHMetricCounter.allCases.map(\.rawValue) == expectedCounters)
     #expect(SSHMetricGauge.allCases.map(\.rawValue) == expectedGauges)
     #expect(
-      Mirror(reflecting: SSHTransportCounters()).children.compactMap(\.label)
+      Mirror(reflecting: fixtureCounters()).children.compactMap(\.label)
         == expectedCounters
     )
     #expect(
-      Mirror(reflecting: SSHTransportGauges()).children.compactMap(\.label)
+      Mirror(reflecting: fixtureGauges()).children.compactMap(\.label)
         == expectedGauges
     )
   }
@@ -473,16 +569,20 @@ struct SSHTransportContractTests {
       lane: fixtureLane(),
       connectionState: .ready,
       negotiatedAlgorithms: fixtureNegotiatedAlgorithms(),
-      keyExchangeGeneration: 4,
-      counters: SSHTransportCounters(payloadBytesSent: 17, payloadBytesReceived: 19),
-      gauges: SSHTransportGauges(openDirectChannels: 1, remainingReceiveWindowBytes: 8)
+      keyExchangeGeneration: .reported(4),
+      counters: fixtureCounters(payloadBytesSent: 17, payloadBytesReceived: 19),
+      gauges: fixtureGauges(
+        openDirectChannels: 1,
+        remainingReceiveWindowBytes: .reported(8)
+      )
     )
-    let error = SSHTransportError(
+    let error = try SSHTransportError(
       code: .authenticationRejected,
       phase: .authentication,
       scope: .lane(fixtureLane()),
       retryDisposition: .never,
-      requiresTeardown: true
+      requiresTeardown: true,
+      channelOpenReason: .notApplicable
     )
     let diagnostics = [
       String(reflecting: event),
@@ -521,8 +621,12 @@ struct SSHTransportContractTests {
         dependencies: dependencies
       )
       #expect(await transport.snapshot().lane == fixtureLane())
-      #expect(factory.capabilities.features.contains(.perChannelReceiveWindows))
+      #expect(factory.capabilities.features.contains(.boundedReceiveBuffers))
       #expect(factory.capabilities.features.contains(.serverRekey))
+      #expect(
+        factory.capabilities.deferredSemantics.consumerDrivenReceiveWindowCredit
+          == .unsupported
+      )
     }
   }
 }
@@ -632,7 +736,7 @@ private actor FixtureTransport: SSHTransport {
       ),
       acceptedHost: accepted,
       negotiatedAlgorithms: fixtureNegotiatedAlgorithms(),
-      keyExchangeGeneration: 1
+      keyExchangeGeneration: .reported(1)
     )
   }
 
@@ -659,8 +763,8 @@ private actor FixtureTransport: SSHTransport {
 
   func requestRekey(reason: SSHClientRekeyReason) async throws {}
 
-  func sendKeepalive() async throws -> Duration {
-    .milliseconds(1)
+  func sendKeepalive() async throws -> SSHDeferredSemanticReport<Duration> {
+    .reported(.milliseconds(1))
   }
 
   func snapshot() -> SSHTransportSnapshot {
@@ -668,9 +772,9 @@ private actor FixtureTransport: SSHTransport {
       lane: lane,
       connectionState: .idle,
       negotiatedAlgorithms: nil,
-      keyExchangeGeneration: 0,
-      counters: SSHTransportCounters(),
-      gauges: SSHTransportGauges()
+      keyExchangeGeneration: .notReported,
+      counters: fixtureCounters(),
+      gauges: fixtureGauges()
     )
   }
 
@@ -763,8 +867,8 @@ private actor BoundedFixtureChannel: SSHExecChannel {
     eofSent = true
   }
 
-  func receiveWindow() async -> SSHReceiveWindowSnapshot {
-    window
+  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
+    .reported(window)
   }
 
   func cancel() async {
@@ -810,12 +914,13 @@ private actor BoundedFixtureChannel: SSHExecChannel {
     code: SSHTransportErrorCode,
     phase: SSHTransportPhase
   ) -> SSHTransportError {
-    SSHTransportError(
+    try! SSHTransportError(
       code: code,
       phase: phase,
       scope: .channel(identity),
       retryDisposition: .never,
-      requiresTeardown: false
+      requiresTeardown: false,
+      channelOpenReason: .notApplicable
     )
   }
 }
@@ -959,6 +1064,12 @@ private func fixtureChannelID(_ value: Int) -> SSHChannelIdentity {
 private func fixtureCapabilities() -> SSHAdapterCapabilities {
   SSHAdapterCapabilities(
     features: Set(SSHAdapterFeature.allCases),
+    deferredSemantics: SSHDeferredSemanticCapabilities(
+      consumerDrivenReceiveWindowCredit: .unsupported,
+      rfcChannelOpenFailureReasons: .unsupported,
+      exactExecExitMetadata: .notReported,
+      deepRekeyAndKeepaliveObservability: .unsupported
+    ),
     keyExchangeAlgorithms: ["curve25519-sha256"],
     hostKeyAlgorithms: ["ssh-ed25519", "rsa-sha2-512"],
     cipherAlgorithms: ["aes128-gcm@openssh.com"],
@@ -967,11 +1078,43 @@ private func fixtureCapabilities() -> SSHAdapterCapabilities {
   )
 }
 
+private func fixtureCounters(
+  payloadBytesSent: UInt64 = 0,
+  payloadBytesReceived: UInt64 = 0
+) -> SSHTransportCounters {
+  SSHTransportCounters(
+    payloadBytesSent: payloadBytesSent,
+    payloadBytesReceived: payloadBytesReceived,
+    windowAdjustments: .unsupported,
+    windowAdjustmentBytes: .unsupported,
+    serverRekeys: .notReported,
+    keepalivesAcknowledged: .notReported,
+    keepalivesTimedOut: .notReported
+  )
+}
+
+private func fixtureGauges(
+  openDirectChannels: Int64 = 0,
+  remainingReceiveWindowBytes: SSHDeferredSemanticReport<Int64> = .unsupported
+) -> SSHTransportGauges {
+  SSHTransportGauges(
+    openDirectChannels: openDirectChannels,
+    remainingReceiveWindowBytes: remainingReceiveWindowBytes,
+    activeKeyExchange: .notReported,
+    consecutiveKeepaliveMisses: .notReported,
+    lastKeepaliveRTTNanoseconds: .notReported
+  )
+}
+
 private func fixtureChannelPolicy() throws -> SSHChannelPolicy {
-  try SSHChannelPolicy(
+  let receiveWindow = try SSHConsumerReceiveWindowPolicy(
     initialReceiveWindowBytes: 8,
     maximumAdvertisedReceiveWindowBytes: 8,
-    windowAdjustThresholdBytes: 4,
+    windowAdjustThresholdBytes: 4
+  )
+  return try SSHChannelPolicy(
+    initialReceiveWindowBytes: 8,
+    consumerReceiveWindowCredit: .reported(receiveWindow),
     maximumBufferedReadBytes: 8,
     maximumQueuedWriteBytes: 4,
     maximumWriteCallBytes: 8

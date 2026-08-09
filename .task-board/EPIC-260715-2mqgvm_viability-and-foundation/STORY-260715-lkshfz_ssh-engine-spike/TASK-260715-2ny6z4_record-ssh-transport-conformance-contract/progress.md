@@ -8,7 +8,7 @@ done
 2026-07-15T01:03:14Z
 
 ## Last Update
-2026-07-20T04:26:37Z
+2026-08-09T23:12:31Z
 
 ## Blocked By
 - TASK-260715-28ok1k
@@ -53,7 +53,7 @@ spawn run completed: claude (run=RUN-260720-fe3f47, pid=46095, exit=0)
 
 ## Outcome Resources
 - [TASK-260715-2ny6z4_spawn-log_-analyst--solution-architect--codex-.log](file://TASK-260715-2ny6z4/TASK-260715-2ny6z4_spawn-log_-analyst--solution-architect--codex-.log) — System spawn log captured by task-board
-- [TASK-260715-2ny6z4_ssh-transport-conformance-contract.md](file://TASK-260715-2ny6z4/TASK-260715-2ny6z4_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport implementation and shared-test contract
+- [TASK-260715-2ny6z4_ssh-transport-conformance-contract.md](file://TASK-260715-2ny6z4/TASK-260715-2ny6z4_ssh-transport-conformance-contract.md) — Canonical SSH transport conformance contract revised to approved M0 viability scope
 - [TASK-260715-2ny6z4_connection-lifecycle.puml](file://TASK-260715-2ny6z4/TASK-260715-2ny6z4_connection-lifecycle.puml) — PlantUML source for connection lifecycle and ownership
 - [TASK-260715-2ny6z4_connection-lifecycle.svg](file://TASK-260715-2ny6z4/TASK-260715-2ny6z4_connection-lifecycle.svg) — Rendered connection lifecycle diagram
 - [TASK-260715-2ny6z4_host-verification-sequence.puml](file://TASK-260715-2ny6z4/TASK-260715-2ny6z4_host-verification-sequence.puml) — PlantUML source for mandatory pre-auth host verification

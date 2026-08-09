@@ -3,6 +3,17 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-08-10
+
+### 0246 — SSH M0 viability keeps operational invariants and makes four evidence gaps typed
+- DECISION: ADR-023 is now exhaustive in `.spec/ssh-transport-conformance-contract.md` and `SSHConformanceRequirement`: 16 operational/security requirements are `m0ViabilityMandatory`; consumer-driven receive credit/cap, RFC channel-open rejection reasons, exact exec-exit presence/`coreDumped`, and deep server-KEX/keepalive observability are `m3Deferred(ownerTaskID: "TASK-260728-3cveay")`.
+- IMPLEMENTATION: `SSHDeferredSemanticReport` exposes `reported`, `notReported`, and `unsupported`. Exact receive-credit policy/snapshots, open reasons, exit metadata, KEX generation, window/server-rekey/keepalive metrics, and manual keepalive RTT now require one of those states; no default zero/false or mandatory full-fidelity policy remains. Host-before-auth, approved public-key auth, direct-tcpip, exec/stdin upload, client and server rekey handling, bounded buffers/backpressure, cancellation/lifecycle, Keychain-only credential references, keepalive transmission, available metrics, and privacy-safe errors remain mandatory.
+- REVIEW REWORK: `SSHTransportError.channelOpenReason` is now the nonoptional `SSHChannelOpenReasonReport`. Public construction requires `reported`, `notReported`, or `unsupported` for `channelOpenRejected`, requires `notApplicable` for every other error, and throws on either invalid combination; the focused regression closes the prior optional-`nil` path.
+- REVIEW REWORK: `SSHConsumerReceiveWindowPolicy` now retains its validated initial window, and `SSHChannelPolicy` rejects any reported exact policy whose initial window differs from the channel's initial window. Regression coverage proves the contradictory reported combination fails while `notReported` and `unsupported` viability states remain constructible.
+- EVIDENCE: The revised contract preserves and cites all three libssh2 stop-line packets, the ReluxNIOSSH adapter/window packet, the candidate audit, exact source locations, and accepted header/patch SHA-256 values. The original contract outcome and the preconditions for `TASK-260715-1ozsb6`, `TASK-260715-2d3g5e`, `TASK-260715-1u2vpc`, and `TASK-260728-3cveay` now carry the same revision.
+- VERIFICATION: Focused SSH contract suite passes 13 tests; strict Swift format, diff checks, core boundary guard, native/libssh2 verification, full 336-test/29-suite `swift test`, and `swift build` pass. `make validate-core` exits 0.
+- ANOMALY: `task-board validate` reports `PARENT_STATUS_MISMATCH` for `STORY-260715-lkshfz`: this child is correctly `development`, but the story remains `to-dev` because unfinished hard blocker `STORY-260715-l2i2oo` suppresses automatic promotion. The validator command exits 0; no dependency/status was bypassed.
+
 ## 2026-07-28
 
 ### 1416 — `swift test` flakes on an adapter-internal counter read after a peer-observable event

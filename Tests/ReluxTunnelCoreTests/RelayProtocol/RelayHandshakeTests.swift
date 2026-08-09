@@ -704,16 +704,17 @@ private actor HandshakeByteChannel: SSHByteChannel {
 
   func finishWriting() async throws {}
 
-  func receiveWindow() async -> SSHReceiveWindowSnapshot {
-    try! SSHReceiveWindowSnapshot(
-      initialReceiveWindowBytes: 1,
-      maximumAdvertisedReceiveWindowBytes: 1,
-      remainingProtocolCreditBytes: 1,
-      bufferedUnreadBytes: 0,
-      deliveredButNotYetReturnedCreditBytes: 0,
-      adjustmentCount: 0,
-      cumulativeAdjustmentBytes: 0
-    )
+  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
+    .reported(
+      try! SSHReceiveWindowSnapshot(
+        initialReceiveWindowBytes: 1,
+        maximumAdvertisedReceiveWindowBytes: 1,
+        remainingProtocolCreditBytes: 1,
+        bufferedUnreadBytes: 0,
+        deliveredButNotYetReturnedCreditBytes: 0,
+        adjustmentCount: 0,
+        cumulativeAdjustmentBytes: 0
+      ))
   }
 
   func cancel() async {

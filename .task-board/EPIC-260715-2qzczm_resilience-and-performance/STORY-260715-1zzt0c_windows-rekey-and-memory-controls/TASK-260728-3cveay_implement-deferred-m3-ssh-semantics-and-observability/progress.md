@@ -25,6 +25,7 @@ notEstimated
 
 ## Precondition Resources
 - [TASK-260728-3cveay_approved-m0-viability-decision.md](file://TASK-260728-3cveay/TASK-260728-3cveay_approved-m0-viability-decision.md) — Human-approved 2026-07-28 SSH scope and candidate decision
+- [TASK-260728-3cveay_ssh-transport-conformance-contract.md](file://TASK-260728-3cveay/TASK-260728-3cveay_ssh-transport-conformance-contract.md) — Binding deferred SSH semantics and pinned evidence inherited from M0 rescope
 
 ## Outcome Resources
 (none)
@@ -33,4 +34,4 @@ notEstimated
 2026-07-28T00:48:14Z
 
 ## Last Update
-2026-07-28T00:58:07Z
+2026-08-09T23:12:32Z

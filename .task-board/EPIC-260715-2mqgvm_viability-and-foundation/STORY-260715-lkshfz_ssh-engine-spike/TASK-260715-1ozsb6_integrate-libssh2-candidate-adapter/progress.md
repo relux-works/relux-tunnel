@@ -8,7 +8,7 @@ to-dev
 2026-07-15T01:03:15Z
 
 ## Last Update
-2026-07-28T00:48:48Z
+2026-08-09T23:12:32Z
 
 ## Blocked By
 - TASK-260715-28ok1k
@@ -56,7 +56,7 @@ ESCALATION TO HUMAN — M0-vs-M3 SSH-CONTRACT-SCOPE DECISION (orchestrator, 2026
 2026-07-28 human decision recorded: approve M0 viability scope and make libssh2 the primary candidate. Contract/task/consumer mapping must be revised before restarting this task; deferred M3 semantics remain explicitly evidence-gated.
 
 ## Precondition Resources
-- [TASK-260715-1ozsb6_ssh-transport-conformance-contract.md](file://TASK-260715-1ozsb6/TASK-260715-1ozsb6_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport contract from TASK-260715-2ny6z4; consume after blocker review acceptance
+- [TASK-260715-1ozsb6_ssh-transport-conformance-contract.md](file://TASK-260715-1ozsb6/TASK-260715-1ozsb6_ssh-transport-conformance-contract.md) — Revised M0-viability SSH transport contract; four exact semantics remain M3-deferred
 - [TASK-260715-1ozsb6_inputs.md](file://TASK-260715-1ozsb6/TASK-260715-1ozsb6_inputs.md) — libssh2 adapter requirements + neutral-seam fit
 - [TASK-260715-1ozsb6_approved-m0-viability-decision.md](file://TASK-260715-1ozsb6/TASK-260715-1ozsb6_approved-m0-viability-decision.md) — Human-approved SSH scope and candidate decision
 

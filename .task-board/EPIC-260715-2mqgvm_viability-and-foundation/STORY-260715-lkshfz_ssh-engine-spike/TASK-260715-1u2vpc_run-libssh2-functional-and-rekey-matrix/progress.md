@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:16Z
 
 ## Last Update
-2026-07-28T01:47:11Z
+2026-08-09T23:12:32Z
 
 ## Blocked By
 - TASK-260715-1ozsb6
@@ -28,7 +28,7 @@ backlog
 2026-07-28 replan round 3 (TASK-260728-3a2dnr): restored blocker TASK-260715-2ayxqn. Round 2 had removed it, which scheduled this matrix before Gate P0 existed even though its scope still requires the Gate-P0 provider smoke on the physical Apple-silicon Mac. The matrix is not re-scoped and the Apple-target rows are not weakened; it simply runs after the P0 disposition.
 
 ## Precondition Resources
-(none)
+- [TASK-260715-1u2vpc_ssh-transport-conformance-contract.md](file://TASK-260715-1u2vpc/TASK-260715-1u2vpc_ssh-transport-conformance-contract.md) — Revised M0-viability matrix contract and M3 deferred-state mapping
 
 ## Outcome Resources
 (none)
