@@ -6,6 +6,15 @@ import Testing
 
 @Suite("ReluxTunnelHarness")
 struct HarnessTests {
+  @Test("macOS harness registers the pinned libssh2 candidate capabilities")
+  func libSSH2CandidateRegistration() {
+    let capabilities = LibSSH2HarnessRegistration.capabilities
+    #expect(capabilities.features.contains(.hostKeyBeforeAuthentication))
+    #expect(capabilities.features.contains(.explicitRekey))
+    #expect(capabilities.deferredSemantics.consumerDrivenReceiveWindowCredit == .unsupported)
+    #expect(capabilities.deferredSemantics.exactExecExitMetadata == .unsupported)
+  }
+
   @Test("argument parser rejects missing and unknown subcommands")
   func argumentValidationCommands() {
     #expect(throws: HarnessArgumentError.missingCommand) {
@@ -91,6 +100,7 @@ struct HarnessTests {
     #expect(
       result.metrics.gauges == [
         "harness.hev.linked": 1,
+        "harness.libssh2.linked": 1,
         "harness.native_fixture.schema_version": 1,
       ]
     )

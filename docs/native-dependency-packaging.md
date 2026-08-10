@@ -157,8 +157,9 @@ make build-libssh2 \
 make validate-libssh2
 ```
 
-The target is intentionally not attached to `ReluxTunnelCore` or the existing
-shared native adapter. `TASK-260715-1ozsb6` owns the future named libssh2
-adapter dependency; that adapter may import only the XCFramework's public
-module and headers. Fork provenance, exact delta, and rebase policy live under
+The named `ReluxTunnelLibSSH2Adapter` target is attached only to the macOS
+provider and harness products. It is intentionally absent from
+`ReluxTunnelCore`, the shared native adapter, and every iOS product. The adapter
+imports only the XCFramework's public module and headers. Fork provenance,
+exact delta, and rebase policy live under
 [`Dependencies/ReluxLibSSH2`](../Dependencies/ReluxLibSSH2/README.md).

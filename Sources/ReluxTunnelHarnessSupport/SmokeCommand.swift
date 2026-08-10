@@ -1,5 +1,6 @@
 import Foundation
 import ReluxTunnelCore
+import ReluxTunnelLibSSH2Adapter
 import ReluxTunnelNativeAdapter
 
 public struct SmokeHarnessCommand: HarnessCommand {
@@ -33,6 +34,10 @@ public struct SmokeHarnessCommand: HarnessCommand {
     await context.dependencies.runtime.metrics.setGauge(
       named: "harness.hev.linked",
       to: 1
+    )
+    await context.dependencies.runtime.metrics.setGauge(
+      named: "harness.libssh2.linked",
+      to: LibSSH2PackagingAnchor.linkageSmoke() ? 1 : 0
     )
     try await context.dependencies.faultPolicy.evaluate(.smokeFinish)
   }

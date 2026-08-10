@@ -1,5 +1,6 @@
 import Foundation
 import ReluxTunnelCore
+import ReluxTunnelLibSSH2Adapter
 
 public enum HarnessExitCode: Int32, Equatable, Sendable {
   case success = 0
@@ -69,6 +70,37 @@ public struct UnavailableHarnessSSHTransportFactory: HarnessSSHTransportFactory 
 
   public func makeSSHTransport() async throws -> any SSHTransport {
     throw HarnessUnavailableDependencyError.sshTransport
+  }
+}
+
+public enum LibSSH2HarnessRegistration {
+  public static let capabilities = LibSSH2TransportFactory().capabilities
+}
+
+/// Registers the same candidate factory used by the macOS provider while
+/// retaining all candidate-neutral dependencies as harness injection points.
+public struct LibSSH2HarnessSSHTransportFactory: HarnessSSHTransportFactory {
+  public let capabilities: SSHAdapterCapabilities
+  private let factory: LibSSH2TransportFactory
+  private let lane: SSHLaneIdentity
+  private let dependencies: SSHTransportDependencies
+
+  public init(
+    lane: SSHLaneIdentity,
+    dependencies: SSHTransportDependencies,
+    maximumTransportBufferBytes: Int = 256 * 1_024
+  ) {
+    let factory = LibSSH2TransportFactory(
+      maximumTransportBufferBytes: maximumTransportBufferBytes
+    )
+    self.factory = factory
+    capabilities = factory.capabilities
+    self.lane = lane
+    self.dependencies = dependencies
+  }
+
+  public func makeSSHTransport() async throws -> any SSHTransport {
+    try await factory.makeTransport(lane: lane, dependencies: dependencies)
   }
 }
 

@@ -43,7 +43,9 @@ targets = {target["name"]: target for target in package["targets"]}
 required = {
     "CReluxNativeFixture",
     "HevSocks5Tunnel",
+    "ReluxLibSSH2",
     "ReluxTunnelCore",
+    "ReluxTunnelLibSSH2Adapter",
     "ReluxTunnelNativeAdapter",
     "ReluxTunnelIOSAdapter",
     "ReluxTunnelMacOSAdapter",
@@ -75,17 +77,28 @@ if dependency_names(targets["ReluxTunnelNativeAdapter"]) != {
     "ReluxTunnelCore",
 }:
     raise SystemExit("ReluxTunnelNativeAdapter must own the native/core boundary")
-for adapter in ("ReluxTunnelIOSAdapter", "ReluxTunnelMacOSAdapter"):
-    if dependency_names(targets[adapter]) != {
-        "ReluxTunnelCore",
-        "ReluxTunnelNativeAdapter",
-    }:
-        raise SystemExit(f"{adapter} must depend only on Core and NativeAdapter")
-if dependency_names(targets["ReluxTunnelHarnessSupport"]) != {
+if dependency_names(targets["ReluxTunnelLibSSH2Adapter"]) != {
+    "ReluxLibSSH2",
+    "ReluxTunnelCore",
+}:
+    raise SystemExit("ReluxTunnelLibSSH2Adapter must own the libssh2/core boundary")
+if dependency_names(targets["ReluxTunnelIOSAdapter"]) != {
     "ReluxTunnelCore",
     "ReluxTunnelNativeAdapter",
 }:
-    raise SystemExit("ReluxTunnelHarnessSupport must depend only on Core and NativeAdapter")
+    raise SystemExit("ReluxTunnelIOSAdapter must remain independent of the deferred iOS SSH graph")
+if dependency_names(targets["ReluxTunnelMacOSAdapter"]) != {
+        "ReluxTunnelCore",
+        "ReluxTunnelLibSSH2Adapter",
+        "ReluxTunnelNativeAdapter",
+}:
+    raise SystemExit("ReluxTunnelMacOSAdapter must include the named libssh2 adapter")
+if dependency_names(targets["ReluxTunnelHarnessSupport"]) != {
+    "ReluxTunnelCore",
+    "ReluxTunnelLibSSH2Adapter",
+    "ReluxTunnelNativeAdapter",
+}:
+    raise SystemExit("ReluxTunnelHarnessSupport must include the named libssh2 adapter")
 if dependency_names(targets["ReluxTunnelHarness"]) != {
     "ReluxTunnelCore",
     "ReluxTunnelHarnessSupport",

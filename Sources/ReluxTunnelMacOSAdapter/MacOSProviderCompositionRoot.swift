@@ -1,6 +1,16 @@
 import Foundation
 import NetworkExtension
 import ReluxTunnelCore
+import ReluxTunnelLibSSH2Adapter
+
+/// The packet-tunnel extension's pinned, extension-safe SSH provider graph.
+public enum MacOSProviderSSHConfiguration {
+  public static func makeTransportFactory(
+    maximumTransportBufferBytes: Int = 256 * 1_024
+  ) -> any SSHTransportFactory {
+    LibSSH2TransportFactory(maximumTransportBufferBytes: maximumTransportBufferBytes)
+  }
+}
 
 /// Public-API adapter for the macOS provider's `NEPacketTunnelFlow`.
 public final class MacOSPacketFlowAdapter: PacketFlow, @unchecked Sendable {

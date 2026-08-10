@@ -1,5 +1,5 @@
 ## Status
-to-dev
+backlog
 
 ## Assigned To
 [analyst] solution-architect (codex)
@@ -8,7 +8,7 @@ to-dev
 2026-07-15T00:46:31Z
 
 ## Last Update
-2026-07-28T10:25:23Z
+2026-08-10T18:13:48Z
 
 ## Blocked By
 - (none)

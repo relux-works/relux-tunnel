@@ -6,6 +6,15 @@ import Testing
 
 @Suite("Provider adapter contracts")
 struct ProviderAdapterContractTests {
+  @Test("macOS provider configuration selects the pinned libssh2 candidate")
+  func macOSLibSSH2Configuration() {
+    let capabilities = MacOSProviderSSHConfiguration.makeTransportFactory().capabilities
+    #expect(capabilities.features.contains(.directTCPIP))
+    #expect(capabilities.features.contains(.execStdinUpload))
+    #expect(capabilities.deferredSemantics.rfcChannelOpenFailureReasons == .unsupported)
+    #expect(capabilities.deferredSemantics.deepRekeyAndKeepaliveObservability == .unsupported)
+  }
+
   @Test("both provider adapters link the pinned native fixture")
   func nativePackagingAnchors() {
     #expect(IOSNativePackagingAnchor.schemaVersion == 1)

@@ -10,6 +10,7 @@ let package = Package(
   ],
   products: [
     .library(name: "ReluxTunnelCore", targets: ["ReluxTunnelCore"]),
+    .library(name: "ReluxTunnelLibSSH2Adapter", targets: ["ReluxTunnelLibSSH2Adapter"]),
     .library(name: "ReluxTunnelNativeAdapter", targets: ["ReluxTunnelNativeAdapter"]),
     .library(name: "ReluxTunnelIOSAdapter", targets: ["ReluxTunnelIOSAdapter"]),
     .library(name: "ReluxTunnelMacOSAdapter", targets: ["ReluxTunnelMacOSAdapter"]),
@@ -30,6 +31,17 @@ let package = Package(
       path: "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework"
     ),
     .target(
+      name: "ReluxTunnelLibSSH2Adapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxLibSSH2",
+      ],
+      linkerSettings: [
+        .linkedFramework("Security"),
+        .linkedFramework("CoreFoundation"),
+      ]
+    ),
+    .target(
       name: "ReluxTunnelNativeAdapter",
       dependencies: [
         "ReluxTunnelCore",
@@ -48,6 +60,7 @@ let package = Package(
       name: "ReluxTunnelMacOSAdapter",
       dependencies: [
         "ReluxTunnelCore",
+        "ReluxTunnelLibSSH2Adapter",
         "ReluxTunnelNativeAdapter",
       ]
     ),
@@ -55,6 +68,7 @@ let package = Package(
       name: "ReluxTunnelHarnessSupport",
       dependencies: [
         "ReluxTunnelCore",
+        "ReluxTunnelLibSSH2Adapter",
         "ReluxTunnelNativeAdapter",
       ]
     ),
@@ -63,6 +77,13 @@ let package = Package(
       dependencies: [
         "ReluxTunnelCore",
         "ReluxTunnelHarnessSupport",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxTunnelLibSSH2AdapterTests",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelLibSSH2Adapter",
       ]
     ),
     .testTarget(
