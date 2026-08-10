@@ -5,6 +5,12 @@
 
 ## 2026-08-10
 
+### 2314 — Gate P0 Apple-account audit separates portal access from organization eligibility (TASK-260715-apc34w)
+- TECHNICAL EVIDENCE: Ceremony C1 records an authenticated Relux Works, LLC portal/team session and authority for matrix `2026-07-28.r12`. A team-scoped Xcode capability bundle refreshed on 2026-08-10 reports Network Extensions as public and editable for development and Developer ID distribution; local signing inventory includes the Relux Works Apple Development and Developer ID Application identities.
+- READINESS GAPS: The audit could not independently retrieve the Apple Developer membership enrollment type, active paid-through date, current Apple Developer Program License Agreement status, the operator's exact Account Holder/Admin role plus Certificates, Identifiers & Profiles grant, or a portal record proving that the current Apple-silicon Mac is registered. The Relux Works Account Holder owns membership/agreement proof; the Apple Platform/CI Admin and `TASK-260715-3jloqy` own role confirmation and Mac registration/profile evidence.
+- DEVICE POLICY: The locally available Mac is recorded only by a truncated SHA-256 reference, model class, OS, and architecture; no full device identifier is persisted. The physical-iPhone row remains the named ADR-024 deferred gap owned by `TASK-260715-1kntdx`, neither pass nor failure and not a macOS Gate P0 blocker.
+- ACCESS ANOMALIES: Read-only Safari automation stalled and was terminated at exit 130 without page data. A named-profile `notarytool history` probe exited 1 because the default Keychain was locked; `TASK-260728-dveo1o` owns revalidation after unattended Keychain access is restored. No secret, credential, certificate private key, recovery code, or full device identifier was captured.
+
 ### 2255 — Owner selects resumed functional evidence for Ceremony C1 (TASK-260728-q5kjta)
 - OWNER DECISION: Option B from reviewer verdict 01 is accepted. ADR-028 and the C1 contract now distinguish one human-input board node from one continuous human sitting; the resumed 2026-07-28/2026-08-10 interactions remain one ceremony node, with the intervening producer/reviewer cycle stated rather than concealed.
 - EVIDENCE POLICY: Effective prompt-free signing through the named identities/tools and authenticated Relux Works portal/team authority replace retrospective proof of the historical Always Allow click and separately timestamped two-factor completion. Missing interaction boundaries remain missing; no uninterrupted-session claim is allowed.
