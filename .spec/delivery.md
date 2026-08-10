@@ -87,9 +87,10 @@ App Store release, and are re-armed unchanged when that branch resumes.
 ```text
 approved Apple identifier/entitlement matrix (ypo7yo, autonomous)
   -> Ceremony C1 = ONE board node, TASK-260728-q5kjta (up-front human permission
-     sitting: Keychain + portal + macOS App IDs/profiles + named notarytool
-     Keychain profile + Sparkle key generation/custody; owner decision D1
-     batched into the same conversation)
+     node: effective signing access + authenticated Relux Works portal/team
+     authority + macOS App IDs/profiles + named notarytool Keychain profile +
+     Sparkle key generation/custody; honestly recorded resumed owner
+     interactions are allowed by ADR-028 and do not become extra board nodes)
   -> agent evidence, unattended: apc34w, 3jloqy, dveo1o, ziprhs
   -> agent builds and review-accepts the disposable macOS probe (1r0fxv)
   -> Approval A1 (brief: approve the probe's system VPN / system extension)

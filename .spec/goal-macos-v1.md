@@ -98,21 +98,26 @@ The current serial wave plan and the Ceremony C1 script live in
 When the critical path reaches one of these, mark the task `blocked` with the
 evidence packet (constraint, options, exact human input needed) and surface it.
 
-**Ceremony C1 — the up-front human *permission* session** (this Mac), owned by
+**Ceremony C1 — the up-front human *permission* node** (this Mac), owned by
 exactly one board node, `TASK-260728-q5kjta`. It contains only grants whose
-inputs exist before any agent build, so the human is never asked to wait through
-a producer or review cycle: Keychain unlock and always-allow private-key access;
-Xcode/Apple Developer portal authentication; authorization to create and
-download the macOS packet-tunnel App IDs, entitlements, and development
-profiles; `notarytool store-credentials` into a **named** Keychain profile plus
-the source-file disposition decision (ADR-025); Sparkle EdDSA generation into
-custody (ADR-026 — generation only). Its only blocker is the approved identifier
-matrix `ypo7yo`, so it is reachable inside the first autonomous segment.
+inputs exist before any agent build, so the human is never asked to remain
+present through a producer or review cycle: effective prompt-free signing-key
+access; authenticated Relux Works Apple Developer portal/team authority;
+authorization to create and download the macOS packet-tunnel App IDs,
+entitlements, and development profiles; `notarytool store-credentials` into a
+**named** Keychain profile plus the source-file disposition decision (ADR-025);
+Sparkle EdDSA generation into custody (ADR-026 — generation only). Per ADR-028,
+the node may contain honestly recorded resumed owner interactions; this does not
+permit an uninterrupted-session claim, invented timestamps, or retrospective
+claims about an Always Allow click or a separately timestamped two-factor event.
+Its only blocker is the approved identifier matrix `ypo7yo`, so it is reachable
+inside the first autonomous segment.
 
 The four evidence tasks it unblocks — `apc34w`, `3jloqy`, `dveo1o`, `ziprhs` —
 are **agent** work that runs unattended with the granted access and keeps its
 full evidence obligations. Owner decision D1 (`intsjz`) needs no Mac access and
-is asked in the same conversation. Never request, echo, or persist secret values.
+is recorded under the same ceremony node. Never request, echo, or persist secret
+values or secret paths.
 
 **Approval A1 — the brief later approval prompt.** `3jloqy` unblocks `1r0fxv`,
 which is ordinary agent work that must be produced and independently reviewed.
