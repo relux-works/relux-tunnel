@@ -1,0 +1,82 @@
+name: ReluxPacketTunnelProbe
+options:
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "26.5"
+settings:
+  base:
+    ARCHS: arm64
+    CODE_SIGN_IDENTITY: Apple Development
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: 262RZ595FP
+    ENABLE_APP_SANDBOX: NO
+    ENABLE_HARDENED_RUNTIME: NO
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ONLY_ACTIVE_ARCH: YES
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_VERSION: "6.0"
+targets:
+  ReluxPacketTunnelProbe:
+    type: application
+    platform: macOS
+    sources:
+      - path: Host
+        excludes:
+          - Info.plist
+      - Shared
+    dependencies:
+      - target: ReluxPacketTunnelProbeProvider
+        embed: true
+        codeSign: true
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: Config/Host.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Host/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: works.relux.tunnel.probe.mac
+        PRODUCT_NAME: ReluxPacketTunnelProbe
+  ReluxPacketTunnelProbeProvider:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Provider
+        excludes:
+          - Info.plist
+      - Shared
+    settings:
+      base:
+        APPLICATION_EXTENSION_API_ONLY: YES
+        CODE_SIGN_ENTITLEMENTS: Config/Provider.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Provider/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: works.relux.tunnel.probe.mac.tunnel
+        PRODUCT_NAME: ReluxPacketTunnelProbeProvider
+        SKIP_INSTALL: YES
+  ReluxPacketTunnelProbeTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - Shared
+      - Tests
+    settings:
+      base:
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: works.relux.tunnel.probe.mac.tests
+        PRODUCT_NAME: ReluxPacketTunnelProbeTests
+schemes:
+  ReluxPacketTunnelProbe:
+    build:
+      targets:
+        ReluxPacketTunnelProbe: all
+    archive:
+      config: Debug
+  ReluxPacketTunnelProbeTests:
+    build:
+      targets:
+        ReluxPacketTunnelProbeTests: all
+    test:
+      config: Debug
+      targets:
+        - ReluxPacketTunnelProbeTests

@@ -3,6 +3,14 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-08-11
+
+### 0410 — Disposable macOS packet-tunnel probe passes signed archive inspection (TASK-260715-1r0fxv)
+- IMPLEMENTATION: A separate XcodeGen macOS 14 arm64 project now contains `works.relux.tunnel.probe.mac`, exactly one embedded `works.relux.tunnel.probe.mac.tunnel` app extension, a v1 JSON request/response contract, privacy-safe lifecycle/status reporting, and save/reload/enable/start/message/stop host paths. The provider installs no network settings, reads no packet flow, forwards no packets, and owns no worker tasks.
+- SIGNING: The initial background process could select the approved profile/identity but could not use the login-Keychain private key (`errSecInternalComponent`). Running the same checked-in command through the approved Aqua Terminal seam resolved that execution-context issue without exporting a key or weakening policy. Both profile-scoped signing preflights and the signed archive then passed.
+- VALIDATION: XcodeGen regeneration is byte-stable. Plist and shell checks, strict Swift format, four Swift Testing cases, the complete unsigned host/provider graph, and all 378 existing SwiftPM tests pass. The signed archive contains the exact team, host/provider identifiers, approved profile UUIDs, unsuffixed `packet-tunnel-provider` entitlements, Apple Development signatures, arm64 binaries, and exactly one provider. Five negative mutations prove identifier, capability, profile, nesting, and signature drift fail closed.
+- SCOPE: `Package.swift`, existing `Sources/`, root `scripts/`, release workflows, and `Makefile` remain untouched. The archived product and privacy-safe inspection log are under `.temp/TASK-260715-1r0fxv/`; no secret signing material is recorded.
+
 ## 2026-08-10
 
 ### 2335 — Four macOS Network Extensions development profiles provisioned (TASK-260715-3jloqy)
