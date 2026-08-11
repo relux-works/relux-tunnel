@@ -1,0 +1,7 @@
+Active macOS-only contract constraints:
+- ADR-014 selects libssh2 as the primary candidate; consume the accepted libssh2 adapter evidence from TASK-260715-1ozsb6 and the M0 viability contract, but do not select or fork an engine here.
+- TASK-260728-7ii1xz supersedes the stale AC2 App Group wording: macOS host and root provider resolve different containers. Non-secret snapshot travels in providerConfiguration; no App Group and no Keychain Sharing entitlement.
+- System-domain Keychain access is via SecAccess designated-requirement ACL and the exact keychain-resolution rules already recorded in task notes. Never record a keychain path, secret value, key material, hostname, username, or credential reference value in board/log output.
+- Preserve the five-state revocation contract, uninstall residue, read-only startTunnel, crash-recovery-only reconciliation, non-identifying attributes, and honest statement that macOS cannot offer login-password protection for the system-domain secret at rest.
+- iOS, UI, routing, ProxyJump, password auth and arbitrary shell access remain out of scope.
+- Produce the smallest task-scoped contract and consumer map; do not create new board tasks unless a real uncovered gap is proven.
