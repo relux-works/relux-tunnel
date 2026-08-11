@@ -96,6 +96,8 @@ inspect_signature() {
     "$EXPECTED_TEAM.$expected_identifier" "$label signed application identifier is approved"
   expect_equal "$(plist_value "$entitlements" com.apple.developer.team-identifier)" \
     "$EXPECTED_TEAM" "$label signed team entitlement is approved"
+  expect_equal "$(plist_value "$entitlements" com.apple.security.app-sandbox)" \
+    "true" "$label signed product requires App Sandbox"
   expect_equal \
     "$(plist_value "$entitlements" com.apple.developer.networking.networkextension:0)" \
     "packet-tunnel-provider" "$label target network-extension entitlement is exact"

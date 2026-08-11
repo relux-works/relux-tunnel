@@ -65,6 +65,58 @@ codesign -d --entitlements :- "$case_provider" > "$drift_entitlements" 2>/dev/nu
 codesign --force --sign - --entitlements "$drift_entitlements" "$case_provider" >/dev/null 2>&1
 expect_drift capability "provider target network-extension entitlement is exact" "$case_app"
 
+case_app="$DRIFT_TEMP/host-sandbox/ReluxPacketTunnelProbe.app"
+mkdir -p "$(dirname "$case_app")"
+ditto "$SOURCE_APP" "$case_app"
+drift_entitlements="$DRIFT_TEMP/host-sandbox/host.entitlements"
+codesign -d --entitlements :- "$case_app" > "$drift_entitlements" 2>/dev/null
+/usr/libexec/PlistBuddy -c \
+  "Delete :com.apple.security.app-sandbox" \
+  "$drift_entitlements"
+codesign --force --sign - --entitlements "$drift_entitlements" "$case_app" >/dev/null 2>&1
+expect_drift host-sandbox "host signed product requires App Sandbox" "$case_app"
+
+case_app="$DRIFT_TEMP/provider-sandbox/ReluxPacketTunnelProbe.app"
+mkdir -p "$(dirname "$case_app")"
+ditto "$SOURCE_APP" "$case_app"
+case_provider="$case_app/Contents/PlugIns/ReluxPacketTunnelProbeProvider.appex"
+drift_entitlements="$DRIFT_TEMP/provider-sandbox/provider.entitlements"
+codesign -d --entitlements :- "$case_provider" > "$drift_entitlements" 2>/dev/null
+/usr/libexec/PlistBuddy -c \
+  "Delete :com.apple.security.app-sandbox" \
+  "$drift_entitlements"
+codesign --force --sign - --entitlements "$drift_entitlements" "$case_provider" >/dev/null 2>&1
+expect_drift provider-sandbox "provider signed product requires App Sandbox" "$case_app"
+
+case_app="$DRIFT_TEMP/app-groups/ReluxPacketTunnelProbe.app"
+mkdir -p "$(dirname "$case_app")"
+ditto "$SOURCE_APP" "$case_app"
+drift_entitlements="$DRIFT_TEMP/app-groups/host.entitlements"
+codesign -d --entitlements :- "$case_app" > "$drift_entitlements" 2>/dev/null
+/usr/libexec/PlistBuddy -c \
+  "Add :com.apple.security.application-groups array" \
+  "$drift_entitlements"
+/usr/libexec/PlistBuddy -c \
+  "Add :com.apple.security.application-groups:0 string 262RZ595FP.forbidden" \
+  "$drift_entitlements"
+codesign --force --sign - --entitlements "$drift_entitlements" "$case_app" >/dev/null 2>&1
+expect_drift app-groups "host target has no App Groups entitlement" "$case_app"
+
+case_app="$DRIFT_TEMP/keychain-sharing/ReluxPacketTunnelProbe.app"
+mkdir -p "$(dirname "$case_app")"
+ditto "$SOURCE_APP" "$case_app"
+case_provider="$case_app/Contents/PlugIns/ReluxPacketTunnelProbeProvider.appex"
+drift_entitlements="$DRIFT_TEMP/keychain-sharing/provider.entitlements"
+codesign -d --entitlements :- "$case_provider" > "$drift_entitlements" 2>/dev/null
+/usr/libexec/PlistBuddy -c \
+  "Add :keychain-access-groups array" \
+  "$drift_entitlements"
+/usr/libexec/PlistBuddy -c \
+  "Add :keychain-access-groups:0 string 262RZ595FP.forbidden" \
+  "$drift_entitlements"
+codesign --force --sign - --entitlements "$drift_entitlements" "$case_provider" >/dev/null 2>&1
+expect_drift keychain-sharing "provider target has no Keychain Sharing entitlement" "$case_app"
+
 case_app="$DRIFT_TEMP/profile/ReluxPacketTunnelProbe.app"
 mkdir -p "$(dirname "$case_app")"
 ditto "$SOURCE_APP" "$case_app"

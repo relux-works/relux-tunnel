@@ -15,6 +15,7 @@ settings, adds routes, forwards packets, or starts background work.
 | Provider identifier | `works.relux.tunnel.probe.mac.tunnel` |
 | Provider profile UUID | `ef64bcae-00ac-458f-94dc-45834429fe80` |
 | Target entitlement | `packet-tunnel-provider` |
+| App Sandbox | enabled on host and provider |
 | Architecture | `arm64` |
 
 The checked-in configuration requests the generic `Apple Development`

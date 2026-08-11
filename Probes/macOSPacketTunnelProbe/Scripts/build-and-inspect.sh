@@ -34,8 +34,11 @@ run bash -n \
   "$SCRIPT_DIR/inspect-archive.sh" \
   "$SCRIPT_DIR/redact-build-log.sh" \
   "$SCRIPT_DIR/test-log-redaction.sh" \
-  "$SCRIPT_DIR/test-inspector-drift.sh"
+  "$SCRIPT_DIR/test-inspector-drift.sh" \
+  "$SCRIPT_DIR/physical-gate-p0.sh" \
+  "$SCRIPT_DIR/test-physical-gate-p0.sh"
 run "$SCRIPT_DIR/test-log-redaction.sh"
+run "$SCRIPT_DIR/test-physical-gate-p0.sh"
 run swift format lint --strict --recursive \
   "$PROBE_ROOT/Host" \
   "$PROBE_ROOT/Provider" \
@@ -48,6 +51,7 @@ run xcodebuild \
   -destination "platform=macOS,arch=arm64" \
   -derivedDataPath "$DERIVED_DATA" \
   CODE_SIGNING_ALLOWED=NO \
+  -enableCodeCoverage YES \
   test
 run "$SCRIPT_DIR/check-signing-access.sh"
 run xcodebuild \
