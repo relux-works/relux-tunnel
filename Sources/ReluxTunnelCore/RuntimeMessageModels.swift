@@ -643,6 +643,7 @@ public struct RuntimeDiagnosticsSnapshot: Codable, Equatable, Sendable {
   public let gauges: [String: Int64]
   public let histograms: [String: RuntimeDiagnosticHistogram]
   public let errors: [RedactedRuntimeError]
+  public let sshBootstrapError: SSHBootstrapDiagnostic?
 
   public init(
     requestID: OpaqueRuntimeRequestIdentifier? = nil,
@@ -651,7 +652,8 @@ public struct RuntimeDiagnosticsSnapshot: Codable, Equatable, Sendable {
     counters: [String: UInt64] = [:],
     gauges: [String: Int64] = [:],
     histograms: [String: RuntimeDiagnosticHistogram] = [:],
-    errors: [RedactedRuntimeError] = []
+    errors: [RedactedRuntimeError] = [],
+    sshBootstrapError: SSHBootstrapDiagnostic? = nil
   ) {
     protocolVersion = RuntimeMessageProtocol.currentProtocolVersion
     kind = .diagnosticsSnapshot
@@ -663,6 +665,7 @@ public struct RuntimeDiagnosticsSnapshot: Codable, Equatable, Sendable {
     self.gauges = gauges
     self.histograms = histograms
     self.errors = errors
+    self.sshBootstrapError = sshBootstrapError
   }
 
   public init(from decoder: any Decoder) throws {
@@ -700,6 +703,10 @@ public struct RuntimeDiagnosticsSnapshot: Codable, Equatable, Sendable {
       } else {
         []
       }
+    sshBootstrapError = try container.decodeIfPresent(
+      SSHBootstrapDiagnostic.self,
+      forKey: .sshBootstrapError
+    )
     try Self.validateMetricNames(counters.keys)
     try Self.validateMetricNames(gauges.keys)
     try Self.validateMetricNames(histograms.keys)
@@ -720,6 +727,7 @@ public struct RuntimeDiagnosticsSnapshot: Codable, Equatable, Sendable {
     try container.encode(gauges, forKey: .gauges)
     try container.encode(histograms, forKey: .histograms)
     try container.encode(errors, forKey: .errors)
+    try container.encodeIfPresent(sshBootstrapError, forKey: .sshBootstrapError)
   }
 
   public var position: RuntimeSnapshotPosition {
@@ -755,6 +763,7 @@ public struct RuntimeDiagnosticsSnapshot: Codable, Equatable, Sendable {
     case gauges
     case histograms
     case errors
+    case sshBootstrapError
   }
 }
 

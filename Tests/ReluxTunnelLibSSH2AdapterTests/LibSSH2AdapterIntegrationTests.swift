@@ -275,6 +275,13 @@ struct LibSSH2AdapterIntegrationTests {
       #expect(error.code == .timedOut)
       #expect(error.phase == .authentication)
       #expect(error.requiresTeardown)
+      let bootstrap = SSHBootstrapErrorMapper.transport(
+        error,
+        configurationGeneration: 6
+      ).diagnostic
+      #expect(bootstrap.code == .operationTimedOut)
+      #expect(bootstrap.stage == .publicKeyAuthentication)
+      #expect(bootstrap.retryDisposition == .retryableLater)
     }
     #expect(
       await transport.ownedResourceSnapshot()

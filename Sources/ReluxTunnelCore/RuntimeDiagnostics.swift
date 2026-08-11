@@ -479,6 +479,22 @@ public final class RuntimeDiagnosticsRecorder: @unchecked Sendable, TunnelMetric
       droppedUpdates: droppedUpdates
     )
   }
+
+  /// Records the latest stable SSH bootstrap projection for this runtime generation.
+  public func recordSSHBootstrapError(_ error: SSHBootstrapProviderError) {
+    store.recordSSHBootstrapError(
+      error.diagnostic,
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+  }
+
+  public func clearSSHBootstrapError() {
+    store.clearSSHBootstrapError(
+      generation: runtimeGeneration,
+      droppedUpdates: droppedUpdates
+    )
+  }
 }
 
 extension RuntimeDiagnosticsRecorder: TCPAdmissionDiagnosticsSink {
@@ -597,6 +613,8 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
     case memory(UInt64, UInt64, UInt64)
     case error(RuntimeDiagnosticErrorCode, UInt64)
     case clearError(RuntimeErrorDomain, UInt64)
+    case sshBootstrapError(SSHBootstrapDiagnostic, UInt64)
+    case clearSSHBootstrapError(UInt64)
     case rejected(UInt64)
 
     var generation: UInt64 {
@@ -611,6 +629,7 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
         generation
       case .tcpFlowOpened(let generation), .tcpFlowClosed(let generation),
         .error(_, let generation), .clearError(_, let generation),
+        .sshBootstrapError(_, let generation), .clearSSHBootstrapError(let generation),
         .rejected(let generation):
         generation
       }
@@ -635,6 +654,7 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       count: RuntimeDiagnosticsSchema.tcpChannelOpenLatencyBucketUpperBoundsMilliseconds.count
     )
     var errors: [RuntimeErrorDomain: RuntimeDiagnosticErrorCode] = [:]
+    var sshBootstrapError: SSHBootstrapDiagnostic?
     var hasAvailableMemorySample = false
     let droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
     let tcpAdmissionGauges: RuntimeTCPAdmissionGaugeReconciler
@@ -754,7 +774,8 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
         ],
         errors: state.errors.values
           .map(\.redactedError)
-          .sorted { $0.domain.rawValue < $1.domain.rawValue }
+          .sorted { $0.domain.rawValue < $1.domain.rawValue },
+        sshBootstrapError: state.sshBootstrapError
       )
     }
   }
@@ -862,6 +883,21 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
     droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
   ) {
     enqueue(.clearError(domain, generation), droppedUpdates: droppedUpdates)
+  }
+
+  fileprivate func recordSSHBootstrapError(
+    _ diagnostic: SSHBootstrapDiagnostic,
+    generation: UInt64,
+    droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
+  ) {
+    enqueue(.sshBootstrapError(diagnostic, generation), droppedUpdates: droppedUpdates)
+  }
+
+  fileprivate func clearSSHBootstrapError(
+    generation: UInt64,
+    droppedUpdates: RuntimeDiagnosticsDroppedUpdateCounter
+  ) {
+    enqueue(.clearSSHBootstrapError(generation), droppedUpdates: droppedUpdates)
   }
 
   fileprivate func rejectUpdate(
@@ -972,6 +1008,10 @@ public final class RuntimeDiagnosticsStore: @unchecked Sendable {
       state.errors[code.domain] = code
     case .clearError(let domain, _):
       state.errors.removeValue(forKey: domain)
+    case .sshBootstrapError(let diagnostic, _):
+      state.sshBootstrapError = diagnostic
+    case .clearSSHBootstrapError:
+      state.sshBootstrapError = nil
     case .rejected:
       incrementKnownCounter("diagnostics_rejected_metric_update_total", by: 1)
     }

@@ -251,7 +251,7 @@ struct RuntimeDiagnosticsTests {
       "protocolVersion", "kind", "schemaVersion", "runtimeGeneration", "snapshotSequence",
       "counters", "gauges", "histograms", "errors",
     ]
-    let approvedStoredProperties = approvedFields.union(["requestID"])
+    let approvedStoredProperties = approvedFields.union(["requestID", "sshBootstrapError"])
 
     #expect(Set(object.keys) == approvedFields)
     #expect(

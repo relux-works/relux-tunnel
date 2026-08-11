@@ -16,6 +16,20 @@ public enum MacOSCredentialResolverError: String, Error, CaseIterable, Equatable
   case operationCancelled
 }
 
+extension MacOSCredentialResolverError {
+  init(status: OSStatus, itemLookup: Bool) {
+    if itemLookup, status == errSecItemNotFound {
+      self = .credentialNotProvisioned
+    } else if status == errSecUserCanceled {
+      self = .operationCancelled
+    } else if status == errSecDecode {
+      self = .credentialMalformed
+    } else {
+      self = .credentialAccessDenied
+    }
+  }
+}
+
 extension MacOSCredentialResolverError: CustomStringConvertible, CustomDebugStringConvertible {
   public var description: String { rawValue }
   public var debugDescription: String { rawValue }
@@ -136,16 +150,7 @@ public final class MacOSSystemKeychainCredentialResolver: SSHCredentialProvider,
   }
 
   private func mapStatus(_ status: OSStatus, itemLookup: Bool) -> MacOSCredentialResolverError {
-    if itemLookup, status == errSecItemNotFound {
-      return .credentialNotProvisioned
-    }
-    if status == errSecUserCanceled {
-      return .operationCancelled
-    }
-    if status == errSecDecode {
-      return .credentialMalformed
-    }
-    return .credentialAccessDenied
+    MacOSCredentialResolverError(status: status, itemLookup: itemLookup)
   }
 
   private func mapFormatError(_ error: MacOSCredentialFormatError)

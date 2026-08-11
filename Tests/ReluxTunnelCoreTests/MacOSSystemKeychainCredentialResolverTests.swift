@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import Network
 import ReluxTunnelCore
 import Security
 import Testing
@@ -89,6 +90,52 @@ struct MacOSSystemKeychainCredentialResolverTests {
         )
       }
     }
+  }
+
+  @Test("OSStatus bootstrap projection is stable and contains no platform status")
+  func osStatusBootstrapProjection() {
+    let cases: [(OSStatus, Bool, SSHBootstrapErrorCode, SSHBootstrapRetryDisposition)] = [
+      (errSecItemNotFound, true, .credentialNotProvisioned, .terminal),
+      (errSecAuthFailed, true, .credentialAccessDenied, .terminal),
+      (errSecDecode, true, .credentialMalformed, .terminal),
+      (errSecUserCanceled, true, .operationCancelled, .cancelled),
+    ]
+
+    for (status, itemLookup, code, retry) in cases {
+      let error = MacOSSSHBootstrapErrorMapper.credential(
+        status: status,
+        itemLookup: itemLookup,
+        configurationGeneration: 12
+      )
+      #expect(error.diagnostic.code == code)
+      #expect(error.diagnostic.retryDisposition == retry)
+      #expect(error.diagnostic.configurationGeneration == 12)
+      #expect(
+        !(error as NSError).userInfo.values.contains { String(describing: $0) == "\(status)" })
+    }
+  }
+
+  @Test("NW and POSIX classes map without endpoint or underlying prose")
+  func networkFrameworkBootstrapProjection() {
+    let context = SSHBootstrapDiagnosticContext(endpointFamily: .ipv6)
+    let unavailable = MacOSSSHBootstrapErrorMapper.network(
+      NWError.posix(.ENETUNREACH),
+      stage: .physicalPathResolution,
+      configurationGeneration: 5,
+      context: context
+    )
+    let reset = MacOSSSHBootstrapErrorMapper.network(
+      NWError.posix(.ECONNRESET),
+      stage: .endpointConnect,
+      configurationGeneration: 5,
+      context: context
+    )
+
+    #expect(unavailable.diagnostic.code == .pathUnavailable)
+    #expect(unavailable.diagnostic.retryDisposition == .retryableLater)
+    #expect(reset.diagnostic.code == .endpointConnectFailed)
+    #expect(reset.diagnostic.retryDisposition == .retryableLater)
+    #expect(reset.diagnostic.context.endpointFamily == .ipv6)
   }
 
   @Test("record generation digest truncation and trailing bytes fail closed")

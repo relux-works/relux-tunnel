@@ -239,6 +239,13 @@ struct LibSSH2BridgeTests {
     } catch let error as SSHTransportError {
       #expect(error.code == .timedOut)
       #expect(error.phase == .resolution)
+      let bootstrap = SSHBootstrapErrorMapper.transport(
+        error,
+        configurationGeneration: 4
+      ).diagnostic
+      #expect(bootstrap.code == .operationTimedOut)
+      #expect(bootstrap.stage == .physicalPathResolution)
+      #expect(bootstrap.retryDisposition == .retryableLater)
     }
     let snapshot = await transport.snapshot()
     #expect(snapshot.counters.operationsTimedOut == 1)
@@ -325,6 +332,13 @@ struct LibSSH2BridgeTests {
     } catch let error as SSHTransportError {
       #expect(error.code == .timedOut)
       #expect(error.phase == .tcpConnect)
+      let bootstrap = SSHBootstrapErrorMapper.transport(
+        error,
+        configurationGeneration: 4
+      ).diagnostic
+      #expect(bootstrap.code == .operationTimedOut)
+      #expect(bootstrap.stage == .endpointConnect)
+      #expect(bootstrap.retryDisposition == .retryableLater)
     }
     #expect((await transport.ownedResourceSnapshot()).automaticTasks == 1)
 
@@ -355,6 +369,13 @@ struct LibSSH2BridgeTests {
     } catch let error as SSHTransportError {
       #expect(error.code == .timedOut)
       #expect(error.phase == .initialKeyExchange)
+      let bootstrap = SSHBootstrapErrorMapper.transport(
+        error,
+        configurationGeneration: 4
+      ).diagnostic
+      #expect(bootstrap.code == .operationTimedOut)
+      #expect(bootstrap.stage == .algorithmNegotiation)
+      #expect(bootstrap.retryDisposition == .retryableLater)
     }
     #expect(started.duration(to: .now) < .seconds(1))
     #expect((await transport.snapshot()).connectionState == .closed)
