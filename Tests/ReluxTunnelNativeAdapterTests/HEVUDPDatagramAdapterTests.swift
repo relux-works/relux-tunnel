@@ -6,7 +6,7 @@ import Testing
 
 @testable import ReluxTunnelNativeAdapter
 
-@Suite("Private HEV UDP datagram adapter")
+@Suite("Private HEV UDP datagram adapter", .serialized)
 struct HEVUDPDatagramAdapterTests {
   @Test("configuration rejects invalid time and queue limits")
   func configurationValidation() throws {
@@ -100,6 +100,7 @@ struct HEVUDPDatagramAdapterTests {
     await adapter.cancel(generation: 41)
     #expect(try await receiveEOF(from: first))
     #expect(try await receiveEOF(from: second))
+    await adapter.waitForPendingTeardowns()
     let snapshot = await adapter.snapshot()
     #expect(snapshot.activeConnections == 0)
     #expect(snapshot.inboundQueuedBytes == 0)
@@ -166,6 +167,7 @@ struct HEVUDPDatagramAdapterTests {
     #expect(close.envelope.type == .closeAssociation)
     #expect(close.envelope.associationID == associationID)
 
+    await adapter.waitForPendingTeardowns()
     let retiring = await adapter.snapshot()
     #expect(retiring.metrics.oversizedReplyDropped == 2)
     #expect(retiring.metrics.repliesDropped == 2)
@@ -194,6 +196,7 @@ struct HEVUDPDatagramAdapterTests {
       associationID: invalidAssociationID,
       generation: 41
     )
+    await adapter.waitForPendingTeardowns()
     let baseline = await adapter.snapshot()
     #expect(baseline.activeConnections == 0)
     #expect(baseline.registry.associationCount == 0)
@@ -225,6 +228,7 @@ struct HEVUDPDatagramAdapterTests {
     #expect(close.envelope.associationID == submitted.envelope.associationID)
     #expect(try await receiveEOF(from: peer))
 
+    await adapter.waitForPendingTeardowns()
     let beforeAck = await adapter.snapshot()
     #expect(beforeAck.metrics.hevOversizedInbound == 1)
     #expect(beforeAck.metrics.localPolicyInboundDropped == 1)
@@ -255,6 +259,7 @@ struct HEVUDPDatagramAdapterTests {
       #expect(try await receiveEOF(from: peer))
       Darwin.close(peer)
 
+      await adapter.waitForPendingTeardowns()
       let snapshot = await adapter.snapshot()
       #expect(snapshot.activeConnections == 0)
       #expect(snapshot.registry.associationCount == 0)
@@ -316,6 +321,7 @@ struct HEVUDPDatagramAdapterTests {
     _ = await relay.next()
     await adapter.sessionLost(generation: 41)
     #expect(try await receiveEOF(from: sessionPeer))
+    await adapter.waitForPendingTeardowns()
     #expect(
       await adapter.receiveRelayDatagram(
         associationID: expiryAssociation,
@@ -410,6 +416,7 @@ struct HEVUDPDatagramAdapterTests {
       let acknowledgement = await relay.next()
       #expect(acknowledgement.envelope.type == .closeAssociation)
       #expect(acknowledgement.envelope.associationID == first.envelope.associationID)
+      await adapter.waitForPendingTeardowns()
       let baseline = await adapter.snapshot()
       #expect(baseline.activeConnections == 0)
       #expect(baseline.registry.associationCount == 0)
@@ -488,6 +495,7 @@ struct HEVUDPDatagramAdapterTests {
       generation: 41
     )
 
+    await adapter.waitForPendingTeardowns()
     let baseline = await adapter.snapshot()
     #expect(baseline.activeConnections == 0)
     #expect(baseline.registry.associationCount == 0)
@@ -545,6 +553,7 @@ struct HEVUDPDatagramAdapterTests {
       error: .generated(.invalidDatagram)
     )
 
+    await adapter.waitForPendingTeardowns()
     let baseline = await adapter.snapshot()
     #expect(baseline.activeConnections == 0)
     #expect(baseline.registry.associationCount == 0)
@@ -585,6 +594,7 @@ struct HEVUDPDatagramAdapterTests {
     #expect(try await receiveEOF(from: cancelled.peer))
     Darwin.close(cancelled.peer)
 
+    await adapter.waitForPendingTeardowns()
     let snapshot = await adapter.snapshot()
     #expect(snapshot.activeConnections == 0)
     #expect(snapshot.registry.associationCount == 0)
@@ -603,6 +613,7 @@ struct HEVUDPDatagramAdapterTests {
     Darwin.close(excess.peer)
     await limited.cancel(generation: 41)
     #expect(try await receiveEOF(from: owner))
+    await limited.waitForPendingTeardowns()
     #expect(await limited.snapshot().metrics.connectionAdmissionRejected == 1)
   }
 
@@ -642,6 +653,7 @@ struct HEVUDPDatagramAdapterTests {
     await adapter.cancel(generation: 41)
     #expect(try await receiveEOF(from: admitted))
     #expect(try await receiveEOF(from: pending.peer))
+    await adapter.waitForPendingTeardowns()
     let snapshot = await adapter.snapshot()
     #expect(snapshot.activeConnections == 0)
     #expect(snapshot.registry.associationCount == 0)
@@ -702,6 +714,7 @@ struct HEVUDPDatagramAdapterTests {
 
     await adapter.cancel(generation: 41)
     #expect(try await receiveEOF(from: peer))
+    await adapter.waitForPendingTeardowns()
     let baseline = await adapter.snapshot()
     #expect(baseline.activeConnections == 0)
     #expect(baseline.inboundQueuedBytes == 0)

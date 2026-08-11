@@ -128,36 +128,33 @@ struct LibSSH2AdapterIntegrationTests {
       )
     )
 
-    let cancelledChannel = try await transport.openExecChannel(
-      request: SSHExecRequest(command: "sleep 2"),
+    let idleChannel = try await transport.openExecChannel(
+      request: SSHExecRequest(command: "cat"),
       policy: fixtureChannelPolicy()
     )
-    let cancelledRead = Task { try await cancelledChannel.read(maximumBytes: 1) }
+    let cancelledRead = Task { try await idleChannel.read(maximumBytes: 1) }
     await waitForPendingReads(1, transport: transport)
+    clock.advance(by: .seconds(1))
+    for _ in 0..<100 { await Task.yield() }
+    #expect(await transport.snapshot().gauges.pendingReads == 1)
+
     cancelledRead.cancel()
     do {
       _ = try await cancelledRead.value
       Issue.record("cancelled read unexpectedly completed", sourceLocation: #_sourceLocation)
     } catch let error as SSHTransportError {
       #expect(error.code == .cancelled)
-      #expect(error.scope == .channel(cancelledChannel.identity))
+      #expect(error.scope == .channel(idleChannel.identity))
       #expect(error.retryDisposition == .sameChannelOperation)
       #expect(!error.requiresTeardown)
     }
-    await cancelledChannel.cancel()
+    #expect(await transport.snapshot().gauges.pendingReads == 0)
 
-    let idleChannel = try await transport.openExecChannel(
-      request: SSHExecRequest(command: "sleep 2"),
-      policy: fixtureChannelPolicy()
-    )
-    let idleRead = Task { try await idleChannel.read(maximumBytes: 1) }
-    await waitForPendingReads(1, transport: transport)
-    clock.advance(by: .seconds(1))
-    for _ in 0..<100 { await Task.yield() }
-    #expect(await transport.snapshot().gauges.pendingReads == 1)
-    idleRead.cancel()
-    await #expect(throws: SSHTransportError.self) { _ = try await idleRead.value }
-    await idleChannel.cancel()
+    let payload = Data("cancelled-channel-alive".utf8)
+    #expect(try await idleChannel.writeSome(payload) == payload.count)
+    try await idleChannel.finishWriting()
+    #expect(try await readAll(idleChannel) == payload)
+    await idleChannel.close()
 
     let sibling = try await transport.openExecChannel(
       request: SSHExecRequest(command: "printf sibling-alive"),
@@ -167,6 +164,7 @@ struct LibSSH2AdapterIntegrationTests {
     await sibling.close()
     #expect(await transport.snapshot().connectionState == .ready)
     await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
   }
 
   @Test("rekey callers coalesce, caller cancellation detaches, and opens keep their deadline")
@@ -174,6 +172,7 @@ struct LibSSH2AdapterIntegrationTests {
     let credential = P256FixtureCredential()
     let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
     defer { server.stop() }
+    let clock = ManualFixtureClock()
     let observer = SuspendingRekeyObserver()
     let transport =
       try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
@@ -183,7 +182,8 @@ struct LibSSH2AdapterIntegrationTests {
           port: server.port,
           credential: credential,
           trace: AdapterFixtureTrace(),
-          observer: observer
+          observer: observer,
+          clock: clock
         )
       ) as! LibSSH2Transport
     _ = try await transport.connect(
@@ -208,11 +208,20 @@ struct LibSSH2AdapterIntegrationTests {
       #expect(!error.requiresTeardown)
     }
 
-    do {
-      _ = try await transport.openExecChannel(
+    let expiredOpen = Task {
+      try await transport.openExecChannel(
         request: SSHExecRequest(command: "printf too-late"),
         policy: fixtureChannelPolicy()
       )
+    }
+    for _ in 0..<200 where !clock.hasPendingSleep(within: .milliseconds(300)) {
+      await Task.yield()
+    }
+    #expect(clock.hasPendingSleep(within: .milliseconds(300)))
+    #expect(await transport.snapshot().gauges.pendingChannelOpens == 1)
+    clock.advance(by: .milliseconds(300))
+    do {
+      _ = try await expiredOpen.value
       Issue.record("queued open exceeded its deadline", sourceLocation: #_sourceLocation)
     } catch let error as SSHTransportError {
       #expect(error.code == .timedOut)
@@ -395,20 +404,63 @@ struct LibSSH2AdapterIntegrationTests {
 
     await observer.resumeRekey()
     try await rekey.value
-    for _ in 0..<500 {
-      if (await transport.snapshot()).counters.keepalivesSent == 1 { break }
-      await Task.yield()
-    }
+    await observer.waitForKeepalivesSent(1)
     #expect((await transport.snapshot()).counters.keepalivesSent == 1)
 
     while !clock.hasPendingSleep(within: .milliseconds(100)) { await Task.yield() }
     clock.advance(by: .milliseconds(100))
-    for _ in 0..<500 {
-      if (await transport.snapshot()).counters.keepalivesSent == 2 { break }
-      await Task.yield()
-    }
+    await observer.waitForKeepalivesSent(2)
     #expect((await transport.snapshot()).counters.keepalivesSent == 2)
     await transport.close()
+  }
+
+  @Test("automatic keepalive fatal failure retires before teardown joins owned tasks")
+  func automaticKeepaliveFatalFailureDoesNotSelfJoinTeardown() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let clock = ManualFixtureClock()
+    let fault = SocketFailureController()
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace(),
+          clock: clock,
+          connector: FaultInjectingFixtureConnector(port: server.port, controller: fault)
+        )
+      ) as! LibSSH2Transport
+    _ = try await transport.connect(
+      configuration: fixtureConfiguration(
+        port: server.port,
+        keepaliveReply: .milliseconds(50),
+        keepaliveInterval: .milliseconds(100)
+      )
+    )
+
+    for _ in 0..<500 where !clock.hasPendingSleep(within: .milliseconds(100)) {
+      await Task.yield()
+    }
+    let keepaliveScheduled = clock.hasPendingSleep(within: .milliseconds(100))
+    #expect(keepaliveScheduled)
+    guard keepaliveScheduled else {
+      await transport.close()
+      return
+    }
+    fault.arm()
+    clock.advance(by: .milliseconds(100))
+    for _ in 0..<1_000 {
+      if (await transport.snapshot()).connectionState == .closed { break }
+      await Task.yield()
+    }
+
+    let closed = (await transport.snapshot()).connectionState == .closed
+    #expect(closed)
+    guard closed else { return }
+    #expect(await transport.ownedResourceSnapshot() == .zero)
   }
 
   @Test("same-channel writes preserve exact arguments across EAGAIN")
@@ -700,6 +752,35 @@ struct LibSSH2AdapterIntegrationTests {
         policy: fixtureChannelPolicy()
       )
     }
+  }
+
+  @Test("approved primary and fallback algorithm sets negotiate without forbidden downgrade")
+  func approvedAlgorithmCompatibilityMatrix() async throws {
+    let ed25519 = Ed25519FixtureCredential(recorder: SigningInvocationRecorder())
+    try await assertApprovedAlgorithmCompatibility(
+      credential: ed25519,
+      publicKey: ed25519.authorizedKey,
+      server: .init(
+        hostKeyType: "ed25519",
+        keyExchange: "curve25519-sha256",
+        hostKey: "ssh-ed25519",
+        cipher: "aes256-ctr",
+        mac: "hmac-sha2-256"
+      )
+    )
+    let p256 = P256FixtureCredential()
+    try await assertApprovedAlgorithmCompatibility(
+      credential: p256,
+      publicKey: p256.authorizedKey,
+      server: .init(
+        hostKeyType: "ecdsa",
+        hostKeyBits: 256,
+        keyExchange: "diffie-hellman-group14-sha256",
+        hostKey: "ecdsa-sha2-nistp256",
+        cipher: "aes128-ctr",
+        mac: "hmac-sha2-512"
+      )
+    )
   }
 
   @Test("socket failure during channel read is privacy-safe and connection-fatal")
@@ -1165,6 +1246,44 @@ struct LibSSH2AdapterIntegrationTests {
     #expect(received == payload)
     #expect(await channel.receiveWindow() == .unsupported)
     await channel.close()
+  }
+
+  private func assertApprovedAlgorithmCompatibility(
+    credential: any SSHPublicKeyCredential,
+    publicKey: String,
+    server algorithms: LoopbackSSHDAlgorithms
+  ) async throws {
+    let server = try LoopbackSSHD(publicKey: publicKey, algorithms: algorithms)
+    defer { server.stop() }
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace()
+        )
+      ) as! LibSSH2Transport
+
+    let session = try await transport.connect(
+      configuration: fixtureConfiguration(
+        port: server.port,
+        hostKeyAlgorithms: [algorithms.hostKey],
+        keyExchangeAlgorithms: [algorithms.keyExchange],
+        cipherAlgorithms: [algorithms.cipher],
+        macAlgorithms: [algorithms.mac]
+      )
+    )
+    #expect(session.negotiatedAlgorithms.keyExchange == algorithms.keyExchange)
+    #expect(session.negotiatedAlgorithms.hostKey == algorithms.hostKey)
+    #expect(session.negotiatedAlgorithms.cipherClientToServer == algorithms.cipher)
+    #expect(session.negotiatedAlgorithms.cipherServerToClient == algorithms.cipher)
+    #expect(session.negotiatedAlgorithms.macClientToServer == algorithms.mac)
+    #expect(session.negotiatedAlgorithms.macServerToClient == algorithms.mac)
+
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
   }
 
   private func assertEchoRoundTrip(
@@ -1827,15 +1946,26 @@ private actor SuspendingRekeyObserver: SSHTransportObserver {
   private var rekeyStarted = false
   private var startWaiters: [CheckedContinuation<Void, Never>] = []
   private var rekeyContinuation: CheckedContinuation<Void, Never>?
+  private var keepalivesSent = 0
+  private var keepaliveWaiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
 
   func observe(_ event: SSHTransportEvent) async {
-    guard case .rekeyStarted = event.kind, !rekeyStarted else { return }
-    rekeyStarted = true
-    let waiters = startWaiters
-    startWaiters.removeAll()
-    for waiter in waiters { waiter.resume() }
-    await withCheckedContinuation { continuation in
-      rekeyContinuation = continuation
+    switch event.kind {
+    case .rekeyStarted where !rekeyStarted:
+      rekeyStarted = true
+      let waiters = startWaiters
+      startWaiters.removeAll()
+      for waiter in waiters { waiter.resume() }
+      await withCheckedContinuation { continuation in
+        rekeyContinuation = continuation
+      }
+    case .keepaliveSent:
+      keepalivesSent += 1
+      let ready = keepaliveWaiters.filter { $0.count <= keepalivesSent }
+      keepaliveWaiters.removeAll { $0.count <= keepalivesSent }
+      for waiter in ready { waiter.continuation.resume() }
+    default:
+      break
     }
   }
 
@@ -1849,6 +1979,13 @@ private actor SuspendingRekeyObserver: SSHTransportObserver {
   func resumeRekey() {
     rekeyContinuation?.resume()
     rekeyContinuation = nil
+  }
+
+  func waitForKeepalivesSent(_ count: Int) async {
+    guard keepalivesSent < count else { return }
+    await withCheckedContinuation { continuation in
+      keepaliveWaiters.append((count, continuation))
+    }
   }
 }
 
@@ -2008,6 +2145,11 @@ private func fixtureDependencies(
 private func fixtureConfiguration(
   port: UInt16,
   hostKeyAlgorithms: [String] = ["ssh-ed25519", "ecdsa-sha2-nistp256"],
+  keyExchangeAlgorithms: [String] = [
+    "curve25519-sha256", "curve25519-sha256@libssh.org",
+  ],
+  cipherAlgorithms: [String] = ["aes256-ctr", "aes128-ctr"],
+  macAlgorithms: [String] = ["hmac-sha2-256", "hmac-sha2-512"],
   credentialReference: SSHCredentialReference = SSHCredentialReference(
     rawValue: "keychain.fixture.p256"
   ),
@@ -2036,10 +2178,10 @@ private func fixtureConfiguration(
     credentialGeneration: 1,
     trustRecordReference: nil,
     algorithms: SSHAlgorithmPolicy(
-      keyExchange: ["curve25519-sha256", "curve25519-sha256@libssh.org"],
+      keyExchange: keyExchangeAlgorithms,
       hostKey: hostKeyAlgorithms,
-      cipher: ["aes256-ctr", "aes128-ctr"],
-      mac: ["hmac-sha2-256", "hmac-sha2-512"]
+      cipher: cipherAlgorithms,
+      mac: macAlgorithms
     ),
     timeouts: SSHTimeoutPolicy(
       resolution: timeout,
@@ -2163,13 +2305,22 @@ private func adapterWireString(_ value: Data) -> Data {
   return withUnsafeBytes(of: &length) { Data($0) } + value
 }
 
+private struct LoopbackSSHDAlgorithms {
+  let hostKeyType: String
+  var hostKeyBits: Int? = nil
+  let keyExchange: String
+  let hostKey: String
+  let cipher: String
+  let mac: String
+}
+
 private final class LoopbackSSHD {
   let port: UInt16
   let hostKeyBlob: Data
   private let directory: URL
   private let process: Process
 
-  init(publicKey: String) throws {
+  init(publicKey: String, algorithms: LoopbackSSHDAlgorithms? = nil) throws {
     guard FileManager.default.fileExists(atPath: "/usr/sbin/sshd") else {
       throw POSIXFixtureError.system(ENOENT)
     }
@@ -2185,10 +2336,13 @@ private final class LoopbackSSHD {
     try Data("\(publicKey)\n".utf8).write(to: authorizedKeys, options: .atomic)
     try FileManager.default.setAttributes(
       [.posixPermissions: 0o600], ofItemAtPath: authorizedKeys.path)
-    try runProcess(
-      "/usr/bin/ssh-keygen",
-      arguments: ["-q", "-t", "ed25519", "-N", "", "-f", hostKey.path]
-    )
+    var hostKeyArguments = [
+      "-q", "-t", algorithms?.hostKeyType ?? "ed25519", "-N", "", "-f", hostKey.path,
+    ]
+    if let bits = algorithms?.hostKeyBits {
+      hostKeyArguments.insert(contentsOf: ["-b", String(bits)], at: 3)
+    }
+    try runProcess("/usr/bin/ssh-keygen", arguments: hostKeyArguments)
     let publicKeyText = try String(
       contentsOf: hostKey.appendingPathExtension("pub"),
       encoding: .utf8
@@ -2201,7 +2355,7 @@ private final class LoopbackSSHD {
     }
     self.hostKeyBlob = hostKeyBlob
     port = try unusedLoopbackPort()
-    let text = [
+    var directives = [
       "Port \(port)",
       "ListenAddress 127.0.0.1",
       "Protocol 2",
@@ -2218,8 +2372,17 @@ private final class LoopbackSSHD {
       "AllowTcpForwarding yes",
       "RekeyLimit 32K 0",
       "LogLevel DEBUG3",
-      "",
-    ].joined(separator: "\n")
+    ]
+    if let algorithms {
+      directives.append(contentsOf: [
+        "KexAlgorithms \(algorithms.keyExchange)",
+        "HostKeyAlgorithms \(algorithms.hostKey)",
+        "Ciphers \(algorithms.cipher)",
+        "MACs \(algorithms.mac)",
+      ])
+    }
+    directives.append("")
+    let text = directives.joined(separator: "\n")
     try Data(text.utf8).write(to: configuration, options: .atomic)
     try runProcess("/usr/sbin/sshd", arguments: ["-t", "-f", configuration.path])
 

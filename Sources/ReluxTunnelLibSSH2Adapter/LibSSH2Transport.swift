@@ -797,11 +797,12 @@ public actor LibSSH2Transport: SSHTransport {
   }
 
   public func sendKeepalive() async throws -> SSHDeferredSemanticReport<Duration> {
-    try await sendKeepalive(deferBehindRekey: false)
+    try await sendKeepalive(deferBehindRekey: false, waitsForFatalTeardown: true)
   }
 
   private func sendKeepalive(
-    deferBehindRekey: Bool
+    deferBehindRekey: Bool,
+    waitsForFatalTeardown: Bool
   ) async throws -> SSHDeferredSemanticReport<Duration> {
     guard let configuration else {
       throw transportError(code: .invalidState, phase: .keepalive)
@@ -846,7 +847,8 @@ public actor LibSSH2Transport: SSHTransport {
         error,
         phase: .keepalive,
         fallback: .keepaliveFailed,
-        scope: .operation
+        scope: .operation,
+        waitsForFatalTeardown: waitsForFatalTeardown
       )
       throw mapped
     }
@@ -1185,7 +1187,10 @@ public actor LibSSH2Transport: SSHTransport {
       while !Task.isCancelled {
         do {
           try await clock.sleep(for: configuration.keepalive.interval)
-          _ = try await self?.sendKeepalive(deferBehindRekey: true)
+          _ = try await self?.sendKeepalive(
+            deferBehindRekey: true,
+            waitsForFatalTeardown: false
+          )
         } catch {
           guard
             await self?.handleAutomaticKeepaliveFailure(
@@ -2401,7 +2406,8 @@ public actor LibSSH2Transport: SSHTransport {
     phase: SSHTransportPhase,
     fallback: SSHTransportErrorCode = .adapterFailure,
     scope: SSHTransportErrorScope? = nil,
-    resetChannel identity: SSHChannelIdentity? = nil
+    resetChannel identity: SSHChannelIdentity? = nil,
+    waitsForFatalTeardown: Bool = true
   ) async -> SSHTransportError {
     let mapped = map(error, phase: phase, fallback: fallback, scope: scope)
     await recordTerminalOperation(mapped)
@@ -2410,7 +2416,11 @@ public actor LibSSH2Transport: SSHTransport {
       if state != .failed, state != .closing, state != .closed {
         try? await transition(to: .failed)
       }
-      await tearDown()
+      if waitsForFatalTeardown {
+        await tearDown()
+      } else {
+        _ = startTearDownIfNeeded()
+      }
     } else if let identity {
       await resetChannelAfterFailedOperation(identity: identity)
     }

@@ -8,13 +8,14 @@ done
 2026-07-15T00:58:02Z
 
 ## Last Update
-2026-08-11T12:10:39Z
+2026-08-11T16:05:11Z
 
 ## Blocked By
 - TASK-260715-1r0fxv
 
 ## Blocks
 - TASK-260715-2ayxqn
+- TASK-260715-1u2vpc
 
 ## Checklist
 - [x] The physical Mac passes signature, configuration, launch, message, and stop checks

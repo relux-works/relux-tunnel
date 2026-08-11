@@ -141,6 +141,8 @@ public final class HEVUDPDatagramAdapter: HEVSOCKSConnectionAdapter, @unchecked 
   private var inboundQueuedBytes: UInt32 = 0
   private var outboundQueuedBytes: UInt32 = 0
   private var metrics = HEVUDPDatagramAdapterMetrics()
+  private var pendingTeardowns = 0
+  private var teardownWaiters: [CheckedContinuation<Void, Never>] = []
   private var stopped = false
 
   public init(
@@ -385,6 +387,17 @@ public final class HEVUDPDatagramAdapter: HEVSOCKSConnectionAdapter, @unchecked 
     )
   }
 
+  func waitForPendingTeardowns() async {
+    await withCheckedContinuation { continuation in
+      let resumeImmediately = lock.withLock { () -> Bool in
+        guard pendingTeardowns > 0 else { return true }
+        teardownWaiters.append(continuation)
+        return false
+      }
+      if resumeImmediately { continuation.resume() }
+    }
+  }
+
   fileprivate func requestAccepted() {
     recordMetric { $0.socksRequestsAccepted = incremented($0.socksRequestsAccepted) }
   }
@@ -533,10 +546,18 @@ public final class HEVUDPDatagramAdapter: HEVSOCKSConnectionAdapter, @unchecked 
         metrics.localCloses = incremented(metrics.localCloses)
       }
     }
-    guard notifyRegistry, let key = connection.key else { return }
-    Task { [registry] in
-      _ = await registry.closeLocally(key)
+    guard notifyRegistry, let key = connection.key else {
+      finishTeardown()
+      return
     }
+    Task { [registry, self] in
+      _ = await registry.closeLocally(key)
+      finishTeardown()
+    }
+  }
+
+  fileprivate func beginTeardown() {
+    lock.withLock { pendingTeardowns += 1 }
   }
 
   fileprivate func closeHEV(
@@ -563,6 +584,17 @@ public final class HEVUDPDatagramAdapter: HEVSOCKSConnectionAdapter, @unchecked 
     _ update: (inout HEVUDPDatagramAdapterMetrics) -> Void
   ) {
     lock.withLock { update(&metrics) }
+  }
+
+  private func finishTeardown() {
+    let waiters = lock.withLock { () -> [CheckedContinuation<Void, Never>] in
+      precondition(pendingTeardowns > 0)
+      pendingTeardowns -= 1
+      guard pendingTeardowns == 0 else { return [] }
+      defer { teardownWaiters.removeAll(keepingCapacity: true) }
+      return teardownWaiters
+    }
+    for waiter in waiters { waiter.resume() }
   }
 
   private func recordRemoteEvent(
@@ -746,6 +778,8 @@ private final class HEVUDPAssociationConnection: @unchecked Sendable {
       return (input, output, true)
     }
     guard state.2 else { return }
+    let owner = owner
+    owner?.beginTeardown()
     channel.close()
     owner?.connectionClosed(
       self,
