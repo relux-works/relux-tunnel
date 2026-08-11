@@ -1,0 +1,101 @@
+OpenAI Codex v0.147.0
+--------
+workdir: /Users/iv/Developer/relux-tunnel
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: high
+reasoning summaries: none
+session id: 019ff2b8-f84a-7b71-b2ce-5ea21a6036b6
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260715-2d3g5e, status=development)'
+```
+
+## Role Contract
+
+- **Role:** `tester` (`tester`) — Writes tests — unit, integration, e2e, UI, snapshot
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+
+### Definition of Done
+
+- [ ] One candidate-neutral Swift Testing suite asserts every functional gate
+- [ ] Host policy, windows, rekey, backpressure, and cancellation are deterministic
+- [ ] Test inventory and passing or red candidate evidence are attached
+- [ ] Tests written and passing
+- [ ] Coverage target ~80%+ for affected code
+- [ ] Lint clean
+- [ ] New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** TASK-260715-2d3g5e
+- **Title:** Add common SSH transport conformance tests
+- **Parent:** STORY-260715-lkshfz
+
+### Description
+
+Implement one Swift Testing and harness suite that runs unchanged against both candidate adapters, asserts every M0-viability-mandatory requirement, and verifies explicit not-reported or unsupported states for the four M3-deferred semantics.
+
+### Scope
+
+In scope: Tier-1 M0-viability host-key ordering, approved auth, direct-tcpip, exec/stdin upload, bounded buffers and backpressure, client rekey, server-rekey handling, keepalive, cancellation, lifecycle, privacy-safe errors, available metrics, and deterministic resource baselines; explicit deferred-state assertions for consumer-driven receive credit, RFC open reasons, exact exec-exit metadata, and deep rekey/keepalive observability. Out of scope: treating M3 exact values as M0 selection gates, candidate-specific pass exceptions, production lane scheduling, full physical performance matrix, relay framing, UI, and sleep-only tests.
+
+### Acceptance Criteria
+
+1. The same named suite runs against both adapters with candidate selection as data, and every M0-viability-mandatory gate has an explicit assertion rather than an informal log check. 2. Host verification proves raw key evidence reaches policy before credential lookup/authentication and changed keys open no destination channel. 3. Direct/exec/upload tests verify independent open, bounded read/write/backpressure, EOF, half-close, reset, cancel, close, and server-rekey-safe active traffic. 4. Fake-clock and byte-count tests trigger mandatory client rekey; the four M3-deferred semantics assert explicit reported, not-reported, or unsupported states and map exact-value work to TASK-260728-3cveay. 5. Repeated cancellation restores tasks, channels, sockets, descriptors, and buffers to baseline; mandatory metrics reconcile and privacy sentinels are absent.
+
+## Instructions
+
+### TASK-260715-2d3g5e_ssh-transport-conformance-contract.md
+> Revised M0-viability conformance tiers and explicit M3 deferred-state contract
+
+Attached file: `/Users/iv/Developer/relux-tunnel/.temp/resources/TASK-260715-2d3g5e/TASK-260715-2d3g5e_ssh-transport-conformance-contract.md`
+
+- Byte count: `13226`
+- Content digest: `sha256:207b5834794202a5a3c051b248b80ddeaab0888399a9e39dd4b65274c57bddf7`
+- Access: read-only
+
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `TASK-260715-2d3g5e_*` before handoff:
+  `task-board m 'add_resource(TASK-260715-2d3g5e, name=TASK-260715-2d3g5e_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `to-review` is a role handoff, not accepted completion. Report **ready for review** or **handed off to review**.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff TASK-260715-2d3g5e --role tester
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at Aug 18th, 2026 4:03 AM.
+ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at Aug 18th, 2026 4:03 AM.
