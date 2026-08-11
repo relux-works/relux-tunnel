@@ -1,28 +1,37 @@
 # BUG-260728-2j25tu results
 
 ## Scope and root cause
-HEVUDPAssociationConnection.close published peer EOF by closing the channel before HEVUDPDatagramAdapter.connectionClosed removed the connection and released queued-byte accounting. Peer EOF therefore raced activeConnections and queue gauges. Registry cleanup could also still be pending for a locally initiated close.
+
+`HEVUDPAssociationConnection.close` published peer EOF by closing the channel before `HEVUDPDatagramAdapter.connectionClosed` removed the connection and released queued-byte accounting. Peer EOF therefore raced `activeConnections` and queue gauges. Registry cleanup could also still be pending for a locally initiated close.
 
 ## Before evidence
-- Historical unmodified-tree reproduction supplied by the bug: 3 failures in roughly 24 full swift test runs on 2026-07-28. Two were staleGenerationTerminalCallbacks at the activeConnections == 0 assertion; one was relayLifecycleOutcomes at the same assertion shape.
-- Task-scoped pre-fix attempt on 2026-08-11: swift test, exit 0, 426 tests in 35 suites. The low historical rate was not reproduced in this single local attempt.
 
-## Change and audit
-- Added a deterministic pending-teardown barrier. A close enters the barrier before channel.close and leaves only after adapter bookkeeping and, when notifyRegistry is true, registry.closeLocally completes.
-- Added await adapter.waitForPendingTeardowns() before every adapter-internal snapshot read following receiveEOF in HEVUDPDatagramAdapterTests. This covers activeConnections, queued bytes, registry association counts, and sibling lateCallbacks/cancellations assertions.
-- Serialized HEVUDPDatagramAdapterTests because repeated full-suite stress exposed blocking-socket worker starvation and real idle expiry in tests unrelated to idle behavior. Production clock defaults and adapter cancellation/generation semantics are unchanged.
-- No sleep, retry, eventually assertion, or wall-clock polling was added.
+- Historical unmodified-tree reproduction supplied by the bug: 3 failures in roughly 24 full `swift test` runs on 2026-07-28. Two occurred in `staleGenerationTerminalCallbacks` at `activeConnections == 0`; one occurred in `relayLifecycleOutcomes` at the same assertion shape.
+- Task-scoped pre-fix attempt on 2026-08-11: `swift test`, exit 0, 426 tests in 35 suites. The low historical rate was not reproduced in that single local attempt.
 
-## Passing validation
-- git diff --check: exit 0.
-- swift format lint --recursive Sources Tests Package.swift: exit 0.
-- swift build: exit 0.
-- swift test --filter HEVUDPDatagramAdapterTests: exit 0; 12 tests passed.
-- Twenty consecutive invocations of swift test --filter HEVUDPDatagramAdapterTests/(relayLifecycleOutcomes|staleGenerationTerminalCallbacks): every run exit 0; 2 tests passed per run. Logs: /tmp/BUG-260728-2j25tu.named.HZYn5L.
-- Unfiltered swift test achieved a maximum consecutive clean streak of 12 runs after the final test-fixture change. Each passed 426 tests in 35 suites. Logs: /tmp/BUG-260728-2j25tu.final3.* (runs 1-12).
+## Deterministic fix and suite audit
 
-## Anomalies and unresolved full-run gate
-- Before suite serialization, full stress exposed an independent 10-second idle-expiry failure in replyValidationConsequences twice and a blocking-I/O hang once. Serialization removed these adapter-suite anomalies; the suite then completed in 1.7-3.0 seconds during the relevant full runs.
-- Three later unfiltered gate attempts hung in the unrelated, pre-existing LibSSH integration test "caller cancellation is scoped and idle reads have no implicit timeout", after the complete HEV UDP adapter suite had passed. The latest occurrence was run 13 after 12 consecutive full passes; the adapter suite passed in 1.735 seconds before the hang.
-- The unrelated LibSSH test file already contains user-owned uncommitted changes and is out of this bug's scope. Interrupted hangs each left a fresh task-created sshd fixture; only the three fixtures created by these attempts were identified by fresh task-directory/process start time and terminated. Older pre-existing fixtures were untouched.
-- Therefore AC1's twenty consecutive unfiltered full swift test runs is not claimed. Exact input needed: stabilize/resolve the unrelated LibSSH hang or provide an isolated full-suite environment where it does not occur, then rerun 20 consecutive unfiltered swift test invocations. No developer handoff was run.
+- A lock-protected pending-teardown barrier begins before `channel.close()` can publish EOF and completes only after adapter bookkeeping and, when `notifyRegistry` is true, `registry.closeLocally` finishes.
+- Every adapter-internal snapshot read after `receiveEOF` in `HEVUDPDatagramAdapterTests` now awaits `adapter.waitForPendingTeardowns()`. This covers `activeConnections`, queued-byte gauges, `registry.associationCount`, `metrics.lateCallbacks`, and `metrics.cancellations`.
+- The one nearby post-EOF snapshot without this seam is `RecordingUDPRelay.snapshot()` at the terminal-error ordering assertions. It reads synchronized relay-fixture submissions, not adapter-internal teardown state, so it does not have the reported race shape.
+- The suite is serialized to prevent its blocking-socket fixtures from starving one another during full-suite stress.
+- No production cancellation semantics or generation model changed. No sleep, retry, eventually assertion, or wall-clock polling was added.
+
+## After evidence
+
+- An earlier attempt reached 12 consecutive unfiltered passes (426 tests in 35 suites) before an unrelated LibSSH integration hang. That anomaly was recorded rather than counted as satisfying AC1.
+- On the final tree at `06dabb11010d874a0810b80409199b8a7f9ec971`, a fresh reset-on-any-failure streak passed 20 consecutive unfiltered `swift test` invocations. Every process exited 0 and reported 427 tests in 35 suites passed.
+- Every one of the 20 logs contains a pass record for both named tests: `relayLifecycleOutcomes` and `staleGenerationTerminalCallbacks`.
+- Logs are retained at `.temp/BUG-260728-2j25tu/full-runs/run-01.log` through `run-20.log`.
+- No test anomaly or process hang occurred in this final 20-run streak.
+
+## Final validation
+
+- `swift format lint --recursive Sources Tests Package.swift`: exit 0.
+- `swift build`: exit 0. The linker emitted the existing alignment-reduction warning for `ReluxTunnelHarness`; build completed successfully.
+- `git diff --check`: exit 0.
+- `task-board validate`: exit 0, while reporting `PARENT_STATUS_MISMATCH` because `STORY-260715-1nsw9p` remained stored as `to-dev` while this bug was in `development`. This board anomaly is unrelated to adapter behavior and is rechecked after handoff.
+
+## Outcome
+
+All bug acceptance criteria and developer checklist gates are satisfied. The implementation and tests are ready for review.

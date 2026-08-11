@@ -5,6 +5,11 @@
 
 ## 2026-08-11
 
+### 2313 — UDP teardown snapshot gate passes twenty consecutive full runs (BUG-260728-2j25tu)
+- VERIFICATION: A fresh reset-on-any-failure streak passed 20/20 consecutive unfiltered `swift test` runs on the final tree. Every invocation exited 0, passed 427 tests in 35 suites, and recorded passes for both `relayLifecycleOutcomes` and `staleGenerationTerminalCallbacks`. Task-scoped logs are retained under `.temp/BUG-260728-2j25tu/full-runs/`.
+- AUDIT: Every adapter-internal snapshot following peer EOF in `HEVUDPDatagramAdapterTests` awaits `waitForPendingTeardowns`; the only nearby snapshot without the seam is `RecordingUDPRelay.snapshot()`, which is relay-fixture state rather than adapter-internal teardown state. The barrier begins before channel close publishes EOF and completes after connection accounting plus any local registry cleanup, without sleep, retry, eventually polling, or cancellation/generation semantic changes.
+- VALIDATION: Recursive Swift format lint, `swift build`, and `git diff --check` exit 0. `task-board validate` also exits 0 while reporting the known parent aggregate anomaly: `STORY-260715-1nsw9p` is stored as `to-dev` while this child is `development`; the developer handoff is expected to recompute the story aggregate.
+
 ### 2245 — Rekey/open deadline coverage uses the injected clock (BUG-260811-3qdo3e)
 - ROOT CAUSE: Reviewer round 3 passed the accepted cancellation, keepalive, and pressure regressions but unfiltered run 3 exposed a final fixture race in `rekeyCoalescingAndOpenScheduling`. The test intentionally held rekey while a first channel open consumed a real 300 ms deadline, then gave a second expected-success open the same real deadline. Aggregate scheduler latency could expire that second open before the observer resumed rekey, so a scheduler delay—not the production contract—selected `.timedOut`.
 - IMPLEMENTATION: The test now injects `ManualFixtureClock`, waits until the first queued open has registered its 300 ms timer, and advances exactly 300 ms to preserve the pre-admission timeout assertion. It then keeps the clock fixed while the second open queues and rekey resumes, removing wall-clock scheduling from the success boundary without extending a timeout, sleeping, skipping, or weakening the expected error.
