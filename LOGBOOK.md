@@ -5,6 +5,12 @@
 
 ## 2026-08-11
 
+### 1616 — Physical Mac P0 row passes; account prerequisite evidence remains blocked (TASK-260715-2ayxqn)
+- PHYSICAL RESULT: Accepted `TASK-260715-9yp8to` evidence proves provider install and PlugInKit discovery on Mac15,9 arm64/macOS 26.5, matching signed profiles and entitlements, ten launch/versioned-message/stop cycles, controlled reinstall, one manager, one provider registration, zero residual provider processes, and zero crashes.
+- GATE DISPOSITION: Overall macOS Gate P0 is BLOCKED, not a conditional pass. The accepted `TASK-260715-apc34w` readiness audit explicitly remains NOT READY because organization enrollment/active paid-through date, current DPLA or Free Apps Agreement status, and the accountable Admin/C&I&P grant were not captured. This task's fail-closed AC3 forbids inferring those missing in-scope prerequisites from successful Mac lifecycle evidence.
+- DEFERRED GAP: Physical iPhone evidence remains blocked/deferred under ADR-024 and ADR-027 in `TASK-260715-1kntdx`; it is neither pass nor failure, is never inferred from the Mac, and re-arms unchanged only when the owner resumes iOS.
+- REVALIDATION: The four Mac Development profiles expire on 2027-08-10. Any profile or agreement expiry/change, device or OS change, signing/capability/entitlement edit, or identifier/archive drift requires the readiness, provisioning, archive, and physical lifecycle gates to be rerun before P0 can pass.
+
 ### 1549 — App Sandbox restores PlugInKit discovery and physical Gate P0 passes (TASK-260715-9yp8to)
 - ROOT CAUSE: `neagent` previously received zero PlugInKit matches because both the development-signed host and embedded packet-tunnel provider omitted `com.apple.security.app-sandbox`. Adding App Sandbox to both exact targets made PlugInKit discover one provider at the expected embedded path after launch; Network Extension stayed exactly `packet-tunnel-provider`, with no App Groups or signed Keychain Sharing entitlement.
 - PHYSICAL RESULT: On the designated arm64 Mac15,9 running macOS 26.5/Xcode 26.5, the rebuilt archive passed 49 inside-out inspection assertions and nine negative drift cases. Ten start/message/stop cycles plus host termination exited 0 with one manager and no provider process; exact-path user-Applications uninstall/reinstall, PlugInKit rediscovery, and a final cycle also exited 0. No probe crash report or privacy finding was present.

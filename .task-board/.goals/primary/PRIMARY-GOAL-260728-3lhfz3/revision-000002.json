@@ -1,0 +1,21 @@
+{
+  "contract": "primary-goal-v1",
+  "id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 2,
+  "previous_revision": 1,
+  "state": "active",
+  "scope": {
+    "kind": "board"
+  },
+  "objective": "Deliver a working, signed and notarized macOS-first Relux Tunnel client that presents as a full-tunnel NEPacketTunnelProvider VPN and uses authenticated SSH with libssh2 as the primary external transport to a user-controlled host. Complete all gate-free SPM core, packet bridge/HEV, SSH viability, TCP/DNS runtime, rootless exec/stdio relay, UDP/degraded mode, macOS UI/provider, self-update, threat-model, CI, signing and release work through tracked producer-reviewer-rework-accepted cycles. iOS, App Store A0 policy research, and native Linux runner evidence are deferred and must not block the macOS prototype. Preserve host-key verification before auth, Keychain-only secret custody, bounded memory, fail-closed DNS, no user-exposed SOCKS, no SFTP, no utun-FD discovery, injectable physical tuning, and stop at real Keychain/Apple provisioning/system-VPN/physical validation/notary or product-decision gates with exact evidence. Execute serially with Codex gpt-5.6-sol at high reasoning as orchestrator, one Codex gpt-5.6-sol high executor at a time, and a fresh Codex gpt-5.6-sol high reviewer; max_parallel 1, lite context, signed pushed synchronized commits after every accepted task.",
+  "mutation": {
+    "kind": "objective_realigned",
+    "reason": "Align execution model with owner instruction: Codex Sol high only, serial producer and reviewer",
+    "actor": {
+      "kind": "primary_parent",
+      "actor_id": "iv"
+    }
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-08-11T12:12:58.998112Z"
+}
