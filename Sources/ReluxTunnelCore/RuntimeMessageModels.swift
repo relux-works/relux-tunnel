@@ -191,39 +191,48 @@ public struct TunnelConfigurationReference: Codable, Equatable, Sendable {
   }
 }
 
-/// Provider start input decoded from system-owned start options.
+/// Bounded consistency token decoded from system-owned start options.
 ///
-/// This is not an app-message command. Required fields are `schemaVersion` and
-/// `configurationReference`; no fields default when decoding.
+/// This request never duplicates the profile. It binds a host-initiated start
+/// to the exact canonical snapshot bytes already stored in provider configuration.
 public struct RuntimeStartRequest: Codable, Equatable, Sendable {
+  public static let kindValue = "sshProfileSnapshotStart"
   public static let currentSchemaVersion = RuntimeMessageProtocol.currentSchemaVersion
   public static let maximumEncodedSize = RuntimeMessageSizeLimit.startRequest
 
+  public let protocolVersion: UInt16
   public let schemaVersion: UInt16
-  public let configurationReference: TunnelConfigurationReference
+  public let kind: String
+  public let configurationGeneration: UInt64
+  public let snapshotDigestSHA256: SSHProfileSnapshotDigestSHA256
 
-  public init(configurationReference: TunnelConfigurationReference) {
+  public init(
+    configurationGeneration: UInt64,
+    snapshotDigestSHA256: SSHProfileSnapshotDigestSHA256
+  ) {
+    protocolVersion = RuntimeMessageProtocol.currentProtocolVersion
     schemaVersion = Self.currentSchemaVersion
-    self.configurationReference = configurationReference
+    kind = Self.kindValue
+    self.configurationGeneration = configurationGeneration
+    self.snapshotDigestSHA256 = snapshotDigestSHA256
   }
 
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
+    protocolVersion = try container.decode(UInt16.self, forKey: .protocolVersion)
     schemaVersion = try container.decode(UInt16.self, forKey: .schemaVersion)
-    configurationReference = try container.decode(
-      TunnelConfigurationReference.self,
-      forKey: .configurationReference
+    kind = try container.decode(String.self, forKey: .kind)
+    configurationGeneration = try container.decode(
+      UInt64.self,
+      forKey: .configurationGeneration
     )
-    guard configurationReference.schemaVersion == TunnelConfigurationReference.currentSchemaVersion
-    else {
-      throw RuntimeMessageCodecError.unsupportedSchemaVersion(
-        configurationReference.schemaVersion
-      )
+    snapshotDigestSHA256 = try container.decode(
+      SSHProfileSnapshotDigestSHA256.self,
+      forKey: .snapshotDigestSHA256
+    )
+    guard configurationGeneration >= 1 else {
+      throw RuntimeMessageCodecError.corruptPayload
     }
-  }
-
-  public var tunnelConfiguration: TunnelConfiguration {
-    TunnelConfiguration(profileReference: configurationReference)
   }
 }
 
@@ -836,10 +845,26 @@ public enum RuntimeConfigurationCodec {
   }
 
   public static func decodeStartRequest(_ data: Data) throws -> RuntimeStartRequest {
-    try RuntimeJSONCodec.decodeVersioned(
+    let keys = try StrictJSONValidator.validate(
+      data,
+      maximumBytes: RuntimeStartRequest.maximumEncodedSize
+    )
+    guard
+      keys == [
+        "protocolVersion",
+        "schemaVersion",
+        "kind",
+        "configurationGeneration",
+        "snapshotDigestSHA256",
+      ]
+    else {
+      throw RuntimeMessageCodecError.corruptPayload
+    }
+    return try RuntimeJSONCodec.decodeMessage(
       RuntimeStartRequest.self,
       from: data,
-      maximumBytes: RuntimeStartRequest.maximumEncodedSize
+      maximumBytes: RuntimeStartRequest.maximumEncodedSize,
+      acceptedKinds: [RuntimeStartRequest.kindValue]
     )
   }
 }
@@ -1095,8 +1120,33 @@ enum RuntimeJSONCodec {
 }
 
 enum StrictJSONValidator {
+  struct ValidationResult {
+    let topLevelKeys: Set<String>
+    let allObjectKeys: Set<String>
+  }
+
   @discardableResult
   static func validate(_ data: Data, maximumBytes: Int) throws -> Set<String> {
+    try validate(
+      data,
+      maximumBytes: maximumBytes,
+      maximumDepth: RuntimeMessageProtocol.maximumNestingDepth,
+      requiresSortedKeys: false,
+      allowsInsignificantWhitespace: true,
+      requiresCanonicalStrings: false,
+      requiresCanonicalNumbers: false
+    ).topLevelKeys
+  }
+
+  static func validate(
+    _ data: Data,
+    maximumBytes: Int,
+    maximumDepth: Int,
+    requiresSortedKeys: Bool,
+    allowsInsignificantWhitespace: Bool,
+    requiresCanonicalStrings: Bool,
+    requiresCanonicalNumbers: Bool
+  ) throws -> ValidationResult {
     guard data.count <= maximumBytes else {
       throw RuntimeMessageCodecError.payloadTooLarge(
         maximumBytes: maximumBytes,
@@ -1106,32 +1156,64 @@ enum StrictJSONValidator {
     guard String(data: data, encoding: .utf8) != nil else {
       throw RuntimeMessageCodecError.invalidUTF8
     }
-    var parser = StrictJSONParser(bytes: Array(data))
+    var parser = StrictJSONParser(
+      bytes: Array(data),
+      maximumDepth: maximumDepth,
+      requiresSortedKeys: requiresSortedKeys,
+      allowsInsignificantWhitespace: allowsInsignificantWhitespace,
+      requiresCanonicalStrings: requiresCanonicalStrings,
+      requiresCanonicalNumbers: requiresCanonicalNumbers
+    )
     return try parser.parseDocument()
   }
 }
 
 private struct StrictJSONParser {
   private let bytes: [UInt8]
+  private let maximumDepth: Int
+  private let requiresSortedKeys: Bool
+  private let allowsInsignificantWhitespace: Bool
+  private let requiresCanonicalStrings: Bool
+  private let requiresCanonicalNumbers: Bool
   private var index = 0
+  private var allObjectKeys: Set<String> = []
+  private var sawInsignificantWhitespace = false
 
-  init(bytes: [UInt8]) {
+  init(
+    bytes: [UInt8],
+    maximumDepth: Int,
+    requiresSortedKeys: Bool,
+    allowsInsignificantWhitespace: Bool,
+    requiresCanonicalStrings: Bool,
+    requiresCanonicalNumbers: Bool
+  ) {
     self.bytes = bytes
+    self.maximumDepth = maximumDepth
+    self.requiresSortedKeys = requiresSortedKeys
+    self.allowsInsignificantWhitespace = allowsInsignificantWhitespace
+    self.requiresCanonicalStrings = requiresCanonicalStrings
+    self.requiresCanonicalNumbers = requiresCanonicalNumbers
   }
 
-  mutating func parseDocument() throws -> Set<String> {
+  mutating func parseDocument() throws -> StrictJSONValidator.ValidationResult {
     skipWhitespace()
     guard peek == UInt8(ascii: "{") else { throw RuntimeMessageCodecError.corruptPayload }
     let keys = try parseObject(depth: 1)
     skipWhitespace()
     guard index == bytes.count else { throw RuntimeMessageCodecError.corruptPayload }
-    return keys
+    guard allowsInsignificantWhitespace || !sawInsignificantWhitespace else {
+      throw RuntimeMessageCodecError.corruptPayload
+    }
+    return StrictJSONValidator.ValidationResult(
+      topLevelKeys: keys,
+      allObjectKeys: allObjectKeys
+    )
   }
 
   private mutating func parseValue(depth: Int) throws {
-    guard depth <= RuntimeMessageProtocol.maximumNestingDepth else {
+    guard depth <= maximumDepth else {
       throw RuntimeMessageCodecError.excessiveNesting(
-        maximumDepth: RuntimeMessageProtocol.maximumNestingDepth
+        maximumDepth: maximumDepth
       )
     }
     guard let current = peek else { throw RuntimeMessageCodecError.corruptPayload }
@@ -1156,20 +1238,28 @@ private struct StrictJSONParser {
   }
 
   private mutating func parseObject(depth: Int) throws -> Set<String> {
-    guard depth <= RuntimeMessageProtocol.maximumNestingDepth else {
+    guard depth <= maximumDepth else {
       throw RuntimeMessageCodecError.excessiveNesting(
-        maximumDepth: RuntimeMessageProtocol.maximumNestingDepth
+        maximumDepth: maximumDepth
       )
     }
     try consume(UInt8(ascii: "{"))
     skipWhitespace()
     var keys: Set<String> = []
+    var previousKey: String?
     if consumeIf(UInt8(ascii: "}")) { return keys }
 
     while true {
       guard peek == UInt8(ascii: "\"") else { throw RuntimeMessageCodecError.corruptPayload }
       let key = try parseString()
       guard keys.insert(key).inserted else { throw RuntimeMessageCodecError.duplicateKey }
+      allObjectKeys.insert(key)
+      if requiresSortedKeys, let previousKey,
+        !previousKey.utf8.lexicographicallyPrecedes(key.utf8)
+      {
+        throw RuntimeMessageCodecError.corruptPayload
+      }
+      previousKey = key
       skipWhitespace()
       try consume(UInt8(ascii: ":"))
       skipWhitespace()
@@ -1182,9 +1272,9 @@ private struct StrictJSONParser {
   }
 
   private mutating func parseArray(depth: Int) throws {
-    guard depth <= RuntimeMessageProtocol.maximumNestingDepth else {
+    guard depth <= maximumDepth else {
       throw RuntimeMessageCodecError.excessiveNesting(
-        maximumDepth: RuntimeMessageProtocol.maximumNestingDepth
+        maximumDepth: maximumDepth
       )
     }
     try consume(UInt8(ascii: "["))
@@ -1208,6 +1298,13 @@ private struct StrictJSONParser {
         let token = Data(bytes[start..<index])
         guard let decoded = try? JSONDecoder().decode(String.self, from: token) else {
           throw RuntimeMessageCodecError.corruptPayload
+        }
+        if requiresCanonicalStrings {
+          let encoder = JSONEncoder()
+          encoder.outputFormatting = [.withoutEscapingSlashes]
+          guard let canonical = try? encoder.encode(decoded), canonical == token else {
+            throw RuntimeMessageCodecError.corruptPayload
+          }
         }
         return decoded
       }
@@ -1235,6 +1332,7 @@ private struct StrictJSONParser {
   }
 
   private mutating func parseNumber() throws {
+    let start = index
     _ = consumeIf(UInt8(ascii: "-"))
     if consumeIf(UInt8(ascii: "0")) {
       if let next = peek, (UInt8(ascii: "0")...UInt8(ascii: "9")).contains(next) {
@@ -1259,6 +1357,22 @@ private struct StrictJSONParser {
         throw RuntimeMessageCodecError.corruptPayload
       }
       consumeDigits()
+    }
+    if requiresCanonicalNumbers {
+      let token = Data(bytes[start..<index])
+      guard
+        let number = try? JSONSerialization.jsonObject(
+          with: token,
+          options: .fragmentsAllowed
+        ),
+        let canonical = try? JSONSerialization.data(
+          withJSONObject: number,
+          options: [.fragmentsAllowed, .withoutEscapingSlashes]
+        ),
+        canonical == token
+      else {
+        throw RuntimeMessageCodecError.corruptPayload
+      }
     }
   }
 
@@ -1286,11 +1400,15 @@ private struct StrictJSONParser {
   }
 
   private mutating func skipWhitespace() {
+    let start = index
     while let byte = peek,
       byte == UInt8(ascii: " ") || byte == UInt8(ascii: "\n")
         || byte == UInt8(ascii: "\r") || byte == UInt8(ascii: "\t")
     {
       index += 1
+    }
+    if index != start {
+      sawInsignificantWhitespace = true
     }
   }
 

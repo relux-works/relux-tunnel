@@ -9,6 +9,12 @@ struct VPNSessionControllerTests {
       UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
     )
   )
+  private let profileStartRequest = RuntimeStartRequest(
+    configurationGeneration: 7,
+    snapshotDigestSHA256: try! SSHProfileSnapshotDigestSHA256(
+      String(repeating: "a", count: 64)
+    )
+  )
 
   @Test("start preflight maps every system status without duplicate start calls")
   func startPreflightMatrix() async throws {
@@ -49,7 +55,7 @@ struct VPNSessionControllerTests {
     }
   }
 
-  @Test("start sends exactly one bounded v1 request matching the stored reference")
+  @Test("start sends exactly one bounded v1 request matching stored snapshot bytes")
   func startRequestIsExactAndBounded() async throws {
     let session = FakeHostSession(status: .disconnected)
     session.installCurrentProviderSnapshot(generation: 4, sequence: 9)
@@ -68,7 +74,7 @@ struct VPNSessionControllerTests {
     #expect(data.count <= RuntimeStartRequest.maximumEncodedSize)
     #expect(
       try RuntimeConfigurationCodec.decodeStartRequest(data)
-        == RuntimeStartRequest(configurationReference: reference)
+        == profileStartRequest
     )
     #expect(
       (await controller.currentProjection()).providerFacts?.position
@@ -655,6 +661,7 @@ struct VPNSessionControllerTests {
     FreshOwnedVPNSession(
       session: session,
       configurationReference: reference,
+      startRequest: profileStartRequest,
       isEnabled: enabled
     )
   }

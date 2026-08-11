@@ -30,15 +30,18 @@ public protocol VPNHostSession: AnyObject, Sendable {
 public struct FreshOwnedVPNSession: Sendable {
   public let session: any VPNHostSession
   public let configurationReference: TunnelConfigurationReference
+  public let startRequest: RuntimeStartRequest?
   public let isEnabled: Bool
 
   public init(
     session: any VPNHostSession,
     configurationReference: TunnelConfigurationReference,
+    startRequest: RuntimeStartRequest? = nil,
     isEnabled: Bool
   ) {
     self.session = session
     self.configurationReference = configurationReference
+    self.startRequest = startRequest
     self.isEnabled = isEnabled
   }
 }
@@ -709,20 +712,25 @@ public actor VPNSessionController {
     }
 
     try Task.checkCancellation()
-    let request = RuntimeStartRequest(configurationReference: fresh.configurationReference)
-    let encoded: Data
-    do {
-      encoded = try RuntimeConfigurationCodec.encode(request)
-    } catch {
-      throw VPNSessionControllerError.configurationInvalid
-    }
-    guard encoded.count <= RuntimeStartRequest.maximumEncodedSize else {
-      throw VPNSessionControllerError.configurationInvalid
+    let startOptions: [String: Data]
+    if let request = fresh.startRequest {
+      let encoded: Data
+      do {
+        encoded = try RuntimeConfigurationCodec.encode(request)
+      } catch {
+        throw VPNSessionControllerError.configurationInvalid
+      }
+      guard encoded.count <= RuntimeStartRequest.maximumEncodedSize else {
+        throw VPNSessionControllerError.configurationInvalid
+      }
+      startOptions = [startRequestKey: encoded]
+    } else {
+      startOptions = [:]
     }
 
     stopGate.setSession(fresh.session)
     do {
-      try fresh.session.startTunnel(options: [startRequestKey: encoded])
+      try fresh.session.startTunnel(options: startOptions)
     } catch let error as VPNPreferencePlatformError {
       throw mapStartError(error)
     } catch let error as VPNPlatformError {

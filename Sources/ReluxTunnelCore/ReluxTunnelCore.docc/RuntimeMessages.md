@@ -10,14 +10,14 @@ The legacy `version` request and response remain an exact exception with only
 `kind` and `protocolVersion`. Every M1 app message has required
 `protocolVersion`, `kind`, and `schemaVersion` fields. `requestID` is the only
 optional common field and defaults to absent. The system-owned provider
-configuration and start request are not app messages; they carry a required
-`schemaVersion` instead of a command kind.
+configuration snapshot and start request are not app messages, but both remain
+versioned, kind-bearing wire objects.
 
 | Model | Version | Maximum JSON bytes | Required payload fields | Defaults |
 | --- | --- | ---: | --- | --- |
 | `ProviderVersionRequest`, `ProviderVersionResponse` | protocol 1 | 4 KiB | `protocolVersion`, `kind=version` | request protocol version 1 when constructed |
 | `TunnelConfigurationReference` | schema 1 | 4 KiB | `schemaVersion`, `profileIdentifier` | current schema when constructed |
-| `RuntimeStartRequest` | schema 1 | 4 KiB | `schemaVersion`, `configurationReference` | current schema when constructed |
+| `RuntimeStartRequest` | protocol 1, schema 1 | 4 KiB | `protocolVersion`, `schemaVersion`, `kind=sshProfileSnapshotStart`, `configurationGeneration`, `snapshotDigestSHA256` | current protocol and schema when constructed |
 | `RuntimeConfigurationSnapshot` | protocol 1, schema 1 | 64 KiB | generation, profile identity/revision, credential reference, trust reference, compatible route mode | absent `requestID` |
 | `RuntimeCommand` | protocol 1, schema 1 | 4 KiB | one read-only command kind | absent `requestID` |
 | `RuntimeProtocolCapabilitiesSnapshot` | protocol 1, schema 1 | 4 KiB | protocol range and per-kind schema ranges | current protocol range; absent `requestID` |
@@ -38,8 +38,21 @@ invalid UTF-8, non-object roots, trailing bytes, duplicate keys (including
 escape-equivalent keys), nesting deeper than 16 levels, corrupt JSON numbers,
 missing required fields, unsupported protocol/schema versions, unknown input
 kinds, and unknown provider-input values through `RuntimeMessageCodecError`.
-The start-request decoder validates both its own schema version and the nested
-configuration-reference schema version before returning the request.
+The start-request decoder accepts exactly five keys: `protocolVersion`,
+`schemaVersion`, `kind`, `configurationGeneration`, and
+`snapshotDigestSHA256`. Missing or additional keys are corrupt input. It also
+rejects unsupported protocol or schema versions, a kind other than
+`sshProfileSnapshotStart`, a zero generation, and a digest that is not exactly
+64 lowercase hexadecimal characters.
+
+Before the first immutable runtime capture, a present start request must match
+both the configuration generation and the SHA-256 digest of the exact stored
+canonical snapshot bytes. Either mismatch returns
+`profileGenerationMismatch`; matching only the generation is insufficient and
+therefore rejects same-generation field replacement. The contract also permits
+nil start options, in which case the loader may capture the complete validated
+snapshot currently stored in `providerConfiguration`. Subsequent capture calls
+must supply the same stored snapshot bytes as the first capture.
 
 Unknown object fields are ignored and disappear on re-encoding. Unknown output
 lifecycle, route-state, or route-mode values project to `unknown` with every

@@ -73,6 +73,60 @@ struct RuntimeMessageCodecTests {
     #expect(try RuntimeMessageCodec.encode(command) == encoded)
   }
 
+  @Test("profile start request is exact bounded versioned and digest validated")
+  func profileStartRequestValidation() throws {
+    let encoded = try RuntimeConfigurationCodec.encode(RuntimeMessageFixtures.startRequest)
+    let json = String(decoding: encoded, as: UTF8.self)
+    #expect(encoded.count <= RuntimeStartRequest.maximumEncodedSize)
+    #expect(
+      json
+        == #"{"configurationGeneration":7,"kind":"sshProfileSnapshotStart","protocolVersion":1,"schemaVersion":1,"snapshotDigestSHA256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}"#
+    )
+
+    let additive = Data(json.dropLast().appending(#", "future":true}"#).utf8)
+    #expect(throws: RuntimeMessageCodecError.corruptPayload) {
+      try RuntimeConfigurationCodec.decodeStartRequest(additive)
+    }
+
+    let zeroGeneration = Data(
+      json.replacingOccurrences(
+        of: #""configurationGeneration":7"#,
+        with: #""configurationGeneration":0"#
+      ).utf8
+    )
+    #expect(throws: RuntimeMessageCodecError.corruptPayload) {
+      try RuntimeConfigurationCodec.decodeStartRequest(zeroGeneration)
+    }
+
+    let uppercaseDigest = Data(
+      json.replacingOccurrences(
+        of: String(repeating: "a", count: 64),
+        with: String(repeating: "A", count: 64)
+      ).utf8
+    )
+    #expect(throws: RuntimeMessageCodecError.corruptPayload) {
+      try RuntimeConfigurationCodec.decodeStartRequest(uppercaseDigest)
+    }
+
+    let futureProtocol = Data(
+      json.replacingOccurrences(of: #""protocolVersion":1"#, with: #""protocolVersion":2"#)
+        .utf8
+    )
+    #expect(throws: RuntimeMessageCodecError.unsupportedProtocolVersion(2)) {
+      try RuntimeConfigurationCodec.decodeStartRequest(futureProtocol)
+    }
+
+    let futureKind = Data(
+      json.replacingOccurrences(
+        of: RuntimeStartRequest.kindValue,
+        with: "sshProfileSnapshotStartV2"
+      ).utf8
+    )
+    #expect(throws: RuntimeMessageCodecError.unsupportedKind) {
+      try RuntimeConfigurationCodec.decodeStartRequest(futureKind)
+    }
+  }
+
   @Test("unknown object fields are ignored and omitted when re-encoded")
   func unknownFields() throws {
     let encoded = try RuntimeMessageCodec.encode(RuntimeMessageFixtures.command)
@@ -287,11 +341,15 @@ struct RuntimeMessageCodecTests {
 
   @Test("configuration shapes cannot carry private-key or passphrase bytes")
   func secretFieldsAreUnrepresentable() throws {
-    let runtimeConfiguration = RuntimeMessageFixtures.startRequest.tunnelConfiguration
-    #expect(Mirror(reflecting: runtimeConfiguration).children.count == 1)
+    let startRequest = RuntimeMessageFixtures.startRequest
+    #expect(Mirror(reflecting: startRequest).children.count == 5)
+    let startJSON = String(
+      decoding: try RuntimeConfigurationCodec.encode(startRequest),
+      as: UTF8.self
+    )
 
     let encoded = try RuntimeMessageCodec.encode(RuntimeMessageFixtures.configuration)
-    let json = String(decoding: encoded, as: UTF8.self)
+    let json = String(decoding: encoded, as: UTF8.self) + startJSON
     for prohibited in [
       "privateKey", "private_key", "passphrase", "password", "BEGIN PRIVATE KEY",
     ] {

@@ -22,8 +22,13 @@ enum RuntimeMessageFixtures {
     profileIdentifier: profileID
   )
 
+  static let snapshotDigest = try! SSHProfileSnapshotDigestSHA256(
+    String(repeating: "a", count: 64)
+  )
+
   static let startRequest = RuntimeStartRequest(
-    configurationReference: configurationReference
+    configurationGeneration: 7,
+    snapshotDigestSHA256: snapshotDigest
   )
 
   static let configuration = RuntimeConfigurationSnapshot(
