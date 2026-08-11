@@ -56,6 +56,7 @@ public enum SSHValidationField: String, Equatable, Sendable {
   case username
   case profileReference
   case credentialReference
+  case credentialGeneration
   case trustRecordReference
   case keyExchangeAlgorithms
   case hostKeyAlgorithms
@@ -257,6 +258,13 @@ public protocol SSHPublicKeyCredential: Sendable {
   var algorithm: String { get }
   var publicKeyBytes: Data { get }
   func sign(_ payload: Data) async throws -> Data
+  func retire()
+}
+
+extension SSHPublicKeyCredential {
+  /// Releases credential-owned signing state after authentication or cancellation.
+  /// Implementations that own mutable secret storage should clear it here.
+  public func retire() {}
 }
 
 public protocol SSHCredentialProvider: Sendable {
@@ -466,17 +474,20 @@ extension SSHHostKeyDecision {
 
 public struct SSHCredentialRequest: Equatable, Sendable {
   public let credentialReference: SSHCredentialReference
+  public let credentialGeneration: UInt64
   public let username: String
   public let allowedPublicKeyAlgorithms: [String]
   public let acceptedHost: SSHHostKeyAcceptance
 
   public init(
     credentialReference: SSHCredentialReference,
+    credentialGeneration: UInt64,
     username: String,
     allowedPublicKeyAlgorithms: [String],
     acceptedHost: SSHHostKeyAcceptance
   ) {
     self.credentialReference = credentialReference
+    self.credentialGeneration = credentialGeneration
     self.username = username
     self.allowedPublicKeyAlgorithms = allowedPublicKeyAlgorithms
     self.acceptedHost = acceptedHost
@@ -655,6 +666,7 @@ public struct SSHConnectionConfiguration: Equatable, Sendable {
   public let username: String
   public let profileReference: TunnelConfigurationReference
   public let credentialReference: SSHCredentialReference
+  public let credentialGeneration: UInt64
   public let trustRecordReference: SSHTrustRecordReference?
   public let algorithms: SSHAlgorithmPolicy
   public let timeouts: SSHTimeoutPolicy
@@ -667,6 +679,7 @@ public struct SSHConnectionConfiguration: Equatable, Sendable {
     username: String,
     profileReference: TunnelConfigurationReference,
     credentialReference: SSHCredentialReference,
+    credentialGeneration: UInt64,
     trustRecordReference: SSHTrustRecordReference?,
     algorithms: SSHAlgorithmPolicy,
     timeouts: SSHTimeoutPolicy,
@@ -688,6 +701,9 @@ public struct SSHConnectionConfiguration: Equatable, Sendable {
     guard !credentialReference.rawValue.isEmpty else {
       throw SSHContractValidationError.empty(.credentialReference)
     }
+    guard credentialGeneration > 0 else {
+      throw SSHContractValidationError.nonPositive(.credentialGeneration)
+    }
     if let trustRecordReference, trustRecordReference.rawValue.isEmpty {
       throw SSHContractValidationError.empty(.trustRecordReference)
     }
@@ -696,6 +712,7 @@ public struct SSHConnectionConfiguration: Equatable, Sendable {
     self.username = username
     self.profileReference = profileReference
     self.credentialReference = credentialReference
+    self.credentialGeneration = credentialGeneration
     self.trustRecordReference = trustRecordReference
     self.algorithms = algorithms
     self.timeouts = timeouts

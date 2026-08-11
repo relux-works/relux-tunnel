@@ -62,7 +62,8 @@ let package = Package(
         "ReluxTunnelCore",
         "ReluxTunnelLibSSH2Adapter",
         "ReluxTunnelNativeAdapter",
-      ]
+      ],
+      linkerSettings: [.linkedFramework("Security")]
     ),
     .target(
       name: "ReluxTunnelHarnessSupport",

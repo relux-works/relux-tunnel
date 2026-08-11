@@ -420,14 +420,24 @@ final class LibSSH2SessionContext: @unchecked Sendable {
   }
 
   func install(credential: any SSHPublicKeyCredential) {
-    let tasks = lock.withLock { () -> [Task<Void, Never>] in
+    let owned = lock.withLock { () -> ([Task<Void, Never>], (any SSHPublicKeyCredential)?) in
       let tasks = Array(signatureTasks.values)
+      let previous = self.credential
       signatureWaiter = nil
       self.credential = credential
       signatureState = .idle
-      return tasks
+      return (tasks, previous)
     }
-    for task in tasks { task.cancel() }
+    for task in owned.0 { task.cancel() }
+    owned.1?.retire()
+  }
+
+  func retireCredential() {
+    let credential = lock.withLock { () -> (any SSHPublicKeyCredential)? in
+      defer { self.credential = nil }
+      return self.credential
+    }
+    credential?.retire()
   }
 
   func requestSignature(for payload: Data) -> Result<Data, LibSSH2BridgeError>? {
@@ -488,18 +498,21 @@ final class LibSSH2SessionContext: @unchecked Sendable {
   }
 
   func cancelSignature() {
-    let owned = lock.withLock { () -> ([Task<Void, Never>], LibSSH2BridgeOperationWaiter?) in
+    let owned = lock.withLock {
+      () -> ([Task<Void, Never>], LibSSH2BridgeOperationWaiter?, (any SSHPublicKeyCredential)?) in
       let tasks = Array(signatureTasks.values)
       let waiter = signatureWaiter
+      let credential = self.credential
       signatureWaiter = nil
-      credential = nil
+      self.credential = nil
       if case .pending(let payload) = signatureState {
         signatureState = .failed(payload)
       }
-      return (tasks, waiter)
+      return (tasks, waiter, credential)
     }
     for task in owned.0 { task.cancel() }
     owned.1?.complete(with: .failure(CancellationError()))
+    owned.2?.retire()
   }
 
   private func completeSignature(

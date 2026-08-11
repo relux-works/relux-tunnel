@@ -1932,6 +1932,7 @@ private func fixtureConfiguration(
       profileIdentifier: OpaqueProfileIdentifier(UUID())
     ),
     credentialReference: credentialReference,
+    credentialGeneration: 1,
     trustRecordReference: nil,
     algorithms: SSHAlgorithmPolicy(
       keyExchange: ["curve25519-sha256", "curve25519-sha256@libssh.org"],

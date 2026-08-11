@@ -138,6 +138,9 @@ struct SSHTransportContractTests {
     #expect(throws: SSHContractValidationError.nonPositive(.endpointPort)) {
       _ = try fixtureConnectionConfiguration(endpoint: TunnelEndpoint(host: "ssh.example", port: 0))
     }
+    #expect(throws: SSHContractValidationError.nonPositive(.credentialGeneration)) {
+      _ = try fixtureConnectionConfiguration(credentialGeneration: 0)
+    }
     #expect(throws: SSHContractValidationError.empty(.execCommand)) {
       _ = try SSHExecRequest(command: "")
     }
@@ -187,6 +190,7 @@ struct SSHTransportContractTests {
     _ = try await provider.credential(
       for: SSHCredentialRequest(
         credentialReference: SSHCredentialReference(rawValue: "credential-reference"),
+        credentialGeneration: 1,
         username: "private-user",
         allowedPublicKeyAlgorithms: ["ssh-ed25519"],
         acceptedHost: acceptedHost
@@ -1141,7 +1145,8 @@ private func fixtureTimeouts(upload: Duration = .seconds(1)) throws -> SSHTimeou
 }
 
 private func fixtureConnectionConfiguration(
-  endpoint: TunnelEndpoint = TunnelEndpoint(host: "ssh.example", port: 22)
+  endpoint: TunnelEndpoint = TunnelEndpoint(host: "ssh.example", port: 22),
+  credentialGeneration: UInt64 = 1
 ) throws -> SSHConnectionConfiguration {
   try SSHConnectionConfiguration(
     canonicalHostname: "ssh.example",
@@ -1153,6 +1158,7 @@ private func fixtureConnectionConfiguration(
       )
     ),
     credentialReference: SSHCredentialReference(rawValue: "fixture-credential"),
+    credentialGeneration: credentialGeneration,
     trustRecordReference: SSHTrustRecordReference(rawValue: "fixture-trust"),
     algorithms: SSHAlgorithmPolicy(
       keyExchange: ["curve25519-sha256"],

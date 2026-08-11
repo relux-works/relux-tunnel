@@ -276,6 +276,7 @@ public actor LibSSH2Transport: SSHTransport {
       try await transition(to: .authenticating)
       let request = SSHCredentialRequest(
         credentialReference: configuration.credentialReference,
+        credentialGeneration: configuration.credentialGeneration,
         username: configuration.username,
         allowedPublicKeyAlgorithms: configuration.algorithms.hostKey,
         acceptedHost: acceptedHost
@@ -294,6 +295,7 @@ public actor LibSSH2Transport: SSHTransport {
         throw SSHTransportError.authenticationFailure(.keyAlgorithmUnavailable, lane: lane)!
       }
       context.install(credential: credential)
+      defer { context.retireCredential() }
       counters.authenticationAttempts += 1
       await metric(.increment(.authenticationAttempts, by: 1))
       failurePhase = .authentication

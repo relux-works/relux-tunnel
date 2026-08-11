@@ -164,6 +164,7 @@ struct LibSSH2BridgeTests {
     context.cancelSignature()
 
     #expect(context.outstandingTaskCount == 1)
+    #expect(credential.isRetired)
     credential.release()
     while context.outstandingTaskCount != 0 { await Task.yield() }
     #expect(context.outstandingTaskCount == 0)
@@ -593,8 +594,10 @@ private final class CancellationIgnoringCredential: SSHPublicKeyCredential, @unc
   let publicKeyBytes = Data([0, 1])
   private let lock = NSLock()
   private var continuation: CheckedContinuation<Data, Never>?
+  private var retired = false
 
   var isWaiting: Bool { lock.withLock { continuation != nil } }
+  var isRetired: Bool { lock.withLock { retired } }
 
   func sign(_ payload: Data) async throws -> Data {
     await withCheckedContinuation { continuation in
@@ -608,6 +611,10 @@ private final class CancellationIgnoringCredential: SSHPublicKeyCredential, @unc
       return self.continuation
     }
     continuation?.resume(returning: Data([1]))
+  }
+
+  func retire() {
+    lock.withLock { retired = true }
   }
 }
 
@@ -886,6 +893,7 @@ private func lifecycleConfiguration() throws -> SSHConnectionConfiguration {
       profileIdentifier: OpaqueProfileIdentifier(UUID())
     ),
     credentialReference: SSHCredentialReference(rawValue: "keychain.fixture"),
+    credentialGeneration: 1,
     trustRecordReference: nil,
     algorithms: SSHAlgorithmPolicy(
       keyExchange: ["curve25519-sha256"],

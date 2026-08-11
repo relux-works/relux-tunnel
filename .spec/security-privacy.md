@@ -32,11 +32,23 @@ path for the baseline product.
 
 ## Client credentials
 
-- Private keys and passphrases live in the Data Protection Keychain and are
-  shared only through the minimum keychain access group required by the app and
-  its packet tunnel extension.
-- App Group storage contains non-secret profile configuration and opaque Keychain
-  references, never raw private keys or passphrases.
+- On iOS, private keys and passphrases live in the Data Protection Keychain and
+  are shared only through the minimum keychain access group required by the app
+  and its packet tunnel extension.
+- On macOS, the root packet-tunnel provider uses a provider-owned generic-password
+  item in the file-based system-domain Keychain. It resolves that Keychain with
+  `SecKeychainCopyDomainDefault(kSecPreferencesDomainSystem, ...)`, scopes reads
+  through an explicit one-Keychain `kSecMatchSearchList`, and matches only a
+  fixed non-identifying service plus the exact opaque credential reference.
+  Keychain Sharing, access-group, accessibility, ambient-search-list, and
+  hard-coded Keychain-path mechanisms are not used on this path.
+- macOS profile configuration travels through `providerConfiguration`; it contains
+  only non-secret profile data and opaque Keychain references. The macOS host and
+  root provider do not treat App Group storage as a shared credential channel.
+- The macOS system-domain item is not protected by the user's login password.
+  Runtime secret lifetime is bounded and mutable buffers are cleared on a
+  best-effort basis; immutable Swift/framework/allocator copies cannot be proven
+  zeroized.
 - Key import validates format and permissions. Key generation uses platform
   cryptography and never exports silently.
 - Secrets are not placed in `NETunnelProviderProtocol.providerConfiguration`,

@@ -10,6 +10,25 @@ public enum MacOSProviderSSHConfiguration {
   ) -> any SSHTransportFactory {
     LibSSH2TransportFactory(maximumTransportBufferBytes: maximumTransportBufferBytes)
   }
+
+  /// Provider-owned read-only credential source. Concrete format identifiers
+  /// remain fail-closed until the separately reviewed key-format registry lands.
+  public static func makeCredentialProvider() -> any SSHCredentialProvider {
+    MacOSSystemKeychainCredentialResolver()
+  }
+
+  static func makeCredentialProvider(
+    securityClient: any MacOSSystemKeychainSecurityClient,
+    formatRegistry: any MacOSCredentialFormatRegistry,
+    lifecycleObserver: any MacOSCredentialSecretLifecycleObserver =
+      NullMacOSCredentialSecretLifecycleObserver()
+  ) -> any SSHCredentialProvider {
+    MacOSSystemKeychainCredentialResolver(
+      securityClient: securityClient,
+      formatRegistry: formatRegistry,
+      lifecycleObserver: lifecycleObserver
+    )
+  }
 }
 
 /// Public-API adapter for the macOS provider's `NEPacketTunnelFlow`.
