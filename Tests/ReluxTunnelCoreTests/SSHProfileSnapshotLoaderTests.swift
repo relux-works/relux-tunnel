@@ -194,6 +194,18 @@ struct SSHProfileSnapshotLoaderTests {
     #expect(throws: SSHProfileSnapshotLoaderError.profileCorrupt) {
       try SSHProfileSnapshotCodec.decode(missingNullableRecordField)
     }
+
+    let multipleActiveApprovals = try mutatePolicy(validData) { policy in
+      var records = try #require(policy["records"] as? [[String: Any]])
+      var second = try #require(records.first)
+      let secondDigest = Data(repeating: 0x02, count: 32).base64EncodedString().dropLast()
+      second["fingerprintSHA256"] = "SHA256:\(secondDigest)"
+      records.append(second)
+      policy["records"] = records
+    }
+    #expect(throws: SSHProfileSnapshotLoaderError.profileInvalidField(.trustRecords)) {
+      try SSHProfileSnapshotCodec.decode(multipleActiveApprovals)
+    }
   }
 
   @Test("UTF-8 corruption duplicates depth whitespace ordering and trailing bytes reject")

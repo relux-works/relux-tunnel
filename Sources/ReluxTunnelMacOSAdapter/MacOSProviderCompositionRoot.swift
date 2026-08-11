@@ -17,6 +17,18 @@ public enum MacOSProviderSSHConfiguration {
     MacOSSystemKeychainCredentialResolver()
   }
 
+  /// The sole production host-key policy composition. It is always bound to
+  /// one immutable validated snapshot and the selected adapter capabilities.
+  public static func makeHostKeyPolicy(
+    snapshot: SSHProfileSnapshotV1
+  ) throws -> any SSHHostKeyPolicy {
+    let capabilities = LibSSH2TransportFactory().capabilities
+    return try SSHApprovedHostIdentityPolicy(
+      snapshot: snapshot,
+      adapterHostKeyAlgorithms: capabilities.hostKeyAlgorithms
+    )
+  }
+
   static func makeCredentialProvider(
     securityClient: any MacOSSystemKeychainSecurityClient,
     formatRegistry: any MacOSCredentialFormatRegistry,

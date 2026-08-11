@@ -10,6 +10,100 @@ import Testing
 
 @Suite("libssh2 adapter loopback conformance", .serialized)
 struct LibSSH2AdapterIntegrationTests {
+  @Test("every untrusted host stops before credentials and destination channels")
+  func mandatoryHostPolicyOrdering() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let exactApproved = adapterTrustRecord(keyBytes: server.hostKeyBlob, state: .approved)
+    let exactRevoked = adapterTrustRecord(keyBytes: server.hostKeyBlob, state: .revoked)
+    let changed = adapterTrustRecord(
+      keyBytes: adapterEd25519WireKey(repeating: 0xA5),
+      state: .approved
+    )
+    let capabilities = LibSSH2TransportFactory().capabilities.hostKeyAlgorithms
+    let cases: [(SSHTransportErrorCode, any SSHHostKeyPolicy)] = [
+      (
+        .hostTrustRequired,
+        try SSHApprovedHostIdentityPolicy(
+          snapshot: adapterSnapshot(port: server.port, records: []),
+          adapterHostKeyAlgorithms: capabilities
+        )
+      ),
+      (
+        .hostKeyChanged,
+        try SSHApprovedHostIdentityPolicy(
+          snapshot: adapterSnapshot(port: server.port, records: [changed]),
+          adapterHostKeyAlgorithms: capabilities
+        )
+      ),
+      (
+        .hostIdentityRevoked,
+        try SSHApprovedHostIdentityPolicy(
+          snapshot: adapterSnapshot(port: server.port, records: [exactRevoked]),
+          adapterHostKeyAlgorithms: capabilities
+        )
+      ),
+      (
+        .hostKeyAlgorithmRejected,
+        try SSHApprovedHostIdentityPolicy(
+          snapshot: adapterSnapshot(port: server.port, records: [exactApproved]),
+          adapterHostKeyAlgorithms: []
+        )
+      ),
+      (
+        .hostCanonicalMismatch,
+        try SSHApprovedHostIdentityPolicy(
+          snapshot: adapterSnapshot(
+            port: server.port,
+            canonicalHost: "other.invalid",
+            records: [exactApproved]
+          ),
+          adapterHostKeyAlgorithms: capabilities
+        )
+      ),
+      (
+        .hostKeyMalformed,
+        FixedDecisionHostPolicy(decision: .rejectMalformed)
+      ),
+    ]
+
+    for (expectedCode, policy) in cases {
+      let credentialProvider = CountingCredentialProvider(credential: credential)
+      let dependencies = SSHTransportDependencies(
+        resolver: FixtureResolver(),
+        connector: FixtureConnector(port: server.port),
+        hostKeyPolicy: policy,
+        credentialProvider: credentialProvider,
+        clock: ContinuousTunnelClock(),
+        cancellation: TaskCancellationChecker(),
+        logger: FixtureLogger(),
+        observer: FixtureObserver(),
+        metrics: FixtureMetrics(),
+        identityGenerator: FixtureIdentities()
+      )
+      let transport =
+        try await LibSSH2TransportFactory().makeTransport(
+          lane: SSHLaneIdentity(rawValue: UUID()),
+          dependencies: dependencies
+        ) as! LibSSH2Transport
+
+      do {
+        _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+        Issue.record("untrusted host unexpectedly connected")
+      } catch let error as SSHTransportError {
+        #expect(error.code == expectedCode)
+        #expect(error.phase == .hostDecision)
+        #expect(error.retryDisposition == .afterConfigurationChange)
+      }
+      let counters = await transport.snapshot().counters
+      #expect(await credentialProvider.invocationCount == 0)
+      #expect(counters.authenticationAttempts == 0)
+      #expect(counters.directChannelsOpened == 0)
+      #expect(counters.execChannelsOpened == 0)
+    }
+  }
+
   @Test("caller cancellation is scoped and idle reads have no implicit timeout")
   func operationScopedReadCancellationWithoutIdleTimeout() async throws {
     let credential = P256FixtureCredential()
@@ -804,7 +898,7 @@ struct LibSSH2AdapterIntegrationTests {
         ) as! LibSSH2Transport
       let session = try await transport.connect(
         configuration: fixtureConfiguration(port: server.port))
-      #expect(session.hostDecision == .firstUseAccepted)
+      #expect(session.hostDecision == .matchAccepted)
       #expect(await trace.events == [.hostPolicy, .credentialLookup])
 
       if iteration == 0 {
@@ -867,7 +961,7 @@ struct LibSSH2AdapterIntegrationTests {
         credentialReference: SSHCredentialReference(rawValue: "keychain.fixture.ed25519")
       )
     )
-    #expect(session.hostDecision == .firstUseAccepted)
+    #expect(session.hostDecision == .matchAccepted)
     #expect(await trace.events == [.hostPolicy, .credentialLookup])
     #expect(await recorder.invocationCount > 0)
 
@@ -1250,7 +1344,7 @@ private struct AcceptingFixtureHostPolicy: SSHHostKeyPolicy {
 
   func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
     await trace.append(.hostPolicy)
-    return .acceptFirstUse(SSHTrustRecordReference(rawValue: "fixture.trust"))
+    return .acceptMatch(SSHTrustRecordReference(rawValue: "fixture.trust"))
   }
 }
 
@@ -1979,8 +2073,92 @@ private func fixtureChannelPolicy() throws -> SSHChannelPolicy {
   )
 }
 
+private actor CountingCredentialProvider: SSHCredentialProvider {
+  private let credential: any SSHPublicKeyCredential
+  private(set) var invocationCount = 0
+
+  init(credential: any SSHPublicKeyCredential) {
+    self.credential = credential
+  }
+
+  func credential(for request: SSHCredentialRequest) async throws
+    -> any SSHPublicKeyCredential
+  {
+    invocationCount += 1
+    return credential
+  }
+}
+
+private struct FixedDecisionHostPolicy: SSHHostKeyPolicy {
+  let decision: SSHHostKeyDecision
+
+  func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
+    decision
+  }
+}
+
+private func adapterSnapshot(
+  port: UInt16,
+  canonicalHost: String = "fixture.local",
+  records: [SSHHostIdentityRecordV1]
+) -> SSHProfileSnapshotV1 {
+  SSHProfileSnapshotV1(
+    configurationGeneration: 1,
+    profileID: OpaqueProfileIdentifier(
+      UUID(uuidString: "40000000-0000-0000-0000-000000000001")!
+    ),
+    createdAt: SSHProfileTimestamp("2026-08-11T10:00:00.000Z"),
+    updatedAt: SSHProfileTimestamp("2026-08-11T10:00:01.000Z"),
+    displayName: "Adapter fixture",
+    canonicalHost: SSHProfileCanonicalHost(kind: .dns, value: canonicalHost),
+    port: port,
+    account: "fixture-account",
+    credential: SSHProfileCredentialReferenceV1(
+      reference: OpaqueCredentialReference(
+        UUID(uuidString: "50000000-0000-0000-0000-000000000001")!
+      ),
+      generation: 1
+    ),
+    hostPolicy: SSHHostPolicyV1(
+      allowedAlgorithms: [.sshEd25519],
+      records: records
+    )
+  )
+}
+
+private func adapterTrustRecord(
+  keyBytes: Data,
+  state: SSHHostIdentityState
+) -> SSHHostIdentityRecordV1 {
+  SSHHostIdentityRecordV1(
+    algorithm: .sshEd25519,
+    fingerprintSHA256: SSHHostKeyFingerprint(
+      SSHHostKeyEvidence.sha256Fingerprint(for: keyBytes)
+    ),
+    state: state,
+    provenance: state == .approved ? .firstUseApproval : .changedKeyReplacement,
+    firstSeenAt: SSHProfileTimestamp("2026-08-10T10:00:00.000Z"),
+    lastSeenAt: SSHProfileTimestamp("2026-08-10T11:00:00.000Z"),
+    approvedAt: SSHProfileTimestamp("2026-08-10T10:01:00.000Z"),
+    revokedAt: state == .revoked
+      ? SSHProfileTimestamp("2026-08-10T12:00:00.000Z") : nil,
+    revocationReason: state == .revoked ? .replaced : nil
+  )
+}
+
+private func adapterEd25519WireKey(repeating byte: UInt8) -> Data {
+  adapterWireString(Data("ssh-ed25519".utf8))
+    + adapterWireString(Data(repeating: byte, count: 32))
+}
+
+private func adapterWireString(_ value: Data) -> Data {
+  var length = UInt32(value.count).bigEndian
+  return withUnsafeBytes(of: &length) { Data($0) } + value
+}
+
 private final class LoopbackSSHD {
   let port: UInt16
+  let hostKeyBlob: Data
   private let directory: URL
   private let process: Process
 
@@ -2004,6 +2182,17 @@ private final class LoopbackSSHD {
       "/usr/bin/ssh-keygen",
       arguments: ["-q", "-t", "ed25519", "-N", "", "-f", hostKey.path]
     )
+    let publicKeyText = try String(
+      contentsOf: hostKey.appendingPathExtension("pub"),
+      encoding: .utf8
+    )
+    let publicKeyFields = publicKeyText.split(whereSeparator: \.isWhitespace)
+    guard publicKeyFields.count >= 2,
+      let hostKeyBlob = Data(base64Encoded: String(publicKeyFields[1]))
+    else {
+      throw POSIXFixtureError.system(EINVAL)
+    }
+    self.hostKeyBlob = hostKeyBlob
     port = try unusedLoopbackPort()
     let text = [
       "Port \(port)",

@@ -198,14 +198,15 @@ struct SSHTransportContractTests {
     )
 
     #expect(await recorder.events() == [.hostPolicy, .credentialLookup])
-    #expect(acceptedHost.evidence == evidence)
+    #expect(acceptedHost.identity.algorithm == evidence.algorithm)
+    #expect(acceptedHost.identity.fingerprintSHA256 == evidence.fingerprint)
     #expect(acceptedHost.outcome == .matchAccepted)
 
     #expect(throws: SSHHostAcceptanceError.rejected(.changedRejected)) {
       _ = try SSHHostKeyDecision.rejectChanged.acceptance(for: input)
     }
     #expect(throws: SSHContractValidationError.empty(.trustRecordReference)) {
-      _ = try SSHHostKeyDecision.acceptFirstUse(
+      _ = try SSHHostKeyDecision.acceptMatch(
         SSHTrustRecordReference(rawValue: "")
       ).acceptance(for: input)
     }
@@ -445,7 +446,8 @@ struct SSHTransportContractTests {
     let expectedCodes = [
       "cancelled", "timedOut", "invalidArgument", "invalidState", "operationInProgress",
       "unsupportedCapability", "resolutionFailed", "networkUnavailable", "connectionLost",
-      "connectionClosed", "hostKeyUnknown", "hostKeyChanged", "hostKeyRejected",
+      "connectionClosed", "hostTrustRequired", "hostKeyUnknown", "hostKeyChanged",
+      "hostIdentityRevoked", "hostCanonicalMismatch", "hostKeyMalformed", "hostKeyRejected",
       "hostKeyAlgorithmRejected", "algorithmNegotiationFailed", "authenticationRejected",
       "authenticationMethodUnavailable", "authenticationKeyAlgorithmUnavailable",
       "credentialUnavailable", "credentialInteractionRequired", "signatureFailed",

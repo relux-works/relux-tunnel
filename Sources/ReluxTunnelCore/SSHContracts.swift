@@ -333,7 +333,9 @@ public struct SSHTransportDependencies: Sendable {
 
 // MARK: - Host verification and credentials
 
-public struct SSHHostKeyEvidence: Equatable, Sendable {
+public struct SSHHostKeyEvidence: Equatable, Sendable, CustomStringConvertible,
+  CustomDebugStringConvertible
+{
   public let algorithm: String
   public let keyBytes: Data
   public let fingerprint: String
@@ -355,9 +357,15 @@ public struct SSHHostKeyEvidence: Equatable, Sendable {
     let encoded = Data(digest).base64EncodedString().replacingOccurrences(of: "=", with: "")
     return "SHA256:\(encoded)"
   }
+
+  /// Raw host-key bytes and fingerprints are restricted to the host-policy scope.
+  public var description: String { "SSHHostKeyEvidence(<redacted>)" }
+  public var debugDescription: String { description }
 }
 
-public struct SSHHostKeyPolicyInput: Equatable, Sendable {
+public struct SSHHostKeyPolicyInput: Equatable, Sendable, CustomStringConvertible,
+  CustomDebugStringConvertible
+{
   public let canonicalHostname: String
   public let connectedEndpoint: TunnelEndpoint
   public let evidence: SSHHostKeyEvidence
@@ -377,23 +385,33 @@ public struct SSHHostKeyPolicyInput: Equatable, Sendable {
     self.lane = lane
     self.trustRecordReference = trustRecordReference
   }
+
+  public var description: String { "SSHHostKeyPolicyInput(<redacted>)" }
+  public var debugDescription: String { description }
 }
 
 public enum SSHHostKeyDecision: Equatable, Sendable {
-  case acceptFirstUse(SSHTrustRecordReference)
+  /// Candidate-neutral test and adapter seam for an already-approved match.
   case acceptMatch(SSHTrustRecordReference)
-  case rejectUnknown
+  /// Production snapshot-backed approval with privacy-safe record metadata.
+  case acceptApproved(SSHApprovedHostIdentityMatch)
+  case trustRequired(SSHHostTrustRequiredEvidence)
   case rejectChanged
+  case rejectRevoked(SSHHostIdentityAuditMetadata)
   case rejectAlgorithm
+  case rejectHostMismatch
+  case rejectMalformed
   case rejectPolicy
 }
 
 public enum SSHHostDecisionOutcome: String, Equatable, Sendable {
-  case firstUseAccepted
   case matchAccepted
-  case unknownRejected
+  case trustRequired
   case changedRejected
+  case revokedRejected
   case algorithmRejected
+  case hostMismatchRejected
+  case malformedRejected
   case policyRejected
 }
 
@@ -403,23 +421,31 @@ public protocol SSHHostKeyPolicy: Sendable {
 
 /// Proof that the host policy returned an accepting decision for exact evidence.
 /// Credential requests require this value, making rejection an invalid typed path.
-public struct SSHHostKeyAcceptance: Equatable, Sendable {
-  public let evidence: SSHHostKeyEvidence
+public struct SSHHostKeyAcceptance: Equatable, Sendable, CustomStringConvertible,
+  CustomDebugStringConvertible
+{
+  public let identity: SSHVerifiedHostIdentity
   public let lane: SSHLaneIdentity
   public let outcome: SSHHostDecisionOutcome
   public let trustRecordReference: SSHTrustRecordReference
+  public let auditMetadata: SSHHostIdentityAuditMetadata?
 
   fileprivate init(
-    evidence: SSHHostKeyEvidence,
+    identity: SSHVerifiedHostIdentity,
     lane: SSHLaneIdentity,
     outcome: SSHHostDecisionOutcome,
-    trustRecordReference: SSHTrustRecordReference
+    trustRecordReference: SSHTrustRecordReference,
+    auditMetadata: SSHHostIdentityAuditMetadata?
   ) {
-    self.evidence = evidence
+    self.identity = identity
     self.lane = lane
     self.outcome = outcome
     self.trustRecordReference = trustRecordReference
+    self.auditMetadata = auditMetadata
   }
+
+  public var description: String { "SSHHostKeyAcceptance(<redacted>)" }
+  public var debugDescription: String { description }
 }
 
 public enum SSHHostAcceptanceError: Error, Equatable, Sendable {
@@ -429,16 +455,20 @@ public enum SSHHostAcceptanceError: Error, Equatable, Sendable {
 extension SSHHostKeyDecision {
   public var outcome: SSHHostDecisionOutcome {
     switch self {
-    case .acceptFirstUse:
-      .firstUseAccepted
-    case .acceptMatch:
+    case .acceptMatch, .acceptApproved:
       .matchAccepted
-    case .rejectUnknown:
-      .unknownRejected
+    case .trustRequired:
+      .trustRequired
     case .rejectChanged:
       .changedRejected
+    case .rejectRevoked:
+      .revokedRejected
     case .rejectAlgorithm:
       .algorithmRejected
+    case .rejectHostMismatch:
+      .hostMismatchRejected
+    case .rejectMalformed:
+      .malformedRejected
     case .rejectPolicy:
       .policyRejected
     }
@@ -446,33 +476,43 @@ extension SSHHostKeyDecision {
 
   public func acceptance(for input: SSHHostKeyPolicyInput) throws -> SSHHostKeyAcceptance {
     switch self {
-    case .acceptFirstUse(let reference):
-      guard !reference.rawValue.isEmpty else {
-        throw SSHContractValidationError.empty(.trustRecordReference)
-      }
-      return SSHHostKeyAcceptance(
-        evidence: input.evidence,
-        lane: input.lane,
-        outcome: .firstUseAccepted,
-        trustRecordReference: reference
-      )
     case .acceptMatch(let reference):
       guard !reference.rawValue.isEmpty else {
         throw SSHContractValidationError.empty(.trustRecordReference)
       }
       return SSHHostKeyAcceptance(
-        evidence: input.evidence,
+        identity: SSHVerifiedHostIdentity(
+          algorithm: input.evidence.algorithm,
+          fingerprintSHA256: input.evidence.fingerprint
+        ),
         lane: input.lane,
         outcome: .matchAccepted,
-        trustRecordReference: reference
+        trustRecordReference: reference,
+        auditMetadata: nil
       )
-    case .rejectUnknown, .rejectChanged, .rejectAlgorithm, .rejectPolicy:
+    case .acceptApproved(let match):
+      return SSHHostKeyAcceptance(
+        identity: match.identity,
+        lane: input.lane,
+        outcome: .matchAccepted,
+        trustRecordReference: match.trustRecordReference,
+        auditMetadata: match.auditMetadata
+      )
+    case .trustRequired, .rejectChanged, .rejectRevoked, .rejectAlgorithm,
+      .rejectHostMismatch, .rejectMalformed, .rejectPolicy:
       throw SSHHostAcceptanceError.rejected(outcome)
     }
   }
 }
 
-public struct SSHCredentialRequest: Equatable, Sendable {
+extension SSHHostKeyDecision: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String { "SSHHostKeyDecision(\(outcome.rawValue))" }
+  public var debugDescription: String { description }
+}
+
+public struct SSHCredentialRequest: Equatable, Sendable, CustomStringConvertible,
+  CustomDebugStringConvertible
+{
   public let credentialReference: SSHCredentialReference
   public let credentialGeneration: UInt64
   public let username: String
@@ -492,6 +532,9 @@ public struct SSHCredentialRequest: Equatable, Sendable {
     self.allowedPublicKeyAlgorithms = allowedPublicKeyAlgorithms
     self.acceptedHost = acceptedHost
   }
+
+  public var description: String { "SSHCredentialRequest(<redacted>)" }
+  public var debugDescription: String { description }
 }
 
 public enum SSHAuthenticationOutcome: String, CaseIterable, Equatable, Sendable {
@@ -863,10 +906,12 @@ public struct SSHNegotiatedAlgorithms: Equatable, Sendable {
   }
 }
 
-public struct SSHSession: Equatable, Sendable {
+public struct SSHSession: Equatable, Sendable, CustomStringConvertible,
+  CustomDebugStringConvertible
+{
   public let identity: SSHSessionIdentity
   public let lane: SSHLaneIdentity
-  public let acceptedHostKey: SSHHostKeyEvidence
+  public let acceptedHostKey: SSHVerifiedHostIdentity
   public let hostDecision: SSHHostDecisionOutcome
   public let negotiatedAlgorithms: SSHNegotiatedAlgorithms
   public let keyExchangeGeneration: SSHDeferredSemanticReport<UInt64>
@@ -879,11 +924,14 @@ public struct SSHSession: Equatable, Sendable {
   ) {
     self.identity = identity
     self.lane = acceptedHost.lane
-    self.acceptedHostKey = acceptedHost.evidence
+    self.acceptedHostKey = acceptedHost.identity
     self.hostDecision = acceptedHost.outcome
     self.negotiatedAlgorithms = negotiatedAlgorithms
     self.keyExchangeGeneration = keyExchangeGeneration
   }
+
+  public var description: String { "SSHSession(<redacted>)" }
+  public var debugDescription: String { description }
 }
 
 public struct SSHChannelPolicy: Equatable, Sendable {
@@ -1139,8 +1187,12 @@ public enum SSHTransportErrorCode: String, CaseIterable, Equatable, Sendable {
   case networkUnavailable
   case connectionLost
   case connectionClosed
+  case hostTrustRequired
   case hostKeyUnknown
   case hostKeyChanged
+  case hostIdentityRevoked
+  case hostCanonicalMismatch
+  case hostKeyMalformed
   case hostKeyRejected
   case hostKeyAlgorithmRejected
   case algorithmNegotiationFailed
@@ -1256,14 +1308,20 @@ public struct SSHTransportError: Error, Equatable, Sendable {
   ) -> SSHTransportError? {
     let code: SSHTransportErrorCode
     switch decision {
-    case .acceptFirstUse, .acceptMatch:
+    case .acceptMatch, .acceptApproved:
       return nil
-    case .rejectUnknown:
-      code = .hostKeyUnknown
+    case .trustRequired:
+      code = .hostTrustRequired
     case .rejectChanged:
       code = .hostKeyChanged
+    case .rejectRevoked:
+      code = .hostIdentityRevoked
     case .rejectAlgorithm:
       code = .hostKeyAlgorithmRejected
+    case .rejectHostMismatch:
+      code = .hostCanonicalMismatch
+    case .rejectMalformed:
+      code = .hostKeyMalformed
     case .rejectPolicy:
       code = .hostKeyRejected
     }

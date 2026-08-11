@@ -2264,13 +2264,10 @@ public actor LibSSH2Transport: SSHTransport {
 
   private func recordHostDecision(_ decision: SSHHostKeyDecision) async {
     switch decision.outcome {
-    case .firstUseAccepted:
-      counters.hostFirstUseAccepted += 1
-      await metric(.increment(.hostFirstUseAccepted, by: 1))
     case .matchAccepted:
       counters.hostMatchAccepted += 1
       await metric(.increment(.hostMatchAccepted, by: 1))
-    case .unknownRejected:
+    case .trustRequired:
       counters.hostUnknownRejected += 1
       await metric(.increment(.hostUnknownRejected, by: 1))
     case .changedRejected:
@@ -2279,7 +2276,7 @@ public actor LibSSH2Transport: SSHTransport {
     case .algorithmRejected:
       counters.hostAlgorithmRejected += 1
       await metric(.increment(.hostAlgorithmRejected, by: 1))
-    case .policyRejected:
+    case .revokedRejected, .hostMismatchRejected, .malformedRejected, .policyRejected:
       break
     }
     await emit(.hostDecision(decision.outcome))
