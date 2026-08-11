@@ -2,6 +2,7 @@
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
 	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
+	ssh-fixtures-check ssh-fixtures-test ssh-fixtures-lifecycle \
 	relay-protocol-generate relay-protocol-vectors-generate \
 	relay-protocol-vectors-check relay-protocol-conformance-check \
 	relay-protocol-hostile-diagnostics relay-protocol-check \
@@ -75,6 +76,20 @@ build-libssh2:
 		--libssh2-archive "$(LIBSSH2_SOURCE_ARCHIVE)" \
 		--openssl-archive "$(OPENSSL_SOURCE_ARCHIVE)" \
 		--output NativeDependencies/Artifacts/ReluxLibSSH2.xcframework
+
+ssh-fixtures-check:
+	python3 -m py_compile scripts/ssh_matrix_fixture.py scripts/ssh_matrix_provider.py
+	python3 scripts/ssh_matrix_fixture.py verify-manifest
+	python3 scripts/ssh_matrix_fixture.py orchestration-preflight >/dev/null
+
+ssh-fixtures-test: ssh-fixtures-check
+	python3 -m unittest -v \
+		scripts.tests.test_ssh_matrix_fixture \
+		scripts.tests.test_ssh_matrix_provider
+
+ssh-fixtures-lifecycle: ssh-fixtures-check
+	python3 scripts/ssh_matrix_provider.py lifecycle \
+		--output .temp/TASK-260715-39xz9g/provider-lifecycle-report.json
 
 RELAY_PROTOCOL_ENV = LC_ALL=C LANG=C TZ=UTC PYTHONHASHSEED=0
 

@@ -545,6 +545,41 @@ struct LibSSH2AdapterIntegrationTests {
     await transport.close()
   }
 
+  @Test("server rejection of an unapproved public key is terminal and cleans up")
+  func serverRejectsUnapprovedPublicKey() async throws {
+    let authorizedCredential = P256FixtureCredential()
+    let rejectedCredential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: authorizedCredential.authorizedKey)
+    defer { server.stop() }
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: rejectedCredential,
+          trace: AdapterFixtureTrace()
+        )
+      ) as! LibSSH2Transport
+
+    do {
+      _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+      Issue.record("unapproved public key unexpectedly authenticated")
+    } catch let error as SSHTransportError {
+      #expect(error.code == .authenticationRejected)
+      #expect(error.phase == .authentication)
+      #expect(error.retryDisposition == .never)
+      #expect(error.requiresTeardown)
+    }
+
+    let snapshot = await transport.snapshot()
+    #expect(snapshot.connectionState == .closed)
+    #expect(snapshot.counters.authenticationAttempts == 1)
+    #expect(snapshot.counters.authenticationSucceeded == 0)
+    #expect(snapshot.counters.authenticationRejected == 1)
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
   @Test("exec and upload timeouts reset their channel and preserve siblings")
   func channelScopedFailureCleanup() async throws {
     let credential = P256FixtureCredential()
