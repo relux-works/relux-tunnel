@@ -12,6 +12,7 @@ public enum LibSSH2PackagingAnchor {
 
 struct LibSSH2ChannelAPI: Sendable {
   var processStartup: @Sendable (OpaquePointer, String) -> Int32
+  var write: @Sendable (OpaquePointer, Data, Int) -> Int
   var close: @Sendable (OpaquePointer) -> Int32
   var free: @Sendable (OpaquePointer) -> Int32
 
@@ -24,6 +25,16 @@ struct LibSSH2ChannelAPI: Sendable {
           UInt32("exec".utf8.count),
           bytes.bindMemory(to: CChar.self).baseAddress,
           UInt32(max(0, bytes.count - 1))
+        )
+      }
+    },
+    write: { pointer, bytes, count in
+      bytes.withUnsafeBytes { raw in
+        libssh2_channel_write_ex(
+          pointer,
+          0,
+          raw.bindMemory(to: CChar.self).baseAddress,
+          count
         )
       }
     },
@@ -1654,14 +1665,7 @@ public actor LibSSH2Transport: SSHTransport {
     while true {
       try checkCancellation(phase: .channelWrite, scope: .channel(identity))
       try checkChannelDisposition(identity: identity, phase: .channelWrite)
-      let result = bytes.withUnsafeBytes { raw in
-        libssh2_channel_write_ex(
-          record.pointer,
-          0,
-          raw.bindMemory(to: CChar.self).baseAddress,
-          acceptedPrefix
-        )
-      }
+      let result = channelAPI.write(record.pointer, bytes, acceptedPrefix)
       if result > 0 {
         counters.payloadBytesSent += UInt64(result)
         await metric(.increment(.payloadBytesSent, by: UInt64(result)))

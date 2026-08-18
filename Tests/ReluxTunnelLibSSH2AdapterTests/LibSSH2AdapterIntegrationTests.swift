@@ -104,6 +104,78 @@ struct LibSSH2AdapterIntegrationTests {
     }
   }
 
+  @Test("host-policy cancellation is phase-accurate and restores the full baseline")
+  func hostDecisionCancellationRestoresBaseline() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let port = server.port
+
+    for iteration in 0..<3 {
+      let policy = SuspendingHostPolicy()
+      let transport =
+        try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+        .makeTransport(
+          lane: SSHLaneIdentity(rawValue: UUID()),
+          dependencies: fixtureDependencies(
+            port: port,
+            credential: credential,
+            trace: AdapterFixtureTrace(),
+            hostKeyPolicy: policy
+          )
+        ) as! LibSSH2Transport
+      let connect = Task {
+        try await transport.connect(configuration: fixtureConfiguration(port: port))
+      }
+      await policy.waitUntilInvoked()
+      connect.cancel()
+      do {
+        _ = try await connect.value
+        Issue.record("cancelled host decision unexpectedly completed")
+      } catch let error as SSHTransportError {
+        #expect(error.code == .cancelled, "iteration \(iteration)")
+        #expect(error.phase == .hostDecision, "iteration \(iteration)")
+      }
+      #expect(await transport.ownedResourceSnapshot() == .zero, "iteration \(iteration)")
+    }
+  }
+
+  @Test("credential-lookup cancellation is phase-accurate and restores the full baseline")
+  func credentialLookupCancellationRestoresBaseline() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let port = server.port
+
+    for iteration in 0..<3 {
+      let provider = SuspendingCredentialProvider()
+      let transport =
+        try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+        .makeTransport(
+          lane: SSHLaneIdentity(rawValue: UUID()),
+          dependencies: fixtureDependencies(
+            port: port,
+            credential: credential,
+            trace: AdapterFixtureTrace(),
+            credentialProvider: provider
+          )
+        ) as! LibSSH2Transport
+      let connect = Task {
+        try await transport.connect(configuration: fixtureConfiguration(port: port))
+      }
+      await provider.waitUntilInvoked()
+      connect.cancel()
+      do {
+        _ = try await connect.value
+        Issue.record("cancelled credential lookup unexpectedly completed")
+      } catch let error as SSHTransportError {
+        #expect(error.code == .cancelled, "iteration \(iteration)")
+        #expect(error.phase == .credentialLookup, "iteration \(iteration)")
+      }
+      #expect(await transport.ownedResourceSnapshot() == .zero, "iteration \(iteration)")
+    }
+  }
+
   @Test("caller cancellation is scoped and idle reads have no implicit timeout")
   func operationScopedReadCancellationWithoutIdleTimeout() async throws {
     let credential = P256FixtureCredential()
@@ -470,8 +542,12 @@ struct LibSSH2AdapterIntegrationTests {
     defer { server.stop() }
     let echo = try LoopbackEchoServer()
     defer { echo.stop() }
+    let fault = ChannelAPIFaultController()
     let transport =
-      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 8 * 1_024)
+      try await LibSSH2TransportFactory(
+        maximumTransportBufferBytes: 8 * 1_024,
+        channelAPI: fault.api
+      )
       .makeTransport(
         lane: SSHLaneIdentity(rawValue: UUID()),
         dependencies: fixtureDependencies(
@@ -488,18 +564,21 @@ struct LibSSH2AdapterIntegrationTests {
     )
     let completions = WriteCompletionOrder()
     let payloads = (0..<4).map { Data(repeating: UInt8(0x41 + $0), count: 4 * 1_024) }
+    fault.suspendWrites()
     let writes = payloads.enumerated().map { index, payload in
       Task {
         let count = try await channel.writeSome(payload)
         await completions.append(index: index, count: count)
       }
     }
-    for _ in 0..<200 {
-      if await transport.snapshot().gauges.pendingWrites > 0 { break }
-      await Task.yield()
-    }
-    #expect(await transport.snapshot().gauges.pendingWrites > 0)
+    #expect(
+      await eventually {
+        await transport.snapshot().gauges.pendingWrites == Int64(payloads.count)
+      }
+    )
+    #expect(fault.writeCallCount > 0)
     let eof = Task { try await channel.finishWriting() }
+    fault.resumeWrites()
     for write in writes { try await write.value }
     try await eof.value
     let expected = await completions.expectedBytes(from: payloads)
@@ -512,6 +591,301 @@ struct LibSSH2AdapterIntegrationTests {
     #expect(received == expected)
     await channel.close()
     await transport.close()
+  }
+
+  @Test("channel-open cancellation retires admission waiters and preserves the session baseline")
+  func channelOpenCancellationRestoresBaseline() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let observer = SuspendingRekeyObserver()
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace(),
+          observer: observer
+        )
+      ) as! LibSSH2Transport
+    _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+    let rekey = Task { try await transport.requestRekey(reason: .manual) }
+    await observer.waitUntilRekeyStarts()
+    let rekeyBaseline = await transport.ownedResourceSnapshot()
+
+    for iteration in 0..<3 {
+      let open = Task {
+        try await transport.openExecChannel(
+          request: SSHExecRequest(command: "printf cancelled-open"),
+          policy: fixtureChannelPolicy()
+        )
+      }
+      #expect(
+        await eventually {
+          await transport.snapshot().gauges.pendingChannelOpens == 1
+        }
+      )
+      open.cancel()
+      do {
+        _ = try await open.value
+        Issue.record("cancelled channel open unexpectedly completed")
+      } catch let error as SSHTransportError {
+        #expect(error.code == .cancelled, "iteration \(iteration)")
+        #expect(error.phase == .channelOpen, "iteration \(iteration)")
+      }
+      #expect((await transport.snapshot()).gauges.pendingChannelOpens == 0)
+      #expect(
+        await eventually {
+          (await transport.ownedResourceSnapshot()).automaticTasks
+            <= rekeyBaseline.automaticTasks
+        },
+        "iteration \(iteration)"
+      )
+      let restored = await transport.ownedResourceSnapshot()
+      #expect(restored.channels == rekeyBaseline.channels)
+      #expect(restored.socketOwned == rekeyBaseline.socketOwned)
+      #expect(restored.sessionOwned == rekeyBaseline.sessionOwned)
+      #expect(restored.customAllocations == rekeyBaseline.customAllocations)
+      #expect(restored.bufferedBytes == rekeyBaseline.bufferedBytes)
+      #expect(restored.automaticTasks <= rekeyBaseline.automaticTasks)
+    }
+
+    await observer.resumeRekey()
+    try await rekey.value
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
+  @Test("write and EOF cancellation retire queued operations without disturbing the channel")
+  func writeAndEOFCancellationRestoreBaseline() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let echo = try LoopbackEchoServer()
+    defer { echo.stop() }
+    let fault = ChannelAPIFaultController()
+    let transport =
+      try await LibSSH2TransportFactory(
+        maximumTransportBufferBytes: 64 * 1_024,
+        channelAPI: fault.api
+      )
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace()
+        )
+      ) as! LibSSH2Transport
+    _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+    let channel = try await transport.openDirectTCPIP(
+      destination: TunnelEndpoint(host: "127.0.0.1", port: echo.port),
+      originator: TunnelEndpoint(host: "127.0.0.1", port: 42_425),
+      policy: fixtureChannelPolicy()
+    )
+    fault.suspendWrites()
+    let holdingWrite = Task { try await channel.writeSome(Data("held".utf8)) }
+    #expect(await eventually { fault.writeCallCount > 0 })
+
+    for iteration in 0..<3 {
+      let write = Task { try await channel.writeSome(Data("cancelled".utf8)) }
+      #expect(
+        await eventually {
+          await transport.snapshot().gauges.pendingWrites == 2
+        }
+      )
+      write.cancel()
+      do {
+        _ = try await write.value
+        Issue.record("cancelled write unexpectedly completed")
+      } catch let error as SSHTransportError {
+        #expect(error.code == .cancelled, "iteration \(iteration)")
+        #expect(error.phase == .channelWrite, "iteration \(iteration)")
+      }
+      #expect((await transport.snapshot()).gauges.pendingWrites == 1)
+
+      let eof = Task { try await channel.finishWriting() }
+      await Task.yield()
+      eof.cancel()
+      do {
+        try await eof.value
+        Issue.record("cancelled EOF unexpectedly completed")
+      } catch let error as SSHTransportError {
+        #expect(error.code == .cancelled, "iteration \(iteration)")
+        #expect(error.phase == .channelEOF, "iteration \(iteration)")
+      }
+      #expect((await transport.snapshot()).gauges.pendingWrites == 1)
+    }
+
+    fault.resumeWrites()
+    #expect(try await holdingWrite.value == 4)
+    await channel.cancel()
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
+  @Test("exec-request cancellation frees the candidate channel and restores baseline")
+  func execRequestCancellationRestoresBaseline() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let fault = ChannelAPIFaultController()
+    let transport =
+      try await LibSSH2TransportFactory(channelAPI: fault.api)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace()
+        )
+      ) as! LibSSH2Transport
+    _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+    let baseline = await transport.ownedResourceSnapshot()
+
+    for iteration in 0..<3 {
+      fault.suspendExecStartup()
+      let startingCallCount = fault.startupCallCount
+      let open = Task {
+        try await transport.openExecChannel(
+          request: SSHExecRequest(command: "printf cancelled-exec"),
+          policy: fixtureChannelPolicy()
+        )
+      }
+      #expect(await eventually { fault.startupCallCount > startingCallCount })
+      open.cancel()
+      do {
+        _ = try await open.value
+        Issue.record("cancelled exec request unexpectedly completed")
+      } catch let error as SSHTransportError {
+        #expect(error.code == .cancelled, "iteration \(iteration)")
+        #expect(error.phase == .execRequest, "iteration \(iteration)")
+      }
+      fault.resumeExecStartup()
+      #expect(
+        await eventually {
+          (await transport.ownedResourceSnapshot()).automaticTasks
+            <= baseline.automaticTasks
+        },
+        "iteration \(iteration)"
+      )
+      let restored = await transport.ownedResourceSnapshot()
+      #expect(restored.channels == baseline.channels)
+      #expect(restored.socketOwned == baseline.socketOwned)
+      #expect(restored.sessionOwned == baseline.sessionOwned)
+      #expect(restored.customAllocations == baseline.customAllocations)
+      #expect(restored.bufferedBytes == baseline.bufferedBytes)
+      #expect(restored.automaticTasks <= baseline.automaticTasks)
+    }
+
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
+  @Test("keepalive cancellation retires admission waiters and restores the rekey baseline")
+  func keepaliveCancellationRestoresBaseline() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let observer = SuspendingRekeyObserver()
+    let transport =
+      try await LibSSH2TransportFactory().makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace(),
+          observer: observer
+        )
+      ) as! LibSSH2Transport
+    _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+    let rekey = Task { try await transport.requestRekey(reason: .manual) }
+    await observer.waitUntilRekeyStarts()
+    let baseline = await transport.ownedResourceSnapshot()
+
+    for iteration in 0..<3 {
+      let keepalive = Task { try await transport.sendKeepalive() }
+      await Task.yield()
+      keepalive.cancel()
+      do {
+        _ = try await keepalive.value
+        Issue.record("cancelled keepalive unexpectedly completed")
+      } catch let error as SSHTransportError {
+        #expect(error.code == .cancelled, "iteration \(iteration)")
+        #expect(error.phase == .keepalive, "iteration \(iteration)")
+      }
+      #expect(
+        await eventually {
+          (await transport.ownedResourceSnapshot()).automaticTasks
+            <= baseline.automaticTasks
+        },
+        "iteration \(iteration)"
+      )
+      let restored = await transport.ownedResourceSnapshot()
+      #expect(restored.channels == baseline.channels)
+      #expect(restored.socketOwned == baseline.socketOwned)
+      #expect(restored.sessionOwned == baseline.sessionOwned)
+      #expect(restored.customAllocations == baseline.customAllocations)
+      #expect(restored.bufferedBytes == baseline.bufferedBytes)
+      #expect(restored.automaticTasks <= baseline.automaticTasks)
+    }
+
+    await observer.resumeRekey()
+    try await rekey.value
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
+  @Test("server-initiated rekey preserves byte-exact active traffic and bounded buffers")
+  func serverInitiatedRekeyPreservesActiveTraffic() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace()
+        )
+      ) as! LibSSH2Transport
+    _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+
+    let byteCount = 192 * 1_024
+    let channel = try await transport.openExecChannel(
+      request: SSHExecRequest(
+        command: "dd if=/dev/zero bs=1024 count=192 2>/dev/null"
+      ),
+      policy: fixtureChannelPolicy()
+    )
+    let received = try await readAll(channel)
+    #expect(received == Data(repeating: 0, count: byteCount))
+    _ = try await channel.waitForExit()
+    await channel.close()
+
+    #expect(
+      await eventually(timeout: .seconds(3)) {
+        server.completedServerInitiatedRekey
+      }
+    )
+    let postRekey = try await transport.openExecChannel(
+      request: SSHExecRequest(command: "printf post-server-rekey"),
+      policy: fixtureChannelPolicy()
+    )
+    #expect(try await readAll(postRekey) == Data("post-server-rekey".utf8))
+    await postRekey.close()
+
+    let snapshot = await transport.snapshot()
+    #expect(snapshot.connectionState == .ready)
+    #expect(snapshot.gauges.bufferedReadBytes <= 64 * 1_024)
+    #expect(snapshot.gauges.queuedWriteBytes <= 64 * 1_024)
+    #expect(snapshot.counters.serverRekeys == .unsupported)
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
   }
 
   @Test("credential algorithms outside the caller allowlist fail before authentication")
@@ -882,6 +1256,131 @@ struct LibSSH2AdapterIntegrationTests {
     }
   }
 
+  @Test("production public diagnostics exclude every privacy sentinel class")
+  func productionPublicDiagnosticsExcludePrivacySentinels() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let recorder = PrivacySurfaceRecorder()
+    let trace = AdapterFixtureTrace()
+    let fault = SocketFailureController()
+    let credentialSentinel = "credential-sentinel"
+    let commandSentinel = "command-sentinel"
+    let pathSentinel = "path-sentinel"
+    let streamSentinel = "stream-sentinel"
+    let payloadSentinel = "payload-sentinel"
+    let hostSentinel = "host-sentinel.invalid"
+    let endpointSentinel = "endpoint-sentinel.invalid"
+    let userSentinel = "user-sentinel"
+    var publicErrors: [SSHTransportError] = []
+    var snapshots: [SSHTransportSnapshot] = []
+    let rejectedUserTransport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: trace,
+          observer: recorder,
+          metrics: recorder,
+          logger: recorder
+        )
+      ) as! LibSSH2Transport
+    do {
+      _ = try await rejectedUserTransport.connect(
+        configuration: fixtureConfiguration(port: server.port, username: userSentinel)
+      )
+      Issue.record("sentinel user unexpectedly authenticated")
+    } catch let error as SSHTransportError {
+      publicErrors.append(error)
+      #expect(error.phase == .authentication)
+    } catch {
+      Issue.record("authentication rejection escaped privacy-safe mapping")
+    }
+    snapshots.append(await rejectedUserTransport.snapshot())
+    await rejectedUserTransport.close()
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: trace,
+          observer: recorder,
+          connector: FaultInjectingFixtureConnector(port: server.port, controller: fault),
+          metrics: recorder,
+          logger: recorder
+        )
+      ) as! LibSSH2Transport
+    let configuration = try fixtureConfiguration(
+      port: server.port,
+      canonicalHostname: hostSentinel,
+      endpointHost: endpointSentinel,
+      username: NSUserName(),
+      credentialReference: SSHCredentialReference(rawValue: credentialSentinel)
+    )
+
+    let session = try await transport.connect(configuration: configuration)
+    snapshots.append(await transport.snapshot())
+    let command = "printf \(streamSentinel)-\(commandSentinel)-\(pathSentinel)"
+    let exec = try await transport.openExecChannel(
+      request: SSHExecRequest(command: command),
+      policy: fixtureChannelPolicy()
+    )
+    await exec.cancel()
+    let upload = try SSHExecUploadRequest(
+      exec: SSHExecRequest(command: "cat >/dev/null"),
+      source: DataUploadSource(Data(payloadSentinel.utf8)),
+      channelPolicy: fixtureChannelPolicy(),
+      chunkBytes: 4
+    )
+    _ = try await transport.upload(upload)
+    snapshots.append(await transport.snapshot())
+
+    fault.arm()
+    do {
+      _ = try await transport.openDirectTCPIP(
+        destination: TunnelEndpoint(host: endpointSentinel, port: 443),
+        originator: TunnelEndpoint(host: hostSentinel, port: 42_427),
+        policy: fixtureChannelPolicy()
+      )
+      Issue.record("injected socket failure unexpectedly succeeded")
+    } catch let error as SSHTransportError {
+      publicErrors.append(error)
+      #expect(error.code == .connectionLost)
+      #expect(error.phase == .channelOpen)
+      #expect(error.requiresTeardown)
+    } catch {
+      Issue.record("socket failure escaped privacy-safe mapping")
+    }
+    snapshots.append(await transport.snapshot())
+
+    let publicSurface = await recorder.renderedPublicSurface(
+      errors: publicErrors,
+      snapshots: snapshots
+    )
+    let fingerprintSentinel = session.acceptedHostKey.fingerprintSHA256
+    for sentinel in [
+      hostSentinel,
+      userSentinel,
+      endpointSentinel,
+      fingerprintSentinel,
+      credentialSentinel,
+      commandSentinel,
+      pathSentinel,
+      streamSentinel,
+      payloadSentinel,
+    ] {
+      #expect(!publicSurface.contains(sentinel), "public diagnostics leaked privacy sentinel")
+    }
+    #expect(await recorder.logCount > 0)
+    #expect(await recorder.observerEventCount > 0)
+    #expect(await recorder.metricUpdateCount > 0)
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
   @Test("exec-request failure retries EAGAIN free without losing channel ownership")
   func execRequestFailureRetainsPointerUntilFreed() async throws {
     let credential = P256FixtureCredential()
@@ -971,12 +1470,13 @@ struct LibSSH2AdapterIntegrationTests {
         dependencies: fixtureDependencies(
           port: server.port,
           credential: credential,
-          trace: AdapterFixtureTrace()
+          trace: AdapterFixtureTrace(),
+          clock: ManualFixtureClock()
         )
       ) as! LibSSH2Transport
     _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
     let channel = try await transport.openExecChannel(
-      request: SSHExecRequest(command: "cat >/dev/null"),
+      request: SSHExecRequest(command: "cat"),
       policy: fixtureChannelPolicy()
     )
     let exits = (0..<64).map { _ in Task { try await channel.waitForExit() } }
@@ -1262,6 +1762,182 @@ struct LibSSH2AdapterIntegrationTests {
     #expect(await transport.ownedResourceSnapshot() == .zero)
   }
 
+  @Test("mandatory metric updates reconcile with the complete available snapshot")
+  func mandatoryMetricsReconcile() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let metrics = RecordingFixtureMetrics()
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace(),
+          metrics: metrics
+        )
+      ) as! LibSSH2Transport
+
+    _ = try await transport.connect(configuration: fixtureConfiguration(port: server.port))
+    let payload = Data("metric-output".utf8)
+    let channel = try await transport.openExecChannel(
+      request: SSHExecRequest(command: "printf metric-output"),
+      policy: fixtureChannelPolicy()
+    )
+    #expect(try await readAll(channel) == payload)
+    _ = try await channel.waitForExit()
+    await channel.close()
+    let uploadPayload = Data("metric-upload".utf8)
+    let upload = try SSHExecUploadRequest(
+      exec: SSHExecRequest(command: "cat >/dev/null"),
+      source: DataUploadSource(uploadPayload),
+      channelPolicy: fixtureChannelPolicy(),
+      chunkBytes: 4
+    )
+    #expect(try await transport.upload(upload) == .notReported)
+    try await transport.requestRekey(reason: .manual)
+    #expect(try await transport.sendKeepalive() == .unsupported)
+
+    let snapshot = await transport.snapshot()
+    let counters = snapshot.counters
+    #expect(counters.connectAttempts == counters.connectSucceeded + counters.connectFailed)
+    #expect(counters.authenticationAttempts == 1)
+    #expect(counters.authenticationSucceeded == 1)
+    #expect(counters.authenticationRejected == 0)
+    #expect(counters.hostMatchAccepted == 1)
+    #expect(counters.execChannelsOpened == 2)
+    #expect(counters.channelsClosedGracefully == 2)
+    #expect(counters.payloadBytesSent == UInt64(uploadPayload.count))
+    #expect(counters.payloadBytesReceived == UInt64(payload.count))
+    #expect(counters.protectedBytesSent > 0)
+    #expect(counters.protectedBytesReceived > 0)
+    #expect(counters.explicitRekeys == 1)
+    #expect(counters.rekeysSucceeded == 1)
+    #expect(counters.keepalivesSent == 1)
+    #expect(counters.windowAdjustments == .unsupported)
+    #expect(counters.windowAdjustmentBytes == .unsupported)
+    #expect(counters.serverRekeys == .unsupported)
+    #expect(counters.keepalivesAcknowledged == .unsupported)
+    #expect(counters.keepalivesTimedOut == .unsupported)
+
+    #expect(snapshot.gauges.openDirectChannels == 0)
+    #expect(snapshot.gauges.openExecChannels == 0)
+    #expect(snapshot.gauges.pendingChannelOpens == 0)
+    #expect(snapshot.gauges.pendingReads == 0)
+    #expect(snapshot.gauges.pendingWrites == 0)
+    #expect(snapshot.gauges.queuedWriteBytes == 0)
+    #expect(snapshot.gauges.bufferedReadBytes == 0)
+    #expect(snapshot.gauges.remainingReceiveWindowBytes == .unsupported)
+    #expect(snapshot.gauges.activeKeyExchange == .unsupported)
+    #expect(snapshot.gauges.consecutiveKeepaliveMisses == .unsupported)
+    #expect(snapshot.gauges.lastKeepaliveRTTNanoseconds == .unsupported)
+
+    for (metric, expected) in [
+      (SSHMetricCounter.connectAttempts, counters.connectAttempts),
+      (.connectSucceeded, counters.connectSucceeded),
+      (.connectFailed, counters.connectFailed),
+      (.operationsCancelled, counters.operationsCancelled),
+      (.operationsTimedOut, counters.operationsTimedOut),
+      (.hostMatchAccepted, counters.hostMatchAccepted),
+      (.authenticationAttempts, counters.authenticationAttempts),
+      (.authenticationSucceeded, counters.authenticationSucceeded),
+      (.authenticationRejected, counters.authenticationRejected),
+      (.directChannelsOpened, counters.directChannelsOpened),
+      (.execChannelsOpened, counters.execChannelsOpened),
+      (.channelOpenFailed, counters.channelOpenFailed),
+      (.channelsClosedGracefully, counters.channelsClosedGracefully),
+      (.channelsReset, counters.channelsReset),
+      (.channelsCancelled, counters.channelsCancelled),
+      (.payloadBytesSent, counters.payloadBytesSent),
+      (.payloadBytesReceived, counters.payloadBytesReceived),
+      (.protectedBytesSent, counters.protectedBytesSent),
+      (.protectedBytesReceived, counters.protectedBytesReceived),
+      (.writeBackpressureWaits, counters.writeBackpressureWaits),
+      (.clientByteRekeys, counters.clientByteRekeys),
+      (.clientTimeRekeys, counters.clientTimeRekeys),
+      (.rekeysSucceeded, counters.rekeysSucceeded),
+      (.rekeysFailed, counters.rekeysFailed),
+      (.keepalivesSent, counters.keepalivesSent),
+    ] {
+      #expect(await metrics.total(for: metric) == expected, "metric \(metric.rawValue)")
+    }
+    // Explicit rekey reasons share the public rekey-success metric; the reason
+    // count remains available in the typed snapshot.
+    #expect(counters.explicitRekeys == 1)
+    for gauge in [
+      SSHMetricGauge.pendingChannelOpens, .pendingReads, .pendingWrites, .queuedWriteBytes,
+    ] {
+      #expect(await metrics.lastValue(for: gauge) == 0, "gauge \(gauge.rawValue)")
+    }
+
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
+  @Test("all libssh2 M3 runtime surfaces report unsupported or not-reported explicitly")
+  func deferredRuntimeStatesAreExplicit() async throws {
+    let credential = P256FixtureCredential()
+    let server = try LoopbackSSHD(publicKey: credential.authorizedKey)
+    defer { server.stop() }
+    let transport =
+      try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+      .makeTransport(
+        lane: SSHLaneIdentity(rawValue: UUID()),
+        dependencies: fixtureDependencies(
+          port: server.port,
+          credential: credential,
+          trace: AdapterFixtureTrace()
+        )
+      ) as! LibSSH2Transport
+
+    let session = try await transport.connect(
+      configuration: fixtureConfiguration(port: server.port)
+    )
+    #expect(session.keyExchangeGeneration == .unsupported)
+
+    let normalExit = try await transport.openExecChannel(
+      request: SSHExecRequest(command: "printf deferred-state"),
+      policy: fixtureChannelPolicy()
+    )
+    #expect(await normalExit.receiveWindow() == .unsupported)
+    #expect(try await readAll(normalExit) == Data("deferred-state".utf8))
+    #expect(try await normalExit.waitForExit() == .notReported)
+    await normalExit.close()
+
+    let signalled = try await transport.openExecChannel(
+      request: SSHExecRequest(command: "kill -TERM $$"),
+      policy: fixtureChannelPolicy()
+    )
+    _ = try await readAll(signalled)
+    switch try await signalled.waitForExit() {
+    case .signal(let signal):
+      #expect(signal.name == .terminate)
+      #expect(signal.coreDumped == .unsupported)
+    default:
+      Issue.record("libssh2 did not expose the expected signal exit state")
+    }
+    await signalled.close()
+
+    #expect(try await transport.sendKeepalive() == .unsupported)
+    try await transport.requestRekey(reason: .manual)
+    let snapshot = await transport.snapshot()
+    #expect(snapshot.keyExchangeGeneration == .unsupported)
+    #expect(snapshot.counters.windowAdjustments == .unsupported)
+    #expect(snapshot.counters.windowAdjustmentBytes == .unsupported)
+    #expect(snapshot.counters.serverRekeys == .unsupported)
+    #expect(snapshot.counters.keepalivesAcknowledged == .unsupported)
+    #expect(snapshot.counters.keepalivesTimedOut == .unsupported)
+    #expect(snapshot.gauges.remainingReceiveWindowBytes == .unsupported)
+    #expect(snapshot.gauges.activeKeyExchange == .unsupported)
+    #expect(snapshot.gauges.consecutiveKeepaliveMisses == .unsupported)
+    #expect(snapshot.gauges.lastKeepaliveRTTNanoseconds == .unsupported)
+
+    await transport.close()
+    #expect(await transport.ownedResourceSnapshot() == .zero)
+  }
+
   private func exerciseDirectTCPIP(transport: LibSSH2Transport, echoPort: UInt16) async throws {
     let channel = try await transport.openDirectTCPIP(
       destination: TunnelEndpoint(host: "127.0.0.1", port: echoPort),
@@ -1506,6 +2182,46 @@ private struct AcceptingFixtureHostPolicy: SSHHostKeyPolicy {
   func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
     await trace.append(.hostPolicy)
     return .acceptMatch(SSHTrustRecordReference(rawValue: "fixture.trust"))
+  }
+}
+
+private actor SuspendingHostPolicy: SSHHostKeyPolicy {
+  private var invoked = false
+  private var waiters: [CheckedContinuation<Void, Never>] = []
+
+  func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
+    invoked = true
+    let current = waiters
+    waiters.removeAll()
+    for waiter in current { waiter.resume() }
+    try await Task.sleep(for: .seconds(3_600))
+    return .acceptMatch(input.trustRecordReference ?? SSHTrustRecordReference(rawValue: "unused"))
+  }
+
+  func waitUntilInvoked() async {
+    guard !invoked else { return }
+    await withCheckedContinuation { waiters.append($0) }
+  }
+}
+
+private actor SuspendingCredentialProvider: SSHCredentialProvider {
+  private var invoked = false
+  private var waiters: [CheckedContinuation<Void, Never>] = []
+
+  func credential(for request: SSHCredentialRequest) async throws
+    -> any SSHPublicKeyCredential
+  {
+    invoked = true
+    let current = waiters
+    waiters.removeAll()
+    for waiter in current { waiter.resume() }
+    try await Task.sleep(for: .seconds(3_600))
+    throw CancellationError()
+  }
+
+  func waitUntilInvoked() async {
+    guard !invoked else { return }
+    await withCheckedContinuation { waiters.append($0) }
   }
 }
 
@@ -1802,6 +2518,10 @@ private final class FaultInjectingFixtureConnection: SSHTCPConnection, @unchecke
 private final class ChannelAPIFaultController: @unchecked Sendable {
   private struct State {
     var rejectStartup = false
+    var startupSuspended = false
+    var startupCallCount = 0
+    var writesSuspended = false
+    var writeCallCount = 0
     var closeEAGAINRemaining = 0
     var freeEAGAINRemaining = 0
     var closeCallCount = 0
@@ -1814,11 +2534,24 @@ private final class ChannelAPIFaultController: @unchecked Sendable {
     let live = LibSSH2ChannelAPI.live
     return LibSSH2ChannelAPI(
       processStartup: { [self] pointer, command in
-        let reject = state.withLock { state in
+        let disposition = state.withLock { state in
+          state.startupCallCount += 1
+          if state.startupSuspended { return 1 }
           defer { state.rejectStartup = false }
-          return state.rejectStartup
+          return state.rejectStartup ? 2 : 0
         }
-        return reject ? LIBSSH2_ERROR_CHANNEL_REQUEST_DENIED : live.processStartup(pointer, command)
+        switch disposition {
+        case 1: return LIBSSH2_ERROR_EAGAIN
+        case 2: return LIBSSH2_ERROR_CHANNEL_REQUEST_DENIED
+        default: return live.processStartup(pointer, command)
+        }
+      },
+      write: { [self] pointer, bytes, count in
+        let suspended = state.withLock { state in
+          state.writeCallCount += 1
+          return state.writesSuspended
+        }
+        return suspended ? Int(LIBSSH2_ERROR_EAGAIN) : live.write(pointer, bytes, count)
       },
       close: { [self] pointer in
         let inject = state.withLock { state in
@@ -1843,6 +2576,8 @@ private final class ChannelAPIFaultController: @unchecked Sendable {
 
   var closeCallCount: Int { state.withLock(\.closeCallCount) }
   var freeCallCount: Int { state.withLock(\.freeCallCount) }
+  var writeCallCount: Int { state.withLock(\.writeCallCount) }
+  var startupCallCount: Int { state.withLock(\.startupCallCount) }
   var closeEAGAINRemaining: Int { state.withLock(\.closeEAGAINRemaining) }
   var freeEAGAINRemaining: Int { state.withLock(\.freeEAGAINRemaining) }
 
@@ -1851,6 +2586,22 @@ private final class ChannelAPIFaultController: @unchecked Sendable {
       $0.rejectStartup = true
       $0.freeEAGAINRemaining = freeEAGAINCount
     }
+  }
+
+  func suspendWrites() {
+    state.withLock { $0.writesSuspended = true }
+  }
+
+  func resumeWrites() {
+    state.withLock { $0.writesSuspended = false }
+  }
+
+  func suspendExecStartup() {
+    state.withLock { $0.startupSuspended = true }
+  }
+
+  func resumeExecStartup() {
+    state.withLock { $0.startupSuspended = false }
   }
 
   func armClose(closeEAGAINCount: Int, freeEAGAINCount: Int) {
@@ -1971,6 +2722,43 @@ private struct FixtureIdentities: SSHIdentityGenerator {
 
 private struct FixtureLogger: SSHTransportLogger {
   func log(level: TunnelLogLevel, event: SSHTransportEvent) async {}
+}
+
+private actor PrivacySurfaceRecorder: SSHTransportLogger, SSHTransportObserver,
+  SSHTransportMetricsSink
+{
+  private var logs: [(TunnelLogLevel, SSHTransportEvent)] = []
+  private var observerEvents: [SSHTransportEvent] = []
+  private var metricUpdates: [SSHMetricUpdate] = []
+
+  var logCount: Int { logs.count }
+  var observerEventCount: Int { observerEvents.count }
+  var metricUpdateCount: Int { metricUpdates.count }
+
+  func log(level: TunnelLogLevel, event: SSHTransportEvent) {
+    logs.append((level, event))
+  }
+
+  func observe(_ event: SSHTransportEvent) {
+    observerEvents.append(event)
+  }
+
+  func record(_ update: SSHMetricUpdate) {
+    metricUpdates.append(update)
+  }
+
+  func renderedPublicSurface(
+    errors: [SSHTransportError],
+    snapshots: [SSHTransportSnapshot]
+  ) -> String {
+    [
+      String(reflecting: errors),
+      String(reflecting: logs),
+      String(reflecting: observerEvents),
+      String(reflecting: metricUpdates),
+      String(reflecting: snapshots),
+    ].joined(separator: "\n")
+  }
 }
 
 private struct FixtureObserver: SSHTransportObserver {
@@ -2097,6 +2885,32 @@ private struct FixtureMetrics: SSHTransportMetricsSink {
   func record(_ update: SSHMetricUpdate) async {}
 }
 
+private actor RecordingFixtureMetrics: SSHTransportMetricsSink {
+  private var updates: [SSHMetricUpdate] = []
+
+  func record(_ update: SSHMetricUpdate) {
+    updates.append(update)
+  }
+
+  func total(for counter: SSHMetricCounter) -> UInt64 {
+    updates.reduce(into: 0) { total, update in
+      if case .increment(counter, let value) = update {
+        total += value
+      }
+    }
+  }
+
+  func lastValue(for gauge: SSHMetricGauge) -> Int64? {
+    updates.reversed().first { update in
+      if case .set(gauge, _) = update { return true }
+      return false
+    }.flatMap { update in
+      if case .set(_, let value) = update { return value }
+      return nil
+    }
+  }
+}
+
 private final class ManualFixtureClock: TunnelClock, @unchecked Sendable {
   private struct Sleep {
     let deadline: ContinuousClock.Instant
@@ -2161,24 +2975,32 @@ private func fixtureDependencies(
   trace: AdapterFixtureTrace,
   observer: any SSHTransportObserver = FixtureObserver(),
   clock: any TunnelClock = ContinuousTunnelClock(),
-  connector: (any SSHTCPConnector)? = nil
+  connector: (any SSHTCPConnector)? = nil,
+  metrics: any SSHTransportMetricsSink = FixtureMetrics(),
+  logger: any SSHTransportLogger = FixtureLogger(),
+  hostKeyPolicy: (any SSHHostKeyPolicy)? = nil,
+  credentialProvider: (any SSHCredentialProvider)? = nil
 ) -> SSHTransportDependencies {
   SSHTransportDependencies(
     resolver: FixtureResolver(),
     connector: connector ?? FixtureConnector(port: port),
-    hostKeyPolicy: AcceptingFixtureHostPolicy(trace: trace),
-    credentialProvider: FixtureCredentialProvider(credential: credential, trace: trace),
+    hostKeyPolicy: hostKeyPolicy ?? AcceptingFixtureHostPolicy(trace: trace),
+    credentialProvider: credentialProvider
+      ?? FixtureCredentialProvider(credential: credential, trace: trace),
     clock: clock,
     cancellation: TaskCancellationChecker(),
-    logger: FixtureLogger(),
+    logger: logger,
     observer: observer,
-    metrics: FixtureMetrics(),
+    metrics: metrics,
     identityGenerator: FixtureIdentities()
   )
 }
 
 private func fixtureConfiguration(
   port: UInt16,
+  canonicalHostname: String = "fixture.local",
+  endpointHost: String = "127.0.0.1",
+  username: String = NSUserName(),
   hostKeyAlgorithms: [String] = ["ssh-ed25519", "ecdsa-sha2-nistp256"],
   keyExchangeAlgorithms: [String] = [
     "curve25519-sha256", "curve25519-sha256@libssh.org",
@@ -2203,9 +3025,9 @@ private func fixtureConfiguration(
 ) throws -> SSHConnectionConfiguration {
   let timeout = Duration.seconds(10)
   return try SSHConnectionConfiguration(
-    canonicalHostname: "fixture.local",
-    endpoint: TunnelEndpoint(host: "127.0.0.1", port: port),
-    username: NSUserName(),
+    canonicalHostname: canonicalHostname,
+    endpoint: TunnelEndpoint(host: endpointHost, port: port),
+    username: username,
     profileReference: TunnelConfigurationReference(
       profileIdentifier: OpaqueProfileIdentifier(UUID())
     ),
@@ -2354,6 +3176,7 @@ private final class LoopbackSSHD {
   let hostKeyBlob: Data
   private let directory: URL
   private let process: Process
+  private let log: URL
 
   init(publicKey: String, algorithms: LoopbackSSHDAlgorithms? = nil) throws {
     guard FileManager.default.fileExists(atPath: "/usr/sbin/sshd") else {
@@ -2367,7 +3190,7 @@ private final class LoopbackSSHD {
     let hostKey = directory.appendingPathComponent("host-key")
     let authorizedKeys = directory.appendingPathComponent("authorized_keys")
     let configuration = directory.appendingPathComponent("sshd_config")
-    let log = directory.appendingPathComponent("sshd.log")
+    log = directory.appendingPathComponent("sshd.log")
     try Data("\(publicKey)\n".utf8).write(to: authorizedKeys, options: .atomic)
     try FileManager.default.setAttributes(
       [.posixPermissions: 0o600], ofItemAtPath: authorizedKeys.path)
@@ -2437,6 +3260,16 @@ private final class LoopbackSSHD {
     }
     stop()
     throw POSIXFixtureError.system(ECONNREFUSED)
+  }
+
+  var completedServerInitiatedRekey: Bool {
+    guard let contents = try? String(contentsOf: log, encoding: .utf8),
+      let authenticated = contents.range(of: "Entering interactive session for SSH2.")
+    else { return false }
+    let postAuthentication = contents[authenticated.upperBound...]
+    return postAuthentication.contains("ssh_packet_send2: rekex triggered")
+      && postAuthentication.contains("SSH2_MSG_NEWKEYS sent")
+      && postAuthentication.contains("SSH2_MSG_NEWKEYS received")
   }
 
   func stop() {

