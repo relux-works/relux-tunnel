@@ -1,5 +1,5 @@
 .PHONY: check-legacy test-legacy-guard check-core-boundaries core-build core-test \
-	workspace-generate workspace-validate \
+	workspace-generate workspace-validate macos-targets-validate \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
 	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
@@ -23,6 +23,9 @@ workspace-generate:
 
 workspace-validate:
 	./scripts/validate-workspace-foundation.sh
+
+macos-targets-validate:
+	./scripts/validate-macos-targets.sh
 
 check-legacy:
 	./scripts/check-legacy-preservation.sh --legacy-root "$(LEGACY_ROOT)"

@@ -3,6 +3,15 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-08-19
+
+### 0113 — macOS target implementation is ready for review; signed Gate P0 execution is separate (TASK-260715-uyju7n)
+- IMPLEMENTATION: The generated workspace now has a minimal macOS host and one embedded packet-tunnel system extension at `Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension`. The host and provider use the r12 identifiers, macOS 15 floor, shared build/protocol version, target-owned plists, and separate Development/Developer ID entitlement files. The provider imports NetworkExtension and implements only empty start/stop plus version-message handling.
+- VERIFICATION: Credential-free Debug and Release host builds, both Swift Testing target suites (6 host and 5 provider tests), the deterministic workspace gate, strict Swift format lint, all 443 SwiftPM tests, dependency inspection, plist/shell validation, `git diff --check`, and `task-board validate` exit 0.
+- SIGNING SCOPE: Gate P0 development settings remain target-specific and preserve the r12 entitlements without generated-state edits. Actual interactive signed-build execution is owned by `TASK-260819-2lu7p6`; earlier non-interactive attempts retained in task evidence exited 65 because the installed host profile/Keychain session was not usable, and no entitlement or capability was weakened.
+- LEGACY CHECK ANOMALY: `make check-legacy` exits 2 against the independently evolving `../relux-proxy` v0.2.0-dirty checkout because that external checkout no longer matches this repository's v0.1.0 byte/default baseline. The same check explicitly passes the task-relevant boundaries: SwiftPM package/target/executable remain `ReluxProxy`, deployment remains macOS 14, and the generated workspace claims none of the legacy-owned paths. This task does not modify or normalize the external checkout.
+- BUILD GRAPH: The minimal provider intentionally depends on `ReluxTunnelCore`, not `ReluxTunnelMacOSAdapter`. Adding the adapter exposed an existing SwiftPM/Xcode transitive binary-output collision: both `ReluxLibSSH2` and `CReluxNativeFixture` produce `include/module.modulemap`. Packet and transport implementation is out of this task's scope; the later runtime-integration task owns resolving that collision before adding the adapter dependency.
+
 ## 2026-08-18
 
 ### 2338 — ADR-014 binds libssh2 without promoting M3 evidence (TASK-260715-1gjxer)

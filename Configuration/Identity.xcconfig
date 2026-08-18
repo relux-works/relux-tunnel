@@ -2,6 +2,10 @@
 RELUX_DEVELOPMENT_TEAM = 262RZ595FP
 RELUX_MACOS_HOST_BUNDLE_ID = works.relux.tunnel.mac
 RELUX_MACOS_PROVIDER_BUNDLE_ID = works.relux.tunnel.mac.tunnel
+RELUX_MACOS_HOST_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements
+RELUX_MACOS_PROVIDER_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements
+RELUX_MACOS_HOST_PROFILE_SPECIFIER =
+RELUX_MACOS_PROVIDER_PROFILE_SPECIFIER =
 RELUX_IOS_HOST_BUNDLE_ID = works.relux.tunnel.ios
 RELUX_IOS_PROVIDER_BUNDLE_ID = works.relux.tunnel.ios.tunnel
 RELUX_IOS_APP_GROUP = group.works.relux.tunnel

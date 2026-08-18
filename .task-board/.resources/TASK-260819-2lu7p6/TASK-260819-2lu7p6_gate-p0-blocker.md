@@ -1,0 +1,5 @@
+# Generated macOS target signing blocker
+
+The checked-in target implementation passes credential-free Debug and Release builds and its contract tests. Three signed attempts exited 65 without modifying generated state. The installed host profile for works.relux.tunnel.mac lacks System Extension capability and com.apple.developer.system-extension.install. Automatic signing reports no usable Xcode account session. A provider-only attempt reached codesign and failed errSecInternalComponent because the Apple Development private key was unavailable to the non-interactive process.
+
+Resume input: enable System Extension for the host identifier on team 262RZ595FP, regenerate and install the host macOS Development profile, restore the Xcode account session, authorize the Apple Development private key for codesign, then rerun the signed target build. Do not weaken entitlements. Do not record profile contents, credentials, or private-key material.

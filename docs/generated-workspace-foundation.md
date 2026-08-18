@@ -25,6 +25,20 @@ Run the deterministic foundation gate with:
 make workspace-validate
 ```
 
+Validate the macOS containing app, its exactly-one embedded packet-tunnel
+system extension, both credential-free configurations, target-owned plists and
+versions, and the Swift Testing contract suites with:
+
+```bash
+make macos-targets-validate
+```
+
+This target gate writes build and test logs under
+`.temp/TASK-260715-uyju7n/`. Development signing remains an explicit Gate P0
+lane: copy `Signing.example.xcconfig` to the ignored local overlay or inject the
+same target-specific settings on the command line; generated Xcode state is
+never edited.
+
 The gate performs two clean generations, compares normalized generated file
 hashes (excluding Tuist's expected per-user `xcuserdata`), checks the exact
 Xcode-visible scheme list, verifies that `Package.swift` is unchanged, and

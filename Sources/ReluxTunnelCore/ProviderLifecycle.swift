@@ -308,7 +308,7 @@ public enum ProviderMessageCodec {
     return response
   }
 
-  static func response(to data: Data) throws -> Data {
+  public static func response(to data: Data) throws -> Data {
     try validateLegacyObject(data)
     let request: ProviderVersionRequest
     do {

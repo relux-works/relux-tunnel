@@ -4,4 +4,11 @@ CODE_SIGNING_ALLOWED = YES
 CODE_SIGNING_REQUIRED = YES
 DEVELOPMENT_TEAM = $(RELUX_DEVELOPMENT_TEAM)
 CODE_SIGN_IDENTITY = Apple Development
-PROVISIONING_PROFILE_SPECIFIER = replace-with-local-profile-name
+CODE_SIGN_STYLE = Automatic
+
+// Gate P0 development defaults. A later Developer ID lane overrides these two
+// entitlement paths and supplies its own profile/identity inputs.
+RELUX_MACOS_HOST_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements
+RELUX_MACOS_PROVIDER_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements
+RELUX_MACOS_HOST_PROFILE_SPECIFIER = Mac Team Provisioning Profile: works.relux.tunnel.mac
+RELUX_MACOS_PROVIDER_PROFILE_SPECIFIER = Mac Team Provisioning Profile: works.relux.tunnel.mac.tunnel

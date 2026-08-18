@@ -55,8 +55,12 @@ done
 
 grep -F 'Build configuration list for PBXProject "ReluxTunnelApp"' \
   ReluxTunnelApp.xcodeproj/project.pbxproj >/dev/null
-test "$(grep -c 'name = Debug;' ReluxTunnelApp.xcodeproj/project.pbxproj)" -eq 1
-test "$(grep -c 'name = Release;' ReluxTunnelApp.xcodeproj/project.pbxproj)" -eq 1
+xcodebuild -project ReluxTunnelApp.xcodeproj -list > "$task_output/xcodebuild-project-list.log"
+configuration_count=$(sed -n '/^[[:space:]]*Build Configurations:/,/If no build configuration/p' \
+  "$task_output/xcodebuild-project-list.log" | grep -c '^        [^ ]')
+test "$configuration_count" -eq 2
+grep -Fx '        Debug' "$task_output/xcodebuild-project-list.log" >/dev/null
+grep -Fx '        Release' "$task_output/xcodebuild-project-list.log" >/dev/null
 grep -F 'XCLocalSwiftPackageReference "."' \
   ReluxTunnelApp.xcodeproj/project.pbxproj >/dev/null
 if grep -F 'Signing.local.xcconfig' ReluxTunnelApp.xcodeproj/project.pbxproj >/dev/null; then
