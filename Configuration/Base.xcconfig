@@ -1,0 +1,20 @@
+// Shared, credential-free defaults for every generated Apple target.
+#include "Versions.xcconfig"
+#include "Identity.xcconfig"
+
+CODE_SIGNING_ALLOWED = NO
+CODE_SIGNING_REQUIRED = NO
+CODE_SIGN_IDENTITY =
+DEVELOPMENT_TEAM =
+PROVISIONING_PROFILE_SPECIFIER =
+
+MACOSX_DEPLOYMENT_TARGET = 15.0
+IPHONEOS_DEPLOYMENT_TARGET = 18.0
+
+SWIFT_VERSION = 6.0
+SWIFT_STRICT_CONCURRENCY = complete
+CLANG_ENABLE_MODULES = YES
+ENABLE_USER_SCRIPT_SANDBOXING = YES
+
+// An explicitly credentialed local/CI lane may override only signing inputs.
+#include? "Signing.local.xcconfig"

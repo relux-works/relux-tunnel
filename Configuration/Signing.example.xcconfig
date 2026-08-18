@@ -1,0 +1,7 @@
+// Copy to Signing.local.xcconfig and populate only for an explicitly credentialed lane.
+// Signing.local.xcconfig is ignored and must never contain private keys or profile data.
+CODE_SIGNING_ALLOWED = YES
+CODE_SIGNING_REQUIRED = YES
+DEVELOPMENT_TEAM = $(RELUX_DEVELOPMENT_TEAM)
+CODE_SIGN_IDENTITY = Apple Development
+PROVISIONING_PROFILE_SPECIFIER = replace-with-local-profile-name

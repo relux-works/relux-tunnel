@@ -1,0 +1,8 @@
+// Non-secret projection of the accepted 2026-07-28.r12 identity matrix.
+RELUX_DEVELOPMENT_TEAM = 262RZ595FP
+RELUX_MACOS_HOST_BUNDLE_ID = works.relux.tunnel.mac
+RELUX_MACOS_PROVIDER_BUNDLE_ID = works.relux.tunnel.mac.tunnel
+RELUX_IOS_HOST_BUNDLE_ID = works.relux.tunnel.ios
+RELUX_IOS_PROVIDER_BUNDLE_ID = works.relux.tunnel.ios.tunnel
+RELUX_IOS_APP_GROUP = group.works.relux.tunnel
+RELUX_IOS_KEYCHAIN_GROUP = $(AppIdentifierPrefix)works.relux.tunnel.shared

@@ -1,4 +1,5 @@
 .PHONY: check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+	workspace-generate workspace-validate \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
 	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
@@ -16,6 +17,12 @@
 	relay-toolchain-native-linux-smoke relay-toolchain-ci
 
 LEGACY_ROOT ?= ../relux-proxy
+
+workspace-generate:
+	./scripts/generate-workspace.sh --clean
+
+workspace-validate:
+	./scripts/validate-workspace-foundation.sh
 
 check-legacy:
 	./scripts/check-legacy-preservation.sh --legacy-root "$(LEGACY_ROOT)"

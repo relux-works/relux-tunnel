@@ -4,12 +4,14 @@
 .swiftpm/
 dist/
 *.xcworkspace
+*.xcodeproj
 xcuserdata/
 .agents/
 .claude/
 .codex/
 .local/
 .temp/
+Configuration/Signing.local.xcconfig
 .task-board/.progress-pair-generation
 .task-board/.progress-pair-journal.json
 **/__pycache__/

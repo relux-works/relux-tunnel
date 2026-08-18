@@ -1192,3 +1192,8 @@
 - DECISION: Tuist 4.202.5, macOS 15/iOS 18 floors, Debug/Release configurations, explicit credential-free/development/Developer ID signing lanes, r12 identifier injection, exact dependency pins, single version propagation, test ownership, and generated-versus-checked-in rules are binding in `docs/TASK-260715-32umrc_generated-project-architecture-adr.md`.
 - SCOPE: Gate P0 is consumed exactly as the accepted macOS PASS. iOS targets/identifiers remain defined but blocked and unbuilt under ADR-024/027; Gate A0 remains deferred and is not an input. The legacy macOS 14 SwiftPM product remains a separate regression/release lane until an explicit migration decision.
 - FINDING: The earlier focused DOT showed `ReluxTunnelCore -> native dependency seams`, opposite the implemented and documented package direction. The task-scoped diagram now consistently uses source-consumes-destination arrows and separates embedding from source dependency.
+
+### 0044 — macOS-only generation excludes deferred iOS schemes (TASK-260715-2btjwm)
+- REVIEW FINDING: Tuist's `hidden` scheme flag still emitted both deferred iOS shared schemes and left them discoverable to command-line CI, conflicting with the ADR requirement that they are disabled/not generated on the macOS-only path.
+- REWORK: `Project.swift` now has a checked-in `.macOSOnly` workspace-mode input that emits exactly the six active schemes. The stable iOS names remain source-controlled behind the future `.macOSAndIOS` mode, which may be selected only when ADR-024/ADR-027 resume and the iOS targets/actions land.
+- VERIFICATION: The workspace validator requires exactly six schemes and explicitly fails if either deferred iOS scheme appears in `xcodebuild -list` output.
