@@ -1,32 +1,59 @@
 digraph GeneratedTargetDependencyPlan {
   graph [
-    label=<Generated Apple target dependency direction>
+    label=<TASK-260715-32umrc: generated target dependencies<BR/><FONT POINT-SIZE="10">arrow = source consumes or contains destination; iOS is deferred</FONT>>
     labelloc=t
     rankdir=LR
     nodesep=0.5
     ranksep=0.8
   ]
   node [shape=box style=rounded]
+  edge [fontsize=10]
 
-  Legacy [label=<Existing ReluxProxy<BR/>SwiftPM menu-bar product<BR/><I>preserved until explicit migration</I>> style=<rounded,dashed>]
+  subgraph cluster_generated {
+    label=<Generated Apple workspace>
+    color="#7f8c8d"
 
-  MacHost [label=<ReluxProxyMac<BR/>containing app>]
-  MacProvider [label=<ReluxProxyMacTunnel<BR/>thin NE adapter>]
-  IOSHost [label=<ReluxProxyIOS<BR/>containing app>]
-  IOSProvider [label=<ReluxProxyIOSTunnel<BR/>thin NE adapter>]
-  Core [label=<ReluxTunnelCore<BR/>shared packet, SSH, relay,<BR/>lifecycle, memory contracts>]
-  Harness [label=<ReluxTunnelHarness<BR/>macOS CLI experiments>]
-  Native [label=<Pinned extension-safe<BR/>native dependency seams>]
-  Relay [label=<relux-relay and protocol tests<BR/>portable artifact shell>]
+    MacHost [label=<ReluxProxyMac<BR/>configuration / activation owner>]
+    MacProvider [label=<ReluxProxyMacTunnel<BR/>live-state owner / thin entry point>]
+    IOSHost [label=<ReluxProxyIOS<BR/>DEFERRED> style=<rounded,dashed> color="#7f8c8d"]
+    IOSProvider [label=<ReluxProxyIOSTunnel<BR/>DEFERRED> style=<rounded,dashed> color="#7f8c8d"]
+  }
 
-  MacHost -> MacProvider [label=<embeds and manages>]
-  IOSHost -> IOSProvider [label=<embeds and manages>]
-  MacProvider -> Core [label=<adapts provider lifecycle>]
-  IOSProvider -> Core [label=<adapts provider lifecycle>]
-  Harness -> Core [label=<runs the same core contracts>]
-  Core -> Native [label=<consumes through typed adapters>]
-  MacProvider -> Relay [label=<later bundles versioned artifact> style=dashed]
-  IOSProvider -> Relay [label=<later bundles versioned artifact> style=dashed]
+  subgraph cluster_swift {
+    label=<Local Swift package: ReluxTunnel>
+    color="#3498db"
 
-  Legacy -> MacHost [label=<coexists; no silent replacement> style=dashed arrowhead=none]
+    MacAdapter [label=<ReluxTunnelMacOSAdapter<BR/>thin NetworkExtension adapter>]
+    IOSAdapter [label=<ReluxTunnelIOSAdapter<BR/>thin adapter / DEFERRED> style=<rounded,dashed> color="#7f8c8d"]
+    SSHAdapter [label=<ReluxTunnelLibSSH2Adapter<BR/>selected macOS SSH adapter>]
+    Native [label=<ReluxTunnelNativeAdapter<BR/>static native boundary>]
+    Core [label=<ReluxTunnelCore<BR/>platform-neutral contracts / state>]
+    HarnessSupport [label=<ReluxTunnelHarnessSupport>]
+    Harness [label=<ReluxTunnelHarness<BR/>macOS CLI>]
+  }
+
+  Relay [label=<relux-relay + protocol test<BR/>verified Go artifacts / resource input>]
+  Legacy [label=<Existing ReluxProxy<BR/>separate SwiftPM macOS 14 lane> style=<rounded,dashed>]
+
+  MacHost -> MacProvider [label=<embeds / manages configuration> color="#1f618d"]
+  MacHost -> Core [label=<configuration models>]
+  MacProvider -> MacAdapter [label=<composition root>]
+  MacAdapter -> SSHAdapter
+  MacAdapter -> Native
+  MacAdapter -> Core
+  SSHAdapter -> Core
+  Native -> Core
+  MacProvider -> Relay [label=<bundles verified resource> style=dashed]
+  Harness -> HarnessSupport
+  HarnessSupport -> SSHAdapter
+  HarnessSupport -> Native
+  HarnessSupport -> Core
+
+  IOSHost -> IOSProvider [label=<embeds / manages configuration> style=dashed color="#7f8c8d"]
+  IOSProvider -> IOSAdapter [style=dashed color="#7f8c8d"]
+  IOSAdapter -> Native [style=dashed color="#7f8c8d"]
+  IOSAdapter -> Core [style=dashed color="#7f8c8d"]
+  IOSProvider -> Relay [label=<bundles verified resource> style=dashed color="#7f8c8d"]
+
+  Legacy -> MacHost [label=<coexists; no dependency or silent replacement> style=dashed dir=none]
 }
