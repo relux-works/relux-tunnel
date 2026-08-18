@@ -1560,6 +1560,135 @@ struct LibSSH2AdapterIntegrationTests {
     }
   }
 
+  @Test("approved real relux host passes the selected libssh2 compatibility row")
+  func approvedRealReluxHostCompatibility() async throws {
+    guard ProcessInfo.processInfo.environment["RELUX_RUN_REAL_HOST_LIBSSH2"] == "1" else {
+      print("REAL_RELUX_LIBSSH2_EVIDENCE status=NOT_RUN reason=explicit-opt-in-absent")
+      return
+    }
+
+    let tunnel = try RealReluxSSHTunnel()
+    let credentials = try SSHAgentFixtureCredential.availableApprovedCredentials()
+    #expect(!credentials.isEmpty)
+
+    var connected: (transport: LibSSH2Transport, session: SSHSession, trace: AdapterFixtureTrace)?
+    for credential in credentials {
+      let trace = AdapterFixtureTrace()
+      let transport =
+        try await LibSSH2TransportFactory(maximumTransportBufferBytes: 64 * 1_024)
+        .makeTransport(
+          lane: SSHLaneIdentity(rawValue: UUID()),
+          dependencies: fixtureDependencies(
+            port: tunnel.localPort,
+            credential: credential,
+            trace: trace
+          )
+        ) as! LibSSH2Transport
+      do {
+        let session = try await transport.connect(
+          configuration: fixtureConfiguration(
+            port: tunnel.localPort,
+            canonicalHostname: "approved-real-fixture.invalid",
+            username: tunnel.username,
+            keyExchangeAlgorithms: [
+              "curve25519-sha256", "curve25519-sha256@libssh.org",
+              "diffie-hellman-group14-sha256",
+            ],
+            cipherAlgorithms: ["aes256-ctr", "aes128-ctr"],
+            macAlgorithms: ["hmac-sha2-256", "hmac-sha2-512"]
+          )
+        )
+        connected = (transport, session, trace)
+        break
+      } catch {
+        await transport.close()
+        #expect(await transport.ownedResourceSnapshot() == .zero)
+      }
+    }
+
+    let established = try #require(connected)
+    let transport = established.transport
+    let session = established.session
+    #expect(session.hostDecision == .matchAccepted)
+    #expect(await established.trace.events == [.hostPolicy, .credentialLookup])
+    #expect(
+      ["curve25519-sha256", "curve25519-sha256@libssh.org", "diffie-hellman-group14-sha256"]
+        .contains(session.negotiatedAlgorithms.keyExchange)
+    )
+    #expect(
+      ["ssh-ed25519", "ecdsa-sha2-nistp256"]
+        .contains(session.negotiatedAlgorithms.hostKey)
+    )
+    #expect(
+      ["aes256-ctr", "aes128-ctr"]
+        .contains(session.negotiatedAlgorithms.cipherClientToServer)
+    )
+    #expect(
+      ["hmac-sha2-256", "hmac-sha2-512"]
+        .contains(session.negotiatedAlgorithms.macClientToServer)
+    )
+
+    async let firstDirect = transport.openDirectTCPIP(
+      destination: TunnelEndpoint(host: "127.0.0.1", port: tunnel.remoteSSHPort),
+      originator: TunnelEndpoint(host: "127.0.0.1", port: 42_421),
+      policy: fixtureChannelPolicy()
+    )
+    async let secondDirect = transport.openDirectTCPIP(
+      destination: TunnelEndpoint(host: "127.0.0.1", port: tunnel.remoteSSHPort),
+      originator: TunnelEndpoint(host: "127.0.0.1", port: 42_422),
+      policy: fixtureChannelPolicy()
+    )
+    let directChannels = try await (firstDirect, secondDirect)
+    async let firstBanner = directChannels.0.read(maximumBytes: 256)
+    async let secondBanner = directChannels.1.read(maximumBytes: 256)
+    let banners = try await (firstBanner, secondBanner)
+    #expect(try #require(banners.0).starts(with: Data("SSH-".utf8)))
+    #expect(try #require(banners.1).starts(with: Data("SSH-".utf8)))
+    await directChannels.0.close()
+    await directChannels.1.close()
+
+    let longLived = try await transport.openExecChannel(
+      request: SSHExecRequest(
+        command: "printf selected-engine-real-host; sleep 1; printf -- -compatible"
+      ),
+      policy: fixtureChannelPolicy()
+    )
+    #expect(
+      try await readAll(longLived)
+        == Data("selected-engine-real-host-compatible".utf8)
+    )
+    _ = try await longLived.waitForExit()
+    await longLived.close()
+
+    try await exerciseUpload(transport: transport)
+    try await transport.requestRekey(reason: .manual)
+    try await exerciseRepeatedConcurrentCancellation(transport: transport)
+
+    let snapshot = await transport.snapshot()
+    #expect(snapshot.connectionState == .ready)
+    #expect(snapshot.counters.authenticationSucceeded == 1)
+    #expect(snapshot.counters.directChannelsOpened == 2)
+    #expect(snapshot.counters.execChannelsOpened >= 7)
+    #expect(snapshot.counters.rekeysSucceeded >= 1)
+
+    await transport.close()
+    let resources = await transport.ownedResourceSnapshot()
+    #expect(resources == .zero)
+    print(
+      "REAL_RELUX_LIBSSH2_EVIDENCE "
+        + "kex=\(session.negotiatedAlgorithms.keyExchange) "
+        + "host_key=\(session.negotiatedAlgorithms.hostKey) "
+        + "cipher_c2s=\(session.negotiatedAlgorithms.cipherClientToServer) "
+        + "cipher_s2c=\(session.negotiatedAlgorithms.cipherServerToClient) "
+        + "mac_c2s=\(session.negotiatedAlgorithms.macClientToServer) "
+        + "mac_s2c=\(session.negotiatedAlgorithms.macServerToClient) "
+        + "auth_succeeded=\(snapshot.counters.authenticationSucceeded) "
+        + "direct_channels=\(snapshot.counters.directChannelsOpened) "
+        + "exec_channels=\(snapshot.counters.execChannelsOpened) "
+        + "rekeys_succeeded=\(snapshot.counters.rekeysSucceeded) cleanup_zero=\(resources == .zero)"
+    )
+  }
+
   @Test("Ed25519 authenticates through the opaque external signer after host approval")
   func ed25519ExternalSignerAuthentication() async throws {
     let recorder = SigningInvocationRecorder()
@@ -2966,6 +3095,229 @@ private final class ManualFixtureClock: TunnelClock, @unchecked Sendable {
       let limit = state.instant.advanced(by: duration)
       return state.sleeps.values.contains { $0.deadline <= limit }
     }
+  }
+}
+
+private final class RealReluxSSHTunnel: @unchecked Sendable {
+  let localPort: UInt16
+  let remoteSSHPort: UInt16
+  let username: String
+  private let process: Process
+
+  init() throws {
+    let config = try Self.approvedAliasConfiguration()
+    localPort = try unusedLoopbackPort()
+    remoteSSHPort = config.port
+    username = config.username
+    process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/ssh")
+    process.arguments = [
+      "-N", "-T", "-o", "BatchMode=yes", "-o", "ExitOnForwardFailure=yes",
+      "-o", "ControlMaster=no", "-L",
+      "127.0.0.1:\(localPort):127.0.0.1:\(remoteSSHPort)", "relux",
+    ]
+    process.standardOutput = FileHandle.nullDevice
+    process.standardError = FileHandle.nullDevice
+    try process.run()
+
+    let deadline = ContinuousClock.now.advanced(by: .seconds(10))
+    while ContinuousClock.now < deadline, process.isRunning {
+      if let connection = try? POSIXFixtureConnection.connect(port: localPort) {
+        Task { await connection.close() }
+        return
+      }
+      Thread.sleep(forTimeInterval: 0.02)
+    }
+    stop()
+    throw POSIXFixtureError.system(ECONNREFUSED)
+  }
+
+  deinit { stop() }
+
+  private func stop() {
+    guard process.isRunning else { return }
+    process.terminate()
+    let deadline = ContinuousClock.now.advanced(by: .seconds(1))
+    while process.isRunning, ContinuousClock.now < deadline {
+      Thread.sleep(forTimeInterval: 0.01)
+    }
+    if process.isRunning { Darwin.kill(process.processIdentifier, SIGKILL) }
+  }
+
+  private static func approvedAliasConfiguration() throws -> (username: String, port: UInt16) {
+    let process = Process()
+    let output = Pipe()
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/ssh")
+    process.arguments = ["-G", "relux"]
+    process.standardOutput = output
+    process.standardError = FileHandle.nullDevice
+    try process.run()
+    let data = output.fileHandleForReading.readDataToEndOfFile()
+    process.waitUntilExit()
+    guard process.terminationStatus == 0, let text = String(data: data, encoding: .utf8) else {
+      throw POSIXFixtureError.system(EINVAL)
+    }
+    var values: [String: String] = [:]
+    for line in text.split(separator: "\n") {
+      let fields = line.split(separator: " ", maxSplits: 1).map(String.init)
+      if fields.count == 2, values[fields[0]] == nil { values[fields[0]] = fields[1] }
+    }
+    guard let username = values["user"], !username.isEmpty,
+      let portText = values["port"], let port = UInt16(portText)
+    else {
+      throw POSIXFixtureError.system(EINVAL)
+    }
+    return (username, port)
+  }
+}
+
+private struct SSHAgentFixtureCredential: SSHPublicKeyCredential {
+  let algorithm: String
+  let publicKeyBytes: Data
+  private let socketPath: String
+
+  static func availableApprovedCredentials() throws -> [Self] {
+    guard let socketPath = ProcessInfo.processInfo.environment["SSH_AUTH_SOCK"],
+      !socketPath.isEmpty
+    else {
+      throw POSIXFixtureError.system(ENOENT)
+    }
+    var response = try exchange(Data([11]), socketPath: socketPath)
+    guard response.removeFirst() == 12 else { throw POSIXFixtureError.system(EPROTO) }
+    var reader = SSHAgentWireReader(response)
+    let count = try reader.readUInt32()
+    var credentials: [Self] = []
+    for _ in 0..<count {
+      let key = try reader.readString()
+      _ = try reader.readString()
+      var keyReader = SSHAgentWireReader(key)
+      guard let algorithm = String(data: try keyReader.readString(), encoding: .utf8),
+        algorithm == "ssh-ed25519" || algorithm == "ecdsa-sha2-nistp256"
+      else { continue }
+      credentials.append(Self(algorithm: algorithm, publicKeyBytes: key, socketPath: socketPath))
+    }
+    return credentials
+  }
+
+  func sign(_ payload: Data) async throws -> Data {
+    try await Task.detached {
+      var request = Data([13])
+      appendSSHString(publicKeyBytes, to: &request)
+      appendSSHString(payload, to: &request)
+      var flags = UInt32(0).bigEndian
+      withUnsafeBytes(of: &flags) { request.append(contentsOf: $0) }
+      var response = try Self.exchange(request, socketPath: socketPath)
+      guard response.removeFirst() == 14 else { throw POSIXFixtureError.system(EPROTO) }
+      var responseReader = SSHAgentWireReader(response)
+      var signatureReader = SSHAgentWireReader(try responseReader.readString())
+      guard String(data: try signatureReader.readString(), encoding: .utf8) == algorithm else {
+        throw POSIXFixtureError.system(EPROTO)
+      }
+      return try signatureReader.readString()
+    }.value
+  }
+
+  private static func exchange(_ request: Data, socketPath: String) throws -> Data {
+    let descriptor = Darwin.socket(AF_UNIX, SOCK_STREAM, 0)
+    guard descriptor >= 0 else { throw POSIXFixtureError.system(errno) }
+    defer { Darwin.close(descriptor) }
+    var address = sockaddr_un()
+    address.sun_len = UInt8(MemoryLayout<sockaddr_un>.size)
+    address.sun_family = sa_family_t(AF_UNIX)
+    let path = Array(socketPath.utf8CString)
+    let pathCapacity = MemoryLayout.size(ofValue: address.sun_path)
+    guard path.count <= pathCapacity else { throw POSIXFixtureError.system(ENAMETOOLONG) }
+    withUnsafeMutablePointer(to: &address.sun_path) { pointer in
+      pointer.withMemoryRebound(to: CChar.self, capacity: pathCapacity) { destination in
+        destination.initialize(repeating: 0, count: pathCapacity)
+        _ = path.withUnsafeBufferPointer { source in
+          memcpy(destination, source.baseAddress, source.count)
+        }
+      }
+    }
+    let connectResult = withUnsafePointer(to: &address) { pointer in
+      pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        Darwin.connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
+      }
+    }
+    guard connectResult == 0 else { throw POSIXFixtureError.system(errno) }
+
+    var frame = Data()
+    var requestLength = UInt32(request.count).bigEndian
+    withUnsafeBytes(of: &requestLength) { frame.append(contentsOf: $0) }
+    frame.append(request)
+    try writeAll(frame, to: descriptor)
+    let responseLengthData = try readExactly(4, from: descriptor)
+    let responseLength = responseLengthData.withUnsafeBytes {
+      UInt32(bigEndian: $0.loadUnaligned(as: UInt32.self))
+    }
+    guard responseLength > 0, responseLength <= 256 * 1_024 else {
+      throw POSIXFixtureError.system(EMSGSIZE)
+    }
+    return try readExactly(Int(responseLength), from: descriptor)
+  }
+
+  private static func writeAll(_ data: Data, to descriptor: Int32) throws {
+    var offset = 0
+    while offset < data.count {
+      let count = data.withUnsafeBytes {
+        Darwin.write(descriptor, $0.baseAddress!.advanced(by: offset), data.count - offset)
+      }
+      if count > 0 {
+        offset += count
+      } else if count < 0, errno == EINTR {
+        continue
+      } else {
+        throw POSIXFixtureError.system(errno)
+      }
+    }
+  }
+
+  private static func readExactly(_ count: Int, from descriptor: Int32) throws -> Data {
+    var result = Data(count: count)
+    var offset = 0
+    while offset < count {
+      let readCount = result.withUnsafeMutableBytes {
+        Darwin.read(descriptor, $0.baseAddress!.advanced(by: offset), count - offset)
+      }
+      if readCount > 0 {
+        offset += readCount
+      } else if readCount < 0, errno == EINTR {
+        continue
+      } else {
+        throw POSIXFixtureError.system(readCount == 0 ? ECONNRESET : errno)
+      }
+    }
+    return result
+  }
+}
+
+private struct SSHAgentWireReader {
+  private let data: Data
+  private var offset = 0
+
+  init(_ data: Data) { self.data = data }
+
+  mutating func readUInt32() throws -> UInt32 {
+    guard offset <= data.count - 4 else { throw POSIXFixtureError.system(EPROTO) }
+    let start = data.index(data.startIndex, offsetBy: offset)
+    let end = data.index(start, offsetBy: 4)
+    let value = data[start..<end].withUnsafeBytes {
+      UInt32(bigEndian: $0.loadUnaligned(as: UInt32.self))
+    }
+    offset += 4
+    return value
+  }
+
+  mutating func readString() throws -> Data {
+    let length = Int(try readUInt32())
+    guard length >= 0, offset <= data.count - length else {
+      throw POSIXFixtureError.system(EPROTO)
+    }
+    let start = data.index(data.startIndex, offsetBy: offset)
+    let end = data.index(start, offsetBy: length)
+    defer { offset += length }
+    return Data(data[start..<end])
   }
 }
 
