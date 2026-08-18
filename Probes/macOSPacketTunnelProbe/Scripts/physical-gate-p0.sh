@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROBE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 REPOSITORY_ROOT="$(cd "$PROBE_ROOT/../.." && pwd -P)"
+# shellcheck disable=SC1091
+source "$REPOSITORY_ROOT/scripts/physical-test-host-preflight.sh"
 TASK_ID="TASK-260715-9yp8to"
 EXPECTED_HOST_ID="works.relux.tunnel.probe.mac"
 EXPECTED_PROVIDER_ID="works.relux.tunnel.probe.mac.tunnel"
@@ -21,8 +23,9 @@ usage:
   physical-gate-p0.sh verify-log LOG CYCLES
 
 Installation and removal are deliberately separate privileged operator steps.
-This runner never invokes sudo, never changes VPN preferences except through
-the accepted probe, and never records device IDs or signing credentials.
+Run this script only on the configured dedicated Mac. It fails closed on the
+registered build host and without explicit dedicated-host opt-in. This runner
+never invokes sudo and never records raw device IDs or signing credentials.
 EOF
 }
 
@@ -153,6 +156,7 @@ preflight() {
   local profile_temp
   local signing_class
 
+  require_dedicated_physical_test_host
   [ -d "$app_path" ] || fail "archive application does not exist: $app_path"
   [ -d "$provider_path" ] || fail "embedded provider does not exist: $provider_path"
   mkdir -p "$OUTPUT_ROOT"
@@ -215,6 +219,7 @@ exercise() {
   local manager_count
   local timeout_seconds="${PROBE_CYCLE_TIMEOUT_SECONDS:-180}"
 
+  require_dedicated_physical_test_host
   [ -x "$app_binary" ] || fail "installed probe executable does not exist: $app_binary"
   [[ "$cycles" =~ ^[1-9][0-9]*$ ]] || fail "cycles must be a positive integer"
   mkdir -p "$OUTPUT_ROOT"

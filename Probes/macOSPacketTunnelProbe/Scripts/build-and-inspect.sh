@@ -35,6 +35,7 @@ run bash -n \
   "$SCRIPT_DIR/redact-build-log.sh" \
   "$SCRIPT_DIR/test-log-redaction.sh" \
   "$SCRIPT_DIR/test-inspector-drift.sh" \
+  "$REPOSITORY_ROOT/scripts/physical-test-host-preflight.sh" \
   "$SCRIPT_DIR/physical-gate-p0.sh" \
   "$SCRIPT_DIR/test-physical-gate-p0.sh"
 run "$SCRIPT_DIR/test-log-redaction.sh"

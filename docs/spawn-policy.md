@@ -122,3 +122,18 @@ real ambiguity, approval, secret, platform, or external-input gates.
 Persistent producer/reviewer continuity is not part of task-board `0.23.0`.
 Do not add `spawn.execution_policy` until the continuity branch is independently
 audited, rebased, released, and proven against real provider resume paths.
+
+## Build-host VPN prohibition
+
+All agent roles treat this development Mac as build-only. Spawns may run local
+builds, compilation, lint, unit/integration tests, harnesses, simulators, archive
+inspection, and unsigned provider tests. They must not install or open a VPN
+app/system extension, persist a NetworkExtension preference, start or activate
+a tunnel/provider, or mutate routes or DNS on this host.
+
+Any macOS physical VPN validation task must depend on the human provisioning
+gate `TASK-260819-25e1ys`. It executes only on the configured dedicated Mac and
+must first pass `scripts/physical-test-host-preflight.sh`; neither agent
+autonomy nor a spawned role may bypass that guard. The authoritative operation
+matrix and fail-closed identity contract are in
+[`build-host-safety.md`](build-host-safety.md).

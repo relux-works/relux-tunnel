@@ -5,9 +5,18 @@
 The riskiest assumptions are proven before broad UI work. Packet, SSH, relay,
 and lifecycle components are testable in `ReluxTunnelCore` or a macOS CLI
 harness; only Apple-specific packetFlow, entitlement, and lifecycle behavior
-require a signed provider on real hardware. Per ADR-024 that hardware is the
-current Apple-silicon Mac; physical-iPhone and jetsam rows are deferred with
-iOS and are recorded as named deferred gaps, never as passes.
+require a signed provider on real hardware. Per ADR-024, macOS remains the
+active physical platform, but the current development Mac is build-only. All
+network-mutating macOS physical rows require the separate host gate
+`TASK-260819-25e1ys` and the fail-closed preflight in
+`scripts/physical-test-host-preflight.sh`. Physical-iPhone and jetsam rows are
+deferred with iOS and are recorded as named deferred gaps, never as passes.
+
+No validation on the build host may install a system extension or VPN app,
+persist a real VPN preference, call `startVPNTunnel`, activate a provider, or
+change routes or DNS. Build, compile, unit, harness, simulator, inspection, and
+unsigned-provider validation remain local-safe. `docs/build-host-safety.md` is
+the authoritative host-operation policy.
 
 Tests MUST record device/OS, source revision, dependency revisions, configuration,
 duration, traffic shape, loss/latency conditions, peak physical footprint,
@@ -18,7 +27,7 @@ available-memory samples, channel/association counts, and drop/error counters.
 | Gate | Pass condition | Path |
 | --- | --- | --- |
 | A0 Platform intent | Evidence supports the architecture's Network Extension entitlement/App Store use, or the data plane is revised | **Release path only** (ADR-013). Not a gate for the macOS prototype; mandatory before iOS submission and before dependent public distribution claims |
-| P0 Provisioning | Relux Works host and packet-tunnel App IDs install and launch on the physical Apple-silicon Mac | Prototype. macOS-only (ADR-024); the physical-iPhone row is deferred with iOS |
+| P0 Provisioning | Relux Works host and packet-tunnel App IDs install and launch on a dedicated physical Mac distinct from the build host | Prototype. macOS-only (ADR-024), gated by `TASK-260819-25e1ys`; the physical-iPhone row is deferred with iOS |
 | M0 Bridge | Public packetFlow/socketpair bridge passes IPv4/IPv6, MTU, backpressure, cleanup, and physical memory tests on the Apple-silicon Mac | Prototype |
 | M0 SSH | The selected engine passes every Tier-1 M0-viability row in `ssh-transport.md`; Tier-2 semantics are surfaced as explicit not-reported/unsupported states | Prototype (ADR-023) |
 | M1 TCP/DNS | Full-device TCP and leak-free DNS work through one SSH host across representative apps on macOS | Prototype |

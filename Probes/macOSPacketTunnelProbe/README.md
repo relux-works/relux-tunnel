@@ -48,17 +48,21 @@ paths, and real command output under:
 
 ## Install and exercise
 
-Quit and remove any older copy, then install the inspected archive product:
+Installation and exercise are prohibited on the development/build Mac. They may
+occur only on a separately provisioned target after `TASK-260819-25e1ys` is
+satisfied. Transfer the inspected artifact through the approved operator path,
+open a remote session on that Mac, and run the guard there before any install or
+launch step:
 
 ```bash
-sudo ditto \
-  .temp/TASK-260715-1r0fxv/ReluxPacketTunnelProbe.xcarchive/Products/Applications/ReluxPacketTunnelProbe.app \
-  /Applications/ReluxPacketTunnelProbe.app
-open /Applications/ReluxPacketTunnelProbe.app
+export RELUX_PHYSICAL_TEST_OPT_IN=dedicated-mac-only
+export RELUX_PHYSICAL_TEST_HOST=the-dedicated-mac-hostname
+scripts/physical-test-host-preflight.sh
 ```
 
-Select **Run Probe** and approve the development VPN configuration if macOS
-asks. The expected lifecycle is configuration reload, `connecting`,
+The preflight must pass on the target itself. The separately authorized operator
+runbook owns installation, GUI approval, and removal; agents do not perform
+those actions. The expected lifecycle is configuration reload, `connecting`,
 `connected`, validated response `v1, running, packetForwarding=false`,
 `disconnecting`, and `disconnected`. **Stop** cancels an in-flight host task and
 requests provider stop. Launching with `--args --run-probe` starts the same path
