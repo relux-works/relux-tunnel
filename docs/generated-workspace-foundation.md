@@ -25,6 +25,36 @@ Run the deterministic foundation gate with:
 make workspace-validate
 ```
 
+From a clean checkout, the complete credential-free local/PR gate is:
+
+```bash
+make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy
+```
+
+Prerequisites are macOS with the repository's supported Xcode command-line
+tools, Mise, Python 3, Git, Make, curl, and a read-only legacy checkout that
+contains signed tag `v0.1.0`. The command installs the exact Tuist pin through
+Mise and downloads only checksum-pinned Go/Syft archives from
+`relay/toolchain-manifest-v1.json`. It runs the same entry point used by pull
+requests: deterministic generation, exact target/scheme checks, unsigned
+Debug/Release host and provider builds, shared Swift Testing suites, relay
+smoke, native packaging/linkage checks, and the detached legacy SwiftPM
+regression lane.
+
+The pull-request job uses the arm64 `macos-15` image, bootstraps Mise 2026.3.10
+through a commit-pinned action, and verifies the matching macOS arm64 binary
+checksum before invoking that same Make target. A contract regression test
+keeps the runner label and asset checksum paired. The action does not duplicate
+tool installation policy: the repository entry point still installs and
+verifies the Tuist version pinned in `mise.toml`.
+
+Task-scoped, credential-free logs are written only below
+`.temp/TASK-260715-sbrrp7/credential-free-validation/`. The environment record
+contains the source revision, public tool/SDK versions, deployment targets,
+and invoked schemes; it never dumps the process environment or signing inputs.
+The summary explicitly reports credentialed signing and deferred iOS lanes as
+`NOT RUN` with reasons.
+
 Validate the macOS containing app, its exactly-one embedded packet-tunnel
 system extension, both credential-free configurations, target-owned plists and
 versions, and the Swift Testing contract suites with:

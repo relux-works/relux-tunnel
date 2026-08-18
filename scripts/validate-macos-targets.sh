@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 task_output="$repo_root/.temp/TASK-260715-uyju7n"
 products="$task_output/Products"
 intermediates="$task_output/Intermediates"
@@ -13,11 +13,12 @@ cd "$repo_root"
 ./scripts/generate-workspace.sh --clean
 
 build_unsigned() {
-  configuration=$1
-  log_name=$(printf '%s' "$configuration" | tr '[:upper:]' '[:lower:]')
+  scheme=$1
+  configuration=$2
+  log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
   xcodebuild \
     -workspace ReluxTunnel.xcworkspace \
-    -scheme ReluxProxyMac \
+    -scheme "$scheme" \
     -configuration "$configuration" \
     -destination 'generic/platform=macOS' \
     -derivedDataPath "$derived_data" \
@@ -28,8 +29,10 @@ build_unsigned() {
     build > "$task_output/credential-free-$log_name-build.log" 2>&1
 }
 
-build_unsigned Debug
-build_unsigned Release
+for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+  build_unsigned "$scheme" Debug
+  build_unsigned "$scheme" Release
+done
 
 xcodebuild \
   -workspace ReluxTunnel.xcworkspace \
@@ -46,10 +49,15 @@ xcodebuild \
 host="$products/Debug/ReluxProxyMac.app"
 extensions="$host/Contents/Library/SystemExtensions"
 provider="$extensions/works.relux.tunnel.mac.tunnel.systemextension"
+provider_binary="$provider/Contents/MacOS/works.relux.tunnel.mac.tunnel"
+release_provider="$products/Release/ReluxProxyMac.app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension"
+release_provider_binary="$release_provider/Contents/MacOS/works.relux.tunnel.mac.tunnel"
 
 test -d "$host"
 test "$(find "$extensions" -mindepth 1 -maxdepth 1 -type d -name '*.systemextension' | wc -l | tr -d ' ')" -eq 1
 test -d "$provider"
+test -x "$provider_binary"
+test -x "$release_provider_binary"
 test "$(plutil -extract CFBundleIdentifier raw "$host/Contents/Info.plist")" = \
   'works.relux.tunnel.mac'
 test "$(plutil -extract CFBundleIdentifier raw "$provider/Contents/Info.plist")" = \
@@ -69,5 +77,67 @@ if find "$extensions" -mindepth 1 -maxdepth 1 -type d ! -name '*.systemextension
   echo "error: unexpected embedded item in SystemExtensions" >&2
   exit 1
 fi
+
+host_entitlements=Configuration/Entitlements/ReluxProxyMac-Development.entitlements
+provider_entitlements=Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements
+developer_id_host_entitlements=Configuration/Entitlements/ReluxProxyMac-DeveloperID.entitlements
+developer_id_provider_entitlements=Configuration/Entitlements/ReluxProxyMacTunnel-DeveloperID.entitlements
+
+for entitlements in \
+  "$host_entitlements" "$provider_entitlements" \
+  "$developer_id_host_entitlements" "$developer_id_provider_entitlements"; do
+  plutil -lint "$entitlements" >/dev/null
+done
+
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$host_entitlements")" = \
+  'packet-tunnel-provider'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$provider_entitlements")" = \
+  'packet-tunnel-provider'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$developer_id_host_entitlements")" = \
+  'packet-tunnel-provider-systemextension'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$developer_id_provider_entitlements")" = \
+  'packet-tunnel-provider-systemextension'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$host_entitlements")" = true
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$developer_id_host_entitlements")" = true
+for entitlements in "$provider_entitlements" "$developer_id_provider_entitlements"; do
+  if /usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$entitlements" >/dev/null 2>&1; then
+    echo "error: provider entitlement file must not install system extensions: $entitlements" >&2
+    exit 1
+  fi
+done
+
+for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+  xcodebuild \
+    -workspace ReluxTunnel.xcworkspace \
+    -scheme "$scheme" \
+    -configuration Debug \
+    -showBuildSettings > "$task_output/$scheme-build-settings.log"
+done
+grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
+grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+
+provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+test "$provider_architectures" = 'arm64 x86_64 '
+otool -L "$release_provider_binary" > "$task_output/provider-release-linkage.log"
+awk '/^[[:space:]]+\// { print $1 }' "$task_output/provider-release-linkage.log" |
+  while IFS= read -r dependency; do
+    case "$dependency" in
+      /usr/lib/*|/System/Library/Frameworks/*) ;;
+      *)
+        echo "error: disallowed provider dynamic dependency: $dependency" >&2
+        exit 1
+        ;;
+    esac
+  done
+nm -u "$release_provider_binary" > "$task_output/provider-release-undefined-symbols.log"
+for symbol in \
+  _NSAddImage _NSCreateObjectFileImageFromFile _dladdr _dlclose _dlopen _dlsym; do
+  if grep -F " $symbol" "$task_output/provider-release-undefined-symbols.log" >/dev/null; then
+    echo "error: disallowed runtime-loading symbol in provider: $symbol" >&2
+    exit 1
+  fi
+done
 
 echo "macOS host/provider target validation passed"

@@ -1,4 +1,4 @@
-.PHONY: check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+.PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
 	workspace-generate workspace-validate macos-targets-validate \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
@@ -17,6 +17,9 @@
 	relay-toolchain-native-linux-smoke relay-toolchain-ci
 
 LEGACY_ROOT ?= ../relux-proxy
+
+credential-free-validate:
+	./scripts/validate-credential-free.sh --legacy-root "$(LEGACY_ROOT)"
 
 workspace-generate:
 	./scripts/generate-workspace.sh --clean

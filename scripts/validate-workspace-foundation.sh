@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 task_output="$repo_root/.temp/TASK-260715-2btjwm"
 mkdir -p "$task_output"
 cd "$repo_root"
@@ -30,32 +30,23 @@ tracked_state_after=$(git status --porcelain=v1 --untracked-files=all -- . ':!.t
 test "$tracked_state_before" = "$tracked_state_after"
 
 xcodebuild -workspace ReluxTunnel.xcworkspace -list > "$task_output/xcodebuild-list.log"
-
-scheme_count=$(sed -n '/^[[:space:]]*Schemes:/,$p' "$task_output/xcodebuild-list.log" \
-  | grep -c '^        [^ ]')
-test "$scheme_count" -eq 6
-
-for scheme in \
-  ReluxProxyMac \
-  ReluxProxyMacTunnel \
-  ReluxTunnelCore \
-  ReluxTunnelHarness \
-  relux-relay \
-  relux-relay-protocol-test
-do
-  grep -F "        $scheme" "$task_output/xcodebuild-list.log" >/dev/null
-done
-
-for deferred_scheme in ReluxProxyIOS ReluxProxyIOSTunnel; do
-  if grep -F "        $deferred_scheme" "$task_output/xcodebuild-list.log" >/dev/null; then
-    echo "error: deferred iOS scheme must not be generated in macOS-only mode: $deferred_scheme" >&2
-    exit 1
-  fi
-done
+./scripts/check-workspace-schemes.sh "$task_output/xcodebuild-list.log"
 
 grep -F 'Build configuration list for PBXProject "ReluxTunnelApp"' \
   ReluxTunnelApp.xcodeproj/project.pbxproj >/dev/null
 xcodebuild -project ReluxTunnelApp.xcodeproj -list > "$task_output/xcodebuild-project-list.log"
+target_count=$(sed -n '/^[[:space:]]*Targets:/,/Build Configurations:/p' \
+  "$task_output/xcodebuild-project-list.log" | grep -c '^        [^ ]')
+test "$target_count" -eq 4
+for target in ReluxProxyMac ReluxProxyMacTunnel ReluxProxyMacTests ReluxProxyMacTunnelTests; do
+  grep -Fx "        $target" "$task_output/xcodebuild-project-list.log" >/dev/null
+done
+for deferred_target in ReluxProxyIOS ReluxProxyIOSTunnel ReluxProxyIOSTests ReluxProxyIOSTunnelTests; do
+  if grep -Fx "        $deferred_target" "$task_output/xcodebuild-project-list.log" >/dev/null; then
+    echo "error: deferred iOS target must not be generated in macOS-only mode: $deferred_target" >&2
+    exit 1
+  fi
+done
 configuration_count=$(sed -n '/^[[:space:]]*Build Configurations:/,/If no build configuration/p' \
   "$task_output/xcodebuild-project-list.log" | grep -c '^        [^ ]')
 test "$configuration_count" -eq 2

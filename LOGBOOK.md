@@ -5,6 +5,11 @@
 
 ## 2026-08-19
 
+### 0148 — Credential-free generated-project gate closes exact-graph and clean-runner gaps (TASK-260715-sbrrp7)
+- REVIEW REWORK: Workspace scheme validation now compares the complete normalized six-scheme set. Regression fixtures reject missing-only, unexpected-only, and the prior substring-alias case where `ReluxProxyMacTunnel` masked a missing `ReluxProxyMac`.
+- CI BOOTSTRAP: The macOS pull-request lane installs Mise 2026.3.10 through `jdx/mise-action` pinned to commit `3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518` and verifies the macOS arm64 binary SHA-256 matching the arm64 `macos-15` runner before invoking the repository-owned Make entry point. A contract regression keeps the runner label and checksum paired. Tuist installation remains pinned and owned by that entry point.
+- VERIFICATION: `make credential-free-validate LEGACY_ROOT=/Users/iv/Developer/relux-proxy` exits 0 across contract regressions, deterministic generation, unsigned Debug/Release host and provider builds, entitlement/embedding/linkage checks, 443 Swift tests in 37 suites with 25 intentional known issues, Release build, native packaging, relay smoke, and isolated v0.1.0 legacy tests/build. Signing-required and deferred-iOS lanes are explicitly `NOT RUN`.
+
 ### 0113 — macOS target implementation is ready for review; signed Gate P0 execution is separate (TASK-260715-uyju7n)
 - IMPLEMENTATION: The generated workspace now has a minimal macOS host and one embedded packet-tunnel system extension at `Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension`. The host and provider use the r12 identifiers, macOS 15 floor, shared build/protocol version, target-owned plists, and separate Development/Developer ID entitlement files. The provider imports NetworkExtension and implements only empty start/stop plus version-message handling.
 - VERIFICATION: Credential-free Debug and Release host builds, both Swift Testing target suites (6 host and 5 provider tests), the deterministic workspace gate, strict Swift format lint, all 443 SwiftPM tests, dependency inspection, plist/shell validation, `git diff --check`, and `task-board validate` exit 0.

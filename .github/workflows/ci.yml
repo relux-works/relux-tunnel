@@ -14,6 +14,47 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  generated-project-credential-free:
+    name: generated project credential-free validation
+    # macos-15 is the arm64 image; keep this label paired with the arm64 Mise checksum.
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: relux-tunnel
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: relux-works/relux-proxy
+          ref: 2557aba1c030d0643d76e0bc3b185f6d5fd172e1
+          fetch-depth: 0
+          persist-credentials: false
+          path: relux-proxy
+
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4.2.5
+        with:
+          version: 2026.3.10
+          sha256: c7a0eb1035de974b42d36b69c4b55b836c06b455b990dd6ac530aaf05d4a8a17 # mise-v2026.3.10-macos-arm64
+          install: false
+          cache: false
+
+      - name: Run the local credential-free gate
+        working-directory: relux-tunnel
+        run: make credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"
+
+      - name: Upload privacy-safe validation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: credential-free-generated-project-${{ github.run_id }}
+          path: |
+            relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/summary.log
+            relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/environment.log
+            relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/logs
+          if-no-files-found: error
+          retention-days: 14
+
   validate:
     name: board + spec validation
     runs-on: ubuntu-latest
