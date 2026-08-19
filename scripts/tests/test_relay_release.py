@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import importlib.util
+import hashlib
 import io
 import json
 import os
 from pathlib import Path
+import stat
 import struct
 import tarfile
 import tempfile
@@ -336,9 +338,10 @@ class RelayReleaseTests(unittest.TestCase):
 
     def test_build_sandbox_rejects_symlink_and_non_directory_roots(self) -> None:
         relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(
-            dir=relay_release.BUILD_ROOT
-        ) as temporary, tempfile.TemporaryDirectory() as external:
+        with (
+            tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary,
+            tempfile.TemporaryDirectory() as external,
+        ):
             directory = Path(temporary)
             symlinked = directory / "symlinked-workspace"
             symlinked.symlink_to(external, target_is_directory=True)
@@ -384,9 +387,11 @@ class RelayReleaseTests(unittest.TestCase):
             "GOPATH": "go-path",
         }
         for variable, child_name in child_names.items():
-            with self.subTest(variable=variable), tempfile.TemporaryDirectory(
-                dir=relay_release.BUILD_ROOT
-            ) as temporary, tempfile.TemporaryDirectory() as external:
+            with (
+                self.subTest(variable=variable),
+                tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary,
+                tempfile.TemporaryDirectory() as external,
+            ):
                 sandbox = Path(temporary) / "workspace"
                 sandbox.mkdir()
                 (sandbox / child_name).symlink_to(external, target_is_directory=True)
@@ -412,9 +417,10 @@ class RelayReleaseTests(unittest.TestCase):
 
     def test_isolated_child_must_resolve_below_sandbox(self) -> None:
         relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(
-            dir=relay_release.BUILD_ROOT
-        ) as temporary, tempfile.TemporaryDirectory() as external:
+        with (
+            tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary,
+            tempfile.TemporaryDirectory() as external,
+        ):
             sandbox = Path(temporary)
             with self.assertRaises(relay_release.ReleaseError) as raised:
                 relay_release.resolve_isolated_child(
@@ -485,6 +491,55 @@ class RelayReleaseTests(unittest.TestCase):
                     darwin, relay_release.TARGETS[1]
                 )
 
+    def test_binary_inspection_rejects_truncated_and_wrong_architecture(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            binary = directory / "relay"
+
+            binary.write_bytes(b"truncated")
+            for verifier, target, message in (
+                (
+                    relay_release.verify_binary_format,
+                    relay_release.TARGETS[2],
+                    "unexpected Linux file format",
+                ),
+                (
+                    relay_release.verify_binary_format,
+                    relay_release.TARGETS[1],
+                    "unexpected Darwin file format",
+                ),
+                (
+                    relay_release.verify_linkage_contract,
+                    relay_release.TARGETS[2],
+                    "not little-endian ELF64",
+                ),
+                (
+                    relay_release.verify_linkage_contract,
+                    relay_release.TARGETS[1],
+                    "not little-endian Mach-O 64",
+                ),
+                (
+                    relay_release.verify_debug_symbol_contract,
+                    relay_release.TARGETS[2],
+                    "Linux debug-symbol metadata is invalid",
+                ),
+                (
+                    relay_release.verify_debug_symbol_contract,
+                    relay_release.TARGETS[1],
+                    "Darwin debug-symbol metadata is invalid",
+                ),
+            ):
+                with self.subTest(verifier=verifier.__name__, target=target):
+                    with self.assertRaisesRegex(relay_release.ReleaseError, message):
+                        verifier(binary, target)
+
+            self.write_elf_fixture(binary, 183, [1])
+            with self.assertRaisesRegex(relay_release.ReleaseError, "architecture"):
+                relay_release.verify_binary_format(binary, relay_release.TARGETS[2])
+            self.write_macho_fixture(binary, 0x01000007)
+            with self.assertRaisesRegex(relay_release.ReleaseError, "architecture"):
+                relay_release.verify_binary_format(binary, relay_release.TARGETS[1])
+
     def write_portable_asset_fixture(self, root: Path) -> None:
         for target in relay_release.TARGETS:
             directory = root / relay_release.target_directory(target)
@@ -497,6 +552,164 @@ class RelayReleaseTests(unittest.TestCase):
                 cpu_type = 0x01000007 if target["arch"] == "amd64" else 0x0100000C
                 self.write_macho_fixture(binary, cpu_type)
             binary.chmod(0o755)
+
+    def test_portable_asset_archive_has_exact_deterministic_contract(self) -> None:
+        epoch = 1_784_656_987
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            portable_root = directory / "portable"
+            portable_root.mkdir()
+            self.write_portable_asset_fixture(portable_root)
+            first_archive = directory / "first.tar.gz"
+            second_archive = directory / "second.tar.gz"
+
+            relay_release.write_portable_asset_archive(
+                portable_root, first_archive, str(epoch)
+            )
+            relay_release.write_portable_asset_archive(
+                portable_root, second_archive, str(epoch)
+            )
+            first_bytes = first_archive.read_bytes()
+            relay_release.write_portable_asset_archive(
+                portable_root, first_archive, str(epoch)
+            )
+
+            expected: dict[str, tuple[int, str]] = {}
+            for target in relay_release.TARGETS:
+                directory_name = relay_release.target_directory(target)
+                filename = relay_release.target_filename(target)
+                binary = portable_root / directory_name / filename
+                contents = binary.read_bytes()
+                expected[f"{directory_name}/{filename}"] = (
+                    len(contents),
+                    hashlib.sha256(contents).hexdigest(),
+                )
+
+            self.assertEqual(first_archive.read_bytes(), first_bytes)
+            self.assertEqual(first_archive.read_bytes(), second_archive.read_bytes())
+            with tarfile.open(first_archive, "r:gz") as bundle:
+                members = bundle.getmembers()
+                self.assertEqual([member.name for member in members], list(expected))
+                self.assertEqual(len(members), 4)
+                for member in members:
+                    with self.subTest(member=member.name):
+                        self.assertTrue(member.isfile())
+                        self.assertEqual(member.mode, 0o755)
+                        self.assertEqual((member.uid, member.gid), (0, 0))
+                        self.assertEqual((member.uname, member.gname), ("root", "root"))
+                        self.assertEqual(member.mtime, epoch)
+                        self.assertIsInstance(member.mtime, int)
+                        self.assertEqual(member.pax_headers, {})
+                        self.assertNotIn("/._", member.name)
+                        stream = bundle.extractfile(member)
+                        self.assertIsNotNone(stream)
+                        contents = stream.read()
+                        self.assertEqual(len(contents), expected[member.name][0])
+                        self.assertEqual(
+                            hashlib.sha256(contents).hexdigest(),
+                            expected[member.name][1],
+                        )
+
+            first_binary = portable_root / next(iter(expected))
+            apple_double = first_binary.with_name(f"._{first_binary.name}")
+            apple_double.write_bytes(b"undeclared metadata")
+            with self.assertRaisesRegex(relay_release.ReleaseError, "not canonical"):
+                relay_release.write_portable_asset_archive(
+                    portable_root, first_archive, str(epoch)
+                )
+            apple_double.unlink()
+            first_binary.chmod(0o700)
+            with self.assertRaisesRegex(relay_release.ReleaseError, "invalid"):
+                relay_release.write_portable_asset_archive(
+                    portable_root, first_archive, str(epoch)
+                )
+
+    def test_archive_assets_ignores_planted_predictable_symlink_and_cleans_owned_temp(
+        self,
+    ) -> None:
+        epoch = 1_784_656_987
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            directory = Path(temporary)
+            portable_root = directory / "portable"
+            portable_root.mkdir()
+            self.write_portable_asset_fixture(portable_root)
+            archive = directory / "portable-assets.tar.gz"
+            victim = directory / "victim.txt"
+            victim.write_bytes(b"must remain unchanged")
+            victim_hash = hashlib.sha256(victim.read_bytes()).hexdigest()
+            planted = directory / f".{archive.name}.tmp"
+            planted.symlink_to(victim)
+
+            arguments = [
+                "relay_release.py",
+                "archive-assets",
+                "--portable-root",
+                str(portable_root),
+                "--archive",
+                str(archive),
+                "--source-date-epoch",
+                str(epoch),
+            ]
+            with mock.patch.object(os.sys, "argv", arguments):
+                self.assertEqual(relay_release.main(), 0)
+
+            self.assertEqual(
+                hashlib.sha256(victim.read_bytes()).hexdigest(), victim_hash
+            )
+            self.assertTrue(planted.is_symlink())
+            self.assertEqual(planted.resolve(), victim)
+            archive_status = archive.stat(follow_symlinks=False)
+            self.assertTrue(stat.S_ISREG(archive_status.st_mode))
+            self.assertFalse(archive.is_symlink())
+            with tarfile.open(archive, "r:gz") as bundle:
+                members = bundle.getmembers()
+                expected_names = [
+                    f"{relay_release.target_directory(target)}/"
+                    f"{relay_release.target_filename(target)}"
+                    for target in relay_release.TARGETS
+                ]
+                self.assertEqual([member.name for member in members], expected_names)
+                self.assertEqual(len(members), 4)
+                for member in members:
+                    with self.subTest(member=member.name):
+                        source = portable_root / member.name
+                        contents = source.read_bytes()
+                        self.assertTrue(member.isfile())
+                        self.assertEqual(member.mode, 0o755)
+                        self.assertEqual((member.uid, member.gid), (0, 0))
+                        self.assertEqual((member.uname, member.gname), ("root", "root"))
+                        self.assertEqual(member.mtime, epoch)
+                        self.assertIsInstance(member.mtime, int)
+                        self.assertEqual(member.pax_headers, {})
+                        stream = bundle.extractfile(member)
+                        self.assertIsNotNone(stream)
+                        archived = stream.read()
+                        self.assertEqual(len(archived), len(contents))
+                        self.assertEqual(
+                            hashlib.sha256(archived).hexdigest(),
+                            hashlib.sha256(contents).hexdigest(),
+                        )
+
+            archive.unlink()
+            with (
+                mock.patch.object(os.sys, "argv", arguments),
+                mock.patch.object(
+                    relay_release.os,
+                    "replace",
+                    side_effect=OSError("injected replacement failure"),
+                ),
+            ):
+                self.assertEqual(relay_release.main(), 1)
+            self.assertFalse(archive.exists())
+            self.assertEqual(
+                hashlib.sha256(victim.read_bytes()).hexdigest(), victim_hash
+            )
+            self.assertTrue(planted.is_symlink())
+            self.assertEqual(
+                sorted(path.name for path in directory.glob(f".{archive.name}.*.tmp")),
+                [],
+            )
 
     def test_portable_asset_report_is_exact_budgeted_and_path_free(self) -> None:
         relay_version = "0.1.0"
@@ -614,6 +827,45 @@ class RelayReleaseTests(unittest.TestCase):
                 relay_release.inspect_portable_assets(arguments)
             retained = json.loads(report_path.read_text(encoding="utf-8"))
             self.assertFalse(retained["withinBundleBudget"])
+            self.assertEqual(len(retained["artifacts"]), 4)
+
+    def test_inspect_assets_accepts_exact_budget_with_clean_checkout(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        manifest = relay_release.verify_toolchain_manifest()
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            fixture = Path(temporary)
+            portable_root = fixture / "portable"
+            portable_root.mkdir()
+            self.write_portable_asset_fixture(portable_root)
+            report_path = fixture / "portable-assets-v1.json"
+            report_path.write_text("previous report\n", encoding="utf-8")
+            arguments = mock.Mock(
+                go="go",
+                go_toolchain="local",
+                relay_version="0.1.0",
+                source_commit="0123456789abcdef0123456789abcdef01234567",
+                source_date_epoch="1784563200",
+                bundle_budget_bytes=1_000_000,
+                portable_root=str(portable_root),
+                report=str(report_path),
+                require_clean=True,
+            )
+            with (
+                mock.patch.object(relay_release, "verify_checkout_revision"),
+                mock.patch.object(relay_release, "verify_clean_checkout") as clean,
+                mock.patch.object(
+                    relay_release,
+                    "verify_toolchain_manifest",
+                    return_value=manifest,
+                ),
+                mock.patch.object(relay_release, "verify_go_module_policy"),
+                mock.patch.object(relay_release, "verify_go_toolchain"),
+                mock.patch.object(relay_release, "verify_go_build_info"),
+            ):
+                relay_release.inspect_portable_assets(arguments)
+            clean.assert_called_once_with(arguments.source_commit)
+            retained = json.loads(report_path.read_text(encoding="utf-8"))
+            self.assertTrue(retained["withinBundleBudget"])
             self.assertEqual(len(retained["artifacts"]), 4)
 
     def test_output_paths_cannot_escape_build_root(self) -> None:
@@ -1025,21 +1277,24 @@ class RelayReleaseTests(unittest.TestCase):
 
             identity_path = fixture / "canonical-identity.json"
             identity_path.write_bytes(canonical_identity)
-            with mock.patch(
-                "sys.argv",
-                [
-                    str(SCRIPT),
-                    "verify-identity",
-                    "--target",
-                    target_name,
-                    "--manifest",
-                    str(manifest_path),
-                    "--executable",
-                    str(selected_copy),
-                    "--identity-output",
-                    str(identity_path),
-                ],
-            ), mock.patch("sys.stderr", new_callable=io.StringIO) as diagnostics:
+            with (
+                mock.patch(
+                    "sys.argv",
+                    [
+                        str(SCRIPT),
+                        "verify-identity",
+                        "--target",
+                        target_name,
+                        "--manifest",
+                        str(manifest_path),
+                        "--executable",
+                        str(selected_copy),
+                        "--identity-output",
+                        str(identity_path),
+                    ],
+                ),
+                mock.patch("sys.stderr", new_callable=io.StringIO) as diagnostics,
+            ):
                 self.assertEqual(relay_release.main(), 0)
                 self.assertEqual(diagnostics.getvalue(), "")
 
@@ -1143,21 +1398,24 @@ class RelayReleaseTests(unittest.TestCase):
             with self.subTest("CLI mismatch is stable and privacy safe"):
                 mismatch_path = fixture / "mismatched-identity.json"
                 mismatch_path.write_bytes(identity_output("0" * 64))
-                with mock.patch(
-                    "sys.argv",
-                    [
-                        str(SCRIPT),
-                        "verify-identity",
-                        "--target",
-                        target_name,
-                        "--manifest",
-                        str(manifest_path),
-                        "--executable",
-                        str(selected_copy),
-                        "--identity-output",
-                        str(mismatch_path),
-                    ],
-                ), mock.patch("sys.stderr", new_callable=io.StringIO) as diagnostics:
+                with (
+                    mock.patch(
+                        "sys.argv",
+                        [
+                            str(SCRIPT),
+                            "verify-identity",
+                            "--target",
+                            target_name,
+                            "--manifest",
+                            str(manifest_path),
+                            "--executable",
+                            str(selected_copy),
+                            "--identity-output",
+                            str(mismatch_path),
+                        ],
+                    ),
+                    mock.patch("sys.stderr", new_callable=io.StringIO) as diagnostics,
+                ):
                     self.assertEqual(relay_release.main(), 1)
                     self.assertEqual(
                         diagnostics.getvalue(),

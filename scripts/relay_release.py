@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
+import io
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -16,6 +18,7 @@ import struct
 import subprocess
 import sys
 import tarfile
+import tempfile
 from typing import Any
 
 
@@ -1438,6 +1441,110 @@ def portable_asset_report(
     return report
 
 
+def portable_asset_paths(portable_root: Path) -> list[tuple[str, Path]]:
+    validate_isolated_directory(portable_root, "portable asset root", create=False)
+    expected_directories = {target_directory(target) for target in TARGETS}
+    actual_directories = {entry.name for entry in portable_root.iterdir()}
+    if actual_directories != expected_directories:
+        raise ReleaseError(
+            "portable asset root must contain exactly four target directories"
+        )
+
+    assets: list[tuple[str, Path]] = []
+    for target in TARGETS:
+        directory_name = target_directory(target)
+        directory = portable_root / directory_name
+        validate_isolated_directory(
+            directory,
+            f"portable target directory {directory_name}",
+            create=False,
+        )
+        filename = target_filename(target)
+        entries = list(directory.iterdir())
+        if len(entries) != 1 or entries[0].name != filename:
+            raise ReleaseError(
+                f"portable target directory is not canonical: {filename}"
+            )
+        binary = entries[0]
+        try:
+            status = binary.stat(follow_symlinks=False)
+        except OSError as error:
+            raise ReleaseError(
+                f"portable executable is unavailable: {filename}"
+            ) from error
+        if (
+            not stat.S_ISREG(status.st_mode)
+            or status.st_size <= 0
+            or stat.S_IMODE(status.st_mode) != 0o755
+        ):
+            raise ReleaseError(f"portable executable is invalid: {filename}")
+        assets.append((f"{directory_name}/{filename}", binary))
+    return assets
+
+
+def write_portable_asset_archive(
+    portable_root: Path, archive_path: Path, source_date_epoch: str
+) -> None:
+    epoch = int(validate_source_date_epoch(source_date_epoch))
+    assets = portable_asset_paths(portable_root)
+    archive_path.parent.mkdir(parents=True, exist_ok=True)
+    if archive_path.exists() or archive_path.is_symlink():
+        try:
+            archive_status = archive_path.stat(follow_symlinks=False)
+        except OSError as error:
+            raise ReleaseError("portable archive output cannot be inspected") from error
+        if not stat.S_ISREG(archive_status.st_mode):
+            raise ReleaseError("portable archive output must be a regular file")
+
+    temporary_fd, temporary_name = tempfile.mkstemp(
+        dir=archive_path.parent,
+        prefix=f".{archive_path.name}.",
+        suffix=".tmp",
+    )
+    temporary = Path(temporary_name)
+    temporary_status = os.fstat(temporary_fd)
+    try:
+        with os.fdopen(temporary_fd, "wb") as raw_stream:
+            temporary_fd = -1
+            with gzip.GzipFile(
+                filename="", mode="wb", fileobj=raw_stream, mtime=epoch
+            ) as compressed_stream:
+                with tarfile.open(
+                    fileobj=compressed_stream,
+                    mode="w",
+                    format=tarfile.USTAR_FORMAT,
+                ) as bundle:
+                    for member_name, binary in assets:
+                        contents = binary.read_bytes()
+                        member = tarfile.TarInfo(member_name)
+                        member.size = len(contents)
+                        member.mode = 0o755
+                        member.uid = 0
+                        member.gid = 0
+                        member.uname = "root"
+                        member.gname = "root"
+                        member.mtime = epoch
+                        bundle.addfile(member, io.BytesIO(contents))
+        os.replace(temporary, archive_path)
+        archive_status = archive_path.stat(follow_symlinks=False)
+        if not stat.S_ISREG(archive_status.st_mode):
+            raise ReleaseError("portable archive output must be a regular file")
+    finally:
+        if temporary_fd >= 0:
+            os.close(temporary_fd)
+        try:
+            current_status = temporary.stat(follow_symlinks=False)
+        except FileNotFoundError:
+            pass
+        else:
+            if (
+                stat.S_ISREG(current_status.st_mode)
+                and current_status.st_dev == temporary_status.st_dev
+                and current_status.st_ino == temporary_status.st_ino
+            ):
+                temporary.unlink()
+
+
 def expected_manifest_keys() -> tuple[set[str], set[str], set[str]]:
     return (
         {
@@ -1937,6 +2044,16 @@ def inspect_portable_assets(arguments: argparse.Namespace) -> None:
         raise ReleaseError(f"portable assets exceed bundle budget by {overage} bytes")
 
 
+def archive_portable_assets(arguments: argparse.Namespace) -> None:
+    portable_root = validate_output_path(Path(arguments.portable_root))
+    archive_path = validate_output_path(Path(arguments.archive))
+    if portable_root == archive_path or portable_root in archive_path.parents:
+        raise ReleaseError("portable archive must remain outside the four-asset root")
+    write_portable_asset_archive(
+        portable_root, archive_path, arguments.source_date_epoch
+    )
+
+
 def extract_toolchain_licenses(arguments: argparse.Namespace) -> None:
     arguments.go = resolve_tool_command(arguments.go)
     verify_toolchain_manifest()
@@ -2152,6 +2269,15 @@ def parser() -> argparse.ArgumentParser:
     inspect_assets.add_argument("--require-clean", action="store_true")
     add_toolchain_options(inspect_assets)
     inspect_assets.set_defaults(action=inspect_portable_assets)
+
+    archive_assets = subparsers.add_parser(
+        "archive-assets",
+        help="write a deterministic four-member portable relay archive",
+    )
+    archive_assets.add_argument("--portable-root", required=True)
+    archive_assets.add_argument("--archive", required=True)
+    archive_assets.add_argument("--source-date-epoch", required=True)
+    archive_assets.set_defaults(action=archive_portable_assets)
 
     licenses = subparsers.add_parser(
         "extract-licenses",
