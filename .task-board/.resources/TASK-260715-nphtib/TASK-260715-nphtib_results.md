@@ -1,83 +1,117 @@
-# TASK-260715-nphtib generated-project architecture verification
+# TASK-260715-nphtib — generated-project architecture verification results
 
-Date: 2026-08-19 (Asia/Tbilisi)
-Role: tester
-Overall verdict: **FAIL — recoverable architecture/gate rework required**
-Rework: `BUG-260819-8qf0s0`
+## Verdict
 
-## Environment and safety
+READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
 
-- Source revision: `409b3b4151c9f2f7bac7392595583b3fe971e455`
-- Checkout: detached local clone made with `git clone --local --no-hardlinks`; source status was clean before execution.
-- Host: macOS 26.5, arm64; Xcode 26.5 (`17F42`); macOS SDK 26.5.
-- Swift: 6.3.2; Mise: 2026.2.0; Tuist: 4.202.5; Go: 1.26.5; Syft: 1.48.0; Python: 3.14.4; Git: 2.50.1.
-- Deployment inputs: macOS 15.0; deferred iOS input 18.0.
-- Legacy input: read-only local checkout containing verified signed tag `v0.1.0` at `2557aba1c030d0643d76e0bc3b185f6d5fd172e1`.
-- Safety: no command installed, opened, saved, activated, or started a VPN; no app/system extension was installed or activated. Production signing, physical Gate P0, notarization, and deferred iOS were not run by scope.
-- Privacy: evidence uses task-scoped relative paths and public metadata only. A targeted generated-artifact scan found no PEM/private-key material. No unrelated local filename/path is retained here.
+The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
 
-## Repository-owned matrix
+The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
 
-Exact top-level command (privacy-safe variable notation):
+No production signing, app/system-extension install, app/provider launch, Network Extension activation, VPN preference save, VPN tunnel start, route change, or DNS change was performed. The harness `smoke` command is a local no-op resource-lifecycle test and does not use Network Extension.
 
-```sh
-/usr/bin/time -p make credential-free-validate LEGACY_ROOT="$LEGACY_ROOT"
-```
+## Environment and revision
 
-Result: exit `0`; real `316.05 s`, user `324.32 s`, sys `85.43 s`. Per-row durations are APFS log birth-to-last-write measurements rounded to whole seconds.
+- Source revision: `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`; source timestamp `1787098294`; clean source state before the accepted run.
+- Legacy revision: signed tag `v0.1.0` resolved to and was detached at `2557aba1c030d0643d76e0bc3b185f6d5fd172e1` in another `--no-hardlinks` clone.
+- Host: macOS 26.5 build 25F71, arm64.
+- Xcode 26.5 build 17F42; macOS SDK 26.5; Swift 6.3.2; swift-format 6.3.0.
+- Mise 2026.2.0; Tuist 4.202.5; Go 1.26.5 darwin/arm64; Syft 1.48.0; Git 2.50.1; Python 3.14.4; GNU Make 3.81.
+- Deployment inputs: macOS 15.0; deferred iOS 18.0.
+- Privacy: commands below use `<task-temp>` and `<legacy-root>` aliases; no credential values, unrelated paths, or environment dumps are retained.
 
-| Row | Exact command | Duration | Exit/result |
+## Foundation matrix
+
+The authoritative command was:
+
+`make credential-free-validate LEGACY_ROOT=<legacy-root>`
+
+Result: exit 0 in 310.40s. Its repository-owned summary reported every row below PASS and explicitly reported production signing/physical P0/Developer ID/notarization/DMG and deferred iOS as NOT RUN. The durations below are from a subsequent independent row-by-row timing pass on the same accepted clone; the Swift row includes its required clean rerun after an intermittent failure.
+
+| Row | Exact command | Exit | Duration | Result |
+| --- | --- | ---: | ---: | --- |
+| Relay tool bootstrap | `./scripts/bootstrap-relay-tools.sh` | 0 | 13.557s | PASS |
+| Relay packaging/reproducibility/verify/smoke | `env RELAY_VERSION=0.1.0 SOURCE_COMMIT=7dc73ac6e7325f86a4a178a0558619f0fc9d1490 SOURCE_DATE_EPOCH=1787098294 make relay-shell-validate` | 0 | 76.687s | PASS |
+| Entrypoint contract regressions | `./scripts/tests/test-credential-free-validation.sh` | 0 | 0.937s | PASS |
+| Deterministic double generation | `./scripts/validate-workspace-foundation.sh` | 0 | 9.191s | PASS |
+| macOS Debug/Release builds and contracts | `./scripts/validate-macos-targets.sh` | 0 | 82.701s | PASS |
+| Core dependency boundaries | `./scripts/check-core-boundaries.sh` | 0 | 1.166s | PASS |
+| Swift Testing clean rerun | `swift package clean && swift test` | 0 | 79.71s | PASS: 443 tests / 37 suites / 25 accepted known issues |
+| Swift release build | `swift build -c release` | 0 | 2.091s | PASS |
+| Native packaging negatives and reproduction | `make check-native-dependencies test-native-dependencies` | 0 | 4.678s | PASS |
+| Legacy isolated clone | `git clone --quiet --local --no-hardlinks <legacy-root> <task-temp>/legacy-v0.1.0` | 0 | 1.087s | PASS |
+| Legacy detached checkout | `git -C <task-temp>/legacy-v0.1.0 checkout --quiet 2557aba1c030d0643d76e0bc3b185f6d5fd172e1` | 0 | 0.200s | PASS |
+| Legacy preservation | `./scripts/check-legacy-preservation.sh --legacy-root <task-temp>/legacy-v0.1.0 --workspace-root <task-temp>/repo` | 0 | 0.515s | PASS |
+| Legacy negative guard tests | `./scripts/tests/test-legacy-preservation-guard.sh --legacy-root <task-temp>/legacy-v0.1.0` | 0 | 9.557s | PASS |
+| Legacy Swift tests | `swift test --package-path <task-temp>/legacy-v0.1.0` | 0 | 14.383s | PASS |
+| Legacy release build | `swift build -c release --package-path <task-temp>/legacy-v0.1.0` | 0 | 5.260s | PASS |
+
+Additional gates:
+
+- `swift format lint --strict --parallel` over tracked product/manifests/tests Swift files excluding `.task-board/**`: exit 0, 2.38s.
+- `swift test --enable-code-coverage`: exit 0, 64.24s; 443 tests / 37 suites passed with 25 expected known issues.
+- Product `Sources/` coverage across 46 files: lines 19,482/21,655 = 89.97%; functions 2,322/2,591 = 89.62%; regions 6,567/7,998 = 82.11%.
+- `task-board validate`: exit 0, 0.27s, no issues.
+- `swift run --skip-build ReluxTunnelHarness smoke --configuration-json <privacy-labelled-noop-document>`: exit 0, 1.02s; status succeeded, profile reference redacted, temporary directory/socket/task cleanup succeeded, and gauges proved HEV/libssh2 linkage.
+
+## Exact generated graph and ADR comparison
+
+Workspace-visible schemes are exactly:
+
+1. `relux-relay`
+2. `relux-relay-protocol-test`
+3. `ReluxProxyMac`
+4. `ReluxProxyMacTunnel`
+5. `ReluxTunnelCore`
+6. `ReluxTunnelHarness`
+
+Generated application targets are exactly `ReluxProxyMac`, `ReluxProxyMacTests`, `ReluxProxyMacTunnel`, and `ReluxProxyMacTunnelTests`. Generated configurations are exactly `Debug` and `Release`. `ReluxProxyIOS`, `ReluxProxyIOSTunnel`, `ReluxProxyIOSTests`, and `ReluxProxyIOSTunnelTests` are absent from the generated targets and workspace-visible schemes, matching accepted ADR-024/ADR-027 and ADR-029.
+
+`scripts/check-generated-provider-graph.py` passed against `Project.swift`, `Package.swift`, the generated provider-owned PBX build phases, the staged relay root, and the actual Release provider bundle. It proves the accepted consumer-to-dependency direction:
+
+- Provider directly consumes only `ReluxTunnelMacOSAdapter` plus the verified relay folder resource.
+- `ReluxTunnelMacOSAdapter` consumes exactly Core, `ReluxTunnelLibSSH2Adapter`, and `ReluxTunnelNativeAdapter`.
+- `ReluxTunnelNativeAdapter` consumes exactly Core and `HevSocks5Tunnel`.
+- `CReluxNativeFixture` is restricted to test evidence and absent from the generated production project/provider binary.
+
+Two clean-generation SHA-256 manifests were byte-identical (`cmp` exit 0), each with digest `d5c5fd2899750f5b9e90de096e2b0552df22384a5ecbea793c0f19df630b7fc6` across 11 generated files. `Package.swift` and tracked source state remained unchanged by generation.
+
+## Release bundle, static/native linkage, and relay evidence
+
+- Release host bundle ID: `works.relux.tunnel.mac`; exactly one nested system extension with bundle ID `works.relux.tunnel.mac.tunnel` at the ADR path.
+- Actual Release provider binary architectures: `x86_64 arm64` (universal).
+- Production symbol evidence: 249 HEV text symbols and 28 libssh2 text symbols, plus `ReluxTunnelMacOSAdapter` Swift symbols.
+- Forbidden `_NSAddImage`, `_NSCreateObjectFileImageFromFile`, `_dladdr`, `_dlclose`, `_dlopen`, `_dlsym`, `relux_native_fixture`, and `CReluxNativeFixture` symbols: absent.
+- Dynamic linkage contains only `/System/Library/Frameworks/*` and `/usr/lib/*`; no bundled or third-party dylib.
+- `_CodeSignature` and `Configuration/Signing.local.xcconfig`: absent, as required for the unsigned lane.
+- No complete embedded PEM private-key payload was present. A broad marker-only probe found libssh2's literal OpenSSH parser delimiter; a complete-payload check correctly distinguished this non-secret format marker from key material and passed.
+- The nested provider relay resource contains exactly four executable OS/architecture artifacts, four SPDX SBOMs, the manifest, canonical checksum file, and notice. `shasum -a 256 -c relux-relay-SHA256SUMS` passed every entry.
+- Manifest schema/protocol versions are 1/1. Artifact SHA-256 values: Darwin amd64 `8ae943c5ee6e4bac6934081eb7388f8504840f441709a28653da96a61eb0bed0`; Darwin arm64 `bbfe79ff550dc3f09ab795b0870f0703151e4f3b6c3c8c19a28eaa635a291d64`; Linux amd64 `012818980e94ff69f159620650902823e6174c5e99aa72c6cdba7ee70e9f0484`; Linux arm64 `22fce3f64b2e114f76ad5fb6bcc2442c4611e7812b8e547f6ae8595b9e85808d`.
+
+## Failure routing and anomalies
+
+- Resolved prerequisite diagnostic: a first disposable clean clone failed because its checked-in Mise config had not yet been trusted (exit 2, 113.61s). The accepted run used a second fresh clone after `mise trust <task-temp>/repo/mise.toml`, as documented by the repository.
+- Scope diagnostic: a broad Swift-format probe included historical `.task-board` Swift evidence and exited 1 in 3.29s. The relevant tracked product/manifests/tests scope then passed strict lint. No product lint failure exists.
+- Real intermittent regression: a warm-cache `swift test` timing row exited 1 in 75.684s because `ReluxTunnelHarness` test `signal cancellation uses signal exit code and cleans all resources` threw `TimedOut()` at `HarnessTests.swift:140`. It is routed to `BUG-260819-34ikhl` with reproduction evidence and rework checklist. The authoritative clean matrix, coverage run, and subsequent `swift package clean && swift test` all pass; no architecture failure remains hidden.
+- The anomaly and final accepted evidence are recorded in `LOGBOOK.md` under the 2026-08-19 TASK-260715-nphtib entry.
+
+## Scope exclusions and safety attestation
+
+NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
+
+## Focused deterministic-harness closure at `069e23b`
+
+Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
+
+| Gate | Exact command | Exit | Duration/result |
 | --- | --- | ---: | --- |
-| Relay tool bootstrap | `./scripts/bootstrap-relay-tools.sh` | 25 s | 0 / PASS |
-| Validation contract regressions | `./scripts/tests/test-credential-free-validation.sh` | <1 s | 0 / PASS |
-| Deterministic double generation | `./scripts/validate-workspace-foundation.sh` | 9 s | 0 / PASS |
-| macOS target builds/contracts | `./scripts/validate-macos-targets.sh` | 69 s | 0 / PASS |
-| Core boundary guard | `./scripts/check-core-boundaries.sh` | 2 s | 0 / PASS |
-| Swift Testing | `swift test` | 69 s | 0 / PASS |
-| Swift Release build | `swift build -c release` | 25 s | 0 / PASS |
-| Native packaging | `make check-native-dependencies test-native-dependencies` | 5 s | 0 / PASS |
-| Relay artifacts/smoke | `env RELAY_VERSION="$MARKETING_VERSION" SOURCE_COMMIT="$SOURCE_REVISION" SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" make relay-shell-validate` | 62 s | 0 / PASS |
-| Detached legacy clone | `git clone --quiet --local --no-hardlinks "$LEGACY_ROOT" "$LEGACY_FIXTURE"` | <1 s | 0 / PASS |
-| Pinned legacy checkout | `git -C "$LEGACY_FIXTURE" checkout --quiet 2557aba1c030d0643d76e0bc3b185f6d5fd172e1` | <1 s | 0 / PASS |
-| Legacy preservation | `./scripts/check-legacy-preservation.sh --legacy-root "$LEGACY_FIXTURE" --workspace-root "$CLEAN_CLONE"` | 1 s | 0 / PASS |
-| Legacy negative guards | `./scripts/tests/test-legacy-preservation-guard.sh --legacy-root "$LEGACY_FIXTURE"` | 7 s | 0 / PASS |
-| Legacy Swift tests | `swift test --package-path "$LEGACY_FIXTURE"` | 14 s | 0 / PASS |
-| Legacy Release build | `swift build -c release --package-path "$LEGACY_FIXTURE"` | 5 s | 0 / PASS |
+| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
+| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
+| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
+| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
+| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
+| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
+| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
+| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
 
-Build subrows: `ReluxProxyMac` Debug 17 s, Release 28 s; `ReluxProxyMacTunnel` Debug 1 s, Release 14 s; target-contract tests 6 s. All used `CODE_SIGNING_ALLOWED=NO`, `CODE_SIGNING_REQUIRED=NO`, and a generic/platform macOS destination.
-
-## Independent result matrix
-
-| Requirement | Evidence | Verdict |
-| --- | --- | --- |
-| Clean isolated revision | Detached no-hardlink clone; clean source status; exact revision above | PASS |
-| Deterministic generation | Two clean generations; 11 normalized files each; both hash-list SHA-256 `d2da12f9f1f921237b9ad14a9a397c28cdc30e55cb7189abf25b43f5118619e1`; no tracked drift | PASS |
-| Exact workspace schemes | `ReluxProxyMac`, `ReluxProxyMacTunnel`, `ReluxTunnelCore`, `ReluxTunnelHarness`, `relux-relay`, `relux-relay-protocol-test` only | PASS |
-| Exact generated Xcode targets/configurations | `ReluxProxyMac`, `ReluxProxyMacTests`, `ReluxProxyMacTunnel`, `ReluxProxyMacTunnelTests`; Debug and Release only; all four deferred iOS targets absent | PASS |
-| Accepted dependency/resource direction | Accepted ADR §3.1 requires provider → `ReluxTunnelMacOSAdapter` plus verified relay resources. Generated `Project.swift` declares provider → `ReluxTunnelCore` only; Release provider has no adapter/native symbol and no relay payload. Existing logbook notes this was deferred, but there is no accepted exception to this task's exact-graph criterion. | **FAIL** |
-| Unsigned macOS builds/tests | Host and provider Debug/Release builds pass; target-contract tests pass | PASS |
-| Swift Testing/harness lifecycle | 443 tests in 37 suites pass; 25 existing declared known-issue rows are limited to the unavailable ReluxNIOSSH adapter. Harness suites and repeated cleanup/lifecycle baselines pass. | PASS |
-| Coverage | `swift test --enable-code-coverage` exits 0 in 70.81 s; 93.30% lines, 91.44% functions, 85.67% regions overall | PASS (>80%) |
-| Lint | `swift format lint --strict --parallel --recursive Sources Tests App Package.swift Project.swift Workspace.swift Tuist.swift` exits 0 in 2.28 s; relay gate also runs `gofmt` checks and pinned `go vet ./...` | PASS |
-| Native/static policy | macOS slices for `HevSocks5Tunnel`, `ReluxLibSSH2`, and evidence-only `ReluxNativeFixture` are static universal `arm64+x86_64`; checksum, byte-identical fixture rebuild, notices, architecture and extension-safety negative gates pass | PASS |
-| Nested bundle/linkage | Exactly one system extension is embedded at the accepted path; Release provider is universal `arm64+x86_64`, has only Apple system dynamic dependencies, and has no runtime-loading symbols | PASS for foundation embedding; production adapter/resource edge fails above |
-| Relay artifacts | Four Darwin/Linux amd64/arm64 binaries, manifest, checksums, SPDX SBOMs, offline tests/vet, executable-byte reproducibility comparison, format/linkage/strip/minimum-OS verification and smoke all pass | PASS |
-| Legacy coexistence | Signed pinned v0.1.0 detached fixture, preservation/negative guards, Swift tests and Release build pass | PASS |
-| Secret material | Targeted artifact/log scan finds no private-key PEM; credential-free settings remain unsigned and no signing overlay is generated | PASS |
-| Local VPN prohibition | Only generation/build/test/static inspection commands executed; no install/open/save/activate/start command | PASS |
-
-## Evidence locations
-
-All paths are relative to the detached clone and ignored/task-scoped:
-
-- `.temp/TASK-260715-sbrrp7/credential-free-validation/{environment.log,summary.log,logs/}`
-- `.temp/TASK-260715-2btjwm/{generation-01.sha256,generation-02.sha256,xcodebuild-list.log,xcodebuild-project-list.log}`
-- `.temp/TASK-260715-uyju7n/` (four build logs, target tests, build settings, nested products, provider linkage/symbol reports)
-- `.build/relay/apple-bundle-input/` and `.build/relay/repro/` (relay manifests, binaries, SBOMs, reproducibility inputs)
-- `.temp/TASK-260715-nphtib-swift-format.log`
-- `.temp/TASK-260715-nphtib-swift-coverage.log`
-- `.build/arm64-apple-macosx/debug/codecov/ReluxTunnel.json`
-
-## Disposition
-
-The repository-owned matrix is green, but architecture acceptance is not. `BUG-260819-8qf0s0` owns the missing provider adapter/relay-resource edges and a validator regression that must fail on their absence. `TASK-260715-nphtib` is linked to that bug and remains in development. Per AC6, pass and tester handoff require accepted rework followed by a fresh clean-clone rerun; no handoff command was run in this attempt.
+`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.

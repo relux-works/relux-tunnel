@@ -1,0 +1,2691 @@
+OpenAI Codex v0.147.0
+--------
+workdir: /Users/iv/Developer/relux-tunnel
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a017af-ffc5-7b53-aa40-f4f3227d4ec3
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260715-nphtib, status=development)'
+```
+
+## Role Contract
+
+- **Role:** `tester` (`tester`) — Writes tests — unit, integration, e2e, UI, snapshot
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+
+### Definition of Done
+
+- [ ] The full clean-environment foundation matrix was executed independently
+- [ ] Target graph, deterministic generation, linkage, tests, and legacy checks all have evidence
+- [ ] Failures are routed to concrete board work and the result matrix is attached
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Tests written and passing
+- [ ] Coverage target ~80%+ for affected code
+- [ ] Lint clean
+- [ ] New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** TASK-260715-nphtib
+- **Title:** Execute the generated-project architecture verification matrix
+- **Parent:** STORY-260715-l2i2oo
+
+### Description
+
+Independently run and review the foundation validation matrix on a clean environment, including generated target graph, dependency direction, Apple builds, native fixture linkage, harness lifecycle, relay artifacts, and legacy regression. Produce the evidence needed to accept the story architecture.
+
+### Scope
+
+In scope: clean detached clone of the current revision; deterministic Tuist generation; exact macOS-only target and scheme enumeration under ADR-024/ADR-027; unsigned Debug and Release host/provider builds; Swift Testing; native static archive and linkage inspection; harness lifecycle; relay artifacts; pinned legacy SwiftPM regression; and a second drift-free generation. Out of scope: every iOS target/build, production signing, installation or activation of a system extension/VPN, physical Gate P0, packet/SSH feature matrices, and fixing failures inside this verification task.
+
+### Acceptance Criteria
+
+1. A TASK-ID-scoped matrix records environment, public tool/SDK versions, source revision, exact commands, durations, privacy-safe artifacts, and pass/fail for every macOS foundation row. 2. The exact macOS-only target graph and dependency direction match accepted ADRs, while all deferred iOS targets/schemes are absent. 3. An isolated clean checkout runs the repository-owned credential-free entrypoint, a second clean generation is drift-free, and all applicable builds/tests pass. 4. Native linkage and nested bundle inspection prove universal architecture coverage, static/native policy, correct host/provider embedding, and no secret material. 5. No command installs, opens, saves, activates, or starts a real VPN on this build host. 6. Every failure creates or references concrete board rework; pass is claimed only after clean rerun evidence.
+
+## Instructions
+
+### TASK-260715-nphtib_resume-after-provider-graph.md
+> Committed-revision rerun instructions after accepted provider graph fix
+
+# Resume architecture verification after accepted provider-graph fix
+
+Authoritative revision: 7dc73ac6e7325f86a4a178a0558619f0fc9d1490. BUG-260819-8qf0s0 is accepted done. Re-run the complete generated-project architecture verification from a clean local clone made with --no-hardlinks at this committed revision. Do not rely on the dirty-worktree evidence from the prior failed attempt.
+
+Required evidence:
+1. Run make credential-free-validate with the legacy checkout and capture real exit/status summary.
+2. Confirm exact macOS-only schemes/targets/configurations and deterministic generation.
+3. Confirm unsigned Debug/Release host and provider builds.
+4. Inspect the actual Release provider bundle and binary: ReluxTunnelMacOSAdapter plus HEV/libssh2 production symbols; verified relay manifest/checksum payload; no CReluxNativeFixture; no forbidden dynamic loader symbols; system-only dynamic linkage.
+5. Run strict Swift formatting, coverage, task-board validation, and architecture/ADR comparison.
+6. Confirm no signing, app/system-extension installation or launch, VPN preference/tunnel, route, or DNS mutation.
+7. Update the task-scoped outcome with the committed-revision evidence and hand off to review only if every AC/DoD item is proven.
+
+The current machine is build-only. Never activate a real VPN.
+
+
+### TASK-260715-nphtib_reviewer-instructions.md
+> Independent acceptance review with explicit flaky-test and build-host safety gates
+
+# Independent review instructions
+
+Review TASK-260715-nphtib against its complete acceptance criteria and the committed provider-graph contract at revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
+
+Use independent checks and task-scoped evidence. Pay special attention to `BUG-260819-34ikhl`: one warm-cache `swift test` run timed out in the harness signal-cancellation cleanup test while the authoritative clean matrix, coverage run, and a subsequent `swift package clean && swift test` passed. Decide from evidence whether this violates the task's deterministic-test acceptance boundary. Do not accept merely because a bug was filed; request rework if deterministic acceptance is not proved.
+
+Verify the generated provider's actual adapter/HEV/libssh2 linkage, relay resource integrity, absence of fixture or dynamic-loader linkage, clean generation, legacy preservation, privacy-safe evidence, and the build-only safety boundary.
+
+Never sign, install, launch, save, start, or stop a VPN; never mutate NetworkExtension preferences, routes, or DNS on this development Mac.
+
+If accepted, record the reviewer verdict and leave commit-confirmed terminal movement to the orchestrator. If changes are required, return the task to `to-dev` with exact reproducible findings.
+
+
+
+### TASK-260715-nphtib_bug-closure-resume.md
+> Focused architecture-verification resume after accepted harness determinism fix
+
+Focused resume after BUG-260819-34ikhl acceptance. Reuse the producer and independent reviewer clean-clone architecture evidence already attached. Verify BUG-260819-34ikhl is done at signed pushed commit 069e23b, run only the focused deterministic harness delta plus cheap lint, boundary, diff, and board checks, update the task-scoped result and checklist, and hand off for fresh review. Do not rerun the full credential-free matrix unless new evidence contradicts the accepted graph result. Build-host safety remains strict: no signing, installation, application/provider launch, VPN preference mutation, VPN activation, route change, or DNS change.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `TASK-260715-nphtib_*` before handoff:
+  `task-board m 'add_resource(TASK-260715-nphtib, name=TASK-260715-nphtib_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `to-review` is a role handoff, not accepted completion. Report **ready for review** or **handed off to review**.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff TASK-260715-nphtib --role tester
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+codex
+I’m starting the assigned tester run now, then I’ll load the two required workflows and inspect the task’s existing evidence before executing the focused post-fix gates.
+exec
+/bin/zsh -lc "task-board m 'set_status(TASK-260715-nphtib, status=development)'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 71ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"TASK-260715-nphtib","field":"status","new_value":"development","old_value":"to-dev"},"side_effects":[{"action":"escalated","element_id":"STORY-260715-l2i2oo","field":"status","new_value":"development","old_value":"to-dev"},{"action":"escalated","element_id":"EPIC-260715-2mqgvm","field":"status","new_value":"development","old_value":"reviewing"}]}}
+
+codex
+The board moved the task to development successfully (exit 0), with the parent story and epic escalated automatically. I’m using `project-management` for scoped board evidence/handoff and `go-testing-tools` for the deterministic test workflow, as required by the assignment.
+exec
+/bin/zsh -lc "wc -l /Users/iv/.claude/skills/project-management/SKILL.md /Users/iv/.claude/skills/go-testing-tools/SKILL.md && sed -n '1,240p' /Users/iv/.claude/skills/project-management/SKILL.md && sed -n '1,260p' /Users/iv/.claude/skills/go-testing-tools/SKILL.md" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+     118 /Users/iv/.claude/skills/project-management/SKILL.md
+     453 /Users/iv/.claude/skills/go-testing-tools/SKILL.md
+     571 total
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=PROVIDER?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Every child has explicit role, background mode, model, and in-policy
+   Codex/Qwen reasoning effort. Providers: `claude`, `codex`, `gemini`, `muse`,
+   `qwen`; Gemini takes no `--reasoning-effort`.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID
+   --role ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child;
+   routine work is never handed to the human.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `task-board codex|claude` (`codexD`/`claudeD`) launches primary sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, reattach,
+   `codex resume THREAD_ID`, `claude --resume UUID`, and session operations.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown operation/mutation or field? -> schema(operation|mutation=NAME), retry
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Spawned goals, selection, runs, recovery | [tracked background spawn](references/tracked-background-spawn.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+## Command Resolution & Install Modes
+
+Managed commands (`task-board`, `tb-sessiond`, `task-board-tui`) are shipped as compiled shims. Agents must resolve them shell-neutrally without assuming shell profile activation. Two install modes are supported:
+
+- **Mode A — Curator-managed (preferred):** skill installed via `curator install` (vendored `tools/board-cli`/`tools/board-tui`, `-mod=vendor`, no network). Curator publishes project shims to `.agents/bin` and forwarding shims to `global/bin` under Curator home (e.g. `~/.local/bin`) and arranges shell integration so `PATH` contains them. Agents SHOULD invoke bare commands (`task-board`, `tb-sessiond`, `task-board-tui`) directly; the resolver below is a fallback when bare dispatch fails.
+
+- **Mode B — Legacy / non-Curator:** no Curator environment (direct `tools/` checkout, `scripts/setup.sh`, or `PATH` not propagated / out-of-directory launch). Agents MUST use the shell-neutral resolver chain and never assume bare names:
+
+  1. Project shim: `.agents/bin/<command>` (`.agents\bin\<command>.cmd` on Windows)
+  2. Manager global shim: `global/bin` under Curator home (e.g. `~/.local/bin` forwarding shim) — covers launches outside the project root or before shell profile activation
+  3. Validated bare command: `command -v <command>` on POSIX or `Get-Command <command>` on PowerShell
+  4. Source-checkout fallback (last resort, not part of installed skill context): `tools/board-cli` / `tools/board-tui` build roots with `go run`/`go build -mod=vendor`
+
+For installed skills Curator excludes build roots from skill context — use exported shims for execution and keep manifest-relative build source paths source-checkout-only. Shell profile activation is optional; prefer steps 1–3 before falling back to 4.
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Gemini CLI 0.54.4 is prompt-only; Antigravity CLI supersedes it:
+`task-board spawn TASK-ID --role developer --background --agent gemini --model gemini-3.5-flash`.
+Keys: `spawn.ceilings.gemini`,
+`spawn.preferred_agentic_system`, and `spawn.schedule`.
+---
+name: go-testing-tools
+description: >
+  Go testing toolkit with tuitestkit library and a closed-loop development
+  cycle for Go applications. Covers test helpers, reducer tests,
+  snapshot/golden testing, mock executor patterns, and view assertions.
+triggers:
+  - go test
+  - bubbletea test
+  - tuitestkit
+  - go test helpers
+  - reducer test
+  - snapshot test go
+  - golden file go
+  - тесты го
+  - го тест хелперы
+  - тесты баблти
+  - тест утилиты го
+  - замкнутый цикл тестирования
+---
+
+# Go Testing Tools
+
+Testing toolkit for Go TUI applications built with bubbletea. Provides a Go library (`tuitestkit`), reference documentation, and templates that enable a closed-loop development cycle: write code, write tests, run tests, validate, fix, repeat -- all without human intervention.
+
+Core philosophy: **Elm architecture makes TUI testable.** The reducer is a pure function -- given the same state and action, it always returns the same result. No I/O, no randomness, no terminal. Test everything as function calls.
+
+---
+
+## Prerequisites
+
+- **Go 1.21+**
+- **bubbletea** (`github.com/charmbracelet/bubbletea`)
+- **lipgloss** (`github.com/charmbracelet/lipgloss`) -- used by most bubbletea apps for styling
+
+Install the library in your project:
+
+```bash
+go get github.com/relux-works/skill-go-testing-tools/tuitestkit
+```
+
+---
+
+## Quick Start
+
+Minimal test showing the core workflow: build a message, send it to a model, assert on the view.
+
+```go
+package myscreen_test
+
+import (
+    "testing"
+
+    "github.com/relux-works/skill-go-testing-tools/tuitestkit"
+)
+
+func TestBasicNavigation(t *testing.T) {
+    m := NewMyModel(testData)
+    m = tuitestkit.Send(m, tuitestkit.WindowSize(80, 24))
+
+    // Press down twice
+    m = tuitestkit.Send(m, tuitestkit.Key("down"), tuitestkit.Key("down"))
+
+    // Assert the view contains expected content
+    tuitestkit.ViewContains(t, m, "third item")
+    tuitestkit.ViewNotContains(t, m, "ERROR")
+}
+```
+
+---
+
+## Testing Pyramid
+
+Five levels, from fastest/most numerous to slowest/fewest:
+
+| Level | What | Speed | Investment |
+|-------|------|-------|------------|
+| 1. Pure Reducer | `func(State, Action) State` | Nanoseconds | ~60% |
+| 2. Component | `Update` + `View` | Microseconds | ~20% |
+| 3. Integration | Multi-component with mocks | Milliseconds | ~10% |
+| 4. Snapshot | Golden file comparison | Milliseconds | ~5% |
+| 5. Behavioral | Full user workflows | Milliseconds | ~5% |
+
+When time is limited: **Level 1 > Level 2 > Level 3**. Pure reducer tests catch the most bugs per line of test code.
+
+Full details: `references/testing-pyramid.md`
+
+---
+
+## Library API Reference
+
+All functions are in the `tuitestkit` package.
+
+### Message Builders (`messages.go`)
+
+Build `tea.Msg` values for driving model updates.
+
+```go
+// Key builds a tea.KeyMsg from a human-readable string.
+// Supports: "enter", "tab", "esc", "space", "backspace", "up", "down",
+// "left", "right", "home", "end", "pgup", "pgdown", "delete", "insert",
+// "f1"-"f20", "ctrl+c", "ctrl+a"..."ctrl+z", "alt+h", "alt+enter",
+// single runes: "a", "/", "1", etc.
+func Key(k string) tea.KeyMsg
+
+// Keys builds a slice of tea.Msg from multiple key strings.
+func Keys(keys ...string) []tea.Msg
+
+// WindowSize builds a tea.WindowSizeMsg with the given dimensions.
+func WindowSize(w, h int) tea.WindowSizeMsg
+
+// MouseClick builds a tea.MouseMsg for a left-button click at (x, y).
+func MouseClick(x, y int) tea.MouseMsg
+
+// MouseClickRight builds a tea.MouseMsg for a right-button click at (x, y).
+func MouseClickRight(x, y int) tea.MouseMsg
+
+// MouseScroll builds a tea.MouseMsg for a scroll event.
+// Direction constants: ScrollUp, ScrollDown, ScrollLeft, ScrollRight.
+func MouseScroll(dir ScrollDir) tea.MouseMsg
+
+// MouseRelease builds a tea.MouseMsg for a button release at (x, y).
+func MouseRelease(x, y int) tea.MouseMsg
+```
+
+### Model Harness (`harness.go`)
+
+Send messages to bubbletea models and handle commands.
+
+```go
+// Send sends messages to a model sequentially, returns the final model.
+// Preserves concrete type via generics -- no type assertion needed.
+// Panics if Update returns a different type (broken implementation).
+// Init() is NOT called.
+func Send[M tea.Model](model M, msgs ...tea.Msg) M
+
+// SendAndCollect sends messages, collects all non-nil Cmds returned by Update.
+// Returns final model + collected commands.
+func SendAndCollect[M tea.Model](model M, msgs ...tea.Msg) (M, []tea.Cmd)
+
+// ExecCmds executes tea.Cmd functions synchronously, collects resulting messages.
+// Recursively handles tea.BatchMsg. Nil cmds/messages are skipped.
+func ExecCmds(cmds ...tea.Cmd) []tea.Msg
+```
+
+**Common pattern -- command pipeline:**
+
+```go
+m, cmds := tuitestkit.SendAndCollect(m, tuitestkit.Key("r"))
+msgs := tuitestkit.ExecCmds(cmds...)
+m = tuitestkit.Send(m, msgs...)
+```
+
+### Reducer Harness (`reducer.go`)
+
+Table-driven testing for pure reducer functions.
+
+```go
+// ReducerTest defines a single test case for a pure reducer.
+// S = state type, A = action type.
+type ReducerTest[S any, A any] struct {
+    Name    string
+    Initial S
+    Action  A
+    Assert  func(t *testing.T, got S)
+}
+
+// Step defines one step in a multi-action reducer sequence.
+// Assert is optional -- if nil, applied without per-step validation.
+type Step[S any, A any] struct {
+    Name   string
+    Action A
+    Assert func(t *testing.T, got S)
+}
+
+// ReducerSequence defines a multi-step test scenario.
+// Actions applied sequentially from Initial. Final runs on end state.
+type ReducerSequence[S, A any] struct {
+    Name    string
+    Initial S
+    Steps   []Step[S, A]
+    Final   func(t *testing.T, got S)
+}
+
+// RunReducerTests executes table-driven reducer tests as subtests.
+func RunReducerTests[S, A any](t *testing.T, reduce func(S, A) S, tests []ReducerTest[S, A])
+
+// RunReducerSequences executes multi-step sequence tests.
+// Per-step Assert runs after each step (if non-nil). Final runs on end state.
+func RunReducerSequences[S, A any](t *testing.T, reduce func(S, A) S, sequences []ReducerSequence[S, A])
+```
+
+**Invariant checking:**
+
+```go
+// Invariant defines a property that must hold for any state.
+type Invariant[S any] struct {
+    Name  string
+    Check func(s S) error
+}
+
+// InvariantChecker holds invariants and validates state against all of them.
+type InvariantChecker[S any] struct { /* ... */ }
+
+// NewInvariantChecker creates a checker with the given invariants.
+func NewInvariantChecker[S any](invariants ...Invariant[S]) *InvariantChecker[S]
+
+// Check validates state against all invariants. Returns combined error or nil.
+func (ic *InvariantChecker[S]) Check(s S) error
+
+// WrapWithInvariants wraps a reducer with invariant checking.
+// After every reduce call, all invariants are validated.
+// t.Fatalf on violation.
+func WrapWithInvariants[S, A any](t *testing.T, reduce func(S, A) S, checker *InvariantChecker[S]) func(S, A) S
+```
+
+**Example:**
+
+```go
+checker := tuitestkit.NewInvariantChecker(
+    tuitestkit.Invariant[AppState]{
+        Name: "cursor in bounds",
+        Check: func(s AppState) error {
+            if s.Cursor < 0 || s.Cursor >= len(s.Items) {
+                return fmt.Errorf("cursor %d out of [0, %d)", s.Cursor, len(s.Items))
+            }
+            return nil
+        },
+    },
+)
+safeReduce := tuitestkit.WrapWithInvariants(t, Reduce, checker)
+tuitestkit.RunReducerTests(t, safeReduce, tests)
+```
+
+### Mock Building Blocks (`mock.go`)
+
+Composable primitives for building project-specific mocks.
+
+```go
+// MockCall represents a single recorded method invocation.
+type MockCall struct {
+    Method string
+    Args   []any
+}
+
+// MockCallRecorder provides thread-safe recording of method calls.
+// Embed into project-specific mock structs.
+type MockCallRecorder struct { /* ... */ }
+
+func (r *MockCallRecorder) Record(method string, args ...any)
+func (r *MockCallRecorder) CallCount(method string) int
+func (r *MockCallRecorder) Calls() []MockCall
+func (r *MockCallRecorder) CallsFor(method string) []MockCall
+func (r *MockCallRecorder) Reset()
+
+// MockResponseMap provides thread-safe canned response storage.
+type MockResponseMap struct { /* ... */ }
+
+func NewMockResponseMap() *MockResponseMap
+func (m *MockResponseMap) Set(key string, data []byte, err error)
+
+exec
+/bin/zsh -lc "sed -n '261,520p' /Users/iv/.claude/skills/go-testing-tools/SKILL.md && sed -n '1,260p' /Users/iv/.claude/skills/project-management/references/statuses.md && sed -n '1,280p' /Users/iv/.claude/skills/project-management/references/resources-and-bugs.md && sed -n '1,240p' /Users/iv/.claude/skills/project-management/references/roles.md" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+func (m *MockResponseMap) Get(key string) ([]byte, error)
+func (m *MockResponseMap) SetError(key string, err error)
+
+// Assertion helpers
+func AssertCalled(t testing.TB, r *MockCallRecorder, method string)
+func AssertNotCalled(t testing.TB, r *MockCallRecorder, method string)
+func AssertCalledN(t testing.TB, r *MockCallRecorder, method string, n int)
+func AssertCalledWith(t testing.TB, r *MockCallRecorder, method string, args ...any)
+```
+
+**Building a mock (two lines per method):**
+
+```go
+type TaskBoardMock struct {
+    tuitestkit.MockCallRecorder
+    Responses *tuitestkit.MockResponseMap
+}
+
+func NewTaskBoardMock() *TaskBoardMock {
+    return &TaskBoardMock{Responses: tuitestkit.NewMockResponseMap()}
+}
+
+func (m *TaskBoardMock) TreeJSON() ([]byte, error) {
+    m.Record("TreeJSON")
+    return m.Responses.Get("TreeJSON")
+}
+
+func (m *TaskBoardMock) Execute(cmd string, args ...string) ([]byte, error) {
+    m.Record("Execute", cmd, args)
+    return m.Responses.Get("Execute:" + cmd)
+}
+```
+
+### View Assertions (`view.go`)
+
+Assert on rendered output. All functions strip ANSI escape codes before comparison.
+
+```go
+// StripANSI removes all ANSI escape sequences from a string.
+func StripANSI(s string) string
+
+// --- Model-based (call model.View() internally) ---
+
+func ViewContains(t testing.TB, model tea.Model, text string)
+func ViewNotContains(t testing.TB, model tea.Model, text string)
+func ViewLines(model tea.Model) []string
+func ViewLineContains(t testing.TB, model tea.Model, lineIdx int, text string)
+func ViewLineEquals(t testing.TB, model tea.Model, lineIdx int, text string)
+func ViewMatchesRegex(t testing.TB, model tea.Model, pattern string)
+
+// --- String-based (when you already have the view string) ---
+
+func ContainsStr(t testing.TB, view string, text string)
+func NotContainsStr(t testing.TB, view string, text string)
+func LinesFromStr(view string) []string
+func MatchesRegexStr(t testing.TB, view string, pattern string)
+```
+
+### Snapshot Testing (`snapshot.go`)
+
+Golden file comparison for visual regression testing.
+
+```go
+// UpdateSnapshots controls whether snapshots are written (true) or compared (false).
+// Set via UPDATE_SNAPSHOTS=1 environment variable.
+var UpdateSnapshots bool
+
+// SnapshotView captures model.View(), strips ANSI, compares against golden file.
+func SnapshotView(t *testing.T, model tea.Model, name string)
+
+// SnapshotViewRaw captures model.View() with raw ANSI codes intact.
+func SnapshotViewRaw(t *testing.T, model tea.Model, name string)
+
+// SnapshotStr compares a pre-rendered string (ANSI-stripped) against golden file.
+func SnapshotStr(t *testing.T, view string, name string)
+
+// SnapshotStrRaw compares a pre-rendered string (raw ANSI) against golden file.
+func SnapshotStrRaw(t *testing.T, view string, name string)
+```
+
+Golden files stored at `testdata/snapshots/<name>.golden` relative to the test file.
+
+```bash
+# Create or update golden files
+UPDATE_SNAPSHOTS=1 go test ./...
+
+# Update for a single package
+UPDATE_SNAPSHOTS=1 go test ./internal/ui/screens/board/ -run TestSnapshot
+```
+
+Mismatches produce a line-by-line diff with `-`/`+` markers.
+
+---
+
+## Closed-Loop Workflow
+
+The agent development cycle for writing tests:
+
+```
+1. UNDERSTAND: Read screen/component code
+2. IDENTIFY:   What behaviors need tests?
+3. EXTRACT:    If exec.Command present, extract to interface (use mock template)
+4. WRITE:      Tests using tuitestkit helpers
+5. RUN:        go test ./... -v
+6. VALIDATE:   All pass? Check coverage with go test -cover
+7. FIX:        If failures, read error, fix code or test, goto 5
+8. SNAPSHOT:   Optionally capture view golden files
+9. DONE:       Tests green, coverage acceptable
+```
+
+### Step Details
+
+**UNDERSTAND:** Read the component source. Identify:
+- What state does it manage?
+- What messages does it handle in Update?
+- Does it have a pure reducer (`func(State, Action) State`)?
+- Does it shell out to external commands (exec.Command)?
+- What does View() render?
+
+**IDENTIFY:** Map behaviors to test levels:
+- Pure state logic -> Level 1 (reducer tests)
+- Key bindings, view rendering -> Level 2 (component tests)
+- Data loading, command execution -> Level 3 (integration tests with mocks)
+- Visual appearance -> Level 4 (snapshot tests)
+
+**EXTRACT:** If the component uses `exec.Command` or any I/O directly:
+1. Define an interface with only the methods this component needs
+2. Move `exec.Command` calls to a production implementation
+3. Build a mock using `MockCallRecorder` + `MockResponseMap`
+4. See `assets/templates/executor_interface.go.tmpl` and `assets/templates/mock_executor.go.tmpl`
+
+**WRITE:** Use the appropriate tuitestkit helpers per level:
+- Level 1: `RunReducerTests`, `RunReducerSequences`, `WrapWithInvariants`
+- Level 2: `Send`, `ViewContains`, `ViewLines`, `Key`, `MouseClick`
+- Level 3: `SendAndCollect`, `ExecCmds`, `AssertCalled`, `AssertCalledWith`
+- Level 4: `SnapshotView`, `SnapshotStr`
+
+**RUN:** `go test ./... -v` -- all tests must run in under 1 second (no I/O, no network).
+
+**VALIDATE:** `go test ./... -cover` -- target 80%+ for code under test.
+
+**FIX:** Read error messages carefully. Common issues:
+- Type assertion panic -> `Update` returns wrong type (broken implementation)
+- View assertion failure -> check ANSI stripping, check exact text
+- Snapshot mismatch -> run with `UPDATE_SNAPSHOTS=1` if the change is intentional
+- Mock assertion failure -> check response key matches (`"Execute:list"` not `"Execute"`)
+
+---
+
+## Templates
+
+Scaffolding templates in `assets/templates/`:
+
+| Template | Purpose |
+|----------|---------|
+| `reducer_test.go.tmpl` | Table-driven reducer tests with invariants |
+| `component_test.go.tmpl` | Component model tests (keyboard, mouse, commands, view) |
+| `snapshot_test.go.tmpl` | Snapshot golden file tests |
+| `executor_interface.go.tmpl` | Executor interface + production stub |
+| `mock_executor.go.tmpl` | Mock executor using MockCallRecorder + MockResponseMap |
+| `PROJECT_STRUCTURE.md` | Recommended directory layout for test files |
+
+Copy templates into your project, replace `TODO` markers with your actual types and import paths.
+
+---
+
+## References
+
+In-depth documentation in `references/`:
+
+| Document | Content |
+|----------|---------|
+| `elm-architecture.md` | Why Elm makes TUI testable, state/action/reducer/view cycle, nested reducers, dependency injection, the executor pattern |
+| `mock-patterns.md` | Interface extraction, when to mock vs test pure functions, stubs vs mocks vs fakes, callback capture, full mock lifecycle example |
+| `testing-pyramid.md` | All 5 test levels with code examples, decision table for which level to use, coverage strategy |
+
+---
+
+## Setup
+
+Run the setup script to create symlinks:
+
+```bash
+./scripts/setup.sh
+```
+
+This links the skill to `~/.agents/skills/go-testing-tools`, `~/.claude/skills/go-testing-tools`, and `~/.codex/skills/go-testing-tools`.
+
+To remove:
+
+```bash
+./scripts/deinit.sh
+```
+# Statuses
+
+9 statuses organized in a workflow:
+
+| Status | Meaning | Who sets |
+|--------|---------|----------|
+| **backlog** | Captured, no work yet | anyone |
+| **analysis** | Researching, decomposing | anyone |
+| **to-dev** | Ready for development | orchestrator |
+| **development** | Writing code | sub-agent |
+| **to-review** | Code ready for review | sub-agent |
+| **reviewing** | Reviewer child is checking the work | reviewer |
+| **done** | Reviewed and accepted leaf work, or computed container completion | reviewer / orchestrator after reviewer verdict; parent aggregation |
+| **closed** | Explicit administrative disposition: cancelled, obsolete, or won't do (reason in notes) | anyone |
+| **blocked** | Concrete external blocker or unresolved human-only stop-the-line decision (full evidence packet in notes/resource) | anyone |
+
+## Status Flow
+
+**Happy path:**
+```
+backlog → analysis → to-dev → development → to-review → reviewing → done
+```
+
+**Returns from reviewing:**
+- `reviewing → analysis` — need more research
+- `reviewing → to-dev` — code issues, needs rework
+
+**Terminal from any status:**
+- `any → closed` — won't do / cancelled
+- `any → blocked` — concrete external blocker or unresolved human-only platform/product/architecture/tradeoff/approval decision
+
+**Note on closed:** Use `closed` for cancelled, obsolete, or won't-do items. Don't delete — close with a note explaining why. History is preserved, and the item can be reopened if needed.
+
+For a leaf task or bug, `done` means its delivery was accepted and `closed`
+means it was explicitly disposed without accepted delivery. A leaf may be
+closed from any lifecycle state.
+
+For a story or epic, `done` is computed completion: every direct child is
+`done` or `closed`. `closed` is an explicit administrative disposition of the
+container itself. A container may be closed only when every direct and
+transitive descendant is already `done` or `closed`; an empty container also
+satisfies this rule. Close or complete descendant work first, then close
+containers from the inside out. `task-board validate` reports
+`PARENT_STATUS_MISMATCH` for stored closed containers that still contain active
+descendants.
+
+Validation is strict by default for empty containers too: an empty Story/Epic
+stored as `done` aggregates to `backlog` and is reported. A migrated local
+board may explicitly set
+`task-board.config.json -> validation.allow_legacy_empty_done_containers` to
+`true` to suppress only that historical empty-`done` mismatch. Empty active
+containers and every container with one or more children remain strict.
+
+**Don't delete elements.** Use `closed` instead of `delete`. Deletion loses history and context. The only exception is removing test/junk data during board setup.
+
+**Orchestrator review routing flow:** When a producer child sets `to-review`:
+1. Orchestrator confirms the producer attached task-scoped outcome evidence.
+2. Orchestrator spawns a reviewer child with explicit selection, for example `task-board spawn TASK-... --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort max`.
+3. Reviewer child sets/keeps `reviewing`, reads artifacts/code, and writes the verdict.
+4. If accepted → `done`. If changes are requested → `to-dev` (code rework) or `analysis` (needs more research), with notes/outcome evidence.
+5. On changes requested, the Orchestrator preserves the verdict, spawns the appropriate producer, and sends the next `to-review` handoff through a new reviewer. Repeat producer -> reviewer -> rework -> reviewer until accepted `done`.
+6. If a child exits early or leaves the item parked in `analysis`, `development`, `testing`, or `reviewing`, the Orchestrator inspects the run/outcomes and retries or reroutes through a focused child. Recoverable work is never handed to the human.
+7. A `blocked` verdict stops routing only when it identifies a concrete external blocker or unresolved human-only stop-the-line decision and records the full evidence packet; otherwise retry or reroute.
+
+`reviewing` is a real state, not a pass-through. A reviewer child must do actual review work between the producer handoff and `done`; the orchestrator routes and monitors that review instead of performing the verdict inline.
+
+`to-review` is an internal routing trigger, never a handoff of routine review to the human. Human input is reserved for a concrete external blocker or unresolved human-only platform/product/architecture/tradeoff/approval decision.
+
+Human-facing wording follows the board state. `to-review` means "ready for review" or "handed off to review"; it is not "done", "complete", "finished", "final", or "готово". Say a task is done only after the board item is actually `done`.
+
+## Per-Element Review Policy
+
+Every board element has a `review` policy. Set it at creation with
+`create(..., review=required|light|none)`, change it with
+`set_details(ID, review=...)`, and inspect it through the `review` query
+projection. New elements and legacy elements without the field default to
+`required`.
+
+- `required` keeps the producer -> reviewer -> rework/reviewer loop. Only an
+  accepted reviewer verdict reaches `done`.
+- `light` still requires a reviewer child, but selection should favor a cheaper suitable effort tier that can satisfy the same evidence and quality gates.
+- `none` lets the Orchestrator accept a producer handoff from `to-review`
+  directly to `done` only after checking acceptance criteria, checklist,
+  validation results, and outcome evidence. Missing evidence returns to the
+  producer; `none` never means accepting an unevidenced handoff.
+
+This policy changes reviewer routing, not the need for board-owned evidence, and
+never introduces routine human review.
+
+## blocked vs is_blocked
+
+Two different concepts:
+
+- **blocked** (status) — explicit stop-the-line status for an evidence-backed external blocker or unresolved human-only platform/product/architecture/tradeoff/approval decision. Notes or an outcome resource must record the constraint, evidence, failed assumptions/attempts, viable alternatives and tradeoffs, recommendation, and exact human decision or external input needed to resume. Recoverable failures and ordinary rework are not `blocked`.
+- **is_blocked** (computed) — from `blocked-by` dependencies; if dependency is not `done`/`closed`, element is blocked
+
+CLI display:
+```
+TASK-05: to-dev [BLOCKED by TASK-02]     ← computed from dependency
+TASK-07: blocked                          ← explicit status
+```
+
+## Automatic Parent Status Aggregation
+
+After a child status mutation, the CLI recomputes every ancestor from its direct
+children. It is derived state: an unassigned story or epic may follow an
+assigned child without implying ownership of the container.
+
+- If every child is `done` or `closed`, a non-closed parent becomes `done`.
+  An already explicit `closed` parent stays `closed`; terminal child updates do
+  not silently normalize it to `done`.
+- Otherwise the parent adopts the highest-priority active child status:
+  `development`, `to-review`, `reviewing`, `to-dev`, `analysis`, then `backlog`.
+  `blocked` children do not select a parent status; a parent with only blocked
+  children keeps its current manual status.
+- The recomputation can promote, escalate, reopen, or demote a parent, then
+  continues through all ancestors. A parent that is `blocked` explicitly is not
+  recomputed.
+
+```bash
+task-board m 'set_status(TASK-260205-abc123, status=development)'
+# TASK-260205-abc123 → development
+# STORY-260205-def456 → development (auto-escalated)
+# EPIC-260205-ghi789 → development (auto-escalated)
+```
+
+For Task/Bug records created with the current format, the first transition into
+`development` also requires an explicit estimated value. Set it first with
+`set_estimate(ID, estimate=estimated, scale=fibonacci, number=N)`. The refusal
+is a typed estimate-required error, parallel to the unfinished-dependency start
+refusal. Records whose legacy `progress.md` has no Estimate section are
+grandfathered and are not retroactively blocked; an idempotent status write for
+an element already in `development` is not treated as a new start.
+
+### Commit confirmation for accepted work
+
+Top-level `task-board.config.json -> version_control.confirm` defaults to
+`false`. When it is `true`, `desired_commit_time` is required. Any mutation
+that would move a Bug or Story to `done` must then include the exact mover-local
+acknowledgement `commit_ack=scope_committed`. This covers a direct Bug/Story
+transition and a Task/Bug terminal transition that automatically promotes its
+parent Story.
+
+```json
+{
+  "version_control": {
+    "confirm": true,
+    "desired_commit_time": "evening MSK"
+  }
+}
+```
+
+```bash
+task-board m 'set_status(STORY-260205-def456, status=done, commit_ack=scope_committed)'
+```
+
+The error reports the transition-causing element, every enforced Bug/Story
+transition, the owner message, and the configured desired time. The
+acknowledgement covers only the mover's scope; foreign uncommitted work is
+allowed and task-board performs no git clean-tree check. Local evaluation and
+status writes share one mutation lock. In remote mode an enforcing CLI first
+requires the server's `version_control_confirmation=atomic-v1` capability, then
+the server evaluates the acknowledgement and writes the child/ancestor statuses
+under one serialized mutation.
+
+A reviewer-archetype spawned run must not supply `commit_ack`. It records
+acceptance evidence and hands it to the mover that owns the scoped commit; that
+mover commits first, then makes the final `done` transition with
+`commit_ack=scope_committed`.
+
+Reactivation follows one deterministic rule: adding a descendant creates it in
+`backlog`, and adding or changing any descendant to an aggregating active status
+runs ordinary aggregation through every ancestor. Any `done` or `closed`
+container on that path reopens to the highest-priority active aggregate status;
+explicit closure is not sticky once descendant work becomes active. The target
+is the aggregate child status, not a fixed `development` state:
+
+```bash
+task-board m 'set_status(TASK-260205-abc123, status=to-dev)'
+# TASK-260205-abc123 → to-dev
+# STORY-260205-def456 → to-dev (auto-reopened)
+# EPIC-260205-ghi789 → to-dev (auto-reopened)
+```
+
+Automatic container transitions do not require an assignee. Hard dependencies
+still gate automatic changes to `development`, `to-review`, `reviewing`, and
+`done`: if a container has an unfinished blocker, its derived status is left
+unchanged and the child mutation succeeds. Direct manual transitions use the
+same dependency gate; they additionally require an assignee for `to-dev`,
+`development`, and `to-review`.
+
+`blocked` remains the existing non-aggregating exception: blocked children do
+not select a parent status. Closed ancestors remain closed rather than being
+silently normalized to `done`, so validation reports every affected container
+that still has a blocked descendant. The operator must reopen the container or
+resolve/close that descendant work.
+# Resources
+
+Resources are linked to board elements via explicit CRUD operations. They are stored centrally in `.task-board/.resources/` (local) or in MinIO / filesystem storage (remote board-server).
+
+## Resource Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **precondition** | Inputs needed before work starts | Design docs, specs, instructions, API schemas |
+| **outcome** | Results produced by work | Research findings, implementation notes, analysis |
+
+## Commands
+
+```bash
+# Create a resource
+task-board m 'add_resource(TASK-260218-abc, name=TASK-260218-abc_design.md, type=precondition, content="...", description="Architecture design")'
+task-board m 'add_resource(TASK-260218-abc, name=TASK-260218-abc_results.md, type=outcome, content="...", description="Research findings")'
+
+# Replace an existing resource
+task-board m 'update_resource(TASK-260218-abc, name=TASK-260218-abc_results.md, type=outcome, content="revised findings", description="Research findings v2")'
+task-board resource update TASK-260218-abc ./TASK-260218-abc_results.md --type outcome
+
+# Adopt an existing orphaned local payload without rewriting it
+task-board resource adopt TASK-260218-abc TASK-260218-abc_results.md --type outcome --description "Recovered result"
+
+# Delete a resource (destructive — requires --confirm)
+task-board m --confirm 'delete_resource(TASK-260218-abc, name=TASK-260218-abc_design.md)'
+task-board resource delete TASK-260218-abc TASK-260218-abc_design.md --confirm
+
+# View resources on an element
+task-board q --format compact 'get(TASK-260218-abc) { preconditionResources outcomeResources }'
+```
+
+## Storage
+
+Resources are stored flat in `.task-board/.resources/<elementID>/<name>`:
+
+```
+.task-board/.resources/
+├── TASK-260203-g7h8i9/
+│   ├── design.md           # precondition
+│   └── results.md          # outcome
+└── STORY-260203-d4e5f6/
+    └── research.md         # outcome
+```
+
+Local and board-server filesystem element deletion is journaled and
+crash-recoverable. Direct resource CRUD first resolves any pending staged
+element delete under the board mutation lock. MinIO element/subtree deletion
+currently fails before mutation with the typed
+`ErrAtomicResourceDeleteUnsupported` capability error; ordinary resource CRUD
+remains available.
+
+References are tracked in `progress.md` as markdown links:
+```markdown
+## Precondition Resources
+- [design.md](board-resource://TASK-260203-g7h8i9/precondition/design.md) — Architecture design
+
+## Outcome Resources
+- [results.md](board-resource://TASK-260203-g7h8i9/outcome/results.md) — Research findings
+```
+
+## Spawn Integration
+
+Precondition resources are automatically injected into agent prompts by `task-board spawn`. Full prompts preserve normal text inlining. Lite prompts use the resolved `agent_context.prompt.preconditions` policy: by default, text below `inline_bytes` is rendered inline, while larger text and binary resources are written read-only under `.temp/resources/` and represented by their name, description, byte count, SHA-256 digest, and local path. This means:
+
+1. Attach instructions/specs as precondition resources to a task
+2. Run `task-board spawn TASK-XX --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort max` — agent gets everything automatically
+3. Agent saves results via `task-board m 'add_resource(..., type=outcome)'` on first write, then `update_resource(...)` for revisions
+
+## Best Practices
+
+- **Use preconditions for agent instructions** — attach design docs, specs, or step-by-step instructions before spawning
+- **Use outcomes for work products** — research findings, analysis, implementation notes
+- **Use explicit create/update/delete** — `add_resource` / `resource add` must not silently overwrite; use `update_resource` / `resource update` when replacing an existing payload
+- **Use adopt only for local repair** — `resource adopt` registers bytes already stored at `.resources/<elementID>/<name>` without rewriting them; a missing payload returns resource-not-found and an existing declaration returns resource-exists
+- **Use one safe filename component** — element IDs and resource names containing traversal segments, absolute paths, path separators, malformed URL escapes, or encoded/repeatedly encoded escapes are rejected in local and remote storage
+- **Always use board commands** — never create/edit resource files or progress.md resource sections manually
+- **Name descriptively with task scope** — `TASK-260218-abc_architecture-design.md` not `doc.md`
+- **Add descriptions** — the `description=` param adds a one-line description shown in spawn prompts
+
+---
+
+# Bugs
+
+Bugs are elements of the board, living inside stories alongside tasks.
+
+```bash
+# Create bug
+task-board m 'create(type=bug, parent=STORY-260218-abc, name=crash-on-start, description="App crashes when starting recording")'
+
+# Track like any element
+task-board m 'set_status(BUG-260218-abc, status=development)'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Reproduce the issue")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Find root cause")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Write fix")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Add regression test")'
+```
+# Role Registry
+
+Roles define a spawned agent's identity, skills, lifecycle, and baseline
+definition of done. The registry supports project-local overrides and bundled
+global defaults without copying role bodies into `SKILL.md`.
+
+## Registry Layout
+
+The preferred directory form keeps the role definition and optional skill
+catalog together:
+
+```text
+.roles/
+├── developer/
+│   ├── role.md
+│   └── skills.md
+├── researcher/
+│   ├── role.md
+│   └── skills.md
+└── reviewer/
+    └── role.md
+```
+
+The legacy single-file form, `.roles/<role-name>.md`, remains supported.
+
+## `role.md` Frontmatter
+
+```yaml
+---
+name: developer
+description: Writes code, fixes bugs, writes tests
+archetype: implementer
+start_status: development
+end_status: to-review
+dod:
+  - Outcome attached with a task-scoped name
+  - text: Relevant tests pass
+    classes: [code]
+  - text: Published artifact validated
+    classes: [metadata, docs]
+skills:
+  - project-management
+---
+
+# developer
+
+The Markdown body supplies the role's instructions, deliverable, standing
+orders, constraints, and human-facing handoff wording.
+```
+
+Keep baseline DoD only in frontmatter; spawn merges it with the task checklist
+and renders it once. Do not repeat a `Definition of Done` section in the body.
+For board reads, role bodies direct concrete workers to compact task-specific
+projections and away from routine `summary()`, `plan()`, `schema()`, and
+`{ full }` orientation.
+
+Frontmatter fields:
+
+| Field | Meaning |
+| --- | --- |
+| `name` | Canonical role identity used by `--role`. |
+| `description` | Short role summary used in role listings. |
+| `archetype` | High-level identity: `implementer`, `analyst`, `reviewer`, or `tester`. |
+| `start_status` | FIRST lifecycle status set after the child launches. Omit for an orchestration-only role. |
+| `end_status` | LAST producer handoff status. A verdict-driven reviewer omits it and selects exactly one verdict branch instead. |
+| `dod` | Baseline checklist entries injected by spawn, optionally gated by task class. |
+| `skills` | Optional inline lazy skill catalog, merged with `skills.md`. |
+
+## Task Classes And DoD Gating
+
+Every board element has a `task_class`:
+
+- `code` — default, including legacy elements without an explicit value
+- `metadata`
+- `docs`
+- `research`
+
+Set it during creation or update it later:
+
+```bash
+task-board m 'create(type=task, parent=STORY-260218-abc123, name=publish-metadata, task_class=metadata)'
+task-board m 'set_details(TASK-260218-def456, task_class=docs)'
+```
+
+Inspect it through the `task_class` query projection:
+
+```bash
+task-board q --format compact 'get(TASK-260218-def456) { id name task_class }'
+task-board q --format compact 'list(type=task) { id name task_class }'
+```
+
+A role `dod` entry may be either:
+
+- a plain string, which applies to every task class; or
+- an object with `text` and optional `classes`.
+
+Spawn injects an object entry only when the board element's normalized
+`task_class` appears in `classes`. Omitting `classes` or using an empty list
+preserves the all-classes behavior. Unknown class values are rejected. This
+filter applies to role baseline DoD; the task-specific checklist already stored
+on the board remains the task-specific contract.
+
+```yaml
+dod:
+  - Always attach a task-scoped outcome
+  - text: Run code tests
+    classes: [code]
+  - text: Validate the published artifact
+    classes:
+      - metadata
+      - docs
+```
+
+## `skills.md` Format
+
+`skills.md` is optional. Use the `Required` and `Domain` sections so agents can
+distinguish baseline workflow skills from task-dependent domain catalogs:
+
+```markdown
+# developer — skills
+
+## Required
+
+- project-management
+- go-testing-tools
+
+## Domain
+
+- core-data (when working on persistence)
+- swiftui (when building UI)
+```
+
+List entries are merged with the frontmatter `skills` list and deduplicated.
+Skills remain lazy references: load a full skill body only when the concrete
+task scope requires it or the user, task, or project explicitly names it.
+
+## Resolution Order
+
+`LoadRole(workDir, name)` resolves the first existing path in this exact order:
+
+1. Project directory: `<workDir>/.roles/<name>/role.md`
+2. Project single file: `<workDir>/.roles/<name>.md`
+3. Global directory: `~/.roles/<name>/role.md`
+4. Global single file: `~/.roles/<name>.md`
+
+Therefore project-local definitions override global definitions, and the
+directory form overrides the single-file form within the same registry. Role
+names are normalized before lookup; path-like or unknown roles fail closed.
+Only the directory form loads a sibling `skills.md`.
+
+## Bundled Roles And Global Installation
+
+The bundled registry includes these core roles:
+
+| Role | Archetype | Lifecycle |
+| --- | --- | --- |
+| `researcher` | analyst | `analysis` -> `to-review` |
+| `developer` | implementer | `development` -> `to-review` |
+| `tester` | tester | `development` -> `to-review` |
+| `solution-architect` | analyst | `analysis` -> `to-review` |
+| `doc-writer` | implementer | `development` -> `to-review` |
+| `reviewer` | reviewer | `reviewing` -> verdict branch |
+| `orchestrator` | analyst | orchestration-only |
+| `coordinator` | analyst | legacy alias for `orchestrator` |
+
+Run the canonical setup entrypoint from the skill source checkout to sync
+bundled `.roles/` entries into `~/.roles/`:
+
+```bash
+./scripts/setup.sh --install-only
+```
+
+Setup installs the skill artifact and globally available roles, then verifies
+the installed role trees and the complete installed `references/` directory
+against source. Because reference parity is recursive, it includes this file.
+
+codex
+The focused resume instruction is authoritative here: the previously accepted clean-clone matrix should be reused, and I’ll rerun only the harness determinism delta plus inexpensive lint, safety-boundary, revision/diff, and board checks unless the stored evidence contradicts it. The Go-specific helper library does not apply to this Swift repository, but its closed-loop test discipline does.
+exec
+/bin/zsh -lc "task-board q --format compact 'get(BUG-260819-34ikhl) { id name status description acceptanceCriteria checklist outcomeResources }'" in /Users/iv/Developer/relux-tunnel
+ exited 1 in 0ms:
+query error: parse error at 1:55: unknown field "acceptanceCriteria" (got "acceptanceCriteria"); relevant operation signature: get(id:string)
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(TASK-260715-nphtib) { id name status assignee task_class description acceptanceCriteria checklist dependencies preconditionResources outcomeResources review }'" in /Users/iv/Developer/relux-tunnel
+ exited 1 in 0ms:
+query error: parse error at 1:76: unknown field "acceptanceCriteria" (got "acceptanceCriteria"); relevant operation signature: get(id:string)
+
+exec
+/bin/zsh -lc "rg -n \"34ikhl|nphtib|signal-cancellation|signal cancellation|credential-free-validate|swiftlint|swiftformat\" Makefile README.md . --glob '"'!**/.git/**'"' --glob '"'!**/.task-board/**'"'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+Makefile:1:.PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+Makefile:21:credential-free-validate:
+./LOGBOOK.md:8:### 0505 — Accepted provider graph passes the clean architecture matrix; harness cancellation test is flaky (TASK-260715-nphtib)
+./LOGBOOK.md:9:- VERIFICATION: A fresh local `--no-hardlinks` clone of authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490` passed `make credential-free-validate` in 310.40 seconds. Evidence covers the exact six macOS-only workspace schemes, four generated targets, Debug/Release configurations, unsigned host/provider builds, deterministic double generation, static universal provider linkage, verified relay resources, 443 Swift tests, and detached legacy `v0.1.0` test/build. Product Swift coverage is 89.97% lines, 89.62% functions, and 82.11% regions; strict product Swift formatting and board validation pass.
+./LOGBOOK.md:11:- ANOMALY: A later warm-cache timing rerun of `swift test` exited 1 when `ReluxTunnelHarness` test `signal cancellation uses signal exit code and cleans all resources` threw `TimedOut()` at `HarnessTests.swift:140`; the authoritative clean matrix, coverage run, and a subsequent `swift package clean && swift test` all passed. Routed nondeterministic cleanup timing to `BUG-260819-34ikhl`; the verification task does not fix it.
+./LOGBOOK.md:13:### 0430 — Clean generated-project matrix is false-green on the accepted provider graph (TASK-260715-nphtib)
+./LOGBOOK.md:27:- VERIFICATION: `make credential-free-validate LEGACY_ROOT=/Users/iv/Developer/relux-proxy` exits 0 across contract regressions, deterministic generation, unsigned Debug/Release host and provider builds, entitlement/embedding/linkage checks, 443 Swift tests in 37 suites with 25 intentional known issues, Release build, native packaging, relay smoke, and isolated v0.1.0 legacy tests/build. Signing-required and deferred-iOS lanes are explicitly `NOT RUN`.
+./LOGBOOK.md:898:- M0 GATE: TASK-260715-nphtib, TASK-260715-2jatnd, and TASK-260715-1gjxer currently have no reviewer-accepted outcome resources. New atomic TASK-260720-1qhxqa binds their future exact resources/digests and alone may set productionCompositionPermitted=true; TASK-260715-3ejhyy remains blocked behind it without delaying candidate-neutral models/coordinator work.
+./LOGBOOK.md:1231:### 2215 — Architecture matrix review requests deterministic harness-test rework (TASK-260715-nphtib)
+./LOGBOOK.md:1234:- VERDICT: Changes requested under the explicit deterministic-test gate. `BUG-260819-34ikhl` remains the concrete rework item: reproduce under repetition/load, replace the scheduler-count timeout without weakening cleanup assertions, then prove repeated clean full-suite and coverage passes before a fresh review.
+./LOGBOOK.md:1236:### 0520 — Harness cancellation readiness is event-synchronized (BUG-260819-34ikhl)
+./LOGBOOK.md:1239:- VERIFICATION: The focused test runs 50 parameterized cases concurrently and asserts exit 143, empty output, removed directory/socket, and exactly one managed-task cancellation. Three clean full `swift test` runs passed 443 tests in 81.63s, 80.87s, and 83.88s; coverage passed 443 tests in 83.06s. Strict recursive Swift formatting, `git diff --check`, core boundaries, and full `make credential-free-validate` passed. Only the existing 25 ReluxNIOSSH-unavailable known issues were reported; no signing, installation, launch, VPN/network preference, route, or DNS mutation ran.
+./LOGBOOK.md:1241:### 0530 — Harness cancellation readiness review finds an unbounded startup-failure waiter (BUG-260819-34ikhl)
+./LOGBOOK.md:1246:### 0530 — Harness readiness terminal state closes failure and cancellation leaks (BUG-260819-34ikhl)
+./LOGBOOK.md:1251:### 0545 — Harness readiness rework accepted in independent review (BUG-260819-34ikhl)
+./Makefile:1:.PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+./Makefile:21:credential-free-validate:
+./Tests/ReluxTunnelHarnessTests/HarnessTests.swift:141:    "signal cancellation uses signal exit code and cleans all resources",
+./docs/TASK-260715-32umrc_generated-project-architecture-adr.md:282:unsigned build is not signing/lifecycle evidence. `TASK-260715-nphtib` accepts
+./docs/TASK-260715-32umrc_generated-project-architecture-adr.md:329:| `TASK-260715-nphtib` independent architecture verification | entire ADR, especially §§2, 4–8 |
+./docs/generated-workspace-foundation.md:31:make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy
+./scripts/tests/test-credential-free-validation.sh:61:test "$(grep -Fc 'make credential-free-validate LEGACY_ROOT=' "$workflow")" -eq 1
+./scripts/tests/test-credential-free-validation.sh:66:gate_line=$(grep -nF 'make credential-free-validate LEGACY_ROOT=' "$workflow" | cut -d: -f1)
+
+exec
+/bin/zsh -lc 'git status --short && git rev-parse HEAD && git log -5 --oneline --decorate' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+ M .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_results.md
+ M .task-board/EPIC-260715-2mqgvm_viability-and-foundation/STORY-260715-l2i2oo_target-project-architecture/TASK-260715-nphtib_execute-generated-project-architecture-verification/progress.md
+ M .task-board/EPIC-260715-2mqgvm_viability-and-foundation/STORY-260715-l2i2oo_target-project-architecture/progress.md
+ M .task-board/EPIC-260715-2mqgvm_viability-and-foundation/progress.md
+?? .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_bug-closure-resume.md
+?? .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_resume-after-provider-graph.md
+?? .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_review-results.md
+?? .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_reviewer-instructions.md
+?? .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-reviewer--reviewer--codex-_RUN-260819-4770ed.log
+?? .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-41f105.log
+?? .task-board/.resources/TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-f012d5.log
+069e23bdbbef71be194762d275b003a40a6cfc72
+069e23b (HEAD -> main, origin/main, origin/HEAD) test(harness): make readiness cancellation deterministic
+7dc73ac fix(macos): restore provider production graph
+409b3b4 safety(macos): require dedicated VPN test host
+7db56df ci(macos): add credential-free validation gate
+9b97a54 build(macos): add host and packet tunnel targets
+
+codex
+The repository is exactly at pushed commit `069e23b` (the accepted determinism fix), with only board-managed changes present. My first compact query used an unsupported field name; per the board contract I’m requesting the scoped `get` schema once, then retrying with only valid projections.
+exec
+/bin/zsh -lc "task-board q --format compact 'schema(operation=get)'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+description:Get a single element by ID
+examples:["get(TASK-XX) { overview }"]
+kind:operation
+name:get
+parameters:[{"name":"id","type":"string","optional":false,"description":"Element ID"}]
+signature:get(id:string)
+
+exec
+/bin/zsh -lc "wc -l /Users/iv/.claude/skills/project-management/references/querying.md && sed -n '1,360p' /Users/iv/.claude/skills/project-management/references/querying.md" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+     338 /Users/iv/.claude/skills/project-management/references/querying.md
+# Querying & Mutating the Board
+
+Three primary access modes following the [agent-facing-api](https://github.com/relux-works/skill-agent-facing-api) pattern, plus CLI for humans:
+
+## Concrete Assignment Default
+
+When a prompt already supplies a Task/Bug ID and task inputs, query only fields
+needed for the next decision:
+
+```bash
+task-board q --format compact 'get(TASK-260211-abc) { status checklist outcomeResources }'
+task-board q --format compact 'get(TASK-260211-abc) { status blockedBy derivedBlockedBy }'
+```
+
+Do not add routine `summary()`, `plan()`, `schema()`, or `{ full }` orientation.
+Use `schema(operation=NAME)` or `schema(mutation=NAME)` only after an unknown
+call. Board-wide observability and plans belong to an orchestrator routing
+decision; full reads remain explicit audit/debug surfaces.
+
+## DSL Queries — primary read approach for agents
+
+Compact queries that return structured output. Zero session overhead (no MCP handshake), batch multiple queries in a single call. **This is what agents should use for all structured reads.**
+
+**Output format:** Use `--format compact` for token-efficient output (~40% fewer tokens). Default is `--format json`.
+
+```bash
+# Board overview
+task-board q --format compact 'summary()'
+
+# Whole-project readiness with the existing summary folded in
+task-board q --format compact 'summary() { observability-project }'
+
+# Scoped readiness at each board level
+task-board q --format compact 'list(type=epic) { observability-epic }'
+task-board q --format compact 'get(STORY-260211-def) { observability-story }'
+task-board q --format compact 'list(type=task, status=development) { observability-task }'
+
+# Single element lookup
+task-board q --format compact 'get(TASK-260211-abc) { status assignee }'
+
+# Filtered listing with field preset
+task-board q --format compact 'list(type=task, status=development) { overview }'
+
+# Agent monitoring
+task-board q --format compact 'agents(stale=60)'
+
+# Batch: multiple queries in one call (semicolon-separated)
+task-board q --format compact 'get(T1) { status }; get(T2) { status }; get(T3) { status }'
+
+# Zero-argument and parameterized operations can share a batch
+task-board q --format compact 'project_config(); models(agent=codex)'
+
+# Execution plan
+task-board q --format compact 'plan(EPIC-01, mode=children)'
+
+# Schema introspection — discover available fields, presets, operations, and mutations
+task-board q 'schema()'
+task-board q 'schema(operation=project_config)'
+task-board q 'schema(mutation=set_status)'
+
+# Target-only spawn policy (explicit opt-in in every profile)
+task-board q --format compact 'project_config(view=spawn-preflight, role=developer, agent=codex)'
+```
+
+**Operations:** `get(ID)`, `list(filters...)`, `count(filters...)`, `summary()`, `plan(scope?, mode=?, active=?)`, `agents(stale=N?)`, `models(agent?)`, `project_config(view?, role?, agent?)`, `whoami()`, `schema(operation?|mutation?)`
+**Field projection:** `{ id status assignee }`; base presets: `minimal`, `default`, `overview`, `full`, `progress`, `planning`; observability presets: `observability-project`, `observability-epic`, `observability-story`, `observability-task`
+**Batching:** semicolons between queries. Statements and results preserve source order. JSON batches return an ordered top-level array; compact batches format each result normally and separate adjacent results with one blank line. A single query remains unwrapped. Syntax and unknown-operation errors reject the whole batch before execution instead of returning partial output; handler errors remain ordered in-band error results and later statements continue.
+**Format:** `--format compact` (agent default) or `--format json` (TUI/programmatic)
+
+**First-time setup:** Under the full profile, `schema()` returns the complete API contract. Under lite, skip the proactive full read and request only the failed/unknown call with `schema(operation=NAME)` or `schema(mutation=NAME)`. Parser errors for a known call include that same typed signature directly.
+
+### Scoped signatures
+
+`schema(operation=NAME)` and `schema(mutation=NAME)` return one flat signature object: `kind`, `name`, a typed `signature`, description, parameters, and examples; mutations also report `destructive` and `idempotent`. They do not include unrelated fields, presets, operations, or mutation contracts. Provide exactly one scope. `schema()` without a scope retains the full legacy response.
+
+Known-operation parser failures preserve the underlying typed parse error and append the relevant signature. This lets an agent repair a call without reading the full schema.
+
+### `project_config()` runtime shape
+
+`project_config()` is always resolved by the local CLI, including when normal
+board reads and writes target a remote server. Its current top-level keys are
+`configured_mode`, `effective_mode`, `board_source`,
+`explicit_remote_override`, `project_root`, `config_path`, `config_exists`,
+`local`, `remote`, `whoami`, `goals`, `spawn`, `codex`, and `version_control`.
+
+The no-argument shape remains the role-optional general config surface in every
+profile, including the full default. For a spawn decision, opt in explicitly:
+
+```bash
+task-board q --format compact 'project_config(view=spawn-preflight, role=developer, agent=codex)'
+```
+
+`role` is required. `agent` is optional and otherwise follows the same
+preferred-provider/schedule/runtime-affinity resolver as `task-board spawn`.
+The narrow result contains `enabled`, `max_parallel`, a small effective
+agent-context profile/source header, the effective allowed and target providers,
+the active schedule window, canonical role, merged role ceiling for the target
+provider, provider selection mode, and launch-composition enabled/status. It
+excludes local/remote auth, `whoami`, Codex session, nested agent-context policy,
+project paths, all unrelated provider ceilings, and version-control fields.
+Active schedule allow-sets and provider refusals use the same fail-closed
+resolver as spawn.
+
+The lite profile's resolved `queries.project_config=spawn-preflight` setting
+guides agents toward the target-specific call; it does not rewrite a bare
+`project_config()` invocation. Supplying a view or target argument opts into
+the narrow projection, whose role remains mandatory.
+
+The policy members relevant to spawning and status mutation are:
+
+| Path | Shape |
+|---|---|
+| `spawn.preferred_agent` | Legacy configured provider string, or `null`. It is retained only as compatibility evidence. |
+| `spawn.preferred_agentic_system` | Currently effective `{mode, allowed_providers, source, config_key}`, or `null`. During an active schedule window, `source` is `schedule`. |
+| `spawn.schedule` | `{configured, timezone, config_key, windows, active_window, base_preferred_agentic_system}`. `timezone` is always `UTC`; every projected window also carries its normalized bounds, key, and provider-system projection. |
+| `spawn.launch_composition` | `{enabled, config_key, contract, schema_version, degradation}` without invoking `agents-infra`. |
+| `spawn.ceilings` | `{contract_version, configured, config_path, codex, claude, qwen}`; each provider reports `configured` and only its configured model/criterion/effort/role fields. |
+| `spawn.selection` | Required flags plus provider effort vocabularies and supported model criteria. |
+| `spawn.execution` / `spawn.tracking` | Executable background mode and durable run-observation contract. |
+| `goals` | Static compact `board-goal-v2` capability with required Session Manager native reflection and the one-release `primary-goal-v1` / `board-goal-v1` adapters. The legacy `goals.primary` descriptor remains nested alongside the v2 fields for the compatibility release. It never embeds the current objective and is omitted from `view=spawn-preflight`. |
+| `version_control` | `{configured, confirm, desired_commit_time, enforced_types, owner_message, acknowledgement_parameter, acknowledgement_value, config_key}`. |
+
+Local mode uses `spawn.*` keys. Remote mode uses `remote.spawn.*` when that
+object is present and non-null; otherwise it falls back to the whole root
+`spawn` object. The reported `spawn.config_key_prefix` and nested `config_key`
+values always identify the effective source. `preferred_agentic_system` is the
+canonical config spelling; `preferred_agent_system` is not an alias.
+
+### Project observability preset family
+
+`summary() { observability-project }` returns the whole-project view. The
+element presets work with the existing `get` and `list` operations; the task
+preset also applies to Bugs because Tasks and Bugs share the leaf estimate
+contract.
+
+Every preset exposes the same nested `observability` field:
+
+- `scope` identifies the project or selected Epic/Story/Task/Bug.
+- `summary` carries the existing `byType`, `active`, and `blocked` summary,
+  scoped to that element and its descendants.
+- `readiness.estimateKind` carries the leaf or calculated
+  Story/Epic/project projection state without dumping every missing leaf.
+- `readiness.coverage` always reports `estimated`, `unestimated`, `total`,
+  `ratio`, and `complete`, including fully estimated scopes.
+- `readiness.rolledEstimate` is the known Fibonacci sum even when coverage is
+  partial. Query the separate `estimate` field on the incomplete Story/Epic to
+  retrieve its exact `unestimatedTaskIds` drill-down list.
+- `isBlocked` / `blockedElementIds` aggregate hard dependency state across the
+  scope, while `isAdvisoryBlocked` / `advisoryBlockedElementIds` aggregate
+  derived cross-container waiting. The nested summary retains blocker details.
+- Only the project preset adds `primary_goal`. Its active form is
+  `{active:true,id,revision,objective,updated_at}`; after a clear or before
+  any creation it is `{active:false,latest_ref}` (where `latest_ref` can be
+  `null`). Epic, Story, Task, and Bug observability deliberately do not repeat
+  this board-wide parent intent or treat it as element acceptance.
+
+Plain `summary()` keeps its legacy response shape for compatibility.
+
+## DSL Mutations — structured writes for agents
+
+Write operations through the same DSL engine. All mutations support `--dry-run` preview. Destructive mutations require `--confirm`.
+
+```bash
+# Status changes
+task-board m 'set_status(TASK-12, status=development)'
+
+# Evidence-backed role handoff (preferred producer end transition)
+task-board handoff TASK-12 --role developer
+
+# Task/Bug estimate enum
+task-board m 'set_estimate(TASK-12, estimate=notEstimated)'
+task-board m 'set_estimate(TASK-12, estimate=estimated, scale=fibonacci, number=5)'
+
+# Create elements
+task-board m 'create(type=task, parent=STORY-05, name=new-task)'
+task-board m 'create(type=task, parent=STORY-05, name=new-task, description="Implement feature", scope="Backend only", ac="Tests pass")'
+
+# Update README fields
+task-board m 'set_details(TASK-12, title="New title", description="Updated desc")'
+
+# Rename overview name/slug while preserving ID, README, progress, children, and resources
+task-board m 'rename(TASK-12, name=better-task-name)'
+
+# Assignment
+task-board m 'assign(TASK-12, agent=claude-opus)'
+task-board m 'unassign(TASK-12)'
+
+# Dependencies
+task-board m 'link(TASK-13, blocked_by=TASK-12)'
+task-board m 'unlink(TASK-13, blocked_by=TASK-12)'
+
+# Checklist
+task-board m 'check_item(TASK-12, item=1)'
+task-board m 'uncheck_item(TASK-12, item=1)'
+task-board m 'add_checklist_item(TASK-12, text="Write tests")'
+
+# Notes
+task-board m 'set_notes(TASK-12, text="Progress update")'        # append
+task-board m 'set_notes(TASK-12, text="Replace all", set=true)'  # replace
+
+# Move to new parent
+task-board m 'set_parent(TASK-12, parent=STORY-03)'
+
+# Resources
+task-board m 'add_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="...", description="Design doc")'
+task-board m 'update_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="revised", description="Design doc v2")'
+task-board m --confirm 'delete_resource(TASK-12, name="TASK-12_design.md")'
+
+# Destructive — preview first, then confirm
+task-board m --dry-run 'delete(TASK-12)'
+task-board m --confirm 'delete(TASK-12)'
+
+# Batch mutations (semicolon-separated)
+task-board m 'set_status(TASK-12, status=done); set_status(TASK-13, status=development)'
+```
+
+**Safety flags:**
+- `--dry-run` — preview mutation without applying. Returns what would change
+- `--confirm` — required for destructive mutations (`delete`, `delete_resource`)
+- Mutation arguments are schema-checked. Unknown named arguments and extra positional fragments are rejected with typed errors before any write runs.
+- Without `--confirm`, destructive mutations are rejected with an error
+
+**Format:** `--format json` (default) or `--format compact`
+
+**Introspection:** Run `task-board q 'schema(mutation=NAME)'` for one mutation signature, or full `schema()` for the entire contract.
+
+`task-board handoff` resolves the role's configured end status, verifies all
+checklist items plus an actual stored task-scoped outcome, and serializes that
+decision with the ordinary status transition. The underlying shared `handoff`
+mutation carries the already-resolved role/status for remote execution; use the
+CLI facade so callers do not have to reproduce role-policy resolution.
+
+The `estimate` q field is a nested enum. Task/Bug values are either
+`{"kind":"notEstimated"}` or
+`{"kind":"estimated","scale":{"kind":"fibonacci","number":5}}`.
+Story/Epic values are calculated, never persisted or hand-set. Full coverage
+returns the same `estimated` shape with the descendant sum. Partial coverage
+returns
+`{"kind":"partiallyEstimated","rolledEstimate":{"kind":"estimated","scale":{"kind":"fibonacci","number":5}},"notEstimatedCount":"1/3","unestimatedTaskIds":["TASK-..."]}`.
+Story counts direct Task/Bug children; Epic rolls up descendant Task/Bug values.
+New Task/Bug records must be estimated before entering `development`; legacy
+records with no persisted Estimate section remain compatible and count as
+unestimated in container projections.
+
+## Grep — unstructured text search
+
+When DSL can't help — searching for arbitrary text across board files.
+
+```bash
+# Find mentions of a term
+task-board grep "AudioRecorder"
+
+# Search in specific file type
+task-board grep "blocked.*deployment" --file progress.md
+
+# Case-insensitive search in descriptions
+task-board grep "TODO" -i --file README.md
+
+# With context lines
+task-board grep "error" -C 2
+```
+
+## CLI — human-facing output and complex operations
+
+CLI text output with ANSI colors is designed for humans. Use for operations not covered by DSL, or when human-readable output is needed.
+
+When reporting board state to a person, reference each epic, story, task, or bug with both its concrete ID and its human-readable title/name. In practice, that usually means carrying both `id` and `name` in your query output, or using a preset such as `default` or `overview` that already includes them. ID-only references are not enough for chat summaries because readers should not have to resolve identifiers manually.
+
+```bash
+# Good human-facing summary inputs
+task-board q --format compact 'list(type=task, status=development) { id name status }'
+task-board q --format compact 'list(type=story, parent=EPIC-260218-abc123) { overview }'
+```
+
+### Parent alignment in the unified goal ledger
+
+Use the top-level `goal` group to maintain one provider-neutral, board-scoped
+statement of the current `parent/primary` owner's complete objective. It
+survives a parent-session replacement, records immutable `board-goal-v2`
+revisions, and never changes a board element's status or acceptance evidence.
+The command group is the one-release `primary-goal-v1` compatibility adapter.
+
+```bash
+# Create only when no primary goal is active.
+task-board goal set-primary \
+  --objective "Keep the parent goal aligned with the current user requirements." \
+  --reason "First actionable requirement"
+
+# CAS-replace the whole objective. Repeating the same objective is idempotent.
+task-board goal update --if-revision 1 \
+  --objective "Keep the parent goal aligned with the current user requirements and active delivery work." \
+  --reason "Requirement expanded"
+
+# Read current state, immutable audit history, or one immutable revision.
+task-board goal get
+task-board goal get --history
+task-board goal get --goal-id PRIMARY-GOAL-260723-a1b2c3 --revision 1
+
+# Clear only with the observed revision and an explicit disposition reason.
+task-board goal clear --if-revision 2 --reason "Parent intent superseded"
+```
+
+`goal get` is read-only and remains available inside a spawned run. When
+`TASK_BOARD_RUN_ID` is set, `set-primary`, `update`, and `clear` return the
+typed `primary_goal_parent_context_required` failure with no side effects;
+spawned owners must use `task-board spawn goal` or `task-board spawn goal
+upsert` for their `run/RUN-*` owner. Both commands use `board-goal-v2`; owner
+isolation prevents either compatibility adapter from silently updating or
+clearing the other.
+
+Every successful JSON response has `ok`, `board_scope`, `primary_goal`, and
+`latest_ref`; mutations additionally carry `mutation`. Exact revision reads
+add `primary_goal_revision`, and history reads add newest-first `history`
+summaries. Typed failures use
+`{ok:false,error:{code,message,current_ref,side_effects:false,remediation?}}`.
+Remote primary-adapter mutations accept authoritative `goal=board-v2` or the
+one-release `primary_goal=board-v1` compatibility capability. Direct v2
+mutations require `goal=board-v2`, and reads never create a local shadow
+ledger.
+
+## Decision table
+
+| Need | Tool | Example |
+|------|------|---------|
+| Discover full API contract | DSL | `task-board q 'schema()'` |
+| Repair one operation/mutation call | DSL | `task-board q 'schema(operation=NAME)'` / `schema(mutation=NAME)` |
+| Preflight one spawn target | DSL | `task-board q 'project_config(view=spawn-preflight, role=ROLE, agent=PROVIDER)'` |
+| Structured query (status, filter, lookup) | DSL query | `task-board q --format compact 'list(type=task, status=development) { overview }'` |
+| Structured write (status, assign, link, create) | DSL mutation | `task-board m 'set_status(TASK-XX, status=development)'` |
+| Evidence-backed producer handoff | CLI facade over shared mutation | `task-board handoff TASK-XX --role developer` |
+| Board parent intent | CLI primary-goal group | `task-board goal get` / `task-board goal update --if-revision N ...` |
+| Preview write without applying | DSL mutation | `task-board m --dry-run 'delete(TASK-XX)'` |
+| Text search across elements | Grep | `task-board grep "AudioRecorder"` |
+| **Phase planning (canonical API)** | **DSL query** | **`task-board q 'plan(EPIC-XX, mode=children)'`** |
+| **Pretty-print / render / save a plan** | **CLI facade** | **`task-board plan EPIC-XX --render --format png`** |
+| Resource management | DSL mutation / CLI | `task-board m 'add_resource(TASK-XX, name=TASK-XX_results.md, content="...", type=outcome)'` |
+
+**IMPORTANT:** Canonical planning lives in `task-board q 'plan(...)'`. Use `task-board plan` only as a local pretty-print / render / save facade over that same planning model. Never manually create phase breakdowns or write `.planning/` files from scratch.
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(TASK-260715-nphtib) { id name status checklist outcomeResources review }; get(BUG-260819-34ikhl) { id name status checklist outcomeResources }'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+id:TASK-260715-nphtib
+name:execute-generated-project-architecture-verification
+status:development
+checklist:[{"text":"The full clean-environment foundation matrix was executed independently","done":true},{"text":"Target graph, deterministic generation, linkage, tests, and legacy checks all have evidence","done":true},{"text":"Failures are routed to concrete board work and the result matrix is attached","done":true},{"text":"Tests written and passing","done":false},{"text":"Coverage target ~80%+ for affected code","done":true},{"text":"Lint clean","done":true},{"text":"New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Implementation matches AC","done":false},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":false},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}]
+outcomeResources:[{"name":"TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260818-24b9f4.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260818-24b9f4.log","description":"Privacy-redacted tester run record; detailed evidence is in the task result matrix"},{"name":"TASK-260715-nphtib_results.md","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_results.md","description":"Handoff evidence"},{"name":"TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-f012d5.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-f012d5.log","description":"System spawn log captured by task-board"},{"name":"TASK-260715-nphtib_spawn-log_-reviewer--reviewer--codex-_RUN-260819-4770ed.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-reviewer--reviewer--codex-_RUN-260819-4770ed.log","description":"System spawn log captured by task-board"},{"name":"TASK-260715-nphtib_review-results.md","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_review-results.md","description":"Independent reviewer verdict and clean-clone evidence"},{"name":"TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-41f105.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-41f105.log","description":"System spawn log captured by task-board"}]
+review:required
+
+id:BUG-260819-34ikhl
+name:harness-signal-cancellation-cleanup-test-is-flaky
+status:done
+checklist:[{"text":"Reproduce signal-cancellation cleanup timeout under repeated and loaded Swift Testing runs","done":true},{"text":"Eliminate timing race without weakening cleanup assertions","done":true},{"text":"Prove repeated clean swift test and coverage runs pass","done":true},{"text":"Code written per task description and AC","done":true},{"text":"Relevant tests written for new or changed behavior and passing","done":true},{"text":"Lint clean","done":true},{"text":"Relevant build/validation commands run after changes and build not broken","done":true},{"text":"New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Implementation matches AC","done":true},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":true},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}]
+outcomeResources:[{"name":"BUG-260819-34ikhl_spawn-log_-implementer--developer--codex-_RUN-260819-294fb4.log","uri":"file://BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-implementer--developer--codex-_RUN-260819-294fb4.log","description":"System spawn log captured by task-board"},{"name":"BUG-260819-34ikhl_results.md","uri":"file://BUG-260819-34ikhl/BUG-260819-34ikhl_results.md","description":"Handoff evidence"},{"name":"BUG-260819-34ikhl_spawn-log_-reviewer--reviewer--codex-_RUN-260819-3d7fa5.log","uri":"file://BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-reviewer--reviewer--codex-_RUN-260819-3d7fa5.log","description":"System spawn log captured by task-board"},{"name":"BUG-260819-34ikhl_review-results.md","uri":"file://BUG-260819-34ikhl/BUG-260819-34ikhl_review-results.md","description":"Independent accepted rework verdict and gate evidence"},{"name":"BUG-260819-34ikhl_spawn-log_-implementer--developer--codex-_RUN-260819-d12515.log","uri":"file://BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-implementer--developer--codex-_RUN-260819-d12515.log","description":"System spawn log captured by task-board"},{"name":"BUG-260819-34ikhl_spawn-log_-reviewer--reviewer--codex-_RUN-260819-57b67c.log","uri":"file://BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-reviewer--reviewer--codex-_RUN-260819-57b67c.log","description":"System spawn log captured by task-board"}]
+
+exec
+/bin/zsh -lc 'task-board resource --help' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+Manage attached resources such as screenshots, docs, logs, and other files.
+
+Use "task-board resource add" to create a new attached resource, "task-board
+resource adopt" to register an orphaned local payload, "task-board resource
+update" to replace an existing one, "task-board resource delete" to remove it,
+and "task-board resource get" to materialize a resource back to the local
+filesystem for inspection.
+
+Usage:
+  task-board resource [command]
+
+Available Commands:
+  add         Attach a new file resource to an element
+  adopt       Register an existing unreferenced local resource payload
+  delete      Delete a resource from an element (requires --confirm)
+  get         Download a resource to the local filesystem
+  update      Replace an existing file resource on an element
+
+Flags:
+  -h, --help   help for resource
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board resource [command] --help" for more information about a command.
+
+exec
+/bin/zsh -lc 'task-board resource get --help' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+Download a board resource and save it locally.
+
+If --output is omitted, the file is materialized under:
+  .temp/resources/<ELEMENT-ID>/<NAME>
+
+Use --output - to write the resource bytes to stdout.
+
+Usage:
+  task-board resource get <ELEMENT-ID> <NAME> [flags]
+
+Flags:
+  -h, --help            help for get
+  -o, --output string   Write resource to this path (default: .temp/resources/<ELEMENT-ID>/<NAME>, use - for stdout)
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+exec
+/bin/zsh -lc 'task-board resource get TASK-260715-nphtib TASK-260715-nphtib_results.md --output -' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+# TASK-260715-nphtib — generated-project architecture verification results
+
+## Verdict
+
+READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
+
+The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+No production signing, app/system-extension install, app/provider launch, Network Extension activation, VPN preference save, VPN tunnel start, route change, or DNS change was performed. The harness `smoke` command is a local no-op resource-lifecycle test and does not use Network Extension.
+
+## Environment and revision
+
+- Source revision: `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`; source timestamp `1787098294`; clean source state before the accepted run.
+- Legacy revision: signed tag `v0.1.0` resolved to and was detached at `2557aba1c030d0643d76e0bc3b185f6d5fd172e1` in another `--no-hardlinks` clone.
+- Host: macOS 26.5 build 25F71, arm64.
+- Xcode 26.5 build 17F42; macOS SDK 26.5; Swift 6.3.2; swift-format 6.3.0.
+- Mise 2026.2.0; Tuist 4.202.5; Go 1.26.5 darwin/arm64; Syft 1.48.0; Git 2.50.1; Python 3.14.4; GNU Make 3.81.
+- Deployment inputs: macOS 15.0; deferred iOS 18.0.
+- Privacy: commands below use `<task-temp>` and `<legacy-root>` aliases; no credential values, unrelated paths, or environment dumps are retained.
+
+## Foundation matrix
+
+The authoritative command was:
+
+`make credential-free-validate LEGACY_ROOT=<legacy-root>`
+
+Result: exit 0 in 310.40s. Its repository-owned summary reported every row below PASS and explicitly reported production signing/physical P0/Developer ID/notarization/DMG and deferred iOS as NOT RUN. The durations below are from a subsequent independent row-by-row timing pass on the same accepted clone; the Swift row includes its required clean rerun after an intermittent failure.
+
+| Row | Exact command | Exit | Duration | Result |
+| --- | --- | ---: | ---: | --- |
+| Relay tool bootstrap | `./scripts/bootstrap-relay-tools.sh` | 0 | 13.557s | PASS |
+| Relay packaging/reproducibility/verify/smoke | `env RELAY_VERSION=0.1.0 SOURCE_COMMIT=7dc73ac6e7325f86a4a178a0558619f0fc9d1490 SOURCE_DATE_EPOCH=1787098294 make relay-shell-validate` | 0 | 76.687s | PASS |
+| Entrypoint contract regressions | `./scripts/tests/test-credential-free-validation.sh` | 0 | 0.937s | PASS |
+| Deterministic double generation | `./scripts/validate-workspace-foundation.sh` | 0 | 9.191s | PASS |
+| macOS Debug/Release builds and contracts | `./scripts/validate-macos-targets.sh` | 0 | 82.701s | PASS |
+| Core dependency boundaries | `./scripts/check-core-boundaries.sh` | 0 | 1.166s | PASS |
+| Swift Testing clean rerun | `swift package clean && swift test` | 0 | 79.71s | PASS: 443 tests / 37 suites / 25 accepted known issues |
+| Swift release build | `swift build -c release` | 0 | 2.091s | PASS |
+| Native packaging negatives and reproduction | `make check-native-dependencies test-native-dependencies` | 0 | 4.678s | PASS |
+| Legacy isolated clone | `git clone --quiet --local --no-hardlinks <legacy-root> <task-temp>/legacy-v0.1.0` | 0 | 1.087s | PASS |
+| Legacy detached checkout | `git -C <task-temp>/legacy-v0.1.0 checkout --quiet 2557aba1c030d0643d76e0bc3b185f6d5fd172e1` | 0 | 0.200s | PASS |
+| Legacy preservation | `./scripts/check-legacy-preservation.sh --legacy-root <task-temp>/legacy-v0.1.0 --workspace-root <task-temp>/repo` | 0 | 0.515s | PASS |
+| Legacy negative guard tests | `./scripts/tests/test-legacy-preservation-guard.sh --legacy-root <task-temp>/legacy-v0.1.0` | 0 | 9.557s | PASS |
+| Legacy Swift tests | `swift test --package-path <task-temp>/legacy-v0.1.0` | 0 | 14.383s | PASS |
+| Legacy release build | `swift build -c release --package-path <task-temp>/legacy-v0.1.0` | 0 | 5.260s | PASS |
+
+Additional gates:
+
+- `swift format lint --strict --parallel` over tracked product/manifests/tests Swift files excluding `.task-board/**`: exit 0, 2.38s.
+- `swift test --enable-code-coverage`: exit 0, 64.24s; 443 tests / 37 suites passed with 25 expected known issues.
+- Product `Sources/` coverage across 46 files: lines 19,482/21,655 = 89.97%; functions 2,322/2,591 = 89.62%; regions 6,567/7,998 = 82.11%.
+- `task-board validate`: exit 0, 0.27s, no issues.
+- `swift run --skip-build ReluxTunnelHarness smoke --configuration-json <privacy-labelled-noop-document>`: exit 0, 1.02s; status succeeded, profile reference redacted, temporary directory/socket/task cleanup succeeded, and gauges proved HEV/libssh2 linkage.
+
+## Exact generated graph and ADR comparison
+
+Workspace-visible schemes are exactly:
+
+1. `relux-relay`
+2. `relux-relay-protocol-test`
+3. `ReluxProxyMac`
+4. `ReluxProxyMacTunnel`
+5. `ReluxTunnelCore`
+6. `ReluxTunnelHarness`
+
+Generated application targets are exactly `ReluxProxyMac`, `ReluxProxyMacTests`, `ReluxProxyMacTunnel`, and `ReluxProxyMacTunnelTests`. Generated configurations are exactly `Debug` and `Release`. `ReluxProxyIOS`, `ReluxProxyIOSTunnel`, `ReluxProxyIOSTests`, and `ReluxProxyIOSTunnelTests` are absent from the generated targets and workspace-visible schemes, matching accepted ADR-024/ADR-027 and ADR-029.
+
+`scripts/check-generated-provider-graph.py` passed against `Project.swift`, `Package.swift`, the generated provider-owned PBX build phases, the staged relay root, and the actual Release provider bundle. It proves the accepted consumer-to-dependency direction:
+
+- Provider directly consumes only `ReluxTunnelMacOSAdapter` plus the verified relay folder resource.
+- `ReluxTunnelMacOSAdapter` consumes exactly Core, `ReluxTunnelLibSSH2Adapter`, and `ReluxTunnelNativeAdapter`.
+- `ReluxTunnelNativeAdapter` consumes exactly Core and `HevSocks5Tunnel`.
+- `CReluxNativeFixture` is restricted to test evidence and absent from the generated production project/provider binary.
+
+Two clean-generation SHA-256 manifests were byte-identical (`cmp` exit 0), each with digest `d5c5fd2899750f5b9e90de096e2b0552df22384a5ecbea793c0f19df630b7fc6` across 11 generated files. `Package.swift` and tracked source state remained unchanged by generation.
+
+## Release bundle, static/native linkage, and relay evidence
+
+- Release host bundle ID: `works.relux.tunnel.mac`; exactly one nested system extension with bundle ID `works.relux.tunnel.mac.tunnel` at the ADR path.
+- Actual Release provider binary architectures: `x86_64 arm64` (universal).
+- Production symbol evidence: 249 HEV text symbols and 28 libssh2 text symbols, plus `ReluxTunnelMacOSAdapter` Swift symbols.
+- Forbidden `_NSAddImage`, `_NSCreateObjectFileImageFromFile`, `_dladdr`, `_dlclose`, `_dlopen`, `_dlsym`, `relux_native_fixture`, and `CReluxNativeFixture` symbols: absent.
+- Dynamic linkage contains only `/System/Library/Frameworks/*` and `/usr/lib/*`; no bundled or third-party dylib.
+- `_CodeSignature` and `Configuration/Signing.local.xcconfig`: absent, as required for the unsigned lane.
+- No complete embedded PEM private-key payload was present. A broad marker-only probe found libssh2's literal OpenSSH parser delimiter; a complete-payload check correctly distinguished this non-secret format marker from key material and passed.
+- The nested provider relay resource contains exactly four executable OS/architecture artifacts, four SPDX SBOMs, the manifest, canonical checksum file, and notice. `shasum -a 256 -c relux-relay-SHA256SUMS` passed every entry.
+- Manifest schema/protocol versions are 1/1. Artifact SHA-256 values: Darwin amd64 `8ae943c5ee6e4bac6934081eb7388f8504840f441709a28653da96a61eb0bed0`; Darwin arm64 `bbfe79ff550dc3f09ab795b0870f0703151e4f3b6c3c8c19a28eaa635a291d64`; Linux amd64 `012818980e94ff69f159620650902823e6174c5e99aa72c6cdba7ee70e9f0484`; Linux arm64 `22fce3f64b2e114f76ad5fb6bcc2442c4611e7812b8e547f6ae8595b9e85808d`.
+
+## Failure routing and anomalies
+
+- Resolved prerequisite diagnostic: a first disposable clean clone failed because its checked-in Mise config had not yet been trusted (exit 2, 113.61s). The accepted run used a second fresh clone after `mise trust <task-temp>/repo/mise.toml`, as documented by the repository.
+- Scope diagnostic: a broad Swift-format probe included historical `.task-board` Swift evidence and exited 1 in 3.29s. The relevant tracked product/manifests/tests scope then passed strict lint. No product lint failure exists.
+- Real intermittent regression: a warm-cache `swift test` timing row exited 1 in 75.684s because `ReluxTunnelHarness` test `signal cancellation uses signal exit code and cleans all resources` threw `TimedOut()` at `HarnessTests.swift:140`. It is routed to `BUG-260819-34ikhl` with reproduction evidence and rework checklist. The authoritative clean matrix, coverage run, and subsequent `swift package clean && swift test` all pass; no architecture failure remains hidden.
+- The anomaly and final accepted evidence are recorded in `LOGBOOK.md` under the 2026-08-19 TASK-260715-nphtib entry.
+
+## Scope exclusions and safety attestation
+
+NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
+
+exec
+/bin/zsh -lc 'task-board resource get TASK-260715-nphtib TASK-260715-nphtib_review-results.md --output -' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+# TASK-260715-nphtib — independent reviewer results
+
+## Verdict
+
+CHANGES REQUESTED at revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. Architecture, generation, build, linkage, relay, legacy, lint, coverage, and safety gates pass. Deterministic Swift Testing is not proved because the same revision has a real recorded warm-cache `swift test` failure in `HarnessTests.cancellationCleanup`, the scheduler-count polling implementation is unchanged, and BUG-260819-34ikhl has no completed rework.
+
+## Independent clean environment
+
+- Fresh local source clone: `git clone --quiet --local --no-hardlinks <source> <review-root>/repo`; detached checkout at the authoritative revision; exit 0.
+- Fresh legacy clone: `git clone --quiet --local --no-hardlinks <legacy-source> <review-root>/legacy-v0.1.0`; detached checkout `2557aba1c030d0643d76e0bc3b185f6d5fd172e1`; exit 0.
+- Source was clean before and after applicable gates. Public environment: macOS 26.5 arm64; Xcode 26.5 build 17F42; macOS SDK 26.5; Swift 6.3.2; Mise 2026.2.0; Tuist 4.202.5; Go 1.26.5; Syft 1.48.0.
+- Privacy: `<source>`, `<legacy-source>`, and `<review-root>` replace local paths. No credentials, environment dump, unrelated filename, or secret material is attached.
+
+## Result matrix
+
+| Gate | Exact command | Exit | Duration/result |
+| --- | --- | ---: | --- |
+| Full repository entrypoint | `make credential-free-validate LEGACY_ROOT=<review-root>/legacy-v0.1.0` | 0 | 417.04s; all 15 applicable rows PASS |
+| Strict Swift formatting | `git ls-files *.swift :!.task-board/** \| xargs swift format lint --strict --parallel` | 0 | 2.72s |
+| Coverage suite | `swift test --enable-code-coverage` | 0 | 75.64s; 443 tests, 37 suites, 25 accepted known issues |
+| Product Sources coverage | `jq` aggregation over Swift codecov JSON | 0 | lines 19,481/21,655 = 89.96%; functions 2,322/2,591 = 89.62%; regions 6,573/7,998 = 82.18% |
+| Targeted flaky-test stress | 50 sequential `swift test --filter cancellationCleanup` invocations | 0 | 50/50 pass in 75s |
+| Second deterministic generation | `./scripts/validate-workspace-foundation.sh` | 0 | 11.46s; manifests identical |
+| Generation manifest compare | `diff -u generation-01.sha256 generation-02.sha256` | 0 | both SHA-256 `d5c5fd2899750f5b9e90de096e2b0552df22384a5ecbea793c0f19df630b7fc6` |
+| Exact graph enumeration | `xcodebuild -workspace ReluxTunnel.xcworkspace -list -json` and project list | 0 | six workspace schemes; four application targets; Debug/Release only; deferred iOS absent |
+| Actual Release provider graph | `scripts/check-generated-provider-graph.py` with generated PBX project and nested Release provider bundle | 0 | graph and relay resource contract PASS |
+| Release provider inspection | `lipo`, `nm`, `otool -L`, PlistBuddy, and nested-bundle count | 0 | x86_64+arm64; one nested extension; adapter/HEV/libssh2 symbols present; fixture/loader symbols absent; system-only dylibs |
+| Actual nested relay checksums | `shasum -a 256 -c relux-relay-SHA256SUMS` in the nested Release resource | 0 | notice, four executables, four SBOMs, and manifest all OK |
+| Staged relay verifier | `scripts/relay_release.py verify ... --output .build/relay/apple-bundle-input` | 0 | PASS |
+| Focused architecture DOT | `dot -Tdot diagrams/TASK-260715-32umrc_target-dependency-plan.dot -o /dev/null` | 0 | parses; consumer-to-dependency direction matches ADR |
+| Board validation, clean clone and working board | `task-board validate` | 0 / 0 | no issues |
+
+The producer outcome `TASK-260715-nphtib_results.md` retains exact per-row commands and durations for the accepted clean producer matrix; this reviewer independently reran the full entrypoint and the gates above.
+
+## Architecture and artifact findings
+
+Workspace schemes are exactly `relux-relay`, `relux-relay-protocol-test`, `ReluxProxyMac`, `ReluxProxyMacTunnel`, `ReluxTunnelCore`, and `ReluxTunnelHarness`. Generated application targets are exactly `ReluxProxyMac`, `ReluxProxyMacTests`, `ReluxProxyMacTunnel`, and `ReluxProxyMacTunnelTests`; configurations are exactly Debug and Release. All four deferred iOS target names are absent.
+
+The provider directly consumes `ReluxTunnelMacOSAdapter` and verified relay resources. Its universal Release binary contains macOS-adapter, HEV, and libssh2 production symbols; contains no `CReluxNativeFixture`, `relux_native_fixture`, or forbidden dynamic-loader symbol; and dynamically links only system frameworks/libraries. Bundle IDs, exactly-one embedding, no `_CodeSignature`, and no local signing overlay all match the credential-free ADR lane. Relay checksums and the provider-graph verifier pass against the actual nested bundle.
+
+One reviewer-authored `otool` filter initially exited 92 because it treated the fat-binary architecture header as a dependency. A corrected path-only filter exited 0 and proved system-only linkage. A direct `relay_release.py verify` attempt on the nested bundle printed its intended `output paths must remain under .build/relay` refusal; the supported staged verifier then exited 0, while the actual nested bundle was independently covered by checksum verification and `check-generated-provider-graph.py` exit 0. These are reviewer diagnostic-command corrections, not product failures.
+
+## Deterministic-test rejection
+
+Prior same-revision evidence records `swift test` exit 1 after 75.684s: `HarnessTests.cancellationCleanup` threw `TimedOut()` at `HarnessTests.swift:140`. The authoritative clean matrix, this review coverage suite, and 50 targeted repeats pass, but the failing revision still implements `waitUntil` as only 10,000 scheduler yields. No code change eliminates or bounds the demonstrated scheduling race, and BUG-260819-34ikhl remains backlog with all rework checklist items false. Passing samples cannot establish determinism after an actual unchanged-revision failure.
+
+Required rework is concrete: complete BUG-260819-34ikhl by reproducing under repetition/load, replacing the scheduler-count wait without weakening resource-cleanup assertions, and attaching repeated clean full-suite plus coverage evidence. Then rerun this complete matrix from a fresh clone.
+
+## Build-host safety
+
+No production signing, app/system-extension installation, app/provider launch, NetworkExtension preference save, VPN start/stop, route mutation, or DNS mutation was invoked. Physical Gate P0, notarization, DMG, and deferred iOS were NOT RUN by scope. The harness smoke remains a local no-op resource-lifecycle test and does not activate a VPN.
+exec
+/bin/zsh -lc 'task-board resource get BUG-260819-34ikhl BUG-260819-34ikhl_results.md --output -' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+# BUG-260819-34ikhl developer outcome — rework 01
+
+## Root cause
+
+The original signal test used 10,000 `Task.yield()` calls as a scheduler-count deadline. Under loaded Swift Testing, that loop could finish before the command acquired `ResourceRecorder` and published ownership, so `TimedOut()` represented executor scheduling rather than failed cleanup.
+
+The first explicit-event fix had a second ownership hole found by review: `waitUntilStarted()` stored a non-throwing continuation that only `record(directory:socket:)` could resume. A command failure before full publication, or cancellation of the waiting test task, retained the continuation indefinitely even though `HarnessApplication.run` had already reached a terminal response.
+
+## Fix
+
+`ResourceRecorder` now owns an actor-isolated readiness state machine with atomic `pending -> ready` and `pending -> completed-before-readiness` transitions. The application task publishes its terminal response after production cleanup. Both stored waiters and waiters arriving after completion receive the same typed diagnostic. Each waiter has a UUID; a cancellation handler removes and resumes only that waiter, and registration checks cancellation while actor-isolated, covering cancellation before registration without a missed wakeup or double resume.
+
+Resource publication is staged so the injected pre-readiness failure records its temporary directory without claiming readiness. Readiness is published only after the directory, Unix socket, and managed task are owned. The signal test still asserts exit 143, empty output, removed directory and socket, and exactly one managed-task cancellation. Startup failure asserts exit 1, the exact diagnostic, partial-directory removal, no socket/task ownership, and zero retained waiters. No arbitrary sleep, timeout increase, retry, weakened assertion, or production VPN behavior change was introduced. Production cleanup ordering remains: choose first event, cancel and join both task-group children, then run the actor-guarded reverse-order resource cleanup once.
+
+## Evidence
+
+- `swift test --filter ReluxTunnelHarness`: exit 0; 13 tests including 50 signal cases, 50 injected startup-failure cases, 50 pre-registration cancellation cases, and explicit post-registration cancellation.
+- Four CPU-load workers plus `swift test --filter ReluxTunnelHarness`: exit 0; the same focused matrix passed.
+- Clean full run 1, `swift package clean && swift test`: exit 0; 446 tests in 37 suites, 25 known ReluxNIOSSH-unavailable issues; 68.18s.
+- Clean full run 2, same command: exit 0; 446 tests in 37 suites, same 25 known issues; 69.10s.
+- Clean full run 3, same command: exit 0; 446 tests in 37 suites, same 25 known issues; 65.52s.
+- Clean coverage, `swift package clean && swift test --enable-code-coverage`: exit 0; 446 tests in 37 suites, same 25 known issues; 66.06s.
+- `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift`: exit 0.
+- `make check-core-boundaries`: exit 0.
+- `git diff --check`: exit 0.
+- `task-board validate`: exit 0; board valid with no issues.
+
+## Safety
+
+All evidence is privacy-safe and build/test-only. No signing, installation, app/provider launch, VPN preference save or mutation, VPN activation, route change, or DNS change ran.
+
+## Files
+
+- `Tests/ReluxTunnelHarnessTests/HarnessTests.swift`
+- `LOGBOOK.md`
+
+exec
+/bin/zsh -lc 'task-board resource get BUG-260819-34ikhl BUG-260819-34ikhl_review-results.md --output -' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+# BUG-260819-34ikhl independent review — rework 01
+
+## Verdict
+
+Accepted. Terminal movement remains with the commit-owning orchestrator; this reviewer did not supply `commit_ack`.
+
+## Concurrency and ownership review
+
+The original failure was a scheduler race in the test harness: 10,000 `Task.yield()` calls were treated as a deadline while the command task still needed executor time to acquire `ResourceRecorder` and publish resource ownership. The delta removes that polling and its `TimedOut` result.
+
+`ResourceRecorder` now owns an actor-isolated `pending`, `ready`, and `terminal` state machine. Waiter state inspection and registration occur in one actor turn. Readiness, command completion before readiness, and waiter cancellation are serialized through the same actor, so each continuation is removed before it is resumed and competing paths cannot double-resume it. A cancellation check before insertion covers cancellation-before-registration; UUID ownership and the cancellation handler cover stored waiters. Late waiters receive the existing terminal result immediately. No waiter remains after the deterministic startup-failure or cancellation cases.
+
+Readiness is published only after the directory, Unix socket, and managed task have all been registered. The signal path still proves exit 143, empty output, removed directory/socket, and exactly one managed-task cancellation. The injected pre-readiness failure proves exit 1 with the exact diagnostic, removal of the partially owned directory, no socket or task ownership, and zero pending readiness waiters. Production resource cleanup remains unchanged: the task group selects the first event, cancels and joins both children, then the actor-guarded resource scope performs reverse-order cleanup once.
+
+No arbitrary sleep or timeout extension, blind retry, relaxed assertion, production VPN behavior change, or production source change was introduced.
+
+## Independent evidence
+
+- Four CPU-load workers plus `swift test --filter ReluxTunnelHarness`: exit 0; 13 tests passed, including 50 signal cases, 50 injected startup-failure cases, 50 pre-registration cancellation cases, and registered cancellation.
+- `swift package clean && swift test`: exit 0; 446 tests in 37 suites passed with 25 declared ReluxNIOSSH-unavailable known issues.
+- `swift package clean && swift test --enable-code-coverage`: exit 0; 446 tests in 37 suites passed with the same 25 declared known issues.
+- `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift`: exit 0.
+- `make check-core-boundaries`: exit 0.
+- `git diff --check`: exit 0.
+- `task-board validate`: exit 0; board valid with no issues.
+- Scoped diff audit: only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed under Sources/Tests/Package.swift/Makefile; scheduler polling and `TimedOut` were removed; the existing 3,600-second sleeps are command fixtures, unchanged.
+
+Producer evidence additionally records three clean full-suite runs and one clean coverage run, satisfying the complete acceptance matrix when combined with this independent rerun.
+
+## Safety
+
+All review activity was privacy-safe and build/test-only. No signing, installation, application/provider launch, VPN preference save or mutation, VPN activation, route change, or DNS change ran.
+
+codex
+Stored evidence is internally consistent: both independent clean-clone architecture matrices passed at `7dc73ac`, the sole rejection was the harness race, and `BUG-260819-34ikhl` is now accepted/done with repeated clean-suite and coverage evidence. I’m now independently verifying the signed/pushed `069e23b` delta and running the focused harness suite; this remains build/test-only and will not invoke any app, provider, NetworkExtension, or VPN lifecycle operation.
+exec
+/bin/zsh -lc 'git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+069e23bdbbef71be194762d275b003a40a6cfc72
+
+exec
+/bin/zsh -lc 'git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72 && git diff --name-status 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72 && git show --format=fuller --stat --oneline 069e23bdbbef71be194762d275b003a40a6cfc72' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_fix-instructions.md
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_reproduction.md
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_results.md
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_review-results.md
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_reviewer-instructions.md
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_rework-01.md
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-implementer--developer--codex-_RUN-260819-294fb4.log
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-implementer--developer--codex-_RUN-260819-d12515.log
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-reviewer--reviewer--codex-_RUN-260819-3d7fa5.log
+A	.task-board/.resources/BUG-260819-34ikhl/BUG-260819-34ikhl_spawn-log_-reviewer--reviewer--codex-_RUN-260819-57b67c.log
+A	.task-board/EPIC-260715-2mqgvm_viability-and-foundation/STORY-260715-l2i2oo_target-project-architecture/BUG-260819-34ikhl_harness-signal-cancellation-cleanup-test-is-flaky/README.md
+A	.task-board/EPIC-260715-2mqgvm_viability-and-foundation/STORY-260715-l2i2oo_target-project-architecture/BUG-260819-34ikhl_harness-signal-cancellation-cleanup-test-is-flaky/progress.md
+M	.task-board/EPIC-260715-2mqgvm_viability-and-foundation/STORY-260715-l2i2oo_target-project-architecture/progress.md
+M	.task-board/EPIC-260715-2mqgvm_viability-and-foundation/progress.md
+M	LOGBOOK.md
+M	Tests/ReluxTunnelHarnessTests/HarnessTests.swift
+069e23b test(harness): make readiness cancellation deterministic
+ .../BUG-260819-34ikhl_fix-instructions.md          |    13 +
+ .../BUG-260819-34ikhl_reproduction.md              |     7 +
+ .../BUG-260819-34ikhl/BUG-260819-34ikhl_results.md |    35 +
+ .../BUG-260819-34ikhl_review-results.md            |    32 +
+ .../BUG-260819-34ikhl_reviewer-instructions.md     |    11 +
+ .../BUG-260819-34ikhl_rework-01.md                 |    16 +
+ ...menter--developer--codex-_RUN-260819-294fb4.log | 17982 +++++++++++++++
+ ...menter--developer--codex-_RUN-260819-d12515.log | 22882 +++++++++++++++++++
+ ...eviewer--reviewer--codex-_RUN-260819-3d7fa5.log |  6689 ++++++
+ ...eviewer--reviewer--codex-_RUN-260819-57b67c.log |  7137 ++++++
+ .../README.md                                      |    10 +
+ .../progress.md                                    |    81 +
+ .../progress.md                                    |     4 +-
+ .../progress.md                                    |     4 +-
+ LOGBOOK.md                                         |    30 +
+ Tests/ReluxTunnelHarnessTests/HarnessTests.swift   |   255 +-
+ 16 files changed, 55156 insertions(+), 32 deletions(-)
+
+exec
+/bin/zsh -lc 'swift package clean && swift test --filter ReluxTunnelHarness' in /Users/iv/Developer/relux-tunnel
+ succeeded in 23931ms:
+Building for debugging...
+[0/24] /Users/iv/Developer/relux-tunnel/.build/arm64-apple-macosx/debug/ReluxTunnelPackageTests.derived/runner.swift
+[1/24] Write sources
+[12/24] Copying libReluxLibSSH2.a
+[12/24] Copying libhev-socks5-tunnel.a
+[13/24] Write sources
+[16/24] Copying libCReluxNativeFixture.a
+[16/24] Write ReluxTunnelHarness-entitlement.plist
+[18/24] Write swift-version-45881B103DA9D485.txt
+[20/51] Emitting module ReluxLibSSH2PackagingTests
+[21/51] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[22/51] Compiling ReluxTunnelCore PacketContracts.swift
+[23/51] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[24/52] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[25/52] Compiling ReluxTunnelCore ClientUDPAssociationRegistry.swift
+[26/52] Compiling ReluxTunnelCore RelaySession.swift
+[27/52] Compiling ReluxTunnelCore RuntimeContracts.swift
+[28/52] Emitting module ReluxTunnelCore
+[29/52] Compiling ReluxTunnelCore SSHBootstrapDiagnostics.swift
+[30/52] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[31/52] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[32/52] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[33/52] Compiling ReluxTunnelCore RelayHandshake.swift
+[34/52] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[35/52] Compiling ReluxTunnelCore RelayByteCodec.swift
+[36/52] Compiling ReluxTunnelCore TCPAdmissionRegistry.swift
+[37/52] Compiling ReluxTunnelCore ApprovedHostIdentityPolicy.swift
+[38/52] Compiling ReluxTunnelCore BoundedFullDuplexBytePump.swift
+[39/52] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[40/52] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[41/52] Compiling ReluxTunnelCore VPNManagerRepository.swift
+[42/52] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[43/52] Compiling ReluxTunnelCore ComponentContracts.swift
+[44/52] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[45/52] Compiling ReluxTunnelCore SSHProfileSnapshot.swift
+[46/52] Compiling ReluxTunnelCore SSHContracts.swift
+[47/52] Compiling ReluxTunnelCore VPNSessionController.swift
+[48/62] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[49/62] Emitting module ReluxTunnelNativeAdapter
+[50/62] Compiling ReluxTunnelNativeAdapter HEVUDPDatagramAdapter.swift
+[51/62] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[52/62] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[53/62] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[54/66] Emitting module ReluxTunnelIOSAdapter
+[55/66] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[56/66] Compiling ReluxTunnelIOSAdapter IOSVPNManagerPreferences.swift
+[57/66] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[58/66] Emitting module ReluxTunnelLibSSH2Adapter
+[59/66] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Transport.swift
+[60/66] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Bridge.swift
+[61/66] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Channels.swift
+[62/83] Emitting module ReluxTunnelMacOSAdapter
+[63/83] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[64/83] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[65/83] Compiling ReluxTunnelMacOSAdapter MacOSVPNManagerPreferences.swift
+[66/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHProfileSnapshotLoader.swift
+[67/83] Compiling ReluxTunnelMacOSAdapter MacOSSystemKeychainCredentialResolver.swift
+/Users/iv/Developer/relux-tunnel/Sources/ReluxTunnelMacOSAdapter/MacOSSystemKeychainCredentialResolver.swift:281:18: warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+279 |   private static func resolveSystemDomain() -> MacOSSystemKeychainResolution {
+280 |     var keychain: SecKeychain?
+281 |     let status = SecKeychainCopyDomainDefault(.system, &keychain)
+    |                  `- warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+282 |     return MacOSSystemKeychainResolution(
+283 |       status: status,
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[68/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHBootstrapErrorMapper.swift
+[69/83] Emitting module ReluxTunnelHarnessSupport
+[70/83] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[71/83] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[72/83] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[73/83] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[74/83] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[75/122] Emitting module ReluxTunnelHarness
+[76/122] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[76/122] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[77/122] Linking ReluxTunnelHarness
+[78/122] Applying ReluxTunnelHarness
+[80/122] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[81/122] Emitting module ReluxTunnelHarnessTests
+[82/122] Emitting module ReluxTunnelCoreTests
+[83/123] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[84/123] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[85/123] Compiling ReluxTunnelNativeAdapterTests HEVUDPDatagramAdapterTests.swift
+[86/123] Emitting module ReluxTunnelNativeAdapterTests
+[87/123] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[88/123] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[89/123] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[90/123] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[91/123] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[92/123] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[93/123] Compiling ReluxTunnelCoreTests VPNSessionControllerTests.swift
+[94/123] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[95/123] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[96/123] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[97/123] Compiling ReluxTunnelCoreTests TCPAdmissionRegistryTests.swift
+[98/123] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[99/123] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[100/123] Compiling ReluxTunnelCoreTests SSHBootstrapErrorMappingTests.swift
+[101/123] Compiling ReluxTunnelCoreTests SSHProfileSnapshotLoaderTests.swift
+[102/123] Compiling ReluxTunnelCoreTests MacOSSystemKeychainCredentialResolverTests.swift
+/Users/iv/Developer/relux-tunnel/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift:573:18: warning: 'SecKeychainCreate' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+571 |     }
+572 |     var keychain: SecKeychain?
+573 |     let status = SecKeychainCreate(
+    |                  `- warning: 'SecKeychainCreate' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+574 |       path,
+575 |       UInt32(password.count),
+
+/Users/iv/Developer/relux-tunnel/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift:588:5: warning: 'SecKeychainDelete' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+586 |
+587 |   deinit {
+588 |     SecKeychainDelete(handle.rawValue)
+    |     `- warning: 'SecKeychainDelete' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+589 |     try? FileManager.default.removeItem(at: directory)
+590 |   }
+
+/Users/iv/Developer/relux-tunnel/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift:618:9: warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+616 | private func systemKeychainHandle() throws -> MacOSSystemKeychainHandle {
+617 |   var keychain: SecKeychain?
+618 |   guard SecKeychainCopyDomainDefault(.system, &keychain) == errSecSuccess, let keychain else {
+    |         `- warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+619 |     throw MacOSCredentialResolverError.credentialAccessDenied
+620 |   }
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[103/123] Compiling ReluxTunnelCoreTests OwnedVPNManagerRepositoryTests.swift
+/Users/iv/Developer/relux-tunnel/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift:573:18: warning: 'SecKeychainCreate' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+571 |     }
+572 |     var keychain: SecKeychain?
+573 |     let status = SecKeychainCreate(
+    |                  `- warning: 'SecKeychainCreate' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+574 |       path,
+575 |       UInt32(password.count),
+
+/Users/iv/Developer/relux-tunnel/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift:588:5: warning: 'SecKeychainDelete' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+586 |
+587 |   deinit {
+588 |     SecKeychainDelete(handle.rawValue)
+    |     `- warning: 'SecKeychainDelete' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+589 |     try? FileManager.default.removeItem(at: directory)
+590 |   }
+
+/Users/iv/Developer/relux-tunnel/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift:618:9: warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+616 | private func systemKeychainHandle() throws -> MacOSSystemKeychainHandle {
+617 |   var keychain: SecKeychain?
+618 |   guard SecKeychainCopyDomainDefault(.system, &keychain) == errSecSuccess, let keychain else {
+    |         `- warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+619 |     throw MacOSCredentialResolverError.credentialAccessDenied
+620 |   }
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[104/123] Compiling ReluxTunnelCoreTests ApprovedHostIdentityPolicyTests.swift
+[105/123] Compiling ReluxTunnelCoreTests BoundedFullDuplexBytePumpTests.swift
+[106/123] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[107/123] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[108/123] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[109/123] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[110/123] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[111/123] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[112/123] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[113/123] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[114/123] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[115/123] Compiling ReluxTunnelCoreTests ClientUDPAssociationRegistryTests.swift
+[116/123] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[117/123] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[118/123] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2BridgeTests.swift
+[119/123] Compiling ReluxTunnelLibSSH2AdapterTests SSHTransportConformanceTests.swift
+[120/123] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2AdapterIntegrationTests.swift
+[121/123] Emitting module ReluxTunnelLibSSH2AdapterTests
+[122/125] Compiling ReluxTunnelPackageTests runner.swift
+[123/125] Emitting module ReluxTunnelPackageTests
+[123/125] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[124/125] Linking ReluxTunnelPackageTests
+Build complete! (20.58s)
+Test Suite 'Selected tests' started at 2026-08-19 05:45:28.331.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-19 05:45:28.337.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-19 05:45:28.337.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-19 05:45:28.337.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "ReluxTunnelHarness" started.
+􀟈  Test "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test "signals map to shell-standard exit codes" started.
+􀟈  Test "configuration schema versions fail closed" started.
+􀟈  Test "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test "normal exit cleans files, sockets, and managed tasks" started.
+􀟈  Test "registered readiness wait cancellation removes its continuation" started.
+􀟈  Test "argument parser rejects missing and unknown subcommands" started.
+􀟈  Test "smoke output is deterministic, versioned, and privacy safe" started.
+􀟈  Test case passing 1 argument iteration → 1 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 2 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test "subcommands receive every packet and SSH experiment seam" started.
+􀟈  Test "configuration rejects a non-opaque runtime profile reference" started.
+􀟈  Test case passing 1 argument iteration → 4 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 5 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 7 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 6 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 3 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test "macOS harness registers the pinned libssh2 candidate capabilities" started.
+􀟈  Test case passing 1 argument iteration → 8 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 9 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 11 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test "argument parser requires exactly one structured configuration input" started.
+􀟈  Test case passing 1 argument iteration → 1 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 10 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 12 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 13 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 2 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 14 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 3 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 6 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 16 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 20 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 21 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 22 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 18 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 7 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 15 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 5 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 23 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 17 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 4 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 9 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 24 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 26 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 28 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 14 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 16 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 25 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 12 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 19 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 29 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 10 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 19 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 8 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 15 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 13 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 33 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 21 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 11 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 35 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 27 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 36 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 37 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 26 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 22 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 32 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 38 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 27 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 28 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 39 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 29 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 30 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 30 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 18 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 17 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 41 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 24 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 34 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 32 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 20 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 45 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 34 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 33 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 40 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 37 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 46 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 43 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 38 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 23 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 25 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 40 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 41 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 49 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 39 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 44 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 48 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 42 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 31 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 47 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 44 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 45 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 42 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 50 to "startup failure completes readiness waiters and cleans partial resources" started.
+􁁛  Test "signals map to shell-standard exit codes" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument iteration → 2 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 3 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 49 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 8 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 43 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 47 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 9 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 46 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 10 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 36 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 35 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 13 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 12 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 14 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 15 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 16 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 18 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 7 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 4 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 17 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 11 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 50 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 1 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 24 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 48 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 25 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 27 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 23 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 21 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 28 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 19 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 29 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 20 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 6 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 36 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 5 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 33 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 39 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 32 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 22 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 26 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 41 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 40 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 46 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 45 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 37 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 42 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 35 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 48 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 50 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 47 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 34 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 31 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 30 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 49 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 31 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 38 to "readiness wait cancellation before registration cannot leak" started.
+􁁛  Test "configuration schema versions fail closed" passed after 0.002 seconds.
+􀟈  Test case passing 1 argument iteration → 44 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 43 to "readiness wait cancellation before registration cannot leak" started.
+􁁛  Test "argument parser rejects missing and unknown subcommands" passed after 0.002 seconds.
+􁁛  Test "argument parser requires exactly one structured configuration input" passed after 0.002 seconds.
+􁁛  Test "macOS harness registers the pinned libssh2 candidate capabilities" passed after 0.002 seconds.
+􁁛  Test "configuration rejects a non-opaque runtime profile reference" passed after 0.009 seconds.
+􁁛  Test "readiness wait cancellation before registration cannot leak" with 50 test cases passed after 0.042 seconds.
+􁁛  Test "registered readiness wait cancellation removes its continuation" passed after 0.057 seconds.
+􁁛  Test "subcommands receive every packet and SSH experiment seam" passed after 0.057 seconds.
+􁁛  Test "normal exit cleans files, sockets, and managed tasks" passed after 0.080 seconds.
+􁁛  Test "startup failure completes readiness waiters and cleans partial resources" with 50 test cases passed after 0.080 seconds.
+􁁛  Test "signal cancellation uses signal exit code and cleans all resources" with 50 test cases passed after 0.085 seconds.
+􁁛  Test "smoke output is deterministic, versioned, and privacy safe" passed after 0.085 seconds.
+􁁛  Suite "ReluxTunnelHarness" passed after 0.086 seconds.
+􁁛  Test run with 13 tests in 1 suite passed after 0.086 seconds.
+
+codex
+The focused suite passed from a clean package build: 13 harness tests, including 50 concurrent signal-cleanup cases, 50 startup-failure cases, and 50 pre-registration cancellation cases (exit 0, 23.93s). The commit signature is valid, `069e23b` is exactly `origin/main`, and the code delta is confined to harness tests plus logbook/board evidence—no production source changed.
+exec
+/bin/zsh -lc 'changed=$(git diff --name-only 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72 -- Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift Makefile scripts); test "$changed" = "Tests/ReluxTunnelHarnessTests/HarnessTests.swift"; if git diff 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72 -- Tests/ReluxTunnelHarnessTests/HarnessTests.swift | rg -i '"'NEVPN|NETunnelProviderManager|saveToPreferences|startVPNTunnel|systemextensionsctl|networksetup|scutil|route (add|delete|change)|codesign|productbuild|installer'; then exit 1; fi" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+exec
+/bin/zsh -lc 'git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+exec
+/bin/zsh -lc 'swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift' in /Users/iv/Developer/relux-tunnel
+exec
+/bin/zsh -lc 'make check-core-boundaries' in /Users/iv/Developer/relux-tunnel
+exec
+/bin/zsh -lc 'task-board validate' in /Users/iv/Developer/relux-tunnel
+ succeeded in 23ms:
+Board is valid. No issues found.
+
+ succeeded in 572ms:
+ReluxTunnelCore dependency and import boundaries are valid
+
+ succeeded in 2321ms:
+codex
+All inexpensive gates are green: strict Swift formatting, core dependency boundaries, both working-tree and commit-range whitespace checks, safety-boundary audit, and board validation all exited 0. I’m now updating the existing task-scoped matrix with the `069e23b` closure evidence, then I’ll mark only the three remaining checklist items and rerun board validation before handoff.
+exec
+/bin/zsh -lc 'task-board resource get TASK-260715-nphtib TASK-260715-nphtib_results.md --output .temp/TASK-260715-nphtib_results.md' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+.temp/TASK-260715-nphtib_results.md
+
+apply patch
+patch: completed
+/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-nphtib_results.md
+diff --git a/.temp/TASK-260715-nphtib_results.md b/.temp/TASK-260715-nphtib_results.md
+index f754455e2a328fee558ff40170f81d1d25b96a8f..f4150b6d51a6157ce9a6d8e6397b6fe917618aaf
+--- a/.temp/TASK-260715-nphtib_results.md
++++ b/.temp/TASK-260715-nphtib_results.md
+@@ -2,7 +2,9 @@
+
+ ## Verdict
+
+-READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
++
++The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+
+ The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+@@ -96,3 +98,20 @@
+ ## Scope exclusions and safety attestation
+
+ NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
++
++## Focused deterministic-harness closure at `069e23b`
++
++Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
++
++| Gate | Exact command | Exit | Duration/result |
++| --- | --- | ---: | --- |
++| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
++| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
++| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
++| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
++| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
++| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
++| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
++| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
++
++`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+diff --git a/.temp/TASK-260715-nphtib_results.md b/.temp/TASK-260715-nphtib_results.md
+index f754455e2a328fee558ff40170f81d1d25b96a8f..f4150b6d51a6157ce9a6d8e6397b6fe917618aaf
+--- a/.temp/TASK-260715-nphtib_results.md
++++ b/.temp/TASK-260715-nphtib_results.md
+@@ -2,7 +2,9 @@
+
+ ## Verdict
+
+-READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
++
++The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+
+ The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+@@ -96,3 +98,20 @@
+ ## Scope exclusions and safety attestation
+
+ NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
++
++## Focused deterministic-harness closure at `069e23b`
++
++Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
++
++| Gate | Exact command | Exit | Duration/result |
++| --- | --- | ---: | --- |
++| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
++| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
++| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
++| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
++| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
++| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
++| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
++| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
++
++`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+exec
+/bin/zsh -lc "task-board resource update TASK-260715-nphtib .temp/TASK-260715-nphtib_results.md --type outcome --description 'Handoff evidence'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+Updated TASK-260715-nphtib_results.md on TASK-260715-nphtib as outcome
+
+diff --git a/.temp/TASK-260715-nphtib_results.md b/.temp/TASK-260715-nphtib_results.md
+index f754455e2a328fee558ff40170f81d1d25b96a8f..f4150b6d51a6157ce9a6d8e6397b6fe917618aaf
+--- a/.temp/TASK-260715-nphtib_results.md
++++ b/.temp/TASK-260715-nphtib_results.md
+@@ -2,7 +2,9 @@
+
+ ## Verdict
+
+-READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
++
++The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+
+ The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+@@ -96,3 +98,20 @@
+ ## Scope exclusions and safety attestation
+
+ NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
++
++## Focused deterministic-harness closure at `069e23b`
++
++Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
++
++| Gate | Exact command | Exit | Duration/result |
++| --- | --- | ---: | --- |
++| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
++| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
++| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
++| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
++| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
++| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
++| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
++| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
++
++`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+exec
+/bin/zsh -lc "task-board m 'check_item(TASK-260715-nphtib, item=4); check_item(TASK-260715-nphtib, item=9); check_item(TASK-260715-nphtib, item=11)'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 54ms:
+[{"ok":true,"result":{"checked":true,"id":"TASK-260715-nphtib","item":4,"text":"Tests written and passing"}},{"ok":true,"result":{"checked":true,"id":"TASK-260715-nphtib","item":9,"text":"Implementation matches AC"}},{"ok":true,"result":{"checked":true,"id":"TASK-260715-nphtib","item":11,"text":"Tests green"}}]
+
+diff --git a/.temp/TASK-260715-nphtib_results.md b/.temp/TASK-260715-nphtib_results.md
+index f754455e2a328fee558ff40170f81d1d25b96a8f..f4150b6d51a6157ce9a6d8e6397b6fe917618aaf
+--- a/.temp/TASK-260715-nphtib_results.md
++++ b/.temp/TASK-260715-nphtib_results.md
+@@ -2,7 +2,9 @@
+
+ ## Verdict
+
+-READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
++
++The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+
+ The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+@@ -96,3 +98,20 @@
+ ## Scope exclusions and safety attestation
+
+ NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
++
++## Focused deterministic-harness closure at `069e23b`
++
++Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
++
++| Gate | Exact command | Exit | Duration/result |
++| --- | --- | ---: | --- |
++| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
++| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
++| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
++| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
++| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
++| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
++| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
++| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
++
++`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+exec
+/bin/zsh -lc "task-board resource get TASK-260715-nphtib TASK-260715-nphtib_results.md --output - | rg -n 'READY FOR REVIEW at authoritative revision|Focused deterministic-harness closure|swift package clean && swift test --filter|BUG-260819-34ikhl.*done'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+5:READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
+7:The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+102:## Focused deterministic-harness closure at `069e23b`
+110:| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
+117:`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(TASK-260715-nphtib) { id name status checklist outcomeResources review }; get(BUG-260819-34ikhl) { id name status checklist }'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+id:TASK-260715-nphtib
+name:execute-generated-project-architecture-verification
+status:development
+checklist:[{"text":"The full clean-environment foundation matrix was executed independently","done":true},{"text":"Target graph, deterministic generation, linkage, tests, and legacy checks all have evidence","done":true},{"text":"Failures are routed to concrete board work and the result matrix is attached","done":true},{"text":"Tests written and passing","done":true},{"text":"Coverage target ~80%+ for affected code","done":true},{"text":"Lint clean","done":true},{"text":"New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Implementation matches AC","done":true},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":true},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}]
+outcomeResources:[{"name":"TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260818-24b9f4.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260818-24b9f4.log","description":"Privacy-redacted tester run record; detailed evidence is in the task result matrix"},{"name":"TASK-260715-nphtib_results.md","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_results.md","description":"Handoff evidence"},{"name":"TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-f012d5.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-f012d5.log","description":"System spawn log captured by task-board"},{"name":"TASK-260715-nphtib_spawn-log_-reviewer--reviewer--codex-_RUN-260819-4770ed.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-reviewer--reviewer--codex-_RUN-260819-4770ed.log","description":"System spawn log captured by task-board"},{"name":"TASK-260715-nphtib_review-results.md","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_review-results.md","description":"Independent reviewer verdict and clean-clone evidence"},{"name":"TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-41f105.log","uri":"file://TASK-260715-nphtib/TASK-260715-nphtib_spawn-log_-tester--tester--codex-_RUN-260819-41f105.log","description":"System spawn log captured by task-board"}]
+review:required
+
+id:BUG-260819-34ikhl
+name:harness-signal-cancellation-cleanup-test-is-flaky
+status:done
+checklist:[{"text":"Reproduce signal-cancellation cleanup timeout under repeated and loaded Swift Testing runs","done":true},{"text":"Eliminate timing race without weakening cleanup assertions","done":true},{"text":"Prove repeated clean swift test and coverage runs pass","done":true},{"text":"Code written per task description and AC","done":true},{"text":"Relevant tests written for new or changed behavior and passing","done":true},{"text":"Lint clean","done":true},{"text":"Relevant build/validation commands run after changes and build not broken","done":true},{"text":"New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Implementation matches AC","done":true},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":true},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}]
+
+exec
+/bin/zsh -lc 'task-board validate && git diff --check' in /Users/iv/Developer/relux-tunnel
+ succeeded in 47ms:
+Board is valid. No issues found.
+
+diff --git a/.temp/TASK-260715-nphtib_results.md b/.temp/TASK-260715-nphtib_results.md
+index f754455e2a328fee558ff40170f81d1d25b96a8f..f4150b6d51a6157ce9a6d8e6397b6fe917618aaf
+--- a/.temp/TASK-260715-nphtib_results.md
++++ b/.temp/TASK-260715-nphtib_results.md
+@@ -2,7 +2,9 @@
+
+ ## Verdict
+
+-READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
++
++The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+
+ The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+@@ -96,3 +98,20 @@
+ ## Scope exclusions and safety attestation
+
+ NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
++
++## Focused deterministic-harness closure at `069e23b`
++
++Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
++
++| Gate | Exact command | Exit | Duration/result |
++| --- | --- | ---: | --- |
++| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
++| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
++| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
++| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
++| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
++| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
++| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
++| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
++
++`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+codex
+The updated outcome now anchors the accepted clean-clone matrix to the signed `069e23b` closure, every checklist item is complete, `BUG-260819-34ikhl` is done, and final board/diff validation is clean. I’m handing `TASK-260715-nphtib` to the required independent review now.
+exec
+/bin/zsh -lc 'task-board handoff TASK-260715-nphtib --role tester' in /Users/iv/Developer/relux-tunnel
+ succeeded in 145ms:
+id:TASK-260715-nphtib role:tester status:to-review checklist:12/12 outcomes:[TASK-260715-nphtib_results.md,TASK-260715-nphtib_review-results.md]
+
+diff --git a/.temp/TASK-260715-nphtib_results.md b/.temp/TASK-260715-nphtib_results.md
+index f754455e2a328fee558ff40170f81d1d25b96a8f..f4150b6d51a6157ce9a6d8e6397b6fe917618aaf
+--- a/.temp/TASK-260715-nphtib_results.md
++++ b/.temp/TASK-260715-nphtib_results.md
+@@ -2,7 +2,9 @@
+
+ ## Verdict
+
+-READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
++
++The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+
+ The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+@@ -96,3 +98,20 @@
+ ## Scope exclusions and safety attestation
+
+ NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
++
++## Focused deterministic-harness closure at `069e23b`
++
++Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
++
++| Gate | Exact command | Exit | Duration/result |
++| --- | --- | ---: | --- |
++| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
++| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
++| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
++| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
++| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
++| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
++| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
++| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
++
++`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+codex
+TASK-260715-nphtib is handed off to review.
+
+- Handoff exit: 0
+- Status: `to-review`
+- Checklist: 12/12
+- Focused harness suite: 13 tests passed, including 150 concurrent determinism cases
+- Formatting, boundaries, diff, safety audit, and board validation: all exit 0
+- Signed commit `069e23b` verified and confirmed at `origin/main`
+- Updated outcome: `TASK-260715-nphtib_results.md`
+- No VPN activation, installation, signing, launch, route, or DNS mutation performed.
+diff --git a/.temp/TASK-260715-nphtib_results.md b/.temp/TASK-260715-nphtib_results.md
+index f754455e2a328fee558ff40170f81d1d25b96a8f..f4150b6d51a6157ce9a6d8e6397b6fe917618aaf
+--- a/.temp/TASK-260715-nphtib_results.md
++++ b/.temp/TASK-260715-nphtib_results.md
+@@ -2,7 +2,9 @@
+
+ ## Verdict
+
+-READY FOR REVIEW at authoritative revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++READY FOR REVIEW at authoritative revision `069e23bdbbef71be194762d275b003a40a6cfc72`.
++
++The accepted clean-clone architecture matrix below remains authoritative for the provider graph at its parent revision `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`. The only reviewer rejection was the nondeterministic harness cleanup test routed to `BUG-260819-34ikhl`. That bug is now accepted done at signed, pushed child commit `069e23b`; the focused closure verification below independently proves the deterministic test delta and confirms that it does not change production architecture or cross the build-host safety boundary.
+
+ The complete credential-free generated-project foundation matrix passed from a fresh local clone created with `git clone --local --no-hardlinks`, after trusting only that clone's checked-in `mise.toml` as required by the repository instructions. The first disposable clone was rejected by Mise as untrusted (matrix exit 2, 113.61s); it was not used as acceptance evidence. A second fresh clone was created, trusted, confirmed clean, and used for all accepted evidence.
+
+@@ -96,3 +98,20 @@
+ ## Scope exclusions and safety attestation
+
+ NOT RUN by design: production signing, physical Gate P0, Developer ID archive, notarization, DMG publication, every iOS build/target, real-host SSH opt-in, app/system-extension install, application/provider launch, VPN preference save, VPN start/stop, route mutation, and DNS mutation. No command in this verification requested or performed those actions.
++
++## Focused deterministic-harness closure at `069e23b`
++
++Executed independently in the project working copy on 2026-08-19, following the task's focused resume instruction. The earlier producer and reviewer clean-clone matrices were reused because the accepted child commit changes no production source or generated-project input. A full credential-free matrix was intentionally not repeated.
++
++| Gate | Exact command | Exit | Duration/result |
++| --- | --- | ---: | --- |
++| Signed pushed revision | `git verify-commit 069e23bdbbef71be194762d275b003a40a6cfc72 && git merge-base --is-ancestor 069e23bdbbef71be194762d275b003a40a6cfc72 origin/main && git rev-parse origin/main` | 0 | Valid ECDSA signature; `origin/main` is exactly `069e23b` |
++| Scoped commit integrity | `git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` plus scoped name/status and commit-stat inspection | 0 | Only `Tests/ReluxTunnelHarnessTests/HarnessTests.swift` changed in code scope; remaining changes are logbook/board evidence |
++| Focused clean harness suite | `swift package clean && swift test --filter ReluxTunnelHarness` | 0 | 23.93s; 13 tests in one suite passed, including 50 signal-cleanup, 50 startup-failure, and 50 pre-registration cancellation cases |
++| Strict Swift formatting | `swift format lint --recursive --strict Sources Tests App Probes Package.swift Project.swift Workspace.swift Tuist.swift` | 0 | 2.32s |
++| Core dependency boundaries | `make check-core-boundaries` | 0 | 0.57s; valid |
++| Working/scoped diff checks | `git diff --check && git diff --check 7dc73ac6e7325f86a4a178a0558619f0fc9d1490..069e23bdbbef71be194762d275b003a40a6cfc72` | 0 | clean |
++| Build-host safety delta audit | exact changed-path equality plus forbidden lifecycle/network/signing token scan over the harness-test diff | 0 | No production source, signing, installation, launch, VPN preference/tunnel, route, or DNS operation added |
++| Board validation before outcome update | `task-board validate` | 0 | Board valid; no issues |
++
++`BUG-260819-34ikhl` is `done` with all checklist items complete. Its accepted producer/reviewer evidence records three clean full-suite passes (446 tests), an independent clean full-suite pass, producer and reviewer clean coverage passes, focused CPU-load stress, strict formatting, boundaries, diff, and board validation. Combined with the two previously attached clean-clone architecture matrices, every task AC and DoD gate is proven without invoking a real VPN or any installation/activation path.
+
+tokens used
+102,963
+TASK-260715-nphtib is handed off to review.
+
+- Handoff exit: 0
+- Status: `to-review`
+- Checklist: 12/12
+- Focused harness suite: 13 tests passed, including 150 concurrent determinism cases
+- Formatting, boundaries, diff, safety audit, and board validation: all exit 0
+- Signed commit `069e23b` verified and confirmed at `origin/main`
+- Updated outcome: `TASK-260715-nphtib_results.md`
+- No VPN activation, installation, signing, launch, route, or DNS mutation performed.
