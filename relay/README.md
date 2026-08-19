@@ -149,6 +149,57 @@ remain separate tasks.
   consumes the exact bounded identity line and rejects a target tuple, size,
   manifest SHA-256, or selected executable-byte mismatch before stdio launch.
 
+## Portable runtime-boundary gate
+
+`scripts/relay_asset_smoke.py` gates one manifest-selected executable on its
+native runner or an explicitly named emulator. Native evidence fails unless
+the unprivileged host OS and architecture exactly match the requested target;
+emulation is recorded as emulation and `--require-native` turns it into an
+explicit red gate with a task owner and native-evidence requirement.
+
+After the manifest size/hash and raw ELF or Mach-O architecture checks, the
+gate runs bounded identity and stdio subprocesses from read-only `cwd`, `HOME`,
+and temporary directories. Before trusting a relay result, a live containment
+probe proves that filesystem writes, public listeners, and descendant process
+creation are denied. macOS uses its built-in sandbox; Linux uses Landlock plus
+seccomp while still allowing Go runtime threads. An unavailable containment
+primitive is an explicit red gate, not reduced evidence. The gate requires the
+canonical self-hash identity, exact server hello with EOF exit, privacy-safe
+protocol rejection, rejection of daemon/listener/payload/version arguments,
+exit 130 on SIGTERM, no child processes, no sockets/listeners, no runtime
+files, and complete fixture cleanup. Its bounded report contains only
+target/runner identity, revisions, fixed-vocabulary semantic commands,
+durations, observed exit codes, hashes, finite failures, and check results;
+captured stdout, stderr, host paths, emulator paths, and payload markers are
+never retained.
+
+Run the deterministic local behavioral and workflow tests with:
+
+```sh
+python3 -m unittest scripts/tests/test_relay_asset_smoke.py
+```
+
+Run a native gate after `make relay-shell-release` by selecting the current
+host asset and writing task-scoped evidence under `.build/relay/`:
+
+```sh
+python3 scripts/relay_asset_smoke.py \
+  --target darwin/arm64 \
+  --runner-kind native \
+  --runner-name local-darwin-arm64 \
+  --runner-owner TASK-260715-36gq4m \
+  --require-native \
+  --manifest .build/relay/apple-bundle-input/relux-relay-manifest-v1.json \
+  --executable .build/relay/apple-bundle-input/relux-relay-darwin-arm64 \
+  --evidence .build/relay/runtime-evidence/darwin-arm64/report.json
+```
+
+CI clean-builds the exact four-asset release manifest independently on
+`macos-15-intel`, `macos-15`, `ubuntu-24.04`, and `ubuntu-24.04-arm`, runs the
+matching asset natively, and retains the executable, SPDX document, manifest,
+checksum file, and JSON report for 14 days. `fail-fast: false` preserves every
+target-specific result when another row fails.
+
 The entrypoint does not yet wire UDP association socket behavior, upload, SSH
 execution, or release publication. The reusable SSH-independent UDP registry
 is implemented in `internal/udp` for later session integration.

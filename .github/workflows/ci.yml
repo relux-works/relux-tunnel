@@ -121,7 +121,9 @@ jobs:
           persist-credentials: false
 
       - name: Verify checked-in pins and missing-input failure
-        run: make relay-supply-chain-audit relay-supply-chain-test relay-toolchain-check relay-toolchain-negative-test
+        run: |
+          make relay-supply-chain-audit relay-supply-chain-test relay-toolchain-check relay-toolchain-negative-test
+          python3 -W error::ResourceWarning -m unittest scripts/tests/test_relay_asset_smoke.py
 
       - name: Fetch the approved checksum-pinned Go input
         run: |
@@ -143,42 +145,88 @@ jobs:
             SOURCE_DATE_EPOCH="$source_date_epoch" \
             RELAY_BUILD_CLEAN_FLAG=--require-clean
 
-      - name: Smoke Linux amd64 natively as the unprivileged runner user
-        run: |
-          make relay-toolchain-native-linux-smoke \
-            RELAY_VERSION=0.0.0 \
-            SOURCE_COMMIT="$GITHUB_SHA"
-
-  relay-toolchain-linux-arm64-runtime:
-    name: native Linux arm64 relay runtime
-    runs-on: ubuntu-24.04-arm
+  relay-portable-runtime:
+    name: portable runtime ${{ matrix.target }} on ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: darwin/amd64
+            slug: darwin-amd64
+            runner: macos-15-intel
+          - target: darwin/arm64
+            slug: darwin-arm64
+            runner: macos-15
+          - target: linux/amd64
+            slug: linux-amd64
+            runner: ubuntu-24.04
+          - target: linux/arm64
+            slug: linux-arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify checked-in pins and exact missing-input failures
+      - name: Verify checked-in pins and runtime-gate tests
         run: make relay-toolchain-check relay-toolchain-negative-test
 
-      - name: Fetch the approved checksum-pinned arm64 Go input
+      - name: Fetch the approved checksum-pinned host tools
+        env:
+          RELAY_HOST_TARGET: ${{ matrix.target }}
         run: |
           mkdir -p .temp/relay-tools
-          read -r go_archive go_sha go_url <<EOF
-          $(python3 -c 'import json; d=json.load(open("relay/toolchain-manifest-v1.json")); x=next(v for v in d["hostToolArchives"] if v["host"] == "linux/arm64"); print(x["artifact"], x["sha256"], x["source"])')
+          read -r go_archive go_sha go_url syft_archive syft_sha syft_url <<EOF
+          $(python3 -c 'import json,os; d=json.load(open("relay/toolchain-manifest-v1.json")); h=os.environ["RELAY_HOST_TARGET"]; g=next(v for v in d["hostToolArchives"] if v["host"] == h); s=next(v for v in d["buildOnlyTools"][0]["hostArchives"] if v["host"] == h); print(g["artifact"], g["sha256"], g["source"], s["artifact"], s["sha256"], s["source"])')
           EOF
           curl --fail --location --proto '=https' --tlsv1.2 \
             --output ".temp/relay-tools/$go_archive" "$go_url"
-          printf '%s  %s\n' "$go_sha" ".temp/relay-tools/$go_archive" | sha256sum --check --strict
-          make relay-provision-go RELAY_GO_ARCHIVE=".temp/relay-tools/$go_archive"
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output ".temp/relay-tools/$syft_archive" "$syft_url"
+          python3 - "$go_sha" ".temp/relay-tools/$go_archive" "$syft_sha" ".temp/relay-tools/$syft_archive" <<'PY'
+          import hashlib, pathlib, sys
+          for expected, name in zip(sys.argv[1::2], sys.argv[2::2], strict=True):
+              actual = hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()
+              if actual != expected:
+                  raise SystemExit("checksum-pinned host tool mismatch")
+          PY
+          make relay-provision-tools \
+            RELAY_GO_ARCHIVE=".temp/relay-tools/$go_archive" \
+            RELAY_SYFT_ARCHIVE=".temp/relay-tools/$syft_archive"
 
-      - name: Clean-build and smoke Linux arm64 offline as an unprivileged user
+      - name: Clean-build the exact four-asset manifest offline
         run: |
           source_date_epoch=$(git show -s --format=%ct HEAD)
-          make relay-build-linux-arm64 \
+          make relay-shell-release \
             RELAY_VERSION=0.0.0 \
             SOURCE_COMMIT="$GITHUB_SHA" \
-            SOURCE_DATE_EPOCH="$source_date_epoch" \
-            RELAY_BUILD_CLEAN_FLAG=--require-clean
-          make relay-toolchain-native-linux-smoke \
-            RELAY_VERSION=0.0.0 \
-            SOURCE_COMMIT="$GITHUB_SHA"
+            SOURCE_DATE_EPOCH="$source_date_epoch"
+
+      - name: Gate native rootless stdio and runtime boundaries
+        run: |
+          mkdir -p ".build/relay/runtime-evidence/${{ matrix.slug }}"
+          python3 scripts/relay_asset_smoke.py \
+            --target "${{ matrix.target }}" \
+            --runner-kind native \
+            --runner-name "${{ matrix.runner }}" \
+            --runner-owner TASK-260715-36gq4m \
+            --require-native \
+            --manifest .build/relay/apple-bundle-input/relux-relay-manifest-v1.json \
+            --executable ".build/relay/apple-bundle-input/relux-relay-${{ matrix.slug }}" \
+            --evidence ".build/relay/runtime-evidence/${{ matrix.slug }}/report.json"
+
+      - name: Retain exact gated asset and privacy-safe runner evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: runtime-evidence-${{ matrix.slug }}-${{ github.run_id }}
+          path: |
+            .build/relay/apple-bundle-input/relux-relay-${{ matrix.slug }}
+            .build/relay/apple-bundle-input/relux-relay-${{ matrix.slug }}.spdx.json
+            .build/relay/apple-bundle-input/relux-relay-manifest-v1.json
+            .build/relay/apple-bundle-input/relux-relay-SHA256SUMS
+            .build/relay/runtime-evidence/${{ matrix.slug }}/report.json
+          if-no-files-found: warn
+          retention-days: 14
