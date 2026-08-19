@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import gzip
 import hashlib
 import io
@@ -998,7 +999,43 @@ def verify_syft_toolchain(syft_command: str, require_provenance: bool = False) -
         )
 
 
-def generate_sbom(syft_command: str, binary: Path, sbom: Path) -> None:
+def normalized_spdx_timestamp(source_date_epoch: str) -> str:
+    epoch = int(validate_source_date_epoch(source_date_epoch))
+    try:
+        timestamp = datetime.fromtimestamp(epoch, tz=timezone.utc)
+    except (OSError, OverflowError, ValueError) as error:
+        raise ReleaseError("SOURCE_DATE_EPOCH cannot be represented as UTC") from error
+    return timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def normalize_spdx_metadata(binary: Path, sbom: Path, source_date_epoch: str) -> None:
+    try:
+        document = json.loads(sbom.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ReleaseError(f"invalid SPDX document: {sbom.name}") from error
+    if not isinstance(document, dict):
+        raise ReleaseError(f"SPDX deterministic metadata is missing: {sbom.name}")
+    creation_info = document.get("creationInfo")
+    if (
+        not isinstance(creation_info, dict)
+        or not isinstance(document.get("documentNamespace"), str)
+        or not isinstance(creation_info.get("created"), str)
+    ):
+        raise ReleaseError(f"SPDX deterministic metadata is missing: {sbom.name}")
+    document["documentNamespace"] = (
+        f"https://relux.works/spdx/relux-relay/{binary.name}/{sha256(binary)}"
+    )
+    creation_info["created"] = normalized_spdx_timestamp(source_date_epoch)
+    sbom.write_bytes(
+        (
+            json.dumps(document, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+        ).encode("utf-8")
+    )
+
+
+def generate_sbom(
+    syft_command: str, binary: Path, sbom: Path, source_date_epoch: str
+) -> None:
     environment = sanitized_environment("local")
     environment["SYFT_CHECK_FOR_APP_UPDATE"] = "false"
     run_checked(
@@ -1006,6 +1043,7 @@ def generate_sbom(syft_command: str, binary: Path, sbom: Path) -> None:
         cwd=binary.parent,
         environment=environment,
     )
+    normalize_spdx_metadata(binary, sbom, source_date_epoch)
     verify_spdx(sbom)
 
 
@@ -1112,6 +1150,133 @@ def write_checksums(output: Path) -> None:
     paths.sort(key=lambda path: path.as_posix())
     lines = [f"{sha256(output / path)}  {path.as_posix()}\n" for path in paths]
     (output / CHECKSUMS_NAME).write_text("".join(lines), encoding="ascii", newline="\n")
+
+
+def expected_release_paths() -> tuple[PurePosixPath, ...]:
+    paths = [PurePosixPath(MANIFEST_NAME), PurePosixPath(CHECKSUMS_NAME), NOTICE_PATH]
+    for target in TARGETS:
+        filename = target_filename(target)
+        paths.extend((PurePosixPath(filename), PurePosixPath(f"{filename}.spdx.json")))
+    return tuple(sorted(paths, key=lambda path: path.as_posix()))
+
+
+def expected_protocol_test_paths() -> tuple[PurePosixPath, ...]:
+    return tuple(PurePosixPath(protocol_test_filename(target)) for target in TARGETS)
+
+
+def validate_reproducibility_tree(
+    root: Path, expected: tuple[PurePosixPath, ...], label: str
+) -> None:
+    validate_isolated_directory(root, label, create=False)
+    expected_files = {path.as_posix() for path in expected}
+    expected_directories = {
+        parent.as_posix()
+        for path in expected
+        for parent in path.parents
+        if parent != PurePosixPath(".")
+    }
+    actual_files: set[str] = set()
+    actual_directories: set[str] = set()
+    for entry in root.rglob("*"):
+        relative = PurePosixPath(*entry.relative_to(root).parts).as_posix()
+        status = entry.stat(follow_symlinks=False)
+        if stat.S_ISLNK(status.st_mode):
+            raise ReleaseError(f"{label} contains symbolic link: {relative}")
+        if stat.S_ISREG(status.st_mode):
+            actual_files.add(relative)
+        elif stat.S_ISDIR(status.st_mode):
+            actual_directories.add(relative)
+        else:
+            raise ReleaseError(f"{label} contains unsupported entry: {relative}")
+    if actual_files != expected_files or actual_directories != expected_directories:
+        missing = sorted(expected_files - actual_files)
+        extra = sorted(actual_files - expected_files)
+        missing_directories = sorted(expected_directories - actual_directories)
+        extra_directories = sorted(actual_directories - expected_directories)
+        details = ",".join(
+            (
+                f"missing={';'.join(missing) or '-'}",
+                f"extra={';'.join(extra) or '-'}",
+                f"missingDirectories={';'.join(missing_directories) or '-'}",
+                f"extraDirectories={';'.join(extra_directories) or '-'}",
+            )
+        )
+        raise ReleaseError(f"{label} is not canonical: {details}")
+
+
+def first_differing_offset(left: Path, right: Path) -> int:
+    offset = 0
+    with left.open("rb") as left_stream, right.open("rb") as right_stream:
+        while True:
+            left_chunk = left_stream.read(64 * 1024)
+            right_chunk = right_stream.read(64 * 1024)
+            common = min(len(left_chunk), len(right_chunk))
+            for index in range(common):
+                if left_chunk[index] != right_chunk[index]:
+                    return offset + index
+            if len(left_chunk) != len(right_chunk):
+                return offset + common
+            if not left_chunk:
+                raise ReleaseError("byte comparison requested for identical files")
+            offset += len(left_chunk)
+
+
+def json_difference_paths(left: Path, right: Path, limit: int = 8) -> list[str]:
+    try:
+        left_value = json.loads(left.read_text(encoding="utf-8"))
+        right_value = json.loads(right.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return []
+    differences: list[str] = []
+
+    def visit(first: Any, second: Any, path: str) -> None:
+        if len(differences) >= limit:
+            return
+        if type(first) is not type(second):
+            differences.append(path)
+        elif isinstance(first, dict):
+            for key in sorted(set(first) | set(second)):
+                child = f"{path}.{key}"
+                if key not in first or key not in second:
+                    differences.append(child)
+                else:
+                    visit(first[key], second[key], child)
+                if len(differences) >= limit:
+                    return
+        elif isinstance(first, list):
+            if len(first) != len(second):
+                differences.append(f"{path}.length")
+            for index, (first_item, second_item) in enumerate(zip(first, second)):
+                visit(first_item, second_item, f"{path}[{index}]")
+                if len(differences) >= limit:
+                    return
+        elif first != second:
+            differences.append(path)
+
+    visit(left_value, right_value, "$")
+    return differences
+
+
+def compare_reproducibility_file(left: Path, right: Path, name: str) -> str:
+    left_mode = stat.S_IMODE(left.stat(follow_symlinks=False).st_mode)
+    right_mode = stat.S_IMODE(right.stat(follow_symlinks=False).st_mode)
+    left_hash = sha256(left)
+    right_hash = sha256(right)
+    if left_hash == right_hash and left_mode == right_mode:
+        return left_hash
+    if left_hash == right_hash:
+        raise ReleaseError(
+            f"non-reproducible artifact mode: {name} "
+            f"leftMode={left_mode:04o} rightMode={right_mode:04o} sha256={left_hash}"
+        )
+    semantic_paths = json_difference_paths(left, right)
+    semantic = f" jsonPaths={';'.join(semantic_paths)}" if semantic_paths else ""
+    raise ReleaseError(
+        f"non-reproducible artifact: {name}"
+        f" firstOffset={first_differing_offset(left, right)}"
+        f" leftSize={left.stat().st_size} rightSize={right.stat().st_size}"
+        f" leftSha256={left_hash} rightSha256={right_hash}{semantic}"
+    )
 
 
 def reject_host_paths(text: str, label: str) -> None:
@@ -2123,7 +2288,10 @@ def build_release(arguments: argparse.Namespace) -> None:
     for target in TARGETS:
         filename = target_filename(target)
         generate_sbom(
-            arguments.syft, output / filename, output / f"{filename}.spdx.json"
+            arguments.syft,
+            output / filename,
+            output / f"{filename}.spdx.json",
+            source_date_epoch,
         )
     write_notice(output, go_root)
     manifest = build_manifest(arguments.relay_version, arguments.source_commit, output)
@@ -2156,13 +2324,23 @@ def compare_release(arguments: argparse.Namespace) -> None:
     second = validate_output_path(Path(arguments.second))
     first_tests = validate_output_path(Path(arguments.first_tests))
     second_tests = validate_output_path(Path(arguments.second_tests))
-    for target in TARGETS:
-        for left, right, name in (
-            (first, second, target_filename(target)),
-            (first_tests, second_tests, protocol_test_filename(target)),
-        ):
-            if (left / name).read_bytes() != (right / name).read_bytes():
-                raise ReleaseError(f"non-reproducible binary: {name}")
+    release_paths = expected_release_paths()
+    test_paths = expected_protocol_test_paths()
+    validate_reproducibility_tree(first, release_paths, "first release tree")
+    validate_reproducibility_tree(second, release_paths, "second release tree")
+    validate_reproducibility_tree(first_tests, test_paths, "first test tree")
+    validate_reproducibility_tree(second_tests, test_paths, "second test tree")
+    compared = 0
+    for left, right, paths in (
+        (first, second, release_paths),
+        (first_tests, second_tests, test_paths),
+    ):
+        for path in paths:
+            compare_reproducibility_file(
+                left / Path(*path.parts), right / Path(*path.parts), path.as_posix()
+            )
+            compared += 1
+    print(f"relay reproducibility: identical={compared}/{compared}")
 
 
 def parser() -> argparse.ArgumentParser:
@@ -2197,7 +2375,7 @@ def parser() -> argparse.ArgumentParser:
     verify.set_defaults(action=verify_release)
 
     compare = subparsers.add_parser(
-        "compare", help="compare reproducible executable bytes"
+        "compare", help="compare every reproducible release and test artifact byte"
     )
     compare.add_argument("--first", required=True)
     compare.add_argument("--second", required=True)

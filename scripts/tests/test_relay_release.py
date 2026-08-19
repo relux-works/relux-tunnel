@@ -37,6 +37,39 @@ class RelayReleaseTests(unittest.TestCase):
                 info.mode = 0o755
                 bundle.addfile(info, io.BytesIO(contents))
 
+    def write_reproducibility_fixture(self, root: Path) -> tuple[Path, Path]:
+        release = root / "release"
+        protocol_tests = root / "protocol-tests"
+        (release / relay_release.NOTICE_PATH).parent.mkdir(parents=True)
+        protocol_tests.mkdir(parents=True)
+        for index, target in enumerate(relay_release.TARGETS, start=1):
+            filename = relay_release.target_filename(target)
+            binary = release / filename
+            binary.write_bytes(f"relay fixture {index}".encode("ascii"))
+            binary.chmod(0o755)
+            sbom = {
+                "spdxVersion": "SPDX-2.3",
+                "documentNamespace": f"https://example.invalid/{filename}",
+                "creationInfo": {"created": "2026-08-19T00:00:00Z"},
+            }
+            (release / f"{filename}.spdx.json").write_bytes(
+                relay_release.stable_json(sbom)
+            )
+            test_binary = protocol_tests / relay_release.protocol_test_filename(target)
+            test_binary.write_bytes(f"protocol fixture {index}".encode("ascii"))
+            test_binary.chmod(0o755)
+        manifest = relay_release.build_manifest(
+            "0.0.0", "0123456789abcdef0123456789abcdef01234567", release
+        )
+        (release / relay_release.MANIFEST_NAME).write_bytes(
+            relay_release.stable_json(manifest)
+        )
+        (release / relay_release.NOTICE_PATH).write_text(
+            "deterministic notices\n", encoding="utf-8", newline="\n"
+        )
+        relay_release.write_checksums(release)
+        return release, protocol_tests
+
     def write_go_archive(self, path: Path) -> dict[str, bytes]:
         files = {
             "go/bin/go": b"verified-go-fixture",
@@ -1227,6 +1260,289 @@ class RelayReleaseTests(unittest.TestCase):
         encoded = relay_release.stable_json(manifest).decode("utf-8")
         self.assertNotIn(str(Path.home()), encoded)
         self.assertEqual(json.loads(encoded), manifest)
+
+    def test_spdx_metadata_normalization_controls_time_uuid_and_json_order(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            binary = root / "relux-relay-linux-arm64"
+            sbom = root / "relux-relay-linux-arm64.spdx.json"
+            binary.write_bytes(b"exact runtime bytes")
+
+            def render(namespace: str, created: str, reversed_keys: bool) -> bytes:
+                fields = [
+                    ("spdxVersion", "SPDX-2.3"),
+                    ("documentNamespace", namespace),
+                    ("creationInfo", {"created": created}),
+                ]
+                if reversed_keys:
+                    fields.reverse()
+                sbom.write_text(json.dumps(dict(fields)), encoding="utf-8")
+                relay_release.normalize_spdx_metadata(binary, sbom, "1787158980")
+                return sbom.read_bytes()
+
+            first = render(
+                "https://anchore.com/syft/file/random-one",
+                "2026-08-19T00:00:01Z",
+                False,
+            )
+            second = render(
+                "https://anchore.com/syft/file/random-two",
+                "2026-08-19T00:00:59Z",
+                True,
+            )
+            self.assertEqual(first, second)
+            normalized = json.loads(first)
+            self.assertEqual(
+                normalized["creationInfo"]["created"], "2026-08-19T17:03:00Z"
+            )
+            self.assertEqual(
+                normalized["documentNamespace"],
+                "https://relux.works/spdx/relux-relay/relux-relay-linux-arm64/"
+                + hashlib.sha256(binary.read_bytes()).hexdigest(),
+            )
+
+    def test_spdx_normalization_rejects_invalid_missing_and_impossible_metadata(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            binary = root / "relux-relay-linux-amd64"
+            sbom = root / "relux-relay-linux-amd64.spdx.json"
+            binary.write_bytes(b"runtime bytes")
+            sbom.write_bytes(b"{")
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError, "invalid SPDX document"
+            ):
+                relay_release.normalize_spdx_metadata(binary, sbom, "1787158980")
+            sbom.write_text("{}", encoding="utf-8")
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError, "deterministic metadata is missing"
+            ):
+                relay_release.normalize_spdx_metadata(binary, sbom, "1787158980")
+            sbom.write_text("[]", encoding="utf-8")
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError, "deterministic metadata is missing"
+            ):
+                relay_release.normalize_spdx_metadata(binary, sbom, "1787158980")
+            sbom.write_bytes(b"\xff")
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError, "invalid SPDX document"
+            ):
+                relay_release.normalize_spdx_metadata(binary, sbom, "1787158980")
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError, "cannot be represented as UTC"
+            ):
+                relay_release.normalized_spdx_timestamp("9" * 100)
+
+    def test_generate_sbom_normalizes_dynamic_syft_fields_before_verification(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            binary = root / "relux-relay-darwin-amd64"
+            sbom = root / "relux-relay-darwin-amd64.spdx.json"
+            binary.write_bytes(b"runtime bytes")
+            dynamic_document = {
+                "spdxVersion": "SPDX-2.3",
+                "documentNamespace": "https://anchore.com/syft/file/random-uuid",
+                "creationInfo": {"created": "2026-08-19T00:00:01Z"},
+                "packages": [
+                    {
+                        "name": "stdlib",
+                        "versionInfo": relay_release.GO_VERSION,
+                        "licenseDeclared": "BSD-3-Clause",
+                    }
+                ],
+            }
+
+            def write_dynamic_output(*_args, **_kwargs):
+                sbom.write_text(json.dumps(dynamic_document), encoding="utf-8")
+                return mock.Mock(stdout="", stderr="", returncode=0)
+
+            with (
+                mock.patch.object(
+                    relay_release, "sanitized_environment", return_value={}
+                ),
+                mock.patch.object(
+                    relay_release, "run_checked", side_effect=write_dynamic_output
+                ),
+            ):
+                relay_release.generate_sbom(
+                    "syft", binary, sbom, source_date_epoch="1787158980"
+                )
+            document = json.loads(sbom.read_text(encoding="utf-8"))
+            self.assertEqual(
+                document["creationInfo"]["created"], "2026-08-19T17:03:00Z"
+            )
+            self.assertTrue(
+                document["documentNamespace"].endswith(
+                    hashlib.sha256(binary.read_bytes()).hexdigest()
+                )
+            )
+
+    def test_manifest_changes_deterministically_for_one_mutated_asset(self) -> None:
+        source_commit = "0123456789abcdef0123456789abcdef01234567"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original, _ = self.write_reproducibility_fixture(root / "original")
+            first_mutation, _ = self.write_reproducibility_fixture(root / "mutation-a")
+            second_mutation, _ = self.write_reproducibility_fixture(root / "mutation-b")
+            target = relay_release.TARGETS[2]
+            filename = relay_release.target_filename(target)
+            canonical_hash = hashlib.sha256(
+                (original / filename).read_bytes()
+            ).hexdigest()
+            for mutation in (first_mutation, second_mutation):
+                contents = bytearray((mutation / filename).read_bytes())
+                contents[-1] ^= 1
+                (mutation / filename).write_bytes(contents)
+
+            original_manifest = relay_release.stable_json(
+                relay_release.build_manifest("0.0.0", source_commit, original)
+            )
+            first_manifest = relay_release.stable_json(
+                relay_release.build_manifest("0.0.0", source_commit, first_mutation)
+            )
+            second_manifest = relay_release.stable_json(
+                relay_release.build_manifest("0.0.0", source_commit, second_mutation)
+            )
+            self.assertNotEqual(original_manifest, first_manifest)
+            self.assertEqual(first_manifest, second_manifest)
+            self.assertEqual(
+                hashlib.sha256((original / filename).read_bytes()).hexdigest(),
+                canonical_hash,
+            )
+            original_document = json.loads(original_manifest)
+            mutated_document = json.loads(first_manifest)
+            changed = [
+                (before["goTarget"], before["sha256"], after["sha256"])
+                for before, after in zip(
+                    original_document["artifacts"], mutated_document["artifacts"]
+                )
+                if before["sha256"] != after["sha256"]
+            ]
+            self.assertEqual(len(changed), 1)
+            self.assertEqual(changed[0][0], "linux/amd64")
+
+    def test_compare_covers_all_release_metadata_and_reports_json_and_raw_diff(
+        self,
+    ) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            root = Path(temporary)
+            first, first_tests = self.write_reproducibility_fixture(root / "first")
+            second, second_tests = self.write_reproducibility_fixture(root / "second")
+            arguments = relay_release.argparse.Namespace(
+                first=str(first),
+                second=str(second),
+                first_tests=str(first_tests),
+                second_tests=str(second_tests),
+            )
+            with mock.patch("builtins.print") as output:
+                relay_release.compare_release(arguments)
+            output.assert_called_once_with("relay reproducibility: identical=15/15")
+
+            sbom_name = (
+                relay_release.target_filename(relay_release.TARGETS[0]) + ".spdx.json"
+            )
+            document = json.loads((second / sbom_name).read_text(encoding="utf-8"))
+            document["creationInfo"]["created"] = "2026-08-20T00:00:00Z"
+            (second / sbom_name).write_bytes(relay_release.stable_json(document))
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError,
+                r"non-reproducible artifact: .*firstOffset=[0-9]+.*jsonPaths=\$\.creationInfo\.created",
+            ):
+                relay_release.compare_release(arguments)
+
+    def test_compare_rejects_undeclared_bundle_input(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            root = Path(temporary)
+            first, first_tests = self.write_reproducibility_fixture(root / "first")
+            second, second_tests = self.write_reproducibility_fixture(root / "second")
+            (second / "undeclared-metadata.txt").write_text(
+                "not a bundle input\n", encoding="utf-8"
+            )
+            arguments = relay_release.argparse.Namespace(
+                first=str(first),
+                second=str(second),
+                first_tests=str(first_tests),
+                second_tests=str(second_tests),
+            )
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError,
+                r"second release tree is not canonical: .*extra=undeclared-metadata.txt",
+            ):
+                relay_release.compare_release(arguments)
+
+    def test_compare_rejects_mode_raw_byte_and_symlink_drift(self) -> None:
+        relay_release.BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=relay_release.BUILD_ROOT) as temporary:
+            root = Path(temporary)
+            first, first_tests = self.write_reproducibility_fixture(root / "first")
+            second, second_tests = self.write_reproducibility_fixture(root / "second")
+            arguments = relay_release.argparse.Namespace(
+                first=str(first),
+                second=str(second),
+                first_tests=str(first_tests),
+                second_tests=str(second_tests),
+            )
+            filename = relay_release.target_filename(relay_release.TARGETS[0])
+            (second / filename).chmod(0o700)
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError,
+                r"non-reproducible artifact mode: .*leftMode=0755 rightMode=0700",
+            ):
+                relay_release.compare_release(arguments)
+            (second / filename).chmod(0o755)
+
+            protocol_name = relay_release.protocol_test_filename(
+                relay_release.TARGETS[0]
+            )
+            (second_tests / protocol_name).write_bytes(
+                (first_tests / protocol_name).read_bytes() + b"x"
+            )
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError,
+                r"non-reproducible artifact: .*firstOffset=[0-9]+.*leftSha256=.*rightSha256=",
+            ):
+                relay_release.compare_release(arguments)
+            (second_tests / protocol_name).write_bytes(
+                (first_tests / protocol_name).read_bytes()
+            )
+
+            symlink_name = relay_release.target_filename(relay_release.TARGETS[1])
+            (second / symlink_name).unlink()
+            (second / symlink_name).symlink_to(first / symlink_name)
+            with self.assertRaisesRegex(
+                relay_release.ReleaseError,
+                r"second release tree contains symbolic link: relux-relay-darwin-arm64",
+            ):
+                relay_release.compare_release(arguments)
+
+    def test_json_drift_diagnostics_cover_structural_changes_and_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            left = root / "left.json"
+            right = root / "right.json"
+            left.write_text(
+                json.dumps({"items": [1, 2], "kind": "left", "onlyLeft": True}),
+                encoding="utf-8",
+            )
+            right.write_text(
+                json.dumps({"items": [1, 2, 3], "kind": {"nested": True}}),
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                relay_release.json_difference_paths(left, right, limit=8),
+                ["$.items.length", "$.kind", "$.onlyLeft"],
+            )
+            self.assertEqual(
+                relay_release.json_difference_paths(left, right, limit=1),
+                ["$.items.length"],
+            )
 
     def test_identity_preflight_binds_manifest_target_size_hash_and_bytes(self) -> None:
         relay_version = "1.2.3-test.1"
