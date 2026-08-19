@@ -21,7 +21,11 @@ accepted.
 
 ## Development baseline
 
-The current application requires macOS 14+, Xcode 15.3+, and Swift 5.10.
+The generated v2 application targets macOS 15.0 and uses a Swift tools 6.1
+package with Swift 6 language mode. The independently preserved legacy v0.1.0
+application remains on macOS 14.0, Swift tools 5.10, and Swift 5. Use the exact
+clean-checkout prerequisites and matrix in
+[`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md).
 
 ```sh
 make core-test
@@ -32,9 +36,12 @@ The planned multi-target VPN has additional gates in `.spec/validation.md`.
 Passing current SwiftPM tests does not validate the future Network Extension.
 
 This development Mac is build-only. Local build, compile, lint, unit,
-integration, harness, and unsigned-provider tests are allowed. Never install a
-system extension or containing app, save or remove a real VPN preference, call
-`startVPNTunnel`, activate a provider, or mutate host routes or DNS here.
+integration, harness, and unsigned-provider tests are allowed. Never code-sign
+an app, provider, archive, or Gate P0 probe on this host, and never run the
+signed Gate P0 probe here. Never install a system extension or containing app,
+save or remove a real VPN preference, call `startVPNTunnel`, activate a
+provider, or mutate host routes or DNS here. This product-signing prohibition
+does not change the signed Git commit requirement below.
 Physical macOS VPN work must be dependency-gated by `TASK-260819-25e1ys`, run
 on a separately provisioned Mac, and pass
 `scripts/physical-test-host-preflight.sh`. See

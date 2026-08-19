@@ -11,6 +11,9 @@ provider tests that do not reach NetworkExtension preferences or system state.
 
 Prohibited locally:
 
+- code-signing any app, provider, archive, or Gate P0 probe;
+- running the signed Gate P0 probe, including
+  `Probes/macOSPacketTunnelProbe/Scripts/build-and-inspect.sh`;
 - installing or opening a VPN containing app or system extension;
 - saving, removing, or enabling a real `NETunnelProviderManager` preference;
 - calling `startVPNTunnel` or otherwise starting/activating a provider;
