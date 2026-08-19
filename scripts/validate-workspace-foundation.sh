@@ -13,7 +13,7 @@ tracked_state_before=$(git status --porcelain=v1 --untracked-files=all -- . ':!.
 ./scripts/check-generated-provider-graph.py \
   --project Project.swift \
   --package Package.swift \
-  --relay-root .build/relay/apple-bundle-input \
+  --relay-root .build/relay/relay-assets-v1 \
   --generated-project ReluxTunnelApp.xcodeproj/project.pbxproj
 find ReluxTunnel.xcworkspace ReluxTunnelApp.xcodeproj -type f \
   ! -path '*/xcuserdata/*' -print0 \

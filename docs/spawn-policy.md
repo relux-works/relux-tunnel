@@ -1,41 +1,38 @@
 # Spawn policy — relux-tunnel
 
-Serial two-model execution: a **Codex/Sol primary orchestrator** delegates
-implementation to **Claude/Opus 5** and routes independent review to
-**Codex/Sol**. `max_parallel: 1` permits one tracked child at a time in this
-workdir. Per-provider models are pinned in `task-board.config.json` with
-`model_criterion: equal`.
+Serial single-provider execution: a **Codex/Sol primary orchestrator** delegates
+implementation and independent review to tracked **Codex/Sol** children.
+`max_parallel: 1` permits one tracked child at a time in this workdir. The model
+and effort are pinned in `task-board.config.json` with `model_criterion: equal`.
 
 ## Roles → models
 
 | Role | Agent | Model | Effort | Set by |
 |---|---|---|---|---|
 | Orchestrator (primary session) | codex | `gpt-5.6-sol` | `high` | primary-session launch |
-| Producer / implementer | claude | `claude-opus-5` | — | `spawn.ceilings.claude` |
+| Producer / implementer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
 | Independent reviewer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
 
 Notes:
 - The orchestrator is the primary session, **not** a spawned child. Its Sol
   model is selected when launching or resuming the primary session; spawn
   ceilings cannot enforce the primary model.
-- The Claude ceiling governs spawned Claude children and pins them to Opus 5.
-- Claude spawns do not accept a reasoning-effort flag (`claude_reasoning_effort_supported: false`).
-- Codex spawns require an effort; the ceiling pins it to `high` for `gpt-5.6-sol`.
-- Explicit provider policy permits only Claude and Codex; Qwen is out of policy.
+- Codex spawns require an effort; the ceiling pins every role to `high` for `gpt-5.6-sol`.
+- Explicit provider policy permits only Codex; Claude, Gemini, Muse, and Qwen are out of policy.
 - `agent_context.profile: lite` keeps task contracts and safety gates while
   removing repeated generic context and materializing large preconditions.
 
 ## Canonical spawn commands
 
 ```bash
-# producer (developer / tester / researcher) — Claude Opus 5
-task-board spawn TASK-… --role developer --background --agent claude --model claude-opus-5
+# producer (developer / tester / researcher) — Codex Sol high
+task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
 
 # reviewer — independent Codex Sol high
 task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
 
-# architecture producer — Claude Opus 5
-task-board spawn TASK-… --role solution-architect --background --agent claude --model claude-opus-5
+# architecture producer — Codex Sol high
+task-board spawn TASK-… --role solution-architect --background --agent codex --model gpt-5.6-sol --reasoning-effort high
 ```
 
 ## Config (`task-board.config.json`)
@@ -45,11 +42,10 @@ task-board spawn TASK-… --role solution-architect --background --agent claude 
 "spawn": {
   "enabled": true,
   "max_parallel": 1,
-  "preferred_agentic_system": { "mixed": ["claude", "codex"] },
+  "preferred_agentic_system": { "exclusive": "codex" },
   "launch_composition": { "enabled": true },
   "ceilings": {
-    "codex":  { "model": "gpt-5.6-sol",   "model_criterion": "equal", "reasoning_effort": "high" },
-    "claude": { "model": "claude-opus-5", "model_criterion": "equal" }
+    "codex":  { "model": "gpt-5.6-sol", "model_criterion": "equal", "reasoning_effort": "high" }
   }
 },
 "session_manager": {
@@ -65,7 +61,7 @@ task-board spawn TASK-… --role solution-architect --background --agent claude 
 Verify the effective policy — the config file is input, these views are truth:
 
 ```bash
-task-board q 'project_config(view=spawn-preflight, role=developer, agent=claude)'
+task-board q 'project_config(view=spawn-preflight, role=developer, agent=codex)'
 task-board q 'project_config(view=spawn-preflight, role=reviewer, agent=codex)'
 task-board q 'project_config()'
 ```
@@ -84,7 +80,7 @@ to its configured model.
   may use `review=light`.
 - `review=none` is reserved for deterministic evidence wiring where the
   orchestrator can verify every acceptance criterion mechanically.
-- Rework remains producer-owned; review remains independent and Codex-owned.
+- Rework remains producer-owned; review uses a fresh independent Codex run.
 
 ## Commit and synchronization policy
 

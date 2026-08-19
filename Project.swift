@@ -24,7 +24,7 @@ private let deferredSchemeNames = [
 ]
 
 private let macOSDeploymentTargets: DeploymentTargets = .macOS("15.0")
-private let verifiedRelayBundleInput: Path = ".build/relay/apple-bundle-input"
+private let verifiedRelayBundleInput: Path = ".build/relay/relay-assets-v1"
 
 private func targetSettings(
   debugXCConfig: Path,

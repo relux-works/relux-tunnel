@@ -4,32 +4,26 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
-import json
-import os
 import re
 import sys
 from pathlib import Path
+
+from relay_asset_manifest import (
+    AssetManifestError,
+    load_source_contract,
+    validate_bundle,
+    verify_schema,
+)
 
 
 class ContractError(Exception):
     pass
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def named_invocation(
     text: str, kind: str, name: str, required_marker: str | None = None
 ) -> str:
-    pattern = re.compile(
-        rf"\.{re.escape(kind)}\s*\(\s*name:\s*\"{re.escape(name)}\""
-    )
+    pattern = re.compile(rf"\.{re.escape(kind)}\s*\(\s*name:\s*\"{re.escape(name)}\"")
     for match in pattern.finditer(text):
         start = match.start()
         opening = text.find("(", start)
@@ -86,10 +80,12 @@ def verify_manifests(project_path: Path, package_path: Path) -> None:
         raise ContractError(
             "ReluxProxyMacTunnel must directly depend only on ReluxTunnelMacOSAdapter"
         )
-    if '.folderReference(path: verifiedRelayBundleInput)' not in provider:
-        raise ContractError("ReluxProxyMacTunnel is missing the verified relay folder resource")
+    if ".folderReference(path: verifiedRelayBundleInput)" not in provider:
+        raise ContractError(
+            "ReluxProxyMacTunnel is missing the verified relay folder resource"
+        )
     if (
-        'private let verifiedRelayBundleInput: Path = ".build/relay/apple-bundle-input"'
+        'private let verifiedRelayBundleInput: Path = ".build/relay/relay-assets-v1"'
         not in project
     ):
         raise ContractError("verified relay bundle input path drift")
@@ -109,84 +105,26 @@ def verify_manifests(project_path: Path, package_path: Path) -> None:
         "ReluxTunnelNativeAdapter",
     }:
         raise ContractError("ReluxTunnelMacOSAdapter production closure drift")
+    ios = named_invocation(package, "target", "ReluxTunnelIOSAdapter")
+    if target_dependencies(ios) != {"ReluxTunnelCore", "ReluxTunnelNativeAdapter"}:
+        raise ContractError("ReluxTunnelIOSAdapter production closure drift")
+    generated_lookup = (
+        Path(__file__).resolve().parent.parent
+        / "Sources/ReluxTunnelCore/RelayAssets/Generated/RelayAssetManifest+Generated.swift"
+    )
+    if not generated_lookup.is_file():
+        raise ContractError("generated typed relay asset lookup is missing from Core")
     evidence = named_invocation(package, "testTarget", "ReluxTunnelNativeAdapterTests")
     if "CReluxNativeFixture" not in target_dependencies(evidence):
         raise ContractError("CReluxNativeFixture must remain test evidence")
 
 
-def safe_relative_path(value: str) -> Path:
-    candidate = Path(value)
-    if not value or candidate.is_absolute() or ".." in candidate.parts:
-        raise ContractError(f"unsafe relay resource path: {value!r}")
-    return candidate
-
-
 def verify_relay_root(root: Path) -> None:
-    if not root.is_dir():
-        raise ContractError(f"verified relay resource directory is missing: {root}")
-    manifest_path = root / "relux-relay-manifest-v1.json"
-    sums_path = root / "relux-relay-SHA256SUMS"
     try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        sum_lines = sums_path.read_text(encoding="utf-8").splitlines()
-    except (OSError, json.JSONDecodeError) as error:
-        raise ContractError("relay manifest/checksum contract is missing or invalid") from error
-    if manifest.get("schemaVersion") != 1 or manifest.get("relayProtocolVersion") != 1:
-        raise ContractError("relay manifest schema/protocol version drift")
-    artifacts = manifest.get("artifacts")
-    if not isinstance(artifacts, list) or len(artifacts) != 4:
-        raise ContractError("relay manifest must describe exactly four portable artifacts")
-    expected_targets = {
-        ("darwin", "amd64"),
-        ("darwin", "arm64"),
-        ("linux", "amd64"),
-        ("linux", "arm64"),
-    }
-    if {(item.get("os"), item.get("arch")) for item in artifacts} != expected_targets:
-        raise ContractError("relay manifest target matrix drift")
-
-    sums: dict[str, str] = {}
-    for line in sum_lines:
-        match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
-        if match is None:
-            raise ContractError("relay checksum file is not canonical")
-        relative = safe_relative_path(match.group(2)).as_posix()
-        if relative in sums:
-            raise ContractError(f"duplicate relay checksum entry: {relative}")
-        sums[relative] = match.group(1)
-
-    for relative, expected_hash in sums.items():
-        resource = root / safe_relative_path(relative)
-        if not resource.is_file() or resource.is_symlink():
-            raise ContractError(f"relay checksum resource is missing or unsafe: {relative}")
-        if sha256(resource) != expected_hash:
-            raise ContractError(f"relay checksum mismatch: {relative}")
-
-    actual_files = {
-        path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file()
-    }
-    expected_files = set(sums) | {"relux-relay-SHA256SUMS"}
-    if actual_files != expected_files:
-        raise ContractError(
-            "relay resource file set drift: "
-            f"missing={sorted(expected_files - actual_files)} "
-            f"unexpected={sorted(actual_files - expected_files)}"
-        )
-
-    required = {"relux-relay-manifest-v1.json"}
-    for artifact in artifacts:
-        filename = safe_relative_path(str(artifact.get("filename", ""))).as_posix()
-        sbom = safe_relative_path(str(artifact.get("sbom", ""))).as_posix()
-        required.update((filename, sbom))
-        for relative, key in ((filename, "sha256"), (sbom, "sbomSha256")):
-            if sums.get(relative) != artifact.get(key):
-                raise ContractError(f"relay manifest/checksum disagreement: {relative}")
-        executable = root / filename
-        if not os.access(executable, os.X_OK):
-            raise ContractError(f"relay artifact is not executable: {filename}")
-    missing = required - sums.keys()
-    if missing:
-        raise ContractError(f"relay checksum contract omits resources: {sorted(missing)}")
+        verify_schema()
+        validate_bundle(root, load_source_contract())
+    except AssetManifestError as error:
+        raise ContractError(str(error)) from error
 
 
 def pbx_object(text: str, object_id: str) -> str:
@@ -195,7 +133,9 @@ def pbx_object(text: str, object_id: str) -> str:
         rf"(?m)^\s*{re.escape(object_id)}(?:\s+/\*.*?\*/)?\s*=\s*\{{", text
     )
     if declaration is None:
-        raise ContractError(f"generated project references missing PBX object {object_id}")
+        raise ContractError(
+            f"generated project references missing PBX object {object_id}"
+        )
 
     opening = text.find("{", declaration.start())
     depth = 0
@@ -231,9 +171,7 @@ def pbx_list_ids(block: str, key: str) -> list[str]:
 
 def named_native_target(text: str, name: str) -> str:
     candidates: list[str] = []
-    for match in re.finditer(
-        r"(?m)^\s*([0-9A-F]{24})(?:\s+/\*.*?\*/)?\s*=\s*\{", text
-    ):
+    for match in re.finditer(r"(?m)^\s*([0-9A-F]{24})(?:\s+/\*.*?\*/)?\s*=\s*\{", text):
         block = pbx_object(text, match.group(1))
         if "isa = PBXNativeTarget;" not in block:
             continue
@@ -303,7 +241,7 @@ def verify_generated_project(path: Path) -> None:
         text,
         resources,
         "fileRef",
-        "apple-bundle-input",
+        "relay-assets-v1",
         "Resources",
     )
     if "CReluxNativeFixture" in text:
@@ -327,7 +265,9 @@ def verify_linkage(
                 dependency.startswith("/usr/lib/")
                 or dependency.startswith("/System/Library/Frameworks/")
             ):
-                raise ContractError(f"disallowed provider dynamic dependency: {dependency}")
+                raise ContractError(
+                    f"disallowed provider dynamic dependency: {dependency}"
+                )
     if symbols_path is not None:
         symbols = symbols_path.read_text(encoding="utf-8")
         forbidden = (
@@ -339,12 +279,18 @@ def verify_linkage(
             "_dlsym",
         )
         for symbol in forbidden:
-            if re.search(rf"(?:^|\s){re.escape(symbol)}(?:$|\s)", symbols, re.MULTILINE):
-                raise ContractError(f"disallowed runtime-loading symbol in provider: {symbol}")
+            if re.search(
+                rf"(?:^|\s){re.escape(symbol)}(?:$|\s)", symbols, re.MULTILINE
+            ):
+                raise ContractError(
+                    f"disallowed runtime-loading symbol in provider: {symbol}"
+                )
     if all_symbols_path is not None:
         all_symbols = all_symbols_path.read_text(encoding="utf-8")
         if "relux_native_fixture" in all_symbols:
-            raise ContractError("CReluxNativeFixture symbols leaked into the provider binary")
+            raise ContractError(
+                "CReluxNativeFixture symbols leaked into the provider binary"
+            )
 
 
 def parse_args() -> argparse.Namespace:
@@ -369,7 +315,7 @@ def main() -> int:
             verify_generated_project(arguments.generated_project)
         if arguments.provider_bundle is not None:
             verify_relay_root(
-                arguments.provider_bundle / "Contents/Resources/apple-bundle-input"
+                arguments.provider_bundle / "Contents/Resources/relay-assets-v1"
             )
         verify_linkage(
             arguments.linked_libraries,

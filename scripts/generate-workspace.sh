@@ -4,6 +4,8 @@ set -eu
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$repo_root"
 
+python3 scripts/relay_asset_manifest.py generate
+
 expected_tuist_version=4.202.5
 configured_tuist_version=$(sed -n 's/^tuist = "\([^"]*\)"$/\1/p' mise.toml)
 

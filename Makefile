@@ -9,6 +9,7 @@
 	relay-protocol-hostile-diagnostics relay-protocol-check \
 	relay-shell-test relay-shell-vet relay-shell-build relay-shell-release \
 	relay-shell-verify relay-shell-smoke relay-shell-reproducibility relay-shell-validate \
+	relay-asset-bundle-generate relay-asset-bundle-check relay-asset-manifest-test \
 	relay-provision-go relay-provision-syft relay-provision-tools relay-print-apple-bundle-input \
 	relay-toolchain-check relay-toolchain-test relay-toolchain-negative-test \
 	relay-build-darwin-amd64 relay-build-darwin-arm64 relay-build-linux-amd64 \
@@ -132,6 +133,22 @@ RELAY_TOOLCHAIN_LICENSE_OUTPUT ?= .build/relay/toolchain-licenses
 RELAY_CACHE_MODE ?= clean
 RELAY_BUILD_CLEAN_FLAG ?=
 RELAY_DEV_WORK ?= $(CURDIR)/.build/relay/work/development
+RELAY_ASSET_ARCHIVE ?= .task-board/.resources/TASK-260715-24icoz/TASK-260715-24icoz_portable-relay-assets.tar.gz
+RELAY_ASSET_BUNDLE ?= .build/relay/relay-assets-v1
+
+relay-asset-bundle-generate:
+	python3 scripts/relay_asset_manifest.py generate \
+		--archive "$(RELAY_ASSET_ARCHIVE)" \
+		--bundle "$(RELAY_ASSET_BUNDLE)"
+
+relay-asset-bundle-check:
+	python3 scripts/relay_asset_manifest.py check \
+		--archive "$(RELAY_ASSET_ARCHIVE)" \
+		--bundle "$(RELAY_ASSET_BUNDLE)"
+
+relay-asset-manifest-test:
+	python3 -m unittest scripts/tests/test_relay_asset_manifest.py
+	swift test --filter RelayAssetManifestTests
 
 RELAY_BUILD_ARGUMENTS = \
 	--go "$(RELAY_GO)" \

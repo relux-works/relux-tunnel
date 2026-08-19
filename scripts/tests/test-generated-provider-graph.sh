@@ -12,7 +12,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 validator="$repo_root/scripts/check-generated-provider-graph.py"
-relay_root="$repo_root/.build/relay/apple-bundle-input"
+relay_root="$repo_root/.build/relay/relay-assets-v1"
 generated_project="$repo_root/ReluxTunnelApp.xcodeproj/project.pbxproj"
 
 if [ ! -f "$generated_project" ]; then
@@ -60,10 +60,10 @@ import re
 import sys
 path = Path(sys.argv[1])
 text = path.read_text()
-pattern = r'^\s*[0-9A-F]{24} /\* apple-bundle-input in Resources \*/,\n'
+pattern = r'^\s*[0-9A-F]{24} /\* relay-assets-v1 in Resources \*/,\n'
 mutated, count = re.subn(pattern, '', text, flags=re.MULTILINE)
 assert count == 1
-assert 'apple-bundle-input' in mutated
+assert 'relay-assets-v1' in mutated
 path.write_text(mutated)
 PY
 expect_failure missing-generated-relay-edge "$validator" \

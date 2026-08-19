@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "manifestSchemaVersion": 1,
+  "relayProtocolVersion": 1,
+  "relayVersion": "0.1.0",
+  "sourceCommit": "58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096",
+  "bundleSubdirectory": "relay-assets-v1",
+  "buildProvenance": {
+    "kind": "taskBoardResource",
+    "taskID": "TASK-260715-24icoz",
+    "resourceName": "TASK-260715-24icoz_portable-relay-assets.tar.gz",
+    "archiveSHA256": "1f0ba226ed591d1baf5f9464b33e45b7658a33bf5a1a114e77b6d22d3d9eef4e"
+  },
+  "assets": [
+    {
+      "os": "darwin",
+      "arch": "amd64",
+      "archivePath": "darwin-amd64/relux-relay-darwin-amd64",
+      "fileName": "relux-relay-darwin-amd64",
+      "byteSize": 2623664,
+      "sha256": "783b94982e90f0ceed0af0fa11662d11a333e244b87256cbfa0f7d21695f3290"
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64",
+      "archivePath": "darwin-arm64/relux-relay-darwin-arm64",
+      "fileName": "relux-relay-darwin-arm64",
+      "byteSize": 2487362,
+      "sha256": "8ac45b257099c9d2079b0bd2cb9ae489acfb86e443ba7ca7e4b4b2a56380d64c"
+    },
+    {
+      "os": "linux",
+      "arch": "amd64",
+      "archivePath": "linux-amd64/relux-relay-linux-amd64",
+      "fileName": "relux-relay-linux-amd64",
+      "byteSize": 2592894,
+      "sha256": "ddcb22ed4d4a978992a04096abae8adc58d0b8bf3bcdc0c0a006775797e2941f"
+    },
+    {
+      "os": "linux",
+      "arch": "arm64",
+      "archivePath": "linux-arm64/relux-relay-linux-arm64",
+      "fileName": "relux-relay-linux-arm64",
+      "byteSize": 2556030,
+      "sha256": "908b3d9ea3543b6144e2c99407c9aa02cc69e86c1cce80364d32dbdc3de8e0dc"
+    }
+  ]
+}

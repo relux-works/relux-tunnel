@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relux.works/schemas/relux-relay-asset-manifest-v1.schema.json",
+  "title": "Relux bundled relay asset manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "relayProtocolVersion",
+    "buildProvenance",
+    "assets"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "relayProtocolVersion": {"const": 1},
+    "buildProvenance": {"$ref": "#/$defs/buildProvenance"},
+    "assets": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/asset"}
+    }
+  },
+  "$defs": {
+    "buildProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "taskID", "resourceName", "archiveSHA256"],
+      "properties": {
+        "kind": {"const": "taskBoardResource"},
+        "taskID": {"type": "string", "pattern": "^TASK-[0-9]{6}-[a-z0-9]+$"},
+        "resourceName": {"type": "string", "pattern": "^TASK-[A-Za-z0-9_.-]+$"},
+        "archiveSHA256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "buildIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "relayProtocolVersion",
+        "relayVersion",
+        "sourceCommit",
+        "os",
+        "arch",
+        "selfSha256"
+      ],
+      "properties": {
+        "schemaVersion": {"const": 1},
+        "relayProtocolVersion": {"const": 1},
+        "relayVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+        },
+        "sourceCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "os": {"enum": ["darwin", "linux"]},
+        "arch": {"enum": ["amd64", "arm64"]},
+        "selfSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "os",
+        "arch",
+        "fileName",
+        "bundleLocation",
+        "byteSize",
+        "sha256",
+        "relayProtocolVersion",
+        "buildIdentity",
+        "buildProvenanceReference"
+      ],
+      "properties": {
+        "os": {"enum": ["darwin", "linux"]},
+        "arch": {"enum": ["amd64", "arm64"]},
+        "fileName": {
+          "type": "string",
+          "pattern": "^relux-relay-(darwin|linux)-(amd64|arm64)$"
+        },
+        "bundleLocation": {
+          "type": "string",
+          "pattern": "^relay-assets-v1/relux-relay-(darwin|linux)-(amd64|arm64)$"
+        },
+        "byteSize": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "relayProtocolVersion": {"const": 1},
+        "buildIdentity": {"$ref": "#/$defs/buildIdentity"},
+        "buildProvenanceReference": {"const": "#/buildProvenance"}
+      }
+    }
+  }
+}

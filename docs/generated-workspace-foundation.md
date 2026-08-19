@@ -120,10 +120,14 @@ SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)" \
 make relay-shell-validate
 ```
 
-The relay result is staged under `.build/relay/apple-bundle-input/`; protocol
-test binaries are under `.build/relay/protocol-tests/`; isolated build state is
-under `.build/relay/work/`. No relay command uploads or installs an executable
-on an SSH host.
+The release-builder result is staged under `.build/relay/apple-bundle-input/`.
+The separate trusted application bundle is deterministically materialized from
+the accepted four-asset board resource under `.build/relay/relay-assets-v1/` by
+`make relay-asset-bundle-generate`; `make relay-asset-bundle-check` verifies its
+schema, exact file set, bytes, identity, provenance, and generated Swift lookup.
+Protocol test binaries are under `.build/relay/protocol-tests/`; isolated build
+state is under `.build/relay/work/`. No relay command uploads or installs an
+executable on an SSH host.
 
 For the four credential-isolated cross-builds, first provision the official
 host archive as documented in [`relay/README.md`](../relay/README.md), then run:
@@ -266,7 +270,8 @@ silently raise the macOS 15/iOS 18 floor are prohibited.
 | Unsigned target products, intermediates, logs | `.temp/TASK-260715-uyju7n/` |
 | Full credential-free summary/environment/logs | `.temp/TASK-260715-sbrrp7/credential-free-validation/` |
 | SwiftPM products | `.build/` |
-| Relay Apple input and protocol tests | `.build/relay/apple-bundle-input/`, `.build/relay/protocol-tests/` |
+| Trusted bundled relay assets | `.build/relay/relay-assets-v1/` |
+| Relay release-builder input and protocol tests | `.build/relay/apple-bundle-input/`, `.build/relay/protocol-tests/` |
 | Relay portable targets/report/work | `.build/relay/portable/`, `.build/relay/portable-assets-v1.json`, `.build/relay/work/` |
 | Checked-in native artifacts/notices | `NativeDependencies/Artifacts/`, `NativeDependencies/Generated/` |
 

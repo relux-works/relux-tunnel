@@ -19,7 +19,7 @@
       "codex": {
         "model": "gpt-5.6-sol",
         "model_criterion": "equal",
-        "reasoning_effort": "medium"
+        "reasoning_effort": "high"
       }
     }
   },
