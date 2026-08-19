@@ -137,27 +137,123 @@ struct HarnessTests {
     try await expectResourcesCleaned(recorder)
   }
 
-  @Test("signal cancellation uses signal exit code and cleans all resources")
-  func cancellationCleanup() async throws {
+  @Test(
+    "signal cancellation uses signal exit code and cleans all resources",
+    arguments: 1...50
+  )
+  func cancellationCleanup(iteration: Int) async throws {
     let recorder = ResourceRecorder()
-    let command = ResourceCommand(name: "cancel", recorder: recorder, blocks: true)
+    let command = ResourceCommand(
+      name: "cancel-\(iteration)",
+      recorder: recorder,
+      blocks: true
+    )
     let application = try makeApplication(commands: [command])
     let cancellation = StreamHarnessCancellationSource()
-    let invocationArguments = try arguments(command: "cancel")
+    let invocationArguments = try arguments(command: command.name)
 
     let run = Task {
-      await application.run(
+      let response = await application.run(
         arguments: invocationArguments,
         cancellationSource: cancellation
       )
+      await recorder.recordCompletion(response)
+      return response
     }
-    try await waitUntil { await recorder.hasStarted }
+    try await recorder.waitUntilStarted()
     cancellation.cancel(reason: .terminate)
     let response = await run.value
 
     #expect(response.exitCode == .terminated)
     #expect(response.standardOutput.isEmpty)
     try await expectResourcesCleaned(recorder)
+  }
+
+  @Test(
+    "startup failure completes readiness waiters and cleans partial resources",
+    arguments: 1...50
+  )
+  func startupFailureCompletesReadiness(iteration: Int) async throws {
+    let recorder = ResourceRecorder()
+    let command = ResourceCommand(
+      name: "fail-before-ready-\(iteration)",
+      recorder: recorder,
+      blocks: false,
+      failureBeforeReadiness: .injectedBeforeReadiness
+    )
+    let application = try makeApplication(commands: [command])
+    let invocationArguments = try arguments(command: command.name)
+
+    let run = Task {
+      let response = await application.run(
+        arguments: invocationArguments,
+        cancellationSource: StreamHarnessCancellationSource()
+      )
+      await recorder.recordCompletion(response)
+      return response
+    }
+
+    do {
+      try await recorder.waitUntilStarted()
+      Issue.record("startup failure unexpectedly published readiness")
+    } catch let error as ResourceReadinessError {
+      #expect(
+        error
+          == .completedBeforeReadiness(
+            exitCode: .failure,
+            diagnostic: "injectedBeforeReadiness\n"
+          )
+      )
+    } catch {
+      Issue.record("unexpected readiness error: \(error)")
+    }
+
+    let response = await run.value
+    let snapshot = await recorder.snapshot()
+    let directory = try #require(snapshot.directory)
+    #expect(response.exitCode == .failure)
+    #expect(response.standardError == "injectedBeforeReadiness\n")
+    #expect(!FileManager.default.fileExists(atPath: directory.path))
+    #expect(snapshot.socket == nil)
+    #expect(snapshot.managedTaskCancellationCount == 0)
+    #expect(snapshot.pendingReadinessWaiterCount == 0)
+  }
+
+  @Test("readiness wait cancellation before registration cannot leak", arguments: 1...50)
+  func readinessCancellationBeforeRegistration(iteration: Int) async {
+    let recorder = ResourceRecorder()
+    let waiter = Task {
+      withUnsafeCurrentTask { task in
+        task?.cancel()
+      }
+      try await recorder.waitUntilStarted()
+    }
+
+    await #expect(throws: CancellationError.self) {
+      try await waiter.value
+    }
+    #expect(await recorder.pendingReadinessWaiterCount == 0)
+  }
+
+  @Test("registered readiness wait cancellation removes its continuation")
+  func registeredReadinessCancellation() async {
+    let registration = AsyncStream<Void>.makeStream()
+    let recorder = ResourceRecorder {
+      registration.continuation.yield()
+      registration.continuation.finish()
+    }
+    let waiter = Task {
+      try await recorder.waitUntilStarted()
+    }
+    var registrations = registration.stream.makeAsyncIterator()
+
+    _ = await registrations.next()
+    waiter.cancel()
+
+    await #expect(throws: CancellationError.self) {
+      try await waiter.value
+    }
+    #expect(await recorder.pendingReadinessWaiterCount == 0)
   }
 
   @Test("subcommands receive every packet and SSH experiment seam")
@@ -243,7 +339,7 @@ struct HarnessTests {
     let socket = try #require(snapshot.socket)
     #expect(!FileManager.default.fileExists(atPath: directory.path))
     #expect(!FileManager.default.fileExists(atPath: socket.path))
-    #expect(snapshot.managedTaskCancelled)
+    #expect(snapshot.managedTaskCancellationCount == 1)
   }
 }
 
@@ -286,38 +382,154 @@ private struct FixedClock: TunnelClock {
   }
 }
 
+private enum ResourceReadinessError: Error, Equatable {
+  case completedBeforeReadiness(exitCode: HarnessExitCode, diagnostic: String)
+}
+
 private actor ResourceRecorder {
+  private enum ReadinessState {
+    case pending
+    case ready
+    case terminal(ResourceReadinessError)
+  }
+
+  private typealias ReadinessContinuation = CheckedContinuation<Void, any Error>
+
   private(set) var directory: URL?
   private(set) var socket: URL?
-  private(set) var managedTaskCancelled = false
-  private(set) var hasStarted = false
+  private var managedTaskCancellationCount = 0
+  private var readinessState = ReadinessState.pending
+  private var readinessWaiters: [UUID: ReadinessContinuation] = [:]
+  private let onReadinessWaiterRegistered: @Sendable () -> Void
 
-  func record(directory: URL, socket: URL) {
+  init(onReadinessWaiterRegistered: @escaping @Sendable () -> Void = {}) {
+    self.onReadinessWaiterRegistered = onReadinessWaiterRegistered
+  }
+
+  func record(directory: URL) {
     self.directory = directory
+  }
+
+  func record(socket: URL) {
     self.socket = socket
-    hasStarted = true
+  }
+
+  func recordReadiness() {
+    guard case .pending = readinessState else {
+      return
+    }
+    readinessState = .ready
+    completeReadinessWaiters(with: .success(()))
+  }
+
+  func recordCompletion(_ response: HarnessApplicationResponse) {
+    guard case .pending = readinessState else {
+      return
+    }
+    let error = ResourceReadinessError.completedBeforeReadiness(
+      exitCode: response.exitCode,
+      diagnostic: response.standardError
+    )
+    readinessState = .terminal(error)
+    completeReadinessWaiters(with: .failure(error))
+  }
+
+  func waitUntilStarted() async throws {
+    let waiterID = UUID()
+    try await withTaskCancellationHandler {
+      try await withCheckedThrowingContinuation { continuation in
+        registerReadinessWaiter(continuation, id: waiterID)
+      }
+    } onCancel: {
+      Task {
+        await self.cancelReadinessWaiter(id: waiterID)
+      }
+    }
   }
 
   func recordManagedTaskCancellation() {
-    managedTaskCancelled = true
+    managedTaskCancellationCount += 1
   }
 
-  func snapshot() -> (directory: URL?, socket: URL?, managedTaskCancelled: Bool) {
-    (directory, socket, managedTaskCancelled)
+  var pendingReadinessWaiterCount: Int {
+    readinessWaiters.count
   }
+
+  func snapshot() -> (
+    directory: URL?,
+    socket: URL?,
+    managedTaskCancellationCount: Int,
+    pendingReadinessWaiterCount: Int
+  ) {
+    (directory, socket, managedTaskCancellationCount, readinessWaiters.count)
+  }
+
+  private func registerReadinessWaiter(
+    _ continuation: ReadinessContinuation,
+    id: UUID
+  ) {
+    if Task.isCancelled {
+      continuation.resume(throwing: CancellationError())
+      return
+    }
+
+    switch readinessState {
+    case .pending:
+      readinessWaiters[id] = continuation
+      onReadinessWaiterRegistered()
+    case .ready:
+      continuation.resume()
+    case .terminal(let error):
+      continuation.resume(throwing: error)
+    }
+  }
+
+  private func cancelReadinessWaiter(id: UUID) {
+    readinessWaiters.removeValue(forKey: id)?.resume(throwing: CancellationError())
+  }
+
+  private func completeReadinessWaiters(with result: Result<Void, any Error>) {
+    let waiters = readinessWaiters.values
+    readinessWaiters.removeAll()
+    for waiter in waiters {
+      waiter.resume(with: result)
+    }
+  }
+}
+
+private enum ResourceCommandError: Error {
+  case injectedBeforeReadiness
 }
 
 private struct ResourceCommand: HarnessCommand {
   let name: String
   let recorder: ResourceRecorder
   let blocks: Bool
+  var failureBeforeReadiness: ResourceCommandError?
+
+  init(
+    name: String,
+    recorder: ResourceRecorder,
+    blocks: Bool,
+    failureBeforeReadiness: ResourceCommandError? = nil
+  ) {
+    self.name = name
+    self.recorder = recorder
+    self.blocks = blocks
+    self.failureBeforeReadiness = failureBeforeReadiness
+  }
 
   func run(context: HarnessCommandContext) async throws {
     let directory = try await context.resources.makeTemporaryDirectory(prefix: "relux-test")
+    await recorder.record(directory: directory)
     let marker = directory.appendingPathComponent("marker")
     try Data("fixture".utf8).write(to: marker)
+    if let failureBeforeReadiness {
+      throw failureBeforeReadiness
+    }
     let socket = directory.appendingPathComponent("fixture.sock")
     try await context.resources.bindUnixDatagramSocket(at: socket)
+    await recorder.record(socket: socket)
     await context.resources.startTask {
       do {
         try await Task.sleep(for: .seconds(3_600))
@@ -325,25 +537,12 @@ private struct ResourceCommand: HarnessCommand {
         await recorder.recordManagedTaskCancellation()
       }
     }
-    await recorder.record(directory: directory, socket: socket)
+    await recorder.recordReadiness()
 
     if blocks {
       try await Task.sleep(for: .seconds(3_600))
     }
   }
-}
-
-private func waitUntil(
-  _ predicate: @escaping @Sendable () async -> Bool
-) async throws {
-  for _ in 0..<10_000 {
-    if await predicate() {
-      return
-    }
-    await Task.yield()
-  }
-  struct TimedOut: Error {}
-  throw TimedOut()
 }
 
 private struct DependencySnapshot: Sendable {
