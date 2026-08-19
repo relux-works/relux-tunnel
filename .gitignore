@@ -5,6 +5,7 @@
 dist/
 *.xcworkspace
 *.xcodeproj
+Derived/
 xcuserdata/
 .agents/
 .claude/

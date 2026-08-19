@@ -68,4 +68,6 @@ test "$runner_line" -lt "$mise_line"
 test "$mise_line" -lt "$checksum_line"
 test "$mise_line" -lt "$gate_line"
 
+"$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
+
 echo "credential-free validation contract tests passed"

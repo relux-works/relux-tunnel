@@ -125,6 +125,11 @@ relay_syft="$repo_root/.build/relay/toolchains/syft1.48.0-$(uname -s | tr '[:upp
   echo "sdk_inventory_end"
 } > "$metadata"
 
+run_step relay-packaging env \
+  RELAY_VERSION="$marketing_version" \
+  SOURCE_COMMIT="$source_revision" \
+  SOURCE_DATE_EPOCH="$source_date_epoch" \
+  make relay-shell-validate
 run_step validation-contract-tests ./scripts/tests/test-credential-free-validation.sh
 run_step deterministic-generation ./scripts/validate-workspace-foundation.sh
 run_step macos-target-builds-and-contracts ./scripts/validate-macos-targets.sh
@@ -132,12 +137,6 @@ run_step core-boundaries ./scripts/check-core-boundaries.sh
 run_step swift-testing swift test
 run_step swift-release-build swift build -c release
 run_step native-packaging make check-native-dependencies test-native-dependencies
-
-run_step relay-shell-smoke env \
-  RELAY_VERSION="$marketing_version" \
-  SOURCE_COMMIT="$source_revision" \
-  SOURCE_DATE_EPOCH="$source_date_epoch" \
-  make relay-shell-validate
 
 run_step legacy-clone git clone --quiet --local --no-hardlinks "$legacy_root" "$legacy_fixture"
 run_step legacy-checkout git -C "$legacy_fixture" checkout --quiet "$expected_legacy_commit"

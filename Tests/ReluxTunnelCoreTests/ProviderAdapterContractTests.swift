@@ -15,7 +15,7 @@ struct ProviderAdapterContractTests {
     #expect(capabilities.deferredSemantics.deepRekeyAndKeepaliveObservability == .unsupported)
   }
 
-  @Test("both provider adapters link the pinned native fixture")
+  @Test("both provider adapters link the pinned HEV production runtime")
   func nativePackagingAnchors() {
     #expect(IOSNativePackagingAnchor.schemaVersion == 1)
     #expect(MacOSNativePackagingAnchor.schemaVersion == 1)

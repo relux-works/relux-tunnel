@@ -132,12 +132,15 @@ awk '/^[[:space:]]+\// { print $1 }' "$task_output/provider-release-linkage.log"
     esac
   done
 nm -u "$release_provider_binary" > "$task_output/provider-release-undefined-symbols.log"
-for symbol in \
-  _NSAddImage _NSCreateObjectFileImageFromFile _dladdr _dlclose _dlopen _dlsym; do
-  if grep -F " $symbol" "$task_output/provider-release-undefined-symbols.log" >/dev/null; then
-    echo "error: disallowed runtime-loading symbol in provider: $symbol" >&2
-    exit 1
-  fi
-done
+nm "$release_provider_binary" > "$task_output/provider-release-symbols.log"
+./scripts/check-generated-provider-graph.py \
+  --project Project.swift \
+  --package Package.swift \
+  --relay-root .build/relay/apple-bundle-input \
+  --generated-project ReluxTunnelApp.xcodeproj/project.pbxproj \
+  --provider-bundle "$release_provider" \
+  --linked-libraries "$task_output/provider-release-linkage.log" \
+  --undefined-symbols "$task_output/provider-release-undefined-symbols.log" \
+  --all-symbols "$task_output/provider-release-symbols.log"
 
 echo "macOS host/provider target validation passed"

@@ -24,6 +24,7 @@ private let deferredSchemeNames = [
 ]
 
 private let macOSDeploymentTargets: DeploymentTargets = .macOS("15.0")
+private let verifiedRelayBundleInput: Path = ".build/relay/apple-bundle-input"
 
 private func targetSettings(
   debugXCConfig: Path,
@@ -83,8 +84,11 @@ private let macOSTargets: [Target] = [
       "App/ReluxProxyMacTunnel/Sources/**",
       "App/Shared/**",
     ],
+    resources: [
+      .folderReference(path: verifiedRelayBundleInput)
+    ],
     dependencies: [
-      .package(product: "ReluxTunnelCore")
+      .package(product: "ReluxTunnelMacOSAdapter")
     ],
     settings: targetSettings(
       debugXCConfig: "Configuration/MacProvider-Debug.xcconfig",

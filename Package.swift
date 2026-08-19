@@ -45,7 +45,6 @@ let package = Package(
       name: "ReluxTunnelNativeAdapter",
       dependencies: [
         "ReluxTunnelCore",
-        "CReluxNativeFixture",
         "HevSocks5Tunnel",
       ]
     ),
@@ -105,6 +104,7 @@ let package = Package(
     .testTarget(
       name: "ReluxTunnelNativeAdapterTests",
       dependencies: [
+        "CReluxNativeFixture",
         "ReluxTunnelCore",
         "ReluxTunnelMacOSAdapter",
         "ReluxTunnelNativeAdapter",

@@ -10,6 +10,11 @@ package_hash_before=$(shasum -a 256 Package.swift | awk '{print $1}')
 tracked_state_before=$(git status --porcelain=v1 --untracked-files=all -- . ':!.task-board' ':!.temp')
 
 ./scripts/generate-workspace.sh --clean
+./scripts/check-generated-provider-graph.py \
+  --project Project.swift \
+  --package Package.swift \
+  --relay-root .build/relay/apple-bundle-input \
+  --generated-project ReluxTunnelApp.xcodeproj/project.pbxproj
 find ReluxTunnel.xcworkspace ReluxTunnelApp.xcodeproj -type f \
   ! -path '*/xcuserdata/*' -print0 \
   | LC_ALL=C sort -z \

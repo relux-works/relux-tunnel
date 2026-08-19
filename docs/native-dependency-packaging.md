@@ -2,7 +2,8 @@
 
 `TASK-260715-1g9cyt` establishes the extension-safe packaging boundary used by
 HEV/lwIP and either SSH candidate. The checked-in harmless fixture exercises the
-same path without selecting or integrating a production transport.
+binary packaging verifier from a test-only evidence target; it is not part of a
+production adapter, provider, or harness graph.
 
 ## Decision
 
@@ -32,13 +33,15 @@ dependencies. They do not need an XCFramework merely for uniformity.
 ReluxTunnelCore                       (no native or platform dependency)
         ^
         |
-ReluxTunnelNativeAdapter ----------> CReluxNativeFixture binaryTarget
-        |                         `-> HevSocks5Tunnel binaryTarget
+ReluxTunnelNativeAdapter ----------> HevSocks5Tunnel binaryTarget
         ^                                      |
-        |                                      `-- static XCFrameworks only
+        |                                      `-- static XCFramework only
         +-- ReluxTunnelIOSAdapter
         +-- ReluxTunnelMacOSAdapter
         `-- ReluxTunnelHarnessSupport --> ReluxTunnelHarness
+
+ReluxTunnelNativeAdapterTests -----> CReluxNativeFixture binaryTarget
+                                     (evidence only)
 ```
 
 The HEV integration now occupies `ReluxTunnelNativeAdapter` itself: the adapter
@@ -52,7 +55,7 @@ target.
 
 ## Rebuild and verification
 
-The harmless fixture is rebuilt from the manifest inputs with:
+The harmless test-only fixture is rebuilt from the manifest inputs with:
 
 ```sh
 ./scripts/native-dependency-tool.py build-fixture \

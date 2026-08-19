@@ -72,11 +72,12 @@ def dependency_names(target):
     return names
 
 if dependency_names(targets["ReluxTunnelNativeAdapter"]) != {
-    "CReluxNativeFixture",
     "HevSocks5Tunnel",
     "ReluxTunnelCore",
 }:
     raise SystemExit("ReluxTunnelNativeAdapter must own the native/core boundary")
+if "CReluxNativeFixture" not in dependency_names(targets["ReluxTunnelNativeAdapterTests"]):
+    raise SystemExit("CReluxNativeFixture must remain test evidence")
 if dependency_names(targets["ReluxTunnelLibSSH2Adapter"]) != {
     "ReluxLibSSH2",
     "ReluxTunnelCore",

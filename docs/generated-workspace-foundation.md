@@ -31,6 +31,12 @@ From a clean checkout, the complete credential-free local/PR gate is:
 make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy
 ```
 
+The gate builds and verifies the relay Apple bundle input before Tuist
+generation. `ReluxProxyMacTunnel` consumes that directory as a folder resource,
+and the generated/built graph validator rechecks its manifest, checksum file,
+four executables, SBOMs, production adapter closure, linkage allowlist, and
+runtime-loader denylist. A missing or tampered relay input fails closed.
+
 Prerequisites are macOS with the repository's supported Xcode command-line
 tools, Mise, Python 3, Git, Make, curl, and a read-only legacy checkout that
 contains signed tag `v0.1.0`. The command installs the exact Tuist pin through

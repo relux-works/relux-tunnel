@@ -1,3 +1,4 @@
+import CReluxNativeFixture
 import Foundation
 import ReluxTunnelCore
 import ReluxTunnelNativeAdapter
@@ -16,7 +17,8 @@ struct NativeDependencyPackagingTests {
 
     #expect(configuration.profileReference.profileIdentifier == profileID)
     #expect(NativeDependencyPackaging.schemaVersion == 1)
-    #expect(NativeDependencyPackaging.smoke(value: 0) == 0x524C_5854)
-    #expect(NativeDependencyPackaging.smoke(value: 7) == 0x524C_5853)
+    #expect(relux_native_fixture_schema_version() == 1)
+    #expect(relux_native_fixture_mix(0) == 0x524C_5854)
+    #expect(relux_native_fixture_mix(7) == 0x524C_5853)
   }
 }

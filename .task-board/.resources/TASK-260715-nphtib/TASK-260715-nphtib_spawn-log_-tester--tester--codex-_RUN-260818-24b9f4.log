@@ -1,0 +1,5 @@
+TASK-260715-nphtib tester run — REDACTED BOARD RECORD
+
+The automatic runtime log included an over-broad local directory listing with unrelated filenames. The board copy is intentionally replaced under the project privacy policy. Authoritative task-scoped commands, exit codes, durations, architecture findings, artifact locations, and disposition are preserved in TASK-260715-nphtib_results.md.
+
+Outcome: repository-owned matrix exit 0; architecture verification failed on BUG-260819-8qf0s0. No VPN install, open, preference save, activation, start, route mutation, or DNS mutation occurred.
