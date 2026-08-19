@@ -12,6 +12,17 @@ extension RelayAssetCatalog {
     resourceName: "TASK-260715-24icoz_portable-relay-assets.tar.gz",
     archiveSHA256: "1f0ba226ed591d1baf5f9464b33e45b7658a33bf5a1a114e77b6d22d3d9eef4e")
 
+  static let generatedSupplyChain = RelayAssetSupplyChain(
+    kind: "repositoryGenerated",
+    taskID: "TASK-260715-vtot05",
+    manifestLinkageSHA256: "61dbd903ce1055f852a52718adb887d9d5acafb78a6758fae3d0f02a0db9061a",
+    provenanceFile: "relay/source-build-provenance-v1.json",
+    provenanceSHA256: "0b17ed44dc56aeff70d28a063af5b7d1f4214f5628f1f4e701829be82d0919e2",
+    inventoryFile: "relay/dependency-inventory-v1.json",
+    inventorySHA256: "a8c6046067bb5d4296c3022ea18a22031dbc4ed7f6aa91714b9659f703f8ba8f",
+    noticesFile: "relay/PRODUCT_NOTICES.txt",
+    noticesSHA256: "7f1edb1216363e034bd06b4d41edfd04958a597b0dad8ae3cdd4e7c91c69006f")
+
   static let generatedAssets: [RelayBundledAsset] = [
     RelayBundledAsset(
       platform: RelayRemotePlatform(
@@ -30,7 +41,8 @@ extension RelayAssetCatalog {
         operatingSystem: .darwin,
         architecture: .amd64,
         selfSHA256: "783b94982e90f0ceed0af0fa11662d11a333e244b87256cbfa0f7d21695f3290"),
-      buildProvenanceReference: "#/buildProvenance"),
+      buildProvenanceReference: "#/buildProvenance",
+      sourceProvenanceReference: "#/supplyChain"),
     RelayBundledAsset(
       platform: RelayRemotePlatform(
         operatingSystem: .darwin,
@@ -48,7 +60,8 @@ extension RelayAssetCatalog {
         operatingSystem: .darwin,
         architecture: .arm64,
         selfSHA256: "8ac45b257099c9d2079b0bd2cb9ae489acfb86e443ba7ca7e4b4b2a56380d64c"),
-      buildProvenanceReference: "#/buildProvenance"),
+      buildProvenanceReference: "#/buildProvenance",
+      sourceProvenanceReference: "#/supplyChain"),
     RelayBundledAsset(
       platform: RelayRemotePlatform(
         operatingSystem: .linux,
@@ -66,7 +79,8 @@ extension RelayAssetCatalog {
         operatingSystem: .linux,
         architecture: .amd64,
         selfSHA256: "ddcb22ed4d4a978992a04096abae8adc58d0b8bf3bcdc0c0a006775797e2941f"),
-      buildProvenanceReference: "#/buildProvenance"),
+      buildProvenanceReference: "#/buildProvenance",
+      sourceProvenanceReference: "#/supplyChain"),
     RelayBundledAsset(
       platform: RelayRemotePlatform(
         operatingSystem: .linux,
@@ -84,6 +98,7 @@ extension RelayAssetCatalog {
         operatingSystem: .linux,
         architecture: .arm64,
         selfSHA256: "908b3d9ea3543b6144e2c99407c9aa02cc69e86c1cce80364d32dbdc3de8e0dc"),
-      buildProvenanceReference: "#/buildProvenance"),
+      buildProvenanceReference: "#/buildProvenance",
+      sourceProvenanceReference: "#/supplyChain"),
   ]
 }

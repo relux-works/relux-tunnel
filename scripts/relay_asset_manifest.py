@@ -71,6 +71,7 @@ SOURCE_KEYS = {
     "sourceCommit",
     "bundleSubdirectory",
     "buildProvenance",
+    "supplyChain",
     "assets",
 }
 SOURCE_ASSET_KEYS = {
@@ -82,10 +83,22 @@ SOURCE_ASSET_KEYS = {
     "sha256",
 }
 PROVENANCE_KEYS = {"kind", "taskID", "resourceName", "archiveSHA256"}
+SUPPLY_CHAIN_KEYS = {
+    "kind",
+    "taskID",
+    "manifestLinkageSHA256",
+    "provenanceFile",
+    "provenanceSHA256",
+    "inventoryFile",
+    "inventorySHA256",
+    "noticesFile",
+    "noticesSHA256",
+}
 MANIFEST_KEYS = {
     "schemaVersion",
     "relayProtocolVersion",
     "buildProvenance",
+    "supplyChain",
     "assets",
 }
 MANIFEST_ASSET_KEYS = {
@@ -98,6 +111,7 @@ MANIFEST_ASSET_KEYS = {
     "relayProtocolVersion",
     "buildIdentity",
     "buildProvenanceReference",
+    "sourceProvenanceReference",
 }
 IDENTITY_KEYS = {
     "schemaVersion",
@@ -303,6 +317,35 @@ def validate_provenance(value: Any) -> dict[str, str]:
     return value
 
 
+def validate_supply_chain(value: Any) -> dict[str, str]:
+    if not isinstance(value, dict) or set(value) != SUPPLY_CHAIN_KEYS:
+        raise AssetManifestError("supply-chain provenance field set changed")
+    if (
+        value.get("kind") != "repositoryGenerated"
+        or value.get("taskID") != "TASK-260715-vtot05"
+    ):
+        raise AssetManifestError("supply-chain provenance identity is invalid")
+    for key in (
+        "manifestLinkageSHA256",
+        "provenanceSHA256",
+        "inventorySHA256",
+        "noticesSHA256",
+    ):
+        if (
+            not isinstance(value.get(key), str)
+            or SHA256_PATTERN.fullmatch(value[key]) is None
+        ):
+            raise AssetManifestError("supply-chain provenance digest is invalid")
+    expected_files = {
+        "provenanceFile": "relay/source-build-provenance-v1.json",
+        "inventoryFile": "relay/dependency-inventory-v1.json",
+        "noticesFile": "relay/PRODUCT_NOTICES.txt",
+    }
+    if any(value.get(key) != expected for key, expected in expected_files.items()):
+        raise AssetManifestError("supply-chain provenance file reference is invalid")
+    return value
+
+
 def canonical_file_name(os_name: str, architecture: str) -> str:
     return f"relux-relay-{os_name}-{architecture}"
 
@@ -330,6 +373,7 @@ def load_source_contract(path: Path = DEFAULT_CONTRACT) -> dict[str, Any]:
     ):
         raise AssetManifestError("relay asset source build identity is invalid")
     validate_provenance(contract.get("buildProvenance"))
+    validate_supply_chain(contract.get("supplyChain"))
 
     assets = contract.get("assets")
     if not isinstance(assets, list) or len(assets) != len(TARGETS):
@@ -389,12 +433,14 @@ def verify_schema(path: Path = DEFAULT_SCHEMA) -> None:
         "asset",
         "buildIdentity",
         "buildProvenance",
+        "supplyChain",
     }:
         raise AssetManifestError("relay asset manifest schema definitions changed")
     expected = {
         "asset": MANIFEST_ASSET_KEYS,
         "buildIdentity": IDENTITY_KEYS,
         "buildProvenance": PROVENANCE_KEYS,
+        "supplyChain": SUPPLY_CHAIN_KEYS,
     }
     for name, keys in expected.items():
         definition = definitions[name]
@@ -581,12 +627,14 @@ def build_manifest(contract: dict[str, Any], contents: list[bytes]) -> dict[str,
                 "relayProtocolVersion": contract["relayProtocolVersion"],
                 "buildIdentity": identity,
                 "buildProvenanceReference": "#/buildProvenance",
+                "sourceProvenanceReference": "#/supplyChain",
             }
         )
     return {
         "schemaVersion": contract["manifestSchemaVersion"],
         "relayProtocolVersion": contract["relayProtocolVersion"],
         "buildProvenance": contract["buildProvenance"],
+        "supplyChain": contract["supplyChain"],
         "assets": assets,
     }
 
@@ -604,6 +652,8 @@ def validate_manifest(manifest: dict[str, Any], contract: dict[str, Any]) -> Non
         != contract["buildProvenance"]
     ):
         raise AssetManifestError("relay asset manifest provenance mismatch")
+    if validate_supply_chain(manifest.get("supplyChain")) != contract["supplyChain"]:
+        raise AssetManifestError("relay asset manifest supply-chain mismatch")
     assets = manifest.get("assets")
     if not isinstance(assets, list) or len(assets) != len(TARGETS):
         raise AssetManifestError(
@@ -630,6 +680,7 @@ def validate_manifest(manifest: dict[str, Any], contract: dict[str, Any]) -> Non
             or asset.get("sha256") != source["sha256"]
             or asset.get("relayProtocolVersion") != PROTOCOL_VERSION
             or asset.get("buildProvenanceReference") != "#/buildProvenance"
+            or asset.get("sourceProvenanceReference") != "#/supplyChain"
         ):
             raise AssetManifestError(
                 "relay asset manifest entry does not match trusted source"
@@ -926,6 +977,7 @@ def swift_string(value: str) -> str:
 
 def render_swift(manifest: dict[str, Any]) -> bytes:
     provenance = manifest["buildProvenance"]
+    supply_chain = manifest["supplyChain"]
     lines = [
         "// Generated by scripts/relay_asset_manifest.py; do not edit.",
         "",
@@ -940,6 +992,17 @@ def render_swift(manifest: dict[str, Any]) -> bytes:
         f"    taskID: {swift_string(provenance['taskID'])},",
         f"    resourceName: {swift_string(provenance['resourceName'])},",
         f"    archiveSHA256: {swift_string(provenance['archiveSHA256'])})",
+        "",
+        "  static let generatedSupplyChain = RelayAssetSupplyChain(",
+        f"    kind: {swift_string(supply_chain['kind'])},",
+        f"    taskID: {swift_string(supply_chain['taskID'])},",
+        f"    manifestLinkageSHA256: {swift_string(supply_chain['manifestLinkageSHA256'])},",
+        f"    provenanceFile: {swift_string(supply_chain['provenanceFile'])},",
+        f"    provenanceSHA256: {swift_string(supply_chain['provenanceSHA256'])},",
+        f"    inventoryFile: {swift_string(supply_chain['inventoryFile'])},",
+        f"    inventorySHA256: {swift_string(supply_chain['inventorySHA256'])},",
+        f"    noticesFile: {swift_string(supply_chain['noticesFile'])},",
+        f"    noticesSHA256: {swift_string(supply_chain['noticesSHA256'])})",
         "",
         "  static let generatedAssets: [RelayBundledAsset] = [",
     ]
@@ -965,7 +1028,8 @@ def render_swift(manifest: dict[str, Any]) -> bytes:
                 f"        operatingSystem: .{identity['os']},",
                 f"        architecture: .{identity['arch']},",
                 f"        selfSHA256: {swift_string(identity['selfSha256'])}),",
-                f"      buildProvenanceReference: {swift_string(asset['buildProvenanceReference'])}),",
+                f"      buildProvenanceReference: {swift_string(asset['buildProvenanceReference'])},",
+                f"      sourceProvenanceReference: {swift_string(asset['sourceProvenanceReference'])}),",
             ]
         )
     lines.extend(["  ]", "}", ""])

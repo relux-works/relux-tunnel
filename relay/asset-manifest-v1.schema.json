@@ -8,12 +8,14 @@
     "schemaVersion",
     "relayProtocolVersion",
     "buildProvenance",
+    "supplyChain",
     "assets"
   ],
   "properties": {
     "schemaVersion": {"const": 1},
     "relayProtocolVersion": {"const": 1},
     "buildProvenance": {"$ref": "#/$defs/buildProvenance"},
+    "supplyChain": {"$ref": "#/$defs/supplyChain"},
     "assets": {
       "type": "array",
       "minItems": 4,
@@ -58,6 +60,32 @@
         "selfSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
       }
     },
+    "supplyChain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "taskID",
+        "manifestLinkageSHA256",
+        "provenanceFile",
+        "provenanceSHA256",
+        "inventoryFile",
+        "inventorySHA256",
+        "noticesFile",
+        "noticesSHA256"
+      ],
+      "properties": {
+        "kind": {"const": "repositoryGenerated"},
+        "taskID": {"const": "TASK-260715-vtot05"},
+        "manifestLinkageSHA256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "provenanceFile": {"const": "relay/source-build-provenance-v1.json"},
+        "provenanceSHA256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "inventoryFile": {"const": "relay/dependency-inventory-v1.json"},
+        "inventorySHA256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "noticesFile": {"const": "relay/PRODUCT_NOTICES.txt"},
+        "noticesSHA256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
     "asset": {
       "type": "object",
       "additionalProperties": false,
@@ -70,7 +98,8 @@
         "sha256",
         "relayProtocolVersion",
         "buildIdentity",
-        "buildProvenanceReference"
+        "buildProvenanceReference",
+        "sourceProvenanceReference"
       ],
       "properties": {
         "os": {"enum": ["darwin", "linux"]},
@@ -87,7 +116,8 @@
         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "relayProtocolVersion": {"const": 1},
         "buildIdentity": {"$ref": "#/$defs/buildIdentity"},
-        "buildProvenanceReference": {"const": "#/buildProvenance"}
+        "buildProvenanceReference": {"const": "#/buildProvenance"},
+        "sourceProvenanceReference": {"const": "#/supplyChain"}
       }
     }
   }

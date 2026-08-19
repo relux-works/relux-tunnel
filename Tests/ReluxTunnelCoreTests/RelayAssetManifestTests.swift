@@ -58,6 +58,12 @@ struct RelayAssetManifestTests {
     #expect(
       catalog.buildProvenance.archiveSHA256
         == "1f0ba226ed591d1baf5f9464b33e45b7658a33bf5a1a114e77b6d22d3d9eef4e")
+    #expect(catalog.supplyChain.kind == "repositoryGenerated")
+    #expect(catalog.supplyChain.taskID == "TASK-260715-vtot05")
+    #expect(catalog.supplyChain.manifestLinkageSHA256.count == 64)
+    #expect(catalog.supplyChain.provenanceSHA256.count == 64)
+    #expect(catalog.supplyChain.inventorySHA256.count == 64)
+    #expect(catalog.supplyChain.noticesSHA256.count == 64)
 
     for asset in catalog.assets {
       #expect(asset.byteSize > 0)
@@ -72,6 +78,7 @@ struct RelayAssetManifestTests {
       #expect(asset.buildIdentity.architecture == asset.platform.architecture)
       #expect(asset.buildIdentity.selfSHA256 == asset.sha256)
       #expect(asset.buildProvenanceReference == "#/buildProvenance")
+      #expect(asset.sourceProvenanceReference == "#/supplyChain")
       #expect(asset.bundleLocation == "relay-assets-v1/\(asset.fileName)")
     }
   }

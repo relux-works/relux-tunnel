@@ -119,6 +119,17 @@ class RelayAssetManifestTests(unittest.TestCase):
                 "resourceName": "TASK-260715-fixture_assets.tar.gz",
                 "archiveSHA256": manifest_tool.sha256_file(self.archive),
             },
+            "supplyChain": {
+                "kind": "repositoryGenerated",
+                "taskID": "TASK-260715-vtot05",
+                "manifestLinkageSHA256": "a" * 64,
+                "provenanceFile": "relay/source-build-provenance-v1.json",
+                "provenanceSHA256": "b" * 64,
+                "inventoryFile": "relay/dependency-inventory-v1.json",
+                "inventorySHA256": "c" * 64,
+                "noticesFile": "relay/PRODUCT_NOTICES.txt",
+                "noticesSHA256": "d" * 64,
+            },
             "assets": [
                 {
                     "os": os_name,

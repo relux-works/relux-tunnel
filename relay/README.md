@@ -23,6 +23,29 @@ installed tree entry against the archive, and writes a path-free provenance
 receipt. Missing, added, changed, duplicate, traversing, link, device, or other
 unsafe entries fail closed. No build command downloads a toolchain or module.
 
+## Supply-chain metadata and audit
+
+`supply-chain-source-v1.json` is the authoritative relay-only supply-chain
+input. `make relay-supply-chain-generate` deterministically produces the
+machine-readable dependency inventory, SLSA-shaped source/build provenance,
+and `PRODUCT_NOTICES.txt`, then refreshes the exact asset-manifest linkage.
+`make relay-supply-chain-audit` is the clean fail-closed gate for the Git
+revision and source hashes, `go.mod` lock, compiler archive, build recipe,
+licenses and notice coverage, inventory/provenance drift, archive and asset
+hashes, generated Swift linkage, sensitive data, exact immutable source URLs,
+and the fixed application/runtime source scan that rejects enumerated
+executable-download and loading surfaces. Every regular file under the runtime
+roots must be a recognized scanned source kind or an exact reviewed exclusion;
+new/unclassified kinds fail until policy and scanner review. This is a bounded
+complete-classification check, not a semantic proof for arbitrary future
+languages. The audit performs no network access and does not require signing
+material.
+
+The inventory is scoped to the relay bytes and their build inputs; it is a
+vulnerability-review input, not the final product-wide SBOM. Syft remains a
+build-only inspection tool and is recorded separately because it does not
+affect relay executable bytes.
+
 ```sh
 make relay-provision-go \
   RELAY_GO_ARCHIVE=.temp/relay-tools/go1.26.5.darwin-arm64.tar.gz

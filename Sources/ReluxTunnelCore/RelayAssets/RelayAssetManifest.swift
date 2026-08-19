@@ -61,6 +61,18 @@ public struct RelayAssetBuildProvenance: Equatable, Sendable {
   public let archiveSHA256: String
 }
 
+public struct RelayAssetSupplyChain: Equatable, Sendable {
+  public let kind: String
+  public let taskID: String
+  public let manifestLinkageSHA256: String
+  public let provenanceFile: String
+  public let provenanceSHA256: String
+  public let inventoryFile: String
+  public let inventorySHA256: String
+  public let noticesFile: String
+  public let noticesSHA256: String
+}
+
 public struct RelayBundledAsset: Equatable, Sendable {
   public let platform: RelayRemotePlatform
   public let fileName: String
@@ -70,6 +82,7 @@ public struct RelayBundledAsset: Equatable, Sendable {
   public let relayProtocolVersion: Int
   public let buildIdentity: RelayAssetBuildIdentity
   public let buildProvenanceReference: String
+  public let sourceProvenanceReference: String
 }
 
 public enum RelayAssetLookupError: Error, Equatable, Sendable {
@@ -84,11 +97,13 @@ public struct RelayAssetCatalog: Sendable {
     schemaVersion: generatedSchemaVersion,
     relayProtocolVersion: generatedProtocolVersion,
     buildProvenance: generatedBuildProvenance,
+    supplyChain: generatedSupplyChain,
     assets: generatedAssets)
 
   public let schemaVersion: Int
   public let relayProtocolVersion: Int
   public let buildProvenance: RelayAssetBuildProvenance
+  public let supplyChain: RelayAssetSupplyChain
   public let assets: [RelayBundledAsset]
 
   private let assetsByPlatform: [RelayRemotePlatform: RelayBundledAsset]
@@ -97,6 +112,7 @@ public struct RelayAssetCatalog: Sendable {
     schemaVersion: Int,
     relayProtocolVersion: Int,
     buildProvenance: RelayAssetBuildProvenance,
+    supplyChain: RelayAssetSupplyChain,
     assets: [RelayBundledAsset]
   ) {
     precondition(schemaVersion == 1)
@@ -115,6 +131,7 @@ public struct RelayAssetCatalog: Sendable {
     self.schemaVersion = schemaVersion
     self.relayProtocolVersion = relayProtocolVersion
     self.buildProvenance = buildProvenance
+    self.supplyChain = supplyChain
     self.assets = assets
     assetsByPlatform = indexed
   }

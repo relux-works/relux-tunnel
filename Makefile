@@ -10,6 +10,7 @@
 	relay-shell-test relay-shell-vet relay-shell-build relay-shell-release \
 	relay-shell-verify relay-shell-smoke relay-shell-reproducibility relay-shell-validate \
 	relay-asset-bundle-generate relay-asset-bundle-check relay-asset-manifest-test \
+	relay-supply-chain-generate relay-supply-chain-test relay-supply-chain-audit \
 	relay-provision-go relay-provision-syft relay-provision-tools relay-print-apple-bundle-input \
 	relay-toolchain-check relay-toolchain-test relay-toolchain-negative-test \
 	relay-build-darwin-amd64 relay-build-darwin-arm64 relay-build-linux-amd64 \
@@ -149,6 +150,16 @@ relay-asset-bundle-check:
 relay-asset-manifest-test:
 	python3 -m unittest scripts/tests/test_relay_asset_manifest.py
 	swift test --filter RelayAssetManifestTests
+
+relay-supply-chain-generate:
+	python3 scripts/relay_supply_chain.py generate
+	python3 scripts/relay_asset_manifest.py generate
+
+relay-supply-chain-test:
+	python3 -m unittest scripts/tests/test_relay_supply_chain.py
+
+relay-supply-chain-audit:
+	python3 scripts/relay_supply_chain.py audit
 
 RELAY_BUILD_ARGUMENTS = \
 	--go "$(RELAY_GO)" \

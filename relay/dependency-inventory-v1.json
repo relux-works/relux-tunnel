@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "kind": "relay-scoped-dependency-inventory",
+  "manifestLinkageSHA256": "61dbd903ce1055f852a52718adb887d9d5acafb78a6758fae3d0f02a0db9061a",
+  "dependencyLock": {
+    "path": "relay/go.mod",
+    "sha256": "bd56300ba5f8e2263128ac97c6852ea42770644808a14d54a04113f23200deb6",
+    "goSum": "absent",
+    "policy": "standard-library-only"
+  },
+  "components": [
+    {
+      "id": "relay-build-recipe",
+      "name": "Relux relay build recipe",
+      "version": "4326036a26a515d5d349e669574323d4d1c7259c",
+      "revision": "4326036a26a515d5d349e669574323d4d1c7259c",
+      "contentSHA256": "0c3f4306c744e33389bd825f5f16d37028c4fc8aa997641e19dd7b8e9f82811d",
+      "source": "https://github.com/relux-works/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c",
+      "license": "MIT",
+      "noticeObligation": "none-build-only-tool",
+      "byteAffecting": true,
+      "distribution": "build-only",
+      "vulnerabilityReview": {
+        "identifier": "relay-build-recipe",
+        "version": "4326036a26a515d5d349e669574323d4d1c7259c"
+      }
+    },
+    {
+      "id": "relux-relay-source",
+      "name": "Relux Tunnel relay source",
+      "version": "0.1.0",
+      "revision": "58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096",
+      "contentSHA256": "29b6caac4fcaf54436521f17b47319ce8b77971991c0dc284c30296e11d69842",
+      "source": "https://github.com/relux-works/relux-tunnel/tree/58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096/relay",
+      "license": "MIT",
+      "noticeObligation": "include-full-license",
+      "byteAffecting": true,
+      "distribution": "bundled-relay",
+      "vulnerabilityReview": {
+        "identifier": "relux-relay-source",
+        "version": "0.1.0"
+      }
+    },
+    {
+      "id": "go-compiler-linker",
+      "name": "Go gc compiler and internal linker",
+      "version": "go1.26.5",
+      "revision": "go1.26.5",
+      "contentSHA256": "efb87ff28af9a188d0536ef5d42e63dd52ba8263cd7344a993cc48dd11dedb6a",
+      "source": "https://go.dev/dl/go1.26.5.darwin-arm64.tar.gz",
+      "license": "BSD-3-Clause",
+      "noticeObligation": "none-build-only-tool",
+      "byteAffecting": true,
+      "distribution": "build-only",
+      "vulnerabilityReview": {
+        "identifier": "go-compiler-linker",
+        "version": "go1.26.5"
+      }
+    },
+    {
+      "id": "go-standard-library",
+      "name": "Go standard library",
+      "version": "go1.26.5",
+      "revision": "go1.26.5",
+      "contentSHA256": "efb87ff28af9a188d0536ef5d42e63dd52ba8263cd7344a993cc48dd11dedb6a",
+      "source": "https://go.dev/dl/go1.26.5.darwin-arm64.tar.gz",
+      "license": "BSD-3-Clause",
+      "noticeObligation": "include-full-license",
+      "byteAffecting": true,
+      "distribution": "statically-linked",
+      "vulnerabilityReview": {
+        "identifier": "go-standard-library",
+        "version": "go1.26.5"
+      }
+    }
+  ],
+  "metadataTools": [
+    {
+      "id": "syft",
+      "version": "1.48.0",
+      "revision": "3e2bc6ed095f7ec1a415fb38cfe1c319e95dfed6",
+      "contentSHA256": "fef3e6d5df336a0a4c3e421e503119d1e221cf82a3ef5e426a791fcd81667e87",
+      "license": "Apache-2.0",
+      "purpose": "build-time SPDX inspection; does not affect relay executable bytes"
+    }
+  ],
+  "runtimePolicy": {
+    "applicationCodeDownloadAllowed": false,
+    "relayExecutionSource": "application-bundled-hash-verified-assets-only",
+    "scanRoots": [
+      "App",
+      "Sources",
+      "relay"
+    ],
+    "scanExtensions": [
+      ".c",
+      ".cc",
+      ".cpp",
+      ".cxx",
+      ".go",
+      ".h",
+      ".hh",
+      ".hpp",
+      ".hxx",
+      ".m",
+      ".mm",
+      ".swift"
+    ],
+    "excludedFileSuffixes": [
+      "_test.go"
+    ],
+    "excludedPaths": [
+      "App/ReluxProxyMac/Info.plist",
+      "App/ReluxProxyMacTunnel/Info.plist",
+      "Sources/ReluxTunnelCore/ReluxTunnelCore.docc/ReluxTunnelCore.md",
+      "Sources/ReluxTunnelCore/ReluxTunnelCore.docc/RuntimeMessages.md",
+      "Sources/ReluxTunnelIOSAdapter/ReluxTunnelIOSAdapter.docc/ReluxTunnelIOSAdapter.md",
+      "Sources/ReluxTunnelMacOSAdapter/ReluxTunnelMacOSAdapter.docc/ReluxTunnelMacOSAdapter.md",
+      "relay/PRODUCT_NOTICES.txt",
+      "relay/README.md",
+      "relay/asset-bundle-source-v1.json",
+      "relay/asset-manifest-v1.schema.json",
+      "relay/dependency-inventory-v1.json",
+      "relay/go.mod",
+      "relay/licenses/Go-BSD-3-Clause.txt",
+      "relay/manifest-v1.schema.json",
+      "relay/source-build-provenance-v1.json",
+      "relay/supply-chain-source-v1.json",
+      "relay/toolchain-manifest-v1.json"
+    ]
+  }
+}

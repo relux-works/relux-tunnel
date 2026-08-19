@@ -1,0 +1,335 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "relux-relay-darwin-amd64",
+      "digest": {
+        "sha256": "783b94982e90f0ceed0af0fa11662d11a333e244b87256cbfa0f7d21695f3290"
+      }
+    },
+    {
+      "name": "relux-relay-darwin-arm64",
+      "digest": {
+        "sha256": "8ac45b257099c9d2079b0bd2cb9ae489acfb86e443ba7ca7e4b4b2a56380d64c"
+      }
+    },
+    {
+      "name": "relux-relay-linux-amd64",
+      "digest": {
+        "sha256": "ddcb22ed4d4a978992a04096abae8adc58d0b8bf3bcdc0c0a006775797e2941f"
+      }
+    },
+    {
+      "name": "relux-relay-linux-arm64",
+      "digest": {
+        "sha256": "908b3d9ea3543b6144e2c99407c9aa02cc69e86c1cce80364d32dbdc3de8e0dc"
+      }
+    }
+  ],
+  "predicateType": "https://slsa.dev/provenance/v1",
+  "predicate": {
+    "buildDefinition": {
+      "buildType": "https://relux.works/build-types/relay-portable-v1",
+      "externalParameters": {
+        "command": "make -j4 relay-toolchain-build-all RELAY_VERSION=0.1.0 SOURCE_COMMIT=58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096 SOURCE_DATE_EPOCH=1784656987 RELAY_BUILD_CLEAN_FLAG=--require-clean",
+        "targets": [
+          "darwin/amd64",
+          "darwin/arm64",
+          "linux/amd64",
+          "linux/arm64"
+        ],
+        "sourceDateEpoch": 1784656987
+      },
+      "resolvedDependencies": [
+        {
+          "name": "relay-build-recipe",
+          "uri": "https://github.com/relux-works/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c",
+          "digest": {
+            "sha256": "0c3f4306c744e33389bd825f5f16d37028c4fc8aa997641e19dd7b8e9f82811d"
+          },
+          "revision": "4326036a26a515d5d349e669574323d4d1c7259c"
+        },
+        {
+          "name": "relux-relay-source",
+          "uri": "https://github.com/relux-works/relux-tunnel/tree/58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096/relay",
+          "digest": {
+            "sha256": "29b6caac4fcaf54436521f17b47319ce8b77971991c0dc284c30296e11d69842"
+          },
+          "revision": "58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096"
+        },
+        {
+          "name": "go-compiler-linker",
+          "uri": "https://go.dev/dl/go1.26.5.darwin-arm64.tar.gz",
+          "digest": {
+            "sha256": "efb87ff28af9a188d0536ef5d42e63dd52ba8263cd7344a993cc48dd11dedb6a"
+          },
+          "revision": "go1.26.5"
+        },
+        {
+          "name": "go-standard-library",
+          "uri": "https://go.dev/dl/go1.26.5.darwin-arm64.tar.gz",
+          "digest": {
+            "sha256": "efb87ff28af9a188d0536ef5d42e63dd52ba8263cd7344a993cc48dd11dedb6a"
+          },
+          "revision": "go1.26.5"
+        }
+      ]
+    },
+    "runDetails": {
+      "builder": {
+        "id": "repository-local-darwin-arm64-no-container"
+      },
+      "metadata": {
+        "invocationId": "TASK-260715-24icoz"
+      },
+      "byproducts": [
+        {
+          "name": "assetArchive",
+          "digest": {
+            "sha256": "1f0ba226ed591d1baf5f9464b33e45b7658a33bf5a1a114e77b6d22d3d9eef4e"
+          }
+        },
+        {
+          "name": "assetManifestLinkage",
+          "digest": {
+            "sha256": "61dbd903ce1055f852a52718adb887d9d5acafb78a6758fae3d0f02a0db9061a"
+          }
+        }
+      ]
+    },
+    "source": {
+      "name": "Relux Tunnel relay",
+      "repository": "https://github.com/relux-works/relux-tunnel/tree/58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096/relay",
+      "revisionType": "gitCommit",
+      "revision": "58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096",
+      "repositoryTree": "f652536c11d3e6e34a6be89a4be808e489c99cd3",
+      "relayTree": "addc5400556304d5f5005404ed77a66883f575b3",
+      "sourceDateEpoch": 1784656987,
+      "aggregateSHA256": "29b6caac4fcaf54436521f17b47319ce8b77971991c0dc284c30296e11d69842",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE",
+        "sha256": "b50c3ae8807afbaf21a331e3c91cf026c611b325c48a3b0bafc57856b48cc2b3",
+        "noticeObligation": "include-full-license"
+      },
+      "byteAffectingFiles": [
+        {
+          "path": "relay/cmd/relux-relay/main.go",
+          "sha256": "5e274a0c47da349745c68e27ab9f9a04f0e77506cd59fbe37fb961caada7097e"
+        },
+        {
+          "path": "relay/go.mod",
+          "sha256": "bd56300ba5f8e2263128ac97c6852ea42770644808a14d54a04113f23200deb6"
+        },
+        {
+          "path": "relay/internal/buildinfo/buildinfo.go",
+          "sha256": "272a2db572aa189491a0df73b2936a2a89d9a5a59a9b67b8d3f56fa65d1dfb57"
+        },
+        {
+          "path": "relay/internal/buildinfo/identity.go",
+          "sha256": "ac3e1a1d04a2f90bfa4bee3eb60998e267a4542bd1b59471b81e424bed8639b6"
+        },
+        {
+          "path": "relay/internal/protocol/codec.go",
+          "sha256": "04cecbc890add91d142bd1f08a50b14015c5329f3fda1029a149268be2f24330"
+        },
+        {
+          "path": "relay/internal/protocol/generated_v1.go",
+          "sha256": "d00ee95752754d07e796252e54c2c977162fc190e8b63663b3c756a44260b10b"
+        },
+        {
+          "path": "relay/internal/protocol/handshake.go",
+          "sha256": "1ca492d822a589879fa54e37fffb3d55111a5f397f074a98c961aeeafcbeeaf1"
+        },
+        {
+          "path": "relay/internal/protocol/session.go",
+          "sha256": "e4856087e36740d3ac1a8765cd888b5f89f2983db4e4c653bed736885cb97be2"
+        },
+        {
+          "path": "relay/internal/stdio/session.go",
+          "sha256": "64ea667a26e43d7eeec145e611ce6ac641f359c30485074ea729fa5112327e2a"
+        }
+      ]
+    },
+    "buildRecipe": {
+      "recipeRevision": "4326036a26a515d5d349e669574323d4d1c7259c",
+      "recipeSource": "https://github.com/relux-works/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c",
+      "recipeAggregateSHA256": "0c3f4306c744e33389bd825f5f16d37028c4fc8aa997641e19dd7b8e9f82811d",
+      "recipeFiles": [
+        {
+          "path": "Makefile",
+          "sha256": "8adf6c025a05f16f8231d6ffe6f439ff6448677da5a67cd3d89121b44b18268e"
+        },
+        {
+          "path": "relay/toolchain-manifest-v1.json",
+          "sha256": "5cc01380d548be4c063675075f49e6fb1eb921813723c8683041da64a27ab144"
+        },
+        {
+          "path": "scripts/relay_release.py",
+          "sha256": "a3f3f98d4dcb6a314ced89483a081aeaf549607d0319a9f276b7b3b91c6e4cce"
+        }
+      ],
+      "command": "make -j4 relay-toolchain-build-all RELAY_VERSION=0.1.0 SOURCE_COMMIT=58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096 SOURCE_DATE_EPOCH=1784656987 RELAY_BUILD_CLEAN_FLAG=--require-clean",
+      "targets": [
+        "darwin/amd64",
+        "darwin/arm64",
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "environment": {
+        "hostPlatform": "darwin/arm64",
+        "baseImage": {
+          "kind": "none",
+          "identifier": "none",
+          "digest": "none"
+        },
+        "network": "disabled-during-build",
+        "cgoEnabled": false,
+        "goToolchain": "local"
+      }
+    },
+    "artifactManifest": {
+      "manifestName": "relux-relay-assets-v1.json",
+      "manifestSchemaSHA256": "76f7d2dfb4a9da05fb710718fa6a2039597f0438466540c106eb8b66e2bb17aa",
+      "sourceCommit": "58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096",
+      "sourceAggregateSHA256": "29b6caac4fcaf54436521f17b47319ce8b77971991c0dc284c30296e11d69842",
+      "buildRecipeRevision": "4326036a26a515d5d349e669574323d4d1c7259c",
+      "buildRecipeAggregateSHA256": "0c3f4306c744e33389bd825f5f16d37028c4fc8aa997641e19dd7b8e9f82811d",
+      "toolchainManifestSHA256": "5cc01380d548be4c063675075f49e6fb1eb921813723c8683041da64a27ab144",
+      "archiveSHA256": "1f0ba226ed591d1baf5f9464b33e45b7658a33bf5a1a114e77b6d22d3d9eef4e",
+      "assets": [
+        {
+          "os": "darwin",
+          "arch": "amd64",
+          "fileName": "relux-relay-darwin-amd64",
+          "byteSize": 2623664,
+          "sha256": "783b94982e90f0ceed0af0fa11662d11a333e244b87256cbfa0f7d21695f3290"
+        },
+        {
+          "os": "darwin",
+          "arch": "arm64",
+          "fileName": "relux-relay-darwin-arm64",
+          "byteSize": 2487362,
+          "sha256": "8ac45b257099c9d2079b0bd2cb9ae489acfb86e443ba7ca7e4b4b2a56380d64c"
+        },
+        {
+          "os": "linux",
+          "arch": "amd64",
+          "fileName": "relux-relay-linux-amd64",
+          "byteSize": 2592894,
+          "sha256": "ddcb22ed4d4a978992a04096abae8adc58d0b8bf3bcdc0c0a006775797e2941f"
+        },
+        {
+          "os": "linux",
+          "arch": "arm64",
+          "fileName": "relux-relay-linux-arm64",
+          "byteSize": 2556030,
+          "sha256": "908b3d9ea3543b6144e2c99407c9aa02cc69e86c1cce80364d32dbdc3de8e0dc"
+        }
+      ]
+    },
+    "supplyChainBoundary": [
+      {
+        "control": "source pinning",
+        "milestone": "M2",
+        "owner": "relay build",
+        "scopeTaskID": "TASK-260715-27uz4n",
+        "evidence": "source revision, tree and file SHA-256 inventory"
+      },
+      {
+        "control": "build reproducibility",
+        "milestone": "M2",
+        "owner": "relay build",
+        "scopeTaskID": "TASK-260715-27uz4n",
+        "evidence": "pinned compiler, recipe, target matrix and deterministic command"
+      },
+      {
+        "control": "asset integrity",
+        "milestone": "M2",
+        "owner": "relay asset packaging",
+        "scopeTaskID": "TASK-260715-1ue4oy",
+        "evidence": "archive and four executable SHA-256 values plus manifest linkage"
+      },
+      {
+        "control": "license notices",
+        "milestone": "M2",
+        "owner": "relay supply-chain audit",
+        "scopeTaskID": "TASK-260715-vtot05",
+        "evidence": "generated product notice input with fail-closed coverage"
+      },
+      {
+        "control": "application signing",
+        "milestone": "M5",
+        "owner": "Apple release pipeline",
+        "scopeTaskID": "TASK-260715-3sk5cd",
+        "evidence": "signed app/archive verification"
+      },
+      {
+        "control": "notarization",
+        "milestone": "M5",
+        "owner": "Apple release pipeline",
+        "scopeTaskID": "TASK-260715-387eof",
+        "evidence": "notarization submission and staple verification"
+      },
+      {
+        "control": "release attestation",
+        "milestone": "M5",
+        "owner": "release engineering",
+        "scopeTaskID": "TASK-260715-1gzhnk",
+        "evidence": "release-level attestation binding signed deliverables"
+      },
+      {
+        "control": "distribution approval",
+        "milestone": "M5",
+        "owner": "release approver",
+        "scopeTaskID": "TASK-260715-312u2k",
+        "evidence": "explicit release-channel approval"
+      }
+    ],
+    "runtimePolicy": {
+      "applicationCodeDownloadAllowed": false,
+      "relayExecutionSource": "application-bundled-hash-verified-assets-only",
+      "scanRoots": [
+        "App",
+        "Sources",
+        "relay"
+      ],
+      "scanExtensions": [
+        ".c",
+        ".cc",
+        ".cpp",
+        ".cxx",
+        ".go",
+        ".h",
+        ".hh",
+        ".hpp",
+        ".hxx",
+        ".m",
+        ".mm",
+        ".swift"
+      ],
+      "excludedFileSuffixes": [
+        "_test.go"
+      ],
+      "excludedPaths": [
+        "App/ReluxProxyMac/Info.plist",
+        "App/ReluxProxyMacTunnel/Info.plist",
+        "Sources/ReluxTunnelCore/ReluxTunnelCore.docc/ReluxTunnelCore.md",
+        "Sources/ReluxTunnelCore/ReluxTunnelCore.docc/RuntimeMessages.md",
+        "Sources/ReluxTunnelIOSAdapter/ReluxTunnelIOSAdapter.docc/ReluxTunnelIOSAdapter.md",
+        "Sources/ReluxTunnelMacOSAdapter/ReluxTunnelMacOSAdapter.docc/ReluxTunnelMacOSAdapter.md",
+        "relay/PRODUCT_NOTICES.txt",
+        "relay/README.md",
+        "relay/asset-bundle-source-v1.json",
+        "relay/asset-manifest-v1.schema.json",
+        "relay/dependency-inventory-v1.json",
+        "relay/go.mod",
+        "relay/licenses/Go-BSD-3-Clause.txt",
+        "relay/manifest-v1.schema.json",
+        "relay/source-build-provenance-v1.json",
+        "relay/supply-chain-source-v1.json",
+        "relay/toolchain-manifest-v1.json"
+      ]
+    }
+  }
+}

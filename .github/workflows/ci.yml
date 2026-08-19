@@ -117,10 +117,11 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Verify checked-in pins and missing-input failure
-        run: make relay-toolchain-check relay-toolchain-negative-test
+        run: make relay-supply-chain-audit relay-supply-chain-test relay-toolchain-check relay-toolchain-negative-test
 
       - name: Fetch the approved checksum-pinned Go input
         run: |

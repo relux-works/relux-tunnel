@@ -44,5 +44,16 @@
       "byteSize": 2556030,
       "sha256": "908b3d9ea3543b6144e2c99407c9aa02cc69e86c1cce80364d32dbdc3de8e0dc"
     }
-  ]
+  ],
+  "supplyChain": {
+    "kind": "repositoryGenerated",
+    "taskID": "TASK-260715-vtot05",
+    "manifestLinkageSHA256": "61dbd903ce1055f852a52718adb887d9d5acafb78a6758fae3d0f02a0db9061a",
+    "provenanceFile": "relay/source-build-provenance-v1.json",
+    "provenanceSHA256": "0b17ed44dc56aeff70d28a063af5b7d1f4214f5628f1f4e701829be82d0919e2",
+    "inventoryFile": "relay/dependency-inventory-v1.json",
+    "inventorySHA256": "a8c6046067bb5d4296c3022ea18a22031dbc4ed7f6aa91714b9659f703f8ba8f",
+    "noticesFile": "relay/PRODUCT_NOTICES.txt",
+    "noticesSHA256": "7f1edb1216363e034bd06b4d41edfd04958a597b0dad8ae3cdd4e7c91c69006f"
+  }
 }
