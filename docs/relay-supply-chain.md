@@ -30,6 +30,11 @@ make relay-supply-chain-generate
 make relay-supply-chain-test relay-asset-manifest-test
 ```
 
+For the complete operator sequence, use the
+[relay asset release, update, audit, and rollback runbook](relay-asset-release-runbook.md).
+It preserves the accepted split source/recipe pins, exact bytes and manifest,
+and the boundary between M2 unsigned bundle inputs and later M5 release work.
+
 ## M2 and M5 ownership
 
 | Control | Milestone | Concrete owner / scope | Evidence / gate |

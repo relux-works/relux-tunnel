@@ -1,0 +1,209 @@
+OpenAI Codex v0.147.0
+--------
+workdir: /Users/iv/Developer/relux-tunnel
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: high
+reasoning summaries: none
+session id: 01a019d8-c565-70c2-b373-d4d479d75b8d
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260715-u8tkx0, status=reviewing)'
+```
+
+## Role Contract
+
+- **Role:** `reviewer` (`reviewer`) — Reviews implementation quality and project fit
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Verify a second operator can follow the four-target build and audit procedure
+- [ ] Document update rollback mismatch and compromised-asset responses
+- [ ] Link every M2 build gate and downstream bootstrap consumer by concrete ID
+- [ ] Docs updated and consistent with current code
+- [ ] No discrepancies between code and description
+- [ ] Result linked as a new task-scoped outcome resource
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+
+## Task
+
+- **ID:** TASK-260715-u8tkx0
+- **Title:** Document the relay asset release, update, and rollback runbook
+- **Parent:** STORY-260715-3pv7qc
+
+### Description
+
+Publish the developer and release-engineering procedure for pinning, building, verifying, bundling, updating, auditing, and rolling back the four relay assets while preserving manifest, notice, provenance, and later signing boundaries.
+
+### Scope
+
+In scope: prerequisites; clean build commands; target matrix; version and protocol changes; artifact naming; manifest and notice generation; reproducibility and smoke gates; bundle integration check; source pin update; dependency review; checksum rotation; rollback; incident response for mismatches; ownership; M2 versus M5 gates. Out of scope: end-user remote bootstrap troubleshooting, app store submission steps, organization-wide incident policy, implementing automation, publishing standalone relay downloads, and claiming assets are signed when only the containing app protects them.
+
+### Acceptance Criteria
+
+1. Another authorized developer can rebuild all four assets and their manifest from pinned inputs using only documented commands and obtains the expected verification outputs. 2. The update procedure orders source and dependency review, protocol compatibility, build, notices, provenance, reproducibility, smoke, manifest, bundle validation, and downstream bootstrap testing with no bypass. 3. Rollback preserves a known manifest and exact bytes, explains remote version coexistence or replacement, and never directs operators to execute an unverified remote file. 4. A responsibility table clearly separates relay source integrity and bundle hashing from application signing, notarization, attestation, release approval, and notices owned elsewhere. 5. Troubleshooting covers hash drift, missing target, unsupported runtime, notice failure, compromised asset response, and credential-safe evidence collection and links each relevant board task.
+
+## Instructions
+
+### TASK-260715-u8tkx0_build-only-runbook-contract.md
+> Executable four-target release/update/rollback runbook contract
+
+Attached file: `/Users/iv/Developer/relux-tunnel/.temp/resources/TASK-260715-u8tkx0/TASK-260715-u8tkx0_build-only-runbook-contract.md`
+
+- Byte count: `3369`
+- Content digest: `sha256:87b2a1fd433d42bd26979616a32985951dd84173581770c75d6177ea598d943c`
+- Access: read-only
+
+
+
+### TASK-260715-u8tkx0_independent-review-contract.md
+> Fresh second-operator executable review contract
+
+# Independent review contract — TASK-260715-u8tkx0
+
+Act as a fresh second operator. Do not trust the producer summary or merely proofread Markdown.
+
+1. Read the task AC, producer outcome, `docs/relay-asset-release-runbook.md`, linked supply-chain docs, and the current implementation targets they cite.
+2. Follow the documented build/audit procedure from a fresh task-scoped temporary root. Rebuild all four assets twice, compare exact bytes and archive with retained evidence, regenerate/check both manifest layers, and execute the supported native Darwin arm64 smoke. Never install or start a VPN, modify NetworkExtension preferences, routing, DNS, interfaces, or `pf`.
+3. Verify every command is copy-paste executable from the stated directory and that expected success/failure outputs are accurate. Exercise at least the documented hash-drift/mismatch and unsupported-runtime red paths without using remote unverified bytes.
+4. Verify the strict update order, rollback preserving known exact bytes/manifest, compromised-asset response, credential-safe evidence rules, and separation of M2 unsigned bundle work from M5 signing/notary/release ceremonies.
+5. Resolve every concrete task ID in the M2/M5 ownership and downstream-consumer tables against the live board; reject stale or semantically wrong ownership links.
+6. Check RACI separation for source, hash, signing, notarization, attestation, approval, notices, and rollback. Confirm the relay is not represented as a standalone signed download.
+7. Inspect the complete diff and links for contradictions, absolute-path leakage, secrets, or unsafe build-host instructions. Run `task-board validate` and relevant focused docs/build gates.
+
+Verdict rules:
+- Accept only with independently reproduced evidence and move the task to `done` using the reviewer role contract.
+- If anything is inaccurate or non-executable, preserve exact findings in a task-scoped reviewer outcome and return to `to-dev`.
+- Do not commit or push. Do not perform real VPN/system-network testing.
+
+
+
+### TASK-260715-u8tkx0_rework-01-contract.md
+> Address independent reviewer full-release reproducibility findings
+
+# Rework 01 contract — TASK-260715-u8tkx0
+
+The fresh reviewer requested changes. Read the attached reviewer outcome `TASK-260715-u8tkx0_reviewer-results.md` and treat its commands/evidence as authoritative reproduction input.
+
+Required corrections:
+
+1. Fix the strict update procedure so a second operator actually reproduces the full accepted release tree, not only the four binaries/archive. The reviewer observed nondeterministic Syft `documentNamespace` UUID and `creationInfo.created` drift in all four raw SPDX files, cascading into manifests/checksums. Use the accepted deterministic normalization/build path from current repository evidence, or explicitly retain immutable historical metadata where reproduction is not claimed; never claim raw historical Syft output is reproducible.
+2. Fix the cross-clone comparator procedure so all compared paths satisfy its path-containment contract. The documented command must execute successfully from the documented directory.
+3. Add complete copy-paste commands for exact 15-artifact comparison, native Darwin arm64 17-check smoke, mismatch red path, unsupported-runtime red path, and two independent trusted application-manifest regenerations/comparisons.
+4. State unambiguously where `relux-relay-manifest-v1.json` (release-builder manifest) versus `relux-relay-assets-v1.json` (trusted application manifest) is generated, checked, retained, bundled, or rolled back.
+5. Record the full-release metadata anomaly and its resolution in the producer outcome and LOGBOOK. Preserve the already verified split source/recipe pin warning, strict update order, RACI, rollback/incident semantics, M2/M5 boundary, live task IDs, and build-only safety.
+6. Re-run the entire documented procedure from a fresh task-scoped root. Attach exact exits/hashes and update the task outcome. Do not commit or push, and do not install/start/configure a VPN or alter system networking.
+
+Return to `to-review` only when every reviewer finding is closed with executable evidence.
+
+
+
+### TASK-260715-u8tkx0_reviewer-results-rework-input.md
+> Reviewer verdict reproduced as rework input
+
+Attached file: `/Users/iv/Developer/relux-tunnel/.temp/resources/TASK-260715-u8tkx0/TASK-260715-u8tkx0_reviewer-results-rework-input.md`
+
+- Byte count: `6534`
+- Content digest: `sha256:6e8ea38f1b067e60380f1605acc123030ddac7cd819b1bdd632e3aa8dbf77d0b`
+- Access: read-only
+
+
+
+### TASK-260715-u8tkx0_rework-01-final-review.md
+> Fresh review proving rework closes prior reproducibility findings
+
+# Fresh review after rework 01 — TASK-260715-u8tkx0
+
+Perform a fresh independent review. The prior reviewer verdict is attached as `TASK-260715-u8tkx0_reviewer-results-rework-input.md`; verify every finding is actually closed rather than trusting the new handoff.
+
+Required evidence:
+
+1. Execute the corrected historical verification and current-candidate update procedures exactly as documented from fresh task-scoped roots.
+2. Confirm historical source/archive/trusted-manifest reproduction is distinguished from immutable retained historical raw Syft metadata, with no false reproducibility claim.
+3. Confirm the current deterministic path produces two exact 11-file release trees plus four protocol-test executables (`identical=15/15`) and that the comparator command obeys path-containment.
+4. Regenerate and compare `relux-relay-assets-v1.json` twice; run native Darwin arm64 smoke and documented mismatch/unsupported-runtime red paths. Verify the two manifest roles cannot be confused.
+5. Recheck the complete diff, command copy/paste semantics, rollback and compromise response, RACI, M2/M5 separation, concrete board IDs, links, privacy, and build-host safety.
+6. Run relevant focused tests, workspace/macOS validation, link/shell-block checks, `git diff --check`, and `task-board validate`.
+
+Accept only if the prior findings are closed with independent evidence. Otherwise attach a precise verdict and return to `to-dev`. Do not commit/push and never install, configure, or start a VPN or alter system networking.
+
+
+
+### TASK-260715-u8tkx0_rework-02-contract.md
+> Close strict update-order contradiction with executable staged rotation
+
+Attached file: `/Users/iv/Developer/relux-tunnel/.temp/resources/TASK-260715-u8tkx0/TASK-260715-u8tkx0_rework-02-contract.md`
+
+- Byte count: `2148`
+- Content digest: `sha256:5649adf2274716d6a406e10ed067348ba1166b8436c48d94b7b24704628cecb3`
+- Access: read-only
+
+
+
+### TASK-260715-u8tkx0_reviewer-results-rework-01-input.md
+> Rework 01 reviewer verdict as exact input
+
+Attached file: `/Users/iv/Developer/relux-tunnel/.temp/resources/TASK-260715-u8tkx0/TASK-260715-u8tkx0_reviewer-results-rework-01-input.md`
+
+- Byte count: `5577`
+- Content digest: `sha256:51a428a4e40a0590f3b1eeed5204ad172b5f02dc736d0a03a277ca4c5bd760d1`
+- Access: read-only
+
+
+
+### TASK-260715-u8tkx0_rework-02-final-review.md
+> Fresh final review of coordinated metadata rotation and all prior findings
+
+# Fresh review after rework 02 — TASK-260715-u8tkx0
+
+Independently verify the remaining AC2 finding from `TASK-260715-u8tkx0_reviewer-results-rework-01-input.md` is closed. Do not rely on producer summaries or previous reviewer context.
+
+1. Read the full current runbook and implementation. Locate the documented coordinated metadata rotation boundary and every claimed update surface.
+2. In a fresh task-scoped copy, create a deliberately changed candidate and execute the published rotation commands verbatim. Confirm they update exactly the documented source contracts, validator policy/constants, default archive paths, Swift acceptance assertions, and generator outputs; confirm generation/audit/tests/bundle check succeed without mutually inconsistent old/new contracts.
+3. Prove the accepted repository metadata surfaces remain byte-identical after the isolated trial. Verify failure-before-apply and failure-after-apply semantics are safe and do not permit partial continuation.
+4. Reconfirm historical verification, deterministic `identical=15/15`, native smoke/red paths, manifest-role separation, strict logical update order, rollback/compromise/RACI/M2-M5/task-ID/privacy/build-only requirements.
+5. Run focused tests, 14 shell-block syntax checks, link/task-ID resolution, workspace/macOS validation, `git diff --check`, and `task-board validate`.
+
+Accept and move to `done` only if every AC and both prior reviewer verdicts are closed by independent execution evidence. Otherwise return to `to-dev` with exact findings. Never commit/push, sign, install/configure/start a VPN, or modify system networking.
+
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `TASK-260715-u8tkx0_*` before handoff:
+  `task-board m 'add_resource(TASK-260715-u8tkx0, name=TASK-260715-u8tkx0_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- Review read-only and record exactly one evidence-backed verdict: accepted → `done`; changes requested → `to-dev` or `analysis`; genuine Stop-The-Line → `blocked`. Never leave the task in `reviewing`.
+- Reviewer-archetype runs must not supply `commit_ack`; record acceptance evidence for the commit-owning mover, which commits then makes the final `done` transition with `commit_ack=scope_committed`.
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at Aug 24th, 2026 5:15 PM.
+ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at Aug 24th, 2026 5:15 PM.

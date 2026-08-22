@@ -62,8 +62,8 @@ performance numbers not yet measured.
 Board-driven via `task-board` in `/Users/iv/Developer/relux-tunnel`. The
 orchestrator plans from the critical path and delegates every task to tracked
 background children per `docs/spawn-policy.md` — **Codex `gpt-5.6-sol` at `high`
-as primary orchestrator, producer, rework owner, and fresh independent reviewer;
-`max_parallel` 1** (one tracked child at a time). Each task runs producer →
+as primary orchestrator and at `medium` for every producer, rework owner, and
+fresh independent reviewer; `max_parallel` 1** (one tracked child at a time). Each task runs producer →
 reviewer → rework → accepted `done`;
 never stop at `to-review`. Respect dependency links; sequence dependent work.
 **After each accepted task: clean worktree, commit inside the policy window,

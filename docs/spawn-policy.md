@@ -10,14 +10,14 @@ and effort are pinned in `task-board.config.json` with `model_criterion: equal`.
 | Role | Agent | Model | Effort | Set by |
 |---|---|---|---|---|
 | Orchestrator (primary session) | codex | `gpt-5.6-sol` | `high` | primary-session launch |
-| Producer / implementer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
-| Independent reviewer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
+| Producer / implementer | codex | `gpt-5.6-sol` | `medium` | `spawn.ceilings.codex` |
+| Independent reviewer | codex | `gpt-5.6-sol` | `medium` | `spawn.ceilings.codex` |
 
 Notes:
 - The orchestrator is the primary session, **not** a spawned child. Its Sol
   model is selected when launching or resuming the primary session; spawn
   ceilings cannot enforce the primary model.
-- Codex spawns require an effort; the ceiling pins every role to `high` for `gpt-5.6-sol`.
+- Codex spawns require an effort; the ceiling pins every spawned role to `medium` for `gpt-5.6-sol`.
 - Explicit provider policy permits only Codex; Claude, Gemini, Muse, and Qwen are out of policy.
 - `agent_context.profile: lite` keeps task contracts and safety gates while
   removing repeated generic context and materializing large preconditions.
@@ -25,14 +25,14 @@ Notes:
 ## Canonical spawn commands
 
 ```bash
-# producer (developer / tester / researcher) — Codex Sol high
-task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+# producer (developer / tester / researcher) — Codex Sol medium
+task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
 
-# reviewer — independent Codex Sol high
-task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+# reviewer — independent Codex Sol medium
+task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
 
-# architecture producer — Codex Sol high
-task-board spawn TASK-… --role solution-architect --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+# architecture producer — Codex Sol medium
+task-board spawn TASK-… --role solution-architect --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
 ```
 
 ## Config (`task-board.config.json`)
@@ -45,7 +45,7 @@ task-board spawn TASK-… --role solution-architect --background --agent codex -
   "preferred_agentic_system": { "exclusive": "codex" },
   "launch_composition": { "enabled": true },
   "ceilings": {
-    "codex":  { "model": "gpt-5.6-sol", "model_criterion": "equal", "reasoning_effort": "high" }
+    "codex":  { "model": "gpt-5.6-sol", "model_criterion": "equal", "reasoning_effort": "medium" }
   }
 },
 "session_manager": {

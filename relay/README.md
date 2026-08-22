@@ -46,6 +46,12 @@ vulnerability-review input, not the final product-wide SBOM. Syft remains a
 build-only inspection tool and is recorded separately because it does not
 affect relay executable bytes.
 
+The executable operator procedure, including the accepted split source/recipe
+pins, two-independent-build proof, exact expected hashes, strict update order,
+four-native-runner gate, bundle integration, downstream bootstrap consumers,
+rollback, and mismatch/compromise response, is the
+[relay asset release runbook](../docs/relay-asset-release-runbook.md).
+
 ```sh
 make relay-provision-go \
   RELAY_GO_ARCHIVE=.temp/relay-tools/go1.26.5.darwin-arm64.tar.gz

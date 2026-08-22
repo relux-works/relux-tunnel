@@ -147,6 +147,12 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
 
 Build/test evidence and other task-scoped scratch logs belong under `.temp/`.
 
+Release engineers updating or rolling back the four relay assets must follow
+the [relay asset release runbook](docs/relay-asset-release-runbook.md). It is
+the authoritative ordered procedure for the split source/recipe pins, exact
+archive and manifest verification, native runtime rows, bundle integration,
+downstream bootstrap gates, incident response, and M2/M5 ownership boundary.
+
 ## Security
 
 This product hides tunneled destinations, DNS, and payloads from the on-path
