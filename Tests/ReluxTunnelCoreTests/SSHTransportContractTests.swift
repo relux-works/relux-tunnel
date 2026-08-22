@@ -639,6 +639,161 @@ struct SSHTransportContractTests {
 
 @Suite("SSH contract seam fixture regression")
 struct SSHContractSeamFixtureTests {
+  @Test("every host decision gates credentials authentication and channel work")
+  func everyHostDecisionUsesPreAuthenticationGate() async throws {
+    for testCase in hostDecisionCases() {
+      let ordering = OrderingRecorder()
+      let transport = FixtureTransport(
+        lane: fixtureLane(),
+        dependencies: conformanceDependencies(
+          hostPolicy: DecisionHostPolicy(
+            recorder: ordering,
+            decision: testCase.decision
+          ),
+          credentialProvider: OrderingCredentialProvider(recorder: ordering)
+        )
+      )
+      let comment = Comment(rawValue: testCase.name)
+
+      if testCase.isAccepted {
+        _ = try await transport.connect(configuration: fixtureConnectionConfiguration())
+        #expect(
+          await ordering.events() == [.hostPolicy, .credentialLookup, .authentication],
+          comment
+        )
+        #expect((await transport.snapshot()).counters.authenticationAttempts == 1)
+        await transport.close()
+      } else {
+        await #expect(throws: SSHTransportError.self) {
+          _ = try await transport.connect(configuration: fixtureConnectionConfiguration())
+        }
+        #expect(await ordering.events() == [.hostPolicy], comment)
+        let snapshot = await transport.snapshot()
+        #expect(snapshot.counters.authenticationAttempts == 0, comment)
+        #expect(snapshot.counters.directChannelsOpened == 0, comment)
+        #expect(snapshot.counters.execChannelsOpened == 0, comment)
+        #expect(await transport.directRequest() == nil, comment)
+        #expect(await transport.execRequest() == nil, comment)
+      }
+      #expect(await transport.resourceSnapshot() == .zero, comment)
+    }
+  }
+
+  @Test("bounded pre-auth repetitions keep ordering and return all fake resources to zero")
+  func repeatedPreAuthenticationCleanup() async throws {
+    let lifecycleRegistry = FixtureLifecycleRegistry()
+    let baseline = await lifecycleRegistry.snapshot()
+    #expect(baseline == .zero)
+
+    for iteration in 0..<16 {
+      let acceptedOrdering = OrderingRecorder()
+      let accepted = FixtureTransport(
+        lane: fixtureLane(),
+        dependencies: conformanceDependencies(
+          hostPolicy: OrderingHostPolicy(recorder: acceptedOrdering),
+          credentialProvider: OrderingCredentialProvider(recorder: acceptedOrdering)
+        ),
+        lifecycleRegistry: lifecycleRegistry
+      )
+      _ = try await accepted.connect(configuration: fixtureConnectionConfiguration())
+      #expect(
+        await acceptedOrdering.events() == [.hostPolicy, .credentialLookup, .authentication],
+        "iteration \(iteration)"
+      )
+      #expect(
+        await lifecycleRegistry.snapshot()
+          == ConformanceResourceSnapshot(
+            tasks: 0,
+            connections: 1,
+            channels: 0,
+            sockets: 0,
+            descriptors: 0,
+            bufferedBytes: 0,
+            observers: 1,
+            callbacks: 0
+          ),
+        "live success \(iteration)"
+      )
+      await accepted.close()
+      #expect(await lifecycleRegistry.snapshot() == baseline, "success \(iteration)")
+
+      for testCase in hostDecisionCases().filter({ !$0.isAccepted }) {
+        let rejectedOrdering = OrderingRecorder()
+        let rejected = FixtureTransport(
+          lane: fixtureLane(),
+          dependencies: conformanceDependencies(
+            hostPolicy: DecisionHostPolicy(
+              recorder: rejectedOrdering,
+              decision: testCase.decision
+            ),
+            credentialProvider: OrderingCredentialProvider(recorder: rejectedOrdering)
+          ),
+          lifecycleRegistry: lifecycleRegistry
+        )
+        await #expect(throws: SSHTransportError.self) {
+          _ = try await rejected.connect(configuration: fixtureConnectionConfiguration())
+        }
+        let comment = Comment(rawValue: "\(testCase.name) \(iteration)")
+        #expect(await rejectedOrdering.events() == [.hostPolicy], comment)
+        #expect(await lifecycleRegistry.snapshot() == baseline, comment)
+      }
+
+      let thrownOrdering = OrderingRecorder()
+      let throwing = FixtureTransport(
+        lane: fixtureLane(),
+        dependencies: conformanceDependencies(
+          hostPolicy: ThrowingHostPolicy(recorder: thrownOrdering),
+          credentialProvider: OrderingCredentialProvider(recorder: thrownOrdering)
+        ),
+        lifecycleRegistry: lifecycleRegistry
+      )
+      await #expect(throws: FixtureHostPolicyFailure.injected) {
+        _ = try await throwing.connect(configuration: fixtureConnectionConfiguration())
+      }
+      #expect(await thrownOrdering.events() == [.hostPolicy], "thrown \(iteration)")
+      #expect(await lifecycleRegistry.snapshot() == baseline, "thrown \(iteration)")
+
+      let cancelledOrdering = OrderingRecorder()
+      let cancellationGate = HostPolicyCancellationGate()
+      let cancelled = FixtureTransport(
+        lane: fixtureLane(),
+        dependencies: conformanceDependencies(
+          hostPolicy: GatedCancellingHostPolicy(
+            recorder: cancelledOrdering,
+            gate: cancellationGate
+          ),
+          credentialProvider: OrderingCredentialProvider(recorder: cancelledOrdering)
+        ),
+        lifecycleRegistry: lifecycleRegistry
+      )
+      let cancellationTask = Task {
+        try await cancelled.connect(configuration: fixtureConnectionConfiguration())
+      }
+      await cancellationGate.waitUntilReached()
+      #expect(
+        await cancelled.resourceSnapshot()
+          == ConformanceResourceSnapshot(
+            tasks: 1,
+            connections: 1,
+            channels: 0,
+            sockets: 0,
+            descriptors: 0,
+            bufferedBytes: 0,
+            observers: 1,
+            callbacks: 1
+          ),
+        "active cancellation \(iteration)"
+      )
+      cancellationTask.cancel()
+      await cancellationGate.release()
+      await #expect(throws: CancellationError.self) {
+        _ = try await cancellationTask.value
+      }
+      #expect(await cancelledOrdering.events() == [.hostPolicy], "cancellation \(iteration)")
+      #expect(await lifecycleRegistry.snapshot() == baseline, "cancellation \(iteration)")
+    }
+  }
+
   @Test(
     "every M0 gate and explicit M3 state",
     arguments: ConformanceCandidate.allCases
@@ -666,7 +821,7 @@ struct SSHContractSeamFixtureTests {
     // credential lookup; only approved public-key and algorithm choices survive.
     let configuration = try fixtureConnectionConfiguration()
     let session = try await transport.connect(configuration: configuration)
-    #expect(await ordering.events() == [.hostPolicy, .credentialLookup])
+    #expect(await ordering.events() == [.hostPolicy, .credentialLookup, .authentication])
     #expect(session.acceptedHostKey.algorithm == "ssh-ed25519")
     #expect(session.acceptedHostKey.fingerprintSHA256.hasPrefix("SHA256:"))
     #expect(capabilities.publicKeyAuthenticationAlgorithms.contains("ssh-ed25519"))
@@ -819,6 +974,7 @@ struct SSHContractSeamFixtureTests {
 private enum OrderingEvent: Equatable, Sendable {
   case hostPolicy
   case credentialLookup
+  case authentication
 }
 
 enum ConformanceCandidate: String, CaseIterable, CustomTestStringConvertible, Sendable {
@@ -862,10 +1018,79 @@ private enum ConformanceCancellationSite: CaseIterable, Sendable {
 
 private struct ConformanceResourceSnapshot: Equatable, Sendable {
   let tasks: Int
+  let connections: Int
   let channels: Int
   let sockets: Int
   let descriptors: Int
   let bufferedBytes: Int
+  let observers: Int
+  let callbacks: Int
+
+  static let zero = ConformanceResourceSnapshot(
+    tasks: 0,
+    connections: 0,
+    channels: 0,
+    sockets: 0,
+    descriptors: 0,
+    bufferedBytes: 0,
+    observers: 0,
+    callbacks: 0
+  )
+}
+
+private enum FixtureLifecycleResource: Sendable {
+  case task
+  case connection
+  case observer
+  case callback
+}
+
+private struct FixtureLifecycleToken: Hashable, Sendable {
+  let rawValue: Int
+}
+
+private actor FixtureLifecycleRegistry {
+  private var nextToken = 0
+  private var resources: [FixtureLifecycleToken: FixtureLifecycleResource] = [:]
+
+  func register(_ resource: FixtureLifecycleResource) -> FixtureLifecycleToken {
+    nextToken += 1
+    let token = FixtureLifecycleToken(rawValue: nextToken)
+    resources[token] = resource
+    return token
+  }
+
+  func release(_ token: FixtureLifecycleToken) {
+    guard resources.removeValue(forKey: token) != nil else {
+      Issue.record("fixture lifecycle token released more than once")
+      return
+    }
+  }
+
+  func snapshot() -> ConformanceResourceSnapshot {
+    ConformanceResourceSnapshot(
+      tasks: count(.task),
+      connections: count(.connection),
+      channels: 0,
+      sockets: 0,
+      descriptors: 0,
+      bufferedBytes: 0,
+      observers: count(.observer),
+      callbacks: count(.callback)
+    )
+  }
+
+  private func count(_ expected: FixtureLifecycleResource) -> Int {
+    resources.values.count { resource in
+      switch (resource, expected) {
+      case (.task, .task), (.connection, .connection), (.observer, .observer),
+        (.callback, .callback):
+        true
+      default:
+        false
+      }
+    }
+  }
 }
 
 private func deferredReport<Value: Sendable>(
@@ -942,22 +1167,162 @@ private struct ChangedHostPolicy: SSHHostKeyPolicy {
   }
 }
 
+private struct DecisionHostPolicy: SSHHostKeyPolicy {
+  let recorder: OrderingRecorder
+  let decision: SSHHostKeyDecision
+
+  func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
+    #expect(!input.evidence.keyBytes.isEmpty)
+    await recorder.record(.hostPolicy)
+    return decision
+  }
+}
+
+private struct GatedCancellingHostPolicy: SSHHostKeyPolicy {
+  let recorder: OrderingRecorder
+  let gate: HostPolicyCancellationGate
+
+  func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
+    #expect(!input.evidence.keyBytes.isEmpty)
+    await recorder.record(.hostPolicy)
+    await gate.pause()
+    try Task<Never, Never>.checkCancellation()
+    return .rejectPolicy
+  }
+}
+
+private enum FixtureHostPolicyFailure: Error {
+  case injected
+}
+
+private struct ThrowingHostPolicy: SSHHostKeyPolicy {
+  let recorder: OrderingRecorder
+
+  func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
+    #expect(!input.evidence.keyBytes.isEmpty)
+    await recorder.record(.hostPolicy)
+    throw FixtureHostPolicyFailure.injected
+  }
+}
+
+private actor HostPolicyCancellationGate {
+  private var reached = false
+  private var released = false
+  private var reachedWaiters: [CheckedContinuation<Void, Never>] = []
+  private var releaseWaiters: [CheckedContinuation<Void, Never>] = []
+
+  func pause() async {
+    reached = true
+    let waiters = reachedWaiters
+    reachedWaiters.removeAll()
+    for waiter in waiters { waiter.resume() }
+    guard !released else { return }
+    await withCheckedContinuation { releaseWaiters.append($0) }
+  }
+
+  func waitUntilReached() async {
+    guard !reached else { return }
+    await withCheckedContinuation { reachedWaiters.append($0) }
+  }
+
+  func release() {
+    released = true
+    let waiters = releaseWaiters
+    releaseWaiters.removeAll()
+    for waiter in waiters { waiter.resume() }
+  }
+}
+
+private struct HostDecisionCase: Sendable {
+  let name: String
+  let decision: SSHHostKeyDecision
+  let isAccepted: Bool
+}
+
+private func hostDecisionCases() -> [HostDecisionCase] {
+  let timestamp = SSHProfileTimestamp("2026-08-22T00:00:00.000Z")
+  let audit = SSHHostIdentityAuditMetadata(
+    provenance: .firstUseApproval,
+    firstSeenAt: timestamp,
+    previousLastSeenAt: timestamp,
+    observedAt: timestamp
+  )
+  let fingerprint = SSHHostKeyFingerprint(
+    "SHA256:ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0"
+  )
+  return [
+    HostDecisionCase(
+      name: "acceptMatch",
+      decision: .acceptMatch(SSHTrustRecordReference(rawValue: "trust-record")),
+      isAccepted: true
+    ),
+    HostDecisionCase(
+      name: "acceptApproved",
+      decision: .acceptApproved(
+        SSHApprovedHostIdentityMatch(
+          identity: SSHVerifiedHostIdentity(
+            algorithm: "ssh-ed25519",
+            fingerprintSHA256: fingerprint.rawValue
+          ),
+          trustRecordReference: SSHTrustRecordReference(rawValue: "trust-record"),
+          recordIndex: 0,
+          auditMetadata: audit
+        )
+      ),
+      isAccepted: true
+    ),
+    HostDecisionCase(
+      name: "trustRequired",
+      decision: .trustRequired(
+        SSHHostTrustRequiredEvidence(
+          canonicalHost: SSHProfileCanonicalHost(kind: .dns, value: "fixture.invalid"),
+          port: 22,
+          algorithm: .sshEd25519,
+          fingerprintSHA256: fingerprint,
+          observedAt: timestamp
+        )
+      ),
+      isAccepted: false
+    ),
+    HostDecisionCase(name: "rejectChanged", decision: .rejectChanged, isAccepted: false),
+    HostDecisionCase(
+      name: "rejectRevoked",
+      decision: .rejectRevoked(audit),
+      isAccepted: false
+    ),
+    HostDecisionCase(name: "rejectAlgorithm", decision: .rejectAlgorithm, isAccepted: false),
+    HostDecisionCase(
+      name: "rejectHostMismatch",
+      decision: .rejectHostMismatch,
+      isAccepted: false
+    ),
+    HostDecisionCase(name: "rejectMalformed", decision: .rejectMalformed, isAccepted: false),
+    HostDecisionCase(name: "rejectPolicy", decision: .rejectPolicy, isAccepted: false),
+  ]
+}
+
 private struct OrderingCredentialProvider: SSHCredentialProvider {
   let recorder: OrderingRecorder
 
   func credential(for request: SSHCredentialRequest) async throws -> any SSHPublicKeyCredential {
     #expect(request.acceptedHost.outcome == .matchAccepted)
     await recorder.record(.credentialLookup)
-    return FixtureCredential()
+    return FixtureCredential(recorder: recorder)
   }
 }
 
 private struct FixtureCredential: SSHPublicKeyCredential {
   let algorithm = "ssh-ed25519"
   let publicKeyBytes = Data("public-key".utf8)
+  let recorder: OrderingRecorder?
+
+  init(recorder: OrderingRecorder? = nil) {
+    self.recorder = recorder
+  }
 
   func sign(_ payload: Data) async throws -> Data {
-    Data(payload.reversed())
+    await recorder?.record(.authentication)
+    return Data(payload.reversed())
   }
 }
 
@@ -987,6 +1352,7 @@ private actor FixtureTransport: SSHTransport {
   private let lane: SSHLaneIdentity
   private let dependencies: SSHTransportDependencies?
   private let deferredAvailability: SSHDeferredSemanticAvailability
+  private let lifecycleRegistry: FixtureLifecycleRegistry
   private let directChannel: BoundedFixtureChannel
   private let execChannel: BoundedFixtureChannel
   private var recordedDirectRequest: DirectRequest?
@@ -998,17 +1364,22 @@ private actor FixtureTransport: SSHTransport {
   private var uploadedByteCount: UInt64 = 0
   private var elapsedSinceRekey: Duration = .zero
   private var configuredRekeyPolicy: SSHRekeyPolicy?
+  private var taskToken: FixtureLifecycleToken?
+  private var connectionToken: FixtureLifecycleToken?
+  private var observerToken: FixtureLifecycleToken?
 
   init(
     lane: SSHLaneIdentity,
     dependencies: SSHTransportDependencies? = nil,
     deferredAvailability: SSHDeferredSemanticAvailability = .notReported,
     direct: BoundedFixtureChannel? = nil,
-    exec: BoundedFixtureChannel? = nil
+    exec: BoundedFixtureChannel? = nil,
+    lifecycleRegistry: FixtureLifecycleRegistry = FixtureLifecycleRegistry()
   ) {
     self.lane = lane
     self.dependencies = dependencies
     self.deferredAvailability = deferredAvailability
+    self.lifecycleRegistry = lifecycleRegistry
     self.directChannel =
       direct
       ?? BoundedFixtureChannel.fixture(
@@ -1026,55 +1397,73 @@ private actor FixtureTransport: SSHTransport {
   func connect(configuration: SSHConnectionConfiguration) async throws -> SSHSession {
     counters.connectAttempts += 1
     configuredRekeyPolicy = configuration.rekey
-    let evidence = try SSHHostKeyEvidence(algorithm: "ssh-ed25519", keyBytes: Data("abc".utf8))
-    let input = SSHHostKeyPolicyInput(
-      canonicalHostname: configuration.canonicalHostname,
-      connectedEndpoint: configuration.endpoint,
-      evidence: evidence,
-      lane: lane,
-      trustRecordReference: configuration.trustRecordReference
-    )
-    let decision =
-      if let dependencies {
-        try await dependencies.hostKeyPolicy.evaluate(input)
-      } else {
-        SSHHostKeyDecision.acceptMatch(
-          configuration.trustRecordReference ?? SSHTrustRecordReference(rawValue: "fixture-trust")
-        )
+    taskToken = await lifecycleRegistry.register(.task)
+    connectionToken = await lifecycleRegistry.register(.connection)
+    observerToken = await lifecycleRegistry.register(.observer)
+    do {
+      let evidence = try SSHHostKeyEvidence(
+        algorithm: "ssh-ed25519",
+        keyBytes: Data("abc".utf8)
+      )
+      let input = SSHHostKeyPolicyInput(
+        canonicalHostname: configuration.canonicalHostname,
+        connectedEndpoint: configuration.endpoint,
+        evidence: evidence,
+        lane: lane,
+        trustRecordReference: configuration.trustRecordReference
+      )
+      let decision = try await withRegisteredCallback {
+        if let dependencies {
+          try await dependencies.hostKeyPolicy.evaluate(input)
+        } else {
+          SSHHostKeyDecision.acceptMatch(
+            configuration.trustRecordReference ?? SSHTrustRecordReference(rawValue: "fixture-trust")
+          )
+        }
       }
-    guard let accepted = try? decision.acceptance(for: input) else {
+      guard let accepted = try? decision.acceptance(for: input) else {
+        throw SSHTransportError.hostDecisionFailure(decision, lane: lane)!
+      }
+      counters.authenticationAttempts += 1
+      if let dependencies {
+        let credential = try await withRegisteredCallback {
+          try await dependencies.credentialProvider.credential(
+            for: SSHCredentialRequest(
+              credentialReference: configuration.credentialReference,
+              credentialGeneration: configuration.credentialGeneration,
+              username: configuration.username,
+              allowedPublicKeyAlgorithms: Array(
+                fixtureCapabilities(deferredAvailability).publicKeyAuthenticationAlgorithms
+              ),
+              acceptedHost: accepted
+            )
+          )
+        }
+        _ = try await withRegisteredCallback {
+          try await credential.sign(Data("challenge".utf8))
+        }
+        credential.retire()
+      }
+      counters.authenticationSucceeded += 1
+      counters.connectSucceeded += 1
+      counters.hostMatchAccepted += 1
+      await releaseTask()
+      state = .ready
+      return SSHSession(
+        identity: SSHSessionIdentity(
+          rawValue: UUID(uuidString: "20000000-0000-0000-0000-000000000001")!
+        ),
+        acceptedHost: accepted,
+        negotiatedAlgorithms: fixtureNegotiatedAlgorithms(),
+        keyExchangeGeneration: deferredReport(deferredAvailability)
+      )
+    } catch {
+      await releaseTask()
+      await releaseConnectionResources()
       counters.connectFailed += 1
       state = .failed
-      throw SSHTransportError.hostDecisionFailure(decision, lane: lane)!
+      throw error
     }
-    counters.authenticationAttempts += 1
-    if let dependencies {
-      let credential = try await dependencies.credentialProvider.credential(
-        for: SSHCredentialRequest(
-          credentialReference: configuration.credentialReference,
-          credentialGeneration: configuration.credentialGeneration,
-          username: configuration.username,
-          allowedPublicKeyAlgorithms: Array(
-            fixtureCapabilities(deferredAvailability).publicKeyAuthenticationAlgorithms
-          ),
-          acceptedHost: accepted
-        )
-      )
-      _ = try await credential.sign(Data("challenge".utf8))
-      credential.retire()
-    }
-    counters.authenticationSucceeded += 1
-    counters.connectSucceeded += 1
-    counters.hostMatchAccepted += 1
-    state = .ready
-    return SSHSession(
-      identity: SSHSessionIdentity(
-        rawValue: UUID(uuidString: "20000000-0000-0000-0000-000000000001")!
-      ),
-      acceptedHost: accepted,
-      negotiatedAlgorithms: fixtureNegotiatedAlgorithms(),
-      keyExchangeGeneration: deferredReport(deferredAvailability)
-    )
   }
 
   func openDirectTCPIP(
@@ -1145,6 +1534,8 @@ private actor FixtureTransport: SSHTransport {
     await execChannel.close()
     directOpen = false
     execOpen = false
+    await releaseTask()
+    await releaseConnectionResources()
     state = .closed
   }
 
@@ -1185,13 +1576,17 @@ private actor FixtureTransport: SSHTransport {
     return payload
   }
 
-  func resourceSnapshot() -> ConformanceResourceSnapshot {
-    ConformanceResourceSnapshot(
-      tasks: 0,
+  func resourceSnapshot() async -> ConformanceResourceSnapshot {
+    let lifecycle = await lifecycleRegistry.snapshot()
+    return ConformanceResourceSnapshot(
+      tasks: lifecycle.tasks,
+      connections: lifecycle.connections,
       channels: (directOpen ? 1 : 0) + (execOpen ? 1 : 0),
       sockets: state == .ready ? 1 : 0,
       descriptors: state == .ready ? 1 : 0,
-      bufferedBytes: 0
+      bufferedBytes: 0,
+      observers: lifecycle.observers,
+      callbacks: lifecycle.callbacks
     )
   }
 
@@ -1207,6 +1602,37 @@ private actor FixtureTransport: SSHTransport {
     result.keepalivesAcknowledged = deferredReport(deferredAvailability)
     result.keepalivesTimedOut = deferredReport(deferredAvailability)
     return result
+  }
+
+  private func withRegisteredCallback<Value: Sendable>(
+    _ operation: () async throws -> Value
+  ) async throws -> Value {
+    let token = await lifecycleRegistry.register(.callback)
+    do {
+      let value = try await operation()
+      await lifecycleRegistry.release(token)
+      return value
+    } catch {
+      await lifecycleRegistry.release(token)
+      throw error
+    }
+  }
+
+  private func releaseTask() async {
+    guard let taskToken else { return }
+    self.taskToken = nil
+    await lifecycleRegistry.release(taskToken)
+  }
+
+  private func releaseConnectionResources() async {
+    if let connectionToken {
+      self.connectionToken = nil
+      await lifecycleRegistry.release(connectionToken)
+    }
+    if let observerToken {
+      self.observerToken = nil
+      await lifecycleRegistry.release(observerToken)
+    }
   }
 }
 

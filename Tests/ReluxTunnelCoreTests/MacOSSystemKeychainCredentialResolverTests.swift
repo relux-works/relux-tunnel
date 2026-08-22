@@ -12,7 +12,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
   @Test("exact opaque reference and fixed service shape the only lookup")
   func exactQueryShapeAndSuccess() async throws {
     let reference = UUID(uuidString: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")!
-    let handle = try systemKeychainHandle()
+    let handle = fixtureKeychainHandle()
     let security = FixtureSystemKeychainClient(
       keychain: handle,
       item: fixtureItem(reference: reference, generation: 7, format: 1)
@@ -35,7 +35,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
     #expect(dictionary[kSecAttrService as String] as? String == Self.service)
     #expect(dictionary[kSecAttrAccount as String] as? String == reference.uuidString.lowercased())
     #expect(dictionary[kSecUseDataProtectionKeychain as String] as? Bool == false)
-    #expect((dictionary[kSecMatchSearchList as String] as? [SecKeychain])?.count == 1)
+    #expect((dictionary[kSecMatchSearchList as String] as? [AnyObject])?.count == 1)
     #expect(dictionary[kSecMatchLimit as String] as? String == kSecMatchLimitOne as String)
     #expect(dictionary[kSecReturnAttributes as String] as? Bool == true)
     #expect(dictionary[kSecReturnData as String] as? Bool == true)
@@ -48,7 +48,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
   @Test("wrong class and mismatched identity fail distinctly")
   func identityAndClassValidation() async throws {
     let reference = UUID(uuidString: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")!
-    let handle = try systemKeychainHandle()
+    let handle = fixtureKeychainHandle()
 
     let wrongClass = FixtureSystemKeychainClient(
       keychain: handle,
@@ -74,7 +74,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
   @Test("not found inaccessible malformed and platform cancellation remain distinct")
   func statusMapping() async throws {
     let reference = UUID(uuidString: "cccccccc-cccc-cccc-cccc-cccccccccccc")!
-    let handle = try systemKeychainHandle()
+    let handle = fixtureKeychainHandle()
     let cases: [(OSStatus, MacOSCredentialResolverError)] = [
       (errSecItemNotFound, .credentialNotProvisioned),
       (errSecAuthFailed, .credentialAccessDenied),
@@ -115,6 +115,35 @@ struct MacOSSystemKeychainCredentialResolverTests {
     }
   }
 
+  @Test("every credential resolver error has one bounded bootstrap projection")
+  func credentialBootstrapProjectionCoverage() {
+    let cases: [(MacOSCredentialResolverError, SSHBootstrapErrorCode)] = [
+      (.credentialNotProvisioned, .credentialNotProvisioned),
+      (.credentialAccessDenied, .credentialAccessDenied),
+      (.credentialWrongClass, .credentialMalformed),
+      (.credentialGenerationMismatch, .credentialGenerationMismatch),
+      (.credentialMalformed, .credentialMalformed),
+      (.credentialPassphraseRequired, .credentialPassphraseRequired),
+      (.credentialPassphraseInvalid, .credentialPassphraseInvalid),
+      (.credentialKeyUnsupported, .credentialKeyUnsupported),
+      (.operationCancelled, .operationCancelled),
+    ]
+
+    #expect(Set(cases.map(\.0)) == Set(MacOSCredentialResolverError.allCases))
+    for (source, expectedCode) in cases {
+      let error = MacOSSSHBootstrapErrorMapper.credential(
+        source,
+        configurationGeneration: 13
+      )
+      #expect(error.diagnostic.code == expectedCode)
+      #expect(error.diagnostic.configurationGeneration == 13)
+      #expect(
+        error.diagnostic.retryDisposition
+          == (source == .operationCancelled ? .cancelled : .terminal)
+      )
+    }
+  }
+
   @Test("NW and POSIX classes map without endpoint or underlying prose")
   func networkFrameworkBootstrapProjection() {
     let context = SSHBootstrapDiagnosticContext(endpointFamily: .ipv6)
@@ -130,18 +159,34 @@ struct MacOSSystemKeychainCredentialResolverTests {
       configurationGeneration: 5,
       context: context
     )
+    let dns = MacOSSSHBootstrapErrorMapper.network(
+      NWError.dns(-65_537),
+      stage: .endpointConnect,
+      configurationGeneration: 5,
+      context: context
+    )
+    let tls = MacOSSSHBootstrapErrorMapper.network(
+      NWError.tls(-9_800),
+      stage: .algorithmNegotiation,
+      configurationGeneration: 5,
+      context: context
+    )
 
     #expect(unavailable.diagnostic.code == .pathUnavailable)
     #expect(unavailable.diagnostic.retryDisposition == .retryableLater)
     #expect(reset.diagnostic.code == .endpointConnectFailed)
     #expect(reset.diagnostic.retryDisposition == .retryableLater)
     #expect(reset.diagnostic.context.endpointFamily == .ipv6)
+    #expect(dns.diagnostic.code == .endpointConnectFailed)
+    #expect(dns.diagnostic.retryDisposition == .retryableLater)
+    #expect(tls.diagnostic.code == .negotiationFailed)
+    #expect(tls.diagnostic.retryDisposition == .terminal)
   }
 
   @Test("record generation digest truncation and trailing bytes fail closed")
   func strictRecordFormat() async throws {
     let reference = UUID(uuidString: "dddddddd-dddd-dddd-dddd-dddddddddddd")!
-    let handle = try systemKeychainHandle()
+    let handle = fixtureKeychainHandle()
     var records = [
       credentialRecord(reference: reference, generation: 7, format: 1),
       credentialRecord(reference: reference, generation: 7, format: 1) + [0],
@@ -178,7 +223,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
   func importedAndGeneratedRepresentations(format: UInt16) async throws {
     let reference = UUID(uuidString: "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee")!
     let security = FixtureSystemKeychainClient(
-      keychain: try systemKeychainHandle(),
+      keychain: fixtureKeychainHandle(),
       item: fixtureItem(reference: reference, generation: 3, format: format)
     )
     let credential = try await resolver(security: security).credential(
@@ -199,7 +244,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
     let reference = UUID(uuidString: "abababab-abab-abab-abab-abababababab")!
     let registry = PassphraseObservingRegistry()
     let security = FixtureSystemKeychainClient(
-      keychain: try systemKeychainHandle(),
+      keychain: fixtureKeychainHandle(),
       item: fixtureItem(
         reference: reference,
         generation: 9,
@@ -225,7 +270,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
   func formatErrors(testCase: FormatFailureCase) async throws {
     let reference = UUID(uuidString: "ffffffff-ffff-ffff-ffff-ffffffffffff")!
     let security = FixtureSystemKeychainClient(
-      keychain: try systemKeychainHandle(),
+      keychain: fixtureKeychainHandle(),
       item: fixtureItem(reference: reference, generation: 4, format: 9, passphrase: [4, 5])
     )
     await #expect(throws: testCase.expected) {
@@ -247,7 +292,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
       observer: lifecycle
     )
     let security = FixtureSystemKeychainClient(
-      keychain: try systemKeychainHandle(),
+      keychain: fixtureKeychainHandle(),
       item: item,
       gate: gate
     )
@@ -277,7 +322,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
     let lifecycle = SecretLifecycleProbe()
     let retirement = RetirementProbe()
     let security = FixtureSystemKeychainClient(
-      keychain: try systemKeychainHandle(),
+      keychain: fixtureKeychainHandle(),
       item: fixtureItem(reference: reference, generation: 10, passphrase: [1])
     )
     let credential = try await MacOSSystemKeychainCredentialResolver(
@@ -299,7 +344,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
     let reference = UUID(uuidString: referenceText)!
     let marker = "fixture-sensitive-marker"
     let security = FixtureSystemKeychainClient(
-      keychain: try systemKeychainHandle(),
+      keychain: fixtureKeychainHandle(),
       item: fixtureItem(
         reference: reference,
         generation: 1,
@@ -314,7 +359,7 @@ struct MacOSSystemKeychainCredentialResolverTests {
     #expect(!rendered.contains(marker))
 
     let success = FixtureSystemKeychainClient(
-      keychain: try systemKeychainHandle(),
+      keychain: fixtureKeychainHandle(),
       item: fixtureItem(reference: reference, generation: 1)
     )
     let credential = try await resolver(security: success).credential(
@@ -326,31 +371,99 @@ struct MacOSSystemKeychainCredentialResolverTests {
     #expect(!reflected.contains(marker))
   }
 
-  @Test("real file-based Keychain search list denies an unrelated keychain")
-  func throwawayKeychainBoundary() async throws {
+  @Test("one fake-only scoped query performs no enumeration or fallback")
+  func scopedQueryHasNoEnumerationOrFallback() async throws {
     let reference = UUID(uuidString: "12345678-1234-1234-1234-123456789abc")!
-    let first = try ThrowawayKeychain()
-    let unrelated = try ThrowawayKeychain()
-    try first.add(
-      service: Self.service,
-      account: reference.uuidString.lowercased(),
-      data: Data(credentialRecord(reference: reference, generation: 6, format: 1))
+    let handle = fixtureKeychainHandle()
+    let security = FixtureSystemKeychainClient(
+      keychain: handle,
+      status: errSecItemNotFound
     )
-
-    let allowedClient = LiveMacOSSystemKeychainSecurityClient {
-      MacOSSystemKeychainResolution(status: errSecSuccess, keychain: first.handle)
-    }
-    _ = try await resolver(security: allowedClient).credential(
-      for: request(reference, generation: 6)
-    )
-
-    let deniedClient = LiveMacOSSystemKeychainSecurityClient {
-      MacOSSystemKeychainResolution(status: errSecSuccess, keychain: unrelated.handle)
-    }
     await #expect(throws: MacOSCredentialResolverError.credentialNotProvisioned) {
-      try await resolver(security: deniedClient).credential(
+      try await resolver(security: security).credential(
         for: request(reference, generation: 6)
       )
+    }
+    #expect(await security.domainResolutionCount() == 1)
+    #expect(await security.matchingQueryCount() == 1)
+    let query = try #require(await security.recordedQuery())
+    #expect(query.keychain === handle)
+    #expect(query.account == reference.uuidString.lowercased())
+    #expect(query.service == Self.service)
+  }
+
+  @Test("live client rejects fixture query before the Security matcher")
+  func liveClientRejectsFixtureBeforeMatcher() async throws {
+    let matcher = SecurityMatcherSpy()
+    let client = LiveMacOSSystemKeychainSecurityClient(
+      domainResolver: {
+        MacOSSystemKeychainResolution(
+          status: errSecSuccess,
+          keychain: fixtureKeychainHandle()
+        )
+      },
+      itemMatcher: matcher.copyMatching
+    )
+
+    await #expect(throws: MacOSCredentialResolverError.credentialAccessDenied) {
+      try await resolver(security: client).credential(
+        for: request(
+          UUID(uuidString: "22345678-1234-1234-1234-123456789abc")!,
+          generation: 1
+        )
+      )
+    }
+    #expect(matcher.callCount == 0)
+  }
+
+  @Test("malformed references stop before any Keychain client call")
+  func malformedReferenceStopsBeforeKeychain() async throws {
+    let security = FixtureSystemKeychainClient(keychain: fixtureKeychainHandle())
+    let valid = try request(
+      UUID(uuidString: "23456789-2345-2345-2345-23456789abcd")!,
+      generation: 1
+    )
+    let malformed = SSHCredentialRequest(
+      credentialReference: SSHCredentialReference(rawValue: "not-a-canonical-reference"),
+      credentialGeneration: valid.credentialGeneration,
+      username: valid.username,
+      allowedPublicKeyAlgorithms: valid.allowedPublicKeyAlgorithms,
+      acceptedHost: valid.acceptedHost
+    )
+
+    await #expect(throws: MacOSCredentialResolverError.credentialMalformed) {
+      try await resolver(security: security).credential(for: malformed)
+    }
+    #expect(await security.domainResolutionCount() == 0)
+    #expect(await security.matchingQueryCount() == 0)
+  }
+
+  @Test("bounded repetitions leave no secret or query-count growth")
+  func repeatedResolutionReturnsToBaseline() async throws {
+    let reference = UUID(uuidString: "34567890-3456-3456-3456-34567890abcd")!
+    let lifecycle = SecretLifecycleProbe()
+    let iterations = 16
+
+    for iteration in 0..<iterations {
+      let security = FixtureSystemKeychainClient(
+        keychain: fixtureKeychainHandle(iteration),
+        item: fixtureItem(
+          reference: reference,
+          generation: UInt64(iteration + 1),
+          passphrase: [0xA5],
+          observer: lifecycle
+        )
+      )
+      let credential = try await MacOSSystemKeychainCredentialResolver(
+        securityClient: security,
+        formatRegistry: FixtureFormatRegistry(),
+        lifecycleObserver: lifecycle
+      ).credential(for: request(reference, generation: UInt64(iteration + 1)))
+      credential.retire()
+
+      #expect(lifecycle.activeSecretCount == 0, "iteration \(iteration)")
+      #expect(await security.domainResolutionCount() == 1, "iteration \(iteration)")
+      #expect(await security.matchingQueryCount() == 1, "iteration \(iteration)")
     }
   }
 
@@ -386,6 +499,8 @@ private actor FixtureSystemKeychainClient: MacOSSystemKeychainSecurityClient {
   let item: MacOSKeychainLookupItem?
   let gate: ResolverTestGate?
   private var query: MacOSSystemKeychainLookupQuery?
+  private var domainResolutions = 0
+  private var matchingQueries = 0
 
   init(
     keychain: MacOSSystemKeychainHandle,
@@ -400,18 +515,39 @@ private actor FixtureSystemKeychainClient: MacOSSystemKeychainSecurityClient {
   }
 
   func copySystemDomainDefault() -> MacOSSystemKeychainResolution {
-    MacOSSystemKeychainResolution(status: errSecSuccess, keychain: keychain)
+    domainResolutions += 1
+    return MacOSSystemKeychainResolution(status: errSecSuccess, keychain: keychain)
   }
 
   func copyMatching(_ query: MacOSSystemKeychainLookupQuery) async
     -> MacOSSystemKeychainLookupResult
   {
+    matchingQueries += 1
     self.query = query
     if let gate { await gate.enter() }
     return MacOSSystemKeychainLookupResult(status: status, item: item)
   }
 
   func recordedQuery() -> MacOSSystemKeychainLookupQuery? { query }
+  func domainResolutionCount() -> Int { domainResolutions }
+  func matchingQueryCount() -> Int { matchingQueries }
+}
+
+private final class SecurityMatcherSpy: @unchecked Sendable {
+  private let lock = NSLock()
+  private var calls = 0
+
+  var callCount: Int {
+    lock.withLock { calls }
+  }
+
+  func copyMatching(
+    _ query: CFDictionary,
+    _ result: UnsafeMutablePointer<CFTypeRef?>
+  ) -> OSStatus {
+    lock.withLock { calls += 1 }
+    return errSecInternalError
+  }
 }
 
 private struct FixtureFormatRegistry: MacOSCredentialFormatRegistry {
@@ -551,59 +687,6 @@ private actor ResolverTestGate {
   }
 }
 
-private final class ThrowawayKeychain: @unchecked Sendable {
-  let handle: MacOSSystemKeychainHandle
-  private let directory: URL
-
-  init() throws {
-    directory = FileManager.default.temporaryDirectory
-      .appendingPathComponent("relux-keychain-test-\(UUID().uuidString)", isDirectory: true)
-    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    let path = directory.appendingPathComponent("fixture.keychain-db").path
-    var password = [UInt8](repeating: 0, count: 32)
-    defer {
-      _ = password.withUnsafeMutableBytes {
-        $0.initializeMemory(as: UInt8.self, repeating: 0)
-      }
-    }
-    guard SecRandomCopyBytes(kSecRandomDefault, password.count, &password) == errSecSuccess else {
-      throw MacOSCredentialResolverError.credentialAccessDenied
-    }
-    var keychain: SecKeychain?
-    let status = SecKeychainCreate(
-      path,
-      UInt32(password.count),
-      password,
-      false,
-      nil,
-      &keychain
-    )
-    guard status == errSecSuccess, let keychain else {
-      throw MacOSCredentialResolverError.credentialAccessDenied
-    }
-    handle = MacOSSystemKeychainHandle(keychain)
-  }
-
-  deinit {
-    SecKeychainDelete(handle.rawValue)
-    try? FileManager.default.removeItem(at: directory)
-  }
-
-  func add(service: String, account: String, data: Data) throws {
-    let query: [String: Any] = [
-      kSecClass as String: kSecClassGenericPassword,
-      kSecAttrService as String: service,
-      kSecAttrAccount as String: account,
-      kSecUseDataProtectionKeychain as String: false,
-      kSecUseKeychain as String: handle.rawValue,
-      kSecValueData as String: data,
-    ]
-    guard SecItemAdd(query as CFDictionary, nil) == errSecSuccess else {
-      throw MacOSCredentialResolverError.credentialAccessDenied
-    }
-  }
-}
-
 private func resolver(
   security: any MacOSSystemKeychainSecurityClient
 ) -> MacOSSystemKeychainCredentialResolver {
@@ -613,12 +696,12 @@ private func resolver(
   )
 }
 
-private func systemKeychainHandle() throws -> MacOSSystemKeychainHandle {
-  var keychain: SecKeychain?
-  guard SecKeychainCopyDomainDefault(.system, &keychain) == errSecSuccess, let keychain else {
-    throw MacOSCredentialResolverError.credentialAccessDenied
-  }
-  return MacOSSystemKeychainHandle(keychain)
+private func fixtureKeychainHandle(_ discriminator: Int = 0) -> MacOSSystemKeychainHandle {
+  MacOSSystemKeychainHandle(
+    fixtureIdentity: UUID(
+      uuidString: String(format: "40000000-0000-0000-0000-%012d", discriminator)
+    )!
+  )
 }
 
 private func request(_ reference: UUID, generation: UInt64) throws -> SSHCredentialRequest {

@@ -170,9 +170,33 @@ public final class MacOSSystemKeychainCredentialResolver: SSHCredentialProvider,
 }
 
 final class MacOSSystemKeychainHandle: @unchecked Sendable {
-  let rawValue: SecKeychain
+  private let liveValue: SecKeychain?
+  private let fixtureValue: NSObject?
 
   init(_ rawValue: SecKeychain) {
+    liveValue = rawValue
+    fixtureValue = nil
+  }
+
+  /// Test-only construction seam for deterministic Security-client fakes.
+  /// A fixture handle can be recorded and compared, but a live client rejects it.
+  init(fixtureIdentity: UUID) {
+    liveValue = nil
+    fixtureValue = FixtureKeychainIdentity(rawValue: fixtureIdentity)
+  }
+
+  fileprivate var rawValue: SecKeychain? { liveValue }
+
+  fileprivate var queryValue: AnyObject {
+    if let liveValue { return liveValue }
+    return fixtureValue!
+  }
+}
+
+private final class FixtureKeychainIdentity: NSObject {
+  let rawValue: UUID
+
+  init(rawValue: UUID) {
     self.rawValue = rawValue
   }
 }
@@ -193,7 +217,7 @@ struct MacOSSystemKeychainLookupQuery: @unchecked Sendable {
       kSecAttrService as String: service,
       kSecAttrAccount as String: account,
       kSecUseDataProtectionKeychain as String: false,
-      kSecMatchSearchList as String: [keychain.rawValue],
+      kSecMatchSearchList as String: [keychain.queryValue],
       kSecReturnAttributes as String: true,
       kSecReturnData as String: true,
       kSecMatchLimit as String: kSecMatchLimitOne,
@@ -234,15 +258,24 @@ final class LiveMacOSSystemKeychainSecurityClient: MacOSSystemKeychainSecurityCl
   @unchecked Sendable
 {
   typealias DomainResolver = @Sendable () -> MacOSSystemKeychainResolution
+  typealias ItemMatcher = (CFDictionary, UnsafeMutablePointer<CFTypeRef?>) -> OSStatus
 
   private let domainResolver: DomainResolver
+  private let itemMatcher: ItemMatcher
 
   convenience init() {
-    self.init(domainResolver: LiveMacOSSystemKeychainSecurityClient.resolveSystemDomain)
+    self.init(
+      domainResolver: LiveMacOSSystemKeychainSecurityClient.resolveSystemDomain,
+      itemMatcher: SecItemCopyMatching
+    )
   }
 
-  init(domainResolver: @escaping DomainResolver) {
+  init(
+    domainResolver: @escaping DomainResolver,
+    itemMatcher: @escaping ItemMatcher = SecItemCopyMatching
+  ) {
     self.domainResolver = domainResolver
+    self.itemMatcher = itemMatcher
   }
 
   func copySystemDomainDefault() async -> MacOSSystemKeychainResolution {
@@ -252,8 +285,11 @@ final class LiveMacOSSystemKeychainSecurityClient: MacOSSystemKeychainSecurityCl
   func copyMatching(_ query: MacOSSystemKeychainLookupQuery) async
     -> MacOSSystemKeychainLookupResult
   {
+    guard query.keychain.rawValue != nil else {
+      return MacOSSystemKeychainLookupResult(status: errSecParam, item: nil)
+    }
     var output: CFTypeRef?
-    let status = SecItemCopyMatching(query.dictionary as CFDictionary, &output)
+    let status = itemMatcher(query.dictionary as CFDictionary, &output)
     guard status == errSecSuccess, let attributes = output as? [String: Any],
       let itemClass = attributes[kSecClass as String] as? String,
       let service = attributes[kSecAttrService as String] as? String,

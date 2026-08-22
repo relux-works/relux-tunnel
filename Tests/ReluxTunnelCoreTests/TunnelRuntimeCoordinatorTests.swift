@@ -5,6 +5,50 @@ import Testing
 
 @Suite("Tunnel runtime coordinator")
 struct TunnelRuntimeCoordinatorTests {
+  @Test("invalid SSH profiles stop at coordinator before Keychain and network fakes")
+  func invalidProfilesStopBeforeDownstreamBoundaries() async throws {
+    let validSnapshot = profileBoundarySnapshot()
+    let validData = try SSHProfileSnapshotCodec.encode(validSnapshot)
+    let invalidPayloads = try [
+      mutateProfileBoundaryJSON(validData) { $0["configurationGeneration"] = 0 },
+      mutateProfileBoundaryJSON(validData) {
+        $0["canonicalHost"] = ["kind": "dns", "value": "Bad.invalid"]
+      },
+      mutateProfileBoundaryJSON(validData) { $0["schemaVersion"] = 2 },
+      mutateProfileBoundaryJSON(validData) {
+        $0["privateKeyMaterial"] = "synthetic-key-fixture"
+      },
+    ]
+
+    for payload in invalidPayloads {
+      let downstream = ProfileDownstreamProbe()
+      let fixture = CoordinatorFixture(
+        profileProviderConfiguration: profileProviderConfiguration(payload),
+        profileDownstreamProbe: downstream
+      )
+
+      await #expect(throws: TunnelRuntimeCoordinatorError.self) {
+        try await fixture.coordinator.start()
+      }
+      #expect(downstream.keychainCalls == 0)
+      #expect(downstream.networkCalls == 0)
+      #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+    }
+
+    let downstream = ProfileDownstreamProbe()
+    let fixture = CoordinatorFixture(
+      profileProviderConfiguration: try SSHProfileProviderConfigurationCodec.encode(
+        validSnapshot
+      ),
+      profileDownstreamProbe: downstream
+    )
+    try await fixture.coordinator.start()
+    #expect(downstream.keychainCalls == 1)
+    #expect(downstream.networkCalls == 1)
+    await fixture.coordinator.stop(reason: .system)
+    #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+  }
+
   @Test("startup gates settings and publishes M1 usability only after reads")
   func orderedStartupAndStop() async throws {
     let fixture = CoordinatorFixture()
@@ -1210,6 +1254,8 @@ private struct CoordinatorFixture: Sendable {
     clearFails: Bool = false,
     stoppingSnapshotGate: SuspensionGate? = nil,
     cancellation: any TunnelCancellationChecking = TaskCancellationChecker(),
+    profileProviderConfiguration: [String: VPNProviderConfigurationValue]? = nil,
+    profileDownstreamProbe: ProfileDownstreamProbe? = nil,
     startupCompletionHandoffHook:
       (@Sendable (TunnelRuntimeCoordinator) async -> Void)? = nil
   ) {
@@ -1221,13 +1267,23 @@ private struct CoordinatorFixture: Sendable {
       clearFails: clearFails
     )
     self.recorder = recorder
+    let configurationSource: (any ConfigurationSnapshotSource)? =
+      profileProviderConfiguration.map(ProfileConfigurationSource.init)
+    let sshBootstrap: (any SSHBootstrap)? = profileDownstreamProbe.map {
+      ProfileBoundarySSHBootstrap(
+        probe: $0,
+        delegate: TestSSHBootstrap(recorder: recorder, faults: faults)
+      )
+    }
     coordinator = TunnelRuntimeCoordinator(
       runtimeGeneration: generation,
       context: makeContext(cancellation: cancellation),
       dependencies: makeCoordinatorDependencies(
         recorder: recorder,
         faults: faults,
-        stoppingSnapshotGate: stoppingSnapshotGate
+        stoppingSnapshotGate: stoppingSnapshotGate,
+        configurationSource: configurationSource,
+        sshBootstrap: sshBootstrap
       ),
       startupCompletionHandoffHook: startupCompletionHandoffHook
     )
@@ -1242,11 +1298,14 @@ private func makeCoordinatorDependencies(
     gate: nil,
     clearFails: false
   ),
-  stoppingSnapshotGate: SuspensionGate? = nil
+  stoppingSnapshotGate: SuspensionGate? = nil,
+  configurationSource: (any ConfigurationSnapshotSource)? = nil,
+  sshBootstrap: (any SSHBootstrap)? = nil
 ) -> TunnelRuntimeCoordinatorDependencies {
   TunnelRuntimeCoordinatorDependencies(
-    configurationSource: TestConfigurationSource(recorder: recorder, faults: faults),
-    sshBootstrap: TestSSHBootstrap(recorder: recorder, faults: faults),
+    configurationSource: configurationSource
+      ?? TestConfigurationSource(recorder: recorder, faults: faults),
+    sshBootstrap: sshBootstrap ?? TestSSHBootstrap(recorder: recorder, faults: faults),
     tcpFactory: TestTCPFactory(recorder: recorder, faults: faults),
     dnsFactory: TestDNSFactory(recorder: recorder, faults: faults),
     packetPlaneFactory: TestPacketPlaneFactory(recorder: recorder, faults: faults),
@@ -1257,6 +1316,66 @@ private func makeCoordinatorDependencies(
       stoppingSnapshotGate: stoppingSnapshotGate
     )
   )
+}
+
+private struct ProfileConfigurationSource: ConfigurationSnapshotSource {
+  let providerConfiguration: [String: VPNProviderConfigurationValue]
+
+  init(_ providerConfiguration: [String: VPNProviderConfigurationValue]) {
+    self.providerConfiguration = providerConfiguration
+  }
+
+  func loadValidatedSnapshot(
+    for reference: TunnelConfigurationReference
+  ) async throws -> RuntimeConfigurationSnapshot {
+    let snapshot = try SSHProfileRuntimeSnapshotLoader().capture(from: providerConfiguration)
+    guard snapshot.profileID == reference.profileIdentifier else {
+      throw SSHProfileSnapshotLoaderError.profileGenerationMismatch
+    }
+    return RuntimeConfigurationSnapshot(
+      configurationGeneration: snapshot.configurationGeneration,
+      profileIdentifier: snapshot.profileID,
+      profileRevision: OpaqueProfileRevision(testUUID(2)),
+      credentialReference: snapshot.credential.reference,
+      trustReference: OpaqueTrustReference(testUUID(4))
+    )
+  }
+}
+
+private struct ProfileBoundarySSHBootstrap: SSHBootstrap {
+  let probe: ProfileDownstreamProbe
+  let delegate: TestSSHBootstrap
+
+  func authenticate(
+    configuration: RuntimeConfigurationSnapshot,
+    runtimeGeneration: UInt64,
+    healthSink: any TunnelRuntimeHealthEventSink
+  ) async throws -> any SSHBootstrapSession {
+    probe.recordKeychainCall()
+    probe.recordNetworkCall()
+    return try await delegate.authenticate(
+      configuration: configuration,
+      runtimeGeneration: runtimeGeneration,
+      healthSink: healthSink
+    )
+  }
+}
+
+private final class ProfileDownstreamProbe: @unchecked Sendable {
+  private let lock = NSLock()
+  private var keychainCallCount = 0
+  private var networkCallCount = 0
+
+  var keychainCalls: Int { lock.withLock { keychainCallCount } }
+  var networkCalls: Int { lock.withLock { networkCallCount } }
+
+  func recordKeychainCall() {
+    lock.withLock { keychainCallCount += 1 }
+  }
+
+  func recordNetworkCall() {
+    lock.withLock { networkCallCount += 1 }
+  }
 }
 
 private struct TestConfigurationSource: ConfigurationSnapshotSource {
@@ -1689,6 +1808,65 @@ private func makeContext(
       cancellation: cancellation,
       memoryPressure: TestCoordinatorMemoryPressure()
     )
+  )
+}
+
+private func profileBoundarySnapshot() -> SSHProfileSnapshotV1 {
+  let timestamp = SSHProfileTimestamp("2026-08-22T00:00:00.000Z")
+  let fingerprint = Data(repeating: 0x01, count: 32).base64EncodedString().dropLast()
+  return SSHProfileSnapshotV1(
+    configurationGeneration: 1,
+    profileID: OpaqueProfileIdentifier(testUUID(1)),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    displayName: "Boundary Fixture",
+    canonicalHost: SSHProfileCanonicalHost(kind: .dns, value: "fixture.invalid"),
+    port: 22,
+    account: "fixture-account",
+    credential: SSHProfileCredentialReferenceV1(
+      reference: OpaqueCredentialReference(testUUID(3)),
+      generation: 1
+    ),
+    hostPolicy: SSHHostPolicyV1(
+      allowedAlgorithms: [.sshEd25519],
+      records: [
+        SSHHostIdentityRecordV1(
+          algorithm: .sshEd25519,
+          fingerprintSHA256: SSHHostKeyFingerprint("SHA256:\(fingerprint)"),
+          state: .approved,
+          provenance: .firstUseApproval,
+          firstSeenAt: timestamp,
+          lastSeenAt: timestamp,
+          approvedAt: timestamp,
+          revokedAt: nil,
+          revocationReason: nil
+        )
+      ]
+    )
+  )
+}
+
+private func profileProviderConfiguration(
+  _ payload: Data
+) -> [String: VPNProviderConfigurationValue] {
+  [
+    OwnedVPNManagerRepository.ownerKey: .string(OwnedVPNManagerRepository.ownerValue),
+    OwnedVPNManagerRepository.managerContractKey: .unsignedInteger(
+      UInt64(OwnedVPNManagerRepository.managerContractVersion)
+    ),
+    OwnedVPNManagerRepository.configurationReferenceKey: .data(payload),
+  ]
+}
+
+private func mutateProfileBoundaryJSON(
+  _ data: Data,
+  mutation: (inout [String: Any]) throws -> Void
+) throws -> Data {
+  var object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+  try mutation(&object)
+  return try JSONSerialization.data(
+    withJSONObject: object,
+    options: [.sortedKeys, .withoutEscapingSlashes]
   )
 }
 
