@@ -89,12 +89,14 @@ swift build -c release
 ```
 
 The active workspace-visible scheme set is exactly `ReluxProxyMac`,
-`ReluxProxyMacTunnel`, `ReluxTunnelCore`, `ReluxTunnelHarness`, `relux-relay`,
-and `relux-relay-protocol-test`. Only `Debug` and `Release` configurations
-exist. The two relay scheme names are stable discovery surfaces; Go build and
-smoke ownership remains in the explicit Make targets, not an implicit Xcode
-build phase. The iOS schemes and targets are not generated in `.macOSOnly`
-mode.
+`ReluxProxyMacTunnel`, `ReluxProxyMacUITests`, `ReluxProxyIOSUITests`,
+`ReluxTunnelCore`, `ReluxTunnelHarness`, `relux-relay`, and
+`relux-relay-protocol-test`. Only `Debug` and `Release` configurations exist.
+The two relay scheme names are stable discovery surfaces; Go build and smoke
+ownership remains in the explicit Make targets, not an implicit Xcode build
+phase. The production iOS schemes and targets are not generated in
+`.macOSOnly` mode; `ReluxProxyIOSUITests` owns only the isolated Simulator
+fixture described in [Apple UI-test validation](apple-ui-test-validation.md).
 
 The harness smoke is a local no-op resource-lifecycle test. It does not import
 or invoke Network Extension:
@@ -191,9 +193,10 @@ authority if this table and code ever disagree.
 | `relux-relay` | `relay/cmd/relux-relay/**`, `relay/internal/**`; colocated Go tests | rootless stdio relay shell and reusable protocol/UDP internals | Go standard library only; generated protocol contract | `.spec/relay-protocol.md`, `.spec/security-privacy.md`, `relay/README.md` |
 | `relux-relay-protocol-test` | `relay/cmd/relux-relay-protocol-test/**`; colocated Go tests and canonical vectors | executable relay protocol smoke/conformance shell | Go standard library plus relay internals | `.spec/relay-protocol.md`, `Protocol/Relay/Vectors/v1/README.md` |
 
-Dormant `ReluxProxyIOS`, `ReluxProxyIOSTunnel`, and their two test targets are
-names and boundaries only; they are not generated, built, or tested in the
-current `.macOSOnly` workspace.
+Dormant `ReluxProxyIOS`, `ReluxProxyIOSTunnel`, and their product-owned test
+targets are names and boundaries only; they are not generated, built, or tested
+in the current `.macOSOnly` workspace. The separately named iOS Simulator
+fixture host and UI-test target do not resume those product targets.
 
 ## Signing inputs without secrets
 

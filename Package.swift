@@ -9,14 +9,22 @@ let package = Package(
     .macOS(.v15),
   ],
   products: [
+    .library(name: "ReluxAppleUITestShared", targets: ["ReluxAppleUITestShared"]),
     .library(name: "ReluxTunnelCore", targets: ["ReluxTunnelCore"]),
     .library(name: "ReluxTunnelLibSSH2Adapter", targets: ["ReluxTunnelLibSSH2Adapter"]),
     .library(name: "ReluxTunnelNativeAdapter", targets: ["ReluxTunnelNativeAdapter"]),
     .library(name: "ReluxTunnelIOSAdapter", targets: ["ReluxTunnelIOSAdapter"]),
     .library(name: "ReluxTunnelMacOSAdapter", targets: ["ReluxTunnelMacOSAdapter"]),
     .executable(name: "ReluxTunnelHarness", targets: ["ReluxTunnelHarness"]),
+    .executable(name: "relux-snapshot-diff", targets: ["ReluxSnapshotDiff"]),
   ],
   targets: [
+    .target(name: "ReluxAppleUITestShared"),
+    .target(name: "ReluxSnapshotDiffSupport"),
+    .executableTarget(
+      name: "ReluxSnapshotDiff",
+      dependencies: ["ReluxSnapshotDiffSupport"]
+    ),
     .target(name: "ReluxTunnelCore"),
     .binaryTarget(
       name: "CReluxNativeFixture",
@@ -78,6 +86,14 @@ let package = Package(
         "ReluxTunnelCore",
         "ReluxTunnelHarnessSupport",
       ]
+    ),
+    .testTarget(
+      name: "ReluxAppleUITestSharedTests",
+      dependencies: ["ReluxAppleUITestShared"]
+    ),
+    .testTarget(
+      name: "ReluxSnapshotDiffSupportTests",
+      dependencies: ["ReluxSnapshotDiffSupport"]
     ),
     .testTarget(
       name: "ReluxTunnelLibSSH2AdapterTests",

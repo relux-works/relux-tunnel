@@ -5,8 +5,9 @@ private enum WorkspaceMode {
   case macOSAndIOS
 }
 
-// ADR-024/ADR-027 keep iOS deferred. The iOS-resume task changes this checked-in
-// input only when it adds the corresponding targets and scheme actions.
+// ADR-024/ADR-027 keep the iOS product deferred. The cross-platform fixture hosts
+// below are isolated test products: they do not embed a provider or depend on a
+// production adapter, and the iOS row runs only in Simulator.
 private let workspaceMode: WorkspaceMode = .macOSOnly
 
 private let macOSOnlySchemeNames = [
@@ -16,6 +17,8 @@ private let macOSOnlySchemeNames = [
   "ReluxTunnelHarness",
   "relux-relay",
   "relux-relay-protocol-test",
+  "ReluxProxyMacUITests",
+  "ReluxProxyIOSUITests",
 ]
 
 private let deferredSchemeNames = [
@@ -24,6 +27,7 @@ private let deferredSchemeNames = [
 ]
 
 private let macOSDeploymentTargets: DeploymentTargets = .macOS("15.0")
+private let iOSDeploymentTargets: DeploymentTargets = .iOS("18.0")
 private let verifiedRelayBundleInput: Path = ".build/relay/relay-assets-v1"
 
 private func targetSettings(
@@ -66,6 +70,7 @@ private let macOSTargets: [Target] = [
     ],
     dependencies: [
       .target(name: "ReluxProxyMacTunnel"),
+      .package(product: "ReluxAppleUITestShared"),
       .package(product: "ReluxTunnelCore"),
     ],
     settings: targetSettings(
@@ -130,6 +135,64 @@ private let macOSTargets: [Target] = [
   ),
 ]
 
+private let appleUITestInfrastructureTargets: [Target] = [
+  .target(
+    name: "ReluxProxyMacUITestFixtureHost",
+    destinations: [.mac],
+    product: .app,
+    bundleId: "works.relux.tunnel.uitest-fixture.mac",
+    deploymentTargets: macOSDeploymentTargets,
+    infoPlist: .extendingDefault(with: [
+      "CFBundleDisplayName": "Relux UI Fixture"
+    ]),
+    sources: ["App/ReluxUITestFixtureHost/**"],
+    dependencies: [.package(product: "ReluxAppleUITestShared")],
+    settings: testTargetSettings
+  ),
+  .target(
+    name: "ReluxProxyMacUITests",
+    destinations: [.mac],
+    product: .uiTests,
+    bundleId: "works.relux.tunnel.uitests.mac",
+    deploymentTargets: macOSDeploymentTargets,
+    infoPlist: .default,
+    sources: ["Tests/ReluxAppleUITestsShared/**"],
+    dependencies: [
+      .target(name: "ReluxProxyMacUITestFixtureHost"),
+      .package(product: "ReluxAppleUITestShared"),
+    ],
+    settings: testTargetSettings
+  ),
+  .target(
+    name: "ReluxProxyIOSUITestFixtureHost",
+    destinations: [.iPhone],
+    product: .app,
+    bundleId: "works.relux.tunnel.uitest-fixture.ios",
+    deploymentTargets: iOSDeploymentTargets,
+    infoPlist: .extendingDefault(with: [
+      "CFBundleDisplayName": "Relux UI Fixture",
+      "UILaunchScreen": [:],
+    ]),
+    sources: ["App/ReluxUITestFixtureHost/**"],
+    dependencies: [.package(product: "ReluxAppleUITestShared")],
+    settings: testTargetSettings
+  ),
+  .target(
+    name: "ReluxProxyIOSUITests",
+    destinations: [.iPhone],
+    product: .uiTests,
+    bundleId: "works.relux.tunnel.uitests.ios",
+    deploymentTargets: iOSDeploymentTargets,
+    infoPlist: .default,
+    sources: ["Tests/ReluxAppleUITestsShared/**"],
+    dependencies: [
+      .target(name: "ReluxProxyIOSUITestFixtureHost"),
+      .package(product: "ReluxAppleUITestShared"),
+    ],
+    settings: testTargetSettings
+  ),
+]
+
 private var generatedSchemeNames: [String] {
   switch workspaceMode {
   case .macOSOnly:
@@ -157,6 +220,26 @@ private func foundationScheme(named name: String) -> Scheme {
       buildAction: .buildAction(targets: ["ReluxProxyMacTunnel"]),
       testAction: .targets(["ReluxProxyMacTunnelTests"])
     )
+  case "ReluxProxyMacUITests":
+    .scheme(
+      name: name,
+      shared: true,
+      buildAction: .buildAction(targets: [
+        "ReluxProxyMacUITestFixtureHost",
+        "ReluxProxyMacUITests",
+      ]),
+      testAction: .targets(["ReluxProxyMacUITests"])
+    )
+  case "ReluxProxyIOSUITests":
+    .scheme(
+      name: name,
+      shared: true,
+      buildAction: .buildAction(targets: [
+        "ReluxProxyIOSUITestFixtureHost",
+        "ReluxProxyIOSUITests",
+      ]),
+      testAction: .targets(["ReluxProxyIOSUITests"])
+    )
   default:
     .scheme(name: name, shared: true)
   }
@@ -177,7 +260,7 @@ let project = Project(
     defaultSettings: .recommended,
     defaultConfiguration: "Debug"
   ),
-  targets: macOSTargets,
+  targets: macOSTargets + appleUITestInfrastructureTargets,
   schemes: generatedSchemeNames.map { foundationScheme(named: $0) },
   additionalFiles: [
     "Configuration/Base.xcconfig",

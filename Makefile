@@ -1,5 +1,6 @@
 .PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
 	workspace-generate workspace-validate macos-targets-validate \
+	apple-ui-test-contract apple-ui-test-smoke \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
 	check-reluxniossh test-reluxniossh build-reluxniossh validate-reluxniossh \
 	check-libssh2 test-libssh2 test-libssh2-source-gates validate-libssh2 build-libssh2 \
@@ -31,6 +32,16 @@ workspace-validate:
 
 macos-targets-validate:
 	./scripts/validate-macos-targets.sh
+
+apple-ui-test-contract:
+	python3 scripts/check-apple-ui-test-contract.py
+	python3 -m unittest -v scripts.tests.test_extract_apple_ui_test_artifacts scripts.tests.test_validate_apple_ui_test_artifacts
+	./scripts/tests/test-apple-ui-test-smoke-extractor-failure.sh
+	swift test --filter ReluxAppleUITestSharedTests
+	swift test --filter SnapshotDiffSupportTests
+
+apple-ui-test-smoke:
+	./scripts/run-apple-ui-test-smoke.sh
 
 check-legacy:
 	./scripts/check-legacy-preservation.sh --legacy-root "$(LEGACY_ROOT)"

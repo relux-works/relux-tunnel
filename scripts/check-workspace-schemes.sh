@@ -22,6 +22,8 @@ ReluxProxyMac
 ReluxProxyMacTunnel
 ReluxTunnelCore
 ReluxTunnelHarness
+ReluxProxyIOSUITests
+ReluxProxyMacUITests
 relux-relay
 relux-relay-protocol-test
 SCHEMES

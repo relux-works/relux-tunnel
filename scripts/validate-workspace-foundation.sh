@@ -42,8 +42,11 @@ grep -F 'Build configuration list for PBXProject "ReluxTunnelApp"' \
 xcodebuild -project ReluxTunnelApp.xcodeproj -list > "$task_output/xcodebuild-project-list.log"
 target_count=$(sed -n '/^[[:space:]]*Targets:/,/Build Configurations:/p' \
   "$task_output/xcodebuild-project-list.log" | grep -c '^        [^ ]')
-test "$target_count" -eq 4
-for target in ReluxProxyMac ReluxProxyMacTunnel ReluxProxyMacTests ReluxProxyMacTunnelTests; do
+test "$target_count" -eq 8
+for target in \
+  ReluxProxyMac ReluxProxyMacTunnel ReluxProxyMacTests ReluxProxyMacTunnelTests \
+  ReluxProxyMacUITestFixtureHost ReluxProxyMacUITests \
+  ReluxProxyIOSUITestFixtureHost ReluxProxyIOSUITests; do
   grep -Fx "        $target" "$task_output/xcodebuild-project-list.log" >/dev/null
 done
 for deferred_target in ReluxProxyIOS ReluxProxyIOSTunnel ReluxProxyIOSTests ReluxProxyIOSTunnelTests; do
