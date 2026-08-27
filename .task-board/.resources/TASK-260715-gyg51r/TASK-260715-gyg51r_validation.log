@@ -1,0 +1,338 @@
+[0/1] Planning build
+Building for debugging...
+[0/9] Write swift-version-45881B103DA9D485.txt
+[2/44] Compiling ReluxAppleUITestShared ReluxUITest.swift
+[3/44] Compiling ReluxAppleUITestShared ReluxUITestLaunchConfiguration.swift
+[4/44] Compiling ReluxAppleUITestShared ReluxUITestFixture.swift
+[5/44] Emitting module ReluxAppleUITestShared
+[6/44] Emitting module ReluxLibSSH2PackagingTests
+[7/44] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[8/46] Compiling ReluxSnapshotDiffSupport SnapshotDiff.swift
+[9/46] Emitting module ReluxSnapshotDiffSupport
+[10/50] Emitting module ReluxSnapshotDiff
+[11/50] Compiling ReluxSnapshotDiff main.swift
+[11/50] Write Objects.LinkFileList
+[13/50] Emitting module ReluxAppleUITestSharedTests
+[14/50] Compiling ReluxAppleUITestSharedTests ReluxAppleUITestSharedTests.swift
+[15/50] Compiling ReluxSnapshotDiffSupportTests SnapshotDiffSupportTests.swift
+[16/50] Emitting module ReluxSnapshotDiffSupportTests
+[17/50] Compiling ReluxTunnelCore RelayAssetManifest.swift
+[18/50] Compiling ReluxTunnelCore ClientUDPAssociationRegistry.swift
+[18/51] Linking relux-snapshot-diff
+[19/51] Applying relux-snapshot-diff
+[21/51] Compiling ReluxTunnelCore ApprovedHostIdentityPolicy.swift
+[22/51] Compiling ReluxTunnelCore BoundedFullDuplexBytePump.swift
+[23/51] Compiling ReluxTunnelCore SSHProfileSnapshot.swift
+[24/51] Compiling ReluxTunnelCore SSHBootstrapDiagnostics.swift
+[25/51] Compiling ReluxTunnelCore SSHContracts.swift
+[26/51] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[27/51] Compiling ReluxTunnelCore RelayHandshake.swift
+[28/51] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[29/51] Compiling ReluxTunnelCore VPNSessionController.swift
+[30/51] Compiling ReluxTunnelCore PacketContracts.swift
+[31/51] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[32/51] Compiling ReluxTunnelCore VPNManagerRepository.swift
+[33/51] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[34/51] Compiling ReluxTunnelCore RelayAssetManifest+Generated.swift
+[35/51] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[36/51] Compiling ReluxTunnelCore RelayByteCodec.swift
+[37/51] Compiling ReluxTunnelCore ComponentContracts.swift
+[38/51] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[39/51] Compiling ReluxTunnelCore TCPAdmissionRegistry.swift
+[40/51] Compiling ReluxTunnelCore RelaySession.swift
+[41/51] Compiling ReluxTunnelCore RuntimeContracts.swift
+[42/51] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[43/51] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[44/51] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[45/51] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[46/51] Emitting module ReluxTunnelCore
+[47/61] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[48/61] Compiling ReluxTunnelNativeAdapter HEVUDPDatagramAdapter.swift
+[49/61] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[50/61] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[51/61] Emitting module ReluxTunnelNativeAdapter
+[52/61] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[53/65] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[54/65] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[55/65] Compiling ReluxTunnelIOSAdapter IOSVPNManagerPreferences.swift
+[56/65] Emitting module ReluxTunnelIOSAdapter
+[57/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Transport.swift
+[58/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Channels.swift
+[59/65] Emitting module ReluxTunnelLibSSH2Adapter
+[60/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Bridge.swift
+[61/83] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[62/83] Emitting module ReluxTunnelLibSSH2AdapterTests
+[63/83] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[64/83] Compiling ReluxTunnelMacOSAdapter MacOSVPNManagerPreferences.swift
+[65/83] Compiling ReluxTunnelMacOSAdapter MacOSSystemKeychainCredentialResolver.swift
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260716-2m2tl1/worktree/Sources/ReluxTunnelMacOSAdapter/MacOSSystemKeychainCredentialResolver.swift:317:18: warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+315 |   private static func resolveSystemDomain() -> MacOSSystemKeychainResolution {
+316 |     var keychain: SecKeychain?
+317 |     let status = SecKeychainCopyDomainDefault(.system, &keychain)
+    |                  `- warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+318 |     return MacOSSystemKeychainResolution(
+319 |       status: status,
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[66/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHBootstrapErrorMapper.swift
+[67/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHProfileSnapshotLoader.swift
+[68/83] Emitting module ReluxTunnelMacOSAdapter
+[69/83] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[70/88] Compiling ReluxTunnelLibSSH2AdapterTests SSHTransportConformanceTests.swift
+[71/119] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[72/119] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[73/119] Emitting module ReluxTunnelHarnessSupport
+[74/119] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[75/119] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[76/119] Compiling ReluxTunnelHarnessSupport MTUMatrixCommand.swift
+[77/123] Emitting module ReluxTunnelHarness
+[78/123] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[78/123] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[79/123] Linking ReluxTunnelHarness
+[80/123] Applying ReluxTunnelHarness
+[82/123] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[83/123] Compiling ReluxTunnelCoreTests SSHBootstrapErrorMappingTests.swift
+[84/124] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[85/124] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2BridgeTests.swift
+[86/124] Emitting module ReluxTunnelHarnessTests
+[87/124] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[88/124] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[89/124] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[90/124] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[91/124] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[92/124] Emitting module ReluxTunnelCoreTests
+[93/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[94/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[95/124] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[96/124] Compiling ReluxTunnelCoreTests RelayAssetManifestTests.swift
+[97/124] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[98/124] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[99/124] Compiling ReluxTunnelNativeAdapterTests HEVUDPDatagramAdapterTests.swift
+[100/124] Emitting module ReluxTunnelNativeAdapterTests
+[101/124] Compiling ReluxTunnelCoreTests VPNSessionControllerTests.swift
+[102/124] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[103/124] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[104/124] Compiling ReluxTunnelCoreTests ApprovedHostIdentityPolicyTests.swift
+[105/124] Compiling ReluxTunnelCoreTests BoundedFullDuplexBytePumpTests.swift
+[106/124] Compiling ReluxTunnelCoreTests ClientUDPAssociationRegistryTests.swift
+[107/124] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[108/124] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[109/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[110/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[111/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[112/124] Compiling ReluxTunnelCoreTests SSHProfileSnapshotLoaderTests.swift
+[113/124] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[114/124] Compiling ReluxTunnelCoreTests MacOSSystemKeychainCredentialResolverTests.swift
+[115/124] Compiling ReluxTunnelCoreTests OwnedVPNManagerRepositoryTests.swift
+[116/124] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[117/124] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[118/124] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[119/124] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[120/124] Compiling ReluxTunnelCoreTests TCPAdmissionRegistryTests.swift
+[121/124] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[122/124] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2AdapterIntegrationTests.swift
+[123/126] Emitting module ReluxTunnelPackageTests
+[124/126] Compiling ReluxTunnelPackageTests runner.swift
+[124/126] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[125/126] Linking ReluxTunnelPackageTests
+Build complete! (14.09s)
+Test Suite 'Selected tests' started at 2026-08-26 23:56:43.836.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-26 23:56:43.843.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-26 23:56:43.843.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-26 23:56:43.843.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "ReluxTunnelHarness" started.
+􀟈  Test "macOS harness registers the pinned libssh2 candidate capabilities" started.
+􁁛  Test "macOS harness registers the pinned libssh2 candidate capabilities" passed after 0.001 seconds.
+􀟈  Test "argument parser rejects missing and unknown subcommands" started.
+􁁛  Test "argument parser rejects missing and unknown subcommands" passed after 0.001 seconds.
+􀟈  Test "argument parser requires exactly one structured configuration input" started.
+􁁛  Test "argument parser requires exactly one structured configuration input" passed after 0.001 seconds.
+􀟈  Test "configuration schema versions fail closed" started.
+􁁛  Test "configuration schema versions fail closed" passed after 0.001 seconds.
+􀟈  Test "configuration rejects a non-opaque runtime profile reference" started.
+􁁛  Test "configuration rejects a non-opaque runtime profile reference" passed after 0.001 seconds.
+􀟈  Test "signals map to shell-standard exit codes" started.
+􁁛  Test "signals map to shell-standard exit codes" passed after 0.001 seconds.
+􀟈  Test "smoke output is deterministic, versioned, and privacy safe" started.
+􁁛  Test "smoke output is deterministic, versioned, and privacy safe" passed after 0.002 seconds.
+􀟈  Test "normal exit cleans files, sockets, and managed tasks" started.
+􁁛  Test "normal exit cleans files, sockets, and managed tasks" passed after 0.001 seconds.
+􀟈  Test "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 1 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 2 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 3 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 4 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 5 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 6 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 7 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 8 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 9 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 10 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 11 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 12 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 13 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 14 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 15 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 16 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 17 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 18 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 19 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 20 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 21 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 22 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 23 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 24 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 25 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 26 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 27 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 28 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 29 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 30 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 31 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 32 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 33 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 34 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 35 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 36 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 37 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 38 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 39 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 40 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 41 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 42 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 43 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 44 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 45 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 46 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 47 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 48 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 49 to "signal cancellation uses signal exit code and cleans all resources" started.
+􀟈  Test case passing 1 argument iteration → 50 to "signal cancellation uses signal exit code and cleans all resources" started.
+􁁛  Test "signal cancellation uses signal exit code and cleans all resources" with 50 test cases passed after 0.024 seconds.
+􀟈  Test "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 1 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 2 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 3 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 4 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 5 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 6 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 7 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 8 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 9 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 10 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 11 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 12 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 13 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 14 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 15 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 16 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 17 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 18 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 19 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 20 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 21 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 22 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 23 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 24 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 25 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 26 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 27 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 28 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 29 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 30 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 31 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 32 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 33 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 34 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 35 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 36 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 37 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 38 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 39 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 40 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 41 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 42 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 43 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 44 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 45 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 46 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 47 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 48 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 49 to "startup failure completes readiness waiters and cleans partial resources" started.
+􀟈  Test case passing 1 argument iteration → 50 to "startup failure completes readiness waiters and cleans partial resources" started.
+􁁛  Test "startup failure completes readiness waiters and cleans partial resources" with 50 test cases passed after 0.016 seconds.
+􀟈  Test "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 1 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 2 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 3 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 4 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 5 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 6 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 7 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 8 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 9 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 10 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 11 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 12 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 13 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 14 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 15 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 16 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 17 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 18 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 19 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 20 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 21 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 22 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 23 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 24 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 25 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 26 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 27 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 28 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 29 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 30 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 31 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 32 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 33 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 34 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 35 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 36 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 37 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 38 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 39 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 40 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 41 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 42 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 43 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 44 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 45 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 46 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 47 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 48 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 49 to "readiness wait cancellation before registration cannot leak" started.
+􀟈  Test case passing 1 argument iteration → 50 to "readiness wait cancellation before registration cannot leak" started.
+􁁛  Test "readiness wait cancellation before registration cannot leak" with 50 test cases passed after 0.002 seconds.
+􀟈  Test "registered readiness wait cancellation removes its continuation" started.
+􁁛  Test "registered readiness wait cancellation removes its continuation" passed after 0.001 seconds.
+􀟈  Test "subcommands receive every packet and SSH experiment seam" started.
+􁁛  Test "subcommands receive every packet and SSH experiment seam" passed after 0.001 seconds.
+􀟈  Test "MTU matrix configuration rejects output outside task temp at the production call site" started.
+􁁛  Test "MTU matrix configuration rejects output outside task temp at the production call site" passed after 0.001 seconds.
+􀟈  Test "MTU matrix packet ceiling fails closed instead of widening the bounded run" started.
+􁁛  Test "MTU matrix packet ceiling fails closed instead of widening the bounded run" passed after 0.001 seconds.
+􀟈  Test "MTU matrix analysis rejects unexplained nominal loss" started.
+􁁛  Test "MTU matrix analysis rejects unexplained nominal loss" passed after 0.001 seconds.
+􀟈  Test "MTU matrix analysis rejects pressure rows that do not induce a drop" started.
+􁁛  Test "MTU matrix analysis rejects pressure rows that do not induce a drop" passed after 0.001 seconds.
+􀟈  Test "bounded loopback MTU matrix emits all physical Mac rows and named gaps" started.
+􁁛  Test "bounded loopback MTU matrix emits all physical Mac rows and named gaps" passed after 0.541 seconds.
+􁁛  Suite "ReluxTunnelHarness" passed after 0.590 seconds.
+􁁛  Test run with 18 tests in 1 suite passed after 0.590 seconds.

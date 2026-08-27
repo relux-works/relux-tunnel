@@ -1,0 +1,19 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version-45881B103DA9D485.txt
+[1/4] Write sources
+[3/6] Emitting module ReluxTunnelHarnessSupport
+[4/6] Compiling ReluxTunnelHarnessSupport MTUMatrixCommand.swift
+[5/7] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[6/10] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[7/10] Emitting module ReluxTunnelHarness
+[7/10] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[8/10] Linking ReluxTunnelHarness
+[9/10] Applying ReluxTunnelHarness
+Build of product 'ReluxTunnelHarness' complete! (1.89s)
+{"command":"mtu-matrix","configuration":{"parameters":{"output_path":"<redacted>","packets_per_row":"512"},"profileReference":"<redacted>"},"dependencyRevisions":{"HarnessTests.swift.sha256":"2d8e9101247d9e542f8acb271cb16d45a7f51d95385a9af1e8ed32551908c4b2","MTUMatrixCommand.swift.sha256":"b0bc55719aab4b1bc7e86a5f1de65acf868cc5ee321b753683c838f0df00d9e2","NativeDependencies\/manifest.json.sha256":"d661ef8f82b702f4ec77428d4865836a14bb3541db2b44952d833995a9c2ee15","Package.swift.sha256":"0801e22bac7c5af23dfe8e02f685fc93f956eef523eebb1d202c3d41e4c61ea9"},"durationNanoseconds":820509084,"metrics":{"counters":{"harness.mtu_matrix.packets_dropped":8811,"harness.mtu_matrix.packets_sent":17664,"harness.mtu_matrix.rows":36},"gauges":{},"schemaVersion":1},"platform":{"architecture":"arm64","operatingSystem":"macOS","operatingSystemVersion":"Version 26.5 (Build 25F71)"},"schemaVersion":1,"seed":2608270417,"sourceRevision":"a3a3352697686154fa69cc7c12d5eff9bec9d15c+rev4-worktree","status":"succeeded"}
+true
+911f27ce08ff80a565a561e5128335a6a8a6065a102e7483eb5c9211a3229ada  .temp/TASK-260715-gyg51r/rev4-physical-matrix.json
+run_exit=0 analysis_exit=0
+exit_code=0

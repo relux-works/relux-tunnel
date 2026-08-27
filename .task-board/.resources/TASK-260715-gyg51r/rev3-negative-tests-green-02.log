@@ -1,0 +1,42 @@
+Building for debugging...
+[0/7] Write sources
+[1/7] Write swift-version-45881B103DA9D485.txt
+[3/7] Emitting module ReluxTunnelHarnessSupport
+[4/7] Compiling ReluxTunnelHarnessSupport MTUMatrixCommand.swift
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260716-2m2tl1/worktree/Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift:109:12: warning: 'init(cString:)' is deprecated: Use String(decoding: array, as: UTF8.self) instead, after truncating the null termination. [#DeprecatedDeclaration]
+107 |       throw MTUMatrixError.unsafeOutputPath
+108 |     }
+109 |     return String(cString: buffer)
+    |            `- warning: 'init(cString:)' is deprecated: Use String(decoding: array, as: UTF8.self) instead, after truncating the null termination. [#DeprecatedDeclaration]
+110 |   }
+111 | }
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[4/11] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[5/11] Linking ReluxTunnelHarness
+[6/11] Applying ReluxTunnelHarness
+[8/11] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[9/11] Emitting module ReluxTunnelHarnessTests
+[9/11] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[10/11] Linking ReluxTunnelPackageTests
+Build complete! (3.15s)
+Test Suite 'Selected tests' started at 2026-08-27 01:31:53.060.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 01:31:53.067.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 01:31:53.067.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 01:31:53.067.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "ReluxTunnelHarness" started.
+􀟈  Test "MTU matrix production path rejects a project temp root symlink to system temp" started.
+􁁛  Test "MTU matrix production path rejects a project temp root symlink to system temp" passed after 0.002 seconds.
+􀟈  Test "MTU matrix production path rejects a post-parse parent replacement" started.
+􁁛  Test "MTU matrix production path rejects a post-parse parent replacement" passed after 1.262 seconds.
+􀟈  Test "MTU matrix production path supports the advertised 64-packet lower bound" started.
+􁁛  Test "MTU matrix production path supports the advertised 64-packet lower bound" passed after 0.539 seconds.
+􁁛  Suite "ReluxTunnelHarness" passed after 1.805 seconds.
+􁁛  Test run with 3 tests in 1 suite passed after 1.805 seconds.

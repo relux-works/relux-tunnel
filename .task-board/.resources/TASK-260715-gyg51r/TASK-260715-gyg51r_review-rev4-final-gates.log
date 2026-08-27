@@ -1,0 +1,35 @@
+FORMAT
+format_exit=0
+BOUNDARY
+ReluxTunnelCore dependency and import boundaries are valid
+boundary_exit=0
+EXACT_CANDIDATE_BLOBS
+LOGBOOK.md expected=b124605a602f55c78b7de4b8b020acfcb0639e8f actual=b124605a602f55c78b7de4b8b020acfcb0639e8f
+README.md expected=f05c6ab0dfc186ceaac288064a9e5e6d7012f618 actual=f05c6ab0dfc186ceaac288064a9e5e6d7012f618
+Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift expected=8925bb8aba0ded78d286981f867e4446b0c432f8 actual=8925bb8aba0ded78d286981f867e4446b0c432f8
+Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift expected=15921edb485cea708af5032b36ac6fde0b8a955b actual=15921edb485cea708af5032b36ac6fde0b8a955b
+Tests/ReluxTunnelHarnessTests/HarnessTests.swift expected=3a192eb3901974c9f93f4ba477002a70d6f66653 actual=3a192eb3901974c9f93f4ba477002a70d6f66653
+candidate_blob_match=true
+diff_check_exit=0
+patch_sha256=7fe7beb110e9232f1f6397fa4e8f9c85b0a31024375911ee743381bf4068d054
+patch_hash_exit=0
+SAFETY
+forbidden_production_api_match=false
+853:      address.sin6_addr = in6addr_loopback
+864:      address.sin_addr.s_addr = inet_addr("127.0.0.1")
+external_endpoint_match=false
+sensitive_material_match=false
+BOARD
+STORY-260716-2m2tl1  active
+  path:       .temp/STORY-260716-2m2tl1/worktree (present)
+  branch:     task-board/story/STORY-260716-2m2tl1 (present)
+  base:       main
+  tip:        a3a3352697686154fa69cc7c12d5eff9bec9d15c
+  tree:       dirty
+  lease:      held by RUN-260827-f8886c
+  blocked:    story lease is held by run RUN-260827-f8886c
+  blocked:    managed worktree has uncommitted or untracked changes
+  change-req: TASK-260715-gyg51r rev 4 ready (repository_delta=present, 5 changed path(s))
+Board is valid. No issues found.
+board_validate_exit=0
+EXIT_CODE=0

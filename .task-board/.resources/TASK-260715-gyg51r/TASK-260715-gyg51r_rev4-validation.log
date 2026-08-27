@@ -1,0 +1,20 @@
+ M LOGBOOK.md
+ M README.md
+ M Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift
+ M Tests/ReluxTunnelHarnessTests/HarnessTests.swift
+?? Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift
+ LOGBOOK.md                                         |  11 +
+ README.md                                          |  33 +-
+ .../ReluxTunnelHarnessSupport/SmokeCommand.swift   |   2 +-
+ Tests/ReluxTunnelHarnessTests/HarnessTests.swift   | 394 ++++++++++++++++++++-
+ 4 files changed, 435 insertions(+), 5 deletions(-)
+tracked_diff_check=0
+605974b03401c27f91dbd6af8a57a4d6585561b8e38443bd10c5acdf12063333  README.md
+ac42a4c5e3513702666a2acd5ec42d089f14c48ac10a7b048751fd487aaa2bb4  LOGBOOK.md
+475264c80aeac93a7526d2533c724dff695f4983ff55bbe58e8be9f92ae54ac9  Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift
+b0bc55719aab4b1bc7e86a5f1de65acf868cc5ee321b753683c838f0df00d9e2  Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift
+2d8e9101247d9e542f8acb271cb16d45a7f51d95385a9af1e8ed32551908c4b2  Tests/ReluxTunnelHarnessTests/HarnessTests.swift
+911f27ce08ff80a565a561e5128335a6a8a6065a102e7483eb5c9211a3229ada  .temp/TASK-260715-gyg51r/rev4-physical-matrix.json
+Board is valid. No issues found.
+board_validate=0
+exit_code=0

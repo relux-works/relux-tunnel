@@ -1,0 +1,21 @@
+{
+  "contract": "primary-goal-v1",
+  "id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 4,
+  "previous_revision": 3,
+  "state": "active",
+  "scope": {
+    "kind": "board"
+  },
+  "objective": "Deliver a working, signed and notarized macOS-first Relux Tunnel client that presents as a full-tunnel NEPacketTunnelProvider VPN and uses authenticated SSH with libssh2 as the primary external transport to a user-controlled host. Complete all gate-free SPM core, packet bridge/HEV, SSH viability, TCP/DNS runtime, rootless exec/stdio relay, UDP/degraded mode, macOS UI/provider, self-update, threat-model, CI, signing and release work through tracked producer-reviewer-rework-accepted cycles. iOS, App Store A0 policy research, and native Linux runner evidence are deferred and must not block the macOS prototype. Preserve host-key verification before auth, Keychain-only secret custody, bounded memory, fail-closed DNS, no user-exposed SOCKS, no SFTP, no utun-FD discovery, injectable physical tuning, and stop at real Keychain/Apple provisioning/system-VPN/physical validation/notary or product-decision gates with exact evidence. Execute serially with the current primary orchestrator, one Codex gpt-5.6-sol medium executor at a time, and a fresh Codex gpt-5.6-sol medium reviewer; max_parallel 1 and lite context. After every accepted task whose changes merit version control, automatically create a signed commit as Ivan Oparin \u003coparin@me.com\u003e using ~/.ssh/ivanopcode, push a task branch, open a PR, land it in main only after required checks/review pass, then synchronize local main with origin and leave a clean worktree.",
+  "mutation": {
+    "kind": "objective_realigned",
+    "reason": "User explicitly authorized automatic signed commits and required every accepted material task to land in main through a PR.",
+    "actor": {
+      "kind": "primary_parent",
+      "actor_id": "iv"
+    }
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-08-27T01:16:05.883825Z"
+}

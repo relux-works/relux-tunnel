@@ -3,6 +3,17 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-08-27
+
+### 2356 — Physical macOS MTU/socket baseline separates queue drops from send refusal (TASK-260715-gyg51r)
+- MEASUREMENT: The bounded loopback-only SPM harness ran 36 rows on a physical Apple M3 Max Mac (arm64, macOS 26.5): MTU 1500/4096/8500 × IPv4/native IPv6/dual stack × nominal/constrained-buffer/25ms receiver-stall/mixed bidirectional traffic. Nominal and mixed rows delivered 100%; pressure rows produced only named bounded effects and recovered with zero production-owned descriptor delta. Swift-task delta is explicitly unavailable because the synchronous runner owns no tasks; process threads are not treated as a proxy.
+- FINDING: Requested/effective buffers matched at 4096, 32768, and 262144 bytes. MTU 8500 with a 4096-byte send buffer produced 768 errno-40 `Message too long` refusals across the three family rows plus receive-queue drops; its maximum successful constrained datagram was 768 bytes. This is distinct from receiver overflow and makes 8500 unsuitable as a default solely because upstream uses it.
+- RECOMMENDATION: Keep 1500 as the portable baseline; expose 1500...4096 only as an injectable candidate range when an end-to-end path is proven. Use measured requested buffers 32768...262144 bytes; 4096 remains fault injection. Loopback does not prove external fragmentation/path safety.
+- GAPS: Physical iPhone remains `deferred-unavailable` under ADR-024. NAT64 is explicitly unavailable because no authorized deterministic local environment existed and route/Internet mutation was prohibited. Energy is unavailable from the unprivileged SPM harness; no sudo or `powermetrics` was used.
+- VERIFICATION: The full Swift suite passed 474 tests in 40 suites (25 declared known ReluxNIOSSH-unavailable issues); focused matrix coverage is 87.10% regions, 88.17% functions, and 96.13% lines. Strict affected-file format lint and diff checks pass. Raw and analyzed task evidence is attached on the board.
+- REVISION 3: A reviewer reproduced a post-parse parent swap that redirected the Foundation pathname write outside `.temp`. The production writer now uses no-follow `openat` traversal and an fd-bound atomic rename; production-entry tests reject both `.temp -> /tmp` cross-root escape and post-parse replacement. The 64-packet lower bound now applies a measured 4096-byte receiver-stall fault ceiling to 32-packet dual-stack halves. The rerun passed 477 tests; affected coverage is 85.84% regions, 89.11% functions, and 95.86% lines.
+- REVISION 4: The writer now anchors every lexical directory component from the filesystem root during configuration parsing, retains the complete no-follow descriptor chain through write/rename, and revalidates device/inode identity before writing. A production-entry `RENAME_SWAP` regression covers an ancestor above `.temp`, alongside the root-symlink and output-parent attacks. A fresh 512-packet matrix and three 64-packet production repeats passed; the full suite passed 478 tests, and affected coverage is 86.08% regions, 90.35% functions, and 95.98% lines.
+
 ## 2026-08-19
 
 ### 1055 — Relay supply-chain audit closes reviewer fail-open paths (TASK-260715-vtot05)

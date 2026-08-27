@@ -1,0 +1,9 @@
+737:      address.sin6_addr = in6addr_loopback
+748:      address.sin_addr.s_addr = inet_addr("127.0.0.1")
+safety scan: no forbidden API or external-network surface
+privacy scan: no configured profile or secret sentinel persisted
+ M LOGBOOK.md
+ M README.md
+ M Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift
+ M Tests/ReluxTunnelHarnessTests/HarnessTests.swift
+?? Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift

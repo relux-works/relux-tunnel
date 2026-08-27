@@ -74,6 +74,37 @@ records result and metric schema versions, source/dependency revisions, seed,
 redacted configuration, duration, platform, and metrics. `SIGINT` and `SIGTERM`
 cancel the active command and exit with codes 130 and 143 after cleanup.
 
+The macOS-only `mtu-matrix` subcommand runs a bounded, loopback-only physical
+baseline across MTU 1500/4096/8500, IPv4/IPv6/dual stack, and nominal,
+constrained-buffer, receiver-stall, and mixed bidirectional traffic. Its
+configuration requires a task-scoped output below `.temp/` (or `/tmp`) and
+limits each row to 64...2048 packets:
+
+```bash
+swift run ReluxTunnelHarness mtu-matrix --configuration .temp/TASK-ID/matrix-config.json
+```
+
+At the 64-packet floor, each half of a dual-stack receiver-stall row uses the
+same measured 4096-byte fault-injection ceiling as constrained-buffer traffic;
+larger receiver-stall samples request 32768 bytes. This keeps the lower bound a
+real bounded queue-pressure run instead of depending on whether 32 packets fit
+in the larger queue.
+
+Output containment is bound during configuration parsing by traversing from a
+filesystem-root descriptor with `O_DIRECTORY | O_NOFOLLOW`, retaining every
+directory descriptor through the atomic temporary-file write, and rejecting a
+later path traversal whose device/inode chain no longer matches. This covers
+root symlinks, output-parent replacement, and swaps of ancestors above `.temp`.
+
+The report records attempted/sent/received packets, sender refusals and receive
+queue drops separately, bytes, `logicalBatchGroups` derived as ceil(sent/32),
+p50/p95 latency, packet and byte rates, CPU, requested/effective buffers,
+syscall counts, maximum successful datagram, fragmentation observation, and
+production-owned descriptor recovery. Swift-task lifecycle is explicitly
+unavailable because the synchronous runner owns no tasks; process threads are
+not used as a proxy. The command never configures a VPN, route, DNS, interface,
+or NetworkExtension.
+
 ## Planning and execution
 
 Work is tracked on a file-based board in [`.task-board/`](.task-board/), driven
@@ -132,7 +163,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
 | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
 | Disposable macOS packet-tunnel probe | Generate, lint, test, archive, and fail-closed inspect the separate Gate P0 host/provider pair with approved development IDs, profiles, nesting, and entitlements. Dedicated host only: signing and this probe are prohibited on the build host; follow [`docs/build-host-safety.md`](docs/build-host-safety.md). | Dedicated-host-only command: `Probes/macOSPacketTunnelProbe/Scripts/build-and-inspect.sh` | Generated project under `Probes/macOSPacketTunnelProbe/`; signed archive, metadata, and logs under `.temp/TASK-260715-1r0fxv/` |
 | DNS policy evidence harness | Validate candidate `DNSRuntimePolicyV1` wire/accounting boundaries, 20 real default/hard timing mutations, fail-closed authority structure, and exact reliability event traces; run numeric-loopback IPv4/IPv6, maximum framing, failure/cancellation/tombstones, all M2 UDP/TCP triggers, resolver sentinel, footprint, and observed cleanup without public or physical resolver access. Candidate values remain blocked on exact SSH/memory task IDs and the later physical gate. | `python3 scripts/dns-policy-evidence.py --self-test-only`; `python3 scripts/dns-policy-evidence.py --emit-policy --output .research/fixtures/TASK-260721-3miqh4_dns-runtime-policy-v1.json`; `python3 scripts/dns-policy-evidence.py --verify-policy .research/fixtures/TASK-260721-3miqh4_dns-runtime-policy-v1.json`; `python3 scripts/dns-policy-evidence.py --warmup 5 --repeats 30 --output .research/raw/TASK-260721-3miqh4_measurements-run-01.json`; `python3 scripts/dns-policy-evidence.py --memory-trial hard --output .research/raw/TASK-260721-3miqh4_memory-hard-01.json` | `.research/raw/TASK-260721-3miqh4_*.json`; policy vectors under `.research/fixtures/`; scratch/tool checks under `.temp/TASK-260721-3miqh4/` and `.temp/BUG-260721-17f093/` |
-| SwiftPM | Build/test the shared core, provider adapters, and standalone macOS harness | `make validate-core`; `swift run ReluxTunnelHarness smoke --configuration ./smoke.json` | `.build/`; task-scoped logs under `.temp/` |
+| SwiftPM | Build/test the shared core, provider adapters, standalone macOS smoke, and bounded loopback MTU/socket-pressure matrix | `make validate-core`; `swift run ReluxTunnelHarness smoke --configuration ./smoke.json`; `swift run ReluxTunnelHarness mtu-matrix --configuration .temp/TASK-ID/matrix-config.json` | `.build/`; task-scoped reports and logs under `.temp/` |
 | Core boundary guard | Reject forbidden Core/harness imports and invalid adapter or harness dependency direction | `make check-core-boundaries` | Terminal pass/fail report |
 | Relay protocol schema/codegen, canonical vectors, conformance, and hostile-input diagnostics | Validate the canonical relay protocol v1 schema, deterministic Swift/Go bindings, production-code-independent vectors, shared hostile corpus, bounded decoder work/allocation/cleanup, and runtime diagnostics; the gates reject schema/vector/generated/semantic drift | `make relay-protocol-generate`; `make relay-protocol-vectors-generate`; `make relay-protocol-conformance-check`; `make relay-protocol-hostile-diagnostics`; `make relay-protocol-check`; `./scripts/tests/test-relay-protocol-go.sh -fuzz FuzzHostileInputDecoder -fuzztime 30s` | `Protocol/Relay/relay-v1.schema.json` (authority); `Protocol/Relay/Vectors/v1/corpus.json`; `Protocol/Relay/Fuzz/v1/regression-seeds.json`; generated bindings plus handwritten codecs/session tests; scratch under `.temp/relay-protocol-check/` and `.temp/TASK-*/` |
 | Relay portable toolchain and target-shell builder | Verify `relay/toolchain-manifest-v1.json`; offline-provision and whole-tree-verify checksum-pinned Go 1.26.5 plus Syft 1.48.0; run credential-isolated clean or incremental builds with no-follow, resolved-containment checks for each Darwin/Linux amd64/arm64 target; verify the exact four-asset layout, compiler/internal-linker and CPU metadata, format, linkage, stripped debug disposition, minimum runtime, explicit total bundle budget, exact missing/tampered-input failures, reproducibility, native unprivileged Ubuntu 24.04 amd64/arm64 smoke, SBOM, and licenses | `make relay-toolchain-check`; `make relay-provision-go RELAY_GO_ARCHIVE=.temp/relay-tools/<official-go-archive>`; `make relay-build-linux-amd64 RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUILD_CLEAN_FLAG=--require-clean` (replace target suffix for the other three); `make relay-portable-assets RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUNDLE_BUDGET_BYTES=<approved-total-bytes> RELAY_BUILD_CLEAN_FLAG=--require-clean`; `make relay-toolchain-ci ...`; `make relay-toolchain-native-linux-smoke ...`; `make relay-shell-validate ...` | Manifest in `relay/toolchain-manifest-v1.json`; exact target outputs under `.build/relay/portable/`; inspection report at `.build/relay/portable-assets-v1.json`; isolated work under `.build/relay/work/`; extracted licenses under `.build/relay/toolchain-licenses/`; release bundle/test/reproducibility outputs under `.build/relay/` |

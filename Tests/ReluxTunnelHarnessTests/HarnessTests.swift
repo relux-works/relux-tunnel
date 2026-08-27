@@ -1,10 +1,11 @@
+import Darwin
 import Foundation
 import ReluxTunnelCore
 import Testing
 
 @testable import ReluxTunnelHarnessSupport
 
-@Suite("ReluxTunnelHarness")
+@Suite("ReluxTunnelHarness", .serialized)
 struct HarnessTests {
   @Test("macOS harness registers the pinned libssh2 candidate capabilities")
   func libSSH2CandidateRegistration() {
@@ -295,6 +296,340 @@ struct HarnessTests {
     #expect(snapshot.faultOperations == [.makePacketEndpoint, .makeSSHTransport])
   }
 
+  @Test("MTU matrix configuration rejects output outside task temp at the production call site")
+  func matrixProductionPathRejectsUnsafeOutput() async throws {
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(
+        value: "/Users/Shared/mtu-matrix.json", privacy: .sensitive
+      )
+    ])
+    let context = HarnessCommandContext(
+      configuration: configuration,
+      dependencies: HarnessDefaults.dependencies(),
+      resources: HarnessResourceScope()
+    )
+
+    await #expect(throws: MTUMatrixError.unsafeOutputPath) {
+      try await MTUMatrixHarnessCommand().run(context: context)
+    }
+    #expect(!FileManager.default.fileExists(atPath: "/Users/Shared/mtu-matrix.json"))
+  }
+
+  @Test("MTU matrix production path rejects a task-temp symlink escape")
+  func matrixProductionPathRejectsSymlinkEscape() async throws {
+    let fileManager = FileManager.default
+    let taskTemp = URL(fileURLWithPath: fileManager.currentDirectoryPath)
+      .appendingPathComponent(".temp/TASK-260715-gyg51r-symlink-test", isDirectory: true)
+    let external = fileManager.temporaryDirectory
+      .appendingPathComponent("TASK-260715-gyg51r-external-\(UUID().uuidString)", isDirectory: true)
+    let link = taskTemp.appendingPathComponent("escape", isDirectory: true)
+    try fileManager.createDirectory(at: taskTemp, withIntermediateDirectories: true)
+    try fileManager.createDirectory(at: external, withIntermediateDirectories: true)
+    try fileManager.createSymbolicLink(at: link, withDestinationURL: external)
+    defer {
+      try? fileManager.removeItem(at: taskTemp)
+      try? fileManager.removeItem(at: external)
+    }
+    let escapedOutput = link.appendingPathComponent("matrix.json")
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(value: escapedOutput.path, privacy: .sensitive)
+    ])
+    let context = HarnessCommandContext(
+      configuration: configuration,
+      dependencies: HarnessDefaults.dependencies(),
+      resources: HarnessResourceScope()
+    )
+
+    await #expect(throws: MTUMatrixError.unsafeOutputPath) {
+      try await MTUMatrixHarnessCommand().run(context: context)
+    }
+    #expect(!fileManager.fileExists(atPath: external.appendingPathComponent("matrix.json").path))
+  }
+
+  @Test("MTU matrix production path rejects a project temp root symlink to system temp")
+  func matrixProductionPathRejectsProjectTempRootSymlink() async throws {
+    let fileManager = FileManager.default
+    let originalWorkingDirectory = fileManager.currentDirectoryPath
+    let project = fileManager.temporaryDirectory
+      .appendingPathComponent("TASK-260715-gyg51r-project-\(UUID().uuidString)", isDirectory: true)
+    let external = URL(fileURLWithPath: "/tmp", isDirectory: true)
+      .appendingPathComponent(
+        "TASK-260715-gyg51r-root-external-\(UUID().uuidString)", isDirectory: true
+      )
+    try fileManager.createDirectory(at: project, withIntermediateDirectories: true)
+    try fileManager.createDirectory(at: external, withIntermediateDirectories: true)
+    try fileManager.createSymbolicLink(
+      at: project.appendingPathComponent(".temp", isDirectory: true),
+      withDestinationURL: external
+    )
+    #expect(fileManager.changeCurrentDirectoryPath(project.path))
+    defer {
+      _ = fileManager.changeCurrentDirectoryPath(originalWorkingDirectory)
+      try? fileManager.removeItem(at: project)
+      try? fileManager.removeItem(at: external)
+    }
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(value: ".temp/matrix.json", privacy: .sensitive),
+      "packets_per_row": HarnessConfigurationValue(value: "64", privacy: .public),
+    ])
+
+    let response = try await makeApplication(commands: [MTUMatrixHarnessCommand()]).run(
+      arguments: try arguments(command: "mtu-matrix", configuration: configuration),
+      cancellationSource: StreamHarnessCancellationSource()
+    )
+
+    #expect(response.exitCode != .success)
+    #expect(!fileManager.fileExists(atPath: external.appendingPathComponent("matrix.json").path))
+  }
+
+  @Test("MTU matrix production path rejects a post-parse parent replacement")
+  func matrixProductionPathRejectsPostParseParentReplacement() async throws {
+    let fileManager = FileManager.default
+    let taskTemp = URL(fileURLWithPath: fileManager.currentDirectoryPath)
+      .appendingPathComponent(".temp/TASK-260715-gyg51r-swap-test", isDirectory: true)
+    let displaced = taskTemp.deletingLastPathComponent()
+      .appendingPathComponent("TASK-260715-gyg51r-swap-original", isDirectory: true)
+    let external = fileManager.temporaryDirectory
+      .appendingPathComponent(
+        "TASK-260715-gyg51r-swap-external-\(UUID().uuidString)", isDirectory: true
+      )
+    try fileManager.createDirectory(at: taskTemp, withIntermediateDirectories: true)
+    try fileManager.createDirectory(at: external, withIntermediateDirectories: true)
+    defer {
+      try? fileManager.removeItem(at: taskTemp)
+      try? fileManager.removeItem(at: displaced)
+      try? fileManager.removeItem(at: external)
+    }
+    let output = taskTemp.appendingPathComponent("matrix.json")
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(value: output.path, privacy: .sensitive),
+      "packets_per_row": HarnessConfigurationValue(value: "2048", privacy: .public),
+    ])
+    let application = try makeApplication(commands: [MTUMatrixHarnessCommand()])
+    let commandArguments = try arguments(command: "mtu-matrix", configuration: configuration)
+    let run = Task {
+      await application.run(
+        arguments: commandArguments,
+        cancellationSource: StreamHarnessCancellationSource()
+      )
+    }
+    try await Task.sleep(for: .milliseconds(20))
+    try fileManager.moveItem(at: taskTemp, to: displaced)
+    try fileManager.createSymbolicLink(at: taskTemp, withDestinationURL: external)
+
+    let response = await run.value
+
+    #expect(response.exitCode != .success)
+    #expect(!fileManager.fileExists(atPath: external.appendingPathComponent("matrix.json").path))
+  }
+
+  @Test("MTU matrix production path rejects a post-parse ancestor replacement")
+  func matrixProductionPathRejectsPostParseAncestorReplacement() async throws {
+    let fileManager = FileManager.default
+    let originalWorkingDirectory = fileManager.currentDirectoryPath
+    let testRoot = fileManager.temporaryDirectory
+      .appendingPathComponent(
+        "TASK-260715-gyg51r-ancestor-test-\(UUID().uuidString)", isDirectory: true
+      )
+    let ancestor = testRoot.appendingPathComponent("mutable-ancestor", isDirectory: true)
+    let project = ancestor.appendingPathComponent("project", isDirectory: true)
+    let external = fileManager.temporaryDirectory
+      .appendingPathComponent(
+        "TASK-260715-gyg51r-ancestor-external-\(UUID().uuidString)", isDirectory: true
+      )
+    let externalProjectTemp = external.appendingPathComponent("project/.temp", isDirectory: true)
+    try fileManager.createDirectory(
+      at: project.appendingPathComponent(".temp", isDirectory: true),
+      withIntermediateDirectories: true
+    )
+    try fileManager.createDirectory(at: externalProjectTemp, withIntermediateDirectories: true)
+    #expect(fileManager.changeCurrentDirectoryPath(project.path))
+    defer {
+      _ = fileManager.changeCurrentDirectoryPath(originalWorkingDirectory)
+      try? fileManager.removeItem(at: testRoot)
+      try? fileManager.removeItem(at: external)
+    }
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(value: ".temp/matrix.json", privacy: .sensitive),
+      "packets_per_row": HarnessConfigurationValue(value: "64", privacy: .public),
+    ])
+    let command = MTUMatrixHarnessCommand(afterConfigurationParsed: {
+      let swapResult = Darwin.renameatx_np(
+        AT_FDCWD, ancestor.path, AT_FDCWD, external.path, UInt32(RENAME_SWAP)
+      )
+      precondition(swapResult == 0, "renameatx_np swap failed with errno \(errno)")
+    })
+    let application = try makeApplication(commands: [command])
+    let commandArguments = try arguments(command: "mtu-matrix", configuration: configuration)
+    let response = await application.run(
+      arguments: commandArguments,
+      cancellationSource: StreamHarnessCancellationSource()
+    )
+
+    #expect(response.exitCode != .success)
+    #expect(response.standardError.contains(MTUMatrixError.unsafeOutputPath.description))
+    let swappedExternalOutput = ancestor.appendingPathComponent("project/.temp/matrix.json")
+    #expect(!fileManager.fileExists(atPath: swappedExternalOutput.path))
+  }
+
+  @Test("MTU matrix production path supports the advertised 64-packet lower bound")
+  func matrixProductionPathSupportsMinimumPacketCount() async throws {
+    let output = URL(fileURLWithPath: "/tmp/TASK-260715-gyg51r-minimum-\(UUID().uuidString).json")
+    defer { try? FileManager.default.removeItem(at: output) }
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(value: output.path, privacy: .sensitive),
+      "packets_per_row": HarnessConfigurationValue(value: "64", privacy: .public),
+    ])
+
+    let response = try await makeApplication(commands: [MTUMatrixHarnessCommand()]).run(
+      arguments: try arguments(command: "mtu-matrix", configuration: configuration),
+      cancellationSource: StreamHarnessCancellationSource()
+    )
+
+    #expect(response.exitCode == .success, Comment(rawValue: response.standardError))
+    let report = try JSONDecoder().decode(MTUMatrixReport.self, from: Data(contentsOf: output))
+    #expect(report.rows.count == 36)
+    #expect(report.rows.allSatisfy { $0.packetsAttempted == 64 })
+  }
+
+  @Test("MTU matrix packet ceiling fails closed instead of widening the bounded run")
+  func matrixPacketCeiling() throws {
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(value: "/tmp/matrix.json", privacy: .sensitive),
+      "packets_per_row": HarnessConfigurationValue(value: "2049", privacy: .public),
+    ])
+    #expect(throws: MTUMatrixError.invalidPacketCount) {
+      try MTUMatrixRunConfiguration.parse(configuration)
+    }
+  }
+
+  @Test("MTU matrix analysis rejects unexplained nominal loss")
+  func matrixRejectsNominalLoss() {
+    let row = makeMatrixRow(pressure: .nominal, drops: 1)
+    #expect(throws: MTUMatrixError.nominalLoss(row: row.id, count: 1)) {
+      try MTUMatrixAnalysis.validate([row])
+    }
+  }
+
+  @Test("MTU matrix analysis rejects pressure rows that do not induce a drop")
+  func matrixRejectsMissingPressureEffect() {
+    let row = makeMatrixRow(pressure: .constrainedBuffer, drops: 0)
+    #expect(throws: MTUMatrixError.pressureDidNotDrop(row: row.id)) {
+      try MTUMatrixAnalysis.validate([row])
+    }
+  }
+
+  @Test("MTU matrix analysis rejects total pressure loss")
+  func matrixRejectsTotalPressureLoss() {
+    let row = makeMatrixRow(pressure: .constrainedBuffer, drops: 2)
+    #expect(throws: MTUMatrixError.unboundedPressureLoss(row: row.id)) {
+      try MTUMatrixAnalysis.validate([row])
+    }
+  }
+
+  @Test("MTU matrix analysis rejects inconsistent pressure accounting")
+  func matrixRejectsInconsistentPressureAccounting() {
+    let row = makeMatrixRow(pressure: .receiverStall, drops: 1, receiveQueueDrops: 0)
+    #expect(throws: MTUMatrixError.invalidDropAccounting(row: row.id)) {
+      try MTUMatrixAnalysis.validate([row])
+    }
+  }
+
+  @Test("MTU matrix analysis rejects an incorrect reason")
+  func matrixRejectsIncorrectDropReason() {
+    let row = makeMatrixRow(
+      pressure: .constrainedBuffer,
+      drops: 1,
+      dropReason: "sender_socket_refusal"
+    )
+    #expect(throws: MTUMatrixError.invalidDropReason(row: row.id)) {
+      try MTUMatrixAnalysis.validate([row])
+    }
+  }
+
+  @Test("MTU matrix analysis rejects a missing pressure reason")
+  func matrixRejectsMissingDropReason() {
+    let row = makeMatrixRow(pressure: .receiverStall, drops: 1, dropReason: nil)
+    #expect(throws: MTUMatrixError.invalidDropReason(row: row.id)) {
+      try MTUMatrixAnalysis.validate([row])
+    }
+  }
+
+  @Test("MTU matrix analysis rejects failed lifecycle recovery")
+  func matrixRejectsFailedRecovery() {
+    let row = makeMatrixRow(pressure: .receiverStall, drops: 1, recovery: false)
+    #expect(throws: MTUMatrixError.recoveryFailed(row: row.id)) {
+      try MTUMatrixAnalysis.validate([row])
+    }
+  }
+
+  @Test("bounded loopback MTU matrix emits all physical Mac rows and named gaps")
+  func matrixEndToEnd() async throws {
+    let output = URL(fileURLWithPath: "/tmp/TASK-260715-gyg51r-test-\(UUID().uuidString).json")
+    defer { try? FileManager.default.removeItem(at: output) }
+    let configuration = makeConfiguration(parameters: [
+      "output_path": HarnessConfigurationValue(value: output.path, privacy: .sensitive),
+      "packets_per_row": HarnessConfigurationValue(value: "128", privacy: .public),
+    ])
+    let application = try makeApplication(commands: [MTUMatrixHarnessCommand()])
+
+    let response = await application.run(
+      arguments: try arguments(command: "mtu-matrix", configuration: configuration),
+      cancellationSource: StreamHarnessCancellationSource()
+    )
+
+    #expect(response.exitCode == .success)
+    #expect(response.standardError.isEmpty)
+    let report = try JSONDecoder().decode(
+      MTUMatrixReport.self, from: Data(contentsOf: output)
+    )
+    #expect(report.rows.count == 36)
+    #expect(Set(report.rows.map(\.mtu)) == [1_500, 4_096, 8_500])
+    #expect(Set(report.rows.map(\.family)) == Set(MTUMatrixFamily.allCases))
+    #expect(Set(report.rows.map(\.pressure)) == Set(MTUMatrixPressure.allCases))
+    #expect(
+      report.rows.filter { $0.pressure == .nominal || $0.pressure == .mixed }.allSatisfy {
+        $0.drops == 0
+      })
+    #expect(
+      report.rows.filter { $0.pressure == .constrainedBuffer || $0.pressure == .receiverStall }
+        .allSatisfy { $0.drops > 0 })
+    #expect(report.rows.allSatisfy { $0.recoveryProbeSucceeded })
+    #expect(report.rows.allSatisfy { $0.ownedDescriptorDelta == 0 && $0.taskDelta == nil })
+    #expect(report.rows.allSatisfy { $0.descriptorLifecycleMethod.contains("Darwin.close") })
+    #expect(report.rows.allSatisfy { $0.taskLifecycleAvailability.hasPrefix("unavailable:") })
+    #expect(report.rows.allSatisfy { $0.logicalBatchGroups == ($0.packetsSent + 31) / 32 })
+    #expect(report.gaps.contains { $0.row == "NAT64" && $0.status == "unavailable" })
+    #expect(
+      report.gaps.contains {
+        $0.row == "iPhone physical matrix" && $0.status == "deferred-unavailable"
+      })
+  }
+
+  @Test("repeated MTU matrix runs have no monotonic descriptor or task growth")
+  func repeatedMatrixResourceLifecycle() async throws {
+    for iteration in 0..<3 {
+      let output = URL(
+        fileURLWithPath: "/tmp/TASK-260715-gyg51r-lifecycle-\(UUID().uuidString).json"
+      )
+      defer { try? FileManager.default.removeItem(at: output) }
+      let configuration = makeConfiguration(parameters: [
+        "output_path": HarnessConfigurationValue(value: output.path, privacy: .sensitive),
+        "packets_per_row": HarnessConfigurationValue(value: "128", privacy: .public),
+      ])
+      let response = try await makeApplication(commands: [MTUMatrixHarnessCommand()]).run(
+        arguments: try arguments(command: "mtu-matrix", configuration: configuration),
+        cancellationSource: StreamHarnessCancellationSource()
+      )
+      #expect(response.exitCode == .success, "iteration \(iteration)")
+      let report = try JSONDecoder().decode(
+        MTUMatrixReport.self, from: Data(contentsOf: output)
+      )
+      #expect(report.rows.allSatisfy { $0.ownedDescriptorDelta == 0 }, "iteration \(iteration)")
+      #expect(report.rows.allSatisfy { $0.taskDelta == nil }, "iteration \(iteration)")
+    }
+  }
+
   private func runSmoke(configuration: HarnessConfigurationDocument) async
     -> HarnessApplicationResponse
   {
@@ -344,7 +679,8 @@ struct HarnessTests {
 }
 
 private func makeConfiguration(
-  schemaVersion: UInt16 = HarnessConfigurationSchema.currentVersion
+  schemaVersion: UInt16 = HarnessConfigurationSchema.currentVersion,
+  parameters: [String: HarnessConfigurationValue]? = nil
 ) -> HarnessConfigurationDocument {
   HarnessConfigurationDocument(
     schemaVersion: schemaVersion,
@@ -355,10 +691,62 @@ private func makeConfiguration(
       value: "11111111-1111-1111-1111-111111111111",
       privacy: .sensitive
     ),
-    parameters: [
+    parameters: parameters ?? [
       "destination": HarnessConfigurationValue(value: "example.test", privacy: .sensitive),
       "mode": HarnessConfigurationValue(value: "noop", privacy: .public),
     ]
+  )
+}
+
+private func makeMatrixRow(
+  pressure: MTUMatrixPressure,
+  drops: Int,
+  recovery: Bool = true,
+  receiveQueueDrops: Int? = nil,
+  dropReason: String? = "__automatic__"
+) -> MTUMatrixRow {
+  let queueDrops = receiveQueueDrops ?? drops
+  let resolvedDropReason =
+    dropReason == "__automatic__"
+    ? (drops == 0 ? nil : "socket_receive_queue_overflow") : dropReason
+  return MTUMatrixRow(
+    id: "test-row",
+    family: .ipv4,
+    mtu: 1_500,
+    pressure: pressure,
+    trafficGenerator: "test",
+    durationNanoseconds: 1,
+    requestedSendBufferBytes: 4_096,
+    effectiveSendBufferBytes: 4_096,
+    requestedReceiveBufferBytes: 4_096,
+    effectiveReceiveBufferBytes: 4_096,
+    packetsAttempted: 2,
+    packetsSent: 2,
+    packetsReceived: 2 - drops,
+    bytesSent: 128,
+    bytesReceived: drops == 0 ? 128 : 64,
+    logicalBatchGroups: 1,
+    drops: drops,
+    sendFailures: 0,
+    receiveQueueDrops: queueDrops,
+    sendFailureErrnos: [:],
+    dropReason: resolvedDropReason,
+    latencyP50Nanoseconds: 1,
+    latencyP95Nanoseconds: 1,
+    packetsPerSecond: 1,
+    throughputBitsPerSecond: 1,
+    cpuUserNanoseconds: 1,
+    cpuSystemNanoseconds: 1,
+    sendSyscalls: 2,
+    receiveSyscalls: 2,
+    fragmentationObservation: "test",
+    configuredMaximumDatagramBytes: 1_472,
+    maximumDatagramBytes: 1_472,
+    recoveryProbeSucceeded: recovery,
+    ownedDescriptorDelta: 0,
+    descriptorLifecycleMethod: "test fixture",
+    taskDelta: nil,
+    taskLifecycleAvailability: "unavailable: test fixture"
   )
 }
 

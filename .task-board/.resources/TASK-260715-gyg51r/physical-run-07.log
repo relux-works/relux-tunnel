@@ -1,0 +1,7 @@
+Command: swift run ReluxTunnelHarness mtu-matrix --configuration .temp/TASK-260715-gyg51r/matrix-physical-config.json
+Exit code: 0
+Result: 36 bounded loopback rows; rows=36, packets sent=17664, drops=8770, command duration=728225000ns. No NetworkExtension, VPN, route, DNS, interface, packet-filter, SSH, Internet, sudo, or global-pressure operation was used.
+
+Analysis exit code: 0
+Result: 36 unique rows; nominal+mixed drops=0; pressure received=446/9216; sender refusals=768; queue drops=8002; accounting/reason/owned-descriptor/task-honesty/logical-batch violations all 0.
+Raw SHA-256: 106df5bde60fc54cb2cce345c8fa1158339adec0faaa0280b783a2d387bad116

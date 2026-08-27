@@ -1,0 +1,56 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version-45881B103DA9D485.txt
+[2/31] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[3/31] Compiling ReluxTunnelCore RelayAssetManifest+Generated.swift
+[4/32] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[5/32] Compiling ReluxTunnelCore RelayHandshake.swift
+[6/32] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[7/32] Compiling ReluxTunnelCore RelayAssetManifest.swift
+[8/32] Compiling ReluxTunnelCore ClientUDPAssociationRegistry.swift
+[9/32] Compiling ReluxTunnelCore ComponentContracts.swift
+[10/32] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[11/32] Compiling ReluxTunnelCore PacketContracts.swift
+[12/32] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[13/32] Compiling ReluxTunnelCore SSHProfileSnapshot.swift
+[14/32] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[15/32] Compiling ReluxTunnelCore RelayByteCodec.swift
+[16/32] Emitting module ReluxTunnelCore
+[17/32] Compiling ReluxTunnelCore TCPAdmissionRegistry.swift
+[18/32] Compiling ReluxTunnelCore SSHBootstrapDiagnostics.swift
+[19/32] Compiling ReluxTunnelCore SSHContracts.swift
+[20/32] Compiling ReluxTunnelCore VPNManagerRepository.swift
+[21/32] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[22/32] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[23/32] Compiling ReluxTunnelCore RelaySession.swift
+[24/32] Compiling ReluxTunnelCore RuntimeContracts.swift
+[25/32] Compiling ReluxTunnelCore ApprovedHostIdentityPolicy.swift
+[26/32] Compiling ReluxTunnelCore BoundedFullDuplexBytePump.swift
+[27/32] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[28/32] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[29/32] Compiling ReluxTunnelCore VPNSessionController.swift
+[30/42] Compiling ReluxTunnelNativeAdapter HEVUDPDatagramAdapter.swift
+[31/42] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[32/42] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[33/42] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[34/42] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[35/42] Emitting module ReluxTunnelNativeAdapter
+[36/42] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Transport.swift
+[37/42] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Channels.swift
+[38/42] Emitting module ReluxTunnelLibSSH2Adapter
+[39/42] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Bridge.swift
+[40/49] Compiling ReluxTunnelHarnessSupport MTUMatrixCommand.swift
+[41/49] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[42/49] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[43/49] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[44/49] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[45/49] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[46/49] Emitting module ReluxTunnelHarnessSupport
+[47/51] Emitting module ReluxTunnelHarness
+[48/51] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[48/51] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[49/51] Linking ReluxTunnelHarness
+[50/51] Applying ReluxTunnelHarness
+Build of product 'ReluxTunnelHarness' complete! (6.08s)
+{"command":"mtu-matrix","configuration":{"parameters":{"output_path":"<redacted>","packets_per_row":"512"},"profileReference":"<redacted>"},"dependencyRevisions":{"hev-socks5-tunnel":"ad7600497931205105b08367bd1b450048157e40","libssh2":"a34302491c164d53c900fec9b3cbb050ecebe719","openssl":"openssl-3.5.7"},"durationNanoseconds":691110958,"metrics":{"counters":{"harness.mtu_matrix.packets_dropped":8814,"harness.mtu_matrix.packets_sent":17664,"harness.mtu_matrix.rows":36},"gauges":{},"schemaVersion":1},"platform":{"architecture":"arm64","operatingSystem":"macOS","operatingSystemVersion":"Version 26.5 (Build 25F71)"},"schemaVersion":1,"seed":260715,"sourceRevision":"a3a3352697686154fa69cc7c12d5eff9bec9d15c+working-tree-mtu-matrix-review-rerun","status":"succeeded"}

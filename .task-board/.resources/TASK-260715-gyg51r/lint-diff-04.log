@@ -1,0 +1,9 @@
+Command: swift format lint Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift Tests/ReluxTunnelHarnessTests/HarnessTests.swift
+Exit code: 0
+Result: no diagnostics.
+
+Command: git diff --check
+Exit code: 0
+Result: no whitespace errors.
+
+Safety scan: only numeric IPv4 127.0.0.1 and Darwin in6addr_loopback socket bindings are present. No NetworkExtension/VPN/system routing/DNS/interface/filter/SSH operation exists in the matrix implementation.

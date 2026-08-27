@@ -1,0 +1,7 @@
+Command: swift test --enable-code-coverage --filter ReluxTunnelHarnessTests
+Exit code: 0
+Result: 25 tests in 1 suite passed.
+
+Command: xcrun llvm-cov report ... Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift
+Exit code: 0
+Result: 87.10% regions, 88.17% functions, 96.13% lines.

@@ -1,0 +1,40 @@
+{
+  "filename": "/Users/iv/Developer/relux-tunnel/.temp/STORY-260716-2m2tl1/worktree/Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift",
+  "summary": {
+    "branches": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "functions": {
+      "count": 114,
+      "covered": 103,
+      "percent": 90.350877192982466
+    },
+    "instantiations": {
+      "count": 114,
+      "covered": 103,
+      "percent": 90.350877192982466
+    },
+    "lines": {
+      "count": 921,
+      "covered": 884,
+      "percent": 95.982627578718777
+    },
+    "mcdc": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "regions": {
+      "count": 395,
+      "covered": 340,
+      "notcovered": 55,
+      "percent": 86.075949367088612
+    }
+  }
+}
+true
+coverage_gate_exit=0

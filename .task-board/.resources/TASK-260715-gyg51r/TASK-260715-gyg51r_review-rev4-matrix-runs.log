@@ -1,0 +1,100 @@
+RUN=fresh-matrix-config
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version-45881B103DA9D485.txt
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[1/3] Linking ReluxTunnelHarness
+[2/3] Applying ReluxTunnelHarness
+Build of product 'ReluxTunnelHarness' complete! (0.77s)
+{"command":"mtu-matrix","configuration":{"parameters":{"output_path":"<redacted>","packets_per_row":"512"},"profileReference":"<redacted>"},"dependencyRevisions":{"baseOID":"a3a3352697686154fa69cc7c12d5eff9bec9d15c","candidateTree":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d"},"durationNanoseconds":749274917,"metrics":{"counters":{"harness.mtu_matrix.packets_dropped":8814,"harness.mtu_matrix.packets_sent":17664,"harness.mtu_matrix.rows":36},"gauges":{},"schemaVersion":1},"platform":{"architecture":"arm64","operatingSystem":"macOS","operatingSystemVersion":"Version 26.5 (Build 25F71)"},"schemaVersion":1,"seed":2608272001,"sourceRevision":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d","status":"succeeded"}
+        3.04 real         0.27 user         0.19 sys
+            13320192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                7353  page reclaims
+                 477  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+               18480  messages sent
+                9666  messages received
+                   0  signals received
+                   5  voluntary context switches
+                1130  involuntary context switches
+          4812743579  instructions retired
+          1674925090  cycles elapsed
+             4784656  peak memory footprint
+EXIT_CODE=0
+RUN=floor-1-config
+Building for debugging...
+[0/3] Write swift-version-45881B103DA9D485.txt
+Build of product 'ReluxTunnelHarness' complete! (0.11s)
+{"command":"mtu-matrix","configuration":{"parameters":{"output_path":"<redacted>","packets_per_row":"64"},"profileReference":"<redacted>"},"dependencyRevisions":{"candidateTree":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d"},"durationNanoseconds":569498625,"metrics":{"counters":{"harness.mtu_matrix.packets_dropped":855,"harness.mtu_matrix.packets_sent":2176,"harness.mtu_matrix.rows":36},"gauges":{},"schemaVersion":1},"platform":{"architecture":"arm64","operatingSystem":"macOS","operatingSystemVersion":"Version 26.5 (Build 25F71)"},"schemaVersion":1,"seed":2608272064,"sourceRevision":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d","status":"succeeded"}
+        1.18 real         0.13 user         0.07 sys
+            13189120  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                7401  page reclaims
+                 259  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                2352  messages sent
+                1497  messages received
+                   0  signals received
+                   2  voluntary context switches
+                 673  involuntary context switches
+          2154816288  instructions retired
+           773766664  cycles elapsed
+             4669992  peak memory footprint
+EXIT_CODE=0
+RUN=floor-2-config
+Building for debugging...
+[0/3] Write swift-version-45881B103DA9D485.txt
+Build of product 'ReluxTunnelHarness' complete! (0.12s)
+{"command":"mtu-matrix","configuration":{"parameters":{"output_path":"<redacted>","packets_per_row":"64"},"profileReference":"<redacted>"},"dependencyRevisions":{"candidateTree":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d"},"durationNanoseconds":567240166,"metrics":{"counters":{"harness.mtu_matrix.packets_dropped":842,"harness.mtu_matrix.packets_sent":2176,"harness.mtu_matrix.rows":36},"gauges":{},"schemaVersion":1},"platform":{"architecture":"arm64","operatingSystem":"macOS","operatingSystemVersion":"Version 26.5 (Build 25F71)"},"schemaVersion":1,"seed":2608272065,"sourceRevision":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d","status":"succeeded"}
+        1.10 real         0.13 user         0.07 sys
+            13074432  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                7393  page reclaims
+                 250  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                2352  messages sent
+                1510  messages received
+                   0  signals received
+                   3  voluntary context switches
+                 603  involuntary context switches
+          2141865997  instructions retired
+           743940518  cycles elapsed
+             4555304  peak memory footprint
+EXIT_CODE=0
+RUN=floor-3-config
+Building for debugging...
+[0/3] Write swift-version-45881B103DA9D485.txt
+Build of product 'ReluxTunnelHarness' complete! (0.12s)
+{"command":"mtu-matrix","configuration":{"parameters":{"output_path":"<redacted>","packets_per_row":"64"},"profileReference":"<redacted>"},"dependencyRevisions":{"candidateTree":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d"},"durationNanoseconds":568233250,"metrics":{"counters":{"harness.mtu_matrix.packets_dropped":855,"harness.mtu_matrix.packets_sent":2176,"harness.mtu_matrix.rows":36},"gauges":{},"schemaVersion":1},"platform":{"architecture":"arm64","operatingSystem":"macOS","operatingSystemVersion":"Version 26.5 (Build 25F71)"},"schemaVersion":1,"seed":2608272066,"sourceRevision":"82c5b2ce942d3d676a035c559ab80d54aa7ea05d","status":"succeeded"}
+        1.11 real         0.13 user         0.07 sys
+            13123584  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                7163  page reclaims
+                 461  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                2352  messages sent
+                1497  messages received
+                   0  signals received
+                   2  voluntary context switches
+                 600  involuntary context switches
+          2170619652  instructions retired
+           764592409  cycles elapsed
+             4588048  peak memory footprint
+EXIT_CODE=0

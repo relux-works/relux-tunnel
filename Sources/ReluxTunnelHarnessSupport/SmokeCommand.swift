@@ -61,6 +61,6 @@ public enum HarnessDefaults {
 
   public static func registry() -> HarnessCommandRegistry {
     // The built-in list is explicit so command names stay reviewable and stable.
-    try! HarnessCommandRegistry(commands: [SmokeHarnessCommand()])
+    try! HarnessCommandRegistry(commands: [SmokeHarnessCommand(), MTUMatrixHarnessCommand()])
   }
 }

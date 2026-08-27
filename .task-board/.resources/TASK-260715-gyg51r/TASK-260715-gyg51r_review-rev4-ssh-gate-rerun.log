@@ -1,0 +1,65 @@
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.19s)
+Test Suite 'Selected tests' started at 2026-08-27 05:47:20.644.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 05:47:20.651.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 05:47:20.651.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 05:47:20.651.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "libssh2 adapter loopback conformance" started.
+􀟈  Suite "Tier-1 candidate-neutral SSH transport conformance" started.
+􀟈  Test "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → appleIntegrationAndInjection to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → approvedAlgorithmsAndHostBeforeAuthentication to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → directExecUploadAndChannelIsolation to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → boundedBuffersBackpressureAndWindows to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → clientAndServerRekey to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → keepaliveSchedulingAndFailure to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → lifecycleResourceBaselines to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → privacySafeErrors to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → libSSH2Adapter, gate → mandatoryMetrics to "every M0 viability gate" started.
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → appleIntegrationAndInjection to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → appleIntegrationAndInjection at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  appleIntegrationAndInjection cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → approvedAlgorithmsAndHostBeforeAuthentication to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → approvedAlgorithmsAndHostBeforeAuthentication at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  approvedAlgorithmsAndHostBeforeAuthentication cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → directExecUploadAndChannelIsolation to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → directExecUploadAndChannelIsolation at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  directExecUploadAndChannelIsolation cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → boundedBuffersBackpressureAndWindows to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → boundedBuffersBackpressureAndWindows at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  boundedBuffersBackpressureAndWindows cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → clientAndServerRekey to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → clientAndServerRekey at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  clientAndServerRekey cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → keepaliveSchedulingAndFailure to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → keepaliveSchedulingAndFailure at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  keepaliveSchedulingAndFailure cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → lifecycleResourceBaselines to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → lifecycleResourceBaselines at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  lifecycleResourceBaselines cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → privacySafeErrors to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → privacySafeErrors at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  privacySafeErrors cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀟈  Test case passing 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → mandatoryMetrics to "every M0 viability gate" started.
+􀢂  Test "every M0 viability gate" recorded a known issue with 2 arguments candidate → reluxNIOSSHAdapterUnavailable, gate → mandatoryMetrics at SSHTransportConformanceTests.swift:58:21: Issue recorded
+􀄵  mandatoryMetrics cannot run: production ReluxNIOSSHAdapter is absent; adapter delivery is owned outside this test task
+􀄵  ReluxNIOSSH has no SSHTransport adapter target; candidate remains red without emulation
+􀢂  Test "every M0 viability gate" with 18 test cases passed after 30.734 seconds with 9 known issues.
+􀢂  Suite "Tier-1 candidate-neutral SSH transport conformance" passed after 30.734 seconds with 9 known issues.
+􀢂  Suite "libssh2 adapter loopback conformance" passed after 30.734 seconds with 9 known issues.
+􀢂  Test run with 1 test in 2 suites passed after 30.735 seconds with 9 known issues.
+EXIT_CODE=0
