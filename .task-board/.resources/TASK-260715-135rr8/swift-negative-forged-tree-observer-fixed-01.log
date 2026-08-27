@@ -1,0 +1,155 @@
+[0/1] Planning build
+Building for debugging...
+[0/9] Write swift-version-45881B103DA9D485.txt
+[2/44] Emitting module ReluxLibSSH2PackagingTests
+[3/44] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[4/44] Compiling ReluxAppleUITestShared ReluxUITest.swift
+[5/44] Compiling ReluxAppleUITestShared ReluxUITestFixture.swift
+[6/44] Emitting module ReluxAppleUITestShared
+[7/44] Compiling ReluxAppleUITestShared ReluxUITestLaunchConfiguration.swift
+[8/46] Emitting module ReluxSnapshotDiffSupport
+[9/46] Compiling ReluxSnapshotDiffSupport SnapshotDiff.swift
+[10/50] Compiling ReluxSnapshotDiff main.swift
+[11/50] Emitting module ReluxSnapshotDiff
+[11/50] Write Objects.LinkFileList
+[13/50] Emitting module ReluxAppleUITestSharedTests
+[14/50] Compiling ReluxAppleUITestSharedTests ReluxAppleUITestSharedTests.swift
+[15/50] Emitting module ReluxSnapshotDiffSupportTests
+[16/50] Compiling ReluxSnapshotDiffSupportTests SnapshotDiffSupportTests.swift
+[17/50] Compiling ReluxTunnelCore TCPAdmissionRegistry.swift
+[18/50] Compiling ReluxTunnelCore PacketContracts.swift
+[19/50] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[20/50] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[21/50] Compiling ReluxTunnelCore RelayAssetManifest+Generated.swift
+[21/51] Linking relux-snapshot-diff
+[22/51] Applying relux-snapshot-diff
+[24/51] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[25/51] Compiling ReluxTunnelCore RelayHandshake.swift
+[26/51] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[27/51] Compiling ReluxTunnelCore RelayByteCodec.swift
+[28/51] Compiling ReluxTunnelCore VPNManagerRepository.swift
+[29/51] Compiling ReluxTunnelCore RelaySession.swift
+[30/51] Compiling ReluxTunnelCore RuntimeContracts.swift
+[31/51] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[32/51] Compiling ReluxTunnelCore ComponentContracts.swift
+[33/51] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[34/51] Compiling ReluxTunnelCore SSHProfileSnapshot.swift
+[35/51] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[36/51] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[37/51] Compiling ReluxTunnelCore SSHBootstrapDiagnostics.swift
+[38/51] Compiling ReluxTunnelCore SSHContracts.swift
+[39/51] Compiling ReluxTunnelCore RelayAssetManifest.swift
+[40/51] Compiling ReluxTunnelCore ClientUDPAssociationRegistry.swift
+[41/51] Compiling ReluxTunnelCore ApprovedHostIdentityPolicy.swift
+[42/51] Compiling ReluxTunnelCore BoundedFullDuplexBytePump.swift
+[43/51] Emitting module ReluxTunnelCore
+[44/51] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[45/51] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[46/51] Compiling ReluxTunnelCore VPNSessionController.swift
+[47/61] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[48/61] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[49/61] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[50/61] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[51/61] Emitting module ReluxTunnelNativeAdapter
+[52/61] Compiling ReluxTunnelNativeAdapter HEVUDPDatagramAdapter.swift
+[53/65] Compiling ReluxTunnelIOSAdapter IOSVPNManagerPreferences.swift
+[54/65] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[55/65] Emitting module ReluxTunnelIOSAdapter
+[56/65] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[57/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Bridge.swift
+[58/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Transport.swift
+[59/65] Emitting module ReluxTunnelLibSSH2Adapter
+[60/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Channels.swift
+[61/83] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[62/83] Emitting module ReluxTunnelLibSSH2AdapterTests
+[63/83] Emitting module ReluxTunnelMacOSAdapter
+[64/83] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[65/83] Compiling ReluxTunnelMacOSAdapter MacOSVPNManagerPreferences.swift
+[66/83] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[67/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHProfileSnapshotLoader.swift
+[68/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHBootstrapErrorMapper.swift
+[69/83] Compiling ReluxTunnelMacOSAdapter MacOSSystemKeychainCredentialResolver.swift
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260716-2m2tl1/worktree/Sources/ReluxTunnelMacOSAdapter/MacOSSystemKeychainCredentialResolver.swift:317:18: warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+315 |   private static func resolveSystemDomain() -> MacOSSystemKeychainResolution {
+316 |     var keychain: SecKeychain?
+317 |     let status = SecKeychainCopyDomainDefault(.system, &keychain)
+    |                  `- warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+318 |     return MacOSSystemKeychainResolution(
+319 |       status: status,
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[70/83] Compiling ReluxTunnelLibSSH2AdapterTests SSHTransportConformanceTests.swift
+[71/119] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[72/119] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[73/119] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[74/119] Emitting module ReluxTunnelHarnessSupport
+[75/119] Compiling ReluxTunnelHarnessSupport MTUMatrixCommand.swift
+[76/119] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[77/123] Emitting module ReluxTunnelHarness
+[78/123] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[78/123] Write Objects.LinkFileList
+[80/123] Emitting module ReluxTunnelHarnessTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[80/123] Linking ReluxTunnelHarness
+[81/123] Applying ReluxTunnelHarness
+[83/123] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[84/123] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[85/123] Compiling ReluxTunnelCoreTests RelayAssetManifestTests.swift
+[86/124] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[87/124] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[88/124] Compiling ReluxTunnelNativeAdapterTests HEVUDPDatagramAdapterTests.swift
+[89/124] Emitting module ReluxTunnelCoreTests
+[90/124] Compiling ReluxTunnelCoreTests ClientUDPAssociationRegistryTests.swift
+[91/124] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[92/124] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[93/124] Emitting module ReluxTunnelNativeAdapterTests
+[94/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[95/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[96/124] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[97/124] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[98/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[99/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[100/124] Compiling ReluxTunnelCoreTests SSHProfileSnapshotLoaderTests.swift
+[101/124] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[102/124] Compiling ReluxTunnelCoreTests VPNSessionControllerTests.swift
+[103/124] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[104/124] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[105/124] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[106/124] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[107/124] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[108/124] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[109/124] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[110/124] Compiling ReluxTunnelCoreTests SSHBootstrapErrorMappingTests.swift
+[111/124] Compiling ReluxTunnelCoreTests ApprovedHostIdentityPolicyTests.swift
+[112/124] Compiling ReluxTunnelCoreTests BoundedFullDuplexBytePumpTests.swift
+[113/124] Compiling ReluxTunnelCoreTests MacOSSystemKeychainCredentialResolverTests.swift
+[114/124] Compiling ReluxTunnelCoreTests OwnedVPNManagerRepositoryTests.swift
+[115/124] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[116/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[117/124] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[118/124] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[119/124] Compiling ReluxTunnelCoreTests TCPAdmissionRegistryTests.swift
+[120/124] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[121/124] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2AdapterIntegrationTests.swift
+[122/124] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2BridgeTests.swift
+[123/126] Compiling ReluxTunnelPackageTests runner.swift
+[124/126] Emitting module ReluxTunnelPackageTests
+[124/126] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[125/126] Linking ReluxTunnelPackageTests
+Build complete! (12.45s)
+Test Suite 'Selected tests' started at 2026-08-27 07:57:29.650.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 07:57:29.657.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 07:57:29.657.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 07:57:29.657.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" started.
+􀢄  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" recorded an issue at HEVBridgeIntegrationTests.swift:287:4: Caught error: .mismatch("RELUX_CANDIDATE_TREE_OID does not match the independently resolved working tree")
+􀢄  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" failed after 1.363 seconds with 1 issue.
+􀢄  Suite "Pinned HEV integration" failed after 1.363 seconds with 1 issue.
+􀢄  Test run with 1 test in 1 suite failed after 1.363 seconds with 1 issue.

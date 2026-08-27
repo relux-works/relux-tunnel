@@ -1,0 +1,15 @@
+[0/1] Planning build
+Test Suite 'Selected tests' started at 2026-08-27 06:18:09.291.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 06:18:09.299.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 06:18:09.299.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 06:18:09.299.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.008) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" started.
+􁁛  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" passed after 3.932 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 3.932 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 3.932 seconds.

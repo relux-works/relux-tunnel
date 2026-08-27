@@ -1,0 +1,133 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write swift-version-45881B103DA9D485.txt
+[2/7] Emitting module ReluxTunnelHarnessTests
+[3/7] Emitting module ReluxTunnelNativeAdapterTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[3/7] Linking ReluxTunnelHarness
+[4/7] Applying ReluxTunnelHarness
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[5/6] Linking ReluxTunnelPackageTests
+Build complete! (1.59s)
+Test Suite 'Selected tests' started at 2026-08-27 07:58:00.163.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 07:58:00.170.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 07:58:00.170.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 07:58:00.170.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "PacketFlowBridge bounded execution" started.
+􀟈  Suite "PacketFlowBridge deterministic fault injection" started.
+􀟈  Suite "PacketFlowBridge lifecycle fault matrix" started.
+􀟈  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" started.
+􀟈  Test "cancelling start at a startup barrier performs normal ordered cleanup" started.
+􀟈  Test "reverse count budget includes invalid datagrams and flushes one bounded batch" started.
+􀟈  Test "forward and reverse count slices yield deterministically" started.
+􀟈  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" started.
+􀟈  Test "forward count budget includes malformed work and retains only the current batch" started.
+􀟈  Test "metric schema has the exact names and units" started.
+􀟈  Test "forward elapsed-time slices use the injected monotonic clock" started.
+􀟈  Test "reverse MSG_TRUNC reports the full observed size and fails before write" started.
+􀟈  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" started.
+􀟈  Test "all bridge logs expose only public privacy-safe fields" started.
+􀟈  Test "run counters saturate at UInt64.max and log saturation once" started.
+􀟈  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" started.
+􀟈  Test "reverse time budget checks the fake monotonic clock before a second receive" started.
+􀟈  Test "readiness peer close is exact peer EOF and closes only after borrow return" started.
+􀟈  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" started.
+􀟈  Test "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" started.
+􀟈  Test "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test "forward malformed packets count as work and preserve the valid boundary" started.
+􀟈  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" started.
+􀟈  Test "unexpected HEV return is peer EOF and remains the primary error" started.
+􀟈  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test "PacketFlow read errors are fatal and do not schedule another read" started.
+􀟈  Test "drop summaries are window-limited and flush unsummarized drops at stop" started.
+􀟈  Test "duplicate start and concurrent stop calls have no duplicate side effects" started.
+􀟈  Test "unclassified forward errno is one fatal transition without retry" started.
+􀟈  Test "readiness installation failure closes both endpoints without borrowing" started.
+􀟈  Test "runtime readiness failure is a single persistent socket fatal" started.
+􀟈  Test "reverse EMSGSIZE errno is fatal without retry" started.
+􀟈  Test "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" started.
+􀟈  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" started.
+􀟈  Test "reverse framing covers every malformed length and family/version rule" started.
+􀟈  Test "counters and maxima are monotonic within a run and reset for the next run" started.
+􀟈  Test case passing 1 argument input → mtu to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → sendBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → sendBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument failure → socketPair to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument input → receiveBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → workTime to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → datagramOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument failure → setSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument input → receiveBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument failure → setDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument input → diagnosticsWindow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument failure → setReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument input → workCount to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument failure → getSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument stage → packetReadsStopped to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → readinessCancelled to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → pumpsJoined to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → borrowStopRequested to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → borrowReturned to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → hevDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → bridgeDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → socketPairCreated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → descriptorsConfigured to "cancellation at every startup stage restores all observable resources" started.
+􁁛  Test "Darwin SO_NREAD plus recvmsg reports full truncated and zero-length datagrams" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument stage → configurationValidated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → readinessInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → supervisorInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → running to "cancellation at every startup stage restores all observable resources" started.
+􁁛  Test "metric schema has the exact names and units" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument stage → borrowAccepted to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument actualBytes → 2 to "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test case passing 1 argument actualBytes → 0 to "zero and positive short datagram sends are fatal and never retried" started.
+􁁛  Test "every invalid configuration branch fails before descriptor creation" with 9 test cases passed after 0.001 seconds.
+􁁛  Test "readiness installation failure closes both endpoints without borrowing" passed after 0.001 seconds.
+􁁛  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" passed after 0.001 seconds.
+􁁛  Test "every socket setup errno closes exactly the descriptors that were created" with 9 test cases passed after 0.001 seconds.
+􁁛  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" passed after 0.002 seconds.
+􁁛  Test "readiness peer close is exact peer EOF and closes only after borrow return" passed after 0.002 seconds.
+􁁛  Test "runtime readiness failure is a single persistent socket fatal" passed after 0.002 seconds.
+􁁛  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" passed after 0.002 seconds.
+􁁛  Test "PacketFlow read errors are fatal and do not schedule another read" passed after 0.002 seconds.
+􁁛  Test "cancelling start at a startup barrier performs normal ordered cleanup" passed after 0.002 seconds.
+􁁛  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" passed after 0.002 seconds.
+􁁛  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" passed after 0.002 seconds.
+􁁛  Test "reverse MSG_TRUNC reports the full observed size and fails before write" passed after 0.002 seconds.
+􁁛  Test "forward malformed packets count as work and preserve the valid boundary" passed after 0.002 seconds.
+􁁛  Test "reverse EMSGSIZE errno is fatal without retry" passed after 0.002 seconds.
+􁁛  Test "all bridge logs expose only public privacy-safe fields" passed after 0.002 seconds.
+􁁛  Test "zero and positive short datagram sends are fatal and never retried" with 2 test cases passed after 0.002 seconds.
+􁁛  Test "forward count budget includes malformed work and retains only the current batch" passed after 0.002 seconds.
+􁁛  Test "unexpected HEV return is peer EOF and remains the primary error" passed after 0.002 seconds.
+􁁛  Test "reverse framing covers every malformed length and family/version rule" passed after 0.002 seconds.
+􁁛  Test "duplicate start and concurrent stop calls have no duplicate side effects" passed after 0.002 seconds.
+􁁛  Test "counters and maxima are monotonic within a run and reset for the next run" passed after 0.002 seconds.
+􁁛  Test "drop summaries are window-limited and flush unsummarized drops at stop" passed after 0.002 seconds.
+􁁛  Test "reverse PacketFlow rejection is fatal and the rejected batch is never retried" passed after 0.002 seconds.
+􁁛  Test "forward and reverse count slices yield deterministically" passed after 0.002 seconds.
+􁁛  Test "reverse count budget includes invalid datagrams and flushes one bounded batch" passed after 0.002 seconds.
+􁁛  Test "cancellation at every startup stage restores all observable resources" with 7 test cases passed after 0.002 seconds.
+􁁛  Test "run counters saturate at UInt64.max and log saturation once" passed after 0.002 seconds.
+􁁛  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" with 7 test cases passed after 0.002 seconds.
+􁁛  Test "forward elapsed-time slices use the injected monotonic clock" passed after 0.002 seconds.
+􁁛  Test "reverse time budget checks the fake monotonic clock before a second receive" passed after 0.002 seconds.
+􁁛  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" passed after 0.002 seconds.
+􁁛  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" passed after 0.002 seconds.
+􁁛  Test "unclassified forward errno is one fatal transition without retry" passed after 0.002 seconds.
+􁁛  Suite "PacketFlowBridge bounded execution" passed after 0.002 seconds.
+􁁛  Suite "PacketFlowBridge lifecycle fault matrix" passed after 0.002 seconds.
+􁁛  Suite "PacketFlowBridge deterministic fault injection" passed after 0.002 seconds.
+􁁛  Test run with 36 tests in 3 suites passed after 0.002 seconds.

@@ -1,0 +1,19 @@
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.12s)
+Test Suite 'Selected tests' started at 2026-08-27 07:21:37.911.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 07:21:37.918.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 07:21:37.918.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 07:21:37.918.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "lifecycle trend flags rise with plateaus after warmup" started.
+􁁛  Test "lifecycle trend flags rise with plateaus after warmup" passed after 0.001 seconds.
+􀟈  Test "lifecycle trend ignores allocator rise confined to fixed warmup" started.
+􁁛  Test "lifecycle trend ignores allocator rise confined to fixed warmup" passed after 0.001 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 0.001 seconds.
+􁁛  Test run with 2 tests in 1 suite passed after 0.001 seconds.

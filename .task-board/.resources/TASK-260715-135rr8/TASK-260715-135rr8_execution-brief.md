@@ -1,0 +1,7 @@
+# Safe physical Mac execution contract
+
+Run only through the SwiftPM ReluxTunnelHarness on this physical Apple-silicon Mac. Do not install, sign, start, load, or configure a NetworkExtension or system VPN. Do not modify VPN preferences, routes, DNS, interfaces, packet filters, SSH sessions, Keychain, or global system settings. Do not use sudo, powermetrics, memory_pressure, launchctl, kill unrelated processes, or any mechanism that creates global memory pressure.
+
+Exercise only loopback/full bridge plus HEV process-owned resources. Model soft, pressure, and critical states through injectable harness policy and bounded task-local allocations. Use hard byte, descriptor, task, flow, duration, and cycle ceilings; sample the current process with public unprivileged APIs. Stop early on measured safety thresholds, elevated system impact, or unexpected resource growth and preserve the exact reason. Keep 100/250/500/config-limit rows injectable; never force 1200. Run at least 100 lifecycle cycles only when the preceding bounded probe is safe. Record unavailable metrics honestly instead of using proxy zeros. Physical iPhone remains a named deferred gap.
+
+The deliverable must include production-entry tests, negative/narrowing evidence for every bound, a reproducible raw matrix, budget analysis for the provisional 25-30 MiB target and remaining SSH/DNS/relay/cache/reconnect headroom, full Swift Testing, affected coverage, format/boundary/privacy/safety gates, and an independent-review handoff.

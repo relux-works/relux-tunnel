@@ -1,0 +1,22 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write swift-version-45881B103DA9D485.txt
+[2/5] Emitting module ReluxTunnelHarnessTests
+[3/5] Emitting module ReluxTunnelNativeAdapterTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[3/4] Linking ReluxTunnelPackageTests
+Build complete! (2.08s)
+Test Suite 'Selected tests' started at 2026-08-27 08:05:16.736.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 08:05:16.743.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 08:05:16.743.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 08:05:16.743.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" started.
+􁁛  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" passed after 21.836 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 21.836 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 21.837 seconds.

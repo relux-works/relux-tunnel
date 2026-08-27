@@ -1,0 +1,23 @@
+Building for debugging...
+[0/7] Write sources
+[1/7] Write swift-version-45881B103DA9D485.txt
+[3/5] Emitting module ReluxTunnelNativeAdapterTests
+[4/5] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[4/6] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[5/6] Linking ReluxTunnelPackageTests
+Build complete! (3.46s)
+Test Suite 'Selected tests' started at 2026-08-27 08:20:26.709.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 08:20:26.716.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 08:20:26.716.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 08:20:26.716.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" started.
+􁁛  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" passed after 3.890 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 3.890 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 3.891 seconds.

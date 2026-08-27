@@ -1,0 +1,9 @@
+Focused rework from CR rev1 reviewer verdict:
+
+- Preserve product work, but rebuild the task worktree from the current main integration base without destructive changes to the main checkout. The exact candidate-vs-main product delta currently has only LOGBOOK.md, README.md, and Tests/ReluxTunnelNativeAdapterTests/HEVBridgeIntegrationTests.swift. Safely export that delta, advance/switch the task-scoped worktree to current main, and reapply only those task-specific changes. Do not re-include MTUMatrixCommand.swift, SmokeCommand.swift, or HarnessTests.swift in rev2.
+- Regenerate provenance dynamically and bind every raw artifact to the exact rev2 candidate tree/OID and pinned dependency revisions; remove hard-coded a3a3352 and current worktree placeholders.
+- Replace constant lifecycle attestation/monotonicGrowthObserved=false with measured lifecycle samples from the emitting run, or a separate cryptographically bound lifecycle artifact. Derive monotonic growth from captured values.
+- Run the final opt-in matrix at least three independent times on the exact rev2 candidate and attach all raw/log artifacts. Explain the original signal 6 as the retired proc_pid_rusage importer path and prove final task_info sampler repeatability.
+- Re-run focused tests, 100-cycle lifecycle, cancellation/termination/pressure coverage, full suite, code coverage, strict format, diff check, privacy/safety, and patch-apply check against current main.
+- Publish CR rev2 only after it applies cleanly to current main and exact candidate hashes/evidence agree. Keep all operations SwiftPM/loopback-only; no VPN/NE/system route/DNS/interface/pf/global-pressure mutation.
+- Do not mark done; return to-review with updated outcomes and CR rev2.

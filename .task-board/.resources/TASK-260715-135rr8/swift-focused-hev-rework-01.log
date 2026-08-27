@@ -1,0 +1,75 @@
+[0/1] Planning build
+Building for debugging...
+[0/9] Write sources
+[1/9] Write swift-version-45881B103DA9D485.txt
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[2/8] Linking ReluxTunnelHarness
+[3/8] Applying ReluxTunnelHarness
+[5/8] Emitting module ReluxTunnelNativeAdapterTests
+[6/8] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[6/8] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[7/8] Linking ReluxTunnelPackageTests
+Build complete! (4.15s)
+Test Suite 'Selected tests' started at 2026-08-27 07:52:46.713.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 07:52:46.720.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 07:52:46.720.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 07:52:46.720.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" started.
+􁁛  Test "real HEV translates concurrent IPv4 and IPv6 TCP streams, half-close, and reset" passed after 0.012 seconds.
+􀟈  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" started.
+􁁛  Test "real HEV exposes UDP-in-TCP framing and rejects an unowned SOCKS client" passed after 0.003 seconds.
+􀟈  Test "a stalled real HEV path accounts every bridge send or bounded drop" started.
+􁁛  Test "a stalled real HEV path accounts every bridge send or bounded drop" passed after 0.081 seconds.
+􀟈  Test "bridge write failure while real HEV is active tears every boundary down" started.
+􁁛  Test "bridge write failure while real HEV is active tears every boundary down" passed after 0.027 seconds.
+􀟈  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" started.
+􁁛  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" passed after 3.986 seconds.
+􀙟  Test "extended physical Mac lifecycle investigation emits bounded raw evidence" skipped: "Runs only for explicitly authorized bounded 100/500/1000-cycle diagnostics."
+􀙟  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" skipped: "Runs only for the explicitly authorized physical-Mac evidence pass."
+􀟈  Test "production bridge start refuses a zero HEV session configuration" started.
+􁁛  Test "production bridge start refuses a zero HEV session configuration" passed after 0.001 seconds.
+􀟈  Test "physical matrix evidence gate refuses absent, forged, and malformed provenance" started.
+􁁛  Test "physical matrix evidence gate refuses absent, forged, and malformed provenance" passed after 7.871 seconds.
+􀟈  Test "lifecycle trend flags rise with plateaus after warmup" started.
+􁁛  Test "lifecycle trend flags rise with plateaus after warmup" passed after 0.001 seconds.
+􀟈  Test "lifecycle trend ignores allocator rise confined to fixed warmup" started.
+􁁛  Test "lifecycle trend ignores allocator rise confined to fixed warmup" passed after 0.001 seconds.
+􀟈  Test "lifecycle convergence rejects plateau after a late unreleased rise" started.
+􁁛  Test "lifecycle convergence rejects plateau after a late unreleased rise" passed after 0.001 seconds.
+􀟈  Test "lifecycle convergence accepts bounded allocator sawtooth with a release" started.
+􁁛  Test "lifecycle convergence accepts bounded allocator sawtooth with a release" passed after 0.001 seconds.
+􀟈  Test "lifecycle convergence rejects a late rise hidden among plateaus" started.
+􁁛  Test "lifecycle convergence rejects a late rise hidden among plateaus" passed after 0.001 seconds.
+􀟈  Test "lifecycle convergence rejects an oversized early high-water plateau" started.
+􁁛  Test "lifecycle convergence rejects an oversized early high-water plateau" passed after 0.001 seconds.
+􀟈  Test "lifecycle convergence rejects released but linearly rising sawtooth" started.
+􁁛  Test "lifecycle convergence rejects released but linearly rising sawtooth" passed after 0.001 seconds.
+􀟈  Test "lifecycle observer preallocates every retained sample before baseline" started.
+􁁛  Test "lifecycle observer preallocates every retained sample before baseline" passed after 0.001 seconds.
+􀟈  Test "lifecycle probe cycle gate accepts only bounded diagnostic rows" started.
+􁁛  Test "lifecycle probe cycle gate accepts only bounded diagnostic rows" passed after 0.001 seconds.
+􀟈  Test "approved low-memory configuration is emitted exactly" started.
+􁁛  Test "approved low-memory configuration is emitted exactly" passed after 0.001 seconds.
+􀟈  Test "configuration rejects a stack request that upstream would silently raise" started.
+􁁛  Test "configuration rejects a stack request that upstream would silently raise" passed after 0.001 seconds.
+􀟈  Test "external no-auth ingress is rejected before the adapter seam" started.
+􁁛  Test "external no-auth ingress is rejected before the adapter seam" passed after 0.001 seconds.
+􀟈  Test "SOCKS boundary stop waits for listener close and is idempotent" started.
+􁁛  Test "SOCKS boundary stop waits for listener close and is idempotent" passed after 0.001 seconds.
+􀟈  Test "borrow passes only endpoint B and quit joins without closing it" started.
+􁁛  Test "borrow passes only endpoint B and quit joins without closing it" passed after 0.001 seconds.
+􀟈  Test "quit is never sent after HEV main returns in either stop ordering" started.
+􁁛  Test "quit is never sent after HEV main returns in either stop ordering" passed after 0.001 seconds.
+􀟈  Test "startup failure stops listener state and releases the process lease" started.
+􁁛  Test "startup failure stops listener state and releases the process lease" passed after 0.001 seconds.
+􀟈  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" started.
+􁁛  Test "HEV/core/task/lwIP notices are bundled and trace pinned revisions" passed after 0.001 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 11.986 seconds.
+􁁛  Test run with 26 tests in 1 suite passed after 11.986 seconds.

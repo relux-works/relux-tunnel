@@ -1,0 +1,9 @@
+Independent review requirements for CR rev1:
+
+1. Treat current main (d177ac7 or its exact successor) as the integration base. Verify the candidate patch applies cleanly and contains only TASK-260715-135rr8 memory/lifecycle work. Orchestrator preflight found rev1 was generated from stale base a3a3352 and re-includes already-merged TASK-260715-gyg51r MTU files; this is blocking unless a clean rebased CR revision is produced.
+2. Independently reproduce the opt-in physical matrix at least three times or otherwise establish repeatability. The first producer run aborted with signal 6 while using proc_pid_rusage; final code changed to public task_info(TASK_VM_INFO) and one rerun passed. Verify the final sampler no longer crashes and raw evidence corresponds to the exact reviewed tree.
+3. Verify staged 100/250/500 live HEV sessions, zero drops, hard stop at 500 without forcing 1200, authentic process-local footprint/peak/descriptors/threads measurements, and honest unavailable fields for host available memory, HEV queued bytes, and Swift Task count.
+4. Verify >=100 lifecycle cycles, cancellation points, cleanup/no monotonic growth, mixed traffic, host termination, and pressure coverage without enabling NetworkExtension/VPN or mutating routes/DNS/interfaces/pf/global memory pressure.
+5. Verify the 25-30 MiB assessment is incremental HEV/bridge only and does not claim whole-extension production fit; SSH/DNS/relay/cache/reconnect remain unmeasured.
+6. Run focused tests, full Swift suite, affected coverage, strict format lint, diff check, privacy/safety scan, and bind verdict to exact CR revision/tree hash.
+7. Return changes requested for any stale-base/duplicate-scope issue, flaky matrix, fabricated/proxy metric, unsafe host mutation, or weak evidence. Do not mark done directly; issue the reviewer verdict through task-board.

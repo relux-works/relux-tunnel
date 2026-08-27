@@ -1,0 +1,131 @@
+[
+  {
+    "run": "2026-08-27T02:41:12Z",
+    "sourceRevision": "24a9d147e2464f1157ef10eb6ef3ed51dae2b5e5",
+    "rows": [
+      {
+        "flowCount": 100,
+        "physicalFootprintBytes": 12944008,
+        "peakPhysicalFootprintBytes": 12944008,
+        "descriptors": 211,
+        "processThreads": 8,
+        "hevSessions": 100,
+        "drops": 0
+      },
+      {
+        "flowCount": 250,
+        "physicalFootprintBytes": 15762056,
+        "peakPhysicalFootprintBytes": 15762056,
+        "descriptors": 511,
+        "processThreads": 8,
+        "hevSessions": 250,
+        "drops": 0
+      },
+      {
+        "flowCount": 500,
+        "physicalFootprintBytes": 20497032,
+        "peakPhysicalFootprintBytes": 20513416,
+        "descriptors": 1010,
+        "processThreads": 8,
+        "hevSessions": 500,
+        "drops": 0
+      }
+    ],
+    "lifecycle": {
+      "initialDescriptors": 3,
+      "finalDescriptors": 3,
+      "initialThreads": 7,
+      "finalThreads": 7,
+      "initialPhysicalFootprintBytes": 8192624,
+      "finalPhysicalFootprintBytes": 11027080,
+      "monotonicGrowthObserved": false
+    },
+    "targetAssessment": "Met for incremental HEV/bridge footprint: 9453568 bytes at 500 sessions; remaining 30 MiB envelope 22003712 bytes. SSH/DNS/relay/cache/reconnect allocations remain unmeasured."
+  },
+  {
+    "run": "2026-08-27T02:41:31Z",
+    "sourceRevision": "24a9d147e2464f1157ef10eb6ef3ed51dae2b5e5",
+    "rows": [
+      {
+        "flowCount": 100,
+        "physicalFootprintBytes": 12763784,
+        "peakPhysicalFootprintBytes": 12763784,
+        "descriptors": 211,
+        "processThreads": 9,
+        "hevSessions": 100,
+        "drops": 0
+      },
+      {
+        "flowCount": 250,
+        "physicalFootprintBytes": 15565448,
+        "peakPhysicalFootprintBytes": 15565448,
+        "descriptors": 511,
+        "processThreads": 9,
+        "hevSessions": 250,
+        "drops": 0
+      },
+      {
+        "flowCount": 500,
+        "physicalFootprintBytes": 20349576,
+        "peakPhysicalFootprintBytes": 20365960,
+        "descriptors": 1010,
+        "processThreads": 9,
+        "hevSessions": 500,
+        "drops": 0
+      }
+    ],
+    "lifecycle": {
+      "initialDescriptors": 3,
+      "finalDescriptors": 3,
+      "initialThreads": 8,
+      "finalThreads": 8,
+      "initialPhysicalFootprintBytes": 8028784,
+      "finalPhysicalFootprintBytes": 10830472,
+      "monotonicGrowthObserved": false
+    },
+    "targetAssessment": "Met for incremental HEV/bridge footprint: 9519104 bytes at 500 sessions; remaining 30 MiB envelope 21938176 bytes. SSH/DNS/relay/cache/reconnect allocations remain unmeasured."
+  },
+  {
+    "run": "2026-08-27T02:41:54Z",
+    "sourceRevision": "24a9d147e2464f1157ef10eb6ef3ed51dae2b5e5",
+    "rows": [
+      {
+        "flowCount": 100,
+        "physicalFootprintBytes": 12878448,
+        "peakPhysicalFootprintBytes": 12878448,
+        "descriptors": 211,
+        "processThreads": 9,
+        "hevSessions": 100,
+        "drops": 0
+      },
+      {
+        "flowCount": 250,
+        "physicalFootprintBytes": 15696496,
+        "peakPhysicalFootprintBytes": 15696496,
+        "descriptors": 511,
+        "processThreads": 9,
+        "hevSessions": 250,
+        "drops": 0
+      },
+      {
+        "flowCount": 500,
+        "physicalFootprintBytes": 20578952,
+        "peakPhysicalFootprintBytes": 20595336,
+        "descriptors": 1010,
+        "processThreads": 9,
+        "hevSessions": 500,
+        "drops": 0
+      }
+    ],
+    "lifecycle": {
+      "initialDescriptors": 3,
+      "finalDescriptors": 3,
+      "initialThreads": 8,
+      "finalThreads": 8,
+      "initialPhysicalFootprintBytes": 8077912,
+      "finalPhysicalFootprintBytes": 10928728,
+      "monotonicGrowthObserved": false
+    },
+    "targetAssessment": "Met for incremental HEV/bridge footprint: 9650224 bytes at 500 sessions; remaining 30 MiB envelope 21807056 bytes. SSH/DNS/relay/cache/reconnect allocations remain unmeasured."
+  }
+]

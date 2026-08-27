@@ -1,0 +1,200 @@
+[0/1] Planning build
+Building for debugging...
+[0/9] Write swift-version-45881B103DA9D485.txt
+[2/44] Emitting module ReluxLibSSH2PackagingTests
+[3/44] Compiling ReluxLibSSH2PackagingTests ReluxLibSSH2PackagingTests.swift
+[4/44] Compiling ReluxAppleUITestShared ReluxUITestLaunchConfiguration.swift
+[5/44] Compiling ReluxAppleUITestShared ReluxUITest.swift
+[6/44] Emitting module ReluxAppleUITestShared
+[7/44] Compiling ReluxAppleUITestShared ReluxUITestFixture.swift
+[8/46] Emitting module ReluxSnapshotDiffSupport
+[9/46] Compiling ReluxSnapshotDiffSupport SnapshotDiff.swift
+[10/50] Emitting module ReluxSnapshotDiff
+[11/50] Emitting module ReluxSnapshotDiffSupportTests
+[12/50] Compiling ReluxSnapshotDiff main.swift
+[13/50] Emitting module ReluxAppleUITestSharedTests
+[14/50] Compiling ReluxAppleUITestSharedTests ReluxAppleUITestSharedTests.swift
+[14/50] Write Objects.LinkFileList
+[16/50] Compiling ReluxSnapshotDiffSupportTests SnapshotDiffSupportTests.swift
+[17/50] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[18/50] Compiling ReluxTunnelCore TCPAdmissionRegistry.swift
+[19/51] Compiling ReluxTunnelCore VPNManagerRepository.swift
+[19/51] Linking relux-snapshot-diff
+[20/51] Applying relux-snapshot-diff
+[22/51] Compiling ReluxTunnelCore SSHProfileSnapshot.swift
+[23/51] Emitting module ReluxTunnelCore
+[24/51] Compiling ReluxTunnelCore VPNSessionController.swift
+[25/51] Compiling ReluxTunnelCore RuntimeDiagnostics.swift
+[26/51] Compiling ReluxTunnelCore RuntimeMessageModels.swift
+[27/51] Compiling ReluxTunnelCore RelayDatagramCodec.swift
+[28/51] Compiling ReluxTunnelCore RelayHandshake.swift
+[29/51] Compiling ReluxTunnelCore RelayProtocolV1+Generated.swift
+[30/51] Compiling ReluxTunnelCore RelayByteCodec.swift
+[31/51] Compiling ReluxTunnelCore RelaySession.swift
+[32/51] Compiling ReluxTunnelCore RuntimeContracts.swift
+[33/51] Compiling ReluxTunnelCore RelayAssetManifest.swift
+[34/51] Compiling ReluxTunnelCore ClientUDPAssociationRegistry.swift
+[35/51] Compiling ReluxTunnelCore ProviderLifecycle.swift
+[36/51] Compiling ReluxTunnelCore RelayAssetManifest+Generated.swift
+[37/51] Compiling ReluxTunnelCore ComponentContracts.swift
+[38/51] Compiling ReluxTunnelCore DarwinPacketBridgeIO.swift
+[39/51] Compiling ReluxTunnelCore SSHBootstrapDiagnostics.swift
+[40/51] Compiling ReluxTunnelCore SSHContracts.swift
+[41/51] Compiling ReluxTunnelCore PacketFlowBridge.swift
+[42/51] Compiling ReluxTunnelCore PacketFlowBridgeContracts.swift
+[43/51] Compiling ReluxTunnelCore ApprovedHostIdentityPolicy.swift
+[44/51] Compiling ReluxTunnelCore BoundedFullDuplexBytePump.swift
+[45/51] Compiling ReluxTunnelCore PacketContracts.swift
+[46/51] Compiling ReluxTunnelCore PacketFlowAdapterBoundary.swift
+[47/61] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Channels.swift
+[48/61] Compiling ReluxTunnelNativeAdapter HEVIntegration.swift
+[49/61] Compiling ReluxTunnelNativeAdapter HEVUDPDatagramAdapter.swift
+[50/61] Compiling ReluxTunnelNativeAdapter HEVSOCKSBoundary.swift
+[51/61] Compiling ReluxTunnelNativeAdapter HEVNoticeBundle.swift
+[52/61] Emitting module ReluxTunnelNativeAdapter
+[53/61] Compiling ReluxTunnelNativeAdapter NativeDependencyPackaging.swift
+[54/65] Compiling ReluxTunnelIOSAdapter IOSProviderCompositionRoot.swift
+[55/65] Compiling ReluxTunnelIOSAdapter NativePackagingAnchor.swift
+[56/65] Emitting module ReluxTunnelIOSAdapter
+[57/65] Compiling ReluxTunnelIOSAdapter IOSVPNManagerPreferences.swift
+[58/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Bridge.swift
+[59/65] Emitting module ReluxTunnelLibSSH2Adapter
+[60/65] Compiling ReluxTunnelLibSSH2Adapter LibSSH2Transport.swift
+[61/83] Compiling ReluxTunnelHarnessSupport SmokeCommand.swift
+[62/83] Compiling ReluxTunnelMacOSAdapter NativePackagingAnchor.swift
+[63/83] Compiling ReluxTunnelMacOSAdapter MacOSVPNManagerPreferences.swift
+[64/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHProfileSnapshotLoader.swift
+[65/83] Emitting module ReluxTunnelMacOSAdapter
+[66/83] Compiling ReluxTunnelMacOSAdapter MacOSProviderCompositionRoot.swift
+[67/83] Compiling ReluxTunnelMacOSAdapter MacOSSSHBootstrapErrorMapper.swift
+[68/83] Compiling ReluxTunnelMacOSAdapter MacOSSystemKeychainCredentialResolver.swift
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260716-2m2tl1/worktree/Sources/ReluxTunnelMacOSAdapter/MacOSSystemKeychainCredentialResolver.swift:317:18: warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+315 |   private static func resolveSystemDomain() -> MacOSSystemKeychainResolution {
+316 |     var keychain: SecKeychain?
+317 |     let status = SecKeychainCopyDomainDefault(.system, &keychain)
+    |                  `- warning: 'SecKeychainCopyDomainDefault' was deprecated in macOS 10.10: SecKeychain is deprecated [#DeprecatedDeclaration]
+318 |     return MacOSSystemKeychainResolution(
+319 |       status: status,
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[69/83] Compiling ReluxTunnelLibSSH2AdapterTests SSHTransportConformanceTests.swift
+[70/119] Compiling ReluxTunnelHarnessSupport HarnessRuntime.swift
+[71/119] Compiling ReluxTunnelHarnessSupport HarnessConfiguration.swift
+[72/119] Compiling ReluxTunnelHarnessSupport HarnessResources.swift
+[73/119] Compiling ReluxTunnelHarnessSupport HarnessContracts.swift
+[74/119] Emitting module ReluxTunnelHarnessSupport
+[75/119] Compiling ReluxTunnelHarnessSupport MTUMatrixCommand.swift
+[76/123] Compiling ReluxTunnelHarness ReluxTunnelHarness.swift
+[77/123] Emitting module ReluxTunnelHarness
+[77/123] Write Objects.LinkFileList
+[79/123] Emitting module ReluxTunnelHarnessTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[79/123] Linking ReluxTunnelHarness
+[80/123] Applying ReluxTunnelHarness
+[82/123] Compiling ReluxTunnelCoreTests RuntimeMessageFixtures.swift
+[83/123] Compiling ReluxTunnelCoreTests SSHBootstrapErrorMappingTests.swift
+[84/124] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2BridgeTests.swift
+[85/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeProhibitionTests.swift
+[86/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeTests.swift
+[87/124] Compiling ReluxTunnelHarnessTests HarnessTests.swift
+[88/124] Compiling ReluxTunnelCoreTests RuntimeDiagnosticsTests.swift
+[89/124] Compiling ReluxTunnelCoreTests RuntimeMessageCodecTests.swift
+[90/124] Compiling ReluxTunnelCoreTests VPNSessionControllerTests.swift
+[91/124] Compiling ReluxTunnelNativeAdapterTests HEVBridgeIntegrationTests.swift
+[92/124] Compiling ReluxTunnelNativeAdapterTests HEVIntegrationTests.swift
+[93/124] Compiling ReluxTunnelNativeAdapterTests HEVUDPDatagramAdapterTests.swift
+[94/124] Compiling ReluxTunnelNativeAdapterTests NativeDependencyPackagingTests.swift
+[95/124] Emitting module ReluxTunnelNativeAdapterTests
+[96/124] Compiling ReluxTunnelCoreTests ProviderAdapterContractTests.swift
+[97/124] Compiling ReluxTunnelCoreTests RelayAssetManifestTests.swift
+[98/124] Compiling ReluxTunnelCoreTests PacketFrameFuzzCorpus.swift
+[99/124] Compiling ReluxTunnelCoreTests PacketFrameFuzzTests.swift
+[100/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeFaultTests.swift
+[101/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeLifecycleTests.swift
+[102/124] Compiling ReluxTunnelCoreTests PacketFlowAdapterTests.swift
+[103/124] Compiling ReluxTunnelCoreTests PacketFlowBridgeBoundedTests.swift
+[104/124] Compiling ReluxTunnelCoreTests ApprovedHostIdentityPolicyTests.swift
+[105/124] Compiling ReluxTunnelCoreTests BoundedFullDuplexBytePumpTests.swift
+[106/124] Emitting module ReluxTunnelCoreTests
+[107/124] Compiling ReluxTunnelCoreTests MacOSSystemKeychainCredentialResolverTests.swift
+[108/124] Compiling ReluxTunnelCoreTests OwnedVPNManagerRepositoryTests.swift
+[109/124] Compiling ReluxTunnelCoreTests SSHProfileSnapshotLoaderTests.swift
+[110/124] Compiling ReluxTunnelCoreTests SSHTransportContractTests.swift
+[111/124] Compiling ReluxTunnelCoreTests RelayProtocolGeneratedTests.swift
+[112/124] Compiling ReluxTunnelCoreTests RelayProtocolHostileInputTests.swift
+[113/124] Compiling ReluxTunnelCoreTests RelayDatagramCodecTests.swift
+[114/124] Compiling ReluxTunnelCoreTests RelayHandshakeTests.swift
+[115/124] Compiling ReluxTunnelCoreTests RelayProtocolVectorTests.swift
+[116/124] Compiling ReluxTunnelCoreTests RelaySessionTests.swift
+[117/124] Compiling ReluxTunnelCoreTests ClientUDPAssociationRegistryTests.swift
+[118/124] Compiling ReluxTunnelCoreTests RelayByteCodecTests.swift
+[119/124] Compiling ReluxTunnelCoreTests TCPAdmissionRegistryTests.swift
+[120/124] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[121/124] Emitting module ReluxTunnelLibSSH2AdapterTests
+[122/124] Compiling ReluxTunnelLibSSH2AdapterTests LibSSH2AdapterIntegrationTests.swift
+[123/126] Emitting module ReluxTunnelPackageTests
+[124/126] Compiling ReluxTunnelPackageTests runner.swift
+[124/126] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[125/126] Linking ReluxTunnelPackageTests
+Build complete! (13.52s)
+Test Suite 'Selected tests' started at 2026-08-27 08:28:18.375.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 08:28:18.382.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 08:28:18.382.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 08:28:18.382.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "PacketFlowBridge lifecycle fault matrix" started.
+􀟈  Test "duplicate start and concurrent stop calls have no duplicate side effects" started.
+􀟈  Test "runtime readiness failure is a single persistent socket fatal" started.
+􀟈  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test "readiness installation failure closes both endpoints without borrowing" started.
+􀟈  Test "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" started.
+􀟈  Test "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument failure → socketPair to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → getStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument failure → setDescriptorFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setStatusFlags to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument failure → setReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument stage → configurationValidated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → socketPairCreated to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument failure → getSendBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument stage → descriptorsConfigured to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument failure → getReceiveBuffer to "every socket setup errno closes exactly the descriptors that were created" started.
+􀟈  Test case passing 1 argument stage → readinessInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → borrowAccepted to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → supervisorInstalled to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → packetReadsStopped to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → readinessCancelled to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → running to "cancellation at every startup stage restores all observable resources" started.
+􀟈  Test case passing 1 argument stage → pumpsJoined to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → borrowStopRequested to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → bridgeDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument input → mtu to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → sendBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument stage → hevDescriptorClosed to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument stage → borrowReturned to "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" started.
+􀟈  Test case passing 1 argument input → sendBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → receiveBufferZero to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → receiveBufferOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → workCount to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → workTime to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → diagnosticsWindow to "every invalid configuration branch fails before descriptor creation" started.
+􀟈  Test case passing 1 argument input → datagramOverflow to "every invalid configuration branch fails before descriptor creation" started.
+􁁛  Test "descriptor borrow rejection closes B and A without requesting borrowed stop" passed after 0.001 seconds.
+􁁛  Test "readiness installation failure closes both endpoints without borrowing" passed after 0.001 seconds.
+􁁛  Test "every socket setup errno closes exactly the descriptors that were created" with 9 test cases passed after 0.001 seconds.
+􁁛  Test "duplicate start and concurrent stop calls have no duplicate side effects" passed after 0.002 seconds.
+􁁛  Test "runtime readiness failure is a single persistent socket fatal" passed after 0.002 seconds.
+􁁛  Test "every invalid configuration branch fails before descriptor creation" with 9 test cases passed after 0.002 seconds.
+􁁛  Test "caller cancellation while cleanup is paused cannot interrupt ordered cleanup" with 7 test cases passed after 0.002 seconds.
+􁁛  Test "cancellation at every startup stage restores all observable resources" with 7 test cases passed after 0.002 seconds.
+􁁛  Suite "PacketFlowBridge lifecycle fault matrix" passed after 0.002 seconds.
+􁁛  Test run with 8 tests in 1 suite passed after 0.002 seconds.

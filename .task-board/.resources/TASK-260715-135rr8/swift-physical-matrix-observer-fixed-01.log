@@ -1,0 +1,25 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write swift-version-45881B103DA9D485.txt
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[1/6] Linking ReluxTunnelHarness
+[3/6] Emitting module ReluxTunnelNativeAdapterTests
+[3/6] Applying ReluxTunnelHarness
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[4/5] Linking ReluxTunnelPackageTests
+Build complete! (1.43s)
+Test Suite 'Selected tests' started at 2026-08-27 07:53:13.843.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 07:53:13.850.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 07:53:13.850.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 07:53:13.850.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" started.
+􀢄  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" recorded an issue at HEVBridgeIntegrationTests.swift:287:4: Caught error: physical footprint did not prove bounded convergence: samples=90, post-warmup net/max-drawup=65536/65536, trailing net/max-drawup=0/0, trailing increase/equal/decrease=0/0/0, ceiling=262144
+􀢄  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" failed after 5.071 seconds with 1 issue.
+􀢄  Suite "Pinned HEV integration" failed after 5.072 seconds with 1 issue.
+􀢄  Test run with 1 test in 1 suite failed after 5.072 seconds with 1 issue.

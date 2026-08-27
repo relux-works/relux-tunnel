@@ -1,0 +1,57 @@
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.11s)
+Test Suite 'Selected tests' started at 2026-08-27 08:28:19.021.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 08:28:19.028.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 08:28:19.028.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 08:28:19.028.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "PacketFlowBridge deterministic fault injection" started.
+􀟈  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" started.
+􀟈  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" started.
+􀟈  Test "PacketFlow read errors are fatal and do not schedule another read" started.
+􀟈  Test "reverse framing covers every malformed length and family/version rule" started.
+􀟈  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" started.
+􀟈  Test "drop summaries are window-limited and flush unsummarized drops at stop" started.
+􀟈  Test "reverse EMSGSIZE errno is fatal without retry" started.
+􀟈  Test "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test "all bridge logs expose only public privacy-safe fields" started.
+􀟈  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" started.
+􀟈  Test "counters and maxima are monotonic within a run and reset for the next run" started.
+􀟈  Test "reverse MSG_TRUNC reports the full observed size and fails before write" started.
+􀟈  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" started.
+􀟈  Test "unexpected HEV return is peer EOF and remains the primary error" started.
+􀟈  Test "metric schema has the exact names and units" started.
+􀟈  Test case passing 1 argument actualBytes → 0 to "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test case passing 1 argument actualBytes → 2 to "zero and positive short datagram sends are fatal and never retried" started.
+􀟈  Test "readiness peer close is exact peer EOF and closes only after borrow return" started.
+􀟈  Test "run counters saturate at UInt64.max and log saturation once" started.
+􀟈  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" started.
+􀟈  Test "unclassified forward errno is one fatal transition without retry" started.
+􁁛  Test "failed closes are attempted once, preserve success, and omit descriptors from logs" passed after 0.001 seconds.
+􁁛  Test "EAGAIN and EWOULDBLOCK normalize while ENOBUFS drops without retry" passed after 0.001 seconds.
+􁁛  Test "reverse framing covers every malformed length and family/version rule" passed after 0.001 seconds.
+􁁛  Test "all endpoint buffer readbacks remain asymmetric and clamping logs once" passed after 0.001 seconds.
+􁁛  Test "reverse would-block spellings and ENOBUFS end drains without claiming packet loss" passed after 0.001 seconds.
+􁁛  Test "counters and maxima are monotonic within a run and reset for the next run" passed after 0.001 seconds.
+􁁛  Test "readiness peer close is exact peer EOF and closes only after borrow return" passed after 0.001 seconds.
+􁁛  Test "unexpected HEV return is peer EOF and remains the primary error" passed after 0.001 seconds.
+􁁛  Test "metric schema has the exact names and units" passed after 0.001 seconds.
+􁁛  Test "drop summaries are window-limited and flush unsummarized drops at stop" passed after 0.001 seconds.
+􀟈  Test "forward malformed packets count as work and preserve the valid boundary" started.
+􁁛  Test "pre-send checked 4+MTU ceiling is fatal without a syscall or side storage" passed after 0.001 seconds.
+􁁛  Test "run counters saturate at UInt64.max and log saturation once" passed after 0.001 seconds.
+􁁛  Test "zero and positive short datagram sends are fatal and never retried" with 2 test cases passed after 0.001 seconds.
+􁁛  Test "unclassified forward errno is one fatal transition without retry" passed after 0.001 seconds.
+􁁛  Test "reverse EMSGSIZE errno is fatal without retry" passed after 0.001 seconds.
+􁁛  Test "PacketFlow read errors are fatal and do not schedule another read" passed after 0.001 seconds.
+􁁛  Test "all bridge logs expose only public privacy-safe fields" passed after 0.001 seconds.
+􁁛  Test "reverse full datagram size over 4+MTU is fatal even without MSG_TRUNC" passed after 0.001 seconds.
+􁁛  Test "forward malformed packets count as work and preserve the valid boundary" passed after 0.001 seconds.
+􁁛  Test "reverse MSG_TRUNC reports the full observed size and fails before write" passed after 0.001 seconds.
+􁁛  Suite "PacketFlowBridge deterministic fault injection" passed after 0.001 seconds.
+􁁛  Test run with 20 tests in 1 suite passed after 0.001 seconds.

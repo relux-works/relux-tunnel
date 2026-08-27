@@ -1,0 +1,112 @@
+{
+  "architecture" : "arm64",
+  "dependencyRevisions" : {
+    "ReluxTunnelNativeAdapter" : "current worktree",
+    "hev-socks5-tunnel" : "repository-pinned XCFramework"
+  },
+  "device" : "Physical Apple-silicon Mac (Mac15,9; stable identifiers omitted)",
+  "duration" : "bounded by 20 seconds per stage; actual suite duration is preserved in the test log",
+  "exactConfiguration" : {
+    "address_scope" : "numeric loopback only",
+    "bridge_socket_buffer_bytes" : "16384",
+    "flow_stages" : "100,250,500",
+    "maximum_session_count" : "500 (narrowed physical-run ceiling)",
+    "task_stack_size_bytes" : "24576",
+    "tcp_buffer_size_bytes" : "4096"
+  },
+  "gaps" : [
+    "Physical iPhone rows are deferred with iOS.",
+    "Sleep\/wake is unavailable to a bounded headless SwiftPM test without changing global host state.",
+    "HEV queued bytes and process-wide Swift Task count are unknown, not proxy zeros.",
+    "SSH, DNS, relay, caches, and reconnect overlap are not allocated in this HEV\/bridge baseline."
+  ],
+  "generatedAtUTC" : "2026-08-27T02:17:56Z",
+  "lifecycle" : {
+    "cancellationPoints" : "covered by PacketFlowBridge lifecycle\/fault suites at pre-borrow, active read, and stop",
+    "cycles" : 100,
+    "finalDescriptors" : 3,
+    "finalPhysicalFootprintBytes" : 11829872,
+    "finalThreads" : 9,
+    "initialDescriptors" : 3,
+    "initialPhysicalFootprintBytes" : 8061552,
+    "initialThreads" : 9,
+    "monotonicGrowthObserved" : false,
+    "result" : "passed by realHEVHundredLifecycleCycles in the same Swift Testing suite"
+  },
+  "platform" : "Version 26.5 (Build 25F71)",
+  "pressurePolicy" : {
+    "critical" : "stop bridge work; production HEV teardown covered, SSH orchestration deferred",
+    "pressure" : "stop admitting new work; behavior deferred until SSH admission integration",
+    "soft" : "reduce new work; behavior deferred until SSH admission integration"
+  },
+  "rows" : [
+    {
+      "availableMemoryAvailability" : "unavailable: os_proc_available_memory is explicitly unavailable on macOS in the public SDK; no host-memory proxy substituted",
+      "bridgeSocketBufferBytes" : 16384,
+      "configuredTCPBufferBytesPerSession" : 4096,
+      "configuredTaskStackBytesPerSession" : 24576,
+      "descriptors" : 211,
+      "drops" : 0,
+      "failures" : [
+
+      ],
+      "flowCount" : 100,
+      "hevSessions" : 100,
+      "peakPhysicalFootprintBytes" : 12354160,
+      "physicalFootprintBytes" : 12354160,
+      "processThreads" : 10,
+      "queuedBytesAvailability" : "unknown: pinned HEV exposes session and traffic counters but no queue-byte gauge",
+      "requestedFlowCount" : 100,
+      "stage" : "staged",
+      "swiftTasksAvailability" : "unavailable: public Swift runtime APIs expose no process-wide live Task count",
+      "traffic" : "idle UDP-in-TCP sessions established by unique loopback IPv4 flows"
+    },
+    {
+      "availableMemoryAvailability" : "unavailable: os_proc_available_memory is explicitly unavailable on macOS in the public SDK; no host-memory proxy substituted",
+      "bridgeSocketBufferBytes" : 16384,
+      "configuredTCPBufferBytesPerSession" : 4096,
+      "configuredTaskStackBytesPerSession" : 24576,
+      "descriptors" : 511,
+      "drops" : 0,
+      "failures" : [
+
+      ],
+      "flowCount" : 250,
+      "hevSessions" : 250,
+      "peakPhysicalFootprintBytes" : 15270512,
+      "physicalFootprintBytes" : 15270512,
+      "processThreads" : 10,
+      "queuedBytesAvailability" : "unknown: pinned HEV exposes session and traffic counters but no queue-byte gauge",
+      "requestedFlowCount" : 250,
+      "stage" : "staged",
+      "swiftTasksAvailability" : "unavailable: public Swift runtime APIs expose no process-wide live Task count",
+      "traffic" : "idle UDP-in-TCP sessions established by unique loopback IPv4 flows"
+    },
+    {
+      "availableMemoryAvailability" : "unavailable: os_proc_available_memory is explicitly unavailable on macOS in the public SDK; no host-memory proxy substituted",
+      "bridgeSocketBufferBytes" : 16384,
+      "configuredTCPBufferBytesPerSession" : 4096,
+      "configuredTaskStackBytesPerSession" : 24576,
+      "descriptors" : 1010,
+      "drops" : 0,
+      "failures" : [
+
+      ],
+      "flowCount" : 500,
+      "hevSessions" : 500,
+      "peakPhysicalFootprintBytes" : 20054640,
+      "physicalFootprintBytes" : 20038256,
+      "processThreads" : 10,
+      "queuedBytesAvailability" : "unknown: pinned HEV exposes session and traffic counters but no queue-byte gauge",
+      "requestedFlowCount" : 500,
+      "stage" : "staged",
+      "swiftTasksAvailability" : "unavailable: public Swift runtime APIs expose no process-wide live Task count",
+      "traffic" : "idle UDP-in-TCP sessions established by unique loopback IPv4 flows"
+    }
+  ],
+  "schemaVersion" : 1,
+  "sourceRevision" : "a3a3352697686154fa69cc7c12d5eff9bec9d15c",
+  "stopReason" : "Stopped at the explicitly narrowed 500-session configuration limit; 1200 was not forced.",
+  "targetAssessment" : "Met for incremental HEV\/bridge footprint: 11976704 bytes at 500 sessions; remaining 30 MiB envelope 19480576 bytes. SSH\/DNS\/relay\/cache\/reconnect allocations remain unmeasured.",
+  "taskID" : "TASK-260715-135rr8"
+}

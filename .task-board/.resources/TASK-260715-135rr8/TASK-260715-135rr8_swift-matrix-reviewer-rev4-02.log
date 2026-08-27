@@ -1,0 +1,20 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/4] Emitting module ReluxTunnelHarnessTests
+[3/4] Emitting module ReluxTunnelNativeAdapterTests
+Build complete! (0.69s)
+Test Suite 'Selected tests' started at 2026-08-27 08:38:41.650.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 08:38:41.657.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 08:38:41.657.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 08:38:41.657.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" started.
+􁁛  Test "physical Mac HEV memory and concurrency matrix emits bounded raw evidence" passed after 21.456 seconds.
+􁁛  Suite "Pinned HEV integration" passed after 21.456 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 21.457 seconds.

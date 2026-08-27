@@ -1,0 +1,7 @@
+Continue from preserved rev3 worktree patch SHA-256 f2aa59d822772fbc2cf30217301fc7c79aa5be73e286fae800becef4258ca4a4. Provenance fail-closed changes and trend unit tests are already present. Three 100-cycle probes showed post-10-cycle non-decreasing physical footprint growth of 81,920 / 81,920 / 98,328 bytes with 4-5 discrete increases and no decreases.
+
+Run a safe extended process-local lifecycle investigation (target 500 cycles, or another sufficiently strong bounded count) with per-cycle samples, exact jump positions, segment net changes/slopes, descriptors, threads, live sessions, reads, queues, and native/runtime ownership counters. Do not use VPN/NE/global pressure. Determine whether growth is unbounded/linear or converges to a stable allocator/native-runtime high-water. Inspect likely allocation sources if it continues.
+
+If unbounded: fix the lifecycle leak within scope, or create/link a precise blocking bug and preserve evidence; do not weaken the gate. If bounded convergence is proven: implement and document a justified convergence rule (explicit fixed warmup and/or trailing window plus absolute bounded-growth ceiling), retain the non-decreasing-with-plateau negative test, add convergence/non-convergence tests, and ensure raw reports expose every parameter and measured transition. Do not tune a warmup just to observed data without a reason.
+
+Then regenerate 3 exact-tree matrix runs, focused/full/coverage/format/diff/privacy/safety evidence and CR rev3 cleanly applying to main. Return to-review only when truthful gates pass.

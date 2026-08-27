@@ -1,0 +1,1015 @@
+{
+  "architecture" : "arm64",
+  "dependencyRevisions" : {
+    "ReluxTunnelNativeAdapter.tree" : "24a9d147e2464f1157ef10eb6ef3ed51dae2b5e5",
+    "hev-socks5-tunnel.revision" : "ad7600497931205105b08367bd1b450048157e40",
+    "hev-socks5-tunnel.source_sha256" : "1d48d9b8a4dd5befc3460fda3ac4684149ace458c1630ca5f5692c9dc8dd154f"
+  },
+  "device" : "Physical Apple-silicon Mac (Mac15,9; stable identifiers omitted)",
+  "duration" : "bounded by 20 seconds per stage; actual suite duration is preserved in the test log",
+  "exactConfiguration" : {
+    "address_scope" : "numeric loopback only",
+    "bridge_socket_buffer_bytes" : "16384",
+    "flow_stages" : "100,250,500",
+    "maximum_session_count" : "500 (narrowed physical-run ceiling)",
+    "task_stack_size_bytes" : "24576",
+    "tcp_buffer_size_bytes" : "4096"
+  },
+  "gaps" : [
+    "Physical iPhone rows are deferred with iOS.",
+    "Sleep\/wake is unavailable to a bounded headless SwiftPM test without changing global host state.",
+    "HEV queued bytes and process-wide Swift Task count are unknown, not proxy zeros.",
+    "SSH, DNS, relay, caches, and reconnect overlap are not allocated in this HEV\/bridge baseline."
+  ],
+  "generatedAtUTC" : "2026-08-27T03:03:47Z",
+  "lifecycle" : {
+    "cancellationPoints" : "covered by PacketFlowBridge lifecycle\/fault suites at pre-borrow, active read, and stop",
+    "cycles" : 100,
+    "finalDescriptors" : 3,
+    "finalPhysicalFootprintBytes" : 10863240,
+    "finalThreads" : 8,
+    "initialDescriptors" : 3,
+    "initialPhysicalFootprintBytes" : 8192624,
+    "initialThreads" : 8,
+    "monotonicGrowthObserved" : false,
+    "result" : "measured in this emitting process; all lifecycle invariants passed",
+    "samples" : [
+      {
+        "cycle" : 1,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10470000,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 2,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10601072,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 3,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10715760,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 4,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10732144,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 5,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10814064,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 6,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10879600,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 7,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10879600,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 8,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10961520,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 9,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10977904,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 10,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10977904,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 11,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10977904,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 12,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10977904,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 13,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11027080,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 14,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11027080,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 15,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11027080,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 16,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11027080,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 17,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11027080,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 18,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11027080,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 19,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 20,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 21,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 22,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 23,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 24,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 25,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 26,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 27,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 28,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 11043464,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 29,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10977928,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 30,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10977928,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 31,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10977928,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 32,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10945160,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 33,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10945160,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 34,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10945160,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 35,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10912392,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 36,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10912392,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 37,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10928776,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 38,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10896008,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 39,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10896008,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 40,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10896008,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 41,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10896008,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 42,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10896008,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 43,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 44,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 45,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 46,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 47,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 48,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 49,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 50,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 51,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 52,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 53,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 54,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 55,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 56,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 57,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 58,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 59,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 60,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 61,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 62,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 63,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 64,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 65,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 66,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 67,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 68,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 69,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 70,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 71,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 72,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 73,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 74,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 75,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 76,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 77,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 78,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 79,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 80,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 81,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 82,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 83,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 84,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 85,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 86,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 87,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 88,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 89,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 90,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 91,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 92,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 93,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10846856,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 94,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10863240,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 95,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10863240,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 96,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10863240,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 97,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10863240,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 98,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10863240,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 99,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10863240,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      },
+      {
+        "cycle" : 100,
+        "descriptors" : 3,
+        "liveHEVSessionsAfterCleanup" : 0,
+        "outstandingReadsAfterCleanup" : 0,
+        "physicalFootprintBytes" : 10863240,
+        "processThreads" : 8,
+        "queuedBatchesAfterCleanup" : 0
+      }
+    ]
+  },
+  "platform" : "Version 26.5 (Build 25F71)",
+  "pressurePolicy" : {
+    "critical" : "stop bridge work; production HEV teardown covered, SSH orchestration deferred",
+    "pressure" : "stop admitting new work; behavior deferred until SSH admission integration",
+    "soft" : "reduce new work; behavior deferred until SSH admission integration"
+  },
+  "rows" : [
+    {
+      "availableMemoryAvailability" : "unavailable: os_proc_available_memory is explicitly unavailable on macOS in the public SDK; no host-memory proxy substituted",
+      "bridgeSocketBufferBytes" : 16384,
+      "configuredTCPBufferBytesPerSession" : 4096,
+      "configuredTaskStackBytesPerSession" : 24576,
+      "descriptors" : 211,
+      "drops" : 0,
+      "failures" : [
+
+      ],
+      "flowCount" : 100,
+      "hevSessions" : 100,
+      "peakPhysicalFootprintBytes" : 12878496,
+      "physicalFootprintBytes" : 12878496,
+      "processThreads" : 9,
+      "queuedBytesAvailability" : "unknown: pinned HEV exposes session and traffic counters but no queue-byte gauge",
+      "requestedFlowCount" : 100,
+      "stage" : "staged",
+      "swiftTasksAvailability" : "unavailable: public Swift runtime APIs expose no process-wide live Task count",
+      "traffic" : "idle UDP-in-TCP sessions established by unique loopback IPv4 flows"
+    },
+    {
+      "availableMemoryAvailability" : "unavailable: os_proc_available_memory is explicitly unavailable on macOS in the public SDK; no host-memory proxy substituted",
+      "bridgeSocketBufferBytes" : 16384,
+      "configuredTCPBufferBytesPerSession" : 4096,
+      "configuredTaskStackBytesPerSession" : 24576,
+      "descriptors" : 511,
+      "drops" : 0,
+      "failures" : [
+
+      ],
+      "flowCount" : 250,
+      "hevSessions" : 250,
+      "peakPhysicalFootprintBytes" : 15762080,
+      "physicalFootprintBytes" : 15762080,
+      "processThreads" : 9,
+      "queuedBytesAvailability" : "unknown: pinned HEV exposes session and traffic counters but no queue-byte gauge",
+      "requestedFlowCount" : 250,
+      "stage" : "staged",
+      "swiftTasksAvailability" : "unavailable: public Swift runtime APIs expose no process-wide live Task count",
+      "traffic" : "idle UDP-in-TCP sessions established by unique loopback IPv4 flows"
+    },
+    {
+      "availableMemoryAvailability" : "unavailable: os_proc_available_memory is explicitly unavailable on macOS in the public SDK; no host-memory proxy substituted",
+      "bridgeSocketBufferBytes" : 16384,
+      "configuredTCPBufferBytesPerSession" : 4096,
+      "configuredTaskStackBytesPerSession" : 24576,
+      "descriptors" : 1010,
+      "drops" : 0,
+      "failures" : [
+
+      ],
+      "flowCount" : 500,
+      "hevSessions" : 500,
+      "peakPhysicalFootprintBytes" : 20562592,
+      "physicalFootprintBytes" : 20546208,
+      "processThreads" : 9,
+      "queuedBytesAvailability" : "unknown: pinned HEV exposes session and traffic counters but no queue-byte gauge",
+      "requestedFlowCount" : 500,
+      "stage" : "staged",
+      "swiftTasksAvailability" : "unavailable: public Swift runtime APIs expose no process-wide live Task count",
+      "traffic" : "idle UDP-in-TCP sessions established by unique loopback IPv4 flows"
+    }
+  ],
+  "schemaVersion" : 1,
+  "sourceRevision" : "24a9d147e2464f1157ef10eb6ef3ed51dae2b5e5",
+  "stopReason" : "Stopped at the explicitly narrowed 500-session configuration limit; 1200 was not forced.",
+  "targetAssessment" : "Met for incremental HEV\/bridge footprint: 9682968 bytes at 500 sessions; remaining 30 MiB envelope 21774312 bytes. SSH\/DNS\/relay\/cache\/reconnect allocations remain unmeasured.",
+  "taskID" : "TASK-260715-135rr8"
+}

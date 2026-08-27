@@ -1,0 +1,19 @@
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.13s)
+Test Suite 'Selected tests' started at 2026-08-27 07:15:52.756.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 07:15:52.763.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 07:15:52.763.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 07:15:52.763.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Pinned HEV integration" started.
+􀟈  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" started.
+􀢄  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" recorded an issue at HEVBridgeIntegrationTests.swift:902:3: Expectation failed: !((footprintAnalysis → LifecycleFootprintAnalysis(warmupSampleCount: 10, analyzedSampleCount: 90, netChangeBytes: 81920, increaseTransitionCount: 5, equalTransitionCount: 84, decreaseTransitionCount: 0, monotonicGrowthObserved: true)).monotonicGrowthObserved → true → true)
+􀄵  physical footprint was non-decreasing with at least one increase after the fixed 10-cycle warmup
+􀢄  Test "one hundred real HEV bridge traffic cycles restore descriptors, sessions, and reads" failed after 3.914 seconds with 1 issue.
+􀢄  Suite "Pinned HEV integration" failed after 3.914 seconds with 1 issue.
+􀢄  Test run with 1 test in 1 suite failed after 3.914 seconds with 1 issue.
