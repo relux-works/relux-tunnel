@@ -1,0 +1,25 @@
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.12s)
+Test Suite 'Selected tests' started at 2026-08-27 01:28:41.940.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-27 01:28:41.948.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-27 01:28:41.948.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-27 01:28:41.948.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.008) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "ReluxTunnelHarness" started.
+􀟈  Test "MTU matrix production path rejects a project temp root symlink to system temp" started.
+􁁛  Test "MTU matrix production path rejects a project temp root symlink to system temp" passed after 0.568 seconds.
+􀟈  Test "MTU matrix production path rejects a post-parse parent replacement" started.
+􀢄  Test "MTU matrix production path rejects a post-parse parent replacement" recorded an issue at HarnessTests.swift:417:5: Expectation failed: (response.exitCode → .success) != .success
+􀢄  Test "MTU matrix production path rejects a post-parse parent replacement" recorded an issue at HarnessTests.swift:418:5: Expectation failed: !((fileManager → <NSFileManager: 0x1055d9750>).fileExists(atPath: external.appendingPathComponent("matrix.json").path → "/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/TASK-260715-gyg51r-swap-external-3527D2B9-0835-4898-8366-8458F75626EE/matrix.json") → true)
+􀢄  Test "MTU matrix production path rejects a post-parse parent replacement" failed after 1.252 seconds with 2 issues.
+􀟈  Test "MTU matrix production path supports the advertised 64-packet lower bound" started.
+􀢄  Test "MTU matrix production path supports the advertised 64-packet lower bound" recorded an issue at HarnessTests.swift:435:5: Expectation failed: (response.exitCode → .failure) == .success
+􀢄  Test "MTU matrix production path supports the advertised 64-packet lower bound" recorded an issue at HarnessTests.swift:421:4: Caught error: Error Domain=NSCocoaErrorDomain Code=260 "The file “TASK-260715-gyg51r-minimum-C6AF2CB9-4668-4DB2-AFA7-BF54F6EA83BF.json” couldn’t be opened because there is no such file." UserInfo={NSFilePath=/tmp/TASK-260715-gyg51r-minimum-C6AF2CB9-4668-4DB2-AFA7-BF54F6EA83BF.json, NSURL=file:///tmp/TASK-260715-gyg51r-minimum-C6AF2CB9-4668-4DB2-AFA7-BF54F6EA83BF.json, NSUnderlyingError=0x96ee24210 {Error Domain=NSPOSIXErrorDomain Code=2 "No such file or directory"}}
+􀢄  Test "MTU matrix production path supports the advertised 64-packet lower bound" failed after 0.536 seconds with 2 issues.
+􀢄  Suite "ReluxTunnelHarness" failed after 2.358 seconds with 4 issues.
+􀢄  Test run with 3 tests in 1 suite failed after 2.358 seconds with 4 issues.

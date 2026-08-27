@@ -1,0 +1,37 @@
+forbidden-production-api-scan
+forbidden_match=false
+network-literal-scan
+666:    let domain = ipv6 ? AF_INET6 : AF_INET
+852:      address.sin6_family = sa_family_t(AF_INET6)
+853:      address.sin6_addr = in6addr_loopback
+863:      address.sin_family = sa_family_t(AF_INET)
+864:      address.sin_addr.s_addr = inet_addr("127.0.0.1")
+external_endpoint_match=false
+descriptor-containment-call-sites
+82:      target = try MTUMatrixOutputTarget.open(rootPath: projectTemp, components: components)
+84:      target = try MTUMatrixOutputTarget.open(
+144:  static func open(rootPath: String, components: [String]) throws -> MTUMatrixOutputTarget {
+153:      let filesystemRoot = Darwin.open("/", O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
+161:          Darwin.mkdirat(parent, component, S_IRWXU) != 0, errno != EEXIST
+164:            operation: "mkdirat output directory", code: errno
+167:        let descriptor = Darwin.openat(
+168:          parent, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC
+188:  func withParentDescriptor<T>(_ body: (Int32) throws -> T) throws -> T {
+207:    guard Darwin.fstat(descriptor, &metadata) == 0 else {
+208:      throw MTUMatrixError.outputWriteFailure(operation: "fstat output directory", code: errno)
+426:    try validateAnchoredChain(target)
+427:    try target.withParentDescriptor { directoryDescriptor in
+434:    if Darwin.fstatat(directoryDescriptor, fileName, &existing, AT_SYMLINK_NOFOLLOW) == 0 {
+439:      throw MTUMatrixError.outputWriteFailure(operation: "fstatat output file", code: errno)
+443:    let fileDescriptor = Darwin.openat(
+446:      O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC,
+456:        _ = Darwin.unlinkat(directoryDescriptor, temporaryName, 0)
+476:    guard Darwin.renameat(directoryDescriptor, temporaryName, directoryDescriptor, fileName) == 0
+478:      throw MTUMatrixError.outputWriteFailure(operation: "renameat output", code: errno)
+483:  private static func validateAnchoredChain(_ target: MTUMatrixOutputTarget) throws {
+490:    let filesystemRoot = Darwin.open("/", O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
+497:      let descriptor = Darwin.openat(
+500:        O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC
+sensitive-material-scan
+sensitive_match=false
+exit_code=0

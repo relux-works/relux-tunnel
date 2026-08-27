@@ -1,0 +1,6 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version-45881B103DA9D485.txt
+[2/4] Emitting module ReluxTunnelHarnessSupport
+Build of product 'ReluxTunnelHarness' complete! (0.55s)
+{"command":"mtu-matrix","configuration":{"parameters":{"output_path":"<redacted>","packets_per_row":"512"},"profileReference":"<redacted>"},"dependencyRevisions":{"hev-socks5-tunnel":"ad7600497931205105b08367bd1b450048157e40","libssh2":"a34302491c164d53c900fec9b3cbb050ecebe719","openssl":"openssl-3.5.7"},"durationNanoseconds":738474459,"metrics":{"counters":{"harness.mtu_matrix.packets_dropped":8814,"harness.mtu_matrix.packets_sent":17664,"harness.mtu_matrix.rows":36},"gauges":{},"schemaVersion":1},"platform":{"architecture":"arm64","operatingSystem":"macOS","operatingSystemVersion":"Version 26.5 (Build 25F71)"},"schemaVersion":1,"seed":260715,"sourceRevision":"a3a3352697686154fa69cc7c12d5eff9bec9d15c+working-tree-mtu-matrix","status":"succeeded"}

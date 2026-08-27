@@ -1,0 +1,3 @@
+Command: swift test
+Exit code: 1
+Result: 474 tests in 40 suites; 25 pre-existing known ReluxNIOSSH-unavailable issues plus 5 task failures. Under concurrent suite load, the MTU harness recovery loop timed out after roughly 50ms and could consume a delayed ordinary datagram as the 64-byte recovery probe. This exposed an insufficient bounded drain/recovery protocol; no green claim was made.

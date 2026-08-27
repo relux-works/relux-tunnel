@@ -1,0 +1,17 @@
+SOURCE_PROHIBITED_API_SCAN
+Sources/ReluxTunnelHarnessSupport/MTUMatrixCommand.swift:222:            "No authorized deterministic local NAT64 environment is present; Internet and route mutation are prohibited by the execution brief."
+Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift:39:      named: "harness.libssh2.linked",
+Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift:56:      sshTransports: UnavailableHarnessSSHTransportFactory(),
+SOURCE_ENDPOINT_SCAN
+368:    let domain = ipv6 ? AF_INET6 : AF_INET
+369:    let receiver = Darwin.socket(domain, SOCK_DGRAM, 0)
+371:    let sender = Darwin.socket(domain, SOCK_DGRAM, 0)
+541:      address.sin6_family = sa_family_t(AF_INET6)
+542:      address.sin6_addr = in6addr_loopback
+545:          Darwin.bind(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in6>.size))
+552:      address.sin_family = sa_family_t(AF_INET)
+553:      address.sin_addr.s_addr = inet_addr("127.0.0.1")
+556:          Darwin.bind(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in>.size))
+575:          Darwin.connect(sender, $0, length)
+590:          Darwin.connect(sender, $0, length)
+RAW_PRIVACY_SCAN
