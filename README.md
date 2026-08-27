@@ -105,6 +105,54 @@ unavailable because the synchronous runner owns no tasks; process threads are
 not used as a proxy. The command never configures a VPN, route, DNS, interface,
 or NetworkExtension.
 
+The physical HEV/bridge memory matrix is an explicitly opted-in Swift Testing
+run. It opens only numeric-loopback, process-owned resources; stages 100, 250,
+and 500 idle UDP-in-TCP sessions; samples public Mach physical-footprint and
+peak counters; and writes task-scoped raw JSON:
+
+```bash
+matrix_index_dir="$(mktemp -d .temp/TASK-260715-135rr8/candidate-index.XXXXXX)"
+GIT_INDEX_FILE="$matrix_index_dir/index" git read-tree HEAD
+GIT_INDEX_FILE="$matrix_index_dir/index" git add -A
+candidate_tree="$(GIT_INDEX_FILE="$matrix_index_dir/index" git write-tree)"
+RELUX_RUN_PHYSICAL_MEMORY_MATRIX=1 \
+RELUX_MATRIX_RUN_ID=run-01 \
+RELUX_CANDIDATE_TREE_OID="$candidate_tree" \
+swift test \
+  --filter HEVIntegrationTests.physicalMemoryAndConcurrencyMatrix
+```
+
+Repeat with distinct `RELUX_MATRIX_RUN_ID` values for independent evidence
+rows. Each report is written below `.temp/TASK-260715-135rr8/`, carries the
+exact candidate tree OID and HEV revision/source hash read from the pinned
+native manifest, and includes its own measured 500-cycle lifecycle samples.
+Before any HEV work or evidence emission, the entry point independently rebuilds
+the working candidate OID through a task-local temporary Git index and rejects a
+well-formed caller-supplied mismatch. It also hashes the linked macOS HEV archive
+and compares the result with the manifest lock. Lifecycle analysis excludes a
+fixed 10-sample allocator warmup, then records net footprint change,
+increase/equal/decrease transition counts, and exact increase cycles. Bounded
+evidence requires at least 500 preallocated samples and post-warmup maximum
+resident-footprint drawup no greater than 256 KiB. It separately requires every
+cycle to restore harness-owned boundary start/stop, HEV start/main-return, live
+channel, queued batch, outstanding read, descriptor-close-stage, and cleanup
+error counters. This deterministic release signal does not depend on when the
+Darwin allocator returns resident pages to the OS. The ceiling remains 1% of the
+upper 25 MiB provisional envelope; a larger upward excursion or any incomplete
+owned-resource release fails closed. A bounded monotonic allocator rise remains
+explicitly classified and reported instead of being called a release.
+The observer reserves every retained sample before the baseline snapshot, so
+its own Array capacity growth is excluded. Bounded opt-in 100/500/1000-cycle
+diagnostics use `RELUX_RUN_EXTENDED_HEV_LIFECYCLE=1` and
+`RELUX_LIFECYCLE_CYCLES=<row>`. The report records macOS
+`os_proc_available_memory` as unavailable because the public SDK explicitly
+excludes macOS, and records HEV queued bytes and process-wide Swift task counts
+as unknown rather than substituting proxy zeros. The execution does not start a
+NetworkExtension, change VPN/network settings, or induce global memory pressure.
+The production matrix writes schema-2 raw evidence atomically before enforcing
+the lifecycle verdict, so a failing 500-cycle attempt remains independently
+auditable and exact-tree-bound.
+
 ## Planning and execution
 
 Work is tracked on a file-based board in [`.task-board/`](.task-board/), driven
