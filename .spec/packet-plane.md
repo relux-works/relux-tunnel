@@ -51,14 +51,23 @@ constant:
 
 ```yaml
 tunnel:
-  mtu: 8500
+  mtu: 1500
 socks5:
   udp: tcp
 misc:
   task-stack-size: 24576
   tcp-buffer-size: 4096
-  max-session-count: 1200
+  udp-copy-buffer-nums: 2
+  max-session-count: 500
 ```
+
+The M0 bridge requests 32768-byte send and receive buffers on both socket-pair
+endpoints and reads back every effective value. Each pump yields after 64 work
+items or 5 ms, whichever comes first. MTU 4096 and requested buffers through
+262144 bytes remain injectable measured candidates; 4096-byte socket buffers
+are fault-injection only. The complete evidence and revalidation boundary are
+recorded in the task-scoped
+[`TASK-260715-2jatnd` decision](../docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md).
 
 `socks5.udp: tcp` is fixed before adapter work starts. The internal SOCKS
 endpoint is process-local and MUST reject connections that do not originate
@@ -74,10 +83,11 @@ rebase strategy.
 
 ## MTU and batching
 
-Benchmark MTUs 1500, 4096, and 8500 on physical iOS hardware and macOS. MTU 8500
-is the initial hypothesis because local TCP termination can reduce packet and
-syscall counts; it is not accepted until fragmentation, datagram limits,
-latency, memory, IPv6, and representative application behavior pass.
+The M0 physical macOS matrix benchmarked MTUs 1500, 4096, and 8500. MTU 1500 is
+selected. MTU 4096 remains injectable only after end-to-end path proof. MTU
+8500 is rejected as the default because constrained-buffer rows produced
+`EMSGSIZE` sender refusals and loopback did not establish external path or
+fragmentation safety. Physical-iPhone evidence remains deferred by ADR-024.
 
 Batch sizes are adaptive within fixed memory ceilings. The bridge MUST expose
 packets, bytes, batches, queue-full drops, malformed frames, and maximum observed

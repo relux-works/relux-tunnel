@@ -3,6 +3,15 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-08-30
+
+### M0 packet bridge and HEV baseline accepted (TASK-260715-2jatnd)
+
+- DECISION: The macOS-first M0 Bridge gate passes under ADR-024 with MTU 1500, requested/effective 32768-byte socket buffers, 64-packet/5-ms pump budgets, HEV task-stack/TCP/UDP-copy values 24576/4096/2, and an initial measured 500-session ceiling. MTU 4096 remains injectable behind end-to-end proof; MTU 8500 is a named failed default candidate because constrained-buffer rows produced 768 `EMSGSIZE` refusals.
+- EVIDENCE: Public-API bridge, IPv4/IPv6 framing, deterministic faults, hostile-frame fuzzing, bounded pressure, lifecycle, packaging, notices, and physical Mac MTU/memory rows trace to accepted task-scoped resources in `docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md`. The worst measured incremental HEV/bridge cost was 9,715,712 bytes at 500 sessions; whole-extension SSH/DNS/relay/cache/reconnect memory remains unmeasured.
+- FORK: Unmodified HEV `ad7600497931205105b08367bd1b450048157e40` remains selected. There is no Instruments material-bottleneck evidence or improved callback prototype, so fork authorization is rejected by default.
+- GAPS: Physical iPhone, jetsam, NAT64, sleep/wake, energy, and whole-extension memory stay deferred/blocked and are never inferred from macOS. M1 consumers may use this baseline only through the exact accepted-outcome binding task; production composition remains fail-closed on its other M0 inputs.
+
 ## 2026-08-27
 
 ### 0824 — Deterministic lifecycle release is separated from Darwin residency (TASK-260715-135rr8)

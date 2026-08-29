@@ -40,6 +40,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
 - **Native dependencies**: pinned custom-build C graphs use source-rebuilt
   static XCFrameworks behind `ReluxTunnelNativeAdapter`; see
   [`docs/native-dependency-packaging.md`](docs/native-dependency-packaging.md).
+- **M0 bridge baseline**: MTU, socket buffers, batching, HEV settings, session
+  ceiling, memory evidence, and the no-fork disposition are bound by the
+  [`TASK-260715-2jatnd decision`](docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md).
 
 ## macOS experiment harness
 
