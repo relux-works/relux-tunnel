@@ -8,7 +8,7 @@
   },
   "spawn": {
     "enabled": true,
-    "max_parallel": 1,
+    "max_parallel": 3,
     "preferred_agentic_system": {
       "exclusive": "codex"
     },

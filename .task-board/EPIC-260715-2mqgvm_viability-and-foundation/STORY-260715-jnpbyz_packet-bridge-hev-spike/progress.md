@@ -1,5 +1,5 @@
 ## Status
-backlog
+done
 
 ## Assigned To
 (none)
@@ -8,10 +8,10 @@ backlog
 2026-07-15T00:46:59Z
 
 ## Last Update
-2026-07-28T00:47:24Z
+2026-08-29T22:00:27Z
 
 ## Blocked By
-- STORY-260715-l2i2oo
+- (none)
 
 ## Blocks
 - STORY-260715-1zzt0c
@@ -24,6 +24,7 @@ backlog
 (empty)
 
 ## Notes
+Removed the legacy stored Story-level dependency on STORY-260715-l2i2oo after all packet-bridge child tasks reached done. Concrete task-level dependencies remain authoritative; the broad container edge prevented correct done aggregation and caused PARENT_STATUS_MISMATCH.
 
 ## Precondition Resources
 (none)

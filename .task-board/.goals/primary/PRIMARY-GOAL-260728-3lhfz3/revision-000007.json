@@ -1,0 +1,21 @@
+{
+  "contract": "primary-goal-v1",
+  "id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 7,
+  "previous_revision": 6,
+  "state": "active",
+  "scope": {
+    "kind": "board"
+  },
+  "objective": "Deliver a working, signed and notarized macOS-first Relux Tunnel client that presents as a full-tunnel NEPacketTunnelProvider VPN and uses authenticated SSH with libssh2 as the primary external transport to a user-controlled host. Complete all gate-free SPM core, packet bridge and HEV, SSH viability, TCP and DNS runtime, rootless exec and stdio relay, UDP and degraded mode, macOS UI and provider, self-update, threat-model, CI, signing and release work through tracked producer-reviewer-rework-accepted cycles. iOS, App Store A0 policy research, and native Linux runner evidence are deferred and must not block the macOS prototype. Preserve host-key verification before auth, Keychain-only secret custody, bounded memory, fail-closed DNS, no user-exposed SOCKS, no SFTP, no utun-FD discovery, injectable physical tuning, and stop only at real Keychain, Apple provisioning, system-VPN, physical validation, notary, or product-decision gates with exact evidence. Use only Codex gpt-5.6-sol medium workers with lite context and max_parallel 3, scheduling only independent tasks and preserving one task per conflicting Story worktree. Continue autonomously through subsequent critical-path tasks until the human explicitly requests a pause. Do not install, enable, configure, or connect the real system VPN on this machine; reserve system-VPN validation for the dedicated test host. After every accepted task whose changes merit version control, automatically create signed commits as Ivan Oparin \u003coparin@me.com\u003e using /Users/iv/.ssh/ivanopcode, push task branches, open pull requests, land them in main after applicable checks and review, synchronize local main with origin, and leave accepted scopes clean. Commit timestamps must remain sequential and fall within 20:00-09:00 MSK, represented consistently in Tbilisi time.",
+  "mutation": {
+    "kind": "objective_realigned",
+    "reason": "Human authorized autonomous commits and continuous execution until pause",
+    "actor": {
+      "kind": "primary_parent",
+      "actor_id": "iv"
+    }
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-08-29T21:53:59.947756Z"
+}

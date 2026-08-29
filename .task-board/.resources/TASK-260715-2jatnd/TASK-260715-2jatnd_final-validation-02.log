@@ -1,0 +1,12 @@
+Board is valid. No issues found.
+resource_cmp=exact
+checklist=16/16
+repository_diff_check=pass
+f2dc587541386cdc5eb7e10328adda21b8bbba3af32d5c722e62616a2abca173  docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md
+f2dc587541386cdc5eb7e10328adda21b8bbba3af32d5c722e62616a2abca173  .temp/TASK-260715-2jatnd/verify/adr.md
+a19a89d8785ddfa14acade8a365db664f8c67f34d3a482aaf8edcad210ac1aae  .temp/TASK-260715-2jatnd/verify/results.md
+ M .spec/decisions.md
+ M .spec/packet-plane.md
+ M LOGBOOK.md
+ M README.md
+?? docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md

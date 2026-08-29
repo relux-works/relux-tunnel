@@ -1,0 +1,255 @@
+diff --git a/.spec/decisions.md b/.spec/decisions.md
+index f37a88d..fb565e2 100644
+--- a/.spec/decisions.md
++++ b/.spec/decisions.md
+@@ -16,7 +16,7 @@
+ | ADR-012 | Accepted | Make compatible and platform-scoped fail-closed route modes explicit user choices |
+ | ADR-013 | Gate (release path) | Obtain evidence that local TCP termination + remote `direct-tcpip` is acceptable under Apple's packet-tunnel intended-use guidance. Re-scoped 2026-07-28: Gate A0 is an App Store/App Review release gate and is **not** a gate for the macOS prototype critical path. It stays mandatory before iOS submission and before public macOS distribution claims that depend on it. |
+ | ADR-014 | Accepted | Select **libssh2** as the primary SSH engine (2026-07-28 owner decision). `ReluxNIOSSH` is retained as recorded comparative evidence and receives no further fork work unless new evidence invalidates libssh2. Selection rests on the ADR-023 M0-viability gate set plus macOS-harness conformance evidence; per-channel window, scale, and memory numbers remain M3 physical-evidence gates and are not asserted by this decision. |
+-| ADR-015 | Open | Select the production MTU from physical-device tests of 1500, 4096, and 8500 |
++| ADR-015 | Accepted | Select MTU 1500 for the macOS-first M0 baseline; keep 4096 injectable only after end-to-end path proof and reject 8500 as the default because the accepted constrained-buffer matrix produced `EMSGSIZE` sender refusals. The exact buffer, batching, HEV, session, memory, fork, and revalidation bindings are recorded in [`TASK-260715-2jatnd`](../docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md). |
+ | ADR-016 | Accepted | Set new Apple targets to iOS 18.0 and macOS 15.0; preserve the legacy SwiftPM product at macOS 14.0; require minimum/current CI plus named physical baselines per TASK-260715-3r0993 |
+ | ADR-017 | Accepted | Use Tuist 4.202.5 pinned exactly by repository-local Mise; generate with an explicit Xcode pin and deterministic graph/project comparison per TASK-260715-3r0993 |
+ | ADR-018 | Accepted | Pin Sparkle 2.9.4 exactly in `ReluxProxyMac`; require EdDSA-signed payloads plus a signed appcast with pre-extraction verification and no failure expiry; publish only final Developer ID-signed, hardened-runtime, notarized/stapled DMGs; use default stable plus opt-in `prerelease` items on the public HTTPS feed; replace/activate the direct-distribution packet-tunnel system extension only after host relaunch; use higher-build forward rollback because Sparkle 2 has no downgrade path; iOS stays with the App Store |
+diff --git a/.spec/packet-plane.md b/.spec/packet-plane.md
+index 02f708a..3573d31 100644
+--- a/.spec/packet-plane.md
++++ b/.spec/packet-plane.md
+@@ -51,15 +51,24 @@ constant:
+ 
+ ```yaml
+ tunnel:
+-  mtu: 8500
++  mtu: 1500
+ socks5:
+   udp: tcp
+ misc:
+   task-stack-size: 24576
+   tcp-buffer-size: 4096
+-  max-session-count: 1200
++  udp-copy-buffer-nums: 2
++  max-session-count: 500
+ ```
+ 
++The M0 bridge requests 32768-byte send and receive buffers on both socket-pair
++endpoints and reads back every effective value. Each pump yields after 64 work
++items or 5 ms, whichever comes first. MTU 4096 and requested buffers through
++262144 bytes remain injectable measured candidates; 4096-byte socket buffers
++are fault-injection only. The complete evidence and revalidation boundary are
++recorded in the task-scoped
++[`TASK-260715-2jatnd` decision](../docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md).
++
+ `socks5.udp: tcp` is fixed before adapter work starts. The internal SOCKS
+ endpoint is process-local and MUST reject connections that do not originate
+ from the owned bridge/adapter path.
+@@ -74,10 +83,11 @@ rebase strategy.
+ 
+ ## MTU and batching
+ 
+-Benchmark MTUs 1500, 4096, and 8500 on physical iOS hardware and macOS. MTU 8500
+-is the initial hypothesis because local TCP termination can reduce packet and
+-syscall counts; it is not accepted until fragmentation, datagram limits,
+-latency, memory, IPv6, and representative application behavior pass.
++The M0 physical macOS matrix benchmarked MTUs 1500, 4096, and 8500. MTU 1500 is
++selected. MTU 4096 remains injectable only after end-to-end path proof. MTU
++8500 is rejected as the default because constrained-buffer rows produced
++`EMSGSIZE` sender refusals and loopback did not establish external path or
++fragmentation safety. Physical-iPhone evidence remains deferred by ADR-024.
+ 
+ Batch sizes are adaptive within fixed memory ceilings. The bridge MUST expose
+ packets, bytes, batches, queue-full drops, malformed frames, and maximum observed
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index 793f38f..a1a3469 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -3,6 +3,15 @@
+ > Institutional memory. Concise, factual, high-signal.
+ > Newest entries first. One block per insight.
+ 
++## 2026-08-30
++
++### M0 packet bridge and HEV baseline accepted (TASK-260715-2jatnd)
++
++- DECISION: The macOS-first M0 Bridge gate passes under ADR-024 with MTU 1500, requested/effective 32768-byte socket buffers, 64-packet/5-ms pump budgets, HEV task-stack/TCP/UDP-copy values 24576/4096/2, and an initial measured 500-session ceiling. MTU 4096 remains injectable behind end-to-end proof; MTU 8500 is a named failed default candidate because constrained-buffer rows produced 768 `EMSGSIZE` refusals.
++- EVIDENCE: Public-API bridge, IPv4/IPv6 framing, deterministic faults, hostile-frame fuzzing, bounded pressure, lifecycle, packaging, notices, and physical Mac MTU/memory rows trace to accepted task-scoped resources in `docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md`. The worst measured incremental HEV/bridge cost was 9,715,712 bytes at 500 sessions; whole-extension SSH/DNS/relay/cache/reconnect memory remains unmeasured.
++- FORK: Unmodified HEV `ad7600497931205105b08367bd1b450048157e40` remains selected. There is no Instruments material-bottleneck evidence or improved callback prototype, so fork authorization is rejected by default.
++- GAPS: Physical iPhone, jetsam, NAT64, sleep/wake, energy, and whole-extension memory stay deferred/blocked and are never inferred from macOS. M1 consumers may use this baseline only through the exact accepted-outcome binding task; production composition remains fail-closed on its other M0 inputs.
++
+ ## 2026-08-27
+ 
+ ### 0824 — Deterministic lifecycle release is separated from Darwin residency (TASK-260715-135rr8)
+diff --git a/README.md b/README.md
+index e0cc1ec..188bfa1 100644
+--- a/README.md
++++ b/README.md
+@@ -40,6 +40,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
+ - **Native dependencies**: pinned custom-build C graphs use source-rebuilt
+   static XCFrameworks behind `ReluxTunnelNativeAdapter`; see
+   [`docs/native-dependency-packaging.md`](docs/native-dependency-packaging.md).
++- **M0 bridge baseline**: MTU, socket buffers, batching, HEV settings, session
++  ceiling, memory evidence, and the no-fork disposition are bound by the
++  [`TASK-260715-2jatnd decision`](docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md).
+ 
+ ## macOS experiment harness
+ 
+diff --git a/docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md b/docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md
+new file mode 100644
+index 0000000..49e2361
+--- /dev/null
++++ b/docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md
+@@ -0,0 +1,155 @@
++# TASK-260715-2jatnd — M0 packet bridge and HEV decision
++
++- Status: Accepted for the macOS-first prototype scope
++- Date: 2026-08-30
++- Scope authority: ADR-003, ADR-004, ADR-009, ADR-011, ADR-020, ADR-024
++- Decision owner: `TASK-260715-2jatnd`
++
++## Decision
++
++The M0 Bridge gate passes for the active macOS-first prototype scope. The
++accepted implementation is the public `NEPacketTunnelFlow` adapter boundary
++connected to an `AF_UNIX/SOCK_DGRAM` `PacketFlowBridge`, with unmodified pinned
++HEV/lwIP consuming the borrowed endpoint. The decision does not approve SSH,
++relay, production routes or DNS, a real Network Extension VPN run on this build
++host, iOS, or future performance.
++
++No platform or address-family result is averaged. MTU 8500 fails as the default
++candidate because constrained-buffer rows produced 768 `EMSGSIZE` sender
++refusals. The physical-iPhone, NAT64, sleep/wake, and whole-extension-memory rows
++remain explicitly deferred. ADR-024 makes the physical Apple-silicon Mac the
++active M0 target and keeps the iPhone row outside the macOS-first gate; it is
++neither a pass nor a waiver.
++
++## Selected initial configuration
++
++| Setting | Selected M0 value | Evidence and rationale |
++| --- | ---: | --- |
++| Provider and HEV MTU | `1500` | Portable baseline. All nominal and mixed IPv4, native IPv6, and dual-stack rows had zero loss. `4096` remains injectable only after end-to-end path proof; `8500` is rejected as the default. |
++| Requested bridge send/receive buffers, both socket-pair endpoints | `32768` bytes | The physical matrix measured requested = effective at 4096, 32768, and 262144 bytes. `32768` is the smallest non-fault-injection value; `4096` is pressure-only and values through `262144` remain injectable. Effective values must be read back and a clamp must be reported, never assumed. |
++| Work count budget | `64` packets per pump slice | The accepted physical HEV/bridge matrix used 64. Deterministic count-bound tests cover smaller forced yields and count malformed work. |
++| Work time budget | `5 ms` per pump slice | The accepted physical HEV/bridge matrix used 5 ms. The bridge uses an injected monotonic clock and yields when either count or time is exhausted. |
++| `socks5.udp` | `tcp` | Fixed by ADR-004 and verified against the pinned public HEV configuration surface. |
++| `misc.task-stack-size` | `24576` bytes | Effective value remains 24576 only with the selected explicit UDP copy-buffer count. |
++| `misc.tcp-buffer-size` | `4096` bytes per session | Accepted low-memory value and unchanged by the pinned HEV clamp. |
++| `misc.udp-copy-buffer-nums` | `2` | ADR-020 baseline. Omitting it restores upstream default 10 and silently raises the effective stack to 35480, so omission is invalid. |
++| `misc.max-session-count` | `500` initial ceiling | Three producer and three independent reviewer runs passed 100/250/500 stages and intentionally did not force the former 1200 candidate. Raising the ceiling requires new composed memory evidence. |
++
++The 500-session setting supersedes the unmeasured 1200 M0 candidate in the
++earlier baseline YAML. It is a configuration ceiling, not proof that teardown
++is an instantaneous hard allocation cap. Later physical tuning remains caller
++injected and must not mutate these evidence-backed defaults silently.
++
++## Gate record
++
++The evidence column names board-owned resources. Commands and exact exit codes
++are retained in the cited logs; historical red attempts remain attached to
++their source tasks and are not converted into passes by a later rerun.
++
++| Required M0 Bridge row | Result | Reproducible evidence |
++| --- | --- | --- |
++| Public Apple/Darwin API only; no utun discovery, descriptor scan/reopen/duplication, `SCM_RIGHTS`, or detached bridge work | PASS | `TASK-260715-3o0co4_results.md`; independent `TASK-260715-3o0co4_review.md`; `TASK-260720-9xy8yx_results.md`. Reviewer reran build, 39 tests, 13 TSan tests, format, core-boundary, and prohibition scans with exit 0. Production call sites are the iOS/macOS `PacketFlowAdapterBoundary` implementations and `PacketFlowBridge.start`. |
++| IPv4 framing | PASS | `TASK-260715-3dn813_test-report.md`: byte-exact SDK-derived `AF_INET` framing plus malformed/fault coverage; focused 47-test run and TSan exit 0. |
++| Native IPv6 framing | PASS | `TASK-260715-3dn813_test-report.md` and `TASK-260715-gyg51r_review-rev4-verdict.md`: byte-exact `AF_INET6` framing and fresh physical native-IPv6 rows; zero nominal/mixed loss. |
++| Dual-stack framing/order | PASS | `TASK-260715-gyg51r_rev4-raw-matrix.json` and independent reviewer raw matrix named by `TASK-260715-gyg51r_review-rev4-verdict.md`; all 36 rows present and accounting-consistent. |
++| Nominal unexplained loss | PASS | `TASK-260715-gyg51r_rev4-results.md`: zero loss in every nominal and mixed row at 512 packets/row and in three 64-packet-floor repeats. |
++| MTU 1500 default | PASS | Same physical matrix: 6144 attempts across family/pressure rows, maximum successful datagram 1472 bytes, zero sender refusals; selected as portable baseline. |
++| MTU 4096 default | BLOCKED | Physical loopback rows pass, but external path MTU and fragmentation safety are not proven. It remains injectable only with end-to-end proof. |
++| MTU 8500 default | FAIL | `TASK-260715-gyg51r_rev4-results.md`: 768 `EMSGSIZE` sender refusals under constrained buffers and no external path proof. The red row rejects 8500 as the default; it is not averaged with green rows. |
++| Bounded backpressure and error/drop behavior | PASS | `TASK-260715-3dn813_test-report.md` and `TASK-260715-135rr8_swift-pressure-fault-rev4.log` cover deterministic and physical bounded pressure/fault behavior. `TASK-260715-35wctc_stop-line.md` and `TASK-260715-35wctc_real-hev-counter-regression.log` preserve the original red result: the real IPv4/IPv6 data path passed, but post-stop traffic gauges were zero. The resolving evidence is `BUG-260720-2p4fln_rework-01-results.md` plus the accepted `BUG-260720-2p4fln_review2-verdict.md`: the full HEV matrix and exact accounting passed after pre-fini counter capture, with harness-owned teardown assertions and no weakened drop bound. Would-block/`ENOBUFS` remain counted bounded drops with no retry queue; `EMSGSIZE`, truncation, persistent errors, peer EOF, and PacketFlow rejection are fatal as specified. |
++| Batch count/time bounds | PASS | `TASK-260715-3o0co4_review.md` and `TASK-260715-3dn813_test-report.md`: deterministic fake-scheduler/monotonic-clock tests prove count and time yields, including malformed work, with no sleep, retry side buffer, or recursion. |
++| Hostile-frame allocation bound and fuzzing | PASS | `TASK-260715-52h8i3_results.md`: 50,000 frames/direction, about 12.7 MiB reverse peak against a 256 MiB ceiling, no crash/hang/out-of-bounds/unbounded growth; 7/7 extended and TSan tests passed. |
++| HEV integration, lifecycle, cleanup, and traffic accounting | PASS | `TASK-260715-1vv52g_rework-01-results.md`, `BUG-260720-2p4fln_results.md`, and `TASK-260715-135rr8_review-verdict-rev4.md`: one process-wide lease, join-before-close, return-aware quit, 500/500 owned releases in each independent matrix, zero live channels/reads/queued batches/cleanup errors, and post-cleanup descriptor range 3...3. |
++| Physical Apple-silicon Mac memory headroom | PASS | `TASK-260715-135rr8_rev4-results.md`: worst measured incremental HEV/bridge cost 9,715,712 bytes at 500 sessions, leaving 16,498,688 bytes in the 25 MiB envelope and 21,741,568 bytes in the 30 MiB envelope. Three producer and three reviewer matrices passed; 500-cycle drawup stayed below 256 KiB. |
++| Whole-extension 25–30 MiB budget | BLOCKED | The accepted evidence is incremental HEV/bridge only. SSH, DNS, relay, caches, and reconnect overlap are unmeasured and must fit the residual budget. No proxy is substituted for unavailable macOS `os_proc_available_memory`, unknown HEV queued bytes, or unknown process-wide Swift task count. |
++| Physical iPhone memory/lifecycle | BLOCKED / DEFERRED | ADR-024 and `TASK-260715-1kntdx`. No Mac result is reused as iPhone evidence. The row re-arms unchanged when iOS resumes. |
++| NAT64, sleep/wake, and global pressure ordering | BLOCKED / DEFERRED | `TASK-260715-gyg51r_rev4-results.md` and `TASK-260715-135rr8_review-verdict-rev4.md`. NAT64 lacked an authorized deterministic environment; sleep/wake is deferred; soft/pressure admission awaits SSH composition. Critical bridge teardown and bounded local pressure are covered. |
++| Pin, Apple packaging, and notices | PASS | `TASK-260715-uopycx_pinned-baseline-audit.md`, `TASK-260715-uopycx_dependency-manifest.json`, `TASK-260715-uopycx_third-party-notices.txt`, and `TASK-260715-1vv52g_results.md`: exact unmodified graph, deterministic Apple XCFramework, artifact locks, stripped symbol audit, embedded byte-exact MIT/lwIP notices, Apple build matrix, and `make validate-native` exit 0. |
++| HEV fork authorization | FAIL / REJECTED | No Instruments bridge-copy/syscall bottleneck evidence and no measured callback prototype are present. This is an evidenced absence, not a failed read. The default no-fork rule therefore rejects authorization. |
++
++## Pin and fork disposition
++
++The selected unmodified graph is:
++
++| Component | Revision | License |
++| --- | --- | --- |
++| `hev-socks5-tunnel` | `ad7600497931205105b08367bd1b450048157e40` | MIT |
++| `hev-socks5-core` | `c234519072ff5b928b90b304da9a666bcb440455` | MIT |
++| `hev-task-system` | `b1afa0e21fb4ed5a69560e78e54baf0efdebe171` | MIT |
++| HEV lwIP fork | `2a11c14c7a32887af25a034e82ef18b0b12076ac` | BSD-style 3-clause |
++| HEV yaml fork | `efa36117a8646d26d12b58e05bac472d7854a70d` | MIT |
++
++The Apple artifact remains checksum-locked by `NativeDependencies/manifest.json`.
++The notice set is present and verified; release packaging must continue to ship
++the aggregated MIT text and complete lwIP notice and must compare them against
++the actual shipped SBOM. Wintun is outside the Apple binary notice set.
++
++A future fork requires all of the following before authorization:
++
++1. Instruments evidence on the target device/OS identifies bridge copies or
++   syscall rate as a material bottleneck.
++2. A minimal callback-ingress prototype improves the same measured workload.
++3. Public framing, fault, fuzz, backpressure, lifecycle, and memory regression
++   suites remain green, including negative tests at the production call site.
++4. The patch inventory, exact upstream base, notices, conflict test, upstreaming
++   disposition, and rebase procedure are reviewed.
++
++## Residual risks and revalidation triggers
++
++- Re-run the complete physical matrix for a new baseline Mac class, a new major
++  macOS release, a Swift/Xcode SDK change affecting NetworkExtension or Darwin
++  sockets, or any change to bridge I/O, buffer setup, batching, framing, HEV
++  lifecycle, native artifact, compiler flags, or selected HEV graph.
++- Re-run memory composition when SSH, DNS, relay, cache, or reconnect-overlap
++  allocations land. Exceeding the residual 16,498,688-byte 25 MiB allowance at
++  the measured 500-session row reopens the session ceiling; it does not justify
++  weakening the memory gate.
++- Re-run end-to-end MTU evidence before selecting 4096, and reopen the decision
++  on any unexplained nominal loss, family-specific red row, `EMSGSIZE`, clamp
++  change, or new fragmentation observation.
++- Upstream HEV issue 315 remains an unreproduced teardown risk. Any Apple
++  reproduction, upstream lifecycle change, or abnormal stop result reopens the
++  lifecycle decision.
++- Physical iPhone, jetsam, NAT64, sleep/wake, energy, and whole-extension rows
++  remain deferred/blocked, never inferred from macOS or loopback.
++
++## Traceability and downstream readiness
++
++The Story is the smallest complete decomposition because each element owns one
++distinct deliverable and every binding packet-plane requirement has one owner:
++
++| Element | Atomic deliverable | Concrete specification trace |
++| --- | --- | --- |
++| `TASK-260715-uopycx` | Exact unmodified HEV/lwIP pin, public behavior, Apple build, and notices audit | `packet-plane.md` “HEV/lwIP integration” and “Fork policy”; `validation.md` “Security and release validation”. The exact research question left open by the spec was: *Which immutable upstream graph and effective public configuration/build/license behavior satisfy the named upstream-HEV baseline?* |
++| `TASK-260715-p89bdj` | PacketFlow bridge ownership/framing/backpressure/lifecycle contract | `packet-plane.md` “Boundary”, “Packet bridge”, and “Backpressure contract”. |
++| `TASK-260715-3o0co4` | Public socket-pair bridge implementation | Same packet-plane sections plus ADR-003. |
++| `TASK-260715-1vv52g` | HEV integration, binary packaging, configuration, and embedded notices | `packet-plane.md` “HEV/lwIP integration”; ADR-004, ADR-019, ADR-020. |
++| `TASK-260715-3dn813` | Deterministic bridge unit, fault, lifecycle, and negative tests | `validation.md` packet-plane pass conditions and security validation. |
++| `TASK-260715-35wctc` | Real HEV-to-bridge integration tests | `validation.md` M0 Bridge and packet-plane matrix. |
++| `TASK-260715-52h8i3` | Hostile-frame fuzz and allocation-bound evidence | `validation.md` malformed packet fuzzing and `security-privacy.md` bounded-input rule. |
++| `TASK-260720-9xy8yx` | PacketFlow adapter callback/cancellation lifecycle hardening | `validation.md` cancellation/start-stop rows and `packet-plane.md` bounded lifecycle work. |
++| `TASK-260715-2jatnd` | One binding M0 gate/configuration/fork decision | `delivery.md` M0 exit and `validation.md` M0 Bridge gate. |
++| `BUG-260720-2zh86a` | Normalize pinned HEV and ReluxLibSSH2 XCFramework deployment metadata in the deterministic vendor build path | Justified gap: ADR-016 and `validation.md` require iOS 18/macOS 15 slices and a passing Apple native matrix, but the spec did not define how to repair pinned artifacts whose slices advertised older deployment targets. Before creation, scope checks excluded upstream C patches, MTU/framing, routes, DNS, SSH protocol behavior, and relay changes; the fix remained build/vendor-path only. `BUG-260720-2zh86a_results.md` and accepted `BUG-260720-2zh86a_review.md` provide the concrete evidence. |
++| `BUG-260720-2p4fln` | Preserve traffic statistics across teardown | Justified gap: the literal spec requires counters and clean lifecycle but did not define capture ordering. Out-of-scope checks confirmed no HEV pin, framing, route, DNS, SSH, or relay change. |
++| `BUG-260720-24f9w6` | Remove a coverage-instrumentation timing false signal | Justified gap: deterministic gate evidence is required, but the spec does not prescribe the test-observation mechanism. Out-of-scope checks confirmed no production behavior or threshold change. |
++
++The accepted physical evidence is deliberately owned outside this implementation
++Story by `TASK-260715-gyg51r` and `TASK-260715-135rr8`; duplicating those manual
++gate tasks here would weaken provenance. No new research task or diagram is
++needed for this synthesis.
++
++This decision releases only its dependency edge for the following exact tasks:
++
++- `TASK-260720-1qhxqa` — bind accepted M0 runtime revisions for M1 production
++  composition. It remains blocked by the generated-project and SSH decisions.
++- `TASK-260715-12x6oq` — verify macOS physical lifecycle and UI independence.
++  It retains its other runtime, owner-ratification, SSH, and dedicated-host
++  blockers.
++- `TASK-260715-2xx2tk` — consume the measured bridge footprint in the comparative
++  SSH scale/memory matrix.
++- `TASK-260715-38o3xg` and `TASK-260715-1pn983` — later M3 tuning and composed
++  memory/window/rekey work; this M0 decision supplies a baseline, not a tuning
++  authorization.
++
++M1 production composition remains fail-closed until `TASK-260720-1qhxqa` binds
++the exact reviewer-accepted M0 outcomes and all of its other blockers are done.
