@@ -54,13 +54,15 @@ public enum HarnessDefaults {
         memoryPressure: NormalHarnessMemoryPressureSource()
       ),
       sshTransports: UnavailableHarnessSSHTransportFactory(),
-      packetEndpoints: UnavailableHarnessPacketEndpointFactory(),
+      packetEndpoints: M1RuntimeHarnessPacketEndpointFactory(),
       faultPolicy: NoHarnessFaultPolicy()
     )
   }
 
   public static func registry() -> HarnessCommandRegistry {
     // The built-in list is explicit so command names stay reviewable and stable.
-    try! HarnessCommandRegistry(commands: [SmokeHarnessCommand(), MTUMatrixHarnessCommand()])
+    try! HarnessCommandRegistry(commands: [
+      M1RuntimeHarnessCommand(), SmokeHarnessCommand(), MTUMatrixHarnessCommand(),
+    ])
   }
 }

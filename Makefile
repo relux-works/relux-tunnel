@@ -1,5 +1,6 @@
 .PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
 	m0-bindings-check m0-bindings-test \
+	m1-runtime-harness-test \
 	workspace-generate workspace-validate macos-targets-validate \
 	apple-ui-test-contract apple-ui-test-smoke \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
@@ -33,6 +34,13 @@ m0-bindings-check:
 
 m0-bindings-test:
 	python3 -m unittest -v scripts.tests.test_m0_production_bindings
+
+m1-runtime-harness-test:
+	swift test --filter M1RuntimeHarnessTests
+	swift build --product ReluxTunnelHarness
+	python3 scripts/validate-m1-runtime-harness.py \
+		--executable .build/debug/ReluxTunnelHarness \
+		--output .temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json
 
 credential-free-validate:
 	./scripts/validate-credential-free.sh --legacy-root "$(LEGACY_ROOT)"

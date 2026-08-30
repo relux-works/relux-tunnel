@@ -1,0 +1,53 @@
+{
+  "command": "m1-runtime",
+  "dependencyRevisions": {
+    "fixture-manifest": "TASK-260715-m8bi8i-v1",
+    "packet-bridge": "M0-accepted",
+    "runtime-contract": "M1-v1"
+  },
+  "fixtures": [
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json",
+      "expectedExitCode": 0,
+      "expectedStatus": "succeeded",
+      "name": "success-repeated"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json",
+      "expectedExitCode": 70,
+      "expectedStandardError": "m1-runtime injected authentication-failure\n",
+      "name": "authentication-failure"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json",
+      "expectedExitCode": 71,
+      "expectedStandardError": "m1-runtime injected packet-failure\n",
+      "name": "packet-failure"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json",
+      "expectedExitCode": 72,
+      "expectedStandardError": "m1-runtime injected dns-failure\n",
+      "name": "dns-failure"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json",
+      "expectedExitCode": 73,
+      "expectedStandardError": "m1-runtime injected route-apply-failure\n",
+      "name": "route-apply-failure"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json",
+      "expectedExitCode": 74,
+      "expectedStandardError": "m1-runtime injected mid-session-ssh-failure\n",
+      "name": "mid-session-ssh-failure"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json",
+      "expectedExitCode": 74,
+      "expectedStandardError": "m1-runtime injected mid-session-dns-failure\n",
+      "name": "mid-session-dns-failure"
+    }
+  ],
+  "schemaVersion": 1
+}

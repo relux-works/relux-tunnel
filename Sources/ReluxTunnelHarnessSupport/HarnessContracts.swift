@@ -6,8 +6,17 @@ public enum HarnessExitCode: Int32, Equatable, Sendable {
   case success = 0
   case failure = 1
   case usage = 64
+  case m1AuthenticationFailure = 70
+  case m1PacketFailure = 71
+  case m1DNSFailure = 72
+  case m1RouteApplyFailure = 73
+  case m1MandatoryFailure = 74
   case interrupted = 130
   case terminated = 143
+}
+
+public protocol HarnessExitCodeProvidingError: Error {
+  var harnessExitCode: HarnessExitCode { get }
 }
 
 public enum HarnessCancellationReason: Equatable, Sendable {

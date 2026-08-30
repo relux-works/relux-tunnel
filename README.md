@@ -90,6 +90,30 @@ records result and metric schema versions, source/dependency revisions, seed,
 redacted configuration, duration, platform, and metrics. `SIGINT` and `SIGTERM`
 cancel the active command and exit with codes 130 and 143 after cleanup.
 
+The `m1-runtime` subcommand composes the production shared
+`TunnelRuntimeCoordinator` and `BridgeBackedM1PacketPlaneFactory` against
+controlled packet, SSH, TCP, DNS, and route substitutes. The success fixture
+releases a simulated host-app owner after readiness, exchanges one TCP stream
+and one safe-DNS datagram, snapshots bounded aggregate diagnostics, and stops
+three generations. Every generation must restore descriptor, task, channel,
+socket, and native-runtime ownership to zero. The command never launches a
+containing app or Network Extension and never changes host routes or DNS.
+
+```bash
+swift run ReluxTunnelHarness m1-runtime \
+  --configuration Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json
+make m1-runtime-harness-test
+```
+
+The versioned fixture manifest is
+[`TASK-260715-m8bi8i_fixture-manifest-v1.json`](Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json).
+It pins the fixture/runtime/packet revisions and the seven CI commands. Success
+exits `0`; injected authentication, packet, DNS, and route-apply failures exit
+`70`, `71`, `72`, and `73`; mid-session mandatory SSH or DNS loss exits `74`.
+Failure output contains only a fixed scenario token. The validator writes a
+privacy-safe result to
+`.temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json`.
+
 The macOS-only `mtu-matrix` subcommand runs a bounded, loopback-only physical
 baseline across MTU 1500/4096/8500, IPv4/IPv6/dual stack, and nominal,
 constrained-buffer, receiver-stall, and mixed bidirectional traffic. Its
@@ -223,6 +247,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
 | --- | --- | --- | --- |
 | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
 | M0 production binding validator | Recompute the exact reviewer-accepted architecture, packet/HEV, SSH, and M1 runtime-contract resource digests; reject missing, unreadable, stale, superseded, unknown, incompatible, duplicate-key, or repository-drifted input, including protected target closure drift and selected SSH patch/header/license/retained-fork exact-tree drift, before production composition | `make m0-bindings-check TASK_BOARD_RESOURCES="$TASK_BOARD_DIR/.resources"`; `make m0-bindings-test`; see [`TASK-260720-1qhxqa_m0-production-bindings.md`](docs/TASK-260720-1qhxqa_m0-production-bindings.md) | Immutable machine manifest under `Configuration/`; human handoff under `docs/`; validation report under `.temp/TASK-260720-1qhxqa/` |
+| M1 composed runtime harness | Run the shared coordinator and bridge-backed M1 packet plane with deterministic packet/SSH/TCP/DNS/route substitutes; verify ordered readiness, representative traffic, aggregate diagnostics, host-owner independence, stable mandatory-failure exits, privacy, and repeated zero resource growth | `make m1-runtime-harness-test`; or `swift run ReluxTunnelHarness m1-runtime --configuration Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json` | Versioned configs and command/exit manifest under `Fixtures/M1Runtime/`; privacy-safe CI report under `.temp/TASK-260715-m8bi8i/` |
 | Tuist 4.202.5 via Mise | Generate the credential-free Apple workspace; validate deterministic foundation state; build/test the macOS host and embedded packet-tunnel system extension in unsigned Debug and Release | `make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy`; or `make workspace-generate`, `make workspace-validate`, and `make macos-targets-validate`; see [`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md) | Ignored `ReluxTunnel.xcworkspace` and `ReluxTunnelApp.xcodeproj`; full logs under `.temp/TASK-260715-sbrrp7/credential-free-validation/`; foundation evidence under `.temp/TASK-260715-2btjwm/`; target evidence under `.temp/TASK-260715-uyju7n/` |
 | Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
 | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
