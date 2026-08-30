@@ -1,4 +1,5 @@
 .PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+	m0-bindings-check m0-bindings-test \
 	workspace-generate workspace-validate macos-targets-validate \
 	apple-ui-test-contract apple-ui-test-smoke \
 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
@@ -20,6 +21,18 @@
 	relay-toolchain-native-linux-smoke relay-toolchain-ci
 
 LEGACY_ROOT ?= ../relux-proxy
+TASK_BOARD_RESOURCES ?= $(TASK_BOARD_DIR)/.resources
+
+m0-bindings-check:
+	mkdir -p .temp/TASK-260720-1qhxqa
+	task-board q --format json 'get(TASK-260715-nphtib) { id status outcomeResources }; get(TASK-260715-2jatnd) { id status outcomeResources }; get(TASK-260715-1gjxer) { id status outcomeResources }; get(TASK-260715-30zng6) { id status outcomeResources }' > .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json
+	python3 scripts/validate-m0-production-bindings.py \
+		--resources-root "$(TASK_BOARD_RESOURCES)" \
+		--board-state .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json \
+		--report .temp/TASK-260720-1qhxqa/m0-bindings-validation.json
+
+m0-bindings-test:
+	python3 -m unittest -v scripts.tests.test_m0_production_bindings
 
 credential-free-validate:
 	./scripts/validate-credential-free.sh --legacy-root "$(LEGACY_ROOT)"
