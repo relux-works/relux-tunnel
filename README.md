@@ -43,6 +43,16 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
 - **M0 bridge baseline**: MTU, socket buffers, batching, HEV settings, session
   ceiling, memory evidence, and the no-fork disposition are bound by the
   [`TASK-260715-2jatnd decision`](docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md).
+- **M0 production composition**: `MacOSProductionDependencyFactory` validates
+  the exact accepted binding-manifest digest and semantic gate before creating
+  any concrete dependency. Its public factory surface cannot replace the
+  root-owned selected libssh2 transport, system-domain Keychain resolver,
+  immutable-profile approved-host policy, or privacy-safe diagnostic mapper;
+  only candidate-neutral network, policy-value, TCP/DNS, and settings seams are
+  injected. Packet-plane `prepare` constructs a resource-free private-ingress
+  adapter and bridge owner only; `activateReads` is the separate post-settings
+  call that acquires descriptors, the private listener, the HEV lease/thread,
+  and PacketFlow reads.
 
 ## macOS experiment harness
 
@@ -50,6 +60,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
 packet, SSH, relay, fault-injection, and metrics experiments without a Network
 Extension lifecycle or generated workspace. Its support module composes the
 same `ReluxTunnelCore` runtime contracts used by the providers.
+`DeterministicHarnessSessionFactory` implements the same candidate-neutral
+`TunnelRuntimeFactory` boundary with explicit deterministic substitutions and
+does not accept or bypass a production binding manifest.
 
 The initial stable subcommand is `smoke`. It accepts a versioned JSON document
 from a file or inline, exercises temporary-file, Unix-socket, and managed-task

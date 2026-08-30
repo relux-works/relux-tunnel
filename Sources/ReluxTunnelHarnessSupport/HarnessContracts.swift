@@ -160,6 +160,44 @@ public struct HarnessCoreComposition: Sendable {
   }
 }
 
+/// Deterministic SPM root for the same candidate-neutral runtime interface used
+/// by the macOS production factory. Harness composition intentionally has no
+/// production-manifest requirement and supplies all substitutes explicitly.
+public actor DeterministicHarnessSessionFactory: TunnelRuntimeFactory {
+  public typealias GenerationBuilder =
+    @Sendable (
+      _ context: TunnelRuntimeContext,
+      _ runtimeGeneration: UInt64
+    ) async throws -> TunnelRuntimeCoordinatorDependencies
+
+  private let makeDependencies: GenerationBuilder
+  private var latestGeneration: UInt64
+
+  public init(
+    initialGeneration: UInt64 = 0,
+    makeDependencies: @escaping GenerationBuilder
+  ) {
+    latestGeneration = initialGeneration
+    self.makeDependencies = makeDependencies
+  }
+
+  public func makeRuntime(
+    context: TunnelRuntimeContext
+  ) async throws -> any TunnelRuntime {
+    guard latestGeneration < UInt64.max else {
+      throw TunnelRuntimeCoordinatorError.generationExhausted
+    }
+    let generation = latestGeneration + 1
+    let dependencies = try await makeDependencies(context, generation)
+    latestGeneration = generation
+    return TunnelRuntimeCoordinator(
+      runtimeGeneration: generation,
+      context: context,
+      dependencies: dependencies
+    )
+  }
+}
+
 public struct HarnessCommandContext: Sendable {
   public let configuration: HarnessConfigurationDocument
   public let dependencies: HarnessCommandDependencies

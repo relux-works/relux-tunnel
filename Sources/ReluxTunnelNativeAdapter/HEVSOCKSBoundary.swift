@@ -1,11 +1,42 @@
 import Darwin
 import Dispatch
 import Foundation
+import ReluxTunnelCore
 
 public protocol HEVSOCKSConnectionAdapter: Sendable {
   /// Receives an authenticated, exclusively owned channel positioned at the
   /// first byte of the SOCKS request. The channel closes itself on release.
   func acceptAuthenticatedConnection(_ channel: HEVSOCKSChannel)
+}
+
+/// Parser/connection owner selected by the TCP/DNS implementation task. It is
+/// invoked only after the loopback listener has authenticated a connection.
+public protocol M1HEVAuthenticatedConnectionHandler: Sendable {
+  func acceptAuthenticatedConnection(
+    _ channel: HEVSOCKSChannel,
+    ingress: any M1PrivateIngressDispatching
+  )
+}
+
+/// Resource-free adapter between the accepted HEV boundary and M1 ingress.
+/// Construction performs no socket, listener, thread, lease, or read work.
+public final class M1HEVSOCKSConnectionAdapter: HEVSOCKSConnectionAdapter,
+  @unchecked Sendable
+{
+  private let ingress: any M1PrivateIngressDispatching
+  private let handler: any M1HEVAuthenticatedConnectionHandler
+
+  public init(
+    ingress: any M1PrivateIngressDispatching,
+    handler: any M1HEVAuthenticatedConnectionHandler
+  ) {
+    self.ingress = ingress
+    self.handler = handler
+  }
+
+  public func acceptAuthenticatedConnection(_ channel: HEVSOCKSChannel) {
+    handler.acceptAuthenticatedConnection(channel, ingress: ingress)
+  }
 }
 
 public final class HEVSOCKSChannel: @unchecked Sendable {
