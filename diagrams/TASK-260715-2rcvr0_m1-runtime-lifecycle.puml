@@ -1,0 +1,129 @@
+@startuml TASK-260715-2rcvr0_m1-runtime-lifecycle
+
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+autonumber
+
+actor "Host app" as App
+participant "NetworkExtension" as NE
+participant "TunnelProviderAdapter" as Adapter
+participant "Runtime factory" as Factory
+participant "TunnelRuntimeCoordinator" as Runtime
+participant "Config + SSH" as Bootstrap
+participant "TCP + safe DNS" as Consumers
+participant "Packet plane" as Packet
+participant "Network settings" as Settings
+
+== Successful start ==
+
+note over NE,Adapter
+  Contract path shown here requires a concrete provider composition root.
+  The checked-in generated macOS provider subclass is still a shell.
+end note
+
+App -> NE: startVPNTunnel()
+NE -> Adapter: start(configuration, completion)
+Adapter -> Factory: makeRuntime(generation)
+Factory -> Factory: validate exact M0 manifest
+Factory --> Adapter: fresh provider-owned graph
+Adapter -> Runtime: start()
+Runtime -> Bootstrap: load immutable configuration
+Runtime -> Bootstrap: authenticate SSH
+Runtime -> Consumers: prepare TCP
+Runtime -> Consumers: prepare safe DNS over SSH
+Runtime -> Packet: prepare (resource-free)
+Runtime -> Runtime: verify mandatory health
+Runtime -> Settings: build and apply settings
+Settings --> Runtime: committed
+Runtime -> Packet: activateReads(packetFlow)
+Runtime -> Runtime: verify health; publish connectedDegraded
+Runtime --> Adapter: start succeeds
+Adapter --> NE: completion(nil), exactly once
+note over Runtime
+  tcp=true; safeDNS=true; udp=false
+  routeState=installed; healthy=true
+end note
+
+newpage Partial failure rollback
+
+== Partial failure rollback ==
+
+NE -> Adapter: start(configuration, completion)
+Adapter -> Runtime: start()
+Runtime -> Bootstrap: load configuration + authenticate
+Runtime -> Consumers: prepare TCP + safe DNS
+Runtime -> Packet: prepare (resource-free)
+Runtime -> Settings: apply settings
+alt apply not committed
+  Settings --> Runtime: failure(notCommitted)
+  note right of Runtime: No settings clear is issued
+else apply failed after commit or with uncertain disposition
+  Settings --> Runtime: failure(committed / uncertain)
+  note right of Runtime: Activation is not attempted; settings clear is required
+else apply succeeds, then activation fails
+  Settings --> Runtime: success(committed)
+  Runtime -> Packet: activateReads(packetFlow)
+  Packet --> Runtime: failure
+end
+Runtime -> Runtime: publish disconnecting
+Runtime -> Consumers: close TCP admission, then DNS admission
+Runtime -> Packet: stop reads, bridge, native work
+opt settings committed or uncertain
+  Runtime -> Settings: clear settings
+end
+Runtime -> Consumers: stop DNS, then TCP
+Runtime -> Bootstrap: close SSH
+alt clear succeeds
+  Runtime -> Runtime: publish failed with primary error
+else clear fails
+  Runtime -> Runtime: publish failed / clearFailed / capabilities false
+end
+Runtime --> Adapter: redacted startup failure
+Adapter --> NE: completion(provider NSError), exactly once
+
+newpage Host app termination
+
+== Host app termination ==
+
+App -> App: VPNSessionController.retire() / deinit
+App -> App: cancel observers and bounded requests
+note over App,NE
+  No stopTunnel() call.
+  App lifetime is not forwarding authority.
+end note
+NE -> Adapter: provider generation remains running
+Adapter -> Runtime: continue provider-owned TCP + safe DNS
+Runtime -> Consumers: forward representative traffic
+Consumers --> Runtime: success
+Runtime --> Adapter: newer immutable snapshots remain available
+
+newpage User or system stop
+
+== User or system stop ==
+
+alt user stop
+  App -> NE: stopVPNTunnel()
+else system stop
+  NE -> NE: system initiates provider stop
+end
+NE -> Adapter: stop(rawReason, completion)
+Adapter -> Runtime: stop(mapped ProviderStopReason)
+Runtime -> Runtime: publish disconnecting
+Runtime -> Consumers: close TCP admission, then DNS admission
+Runtime -> Packet: stop reads, bridge, native work
+opt settings committed or uncertain
+  Runtime -> Settings: clear settings
+end
+Runtime -> Consumers: stop DNS, then TCP
+Runtime -> Bootstrap: close SSH
+Runtime -> Runtime: publish disconnected
+Runtime --> Adapter: cleanup joined
+alt cleanup within 10-second budget
+  Adapter --> NE: completion(), exactly once
+else deadline exceeded
+  Adapter -> Adapter: cancel + force-close registered handles
+  Adapter -> Adapter: record finite cleanup diagnostic
+  Adapter --> NE: completion(), exactly once
+end
+
+@enduml
