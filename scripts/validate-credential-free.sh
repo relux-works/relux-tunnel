@@ -144,6 +144,14 @@ run_step legacy-preservation ./scripts/check-legacy-preservation.sh \
   --legacy-root "$legacy_fixture" --workspace-root "$repo_root"
 run_step legacy-guard-tests ./scripts/tests/test-legacy-preservation-guard.sh \
   --legacy-root "$legacy_fixture"
+run_step migration-isolation python3 ./scripts/check-migration-isolation.py \
+  --legacy-root "$legacy_fixture" \
+  --workspace-root "$repo_root" \
+  --generated-project "$repo_root/ReluxTunnelApp.xcodeproj/project.pbxproj" \
+  --products-root "$repo_root/.temp/TASK-260715-uyju7n/Products" \
+  --report "$task_output/migration-isolation.json"
+run_step migration-isolation-negative-tests \
+  ./scripts/tests/test-migration-isolation-guard.sh --legacy-root "$legacy_fixture"
 run_step legacy-swift-test swift test --package-path "$legacy_fixture"
 run_step legacy-swift-release-build swift build -c release --package-path "$legacy_fixture"
 

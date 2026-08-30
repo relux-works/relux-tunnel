@@ -1,4 +1,6 @@
-.PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+.PHONY: credential-free-validate check-legacy test-legacy-guard \
+	check-migration-isolation test-migration-isolation \
+	check-core-boundaries core-build core-test \
 	m0-bindings-check m0-bindings-test \
 	m1-runtime-harness-test \
 	workspace-generate workspace-validate macos-targets-validate \
@@ -69,6 +71,14 @@ check-legacy:
 
 test-legacy-guard:
 	./scripts/tests/test-legacy-preservation-guard.sh --legacy-root "$(LEGACY_ROOT)"
+
+check-migration-isolation: check-legacy
+	python3 scripts/check-migration-isolation.py \
+		--legacy-root "$(LEGACY_ROOT)" \
+		--workspace-root .
+
+test-migration-isolation:
+	./scripts/tests/test-migration-isolation-guard.sh --legacy-root "$(LEGACY_ROOT)"
 
 check-core-boundaries:
 	./scripts/check-core-boundaries.sh
