@@ -6,8 +6,17 @@ public enum HarnessExitCode: Int32, Equatable, Sendable {
   case success = 0
   case failure = 1
   case usage = 64
+  case m1AuthenticationFailure = 70
+  case m1PacketFailure = 71
+  case m1DNSFailure = 72
+  case m1RouteApplyFailure = 73
+  case m1MandatoryFailure = 74
   case interrupted = 130
   case terminated = 143
+}
+
+public protocol HarnessExitCodeProvidingError: Error {
+  var harnessExitCode: HarnessExitCode { get }
 }
 
 public enum HarnessCancellationReason: Equatable, Sendable {
@@ -157,6 +166,44 @@ public struct HarnessCoreComposition: Sendable {
   public func makeSSHTransport() async throws -> any SSHTransport {
     try await dependencies.faultPolicy.evaluate(.makeSSHTransport)
     return try await dependencies.sshTransports.makeSSHTransport()
+  }
+}
+
+/// Deterministic SPM root for the same candidate-neutral runtime interface used
+/// by the macOS production factory. Harness composition intentionally has no
+/// production-manifest requirement and supplies all substitutes explicitly.
+public actor DeterministicHarnessSessionFactory: TunnelRuntimeFactory {
+  public typealias GenerationBuilder =
+    @Sendable (
+      _ context: TunnelRuntimeContext,
+      _ runtimeGeneration: UInt64
+    ) async throws -> TunnelRuntimeCoordinatorDependencies
+
+  private let makeDependencies: GenerationBuilder
+  private var latestGeneration: UInt64
+
+  public init(
+    initialGeneration: UInt64 = 0,
+    makeDependencies: @escaping GenerationBuilder
+  ) {
+    latestGeneration = initialGeneration
+    self.makeDependencies = makeDependencies
+  }
+
+  public func makeRuntime(
+    context: TunnelRuntimeContext
+  ) async throws -> any TunnelRuntime {
+    guard latestGeneration < UInt64.max else {
+      throw TunnelRuntimeCoordinatorError.generationExhausted
+    }
+    let generation = latestGeneration + 1
+    let dependencies = try await makeDependencies(context, generation)
+    latestGeneration = generation
+    return TunnelRuntimeCoordinator(
+      runtimeGeneration: generation,
+      context: context,
+      dependencies: dependencies
+    )
   }
 }
 

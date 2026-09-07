@@ -30,16 +30,18 @@ adversarial="$work_root/adversarial.log"
 
 write_list "$valid" \
   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
 write_list "$missing" \
   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
 write_list "$unexpected" \
   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
+  UnexpectedScheme
 write_list "$adversarial" \
   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
+  UnexpectedScheme
 
 "$repo_root/scripts/check-workspace-schemes.sh" "$valid" >/dev/null
 for invalid in "$missing" "$unexpected" "$adversarial"; do

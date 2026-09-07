@@ -258,9 +258,19 @@ public enum HarnessArgumentParser {
   }
 }
 
+private struct HarnessCommandFailure: Sendable {
+  let message: String
+  let exitCode: HarnessExitCode
+
+  init(_ error: any Error) {
+    message = String(describing: error)
+    exitCode = (error as? any HarnessExitCodeProvidingError)?.harnessExitCode ?? .failure
+  }
+}
+
 private enum HarnessRunEvent: Sendable {
   case commandSucceeded
-  case commandFailed(String)
+  case commandFailed(HarnessCommandFailure)
   case cancelled(HarnessCancellationReason)
 }
 
@@ -331,14 +341,16 @@ public struct HarnessApplication: Sendable {
           try await command.run(context: context)
           return .commandSucceeded
         } catch {
-          return .commandFailed(String(describing: error))
+          return .commandFailed(HarnessCommandFailure(error))
         }
       }
       group.addTask {
         .cancelled(await cancellationSource.waitForCancellation())
       }
 
-      let event = await group.next() ?? .commandFailed("command produced no result")
+      let event =
+        await group.next()
+        ?? .commandFailed(HarnessCommandFailure(HarnessInternalError.commandProducedNoResult))
       group.cancelAll()
       await group.waitForAll()
       return event
@@ -366,8 +378,11 @@ public struct HarnessApplication: Sendable {
       } catch {
         return HarnessApplicationResponse(exitCode: .failure, standardError: "\(error)\n")
       }
-    case .commandFailed(let message):
-      return HarnessApplicationResponse(exitCode: .failure, standardError: "\(message)\n")
+    case .commandFailed(let failure):
+      return HarnessApplicationResponse(
+        exitCode: failure.exitCode,
+        standardError: "\(failure.message)\n"
+      )
     case .cancelled(let reason):
       return HarnessApplicationResponse(exitCode: reason.exitCode)
     }
@@ -381,6 +396,10 @@ public struct HarnessApplication: Sendable {
         "error: \(error)\nusage: ReluxTunnelHarness <\(commands)> (--configuration <path> | --configuration-json <json>)\n"
     )
   }
+}
+
+private enum HarnessInternalError: Error {
+  case commandProducedNoResult
 }
 
 extension Duration {
