@@ -1,0 +1,1876 @@
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json
+new file mode 100644
+index 0000000..791d5fb
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json
+@@ -0,0 +1,8 @@
++{
++  "dependencyRevisions": {"fixture-manifest": "TASK-260715-m8bi8i-v1", "packet-bridge": "M0-accepted", "runtime-contract": "M1-v1"},
++  "parameters": {"repetitions": {"privacy": "public", "value": "1"}, "scenario": {"privacy": "public", "value": "authentication-failure"}},
++  "profileReference": {"privacy": "sensitive", "value": "11111111-1111-1111-1111-111111111111"},
++  "schemaVersion": 1,
++  "seed": 26071508,
++  "sourceRevision": "TASK-260715-m8bi8i"
++}
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json
+new file mode 100644
+index 0000000..9600575
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json
+@@ -0,0 +1,8 @@
++{
++  "dependencyRevisions": {"fixture-manifest": "TASK-260715-m8bi8i-v1", "packet-bridge": "M0-accepted", "runtime-contract": "M1-v1"},
++  "parameters": {"repetitions": {"privacy": "public", "value": "1"}, "scenario": {"privacy": "public", "value": "dns-failure"}},
++  "profileReference": {"privacy": "sensitive", "value": "11111111-1111-1111-1111-111111111111"},
++  "schemaVersion": 1,
++  "seed": 26071508,
++  "sourceRevision": "TASK-260715-m8bi8i"
++}
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json
+new file mode 100644
+index 0000000..27a0e8f
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json
+@@ -0,0 +1,53 @@
++{
++  "command": "m1-runtime",
++  "dependencyRevisions": {
++    "fixture-manifest": "TASK-260715-m8bi8i-v1",
++    "packet-bridge": "M0-accepted",
++    "runtime-contract": "M1-v1"
++  },
++  "fixtures": [
++    {
++      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json",
++      "expectedExitCode": 0,
++      "expectedStatus": "succeeded",
++      "name": "success-repeated"
++    },
++    {
++      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json",
++      "expectedExitCode": 70,
++      "expectedStandardError": "m1-runtime injected authentication-failure\n",
++      "name": "authentication-failure"
++    },
++    {
++      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json",
++      "expectedExitCode": 71,
++      "expectedStandardError": "m1-runtime injected packet-failure\n",
++      "name": "packet-failure"
++    },
++    {
++      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json",
++      "expectedExitCode": 72,
++      "expectedStandardError": "m1-runtime injected dns-failure\n",
++      "name": "dns-failure"
++    },
++    {
++      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json",
++      "expectedExitCode": 73,
++      "expectedStandardError": "m1-runtime injected route-apply-failure\n",
++      "name": "route-apply-failure"
++    },
++    {
++      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json",
++      "expectedExitCode": 74,
++      "expectedStandardError": "m1-runtime injected mid-session-ssh-failure\n",
++      "name": "mid-session-ssh-failure"
++    },
++    {
++      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json",
++      "expectedExitCode": 74,
++      "expectedStandardError": "m1-runtime injected mid-session-dns-failure\n",
++      "name": "mid-session-dns-failure"
++    }
++  ],
++  "schemaVersion": 1
++}
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json
+new file mode 100644
+index 0000000..626c80b
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json
+@@ -0,0 +1,8 @@
++{
++  "dependencyRevisions": {"fixture-manifest": "TASK-260715-m8bi8i-v1", "packet-bridge": "M0-accepted", "runtime-contract": "M1-v1"},
++  "parameters": {"repetitions": {"privacy": "public", "value": "1"}, "scenario": {"privacy": "public", "value": "mid-session-dns-failure"}},
++  "profileReference": {"privacy": "sensitive", "value": "11111111-1111-1111-1111-111111111111"},
++  "schemaVersion": 1,
++  "seed": 26071508,
++  "sourceRevision": "TASK-260715-m8bi8i"
++}
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json
+new file mode 100644
+index 0000000..33bebb0
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json
+@@ -0,0 +1,8 @@
++{
++  "dependencyRevisions": {"fixture-manifest": "TASK-260715-m8bi8i-v1", "packet-bridge": "M0-accepted", "runtime-contract": "M1-v1"},
++  "parameters": {"repetitions": {"privacy": "public", "value": "1"}, "scenario": {"privacy": "public", "value": "mid-session-ssh-failure"}},
++  "profileReference": {"privacy": "sensitive", "value": "11111111-1111-1111-1111-111111111111"},
++  "schemaVersion": 1,
++  "seed": 26071508,
++  "sourceRevision": "TASK-260715-m8bi8i"
++}
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json
+new file mode 100644
+index 0000000..5eef343
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json
+@@ -0,0 +1,8 @@
++{
++  "dependencyRevisions": {"fixture-manifest": "TASK-260715-m8bi8i-v1", "packet-bridge": "M0-accepted", "runtime-contract": "M1-v1"},
++  "parameters": {"repetitions": {"privacy": "public", "value": "1"}, "scenario": {"privacy": "public", "value": "packet-failure"}},
++  "profileReference": {"privacy": "sensitive", "value": "11111111-1111-1111-1111-111111111111"},
++  "schemaVersion": 1,
++  "seed": 26071508,
++  "sourceRevision": "TASK-260715-m8bi8i"
++}
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json
+new file mode 100644
+index 0000000..e17348a
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json
+@@ -0,0 +1,8 @@
++{
++  "dependencyRevisions": {"fixture-manifest": "TASK-260715-m8bi8i-v1", "packet-bridge": "M0-accepted", "runtime-contract": "M1-v1"},
++  "parameters": {"repetitions": {"privacy": "public", "value": "1"}, "scenario": {"privacy": "public", "value": "route-apply-failure"}},
++  "profileReference": {"privacy": "sensitive", "value": "11111111-1111-1111-1111-111111111111"},
++  "schemaVersion": 1,
++  "seed": 26071508,
++  "sourceRevision": "TASK-260715-m8bi8i"
++}
+diff --git a/Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json b/Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json
+new file mode 100644
+index 0000000..e31fd9a
+--- /dev/null
++++ b/Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json
+@@ -0,0 +1,18 @@
++{
++  "dependencyRevisions": {
++    "fixture-manifest": "TASK-260715-m8bi8i-v1",
++    "packet-bridge": "M0-accepted",
++    "runtime-contract": "M1-v1"
++  },
++  "parameters": {
++    "repetitions": {"privacy": "public", "value": "3"},
++    "scenario": {"privacy": "public", "value": "success"}
++  },
++  "profileReference": {
++    "privacy": "sensitive",
++    "value": "11111111-1111-1111-1111-111111111111"
++  },
++  "schemaVersion": 1,
++  "seed": 26071508,
++  "sourceRevision": "TASK-260715-m8bi8i"
++}
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index e8a675e..de1d64c 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1432,3 +1432,12 @@
+ - REWORK VERIFICATION: Focused composition, exact macOS ownership, and exact harness ownership suites pass 13/13. The full SwiftPM suite passes 507 tests in 43 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Core, macOS adapter, and harness-support target builds; strict recursive Swift format; Core/security-boundary checks; accepted M0 validation; all 32 M0 negative tests; native/libssh2 pin checks; `git diff --check`; and unsigned generated macOS host/provider Debug+Release validation all exit 0. Three intermediate compile attempts and the first task-scoped lint correctly exited 1 during the API/test-double rework and remain in `.temp/TASK-260715-3ejhyy/`.
+ - BOARD ANOMALY: Final `task-board validate` returned process exit 0 while reporting the owning Story stored as `to-dev` versus child aggregate `development`. The Task checklist and outcome are complete; the parent status is orchestrator-owned and the validation output is retained without calling it clean.
+ - REVIEW REWORK 2: Revision 2 exposed Foundation boolean type confusion: `NSNumber(1) as? Bool` let numeric JSON `1` satisfy `productionCompositionPermitted`. The semantic validator now requires the value's Core Foundation type to be `CFBoolean`; numeric `0` and `1` both fail with `compositionNotPermitted`. Restoring the permissive cast made the named negative test exit 1, and restoring the guard made it pass. Focused composition and exact macOS/harness ownership tests, the 508-test/43-suite SwiftPM run (25 known unavailable-ReluxNIOSSH issues), both production build targets, strict format, Core/native/M0 gates, 32 manifest negatives, and the unsigned macOS provider matrix all exit 0.
++### 1010 — Composed M1 runtime harness owns deterministic lifecycle evidence (TASK-260715-m8bi8i)
++- IMPLEMENTATION: The `m1-runtime` command drives `HarnessApplication.run -> HarnessCoreComposition -> DeterministicHarnessSessionFactory -> TunnelRuntimeCoordinator` and the real `BridgeBackedM1PacketPlaneFactory`/`PacketFlowBridge` path against controlled packet, SSH, TCP, safe-DNS, and route substitutes. It observes ordered readiness snapshots, drops a simulated host owner, exchanges one TCP stream and one DNS datagram, requests fixed-schema aggregate diagnostics, and performs reverse cleanup.
++- FAILURE CONTRACT: Versioned scenarios inject authentication, packet activation, safe-DNS preparation, route apply, mid-session SSH loss, and mid-session DNS loss. Stable exits are 70, 71, 72, 73, and 74; diagnostics contain fixed tokens only. The production configuration gate requires a sensitive opaque profile, public control parameters, exact dependency-revision names, one fault generation, and success repetitions in 1...8.
++- NEGATIVE EVIDENCE: `M1RuntimeHarnessTests.productionConfigurationGate` names the production `HarnessApplication.run` call site, proves the exact repetition bound by admitting 8 and refusing 9, and refuses hidden controls, an exposed profile, general UDP, repeated fault injection, and missing revision evidence. Failure tests traverse the real command entry point and require exact nonzero codes rather than calling component guards directly.
++- MUTATION ANOMALY/FIX: The first `8 -> 7` cap narrowing remained green because the test derived both accepted and rejected values from the production constant, making its evidence self-minted. The test now owns independent contract literals 8 and 9. With production still narrowed to 7 the complete M1 harness suite exited 1; after restoring 8 it passed. Two earlier probes that returned 0 are retained and explicitly do not count as negative evidence.
++- RESOURCE/PRIVACY EVIDENCE: Each generation uses real process-owned socket-pair descriptors and a controlled native borrow, joins the packet read and bridge tasks, closes the TCP channel, and requires zero descriptor, task, channel, socket, and native-runtime residue. The fixture manifest and validator reject dependency drift, raw profile output, nonzero growth gauges, unexpected stdout/stderr, and exit drift without retaining packet, DNS, endpoint, credential, or profile data.
++- REVIEW REWORK: Revision 1 exposed two self-minted claims. Mid-session loss called `stop(.providerFailure)` before checking `.failed`, so a dropped SSH/DNS health event still passed; the host-owner sentinel was an unrelated empty object. `M1RuntimeHarnessCommand.run` now waits for the coordinator-produced failure before the idempotent cleanup stop. The simulated host owner now owns the real `HarnessCoreComposition` bootstrap boundary, is released after runtime readiness, and must deallocate before runtime-owned TCP/DNS forwarding begins.
++- REWORK NEGATIVE EVIDENCE: Narrowing SSH and DNS `healthSink.receive` delivery to impossible generation zero made their named `HarnessApplication.run` production-entry tests exit `1` after the bounded one-second observation deadline. Narrowing host-owner release to impossible generation zero made the named forwarding/ownership test exit `1`. The source was restored from a byte-identical task-scoped copy after every mutant and returned to SHA-256 `f247f10825bcb255ad08adbc9735d29067751ec6c5d7b482128c40c53097c5c5`.
++- REWORK VERIFICATION: `make m1-runtime-harness-test` passes six focused tests and all seven manifest rows. Two additional unchanged-binary manifest runs also pass 7/7 with every row privacy-safe and exact exits `0/70/71/72/73/74/74`. The complete harness filter passes 38 tests in three suites; the full SwiftPM run passes 514 tests in 44 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Strict task-scoped Swift format, Core boundaries, fixture build, and diff checks exit `0`. One invalid Go-style `swift test ... -count=1` invocation exited `64` before tests and was immediately replaced by the valid Swift invocation; it is retained as command-error evidence rather than reported as a test failure.
+diff --git a/Makefile b/Makefile
+index b013fd0..abcc6cb 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,5 +1,6 @@
+ .PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+ 	m0-bindings-check m0-bindings-test \
++	m1-runtime-harness-test \
+ 	workspace-generate workspace-validate macos-targets-validate \
+ 	apple-ui-test-contract apple-ui-test-smoke \
+ 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
+@@ -34,6 +35,13 @@ m0-bindings-check:
+ m0-bindings-test:
+ 	python3 -m unittest -v scripts.tests.test_m0_production_bindings
+ 
++m1-runtime-harness-test:
++	swift test --filter M1RuntimeHarnessTests
++	swift build --product ReluxTunnelHarness
++	python3 scripts/validate-m1-runtime-harness.py \
++		--executable .build/debug/ReluxTunnelHarness \
++		--output .temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json
++
+ credential-free-validate:
+ 	./scripts/validate-credential-free.sh --legacy-root "$(LEGACY_ROOT)"
+ 
+diff --git a/README.md b/README.md
+index 1ac83e0..66649f4 100644
+--- a/README.md
++++ b/README.md
+@@ -90,6 +90,30 @@ records result and metric schema versions, source/dependency revisions, seed,
+ redacted configuration, duration, platform, and metrics. `SIGINT` and `SIGTERM`
+ cancel the active command and exit with codes 130 and 143 after cleanup.
+ 
++The `m1-runtime` subcommand composes the production shared
++`TunnelRuntimeCoordinator` and `BridgeBackedM1PacketPlaneFactory` against
++controlled packet, SSH, TCP, DNS, and route substitutes. The success fixture
++releases a simulated host-app owner after readiness, exchanges one TCP stream
++and one safe-DNS datagram, snapshots bounded aggregate diagnostics, and stops
++three generations. Every generation must restore descriptor, task, channel,
++socket, and native-runtime ownership to zero. The command never launches a
++containing app or Network Extension and never changes host routes or DNS.
++
++```bash
++swift run ReluxTunnelHarness m1-runtime \
++  --configuration Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json
++make m1-runtime-harness-test
++```
++
++The versioned fixture manifest is
++[`TASK-260715-m8bi8i_fixture-manifest-v1.json`](Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json).
++It pins the fixture/runtime/packet revisions and the seven CI commands. Success
++exits `0`; injected authentication, packet, DNS, and route-apply failures exit
++`70`, `71`, `72`, and `73`; mid-session mandatory SSH or DNS loss exits `74`.
++Failure output contains only a fixed scenario token. The validator writes a
++privacy-safe result to
++`.temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json`.
++
+ The macOS-only `mtu-matrix` subcommand runs a bounded, loopback-only physical
+ baseline across MTU 1500/4096/8500, IPv4/IPv6/dual stack, and nominal,
+ constrained-buffer, receiver-stall, and mixed bidirectional traffic. Its
+@@ -223,6 +247,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | --- | --- | --- | --- |
+ | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
+ | M0 production binding validator | Recompute the exact reviewer-accepted architecture, packet/HEV, SSH, and M1 runtime-contract resource digests; reject missing, unreadable, stale, superseded, unknown, incompatible, duplicate-key, or repository-drifted input, including protected target closure drift and selected SSH patch/header/license/retained-fork exact-tree drift, before production composition | `make m0-bindings-check TASK_BOARD_RESOURCES="$TASK_BOARD_DIR/.resources"`; `make m0-bindings-test`; see [`TASK-260720-1qhxqa_m0-production-bindings.md`](docs/TASK-260720-1qhxqa_m0-production-bindings.md) | Immutable machine manifest under `Configuration/`; human handoff under `docs/`; validation report under `.temp/TASK-260720-1qhxqa/` |
++| M1 composed runtime harness | Run the shared coordinator and bridge-backed M1 packet plane with deterministic packet/SSH/TCP/DNS/route substitutes; verify ordered readiness, representative traffic, aggregate diagnostics, host-owner independence, stable mandatory-failure exits, privacy, and repeated zero resource growth | `make m1-runtime-harness-test`; or `swift run ReluxTunnelHarness m1-runtime --configuration Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json` | Versioned configs and command/exit manifest under `Fixtures/M1Runtime/`; privacy-safe CI report under `.temp/TASK-260715-m8bi8i/` |
+ | Tuist 4.202.5 via Mise | Generate the credential-free Apple workspace; validate deterministic foundation state; build/test the macOS host and embedded packet-tunnel system extension in unsigned Debug and Release | `make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy`; or `make workspace-generate`, `make workspace-validate`, and `make macos-targets-validate`; see [`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md) | Ignored `ReluxTunnel.xcworkspace` and `ReluxTunnelApp.xcodeproj`; full logs under `.temp/TASK-260715-sbrrp7/credential-free-validation/`; foundation evidence under `.temp/TASK-260715-2btjwm/`; target evidence under `.temp/TASK-260715-uyju7n/` |
+ | Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
+ | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
+diff --git a/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift b/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift
+index fdfc323..2ae0999 100644
+--- a/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift
++++ b/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift
+@@ -6,10 +6,19 @@ public enum HarnessExitCode: Int32, Equatable, Sendable {
+   case success = 0
+   case failure = 1
+   case usage = 64
++  case m1AuthenticationFailure = 70
++  case m1PacketFailure = 71
++  case m1DNSFailure = 72
++  case m1RouteApplyFailure = 73
++  case m1MandatoryFailure = 74
+   case interrupted = 130
+   case terminated = 143
+ }
+ 
++public protocol HarnessExitCodeProvidingError: Error {
++  var harnessExitCode: HarnessExitCode { get }
++}
++
+ public enum HarnessCancellationReason: Equatable, Sendable {
+   case interrupt
+   case terminate
+diff --git a/Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift b/Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift
+index 10883f0..048df07 100644
+--- a/Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift
++++ b/Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift
+@@ -258,9 +258,19 @@ public enum HarnessArgumentParser {
+   }
+ }
+ 
++private struct HarnessCommandFailure: Sendable {
++  let message: String
++  let exitCode: HarnessExitCode
++
++  init(_ error: any Error) {
++    message = String(describing: error)
++    exitCode = (error as? any HarnessExitCodeProvidingError)?.harnessExitCode ?? .failure
++  }
++}
++
+ private enum HarnessRunEvent: Sendable {
+   case commandSucceeded
+-  case commandFailed(String)
++  case commandFailed(HarnessCommandFailure)
+   case cancelled(HarnessCancellationReason)
+ }
+ 
+@@ -331,14 +341,16 @@ public struct HarnessApplication: Sendable {
+           try await command.run(context: context)
+           return .commandSucceeded
+         } catch {
+-          return .commandFailed(String(describing: error))
++          return .commandFailed(HarnessCommandFailure(error))
+         }
+       }
+       group.addTask {
+         .cancelled(await cancellationSource.waitForCancellation())
+       }
+ 
+-      let event = await group.next() ?? .commandFailed("command produced no result")
++      let event =
++        await group.next()
++        ?? .commandFailed(HarnessCommandFailure(HarnessInternalError.commandProducedNoResult))
+       group.cancelAll()
+       await group.waitForAll()
+       return event
+@@ -366,8 +378,11 @@ public struct HarnessApplication: Sendable {
+       } catch {
+         return HarnessApplicationResponse(exitCode: .failure, standardError: "\(error)\n")
+       }
+-    case .commandFailed(let message):
+-      return HarnessApplicationResponse(exitCode: .failure, standardError: "\(message)\n")
++    case .commandFailed(let failure):
++      return HarnessApplicationResponse(
++        exitCode: failure.exitCode,
++        standardError: "\(failure.message)\n"
++      )
+     case .cancelled(let reason):
+       return HarnessApplicationResponse(exitCode: reason.exitCode)
+     }
+@@ -383,6 +398,10 @@ public struct HarnessApplication: Sendable {
+   }
+ }
+ 
++private enum HarnessInternalError: Error {
++  case commandProducedNoResult
++}
++
+ extension Duration {
+   fileprivate var nonnegativeNanoseconds: UInt64 {
+     let components = self.components
+diff --git a/Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift b/Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift
+new file mode 100644
+index 0000000..bcd8961
+--- /dev/null
++++ b/Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift
+@@ -0,0 +1,1099 @@
++import Darwin
++import Foundation
++import ReluxTunnelCore
++
++public enum M1RuntimeHarnessScenario: String, CaseIterable, Sendable {
++  case success
++  case authenticationFailure = "authentication-failure"
++  case packetFailure = "packet-failure"
++  case dnsFailure = "dns-failure"
++  case routeApplyFailure = "route-apply-failure"
++  case midSessionSSHFailure = "mid-session-ssh-failure"
++  case midSessionDNSFailure = "mid-session-dns-failure"
++
++  fileprivate var isStartupFailure: Bool {
++    switch self {
++    case .authenticationFailure, .packetFailure, .dnsFailure, .routeApplyFailure:
++      true
++    case .success, .midSessionSSHFailure, .midSessionDNSFailure:
++      false
++    }
++  }
++
++  fileprivate var exitCode: HarnessExitCode {
++    switch self {
++    case .success:
++      .success
++    case .authenticationFailure:
++      .m1AuthenticationFailure
++    case .packetFailure:
++      .m1PacketFailure
++    case .dnsFailure:
++      .m1DNSFailure
++    case .routeApplyFailure:
++      .m1RouteApplyFailure
++    case .midSessionSSHFailure, .midSessionDNSFailure:
++      .m1MandatoryFailure
++    }
++  }
++}
++
++public enum M1RuntimeHarnessError: Error, Equatable, CustomStringConvertible,
++  HarnessExitCodeProvidingError
++{
++  case invalidFixture
++  case unsupportedScenario
++  case invalidRepetitionCount
++  case faultScenarioMustRunOnce
++  case sensitiveControlParameter
++  case profileReferenceMustBeSensitive
++  case missingDependencyRevision
++  case injected(M1RuntimeHarnessScenario)
++  case injectionNotObserved
++  case runtimeInvariant
++  case trafficInvariant
++  case diagnosticsInvariant
++  case resourceGrowth
++  case privacyInvariant
++  case hostLifetimeInvariant
++
++  public var harnessExitCode: HarnessExitCode {
++    switch self {
++    case .unsupportedScenario, .invalidRepetitionCount, .faultScenarioMustRunOnce,
++      .sensitiveControlParameter, .profileReferenceMustBeSensitive,
++      .missingDependencyRevision, .invalidFixture:
++      .usage
++    case .injected(let scenario):
++      scenario.exitCode
++    case .injectionNotObserved, .runtimeInvariant, .trafficInvariant,
++      .diagnosticsInvariant, .resourceGrowth, .privacyInvariant,
++      .hostLifetimeInvariant:
++      .failure
++    }
++  }
++
++  public var description: String {
++    switch self {
++    case .invalidFixture:
++      "m1-runtime invalid fixture"
++    case .unsupportedScenario:
++      "m1-runtime unsupported scenario"
++    case .invalidRepetitionCount:
++      "m1-runtime repetitions must be in 1...8"
++    case .faultScenarioMustRunOnce:
++      "m1-runtime failure scenarios require repetitions=1"
++    case .sensitiveControlParameter:
++      "m1-runtime control parameters must be public"
++    case .profileReferenceMustBeSensitive:
++      "m1-runtime profile reference must be sensitive"
++    case .missingDependencyRevision:
++      "m1-runtime required dependency revision is missing"
++    case .injected(let scenario):
++      "m1-runtime injected \(scenario.rawValue)"
++    case .injectionNotObserved:
++      "m1-runtime configured injection was not observed"
++    case .runtimeInvariant:
++      "m1-runtime lifecycle invariant failed"
++    case .trafficInvariant:
++      "m1-runtime traffic invariant failed"
++    case .diagnosticsInvariant:
++      "m1-runtime diagnostics invariant failed"
++    case .resourceGrowth:
++      "m1-runtime resource growth detected"
++    case .privacyInvariant:
++      "m1-runtime privacy invariant failed"
++    case .hostLifetimeInvariant:
++      "m1-runtime retained simulated host owner"
++    }
++  }
++}
++
++public struct M1RuntimeHarnessCommand: HarnessCommand {
++  public static let maximumRepetitions = 8
++  public let name = "m1-runtime"
++
++  public init() {}
++
++  public func run(context: HarnessCommandContext) async throws {
++    let fixture = try M1HarnessFixture(configuration: context.configuration)
++    let sessionFactory = DeterministicHarnessSessionFactory { runtimeContext, generation in
++      guard let packetFlow = runtimeContext.packetFlow as? M1HarnessPacketFlow else {
++        throw M1RuntimeHarnessError.runtimeInvariant
++      }
++      let generationFixture = M1HarnessGeneration(
++        scenario: fixture.scenario,
++        generation: generation,
++        profileIdentifier: runtimeContext.configuration.profileReference.profileIdentifier,
++        packetFlow: packetFlow,
++        environment: runtimeContext.dependencies
++      )
++      fixture.registry.insert(generationFixture)
++      return generationFixture.dependencies()
++    }
++    for expectedGeneration in 1...fixture.repetitions {
++      var hostOwner: M1HarnessHostOwner? = M1HarnessHostOwner(
++        dependencies: context.dependencies,
++        sessionFactory: sessionFactory
++      )
++      weak let weakHostOwner = hostOwner
++
++      let runtime = try await hostOwner!.makeRuntime(
++        configuration: try context.configuration.tunnelConfiguration(),
++      )
++      guard
++        let coordinator = runtime as? TunnelRuntimeCoordinator,
++        coordinator.runtimeGeneration == UInt64(expectedGeneration),
++        let generationFixture = fixture.registry.generation(UInt64(expectedGeneration))
++      else {
++        throw M1RuntimeHarnessError.runtimeInvariant
++      }
++
++      do {
++        try await runtime.start()
++      } catch {
++        guard fixture.scenario.isStartupFailure,
++          generationFixture.injectionWasObserved()
++        else {
++          throw error
++        }
++        try await generationFixture.verifyAfterStop(runtime: runtime)
++        throw M1RuntimeHarnessError.injected(fixture.scenario)
++      }
++
++      guard !fixture.scenario.isStartupFailure else {
++        await runtime.stop(reason: .startupFailure)
++        throw M1RuntimeHarnessError.injectionNotObserved
++      }
++      try await generationFixture.verifyReady(runtime: runtime)
++
++      hostOwner = nil
++      guard weakHostOwner == nil else {
++        await runtime.stop(reason: .providerFailure)
++        throw M1RuntimeHarnessError.hostLifetimeInvariant
++      }
++
++      try await generationFixture.exchangeRepresentativeTraffic()
++      try generationFixture.requestAndVerifyDiagnostics()
++
++      switch fixture.scenario {
++      case .midSessionSSHFailure, .midSessionDNSFailure:
++        try await generationFixture.injectMandatoryLoss()
++        try await generationFixture.awaitMandatoryFailure(runtime: runtime)
++        await runtime.stop(reason: .providerFailure)
++        try await generationFixture.verifyAfterStop(runtime: runtime)
++        throw M1RuntimeHarnessError.injected(fixture.scenario)
++      case .success:
++        await runtime.stop(reason: .userInitiated)
++        try await generationFixture.verifyAfterStop(runtime: runtime)
++      case .authenticationFailure, .packetFailure, .dnsFailure, .routeApplyFailure:
++        throw M1RuntimeHarnessError.injectionNotObserved
++      }
++    }
++
++    let metrics = context.dependencies.runtime.metrics
++    await metrics.incrementCounter(
++      named: "harness.m1.generations_total",
++      by: UInt64(fixture.repetitions)
++    )
++    await metrics.incrementCounter(
++      named: "harness.m1.tcp_fixture_exchanges_total",
++      by: UInt64(fixture.repetitions)
++    )
++    await metrics.incrementCounter(
++      named: "harness.m1.dns_fixture_exchanges_total",
++      by: UInt64(fixture.repetitions)
++    )
++    for resource in ["descriptor", "task", "channel", "socket", "native_runtime"] {
++      await metrics.setGauge(named: "harness.m1.\(resource)_growth", to: 0)
++    }
++    await metrics.setGauge(named: "harness.m1.host_owner_retained", to: 0)
++  }
++}
++
++public struct M1RuntimeHarnessPacketEndpointFactory: HarnessPacketEndpointFactory {
++  public init() {}
++
++  public func makePacketFlow() async throws -> any PacketFlow {
++    M1HarnessPacketFlow()
++  }
++}
++
++private let m1DNSFixtureEndpoint = TunnelEndpoint(host: "192.0.2.53", port: 53)
++private let m1TCPFixtureEndpoint = TunnelEndpoint(host: "198.51.100.80", port: 443)
++private let m1OriginatorFixtureEndpoint = TunnelEndpoint(host: "192.0.2.2", port: 49_152)
++private let m1TCPRequest = Data("GET /fixture HTTP/1.0\r\n\r\n".utf8)
++private let m1TCPResponse = Data("HTTP/1.0 204 Fixture\r\n\r\n".utf8)
++private let m1DNSQuery = Data([0x12, 0x34, 0x01, 0x00])
++private let m1DNSResponse = Data([0x12, 0x34, 0x81, 0x80])
++
++/// Simulates the containing host's ownership of the composition/bootstrap
++/// boundary. The returned runtime must retain everything needed for forwarding
++/// because this owner is released immediately after readiness.
++private final class M1HarnessHostOwner {
++  private let composition: HarnessCoreComposition
++  private let sessionFactory: DeterministicHarnessSessionFactory
++
++  init(
++    dependencies: HarnessCommandDependencies,
++    sessionFactory: DeterministicHarnessSessionFactory
++  ) {
++    composition = HarnessCoreComposition(dependencies: dependencies)
++    self.sessionFactory = sessionFactory
++  }
++
++  func makeRuntime(
++    configuration: TunnelConfiguration
++  ) async throws -> any TunnelRuntime {
++    try await composition.makeRuntime(
++      configuration: configuration,
++      factory: sessionFactory
++    )
++  }
++}
++
++private struct M1HarnessFixture {
++  static let requiredDependencyRevisions = [
++    "fixture-manifest", "packet-bridge", "runtime-contract",
++  ]
++
++  let scenario: M1RuntimeHarnessScenario
++  let repetitions: Int
++  let registry = M1HarnessGenerationRegistry()
++
++  init(configuration: HarnessConfigurationDocument) throws {
++    guard configuration.profileReference.privacy == .sensitive else {
++      throw M1RuntimeHarnessError.profileReferenceMustBeSensitive
++    }
++    guard
++      let scenarioValue = configuration.parameters["scenario"],
++      let repetitionsValue = configuration.parameters["repetitions"]
++    else {
++      throw M1RuntimeHarnessError.invalidFixture
++    }
++    guard scenarioValue.privacy == .public, repetitionsValue.privacy == .public else {
++      throw M1RuntimeHarnessError.sensitiveControlParameter
++    }
++    guard let scenario = M1RuntimeHarnessScenario(rawValue: scenarioValue.value) else {
++      throw M1RuntimeHarnessError.unsupportedScenario
++    }
++    guard let repetitions = Int(repetitionsValue.value),
++      (1...M1RuntimeHarnessCommand.maximumRepetitions).contains(repetitions)
++    else {
++      throw M1RuntimeHarnessError.invalidRepetitionCount
++    }
++    guard scenario == .success || repetitions == 1 else {
++      throw M1RuntimeHarnessError.faultScenarioMustRunOnce
++    }
++    guard
++      Self.requiredDependencyRevisions.allSatisfy({
++        configuration.dependencyRevisions[$0]?.isEmpty == false
++      })
++    else {
++      throw M1RuntimeHarnessError.missingDependencyRevision
++    }
++    self.scenario = scenario
++    self.repetitions = repetitions
++  }
++}
++
++private final class M1HarnessGenerationRegistry: @unchecked Sendable {
++  private let lock = NSLock()
++  private var generations: [UInt64: M1HarnessGeneration] = [:]
++
++  func insert(_ generation: M1HarnessGeneration) {
++    lock.withLock { generations[generation.runtimeGeneration] = generation }
++  }
++
++  func generation(_ runtimeGeneration: UInt64) -> M1HarnessGeneration? {
++    lock.withLock { generations[runtimeGeneration] }
++  }
++}
++
++private final class M1HarnessProbe: @unchecked Sendable {
++  private let lock = NSLock()
++  private var events: [String] = []
++  private var snapshots: [TunnelRuntimePublishedSnapshot] = []
++  private var ingress: (any M1PrivateIngressDispatching)?
++  private var sshSession: M1HarnessSSHSession?
++  private var dnsConsumer: M1HarnessDNSConsumer?
++  private var openDescriptors: Set<Int32> = []
++  private var liveChannels = 0
++  private var liveNativeRuntimes = 0
++
++  func record(_ event: String) {
++    lock.withLock { events.append(event) }
++  }
++
++  func contains(_ event: String) -> Bool {
++    lock.withLock { events.contains(event) }
++  }
++
++  func allEvents() -> [String] {
++    lock.withLock { events }
++  }
++
++  func record(_ snapshot: TunnelRuntimePublishedSnapshot) {
++    lock.withLock { snapshots.append(snapshot) }
++  }
++
++  func allSnapshots() -> [TunnelRuntimePublishedSnapshot] {
++    lock.withLock { snapshots }
++  }
++
++  func setIngress(_ ingress: any M1PrivateIngressDispatching) {
++    lock.withLock { self.ingress = ingress }
++  }
++
++  func capturedIngress() -> (any M1PrivateIngressDispatching)? {
++    lock.withLock { ingress }
++  }
++
++  func setSSHSession(_ session: M1HarnessSSHSession) {
++    lock.withLock { sshSession = session }
++  }
++
++  func capturedSSHSession() -> M1HarnessSSHSession? {
++    lock.withLock { sshSession }
++  }
++
++  func setDNSConsumer(_ consumer: M1HarnessDNSConsumer) {
++    lock.withLock { dnsConsumer = consumer }
++  }
++
++  func capturedDNSConsumer() -> M1HarnessDNSConsumer? {
++    lock.withLock { dnsConsumer }
++  }
++
++  func opened(_ pair: PacketBridgeSocketPair) {
++    lock.withLock {
++      openDescriptors.insert(pair.bridgeDescriptor)
++      openDescriptors.insert(pair.hevDescriptor)
++    }
++  }
++
++  func closed(_ descriptor: Int32) {
++    _ = lock.withLock { openDescriptors.remove(descriptor) }
++  }
++
++  func channelOpened() {
++    lock.withLock { liveChannels += 1 }
++  }
++
++  func channelClosed() {
++    lock.withLock { liveChannels -= 1 }
++  }
++
++  func nativeRuntimeStarted() {
++    lock.withLock { liveNativeRuntimes += 1 }
++  }
++
++  func nativeRuntimeStopped() {
++    lock.withLock { liveNativeRuntimes -= 1 }
++  }
++
++  func hasBalancedResources(activePacketReads: Int) -> Bool {
++    lock.withLock {
++      openDescriptors.isEmpty && liveChannels == 0 && liveNativeRuntimes == 0
++        && activePacketReads == 0
++    }
++  }
++}
++
++private final class M1HarnessGeneration: @unchecked Sendable {
++  let runtimeGeneration: UInt64
++  private let scenario: M1RuntimeHarnessScenario
++  private let profileIdentifier: OpaqueProfileIdentifier
++  private let packetFlow: M1HarnessPacketFlow
++  private let environment: TunnelRuntimeDependencies
++  private let probe = M1HarnessProbe()
++  private let diagnostics: RuntimeDiagnosticsStore
++  private let recorder: RuntimeDiagnosticsRecorder
++
++  init(
++    scenario: M1RuntimeHarnessScenario,
++    generation: UInt64,
++    profileIdentifier: OpaqueProfileIdentifier,
++    packetFlow: M1HarnessPacketFlow,
++    environment: TunnelRuntimeDependencies
++  ) {
++    self.scenario = scenario
++    runtimeGeneration = generation
++    self.profileIdentifier = profileIdentifier
++    self.environment = environment
++    self.packetFlow = packetFlow
++    diagnostics = RuntimeDiagnosticsStore(runtimeGeneration: generation)
++    recorder = diagnostics.recorder()
++  }
++
++  func dependencies() -> TunnelRuntimeCoordinatorDependencies {
++    let packetFactory = BridgeBackedM1PacketPlaneFactory(
++      configuration: PacketBridgeConfiguration(
++        mtu: 1_500,
++        sendBufferBytes: 32_768,
++        receiveBufferBytes: 32_768,
++        maximumWorkCount: 64,
++        workTimeBudget: .milliseconds(5),
++        diagnosticsWindow: .seconds(1)
++      ),
++      virtualDNSEndpoints: [m1DNSFixtureEndpoint]
++    ) { [probe, recorder, scenario, environment] ingress, generation in
++      probe.setIngress(ingress)
++      let bridge = PacketFlowBridge(
++        socketIO: M1HarnessTrackingSocketIO(probe: probe),
++        descriptorConsumer: M1HarnessDescriptorConsumer(probe: probe),
++        clock: environment.clock,
++        logger: environment.logger,
++        metrics: recorder,
++        runIDSource: M1HarnessRunIDSource(generation: generation),
++        lifecycleBarrier: M1HarnessPacketBarrier(scenario: scenario, probe: probe)
++      )
++      return M1HarnessIngressBridge(bridge: bridge, probe: probe)
++    }
++    return TunnelRuntimeCoordinatorDependencies(
++      configurationSource: M1HarnessConfigurationSource(
++        profileIdentifier: profileIdentifier,
++        probe: probe
++      ),
++      sshBootstrap: M1HarnessSSHBootstrap(
++        scenario: scenario,
++        probe: probe,
++        recorder: recorder
++      ),
++      tcpFactory: M1HarnessTCPFactory(probe: probe, recorder: recorder),
++      dnsFactory: M1HarnessDNSFactory(
++        scenario: scenario,
++        probe: probe,
++        recorder: recorder
++      ),
++      packetPlaneFactory: packetFactory,
++      settingsPlanBuilder: M1HarnessSettingsBuilder(probe: probe),
++      settingsApplier: M1HarnessSettingsApplier(
++        scenario: scenario,
++        probe: probe,
++        recorder: recorder
++      ),
++      snapshotStore: M1HarnessSnapshotStore(probe: probe)
++    )
++  }
++
++  func injectionWasObserved() -> Bool {
++    switch scenario {
++    case .authenticationFailure:
++      probe.contains("ssh.authenticate.injected")
++    case .packetFailure:
++      probe.contains("packet.activate.injected")
++    case .dnsFailure:
++      probe.contains("dns.prepare.injected")
++    case .routeApplyFailure:
++      probe.contains("route.apply.injected")
++    case .midSessionSSHFailure:
++      probe.contains("ssh.loss.injected")
++    case .midSessionDNSFailure:
++      probe.contains("dns.loss.injected")
++    case .success:
++      false
++    }
++  }
++
++  func verifyReady(runtime: any TunnelRuntime) async throws {
++    guard await runtime.lifecycleState() == .connectedDegraded,
++      let latest = probe.allSnapshots().last,
++      latest.lifecycle.lifecycleState == .connectedDegraded,
++      latest.lifecycle.tcp,
++      latest.lifecycle.safeDNS,
++      !latest.lifecycle.udp,
++      latest.lifecycle.routesInstalled,
++      latest.lifecycle.healthy
++    else {
++      throw M1RuntimeHarnessError.runtimeInvariant
++    }
++    try requireOrderedEvents([
++      "configuration.load", "ssh.authenticate", "tcp.prepare", "dns.prepare",
++      "packet.prepare", "route.plan", "route.apply", "packet.activate",
++    ])
++  }
++
++  func exchangeRepresentativeTraffic() async throws {
++    guard let ingress = probe.capturedIngress() else {
++      throw M1RuntimeHarnessError.trafficInvariant
++    }
++    let tcpDispatch = try await ingress.dispatch(
++      .tcp(destination: m1TCPFixtureEndpoint, originator: m1OriginatorFixtureEndpoint)
++    )
++    guard case .tcp(let channel) = tcpDispatch else {
++      throw M1RuntimeHarnessError.trafficInvariant
++    }
++    let written = try await channel.writeSome(m1TCPRequest)
++    try await channel.finishWriting()
++    let response = try await channel.read(maximumBytes: 4_096)
++    await channel.close()
++    guard written == m1TCPRequest.count, response == m1TCPResponse else {
++      throw M1RuntimeHarnessError.trafficInvariant
++    }
++
++    let dnsDispatch = try await ingress.dispatch(
++      .udp(
++        payload: m1DNSQuery,
++        destination: m1DNSFixtureEndpoint,
++        originator: m1OriginatorFixtureEndpoint
++      )
++    )
++    guard case .dnsUDP(let dnsResponse) = dnsDispatch, dnsResponse == m1DNSResponse else {
++      throw M1RuntimeHarnessError.trafficInvariant
++    }
++    probe.record("traffic.complete")
++  }
++
++  func requestAndVerifyDiagnostics() throws {
++    let snapshot = try diagnostics.snapshot()
++    guard snapshot.runtimeGeneration == runtimeGeneration,
++      snapshot.counters["tcp_flows_opened_total"] == 1,
++      snapshot.counters["tcp_flows_closed_total"] == 1,
++      snapshot.counters["tcp_bytes_sent_total"] == UInt64(m1TCPRequest.count),
++      snapshot.counters["tcp_bytes_received_total"] == UInt64(m1TCPResponse.count),
++      snapshot.counters["dns_result_success_total"] == 1,
++      snapshot.gauges["route_installed"] == 1
++    else {
++      throw M1RuntimeHarnessError.diagnosticsInvariant
++    }
++    let encoded = try JSONEncoder().encode(snapshot)
++    guard let text = String(data: encoded, encoding: .utf8),
++      !text.contains(m1TCPFixtureEndpoint.host),
++      !text.contains(m1DNSFixtureEndpoint.host),
++      !text.contains(profileIdentifier.rawValue.uuidString)
++    else {
++      throw M1RuntimeHarnessError.privacyInvariant
++    }
++    probe.record("diagnostics.snapshot")
++  }
++
++  func injectMandatoryLoss() async throws {
++    switch scenario {
++    case .midSessionSSHFailure:
++      guard let session = probe.capturedSSHSession() else {
++        throw M1RuntimeHarnessError.injectionNotObserved
++      }
++      await session.injectLoss()
++    case .midSessionDNSFailure:
++      guard let dns = probe.capturedDNSConsumer() else {
++        throw M1RuntimeHarnessError.injectionNotObserved
++      }
++      await dns.injectLoss()
++    case .success, .authenticationFailure, .packetFailure, .dnsFailure,
++      .routeApplyFailure:
++      throw M1RuntimeHarnessError.injectionNotObserved
++    }
++  }
++
++  func awaitMandatoryFailure(runtime: any TunnelRuntime) async throws {
++    guard injectionWasObserved() else {
++      throw M1RuntimeHarnessError.runtimeInvariant
++    }
++
++    let clock = ContinuousClock()
++    let deadline = clock.now.advanced(by: .seconds(1))
++    while await runtime.lifecycleState() != .failed, clock.now < deadline {
++      await Task.yield()
++    }
++    guard await runtime.lifecycleState() == .failed else {
++      throw M1RuntimeHarnessError.runtimeInvariant
++    }
++  }
++
++  func verifyAfterStop(runtime: any TunnelRuntime) async throws {
++    let activeReads = await packetFlow.activeReadCount()
++    guard probe.hasBalancedResources(activePacketReads: activeReads) else {
++      throw M1RuntimeHarnessError.resourceGrowth
++    }
++    let state = await runtime.lifecycleState()
++    guard state == .disconnected || state == .failed else {
++      throw M1RuntimeHarnessError.runtimeInvariant
++    }
++    let lifecycles = probe.allSnapshots().map(\.lifecycle.lifecycleState)
++    guard lifecycles.first == .connecting,
++      lifecycles.contains(.disconnecting),
++      lifecycles.last == state
++    else {
++      throw M1RuntimeHarnessError.runtimeInvariant
++    }
++  }
++
++  private func requireOrderedEvents(_ expected: [String]) throws {
++    let events = probe.allEvents()
++    var previous = -1
++    for event in expected {
++      guard let index = events.firstIndex(of: event), index > previous else {
++        throw M1RuntimeHarnessError.runtimeInvariant
++      }
++      previous = index
++    }
++  }
++}
++
++private struct M1HarnessConfigurationSource: ConfigurationSnapshotSource {
++  let profileIdentifier: OpaqueProfileIdentifier
++  let probe: M1HarnessProbe
++
++  func loadValidatedSnapshot(
++    for reference: TunnelConfigurationReference
++  ) async throws -> RuntimeConfigurationSnapshot {
++    guard reference.profileIdentifier == profileIdentifier else {
++      throw M1RuntimeHarnessError.invalidFixture
++    }
++    probe.record("configuration.load")
++    return RuntimeConfigurationSnapshot(
++      configurationGeneration: 1,
++      profileIdentifier: profileIdentifier,
++      profileRevision: OpaqueProfileRevision(
++        UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
++      ),
++      credentialReference: OpaqueCredentialReference(
++        UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
++      ),
++      trustReference: OpaqueTrustReference(
++        UUID(uuidString: "44444444-4444-4444-4444-444444444444")!
++      )
++    )
++  }
++}
++
++private enum M1HarnessInjectedError: Error {
++  case authentication
++  case dns
++  case packet
++  case route
++}
++
++private struct M1HarnessSSHBootstrap: SSHBootstrap {
++  let scenario: M1RuntimeHarnessScenario
++  let probe: M1HarnessProbe
++  let recorder: RuntimeDiagnosticsRecorder
++
++  func authenticate(
++    configuration: RuntimeConfigurationSnapshot,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any SSHBootstrapSession {
++    probe.record("ssh.authenticate")
++    if scenario == .authenticationFailure {
++      recorder.recordError(.sshCredentialRejected)
++      probe.record("ssh.authenticate.injected")
++      throw M1HarnessInjectedError.authentication
++    }
++    let session = M1HarnessSSHSession(
++      generation: runtimeGeneration,
++      healthSink: healthSink,
++      probe: probe,
++      recorder: recorder
++    )
++    probe.setSSHSession(session)
++    return session
++  }
++}
++
++private actor M1HarnessSSHSession: M1SSHChannelSession {
++  nonisolated let connectedEndpoint = TunnelEndpoint(host: "203.0.113.22", port: 22)
++  private let generation: UInt64
++  private let healthSink: any TunnelRuntimeHealthEventSink
++  private let probe: M1HarnessProbe
++  private let recorder: RuntimeDiagnosticsRecorder
++  private var healthy = true
++
++  init(
++    generation: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink,
++    probe: M1HarnessProbe,
++    recorder: RuntimeDiagnosticsRecorder
++  ) {
++    self.generation = generation
++    self.healthSink = healthSink
++    self.probe = probe
++    self.recorder = recorder
++  }
++
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel {
++    guard healthy else { throw M1HarnessInjectedError.authentication }
++    recorder.recordTCPFlowOpened()
++    probe.channelOpened()
++    return M1HarnessSSHByteChannel(probe: probe, recorder: recorder)
++  }
++
++  func injectLoss() async {
++    healthy = false
++    recorder.recordError(.sshSessionLost)
++    probe.record("ssh.loss.injected")
++    await healthSink.receive(
++      TunnelRuntimeHealthEvent(
++        runtimeGeneration: generation,
++        component: .ssh,
++        health: .unhealthy
++      )
++    )
++  }
++
++  func close() async {
++    healthy = false
++    probe.record("ssh.close")
++  }
++
++  func health() async -> TunnelRuntimeComponentHealth {
++    healthy ? .healthy : .unhealthy
++  }
++}
++
++private actor M1HarnessSSHByteChannel: SSHByteChannel {
++  nonisolated let identity = SSHChannelIdentity(
++    rawValue: UUID(uuidString: "55555555-5555-5555-5555-555555555555")!
++  )
++  private let probe: M1HarnessProbe
++  private let recorder: RuntimeDiagnosticsRecorder
++  private var responseAvailable = true
++  private var closed = false
++
++  init(probe: M1HarnessProbe, recorder: RuntimeDiagnosticsRecorder) {
++    self.probe = probe
++    self.recorder = recorder
++  }
++
++  func read(maximumBytes: Int) async throws -> Data? {
++    guard !closed, responseAvailable, maximumBytes >= m1TCPResponse.count else { return nil }
++    responseAvailable = false
++    recorder.recordTCPBytes(sent: 0, received: UInt64(m1TCPResponse.count))
++    return m1TCPResponse
++  }
++
++  func writeSome(_ bytes: Data) async throws -> Int {
++    guard !closed, !bytes.isEmpty else { throw M1HarnessInjectedError.authentication }
++    recorder.recordTCPBytes(sent: UInt64(bytes.count), received: 0)
++    return bytes.count
++  }
++
++  func finishWriting() async throws {}
++  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
++    .notReported
++  }
++  func cancel() async { await close() }
++  func reset() async { await close() }
++  func close() async {
++    guard !closed else { return }
++    closed = true
++    recorder.recordTCPFlowClosed()
++    probe.channelClosed()
++  }
++}
++
++private struct M1HarnessTCPFactory: TCPConsumerFactory {
++  let probe: M1HarnessProbe
++  let recorder: RuntimeDiagnosticsRecorder
++
++  func prepare(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any TCPConsumer {
++    guard let session = session as? any M1SSHChannelSession else {
++      throw M1RuntimeHarnessError.runtimeInvariant
++    }
++    probe.record("tcp.prepare")
++    return M1HarnessTCPConsumer(session: session, probe: probe)
++  }
++}
++
++private actor M1HarnessTCPConsumer: M1TCPIngressConsumer {
++  private let session: any M1SSHChannelSession
++  private let probe: M1HarnessProbe
++  private var accepting = true
++
++  init(session: any M1SSHChannelSession, probe: M1HarnessProbe) {
++    self.session = session
++    self.probe = probe
++  }
++
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel {
++    guard accepting else { throw M1RuntimeHarnessError.trafficInvariant }
++    return try await session.openTCP(destination: destination, originator: originator)
++  }
++
++  func closeAdmission() async {
++    accepting = false
++    probe.record("tcp.close-admission")
++  }
++  func stop() async { probe.record("tcp.stop") }
++  func health() async -> TunnelRuntimeComponentHealth { accepting ? .healthy : .unhealthy }
++}
++
++private struct M1HarnessDNSFactory: DNSConsumerFactory {
++  let scenario: M1RuntimeHarnessScenario
++  let probe: M1HarnessProbe
++  let recorder: RuntimeDiagnosticsRecorder
++
++  func prepareSafeDNS(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any DNSConsumer {
++    probe.record("dns.prepare")
++    if scenario == .dnsFailure {
++      recorder.recordError(.dnsUpstreamTimeout)
++      probe.record("dns.prepare.injected")
++      throw M1HarnessInjectedError.dns
++    }
++    guard let session = session as? any M1SSHChannelSession else {
++      throw M1RuntimeHarnessError.runtimeInvariant
++    }
++    let consumer = M1HarnessDNSConsumer(
++      session: session,
++      generation: runtimeGeneration,
++      healthSink: healthSink,
++      probe: probe,
++      recorder: recorder
++    )
++    probe.setDNSConsumer(consumer)
++    return consumer
++  }
++}
++
++private actor M1HarnessDNSConsumer: M1DNSIngressConsumer {
++  private let session: any M1SSHChannelSession
++  private let generation: UInt64
++  private let healthSink: any TunnelRuntimeHealthEventSink
++  private let probe: M1HarnessProbe
++  private let recorder: RuntimeDiagnosticsRecorder
++  private var accepting = true
++
++  init(
++    session: any M1SSHChannelSession,
++    generation: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink,
++    probe: M1HarnessProbe,
++    recorder: RuntimeDiagnosticsRecorder
++  ) {
++    self.session = session
++    self.generation = generation
++    self.healthSink = healthSink
++    self.probe = probe
++    self.recorder = recorder
++  }
++
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel {
++    guard accepting else { throw M1RuntimeHarnessError.trafficInvariant }
++    return try await session.openTCP(destination: destination, originator: originator)
++  }
++
++  func exchangeUDP(
++    _ query: Data,
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> Data {
++    guard accepting, query == m1DNSQuery, destination == m1DNSFixtureEndpoint else {
++      recorder.recordDNSResult(.malformed, latencyMilliseconds: 1)
++      throw M1RuntimeHarnessError.trafficInvariant
++    }
++    recorder.recordDNSResult(.success, latencyMilliseconds: 1)
++    return m1DNSResponse
++  }
++
++  func injectLoss() async {
++    accepting = false
++    recorder.recordError(.dnsUpstreamTimeout)
++    probe.record("dns.loss.injected")
++    await healthSink.receive(
++      TunnelRuntimeHealthEvent(
++        runtimeGeneration: generation,
++        component: .dns,
++        health: .unhealthy
++      )
++    )
++  }
++
++  func closeAdmission() async {
++    accepting = false
++    probe.record("dns.close-admission")
++  }
++  func stop() async { probe.record("dns.stop") }
++  func health() async -> TunnelRuntimeComponentHealth { accepting ? .healthy : .unhealthy }
++}
++
++private struct M1HarnessSettingsPlan: NetworkSettingsPlan {}
++
++private struct M1HarnessSettingsBuilder: NetworkSettingsPlanBuilder {
++  let probe: M1HarnessProbe
++  func makePlan(
++    configuration: RuntimeConfigurationSnapshot,
++    connectedEndpoint: TunnelEndpoint,
++    runtimeGeneration: UInt64
++  ) throws -> any NetworkSettingsPlan {
++    probe.record("route.plan")
++    return M1HarnessSettingsPlan()
++  }
++}
++
++private struct M1HarnessSettingsApplier: NetworkSettingsApplier {
++  let scenario: M1RuntimeHarnessScenario
++  let probe: M1HarnessProbe
++  let recorder: RuntimeDiagnosticsRecorder
++
++  func apply(_ plan: any NetworkSettingsPlan, runtimeGeneration: UInt64) async throws {
++    probe.record("route.apply")
++    if scenario == .routeApplyFailure {
++      recorder.recordError(.networkSettingsApplyFailed)
++      probe.record("route.apply.injected")
++      throw M1HarnessInjectedError.route
++    }
++    recorder.recordRoute(mode: .compatible, installed: true)
++  }
++
++  func clear(runtimeGeneration: UInt64) async throws {
++    recorder.recordRoute(mode: .compatible, installed: false)
++    probe.record("route.clear")
++  }
++}
++
++private struct M1HarnessSnapshotStore: RuntimeSnapshotStore {
++  let probe: M1HarnessProbe
++  func publish(_ snapshot: TunnelRuntimePublishedSnapshot) async {
++    probe.record(snapshot)
++  }
++}
++
++private actor M1HarnessPacketFlow: PacketFlow {
++  private var activeReads = 0
++  private var shutDown = false
++
++  func readPackets() async throws -> PacketReadBatch {
++    guard !shutDown else { throw PacketFlowError.adapterShutDown }
++    activeReads += 1
++    defer { activeReads -= 1 }
++    try await Task.sleep(for: .seconds(3_600))
++    return PacketReadBatch(results: [])
++  }
++
++  func writePackets(_ packets: [TunnelPacket]) async throws {}
++  func shutdown() async { shutDown = true }
++  func activeReadCount() -> Int { activeReads }
++}
++
++private struct M1HarnessTrackingSocketIO: PacketBridgeSocketIO {
++  private let base = DarwinPacketBridgeSocketIO()
++  let probe: M1HarnessProbe
++
++  func makeDatagramSocketPair() throws -> PacketBridgeSocketPair {
++    let pair = try base.makeDatagramSocketPair()
++    probe.opened(pair)
++    return pair
++  }
++  func descriptorFlags(for descriptor: Int32) throws -> Int32 {
++    try base.descriptorFlags(for: descriptor)
++  }
++  func setDescriptorFlags(_ flags: Int32, for descriptor: Int32) throws {
++    try base.setDescriptorFlags(flags, for: descriptor)
++  }
++  func statusFlags(for descriptor: Int32) throws -> Int32 {
++    try base.statusFlags(for: descriptor)
++  }
++  func setStatusFlags(_ flags: Int32, for descriptor: Int32) throws {
++    try base.setStatusFlags(flags, for: descriptor)
++  }
++  func setSocketBuffer(
++    _ buffer: PacketBridgeSocketBuffer,
++    bytes: Int32,
++    for descriptor: Int32
++  ) throws {
++    try base.setSocketBuffer(buffer, bytes: bytes, for: descriptor)
++  }
++  func socketBuffer(
++    _ buffer: PacketBridgeSocketBuffer,
++    for descriptor: Int32
++  ) throws -> Int32 {
++    try base.socketBuffer(buffer, for: descriptor)
++  }
++  func sendDatagram(
++    on descriptor: Int32,
++    bytes: UnsafeRawBufferPointer
++  ) throws -> Int {
++    try base.sendDatagram(on: descriptor, bytes: bytes)
++  }
++  func receiveDatagram(
++    on descriptor: Int32,
++    into bytes: UnsafeMutableRawBufferPointer
++  ) throws -> PacketBridgeReceiveResult {
++    try base.receiveDatagram(on: descriptor, into: bytes)
++  }
++  func closeDescriptor(_ descriptor: Int32) throws {
++    try base.closeDescriptor(descriptor)
++    probe.closed(descriptor)
++  }
++}
++
++private struct M1HarnessDescriptorConsumer: DescriptorBorrowConsumer {
++  let probe: M1HarnessProbe
++  func beginBorrowing(
++    _ descriptor: Int32
++  ) async throws -> any DescriptorBorrowHandle {
++    probe.nativeRuntimeStarted()
++    return M1HarnessBorrowHandle(probe: probe)
++  }
++}
++
++private actor M1HarnessBorrowHandle: DescriptorBorrowHandle {
++  private let probe: M1HarnessProbe
++  private var stopped = false
++  init(probe: M1HarnessProbe) { self.probe = probe }
++  func requestStop() async {
++    guard !stopped else { return }
++    stopped = true
++    probe.nativeRuntimeStopped()
++  }
++  func waitForReturn() async {
++    if !stopped { await requestStop() }
++  }
++}
++
++private struct M1HarnessRunIDSource: PacketBridgeRunIDSource {
++  let generation: UInt64
++  func nextRunID() -> String { "m1-fixture-\(generation)" }
++}
++
++private struct M1HarnessPacketBarrier: PacketBridgeLifecycleBarrier {
++  let scenario: M1RuntimeHarnessScenario
++  let probe: M1HarnessProbe
++  func reach(_ stage: PacketBridgeLifecycleStage) async throws {
++    if stage == .configurationValidated, scenario == .packetFailure {
++      probe.record("packet.activate.injected")
++      throw M1HarnessInjectedError.packet
++    }
++  }
++}
++
++private actor M1HarnessIngressBridge: PacketBridge {
++  private let bridge: PacketFlowBridge
++  private let probe: M1HarnessProbe
++
++  init(bridge: PacketFlowBridge, probe: M1HarnessProbe) {
++    self.bridge = bridge
++    self.probe = probe
++    probe.record("packet.prepare")
++  }
++
++  func start(
++    packetFlow: any PacketFlow,
++    configuration: PacketBridgeConfiguration
++  ) async throws -> PacketFlowBridgeRunHandle {
++    probe.record("packet.activate")
++    return try await bridge.start(packetFlow: packetFlow, configuration: configuration)
++  }
++  func stop() async {
++    await bridge.stop()
++    probe.record("packet.stop")
++  }
++  func metrics() async -> TunnelMetricsSnapshot { await bridge.metrics() }
++}
+diff --git a/Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift b/Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift
+index 15921ed..d0a7279 100644
+--- a/Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift
++++ b/Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift
+@@ -54,13 +54,15 @@ public enum HarnessDefaults {
+         memoryPressure: NormalHarnessMemoryPressureSource()
+       ),
+       sshTransports: UnavailableHarnessSSHTransportFactory(),
+-      packetEndpoints: UnavailableHarnessPacketEndpointFactory(),
++      packetEndpoints: M1RuntimeHarnessPacketEndpointFactory(),
+       faultPolicy: NoHarnessFaultPolicy()
+     )
+   }
+ 
+   public static func registry() -> HarnessCommandRegistry {
+     // The built-in list is explicit so command names stay reviewable and stable.
+-    try! HarnessCommandRegistry(commands: [SmokeHarnessCommand(), MTUMatrixHarnessCommand()])
++    try! HarnessCommandRegistry(commands: [
++      M1RuntimeHarnessCommand(), SmokeHarnessCommand(), MTUMatrixHarnessCommand(),
++    ])
+   }
+ }
+diff --git a/Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift b/Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift
+new file mode 100644
+index 0000000..329f629
+--- /dev/null
++++ b/Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift
+@@ -0,0 +1,221 @@
++import Foundation
++import ReluxTunnelCore
++import Testing
++
++@testable import ReluxTunnelHarnessSupport
++
++@Suite("M1 composed runtime harness", .serialized)
++struct M1RuntimeHarnessTests {
++  @Test("production command completes traffic, diagnostics, host-loss, stop, and repeated cleanup")
++  func successfulComposedGenerations() async throws {
++    let response = await runM1(scenario: .success, repetitions: 3)
++
++    #expect(response.exitCode == .success)
++    #expect(response.standardError.isEmpty)
++    let result = try JSONDecoder().decode(
++      HarnessResultDocument.self,
++      from: response.standardOutput
++    )
++    #expect(result.command == "m1-runtime")
++    #expect(result.status == "succeeded")
++    #expect(result.configuration.profileReference == "<redacted>")
++    #expect(result.metrics.counters["harness.m1.generations_total"] == 3)
++    #expect(result.metrics.counters["harness.m1.tcp_fixture_exchanges_total"] == 3)
++    #expect(result.metrics.counters["harness.m1.dns_fixture_exchanges_total"] == 3)
++    #expect(result.metrics.gauges["harness.m1.descriptor_growth"] == 0)
++    #expect(result.metrics.gauges["harness.m1.task_growth"] == 0)
++    #expect(result.metrics.gauges["harness.m1.channel_growth"] == 0)
++    #expect(result.metrics.gauges["harness.m1.socket_growth"] == 0)
++    #expect(result.metrics.gauges["harness.m1.native_runtime_growth"] == 0)
++    #expect(result.metrics.gauges["harness.m1.host_owner_retained"] == 0)
++    #expect(!String(decoding: response.standardOutput, as: UTF8.self).contains(profileUUID))
++  }
++
++  @Test("production command emits stable codes for every mandatory failure scenario")
++  func stableFailureExitCodes() async {
++    let cases: [(M1RuntimeHarnessScenario, HarnessExitCode)] = [
++      (.authenticationFailure, .m1AuthenticationFailure),
++      (.packetFailure, .m1PacketFailure),
++      (.dnsFailure, .m1DNSFailure),
++      (.routeApplyFailure, .m1RouteApplyFailure),
++      (.midSessionSSHFailure, .m1MandatoryFailure),
++      (.midSessionDNSFailure, .m1MandatoryFailure),
++    ]
++
++    for (scenario, exitCode) in cases {
++      let response = await runM1(scenario: scenario, repetitions: 1)
++      #expect(response.exitCode == exitCode, "scenario: \(scenario.rawValue)")
++      #expect(response.standardOutput.isEmpty)
++      #expect(response.standardError == "m1-runtime injected \(scenario.rawValue)\n")
++      #expect(!response.standardError.contains(profileUUID))
++    }
++  }
++
++  @Test(
++    "HarnessApplication.run requires coordinator-observed SSH loss before mandatory exit"
++  )
++  func productionEntryRequiresSSHHealthDelivery() async {
++    let response = await runM1(scenario: .midSessionSSHFailure, repetitions: 1)
++
++    #expect(response.exitCode == .m1MandatoryFailure)
++    #expect(response.standardError == "m1-runtime injected mid-session-ssh-failure\n")
++  }
++
++  @Test(
++    "HarnessApplication.run requires coordinator-observed DNS loss before mandatory exit"
++  )
++  func productionEntryRequiresDNSHealthDelivery() async {
++    let response = await runM1(scenario: .midSessionDNSFailure, repetitions: 1)
++
++    #expect(response.exitCode == .m1MandatoryFailure)
++    #expect(response.standardError == "m1-runtime injected mid-session-dns-failure\n")
++  }
++
++  @Test(
++    "HarnessApplication.run forwards after releasing its real composition bootstrap owner"
++  )
++  func productionEntryDoesNotRetainOrConsultHostOwner() async throws {
++    let response = await runM1(scenario: .success, repetitions: 1)
++
++    #expect(response.exitCode == .success)
++    let result = try JSONDecoder().decode(
++      HarnessResultDocument.self,
++      from: response.standardOutput
++    )
++    #expect(result.metrics.counters["harness.m1.tcp_fixture_exchanges_total"] == 1)
++    #expect(result.metrics.counters["harness.m1.dns_fixture_exchanges_total"] == 1)
++    #expect(result.metrics.gauges["harness.m1.host_owner_retained"] == 0)
++  }
++
++  @Test(
++    "HarnessApplication.run production gate admits exact repetition bound and rejects narrower violations"
++  )
++  func productionConfigurationGate() async {
++    let maximum = await runM1(scenario: .success, repetitions: 8)
++    #expect(maximum.exitCode == .success)
++
++    let aboveMaximum = await runM1(
++      scenario: .success,
++      repetitions: 9
++    )
++    #expect(aboveMaximum.exitCode == .usage)
++    #expect(aboveMaximum.standardError == "m1-runtime repetitions must be in 1...8\n")
++
++    let unknown = await runM1(
++      configuration: configuration(scenarioValue: "general-udp", repetitions: 1)
++    )
++    #expect(unknown.exitCode == .usage)
++    #expect(unknown.standardError == "m1-runtime unsupported scenario\n")
++
++    let hiddenControl = await runM1(
++      configuration: configuration(
++        scenarioValue: M1RuntimeHarnessScenario.success.rawValue,
++        repetitions: 1,
++        scenarioPrivacy: .sensitive
++      )
++    )
++    #expect(hiddenControl.exitCode == .usage)
++    #expect(hiddenControl.standardError == "m1-runtime control parameters must be public\n")
++
++    let exposedProfile = await runM1(
++      configuration: configuration(
++        scenarioValue: M1RuntimeHarnessScenario.success.rawValue,
++        repetitions: 1,
++        profilePrivacy: .public
++      )
++    )
++    #expect(exposedProfile.exitCode == .usage)
++    #expect(exposedProfile.standardError == "m1-runtime profile reference must be sensitive\n")
++
++    let repeatedFault = await runM1(scenario: .dnsFailure, repetitions: 2)
++    #expect(repeatedFault.exitCode == .usage)
++    #expect(repeatedFault.standardError == "m1-runtime failure scenarios require repetitions=1\n")
++
++    let missingRevision = await runM1(
++      configuration: configuration(
++        scenarioValue: M1RuntimeHarnessScenario.success.rawValue,
++        repetitions: 1,
++        dependencyRevisions: ["runtime-contract": "m1-v1"]
++      )
++    )
++    #expect(missingRevision.exitCode == .usage)
++    #expect(missingRevision.standardError == "m1-runtime required dependency revision is missing\n")
++  }
++}
++
++private let profileUUID = "11111111-1111-1111-1111-111111111111"
++
++private func runM1(
++  scenario: M1RuntimeHarnessScenario,
++  repetitions: Int
++) async -> HarnessApplicationResponse {
++  await runM1(
++    configuration: configuration(
++      scenarioValue: scenario.rawValue,
++      repetitions: repetitions
++    )
++  )
++}
++
++private func runM1(
++  configuration: HarnessConfigurationDocument
++) async -> HarnessApplicationResponse {
++  let metrics = HarnessMetricsStore()
++  let dependencies = HarnessCommandDependencies(
++    runtime: TunnelRuntimeDependencies(
++      clock: ContinuousTunnelClock(),
++      logger: SilentHarnessLogger(),
++      metrics: metrics,
++      cancellation: TaskCancellationChecker(),
++      memoryPressure: NormalHarnessMemoryPressureSource()
++    ),
++    sshTransports: UnavailableHarnessSSHTransportFactory(),
++    packetEndpoints: M1RuntimeHarnessPacketEndpointFactory(),
++    faultPolicy: NoHarnessFaultPolicy()
++  )
++  let application = HarnessApplication(
++    registry: try! HarnessCommandRegistry(commands: [M1RuntimeHarnessCommand()]),
++    dependencies: dependencies,
++    readPlatform: {
++      HarnessPlatformMetadata(
++        operatingSystem: "fixture",
++        operatingSystemVersion: "1",
++        architecture: "fixture"
++      )
++    }
++  )
++  let data = try! HarnessConfigurationCodec.encode(configuration)
++  return await application.run(
++    arguments: ["m1-runtime", "--configuration-json", String(decoding: data, as: UTF8.self)],
++    cancellationSource: StreamHarnessCancellationSource()
++  )
++}
++
++private func configuration(
++  scenarioValue: String,
++  repetitions: Int,
++  scenarioPrivacy: HarnessConfigurationPrivacy = .public,
++  profilePrivacy: HarnessConfigurationPrivacy = .sensitive,
++  dependencyRevisions: [String: String] = [
++    "fixture-manifest": "TASK-260715-m8bi8i-v1",
++    "packet-bridge": "M0-accepted",
++    "runtime-contract": "M1-v1",
++  ]
++) -> HarnessConfigurationDocument {
++  HarnessConfigurationDocument(
++    seed: 26_071_508,
++    sourceRevision: "TASK-260715-m8bi8i",
++    dependencyRevisions: dependencyRevisions,
++    profileReference: HarnessConfigurationValue(
++      value: profileUUID,
++      privacy: profilePrivacy
++    ),
++    parameters: [
++      "scenario": HarnessConfigurationValue(value: scenarioValue, privacy: scenarioPrivacy),
++      "repetitions": HarnessConfigurationValue(
++        value: String(repetitions),
++        privacy: .public
++      ),
++    ]
++  )
++}
+diff --git a/scripts/validate-m1-runtime-harness.py b/scripts/validate-m1-runtime-harness.py
+new file mode 100644
+index 0000000..ed5eb0f
+--- /dev/null
++++ b/scripts/validate-m1-runtime-harness.py
+@@ -0,0 +1,171 @@
++#!/usr/bin/env python3
++"""Run the task-scoped composed M1 harness fixture manifest."""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import pathlib
++import subprocess
++import sys
++from typing import Any
++
++
++REQUIRED_ZERO_GAUGES = (
++    "harness.m1.descriptor_growth",
++    "harness.m1.task_growth",
++    "harness.m1.channel_growth",
++    "harness.m1.socket_growth",
++    "harness.m1.native_runtime_growth",
++    "harness.m1.host_owner_retained",
++)
++
++
++def parse_arguments() -> argparse.Namespace:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--executable", required=True, type=pathlib.Path)
++    parser.add_argument(
++        "--manifest",
++        type=pathlib.Path,
++        default=pathlib.Path(
++            "Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json"
++        ),
++    )
++    parser.add_argument(
++        "--output",
++        type=pathlib.Path,
++        default=pathlib.Path(
++            ".temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json"
++        ),
++    )
++    return parser.parse_args()
++
++
++def load_json(path: pathlib.Path) -> dict[str, Any]:
++    value = json.loads(path.read_text(encoding="utf-8"))
++    if not isinstance(value, dict):
++        raise ValueError(f"expected JSON object: {path}")
++    return value
++
++
++def validate_manifest(manifest: dict[str, Any]) -> None:
++    if manifest.get("schemaVersion") != 1 or manifest.get("command") != "m1-runtime":
++        raise ValueError("unsupported M1 fixture manifest")
++    fixtures = manifest.get("fixtures")
++    if not isinstance(fixtures, list) or len(fixtures) != 7:
++        raise ValueError("M1 fixture manifest must contain exactly seven scenarios")
++    names = [fixture.get("name") for fixture in fixtures if isinstance(fixture, dict)]
++    if len(names) != len(set(names)):
++        raise ValueError("M1 fixture names must be unique")
++
++
++def validate_configuration(
++    configuration: dict[str, Any], dependency_revisions: dict[str, str]
++) -> str:
++    if configuration.get("schemaVersion") != 1:
++        raise ValueError("fixture configuration schema mismatch")
++    if configuration.get("dependencyRevisions") != dependency_revisions:
++        raise ValueError("fixture dependency revisions drifted from manifest")
++    profile = configuration.get("profileReference")
++    if not isinstance(profile, dict) or profile.get("privacy") != "sensitive":
++        raise ValueError("fixture profile reference must be sensitive")
++    value = profile.get("value")
++    if not isinstance(value, str) or not value:
++        raise ValueError("fixture profile reference is missing")
++    return value
++
++
++def validate_success(stdout: bytes, profile_reference: str) -> None:
++    result = json.loads(stdout)
++    if result.get("command") != "m1-runtime" or result.get("status") != "succeeded":
++        raise ValueError("success result identity mismatch")
++    if result.get("configuration", {}).get("profileReference") != "<redacted>":
++        raise ValueError("profile reference was not redacted")
++    gauges = result.get("metrics", {}).get("gauges", {})
++    if any(gauges.get(name) != 0 for name in REQUIRED_ZERO_GAUGES):
++        raise ValueError("success result reports retained resources")
++    if profile_reference.encode("utf-8") in stdout:
++        raise ValueError("success output contains the profile reference")
++
++
++def main() -> int:
++    arguments = parse_arguments()
++    manifest = load_json(arguments.manifest)
++    validate_manifest(manifest)
++    dependency_revisions = manifest["dependencyRevisions"]
++    report_rows: list[dict[str, Any]] = []
++    failed = False
++
++    for fixture in manifest["fixtures"]:
++        configuration_path = pathlib.Path(fixture["configuration"])
++        configuration = load_json(configuration_path)
++        profile_reference = validate_configuration(configuration, dependency_revisions)
++        command = [
++            str(arguments.executable),
++            manifest["command"],
++            "--configuration",
++            str(configuration_path),
++        ]
++        completed = subprocess.run(
++            command,
++            check=False,
++            capture_output=True,
++            timeout=30,
++        )
++        expected_exit = fixture["expectedExitCode"]
++        passed = completed.returncode == expected_exit
++        detail = "matched"
++        try:
++            if expected_exit == 0:
++                if completed.stderr:
++                    raise ValueError("success scenario wrote standard error")
++                validate_success(completed.stdout, profile_reference)
++            else:
++                if completed.stdout:
++                    raise ValueError("failure scenario wrote standard output")
++                expected_error = fixture["expectedStandardError"].encode("utf-8")
++                if completed.stderr != expected_error:
++                    raise ValueError("failure diagnostic mismatch")
++                if profile_reference.encode("utf-8") in completed.stderr:
++                    raise ValueError("failure diagnostic contains the profile reference")
++        except (ValueError, json.JSONDecodeError) as error:
++            passed = False
++            detail = str(error)
++        failed = failed or not passed
++        report_rows.append(
++            {
++                "configuration": str(configuration_path),
++                "expectedExitCode": expected_exit,
++                "name": fixture["name"],
++                "observedExitCode": completed.returncode,
++                "outputSHA256": hashlib.sha256(
++                    completed.stdout + completed.stderr
++                ).hexdigest(),
++                "passed": passed,
++                "privacySafe": profile_reference.encode("utf-8")
++                not in completed.stdout + completed.stderr,
++                "validation": detail,
++            }
++        )
++
++    report = {
++        "command": manifest["command"],
++        "fixtureCount": len(report_rows),
++        "fixtures": report_rows,
++        "passed": not failed,
++        "schemaVersion": 1,
++    }
++    arguments.output.parent.mkdir(parents=True, exist_ok=True)
++    arguments.output.write_text(
++        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
++    )
++    print(
++        f"m1 runtime fixtures: passed={not failed} fixtures={len(report_rows)} "
++        f"report={arguments.output}"
++    )
++    return 1 if failed else 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())

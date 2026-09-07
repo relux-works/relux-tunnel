@@ -1,0 +1,9 @@
+[0/1] Planning build
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+Build of target: 'ReluxTunnelIOSAdapter' complete! (0.28s)
+ios_adapter_exit=0
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+Build of target: 'ReluxTunnelMacOSAdapter' complete! (0.14s)
+macos_adapter_exit=0

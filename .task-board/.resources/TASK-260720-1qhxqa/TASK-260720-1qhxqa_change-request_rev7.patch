@@ -1,0 +1,1903 @@
+diff --git a/Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json b/Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+new file mode 100644
+index 0000000..20adf08
+--- /dev/null
++++ b/Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+@@ -0,0 +1,299 @@
++{
++  "schemaVersion": 1,
++  "schemaIdentifier": "relux.m0-production-bindings/1",
++  "taskId": "TASK-260720-1qhxqa",
++  "runtimeContract": {
++    "taskId": "TASK-260715-30zng6",
++    "resourceName": "TASK-260715-30zng6_runtime-contract.md",
++    "sha256": "c13bbb54a455da89f3e66121c81532b298eab73fac30b6d14d2e2df43fff8851",
++    "schema": "m1-runtime-contract/1",
++    "reviewerVerdict": {
++      "resourceName": "TASK-260715-30zng6_review.md",
++      "sha256": "7a64ad098efd8cff52e0c6d144763b29e4d4008aab8e0967ce805c6134b0b756",
++      "verdict": "accepted",
++      "acceptedAt": "2026-07-20",
++      "timestampPrecision": "date"
++    },
++    "supersession": {
++      "status": "current",
++      "supersededBy": null
++    }
++  },
++  "acceptedInputs": [
++    {
++      "kind": "generatedProjectArchitecture",
++      "taskId": "TASK-260715-nphtib",
++      "acceptedOutcome": {
++        "resourceName": "TASK-260715-nphtib_results.md",
++        "sha256": "63faf7a35b1c3554bbe5c23def6edddb9bc8454d40bfc1fb94071e1461f23ddd"
++      },
++      "reviewerVerdict": {
++        "resourceName": "TASK-260715-nphtib_final-delta-review-results.md",
++        "sha256": "d9278fb1baec644d27c2fbd4a263758dee8f583b796f9c8ae7cc5e2e80985679",
++        "verdict": "accepted",
++        "acceptedAt": "2026-08-19",
++        "timestampPrecision": "date"
++      },
++      "supersession": {
++        "status": "current",
++        "supersededBy": null
++      },
++      "sourceOrBinaryPins": {
++        "acceptedRepositoryRevision": "069e23bdbbef71be194762d275b003a40a6cfc72",
++        "acceptedGraphRevision": "7dc73ac6e7325f86a4a178a0558619f0fc9d1490",
++        "generatedFilesSha256": "d5c5fd2899750f5b9e90de096e2b0552df22384a5ecbea793c0f19df630b7fc6"
++      },
++      "requiredCapabilities": [
++        "deterministic double generation",
++        "unsigned macOS Debug and Release provider builds",
++        "static HEV and libssh2 linkage with system-only dynamic dependencies",
++        "verified relay resource bundled by the provider",
++        "legacy v0.1.0 isolation and preservation"
++      ],
++      "bindings": {
++        "platformScope": "macOS-only; iOS production targets remain deferred",
++        "providerTarget": "ReluxProxyMacTunnel",
++        "providerDirectDependencies": [
++          "ReluxTunnelMacOSAdapter"
++        ],
++        "providerResources": [
++          ".build/relay/relay-assets-v1"
++        ],
++        "macOSAdapterDirectDependencies": [
++          "ReluxTunnelCore",
++          "ReluxTunnelLibSSH2Adapter",
++          "ReluxTunnelNativeAdapter"
++        ],
++        "nativeAdapterDirectDependencies": [
++          "ReluxTunnelCore",
++          "HevSocks5Tunnel"
++        ],
++        "dependencyDirection": "ReluxProxyMacTunnel -> ReluxTunnelMacOSAdapter -> candidate-neutral Core plus selected adapter modules; native and selected-engine types never enter ReluxTunnelCore public contracts"
++      },
++      "licenseAndMaintenanceObligations": [
++        "keep relay archive integrity, SBOMs, checksum file, and notices in the provider resource",
++        "preserve deterministic Tuist generation and the exact generated target closure",
++        "keep CReluxNativeFixture test-only and prohibit runtime downloads or third-party dylibs"
++      ],
++      "revalidationTriggers": [
++        "Project.swift, Package.swift, workspace schemes, deployment targets, relay resource path, native linkage, or generated graph changes",
++        "accepted repository or graph revision changes",
++        "deterministic generation, unsigned build, legacy preservation, or architecture boundary gate becomes red"
++      ]
++    },
++    {
++      "kind": "packetBridgeAndHEV",
++      "taskId": "TASK-260715-2jatnd",
++      "acceptedOutcome": {
++        "resourceName": "TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md",
++        "sha256": "f2dc587541386cdc5eb7e10328adda21b8bbba3af32d5c722e62616a2abca173"
++      },
++      "reviewerVerdict": {
++        "resourceName": "TASK-260715-2jatnd_review-verdict-rev2.md",
++        "sha256": "73de6f96adadbd4b9469e26d760c3edbe6bd56120b97ab4f3d752812d3df8246",
++        "verdict": "accepted",
++        "acceptedAt": "2026-08-29",
++        "timestampPrecision": "date"
++      },
++      "supersession": {
++        "status": "current",
++        "supersededBy": null
++      },
++      "sourceOrBinaryPins": {
++        "hevSocks5Tunnel": "ad7600497931205105b08367bd1b450048157e40",
++        "hevSocks5Core": "c234519072ff5b928b90b304da9a666bcb440455",
++        "hevTaskSystem": "b1afa0e21fb4ed5a69560e78e54baf0efdebe171",
++        "lwip": "2a11c14c7a32887af25a034e82ef18b0b12076ac",
++        "yaml": "efa36117a8646d26d12b58e05bac472d7854a70d",
++        "binaryTarget": "HevSocks5Tunnel",
++        "artifactLock": "NativeDependencies/manifest.json"
++      },
++      "requiredCapabilities": [
++        "public PacketFlowAdapterBoundary and PacketFlowBridge.start call path",
++        "IPv4, native IPv6, and dual-stack framing",
++        "bounded backpressure, fatal-frame classification, count/time yielding, and hostile-frame allocation bounds",
++        "single process HEV lease, join-before-close lifecycle, exact traffic accounting, and zero owned-resource cleanup",
++        "static Apple XCFramework packaging with embedded HEV and lwIP notices"
++      ],
++      "bindings": {
++        "bridge": "AF_UNIX/SOCK_DGRAM PacketFlowBridge with HEV borrowing the retained peer endpoint",
++        "mtuBytes": 1500,
++        "socketSendBufferRequestedBytes": 32768,
++        "socketReceiveBufferRequestedBytes": 32768,
++        "socketEffectiveValueRequirement": "read back both effective values; report clamp; never assume requested equals effective",
++        "pumpPacketBudget": 64,
++        "pumpTimeBudgetMilliseconds": 5,
++        "hevSocks5UDPMode": "tcp",
++        "hevTaskStackBytes": 24576,
++        "hevTCPBufferBytesPerSession": 4096,
++        "hevUDPCopyBufferCount": 2,
++        "hevMaximumSessionCount": 500,
++        "memoryEnvelope": {
++          "scope": "incremental HEV/bridge only",
++          "worstMeasuredBytesAt500Sessions": 9715712,
++          "residualBytesIn25MiBEnvelope": 16498688,
++          "wholeExtensionBudgetStatus": "blocked"
++        },
++        "forkDisposition": "rejected; unmodified pinned graph required",
++        "explicitlyRejectedOrDeferred": [
++          "MTU 8500 default",
++          "MTU 4096 without end-to-end path proof",
++          "1200-session candidate",
++          "physical iPhone, NAT64, sleep/wake, whole-extension memory, and global pressure ordering"
++        ]
++      },
++      "licenseAndMaintenanceObligations": [
++        "ship aggregated MIT notices and the complete BSD-3-Clause lwIP notice",
++        "compare shipped notices against the actual SBOM; Wintun remains outside the Apple notice set",
++        "authorize a fork only after target Instruments evidence, an improving callback prototype, unchanged regression gates, and reviewed patch/upstream/rebase disposition"
++      ],
++      "revalidationTriggers": [
++        "new baseline Mac class, major macOS, Swift/Xcode SDK affecting NetworkExtension or Darwin sockets",
++        "bridge I/O, buffers, batching, framing, HEV lifecycle, native artifact, compiler flags, or selected HEV graph changes",
++        "SSH/DNS/relay/cache/reconnect memory lands or residual 25 MiB allowance is exceeded",
++        "MTU 4096 selection, unexplained loss, family-specific red, EMSGSIZE, clamp, or fragmentation change",
++        "HEV issue 315 reproduces on Apple, upstream lifecycle changes, or abnormal stop occurs"
++      ]
++    },
++    {
++      "kind": "sshEngine",
++      "taskId": "TASK-260715-1gjxer",
++      "acceptedOutcome": {
++        "resourceName": "TASK-260715-1gjxer_ssh-engine-selection-adr.md",
++        "sha256": "f1d2369a694c7a6f6642cff4324b46a6727b7a6aef3d65a9cf13ee8821ea2282"
++      },
++      "reviewerVerdict": {
++        "resourceName": "TASK-260715-1gjxer_results.md",
++        "sha256": "3583369777a0d897ef2a156ddddeea92cd15b5c0b3b290582015667a37044a31",
++        "verdict": "accepted",
++        "acceptedAt": "2026-08-18",
++        "timestampPrecision": "date"
++      },
++      "supersession": {
++        "status": "current",
++        "supersededBy": null
++      },
++      "sourceOrBinaryPins": {
++        "selectedAdapter": "ReluxTunnelLibSSH2Adapter",
++        "binaryTarget": "ReluxLibSSH2",
++        "libssh2Commit": "a34302491c164d53c900fec9b3cbb050ecebe719",
++        "libssh2ArchiveSha256": "744ba3e9a8e7a877038e94a74459340052a105ad599605a5b6d0d6bc5ec2c87c",
++        "opensslTag": "openssl-3.5.7",
++        "opensslCommit": "8cf17aaeb4599f8af87fefd810b5b5fee90fe69e",
++        "opensslArchiveSha256": "a8c0d28a529ca480f9f36cf5792e2cd21984552a3c8e4aa11a24aa31aeac98e8",
++        "patchSha256": "79e2464813e3c3add9486b2fb8c9e50004b48b246bbc771b5dd1675a152fa30e",
++        "publicHeaderSha256": "aa542cff4e0e64927983da8c50b0315cd24c6d097fcdd42809d2e3b0878625bf",
++        "retainedReluxNIOSSHCommit": "31cdc3c3391a10460dedf1170530cf651d2ca496",
++        "retainedReluxNIOSSHArchiveSha256": "0b135087e76cb03e33f544484f21e1c3ba3b967f8a0ba2aead960ce4d0d06e6a"
++      },
++      "requiredCapabilities": [
++        "host-key policy receives raw evidence before credential lookup and fails closed",
++        "opaque external-signer public-key authentication with Keychain-only secret posture",
++        "approved algorithm allowlists with exact negotiated-value reporting and no silent downgrade",
++        "concurrent direct-tcpip, long-lived exec, bounded stdin upload, and sibling isolation",
++        "client byte/time/manual rekey and server-initiated rekey under traffic",
++        "bounded buffers, cancellation, keepalive, privacy-safe diagnostics, and leak-free lifecycle",
++        "real relux-server compatibility through the selected LibSSH2TransportFactory"
++      ],
++      "bindings": {
++        "primaryAlgorithms": {
++          "kex": "curve25519-sha256",
++          "hostKey": "ssh-ed25519",
++          "cipher": "aes256-ctr",
++          "mac": "hmac-sha2-256"
++        },
++        "fallbackAlgorithms": {
++          "kex": "diffie-hellman-group14-sha256",
++          "hostKey": "ecdsa-sha2-nistp256",
++          "cipher": "aes128-ctr",
++          "mac": "hmac-sha2-512"
++        },
++        "initialReceiveWindowBytes": {
++          "minimum": 32768,
++          "maximum": 65536,
++          "acceptedM0Value": 65536
++        },
++        "transportBufferBytes": 65536,
++        "readBufferBytes": 16384,
++        "queuedWriteBytes": 32768,
++        "writeCallBytes": 8192,
++        "pendingOperationLimit": 64,
++        "rekeyProtectedBytesPerDirection": {
++          "minimum": 4096,
++          "maximum": 5368709120
++        },
++        "rekeyElapsedMilliseconds": {
++          "minimum": 100,
++          "maximum": 3600000
++        },
++        "rekeyCompletionTimeoutMilliseconds": 10000,
++        "sessionOwnership": "one serialized adapter owner per mutable libssh2 session/socket/channels/KEX/timers/callbacks/allocations/teardown",
++        "retainedCandidateDisposition": "ReluxNIOSSH frozen as comparative evidence; no fork work unless ADR-014 reopens"
++      },
++      "licenseAndMaintenanceObligations": [
++        "ship libssh2 BSD-3-Clause and OpenSSL Apache-2.0 notices and acknowledgements in the combined notice",
++        "verify both source archives before extraction plus exact patch/header/artifact locks, static slices, minimum OS, forbidden symbols, and notices",
++        "keep the libssh2 delta within one patch and six changed paths with no crypto/algorithm changes or private-header export",
++        "monitor libssh2/OpenSSL advisories and recorded upstream issues; re-audit before every signed artifact",
++        "TASK-260728-3cveay owns future rebase; no silent pin movement"
++      ],
++      "revalidationTriggers": [
++        "a selected-engine mandatory row becomes red, leaks, corrupts traffic, violates host-before-auth, exports secrets, or needs weaker thresholds",
++        "a libssh2/OpenSSL advisory affects the pin or a signed release changes relevant code",
++        "patch ceiling, crypto/algorithm policy, public-header boundary, or clean rebase condition changes",
++        "macOS/Xcode/deployment target, OpenSSH policy, approved algorithms, real-host policy, Keychain boundary, or adapter/core boundary changes",
++        "M3 scale, memory, soak, DNS, or deep-observability evidence is red",
++        "ReluxNIOSSH becomes conforming at materially lower security, maintenance, or footprint cost"
++      ]
++    }
++  ],
++  "compatibilityChecks": [
++    {
++      "id": "M1-CONTRACT-SCHEMA",
++      "result": "pass",
++      "condition": "runtime contract schema is exactly m1-runtime-contract/1"
++    },
++    {
++      "id": "M1-GRAPH-DIRECTION",
++      "result": "pass",
++      "condition": "provider consumes only ReluxTunnelMacOSAdapter plus the verified relay resource; adapter closure is Core + libssh2 adapter + native adapter"
++    },
++    {
++      "id": "M1-CANDIDATE-NEUTRAL-CORE",
++      "result": "pass",
++      "condition": "NetworkExtension, HEV, and selected SSH engine types do not cross ReluxTunnelCore public contracts"
++    },
++    {
++      "id": "M1-PACKET-ACTIVATION-ORDER",
++      "result": "pass",
++      "condition": "bound packet preflight is resource-free before routes; PacketFlowBridge.start and HEV acquisition occur only after settings apply"
++    },
++    {
++      "id": "M1-SSH-BEFORE-ROUTES",
++      "result": "pass",
++      "condition": "selected SSH host verification and authentication complete before TCP/DNS preparation or route apply"
++    },
++    {
++      "id": "M1-BOUND-VALUES",
++      "result": "pass",
++      "condition": "MTU, buffers, batching, HEV session ceiling, SSH windows, rekey envelope, lifecycle, notices, and fork dispositions exactly match accepted outcomes"
++    },
++    {
++      "id": "M1-DEFERRED-NOT-PROMOTED",
++      "result": "pass",
++      "condition": "iOS, general UDP, lanes, reconnect, fail-closed routes, physical extension memory, and M3 tuning remain deferred and are not defaults"
++    },
++    {
++      "id": "M1-SOLE-BINDING-SOURCE",
++      "result": "pass",
++      "condition": "TASK-260715-3ejhyy consumes this manifest without copying or reinterpreting M0 decisions"
++    }
++  ],
++  "productionCompositionPermitted": true,
++  "consumerContract": {
++    "taskId": "TASK-260715-3ejhyy",
++    "soleM0BindingSource": "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json",
++    "productionCallSite": "the TASK-260715-3ejhyy macOS production factory entry point before construction of concrete SSH, PacketFlowBridge, or HEV dependencies and before NetworkSettingsApplier.apply",
++    "failureBehavior": "do not construct the production root and do not apply network settings when validation is absent, unreadable, unknown, stale, superseded, incompatible, or digest-mismatched"
++  }
++}
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index a1a3469..259d033 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -5,6 +5,22 @@
+ 
+ ## 2026-08-30
+ 
++### Accepted M0 production bindings (TASK-260720-1qhxqa)
++
++- DECISION: Bound the exact reviewer-accepted generated-project, packet/HEV, and SSH outcome/verdict resource pairs plus the accepted M1 runtime contract in `Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json`. Acceptance timestamps preserve upstream date precision instead of inventing a time of day.
++- PERMIT: `productionCompositionPermitted=true` is only a recomputed result. `scripts/validate-m0-production-bindings.py` fails closed on digest drift, absence, malformed input, unknown schema/fields, stale/superseded evidence, a narrowed input set, negative/missing compatibility rows, and checked-in graph/native-pin drift.
++- BINDINGS: macOS-only generated graph; MTU/buffers/batching/HEV values 1500/32768/64/5ms/24576/4096/2/500 with no HEV fork; selected pinned libssh2/OpenSSL adapter with exact algorithm, window, rekey, lifecycle, notice, maintenance, and revalidation constraints. Deferred iOS, MTU 4096/8500, whole-extension memory, general UDP, lanes, reconnect, and M3 tuning remain blocked/deferred.
++- CONSUMER: `TASK-260715-3ejhyy` must use the machine manifest as its sole M0 binding source and validate it at the future macOS production factory entry point before concrete SSH/PacketFlowBridge/HEV construction or `NetworkSettingsApplier.apply`.
++- BOARD ANOMALY: Final `task-board validate` returned process exit 0 but printed two `PARENT_STATUS_MISMATCH` rows. `STORY-260715-2ungml` is unrelated; current `STORY-260715-1y04r0` remained `backlog` while this leaf was `development`. The leaf had `derivedBlockedBy=[]`, all four hard prerequisites were `done`, and the manifest/resource gates passed. The mismatch is retained as board-state evidence rather than misreported as a clean board validation.
++- REVIEW REWORK: CR revision 1 was correctly rejected because the validator admitted a mutant with MTU 1501, packet budget 1, removed notice obligations, and an `unchecked` compatibility condition. The rework pins SHA-256 `fda46421ae6a6c24cf58f5bfb520399b9ebc8d31800b7d61ed18a38231aea43e` over the complete canonical semantic contract. The exact reviewer mutant now exits 1 at `NORMALIZED-CONTRACT` with `productionCompositionPermitted=false`; the unchanged accepted manifest exits 0. The earlier trailing whitespace in the human-readable manifest was removed.
++- REWORK BOARD ANOMALY: `task-board validate` again returned process exit 0 while printing three `PARENT_STATUS_MISMATCH` rows: unrelated `STORY-260715-1zzt0c` and `STORY-260717-1ecq74`, plus owning `STORY-260715-1y04r0` stored `to-dev` versus child aggregate `development`. The leaf itself remains in the correct `development` role state with every hard prerequisite done. Raw output is attached and is not described as a clean board validation.
++- REVIEW REWORK 2: CR revision 2 was correctly rejected because substring-presence checks admitted an extra direct provider dependency while preserving all required tokens. `verify_repository` now normalizes the protected Swift `dependencies` and provider `resources` arrays and compares exact closures sourced from the immutable manifest; missing, duplicate, extra, and unknown entries fail at stable `REPOSITORY-GRAPH`. The production CLI negative suite covers extra dependencies independently for the provider, macOS adapter, native adapter, and selected SSH adapter, plus a duplicate provider dependency. The final run passes 14/14 tests; the unchanged authoritative baseline remains permitted.
++- REVIEW REWORK 3: CR revision 3 was correctly rejected because raw-source target lookup selected a commented decoy before the real provider declaration. Target and array resolution now use a lexical Swift view: comments cannot supply declarations or fields, string contents cannot supply code candidates, bracket matching ignores both, and duplicate real target declarations fail closed. Production-entry regressions cover the exact comment decoy, a multiline-string decoy, and an ambiguous duplicate target.
++- REVIEW REWORK 4 VALIDATION: The final suite passes 16/16. The unchanged authoritative manifest passes the production Make gate with SHA-256 `39b3428d6cf778fa6b682bb0853a177d6b85f03b8062309f0d198dcdfd49fae6` and permission true; the exact reviewer-attached comment mutant exits 1 at `REPOSITORY-GRAPH` with permission false. Owner and `TASK-260715-3ejhyy` sole-consumer attachments remain byte-identical. `task-board validate` returned process exit 0 while retaining three `PARENT_STATUS_MISMATCH` rows (owning Story stored `to-dev` versus child aggregate `development`, plus two unrelated Stories); the raw result is attached and is not represented as a clean validation.
++- REVIEW REWORK 5: CR revision 4 was correctly rejected because the pinned normalized contract omitted all eight accepted resource digests, allowing changed upstream bytes plus a synchronized mutable-manifest digest to retain permission. The independent canonical trust root now includes every M0 and M1 outcome/verdict SHA-256. The production-entry synchronized-rebind regression refuses at stable row `NORMALIZED-CONTRACT`; the full suite passes 17/17, all eight authoritative digests independently match, and the unchanged owner/repository/sole-consumer manifest remains byte-identical at SHA-256 `39b3428d6cf778fa6b682bb0853a177d6b85f03b8062309f0d198dcdfd49fae6` with permission true.
++- REVIEW REWORK 6: CR revision 5 was correctly rejected because the production gate did not bind the accepted libssh2 patch and public-header SHA-256 values to the checked-in native pin graph. The gate now validates the patch manifest and selected patch bytes plus every required-slice header lock and header bytes; missing, malformed, duplicate, or inconsistent records fail at stable `REPOSITORY-SSH-PIN`. Patch-lock and single-slice header-lock production mutants exit 1 with permission false; the full suite passes 20/20 and the unchanged baseline remains permitted.
++- REVIEW REWORK 7: CR revision 6 was correctly rejected because the new actual-byte gates lacked durable negative coverage. Production-entry regressions now flip one byte in the selected libssh2 patch and one byte in a required `libssh2.h` slice while leaving accepted locks unchanged; both exit 1 at stable `REPOSITORY-SSH-PIN` with `productionCompositionPermitted=false`. The full suite passes 22/22, the authoritative baseline remains permitted at manifest SHA-256 `39b3428d6cf778fa6b682bb0853a177d6b85f03b8062309f0d198dcdfd49fae6`, native dependency validation passes, and all eight upstream resource digests plus owner/sole-consumer attachment identity match. Board validation returned process exit 0 while retaining the unrelated `STORY-260715-1zzt0c` mismatch and owning Story stored `to-dev` versus child aggregate `development`; raw output is attached without calling it clean.
++
+ ### M0 packet bridge and HEV baseline accepted (TASK-260715-2jatnd)
+ 
+ - DECISION: The macOS-first M0 Bridge gate passes under ADR-024 with MTU 1500, requested/effective 32768-byte socket buffers, 64-packet/5-ms pump budgets, HEV task-stack/TCP/UDP-copy values 24576/4096/2, and an initial measured 500-session ceiling. MTU 4096 remains injectable behind end-to-end proof; MTU 8500 is a named failed default candidate because constrained-buffer rows produced 768 `EMSGSIZE` refusals.
+diff --git a/Makefile b/Makefile
+index ba15858..b013fd0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,5 @@
+ .PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
++	m0-bindings-check m0-bindings-test \
+ 	workspace-generate workspace-validate macos-targets-validate \
+ 	apple-ui-test-contract apple-ui-test-smoke \
+ 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
+@@ -20,6 +21,18 @@
+ 	relay-toolchain-native-linux-smoke relay-toolchain-ci
+ 
+ LEGACY_ROOT ?= ../relux-proxy
++TASK_BOARD_RESOURCES ?= $(TASK_BOARD_DIR)/.resources
++
++m0-bindings-check:
++	mkdir -p .temp/TASK-260720-1qhxqa
++	task-board q --format json 'get(TASK-260715-nphtib) { id status outcomeResources }; get(TASK-260715-2jatnd) { id status outcomeResources }; get(TASK-260715-1gjxer) { id status outcomeResources }; get(TASK-260715-30zng6) { id status outcomeResources }' > .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json
++	python3 scripts/validate-m0-production-bindings.py \
++		--resources-root "$(TASK_BOARD_RESOURCES)" \
++		--board-state .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json \
++		--report .temp/TASK-260720-1qhxqa/m0-bindings-validation.json
++
++m0-bindings-test:
++	python3 -m unittest -v scripts.tests.test_m0_production_bindings
+ 
+ credential-free-validate:
+ 	./scripts/validate-credential-free.sh --legacy-root "$(LEGACY_ROOT)"
+diff --git a/README.md b/README.md
+index 188bfa1..fe0ad1c 100644
+--- a/README.md
++++ b/README.md
+@@ -209,6 +209,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Tool | Purpose | Command | Output |
+ | --- | --- | --- | --- |
+ | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
++| M0 production binding validator | Recompute the exact reviewer-accepted architecture, packet/HEV, SSH, and M1 runtime-contract resource digests; reject missing, unreadable, stale, superseded, unknown, incompatible, or repository-drifted input, including missing/duplicate/extra protected target dependencies and selected libssh2 patch/public-header pin drift, before production composition | `make m0-bindings-check TASK_BOARD_RESOURCES="$TASK_BOARD_DIR/.resources"`; `make m0-bindings-test`; see [`TASK-260720-1qhxqa_m0-production-bindings.md`](docs/TASK-260720-1qhxqa_m0-production-bindings.md) | Immutable machine manifest under `Configuration/`; human handoff under `docs/`; validation report under `.temp/TASK-260720-1qhxqa/` |
+ | Tuist 4.202.5 via Mise | Generate the credential-free Apple workspace; validate deterministic foundation state; build/test the macOS host and embedded packet-tunnel system extension in unsigned Debug and Release | `make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy`; or `make workspace-generate`, `make workspace-validate`, and `make macos-targets-validate`; see [`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md) | Ignored `ReluxTunnel.xcworkspace` and `ReluxTunnelApp.xcodeproj`; full logs under `.temp/TASK-260715-sbrrp7/credential-free-validation/`; foundation evidence under `.temp/TASK-260715-2btjwm/`; target evidence under `.temp/TASK-260715-uyju7n/` |
+ | Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
+ | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
+diff --git a/docs/TASK-260720-1qhxqa_m0-production-bindings.md b/docs/TASK-260720-1qhxqa_m0-production-bindings.md
+new file mode 100644
+index 0000000..612d8dc
+--- /dev/null
++++ b/docs/TASK-260720-1qhxqa_m0-production-bindings.md
+@@ -0,0 +1,125 @@
++# TASK-260720-1qhxqa — M0 production binding manifest
++
++Status: ready for independent review
++Machine authority: `Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json`
++Validator: `scripts/validate-m0-production-bindings.py`
++
++## Permit
++
++`productionCompositionPermitted=true` only after the validator independently
++recomputes every accepted outcome and reviewer-verdict SHA-256, confirms all
++four authority tasks remain reviewer-terminal `done`, verifies the exact
++resources are still declared, confirms every supersession marker is `current`,
++recognizes the exact schema and all eight
++stable compatibility rows, and verifies the checked-in provider graph and
++native pins. Protected Swift target arrays are normalized and compared as exact
++direct dependency/resource closures; missing, duplicate, extra, or unknown
++expressions refuse composition. A lexical Swift source pass excludes comments
++and string contents from target resolution and rejects duplicate or ambiguous
++real target declarations. It also verifies a pinned canonical digest covering
++every exact accepted outcome/verdict SHA-256, normalized identity, pin,
++capability, nested binding, obligation, trigger, compatibility condition, and
++consumer constraint. The stored boolean is an attestation to recompute, not authority
++that can override a failed row.
++
++The upstream reviewer evidence records acceptance dates, not times of day. The
++manifest preserves the exact ISO dates with `timestampPrecision=date`; it does
++not invent midnight timestamps.
++
++| M0 authority | Exact accepted outcome | Reviewer verdict | Accepted | Outcome SHA-256 | Supersession |
++| --- | --- | --- | --- | --- | --- |
++| `TASK-260715-nphtib` | `TASK-260715-nphtib_results.md` | `TASK-260715-nphtib_final-delta-review-results.md` | 2026-08-19 (date precision) | `63faf7a35b1c3554bbe5c23def6edddb9bc8454d40bfc1fb94071e1461f23ddd` | current |
++| `TASK-260715-2jatnd` | `TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md` | `TASK-260715-2jatnd_review-verdict-rev2.md` | 2026-08-29 (date precision) | `f2dc587541386cdc5eb7e10328adda21b8bbba3af32d5c722e62616a2abca173` | current |
++| `TASK-260715-1gjxer` | `TASK-260715-1gjxer_ssh-engine-selection-adr.md` | `TASK-260715-1gjxer_results.md` | 2026-08-18 (date precision) | `f1d2369a694c7a6f6642cff4324b46a6727b7a6aef3d65a9cf13ee8821ea2282` | current |
++
++The compatible runtime authority is
++`TASK-260715-30zng6_runtime-contract.md` at SHA-256
++`c13bbb54a455da89f3e66121c81532b298eab73fac30b6d14d2e2df43fff8851`,
++accepted by `TASK-260715-30zng6_review.md` at SHA-256
++`7a64ad098efd8cff52e0c6d144763b29e4d4008aab8e0967ce805c6134b0b756`.
++
++## Normalized bindings
++
++Generated graph:
++
++- macOS production only; iOS production targets remain deferred;
++- `ReluxProxyMacTunnel` directly consumes `ReluxTunnelMacOSAdapter` and the
++  verified relay resource;
++- `ReluxTunnelMacOSAdapter` consumes exactly Core, the selected libssh2 adapter,
++  and the native adapter;
++- Core remains candidate-neutral; HEV and selected-engine types stay in adapter
++  modules;
++- accepted repository revision is
++  `069e23bdbbef71be194762d275b003a40a6cfc72`; accepted graph revision is
++  `7dc73ac6e7325f86a4a178a0558619f0fc9d1490`.
++
++Packet/HEV:
++
++- unmodified five-revision HEV/lwIP graph recorded in the machine manifest;
++- `AF_UNIX/SOCK_DGRAM` PacketFlowBridge; HEV borrows the retained peer;
++- MTU 1500; requested send/receive buffers 32768 bytes with mandatory effective
++  readback; 64 packets or 5 ms per pump slice;
++- HEV stack/TCP/UDP-copy/session values 24576/4096/2/500;
++- incremental HEV/bridge worst case 9,715,712 bytes at 500 sessions; the
++  whole-extension budget remains blocked and cannot be inferred;
++- HEV fork rejected. MTU 8500, unproved MTU 4096, 1200 sessions, physical iOS,
++  NAT64, sleep/wake, whole-extension memory, and global pressure are not
++  promoted.
++
++SSH:
++
++- selected `ReluxTunnelLibSSH2Adapter` with libssh2
++  `a34302491c164d53c900fec9b3cbb050ecebe719`, OpenSSL 3.5.7, and exact
++  archive/patch/header hashes in the machine manifest;
++- primary algorithms are curve25519-sha256 / ssh-ed25519 / aes256-ctr /
++  hmac-sha2-256; fallback is group14-sha256 / P-256 / aes128-ctr /
++  hmac-sha2-512;
++- receive window 32–64 KiB (accepted M0 value 64 KiB), transport/read/queued
++  write/write-call bounds 64/16/32/8 KiB, and 64 pending operations;
++- rekey envelope is 4 KiB–5 GiB per direction, 100 ms–1 hour, with exactly a
++  10-second M0 completion timeout;
++- one serialized session owner performs lifecycle and cleanup. ReluxNIOSSH is
++  frozen comparative evidence and is not authorized for further fork work
++  unless ADR-014 reopens.
++
++Every license, notice, advisory-monitoring, patch ceiling, maintenance owner,
++and revalidation trigger is copied as a normalized machine field. Deferred
++values remain explicit; they are never converted into defaults.
++
++## Fail-closed validation and consumer
++
++Run from the repository root:
++
++```bash
++make m0-bindings-check TASK_BOARD_RESOURCES="$TASK_BOARD_DIR/.resources"
++make m0-bindings-test
++```
++
++The Make target captures a compact authoritative board-state projection, then
++the check emits a deterministic JSON report. Missing evidence is reported as
++missing; malformed or unreadable input is reported as unknown/malformed. A
++reopened authority or removed declaration is stale board state. Every failure
++returns exit 1 and `productionCompositionPermitted=false`.
++
++`TASK-260715-3ejhyy` must use the JSON manifest as its sole M0 binding source.
++Its future macOS production factory entry point must run this validation before
++constructing concrete SSH, PacketFlowBridge, or HEV dependencies and before any
++`NetworkSettingsApplier.apply`. It must not duplicate values from the ADRs,
++notes, source defaults, or this explanatory document.
++
++## Negative evidence
++
++The production CLI entry point is tested against changed bytes, missing
++evidence, malformed JSON, supersession, unknown fields/schema, a narrowed
++two-of-three gate, changed normalized numeric values, weakened notice
++obligations and compatibility conditions, negative/missing compatibility rows,
++checked-in graph drift, an extra direct dependency in each of the provider,
++macOS adapter, native adapter, and selected SSH adapter closures, and a duplicate
++provider dependency. The selected libssh2 patch digest, every required-slice
++public-header digest, and the corresponding checked-in patch/header bytes are
++also verified; missing, malformed, duplicate, or inconsistent SSH pin records
++fail with `REPOSITORY-SSH-PIN`. Commented and multiline-string target decoys plus
++duplicate real target declarations are also refused. Each attack must exit 1 with
++permission false; the changed-resource tests prove an upstream replacement
++cannot retain permission either under the old digest or after synchronizing the
++mutable manifest digest to the changed bytes.
+diff --git a/scripts/tests/test_m0_production_bindings.py b/scripts/tests/test_m0_production_bindings.py
+new file mode 100644
+index 0000000..24ea874
+--- /dev/null
++++ b/scripts/tests/test_m0_production_bindings.py
+@@ -0,0 +1,525 @@
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import os
++import re
++import shutil
++import subprocess
++import tempfile
++import unittest
++from pathlib import Path
++
++
++REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
++SCRIPT = REPOSITORY_ROOT / "scripts/validate-m0-production-bindings.py"
++MANIFEST = (
++    REPOSITORY_ROOT
++    / "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json"
++)
++
++
++class M0ProductionBindingsTests(unittest.TestCase):
++    def setUp(self) -> None:
++        self.temporary = tempfile.TemporaryDirectory()
++        self.root = Path(self.temporary.name)
++        self.resources = self.root / "resources"
++        self.manifest = self.root / "bindings.json"
++        self.board_state = self.root / "board-state.json"
++        self.data = json.loads(MANIFEST.read_text(encoding="utf-8"))
++        self._copy_accepted_resources()
++        self.write_board_state()
++        self.write_manifest()
++
++    def tearDown(self) -> None:
++        self.temporary.cleanup()
++
++    def _copy_accepted_resources(self) -> None:
++        board_dir = Path(
++            os.environ.get("TASK_BOARD_DIR", REPOSITORY_ROOT / ".task-board")
++        )
++        source_root = Path(
++            os.environ.get("TASK_BOARD_RESOURCES", board_dir / ".resources")
++        )
++        bindings: list[tuple[str, dict[str, object]]] = []
++        runtime = self.data["runtimeContract"]
++        bindings.append((runtime["taskId"], runtime))
++        bindings.append((runtime["taskId"], runtime["reviewerVerdict"]))
++        for item in self.data["acceptedInputs"]:
++            bindings.append((item["taskId"], item["acceptedOutcome"]))
++            bindings.append((item["taskId"], item["reviewerVerdict"]))
++        for task_id, resource in bindings:
++            source = source_root / task_id / resource["resourceName"]
++            if not source.is_file():
++                self.fail(f"accepted board resource unavailable: {source}")
++            destination = self.resources / task_id / resource["resourceName"]
++            destination.parent.mkdir(parents=True, exist_ok=True)
++            shutil.copyfile(source, destination)
++
++    def write_manifest(self) -> None:
++        self.manifest.write_text(
++            json.dumps(self.data, indent=2, sort_keys=True) + "\n", encoding="utf-8"
++        )
++
++    def write_board_state(self) -> None:
++        rows = []
++        runtime = self.data["runtimeContract"]
++        rows.append(
++            {
++                "id": runtime["taskId"],
++                "status": "done",
++                "outcomeResources": [
++                    {"name": runtime["resourceName"]},
++                    {"name": runtime["reviewerVerdict"]["resourceName"]},
++                ],
++            }
++        )
++        for item in self.data["acceptedInputs"]:
++            rows.append(
++                {
++                    "id": item["taskId"],
++                    "status": "done",
++                    "outcomeResources": [
++                        {"name": item["acceptedOutcome"]["resourceName"]},
++                        {"name": item["reviewerVerdict"]["resourceName"]},
++                    ],
++                }
++            )
++        self.board_state.write_text(json.dumps(rows), encoding="utf-8")
++
++    def run_validator(self, repository_root: Path = REPOSITORY_ROOT) -> tuple[subprocess.CompletedProcess[str], dict[str, object]]:
++        process = subprocess.run(
++            [
++                "python3",
++                str(SCRIPT),
++                "--manifest",
++                str(self.manifest),
++                "--resources-root",
++                str(self.resources),
++                "--repository-root",
++                str(repository_root),
++                "--board-state",
++                str(self.board_state),
++            ],
++            check=False,
++            capture_output=True,
++            text=True,
++        )
++        return process, json.loads(process.stdout)
++
++    def assert_refused(self, report: dict[str, object]) -> None:
++        self.assertFalse(report["productionCompositionPermitted"])
++        self.assertTrue(report["failures"])
++
++    def copy_repository_fixture(self, name: str) -> Path:
++        repository = self.root / name
++        fixture_files = (
++            "Project.swift",
++            "Package.swift",
++            "NativeDependencies/manifest.json",
++            "Dependencies/ReluxLibSSH2/PATCH_MANIFEST.json",
++            "Dependencies/ReluxLibSSH2/patches/0001-public-client-rekey.patch",
++            "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64/Headers/libssh2.h",
++            "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/ios-arm64_x86_64-simulator/Headers/libssh2.h",
++            "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework/macos-arm64_x86_64/Headers/libssh2.h",
++        )
++        for relative in fixture_files:
++            destination = repository / relative
++            destination.parent.mkdir(parents=True, exist_ok=True)
++            destination.write_bytes((REPOSITORY_ROOT / relative).read_bytes())
++        return repository
++
++    def insert_target_dependency(
++        self, path: Path, target: str, dependency_expression: str
++    ) -> None:
++        text = path.read_text(encoding="utf-8")
++        declaration = re.search(
++            rf'\.target\s*\(\s*name:\s*"{re.escape(target)}"\s*,', text
++        )
++        self.assertIsNotNone(declaration)
++        target_start = declaration.start()
++        dependencies_start = text.find("dependencies: [", target_start)
++        self.assertNotEqual(dependencies_start, -1)
++        insertion = text.find("\n", dependencies_start) + 1
++        text = text[:insertion] + f"        {dependency_expression},\n" + text[insertion:]
++        path.write_text(text, encoding="utf-8")
++
++    def test_production_entry_point_accepts_exact_current_bindings(self) -> None:
++        process, report = self.run_validator()
++        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
++        self.assertTrue(report["productionCompositionPermitted"])
++        self.assertEqual(report["failures"], [])
++
++    def test_manifest_preserves_every_selected_m0_value_without_tuning(self) -> None:
++        inputs = {item["kind"]: item for item in self.data["acceptedInputs"]}
++        graph = inputs["generatedProjectArchitecture"]["bindings"]
++        self.assertEqual(graph["providerDirectDependencies"], ["ReluxTunnelMacOSAdapter"])
++        self.assertEqual(
++            graph["macOSAdapterDirectDependencies"],
++            ["ReluxTunnelCore", "ReluxTunnelLibSSH2Adapter", "ReluxTunnelNativeAdapter"],
++        )
++
++        packet = inputs["packetBridgeAndHEV"]["bindings"]
++        self.assertEqual(
++            {
++                "mtu": packet["mtuBytes"],
++                "send": packet["socketSendBufferRequestedBytes"],
++                "receive": packet["socketReceiveBufferRequestedBytes"],
++                "packets": packet["pumpPacketBudget"],
++                "milliseconds": packet["pumpTimeBudgetMilliseconds"],
++                "stack": packet["hevTaskStackBytes"],
++                "tcp": packet["hevTCPBufferBytesPerSession"],
++                "udpCopies": packet["hevUDPCopyBufferCount"],
++                "sessions": packet["hevMaximumSessionCount"],
++            },
++            {
++                "mtu": 1500,
++                "send": 32768,
++                "receive": 32768,
++                "packets": 64,
++                "milliseconds": 5,
++                "stack": 24576,
++                "tcp": 4096,
++                "udpCopies": 2,
++                "sessions": 500,
++            },
++        )
++        self.assertTrue(packet["forkDisposition"].startswith("rejected"))
++
++        ssh = inputs["sshEngine"]["bindings"]
++        self.assertEqual(ssh["initialReceiveWindowBytes"], {
++            "minimum": 32768, "maximum": 65536, "acceptedM0Value": 65536
++        })
++        self.assertEqual(
++            ssh["rekeyProtectedBytesPerDirection"],
++            {"minimum": 4096, "maximum": 5368709120},
++        )
++        self.assertEqual(
++            ssh["rekeyElapsedMilliseconds"], {"minimum": 100, "maximum": 3600000}
++        )
++        self.assertEqual(ssh["rekeyCompletionTimeoutMilliseconds"], 10000)
++
++    def test_production_entry_point_rejects_narrowed_values_and_obligations(self) -> None:
++        packet = self.data["acceptedInputs"][1]
++        packet["bindings"]["mtuBytes"] = 1501
++        packet["bindings"]["pumpPacketBudget"] = 1
++        packet["licenseAndMaintenanceObligations"][0] = "no notices required"
++        self.data["compatibilityChecks"][5]["condition"] = "unchecked"
++        self.write_manifest()
++
++        process, report = self.run_validator()
++
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "NORMALIZED-CONTRACT")
++
++    def test_changed_upstream_resource_cannot_silently_retain_permission(self) -> None:
++        item = self.data["acceptedInputs"][1]
++        path = self.resources / item["taskId"] / item["acceptedOutcome"]["resourceName"]
++        path.write_text("changed accepted outcome bytes\n", encoding="utf-8")
++        process, report = self.run_validator()
++        self.assertEqual(process.returncode, 1)
++        self.assert_refused(report)
++        self.assertIn("SHA-256 mismatch", report["failures"][0]["detail"])
++
++    def test_changed_upstream_resource_with_rebound_manifest_digest_is_rejected(self) -> None:
++        item = self.data["acceptedInputs"][1]
++        path = self.resources / item["taskId"] / item["acceptedOutcome"]["resourceName"]
++        path.write_text("changed accepted outcome bytes\n", encoding="utf-8")
++        item["acceptedOutcome"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
++        self.write_manifest()
++
++        process, report = self.run_validator()
++
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "NORMALIZED-CONTRACT")
++
++    def test_absent_evidence_is_reported_as_missing(self) -> None:
++        item = self.data["acceptedInputs"][0]
++        path = self.resources / item["taskId"] / item["reviewerVerdict"]["resourceName"]
++        path.unlink()
++        process, report = self.run_validator()
++        self.assertEqual(process.returncode, 1)
++        self.assert_refused(report)
++        self.assertIn("accepted resource missing", report["failures"][0]["detail"])
++
++    def test_malformed_manifest_is_unknown_not_absent(self) -> None:
++        self.manifest.write_text("{not-json", encoding="utf-8")
++        process, report = self.run_validator()
++        self.assertEqual(process.returncode, 1)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "UNREADABLE-OR-MALFORMED")
++
++    def test_superseded_evidence_is_rejected(self) -> None:
++        self.data["acceptedInputs"][2]["supersession"] = {
++            "status": "superseded",
++            "supersededBy": "TASK-999999-replacement_results.md",
++        }
++        self.write_manifest()
++        process, report = self.run_validator()
++        self.assertEqual(process.returncode, 1)
++        self.assert_refused(report)
++        self.assertIn("stale or superseded", report["failures"][0]["detail"])
++
++    def test_reopened_or_undeclared_board_evidence_is_rejected(self) -> None:
++        board_state = json.loads(self.board_state.read_text(encoding="utf-8"))
++        for mutation in ("reopened", "undeclared"):
++            with self.subTest(mutation=mutation):
++                candidate = copy.deepcopy(board_state)
++                if mutation == "reopened":
++                    candidate[1]["status"] = "analysis"
++                else:
++                    candidate[2]["outcomeResources"].pop()
++                self.board_state.write_text(json.dumps(candidate), encoding="utf-8")
++                process, report = self.run_validator()
++                self.assertEqual(process.returncode, 1)
++                self.assert_refused(report)
++                self.assertEqual(report["failures"][0]["row"], "BOARD-STATE")
++
++    def test_unknown_field_and_schema_version_are_rejected(self) -> None:
++        for mutation in ("field", "schema"):
++            with self.subTest(mutation=mutation):
++                candidate = copy.deepcopy(self.data)
++                if mutation == "field":
++                    candidate["permitIfTwoInputsPass"] = True
++                else:
++                    candidate["schemaVersion"] = 2
++                self.manifest.write_text(json.dumps(candidate), encoding="utf-8")
++                process, report = self.run_validator()
++                self.assertEqual(process.returncode, 1)
++                self.assert_refused(report)
++
++    def test_narrowed_two_of_three_gate_is_rejected(self) -> None:
++        self.data["acceptedInputs"].pop()
++        self.write_manifest()
++        process, report = self.run_validator()
++        self.assertEqual(process.returncode, 1)
++        self.assert_refused(report)
++        self.assertIn(report["failures"][0]["row"], {"BOARD-STATE", "INPUT-SET"})
++
++    def test_negative_or_missing_compatibility_row_is_rejected(self) -> None:
++        for mutation in ("negative", "missing"):
++            with self.subTest(mutation=mutation):
++                candidate = copy.deepcopy(self.data)
++                if mutation == "negative":
++                    candidate["compatibilityChecks"][3]["result"] = "fail"
++                else:
++                    candidate["compatibilityChecks"].pop()
++                self.manifest.write_text(json.dumps(candidate), encoding="utf-8")
++                process, report = self.run_validator()
++                self.assertEqual(process.returncode, 1)
++                self.assert_refused(report)
++
++    def test_repository_pin_drift_is_rejected_at_production_entry_point(self) -> None:
++        repository = self.copy_repository_fixture("repository-pin-drift")
++        package = repository / "Package.swift"
++        package.write_text(
++            package.read_text(encoding="utf-8").replace(
++                '"ReluxTunnelLibSSH2Adapter"', '"ReluxTunnelLibSSH2AdapterNarrowed"'
++            ),
++            encoding="utf-8",
++        )
++        process, report = self.run_validator(repository)
++        self.assertEqual(process.returncode, 1)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "REPOSITORY-GRAPH")
++
++    def test_production_entry_point_rejects_selected_patch_lock_drift(self) -> None:
++        repository = self.copy_repository_fixture("selected-patch-lock-drift")
++        path = repository / "Dependencies/ReluxLibSSH2/PATCH_MANIFEST.json"
++        manifest = json.loads(path.read_text(encoding="utf-8"))
++        manifest["patches"][0]["sha256"] = "0" * 64
++        path.write_text(json.dumps(manifest), encoding="utf-8")
++
++        process, report = self.run_validator(repository)
++
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "REPOSITORY-SSH-PIN")
++
++    def test_production_entry_point_rejects_selected_patch_byte_drift(self) -> None:
++        repository = self.copy_repository_fixture("selected-patch-byte-drift")
++        path = (
++            repository
++            / "Dependencies/ReluxLibSSH2/patches/0001-public-client-rekey.patch"
++        )
++        content = bytearray(path.read_bytes())
++        self.assertTrue(content)
++        content[0] ^= 1
++        path.write_bytes(content)
++
++        process, report = self.run_validator(repository)
++
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "REPOSITORY-SSH-PIN")
++
++    def test_production_entry_point_rejects_one_public_header_lock_drift(self) -> None:
++        repository = self.copy_repository_fixture("public-header-lock-drift")
++        path = repository / "NativeDependencies/manifest.json"
++        manifest = json.loads(path.read_text(encoding="utf-8"))
++        file_pins = manifest["dependencies"]["libssh2-openssl"]["artifact"]["file_sha256"]
++        file_pins["ios-arm64/Headers/libssh2.h"] = "0" * 64
++        path.write_text(json.dumps(manifest), encoding="utf-8")
++
++        process, report = self.run_validator(repository)
++
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "REPOSITORY-SSH-PIN")
++
++    def test_production_entry_point_rejects_one_public_header_byte_drift(self) -> None:
++        repository = self.copy_repository_fixture("public-header-byte-drift")
++        path = (
++            repository
++            / "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework"
++            / "macos-arm64_x86_64/Headers/libssh2.h"
++        )
++        content = bytearray(path.read_bytes())
++        self.assertTrue(content)
++        content[0] ^= 1
++        path.write_bytes(content)
++
++        process, report = self.run_validator(repository)
++
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "REPOSITORY-SSH-PIN")
++
++    def test_production_entry_point_rejects_missing_malformed_or_duplicate_ssh_pin_records(
++        self,
++    ) -> None:
++        mutations = ("missing", "malformed", "duplicate")
++        for mutation in mutations:
++            with self.subTest(mutation=mutation):
++                repository = self.copy_repository_fixture(f"ssh-pin-{mutation}")
++                path = repository / "Dependencies/ReluxLibSSH2/PATCH_MANIFEST.json"
++                if mutation == "missing":
++                    path.unlink()
++                elif mutation == "malformed":
++                    path.write_text("{not-json", encoding="utf-8")
++                else:
++                    text = path.read_text(encoding="utf-8")
++                    path.write_text(
++                        text.replace(
++                            '"schema_version": 1,',
++                            '"schema_version": 1, "schema_version": 1,',
++                            1,
++                        ),
++                        encoding="utf-8",
++                    )
++
++                process, report = self.run_validator(repository)
++
++                self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++                self.assert_refused(report)
++                self.assertEqual(report["failures"][0]["row"], "REPOSITORY-SSH-PIN")
++
++    def test_production_entry_point_rejects_extra_dependency_in_every_protected_closure(
++        self,
++    ) -> None:
++        mutants = (
++            (
++                "provider",
++                "Project.swift",
++                "ReluxProxyMacTunnel",
++                '.package(product: "ReluxTunnelCore")',
++            ),
++            (
++                "macos-adapter",
++                "Package.swift",
++                "ReluxTunnelMacOSAdapter",
++                '"UnauthorizedMacOSDependency"',
++            ),
++            (
++                "native-adapter",
++                "Package.swift",
++                "ReluxTunnelNativeAdapter",
++                '"UnauthorizedNativeDependency"',
++            ),
++            (
++                "selected-ssh-adapter",
++                "Package.swift",
++                "ReluxTunnelLibSSH2Adapter",
++                '"UnauthorizedSSHDependency"',
++            ),
++        )
++        for name, relative, target, dependency in mutants:
++            with self.subTest(target=name):
++                repository = self.copy_repository_fixture(f"extra-{name}")
++                self.insert_target_dependency(repository / relative, target, dependency)
++                process, report = self.run_validator(repository)
++                self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++                self.assert_refused(report)
++                self.assertEqual(report["failures"][0]["row"], "REPOSITORY-GRAPH")
++                self.assertIn("extra=", report["failures"][0]["detail"])
++
++    def test_production_entry_point_rejects_duplicate_direct_dependency(self) -> None:
++        repository = self.copy_repository_fixture("duplicate-provider-dependency")
++        self.insert_target_dependency(
++            repository / "Project.swift",
++            "ReluxProxyMacTunnel",
++            '.package(product: "ReluxTunnelMacOSAdapter")',
++        )
++        process, report = self.run_validator(repository)
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "REPOSITORY-GRAPH")
++        self.assertIn("duplicate provider direct dependency", report["failures"][0]["detail"])
++
++    def test_production_entry_point_ignores_comment_and_string_target_decoys(self) -> None:
++        decoys = {
++            "comment": (
++                '// .target(name: "ReluxProxyMacTunnel", '
++                'resources: [.folderReference(path: verifiedRelayBundleInput)], '
++                'dependencies: [.package(product: "ReluxTunnelMacOSAdapter")])\n'
++            ),
++            "multiline-string": (
++                'let targetDecoy = """\n'
++                '.target(name: "ReluxProxyMacTunnel", '
++                'resources: [.folderReference(path: verifiedRelayBundleInput)], '
++                'dependencies: [.package(product: "ReluxTunnelMacOSAdapter")])\n'
++                '"""\n'
++            ),
++            "raw-string": (
++                'let targetDecoy = #".target(name: "ReluxProxyMacTunnel", '
++                'resources: [.folderReference(path: verifiedRelayBundleInput)], '
++                'dependencies: [.package(product: "ReluxTunnelMacOSAdapter")])"#\n'
++            ),
++        }
++        for name, decoy in decoys.items():
++            with self.subTest(decoy=name):
++                repository = self.copy_repository_fixture(f"{name}-target-decoy")
++                project = repository / "Project.swift"
++                self.insert_target_dependency(
++                    project,
++                    "ReluxProxyMacTunnel",
++                    '.package(product: "ReluxTunnelCore")',
++                )
++                project.write_text(decoy + project.read_text(encoding="utf-8"), encoding="utf-8")
++                process, report = self.run_validator(repository)
++                self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++                self.assert_refused(report)
++                self.assertEqual(report["failures"][0]["row"], "REPOSITORY-GRAPH")
++                self.assertIn("extra=", report["failures"][0]["detail"])
++
++    def test_production_entry_point_rejects_ambiguous_target_declaration(self) -> None:
++        repository = self.copy_repository_fixture("ambiguous-target-declaration")
++        project = repository / "Project.swift"
++        duplicate = (
++            '.target(name: "ReluxProxyMacTunnel", '
++            'resources: [.folderReference(path: verifiedRelayBundleInput)], '
++            'dependencies: [.package(product: "ReluxTunnelMacOSAdapter")]),\n'
++        )
++        project.write_text(duplicate + project.read_text(encoding="utf-8"), encoding="utf-8")
++        process, report = self.run_validator(repository)
++        self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
++        self.assert_refused(report)
++        self.assertEqual(report["failures"][0]["row"], "REPOSITORY-GRAPH")
++        self.assertIn("exactly one target declaration", report["failures"][0]["detail"])
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/validate-m0-production-bindings.py b/scripts/validate-m0-production-bindings.py
+new file mode 100644
+index 0000000..41befcb
+--- /dev/null
++++ b/scripts/validate-m0-production-bindings.py
+@@ -0,0 +1,862 @@
++#!/usr/bin/env python3
++"""Fail-closed validator for the accepted M0 production binding manifest."""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import re
++import sys
++from pathlib import Path
++from typing import Any
++
++
++EXPECTED_TASKS = {
++    "TASK-260715-nphtib",
++    "TASK-260715-2jatnd",
++    "TASK-260715-1gjxer",
++}
++EXPECTED_KINDS = {
++    "generatedProjectArchitecture",
++    "packetBridgeAndHEV",
++    "sshEngine",
++}
++EXPECTED_COMPATIBILITY_ROWS = {
++    "M1-CONTRACT-SCHEMA",
++    "M1-GRAPH-DIRECTION",
++    "M1-CANDIDATE-NEUTRAL-CORE",
++    "M1-PACKET-ACTIVATION-ORDER",
++    "M1-SSH-BEFORE-ROUTES",
++    "M1-BOUND-VALUES",
++    "M1-DEFERRED-NOT-PROMOTED",
++    "M1-SOLE-BINDING-SOURCE",
++}
++# SHA-256 of canonical_contract_payload() for the reviewer-accepted manifest.
++# Resource content digests are verified against the board-owned bytes and are
++# also part of this independently pinned payload. That second binding prevents
++# changed upstream bytes plus a synchronized mutable-manifest digest update
++# from silently retaining permission.
++EXPECTED_NORMALIZED_CONTRACT_SHA256 = (
++    "3bedf4fc9b6747512a89e9910d686b98f915e4240dfb050f2a4b2915a4e9cf44"
++)
++ROOT_KEYS = {
++    "schemaVersion",
++    "schemaIdentifier",
++    "taskId",
++    "runtimeContract",
++    "acceptedInputs",
++    "compatibilityChecks",
++    "productionCompositionPermitted",
++    "consumerContract",
++}
++RUNTIME_KEYS = {
++    "taskId",
++    "resourceName",
++    "sha256",
++    "schema",
++    "reviewerVerdict",
++    "supersession",
++}
++INPUT_KEYS = {
++    "kind",
++    "taskId",
++    "acceptedOutcome",
++    "reviewerVerdict",
++    "supersession",
++    "sourceOrBinaryPins",
++    "requiredCapabilities",
++    "bindings",
++    "licenseAndMaintenanceObligations",
++    "revalidationTriggers",
++}
++RESOURCE_KEYS = {"resourceName", "sha256"}
++VERDICT_KEYS = {
++    "resourceName",
++    "sha256",
++    "verdict",
++    "acceptedAt",
++    "timestampPrecision",
++}
++SUPERSESSION_KEYS = {"status", "supersededBy"}
++COMPATIBILITY_KEYS = {"id", "result", "condition"}
++CONSUMER_KEYS = {
++    "taskId",
++    "soleM0BindingSource",
++    "productionCallSite",
++    "failureBehavior",
++}
++
++
++class BindingError(Exception):
++    """One stable validation failure."""
++
++    def __init__(self, row: str, detail: str) -> None:
++        super().__init__(detail)
++        self.row = row
++        self.detail = detail
++
++
++def sha256(path: Path) -> str:
++    digest = hashlib.sha256()
++    with path.open("rb") as handle:
++        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
++            digest.update(chunk)
++    return digest.hexdigest()
++
++
++def load_repository_json(path: Path, row: str) -> dict[str, Any]:
++    """Load a checked-in pin document without accepting duplicate JSON keys."""
++
++    def reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
++        value: dict[str, Any] = {}
++        for key, item in pairs:
++            if key in value:
++                raise BindingError(row, f"duplicate JSON key {key!r} in {path}")
++            value[key] = item
++        return value
++
++    try:
++        decoded = json.loads(
++            path.read_text(encoding="utf-8"), object_pairs_hook=reject_duplicate_keys
++        )
++    except BindingError:
++        raise
++    except (OSError, UnicodeError, json.JSONDecodeError) as error:
++        raise BindingError(row, f"unreadable or malformed {path}: {error}") from error
++    return require_object(decoded, row)
++
++
++def canonical_contract_payload(manifest: dict[str, Any]) -> dict[str, Any]:
++    """Return every immutable binding, including accepted resource digests."""
++
++    runtime = manifest["runtimeContract"]
++    runtime_verdict = runtime["reviewerVerdict"]
++    inputs = []
++    for item in manifest["acceptedInputs"]:
++        outcome = item["acceptedOutcome"]
++        verdict = item["reviewerVerdict"]
++        inputs.append(
++            {
++                "kind": item["kind"],
++                "taskId": item["taskId"],
++                "acceptedOutcome": {
++                    "resourceName": outcome["resourceName"],
++                    "sha256": outcome["sha256"],
++                },
++                "reviewerVerdict": {
++                    key: verdict[key]
++                    for key in (
++                        "resourceName",
++                        "sha256",
++                        "verdict",
++                        "acceptedAt",
++                        "timestampPrecision",
++                    )
++                },
++                "supersession": item["supersession"],
++                "sourceOrBinaryPins": item["sourceOrBinaryPins"],
++                "requiredCapabilities": item["requiredCapabilities"],
++                "bindings": item["bindings"],
++                "licenseAndMaintenanceObligations": item[
++                    "licenseAndMaintenanceObligations"
++                ],
++                "revalidationTriggers": item["revalidationTriggers"],
++            }
++        )
++    return {
++        "schemaVersion": manifest["schemaVersion"],
++        "schemaIdentifier": manifest["schemaIdentifier"],
++        "taskId": manifest["taskId"],
++        "runtimeContract": {
++            "taskId": runtime["taskId"],
++            "resourceName": runtime["resourceName"],
++            "sha256": runtime["sha256"],
++            "schema": runtime["schema"],
++            "reviewerVerdict": {
++                key: runtime_verdict[key]
++                for key in (
++                    "resourceName",
++                    "sha256",
++                    "verdict",
++                    "acceptedAt",
++                    "timestampPrecision",
++                )
++            },
++            "supersession": runtime["supersession"],
++        },
++        "acceptedInputs": inputs,
++        "compatibilityChecks": manifest["compatibilityChecks"],
++        "consumerContract": manifest["consumerContract"],
++    }
++
++
++def canonical_sha256(value: Any) -> str:
++    encoded = json.dumps(
++        value,
++        ensure_ascii=False,
++        separators=(",", ":"),
++        sort_keys=True,
++    ).encode("utf-8")
++    return hashlib.sha256(encoded).hexdigest()
++
++
++def require_object(value: Any, row: str) -> dict[str, Any]:
++    if not isinstance(value, dict):
++        raise BindingError(row, "expected object")
++    return value
++
++
++def require_exact_keys(value: dict[str, Any], expected: set[str], row: str) -> None:
++    actual = set(value)
++    if actual != expected:
++        missing = sorted(expected - actual)
++        unknown = sorted(actual - expected)
++        raise BindingError(row, f"missing={missing}; unknown={unknown}")
++
++
++def require_nonempty_strings(value: Any, row: str) -> None:
++    if not isinstance(value, list) or not value:
++        raise BindingError(row, "expected non-empty array")
++    if any(not isinstance(item, str) or not item.strip() for item in value):
++        raise BindingError(row, "array entries must be non-empty strings")
++
++
++def validate_verdict(verdict: Any, row: str) -> dict[str, Any]:
++    value = require_object(verdict, row)
++    require_exact_keys(value, VERDICT_KEYS, row)
++    if value["verdict"] != "accepted":
++        raise BindingError(row, "reviewer verdict is not accepted")
++    if value["timestampPrecision"] != "date":
++        raise BindingError(row, "unknown acceptance timestamp precision")
++    accepted_at = value["acceptedAt"]
++    if (
++        not isinstance(accepted_at, str)
++        or len(accepted_at) != 10
++        or accepted_at[4] != "-"
++        or accepted_at[7] != "-"
++    ):
++        raise BindingError(row, "acceptedAt must be an evidence-backed ISO date")
++    return value
++
++
++def validate_supersession(value: Any, row: str) -> None:
++    supersession = require_object(value, row)
++    require_exact_keys(supersession, SUPERSESSION_KEYS, row)
++    if supersession["status"] != "current" or supersession["supersededBy"] is not None:
++        raise BindingError(row, "accepted evidence is stale or superseded")
++
++
++def verify_resource(
++    resources_root: Path,
++    task_id: str,
++    resource: dict[str, Any],
++    row: str,
++) -> None:
++    require_exact_keys(resource, RESOURCE_KEYS, row)
++    resource_name = resource["resourceName"]
++    expected_digest = resource["sha256"]
++    if not isinstance(resource_name, str) or not resource_name.startswith(task_id):
++        raise BindingError(row, "resource name is not task-scoped")
++    path = resources_root / task_id / resource_name
++    if not path.is_file():
++        raise BindingError(row, f"accepted resource missing: {task_id}/{resource_name}")
++    actual_digest = sha256(path)
++    if actual_digest != expected_digest:
++        raise BindingError(
++            row,
++            f"SHA-256 mismatch for {task_id}/{resource_name}: expected {expected_digest}, got {actual_digest}",
++        )
++
++
++def swift_lexical_view(text: str, row: str) -> tuple[str, list[bool]]:
++    """Blank Swift comments and identify code positions without parsing strings as code."""
++
++    visible = list(text)
++    code = [False] * len(text)
++    index = 0
++    state = "code"
++    block_depth = 0
++    raw_hashes = 0
++    while index < len(text):
++        if state == "code":
++            if text.startswith("//", index):
++                visible[index : index + 2] = "  "
++                state = "line-comment"
++                index += 2
++            elif text.startswith("/*", index):
++                visible[index : index + 2] = "  "
++                state = "block-comment"
++                block_depth = 1
++                index += 2
++            elif text.startswith('\"\"\"', index):
++                state = "multiline-string"
++                index += 3
++            elif text[index] == '"':
++                state = "string"
++                index += 1
++            elif text[index] == "#":
++                hashes = 1
++                while index + hashes < len(text) and text[index + hashes] == "#":
++                    hashes += 1
++                delimiter = index + hashes
++                if text.startswith('\"\"\"', delimiter):
++                    state = "raw-multiline-string"
++                    raw_hashes = hashes
++                    index = delimiter + 3
++                elif delimiter < len(text) and text[delimiter] == '"':
++                    state = "raw-string"
++                    raw_hashes = hashes
++                    index = delimiter + 1
++                else:
++                    code[index] = True
++                    index += 1
++            else:
++                code[index] = True
++                index += 1
++        elif state == "line-comment":
++            if text[index] == "\n":
++                visible[index] = "\n"
++                code[index] = True
++                state = "code"
++            else:
++                visible[index] = " "
++            index += 1
++        elif state == "block-comment":
++            if text.startswith("/*", index):
++                visible[index : index + 2] = "  "
++                block_depth += 1
++                index += 2
++            elif text.startswith("*/", index):
++                visible[index : index + 2] = "  "
++                block_depth -= 1
++                index += 2
++                if block_depth == 0:
++                    state = "code"
++            else:
++                if text[index] != "\n":
++                    visible[index] = " "
++                index += 1
++        elif state == "string":
++            if text[index] == "\\":
++                index += min(2, len(text) - index)
++            elif text[index] == '"':
++                state = "code"
++                index += 1
++            else:
++                index += 1
++        elif state == "multiline-string":
++            if text.startswith('\"\"\"', index):
++                state = "code"
++                index += 3
++            else:
++                index += 1
++        elif state == "raw-string":
++            closing = '"' + ("#" * raw_hashes)
++            if text.startswith(closing, index):
++                state = "code"
++                index += len(closing)
++            else:
++                index += 1
++        else:
++            closing = '\"\"\"' + ("#" * raw_hashes)
++            if text.startswith(closing, index):
++                state = "code"
++                index += len(closing)
++            else:
++                index += 1
++    if state in {
++        "block-comment",
++        "string",
++        "multiline-string",
++        "raw-string",
++        "raw-multiline-string",
++    }:
++        raise BindingError(row, f"unterminated Swift lexical region: {state}")
++    return "".join(visible), code
++
++
++def target_block(text: str, name: str) -> str:
++    row = "REPOSITORY-GRAPH"
++    visible, code = swift_lexical_view(text, row)
++    declarations = [
++        match
++        for match in re.finditer(
++            rf"\.target\s*\(\s*name:\s*\"{re.escape(name)}\"\s*,", visible
++        )
++        if code[match.start()]
++    ]
++    if len(declarations) != 1:
++        raise BindingError(
++            row, f"expected exactly one target declaration for {name}, got {len(declarations)}"
++        )
++    declaration = declarations[0]
++    opening = declaration.start()
++    depth = 0
++    for index in range(visible.find("(", opening), len(visible)):
++        if not code[index]:
++            continue
++        if visible[index] == "(":
++            depth += 1
++        elif visible[index] == ")":
++            depth -= 1
++            if depth == 0:
++                return visible[opening : index + 1]
++    raise BindingError(row, f"unterminated target block {name}")
++
++
++def array_field(block: str, field: str, row: str) -> str:
++    visible, code = swift_lexical_view(block, row)
++    matches = [
++        match
++        for match in re.finditer(rf"\b{re.escape(field)}\s*:\s*\[", visible)
++        if code[match.start()]
++    ]
++    if len(matches) != 1:
++        raise BindingError(row, f"expected exactly one {field} array, got {len(matches)}")
++    opening = visible.find("[", matches[0].start())
++    depth = 0
++    for index in range(opening, len(visible)):
++        if not code[index]:
++            continue
++        character = visible[index]
++        if character == "[":
++            depth += 1
++        elif character == "]":
++            depth -= 1
++            if depth == 0:
++                return visible[opening + 1 : index]
++    raise BindingError(row, f"unterminated {field} array")
++
++
++def split_swift_array(value: str, row: str) -> list[str]:
++    entries: list[str] = []
++    start = 0
++    depths = {"(": 0, "[": 0, "{": 0}
++    closing = {")": "(", "]": "[", "}": "{"}
++    in_string = False
++    escaped = False
++    for index, character in enumerate(value):
++        if in_string:
++            if escaped:
++                escaped = False
++            elif character == "\\":
++                escaped = True
++            elif character == '"':
++                in_string = False
++            continue
++        if character == '"':
++            in_string = True
++        elif character in depths:
++            depths[character] += 1
++        elif character in closing:
++            opening = closing[character]
++            depths[opening] -= 1
++            if depths[opening] < 0:
++                raise BindingError(row, "malformed Swift array entry")
++        elif character == "," and not any(depths.values()):
++            entry = value[start:index].strip()
++            if entry:
++                entries.append(entry)
++            start = index + 1
++    if in_string or any(depths.values()):
++        raise BindingError(row, "malformed Swift array entry")
++    final = value[start:].strip()
++    if final:
++        entries.append(final)
++    return entries
++
++
++def package_dependencies(block: str, row: str) -> list[str]:
++    dependencies: list[str] = []
++    for entry in split_swift_array(array_field(block, "dependencies", row), row):
++        match = re.fullmatch(r'"([^"\\]+)"', entry)
++        if match is None:
++            raise BindingError(row, f"unknown package dependency expression: {entry}")
++        dependencies.append(match.group(1))
++    return dependencies
++
++
++def project_package_dependencies(block: str, row: str) -> list[str]:
++    dependencies: list[str] = []
++    pattern = re.compile(r'\.package\s*\(\s*product:\s*"([^"\\]+)"\s*\)')
++    for entry in split_swift_array(array_field(block, "dependencies", row), row):
++        match = pattern.fullmatch(entry)
++        if match is None:
++            raise BindingError(row, f"unknown provider dependency expression: {entry}")
++        dependencies.append(match.group(1))
++    return dependencies
++
++
++def project_folder_resources(project: str, block: str, row: str) -> list[str]:
++    resources: list[str] = []
++    pattern = re.compile(r"\.folderReference\s*\(\s*path:\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)")
++    for entry in split_swift_array(array_field(block, "resources", row), row):
++        match = pattern.fullmatch(entry)
++        if match is None:
++            raise BindingError(row, f"unknown provider resource expression: {entry}")
++        variable = match.group(1)
++        visible, code = swift_lexical_view(project, row)
++        declarations = [
++            match.group(1)
++            for match in re.finditer(
++                rf'\b(?:let|var)\s+{re.escape(variable)}\s*:\s*Path\s*=\s*"([^"\\]+)"',
++                visible,
++            )
++            if code[match.start()]
++        ]
++        if len(declarations) != 1:
++            raise BindingError(
++                row, f"expected one literal Path declaration for {variable}, got {len(declarations)}"
++            )
++        resources.append(declarations[0])
++    return resources
++
++
++def require_exact_entries(actual: list[str], expected: list[str], row: str, label: str) -> None:
++    duplicates = sorted({entry for entry in actual if actual.count(entry) > 1})
++    if duplicates:
++        raise BindingError(row, f"duplicate {label}: {duplicates}")
++    actual_set = set(actual)
++    expected_set = set(expected)
++    if actual_set != expected_set or len(actual) != len(expected):
++        raise BindingError(
++            row,
++            f"{label} closure drift: missing={sorted(expected_set - actual_set)}; "
++            f"extra={sorted(actual_set - expected_set)}",
++        )
++
++
++def verify_ssh_repository_pins(
++    repository_root: Path,
++    native_manifest: dict[str, Any],
++    ssh_pins: dict[str, Any],
++) -> None:
++    """Bind accepted selected-engine pins to the checked-in source/artifact graph."""
++
++    row = "REPOSITORY-SSH-PIN"
++    try:
++        ssh = require_object(native_manifest["dependencies"]["libssh2-openssl"], row)
++        source = require_object(ssh["source"], row)
++        libssh2 = require_object(source["libssh2"], row)
++        openssl = require_object(source["openssl"], row)
++        if libssh2["revision"] != ssh_pins["libssh2Commit"]:
++            raise BindingError(row, "libssh2 revision drift")
++        if libssh2["archive_sha256"] != ssh_pins["libssh2ArchiveSha256"]:
++            raise BindingError(row, "libssh2 archive digest drift")
++        if openssl["revision"] != ssh_pins["opensslTag"]:
++            raise BindingError(row, "OpenSSL tag drift")
++        if openssl["archive_sha256"] != ssh_pins["opensslArchiveSha256"]:
++            raise BindingError(row, "OpenSSL archive digest drift")
++
++        patch_manifest_relative = source["patch_manifest"]
++        if patch_manifest_relative != "Dependencies/ReluxLibSSH2/PATCH_MANIFEST.json":
++            raise BindingError(row, "unknown or ambiguous patch manifest path")
++        patch_manifest_path = repository_root / patch_manifest_relative
++        patch_manifest = load_repository_json(patch_manifest_path, row)
++        if patch_manifest.get("schema_version") != 1:
++            raise BindingError(row, "unknown patch manifest schema")
++        upstream = require_object(patch_manifest["upstream"], row)
++        if upstream.get("revision") != ssh_pins["libssh2Commit"]:
++            raise BindingError(row, "patch manifest libssh2 revision drift")
++        if upstream.get("archive_sha256") != ssh_pins["libssh2ArchiveSha256"]:
++            raise BindingError(row, "patch manifest libssh2 archive digest drift")
++        patches = patch_manifest["patches"]
++        if not isinstance(patches, list) or len(patches) != 1:
++            raise BindingError(row, "expected exactly one selected patch pin")
++        patch = require_object(patches[0], row)
++        if patch.get("sha256") != ssh_pins["patchSha256"]:
++            raise BindingError(row, "selected patch digest drift")
++        patch_path = patch.get("path")
++        if not isinstance(patch_path, str) or not patch_path:
++            raise BindingError(row, "selected patch path is missing or malformed")
++        selected_patch = patch_manifest_path.parent / patch_path
++        if not selected_patch.is_file() or sha256(selected_patch) != ssh_pins["patchSha256"]:
++            raise BindingError(row, "selected patch bytes drift")
++
++        compiler = require_object(ssh["compiler"], row)
++        slices = compiler["slices"]
++        if not isinstance(slices, list) or not slices:
++            raise BindingError(row, "required artifact slices are missing or malformed")
++        slice_ids: list[str] = []
++        for item in slices:
++            slice_id = require_object(item, row).get("library_identifier")
++            if not isinstance(slice_id, str) or not slice_id:
++                raise BindingError(row, "artifact slice identifier is missing or malformed")
++            slice_ids.append(slice_id)
++        if len(slice_ids) != len(set(slice_ids)):
++            raise BindingError(row, "duplicate artifact slice identifier")
++
++        file_pins = require_object(ssh["artifact"]["file_sha256"], row)
++        expected_header_digest = ssh_pins["publicHeaderSha256"]
++        artifact_path = ssh["integration"]["artifact_path"]
++        if artifact_path != "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework":
++            raise BindingError(row, "unknown or ambiguous selected artifact path")
++        for slice_id in slice_ids:
++            relative_header = f"{slice_id}/Headers/libssh2.h"
++            if file_pins.get(relative_header) != expected_header_digest:
++                raise BindingError(row, f"public-header pin drift for {slice_id}")
++            header_path = repository_root / artifact_path / relative_header
++            if not header_path.is_file() or sha256(header_path) != expected_header_digest:
++                raise BindingError(row, f"public-header bytes drift for {slice_id}")
++    except BindingError:
++        raise
++    except (KeyError, TypeError) as error:
++        raise BindingError(row, f"missing or malformed selected SSH pin record: {error}") from error
++
++
++def verify_repository(repository_root: Path, inputs: dict[str, dict[str, Any]]) -> None:
++    project = (repository_root / "Project.swift").read_text(encoding="utf-8")
++    package = (repository_root / "Package.swift").read_text(encoding="utf-8")
++    native_manifest = load_repository_json(
++        repository_root / "NativeDependencies/manifest.json", "REPOSITORY-SSH-PIN"
++    )
++
++    graph = inputs["generatedProjectArchitecture"]["bindings"]
++    provider = target_block(project, graph["providerTarget"])
++    require_exact_entries(
++        project_package_dependencies(provider, "REPOSITORY-GRAPH"),
++        graph["providerDirectDependencies"],
++        "REPOSITORY-GRAPH",
++        "provider direct dependency",
++    )
++    require_exact_entries(
++        project_folder_resources(project, provider, "REPOSITORY-GRAPH"),
++        graph["providerResources"],
++        "REPOSITORY-GRAPH",
++        "provider resource",
++    )
++    require_exact_entries(
++        package_dependencies(
++            target_block(package, "ReluxTunnelMacOSAdapter"), "REPOSITORY-GRAPH"
++        ),
++        graph["macOSAdapterDirectDependencies"],
++        "REPOSITORY-GRAPH",
++        "macOS adapter direct dependency",
++    )
++    require_exact_entries(
++        package_dependencies(
++            target_block(package, "ReluxTunnelNativeAdapter"), "REPOSITORY-GRAPH"
++        ),
++        graph["nativeAdapterDirectDependencies"],
++        "REPOSITORY-GRAPH",
++        "native adapter direct dependency",
++    )
++
++    ssh_pins = inputs["sshEngine"]["sourceOrBinaryPins"]
++    selected_ssh_adapter = ssh_pins["selectedAdapter"]
++    require_exact_entries(
++        package_dependencies(
++            target_block(package, selected_ssh_adapter), "REPOSITORY-GRAPH"
++        ),
++        ["ReluxTunnelCore", ssh_pins["binaryTarget"]],
++        "REPOSITORY-GRAPH",
++        "selected SSH adapter direct dependency",
++    )
++
++    packet_pins = inputs["packetBridgeAndHEV"]["sourceOrBinaryPins"]
++    hev = native_manifest["dependencies"].get("hev-lwip", {})
++    if hev.get("revision") != packet_pins["hevSocks5Tunnel"]:
++        raise BindingError("REPOSITORY-HEV-PIN", "HEV top-level revision drift")
++    expected_submodules = {
++        "src/core": packet_pins["hevSocks5Core"],
++        "third-part/hev-task-system": packet_pins["hevTaskSystem"],
++        "third-part/lwip": packet_pins["lwip"],
++        "third-part/yaml": packet_pins["yaml"],
++    }
++    actual_submodules = {
++        item["path"]: item["revision"] for item in hev.get("source", {}).get("submodules", [])
++    }
++    if actual_submodules != expected_submodules:
++        raise BindingError("REPOSITORY-HEV-PIN", "HEV recursive graph drift")
++
++    verify_ssh_repository_pins(repository_root, native_manifest, ssh_pins)
++
++
++def verify_board_state(board_state_path: Path, manifest: dict[str, Any]) -> None:
++    board_state = json.loads(board_state_path.read_text(encoding="utf-8"))
++    if not isinstance(board_state, list) or len(board_state) != 4:
++        raise BindingError("BOARD-STATE", "exactly four authority rows are required")
++    rows: dict[str, dict[str, Any]] = {}
++    for raw_row in board_state:
++        row = require_object(raw_row, "BOARD-STATE")
++        require_exact_keys(row, {"id", "status", "outcomeResources"}, "BOARD-STATE-FIELDS")
++        task_id = row["id"]
++        if task_id in rows:
++            raise BindingError("BOARD-STATE", f"duplicate task {task_id}")
++        rows[task_id] = row
++
++    required: dict[str, set[str]] = {}
++    runtime = manifest["runtimeContract"]
++    required[runtime["taskId"]] = {
++        runtime["resourceName"], runtime["reviewerVerdict"]["resourceName"]
++    }
++    for item in manifest["acceptedInputs"]:
++        required[item["taskId"]] = {
++            item["acceptedOutcome"]["resourceName"],
++            item["reviewerVerdict"]["resourceName"],
++        }
++    if set(rows) != set(required):
++        raise BindingError("BOARD-STATE", "authority task set drift")
++    for task_id, names in required.items():
++        row = rows[task_id]
++        if row["status"] != "done":
++            raise BindingError("BOARD-STATE", f"{task_id} is not reviewer-terminal done")
++        resources = row["outcomeResources"]
++        if not isinstance(resources, list):
++            raise BindingError("BOARD-STATE", f"{task_id} outcome resource declaration unreadable")
++        declared = {
++            item.get("name") for item in resources if isinstance(item, dict)
++        }
++        missing = sorted(names - declared)
++        if missing:
++            raise BindingError(
++                "BOARD-STATE", f"{task_id} accepted resources are no longer declared: {missing}"
++            )
++
++
++def validate(
++    manifest_path: Path,
++    resources_root: Path,
++    repository_root: Path,
++    board_state_path: Path,
++) -> dict[str, Any]:
++    failures: list[dict[str, str]] = []
++    manifest_digest = "unknown"
++    try:
++        manifest_digest = sha256(manifest_path)
++        manifest = require_object(
++            json.loads(manifest_path.read_text(encoding="utf-8")), "MANIFEST-JSON"
++        )
++        require_exact_keys(manifest, ROOT_KEYS, "MANIFEST-FIELDS")
++        if manifest["schemaVersion"] != 1 or manifest["schemaIdentifier"] != "relux.m0-production-bindings/1":
++            raise BindingError("MANIFEST-SCHEMA", "unknown binding schema version")
++        if manifest["taskId"] != "TASK-260720-1qhxqa":
++            raise BindingError("MANIFEST-TASK", "wrong binding task authority")
++        verify_board_state(board_state_path, manifest)
++
++        runtime = require_object(manifest["runtimeContract"], "RUNTIME-CONTRACT")
++        require_exact_keys(runtime, RUNTIME_KEYS, "RUNTIME-CONTRACT")
++        if runtime["taskId"] != "TASK-260715-30zng6" or runtime["schema"] != "m1-runtime-contract/1":
++            raise BindingError("RUNTIME-CONTRACT", "unknown or incompatible runtime contract")
++        validate_supersession(runtime["supersession"], "RUNTIME-SUPERSESSION")
++        runtime_verdict = validate_verdict(runtime["reviewerVerdict"], "RUNTIME-VERDICT")
++        verify_resource(
++            resources_root,
++            runtime["taskId"],
++            {"resourceName": runtime["resourceName"], "sha256": runtime["sha256"]},
++            "RUNTIME-RESOURCE",
++        )
++        verify_resource(resources_root, runtime["taskId"], {
++            "resourceName": runtime_verdict["resourceName"],
++            "sha256": runtime_verdict["sha256"],
++        }, "RUNTIME-VERDICT-RESOURCE")
++
++        raw_inputs = manifest["acceptedInputs"]
++        if not isinstance(raw_inputs, list) or len(raw_inputs) != 3:
++            raise BindingError("INPUT-SET", "exactly three accepted inputs are required")
++        inputs: dict[str, dict[str, Any]] = {}
++        task_ids: set[str] = set()
++        for index, raw_input in enumerate(raw_inputs):
++            value = require_object(raw_input, f"INPUT-{index}")
++            require_exact_keys(value, INPUT_KEYS, f"INPUT-{index}-FIELDS")
++            kind = value["kind"]
++            task_id = value["taskId"]
++            if kind in inputs:
++                raise BindingError("INPUT-SET", f"duplicate input kind {kind}")
++            inputs[kind] = value
++            task_ids.add(task_id)
++            validate_supersession(value["supersession"], f"{task_id}-SUPERSESSION")
++            verdict = validate_verdict(value["reviewerVerdict"], f"{task_id}-VERDICT")
++            outcome = require_object(value["acceptedOutcome"], f"{task_id}-OUTCOME")
++            verify_resource(resources_root, task_id, outcome, f"{task_id}-OUTCOME")
++            verify_resource(resources_root, task_id, {
++                "resourceName": verdict["resourceName"], "sha256": verdict["sha256"]
++            }, f"{task_id}-VERDICT-RESOURCE")
++            require_nonempty_strings(value["requiredCapabilities"], f"{task_id}-CAPABILITIES")
++            require_nonempty_strings(
++                value["licenseAndMaintenanceObligations"], f"{task_id}-OBLIGATIONS"
++            )
++            require_nonempty_strings(value["revalidationTriggers"], f"{task_id}-TRIGGERS")
++            if not value["sourceOrBinaryPins"] or not value["bindings"]:
++                raise BindingError(f"{task_id}-BINDINGS", "pins and normalized bindings are required")
++        if task_ids != EXPECTED_TASKS or set(inputs) != EXPECTED_KINDS:
++            raise BindingError(
++                "INPUT-SET",
++                f"required tasks={sorted(EXPECTED_TASKS)}, got={sorted(task_ids)}; required kinds={sorted(EXPECTED_KINDS)}, got={sorted(inputs)}",
++            )
++
++        checks = manifest["compatibilityChecks"]
++        if not isinstance(checks, list):
++            raise BindingError("COMPATIBILITY", "compatibility checks must be an array")
++        check_ids: set[str] = set()
++        for check in checks:
++            value = require_object(check, "COMPATIBILITY")
++            require_exact_keys(value, COMPATIBILITY_KEYS, "COMPATIBILITY-FIELDS")
++            check_ids.add(value["id"])
++            if value["result"] != "pass" or not value["condition"]:
++                raise BindingError(value["id"], "compatibility condition did not pass")
++        if check_ids != EXPECTED_COMPATIBILITY_ROWS or len(checks) != len(check_ids):
++            raise BindingError("COMPATIBILITY-SET", "missing, unknown, or duplicate compatibility row")
++
++        consumer = require_object(manifest["consumerContract"], "CONSUMER-CONTRACT")
++        require_exact_keys(consumer, CONSUMER_KEYS, "CONSUMER-CONTRACT")
++        if consumer["taskId"] != "TASK-260715-3ejhyy":
++            raise BindingError("CONSUMER-CONTRACT", "wrong or ambiguous downstream consumer")
++        if not all(isinstance(consumer[key], str) and consumer[key] for key in CONSUMER_KEYS):
++            raise BindingError("CONSUMER-CONTRACT", "consumer fields must be non-empty strings")
++
++        normalized_digest = canonical_sha256(canonical_contract_payload(manifest))
++        if normalized_digest != EXPECTED_NORMALIZED_CONTRACT_SHA256:
++            raise BindingError(
++                "NORMALIZED-CONTRACT",
++                "normalized binding contract differs from the reviewer-accepted immutable payload: "
++                f"expected {EXPECTED_NORMALIZED_CONTRACT_SHA256}, got {normalized_digest}",
++            )
++
++        verify_repository(repository_root, inputs)
++        computed_permit = True
++        if manifest["productionCompositionPermitted"] is not computed_permit:
++            raise BindingError("PERMIT-ATTESTATION", "stored permit does not equal recomputed permit")
++    except (BindingError, OSError, json.JSONDecodeError, KeyError, TypeError) as error:
++        if isinstance(error, BindingError):
++            failures.append({"row": error.row, "detail": error.detail})
++        else:
++            failures.append({"row": "UNREADABLE-OR-MALFORMED", "detail": str(error)})
++
++    return {
++        "schemaVersion": 1,
++        "manifestSha256": manifest_digest,
++        "productionCompositionPermitted": not failures,
++        "failures": failures,
++    }
++
++
++def main(argv: list[str] | None = None) -> int:
++    parser = argparse.ArgumentParser()
++    parser.add_argument(
++        "--manifest",
++        type=Path,
++        default=Path("Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json"),
++    )
++    parser.add_argument("--resources-root", type=Path, required=True)
++    parser.add_argument("--repository-root", type=Path, default=Path("."))
++    parser.add_argument("--board-state", type=Path, required=True)
++    parser.add_argument("--report", type=Path)
++    arguments = parser.parse_args(argv)
++    report = validate(
++        arguments.manifest.resolve(),
++        arguments.resources_root.resolve(),
++        arguments.repository_root.resolve(),
++        arguments.board_state.resolve(),
++    )
++    encoded = json.dumps(report, indent=2, sort_keys=True) + "\n"
++    if arguments.report:
++        arguments.report.parent.mkdir(parents=True, exist_ok=True)
++        arguments.report.write_text(encoded, encoding="utf-8")
++    sys.stdout.write(encoded)
++    return 0 if report["productionCompositionPermitted"] else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

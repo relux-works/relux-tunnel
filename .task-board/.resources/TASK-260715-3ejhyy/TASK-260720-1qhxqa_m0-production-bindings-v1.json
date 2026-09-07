@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "schemaIdentifier": "relux.m0-production-bindings/1",
+  "taskId": "TASK-260720-1qhxqa",
+  "runtimeContract": {
+    "taskId": "TASK-260715-30zng6",
+    "resourceName": "TASK-260715-30zng6_runtime-contract.md",
+    "sha256": "c13bbb54a455da89f3e66121c81532b298eab73fac30b6d14d2e2df43fff8851",
+    "schema": "m1-runtime-contract/1",
+    "reviewerVerdict": {
+      "resourceName": "TASK-260715-30zng6_review.md",
+      "sha256": "7a64ad098efd8cff52e0c6d144763b29e4d4008aab8e0967ce805c6134b0b756",
+      "verdict": "accepted",
+      "acceptedAt": "2026-07-20",
+      "timestampPrecision": "date"
+    },
+    "supersession": {
+      "status": "current",
+      "supersededBy": null
+    }
+  },
+  "acceptedInputs": [
+    {
+      "kind": "generatedProjectArchitecture",
+      "taskId": "TASK-260715-nphtib",
+      "acceptedOutcome": {
+        "resourceName": "TASK-260715-nphtib_results.md",
+        "sha256": "63faf7a35b1c3554bbe5c23def6edddb9bc8454d40bfc1fb94071e1461f23ddd"
+      },
+      "reviewerVerdict": {
+        "resourceName": "TASK-260715-nphtib_final-delta-review-results.md",
+        "sha256": "d9278fb1baec644d27c2fbd4a263758dee8f583b796f9c8ae7cc5e2e80985679",
+        "verdict": "accepted",
+        "acceptedAt": "2026-08-19",
+        "timestampPrecision": "date"
+      },
+      "supersession": {
+        "status": "current",
+        "supersededBy": null
+      },
+      "sourceOrBinaryPins": {
+        "acceptedRepositoryRevision": "069e23bdbbef71be194762d275b003a40a6cfc72",
+        "acceptedGraphRevision": "7dc73ac6e7325f86a4a178a0558619f0fc9d1490",
+        "generatedFilesSha256": "d5c5fd2899750f5b9e90de096e2b0552df22384a5ecbea793c0f19df630b7fc6"
+      },
+      "requiredCapabilities": [
+        "deterministic double generation",
+        "unsigned macOS Debug and Release provider builds",
+        "static HEV and libssh2 linkage with system-only dynamic dependencies",
+        "verified relay resource bundled by the provider",
+        "legacy v0.1.0 isolation and preservation"
+      ],
+      "bindings": {
+        "platformScope": "macOS-only; iOS production targets remain deferred",
+        "providerTarget": "ReluxProxyMacTunnel",
+        "providerDirectDependencies": [
+          "ReluxTunnelMacOSAdapter"
+        ],
+        "providerResources": [
+          ".build/relay/relay-assets-v1"
+        ],
+        "macOSAdapterDirectDependencies": [
+          "ReluxTunnelCore",
+          "ReluxTunnelLibSSH2Adapter",
+          "ReluxTunnelNativeAdapter"
+        ],
+        "nativeAdapterDirectDependencies": [
+          "ReluxTunnelCore",
+          "HevSocks5Tunnel"
+        ],
+        "dependencyDirection": "ReluxProxyMacTunnel -> ReluxTunnelMacOSAdapter -> candidate-neutral Core plus selected adapter modules; native and selected-engine types never enter ReluxTunnelCore public contracts"
+      },
+      "licenseAndMaintenanceObligations": [
+        "keep relay archive integrity, SBOMs, checksum file, and notices in the provider resource",
+        "preserve deterministic Tuist generation and the exact generated target closure",
+        "keep CReluxNativeFixture test-only and prohibit runtime downloads or third-party dylibs"
+      ],
+      "revalidationTriggers": [
+        "Project.swift, Package.swift, workspace schemes, deployment targets, relay resource path, native linkage, or generated graph changes",
+        "accepted repository or graph revision changes",
+        "deterministic generation, unsigned build, legacy preservation, or architecture boundary gate becomes red"
+      ]
+    },
+    {
+      "kind": "packetBridgeAndHEV",
+      "taskId": "TASK-260715-2jatnd",
+      "acceptedOutcome": {
+        "resourceName": "TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md",
+        "sha256": "f2dc587541386cdc5eb7e10328adda21b8bbba3af32d5c722e62616a2abca173"
+      },
+      "reviewerVerdict": {
+        "resourceName": "TASK-260715-2jatnd_review-verdict-rev2.md",
+        "sha256": "73de6f96adadbd4b9469e26d760c3edbe6bd56120b97ab4f3d752812d3df8246",
+        "verdict": "accepted",
+        "acceptedAt": "2026-08-29",
+        "timestampPrecision": "date"
+      },
+      "supersession": {
+        "status": "current",
+        "supersededBy": null
+      },
+      "sourceOrBinaryPins": {
+        "hevSocks5Tunnel": "ad7600497931205105b08367bd1b450048157e40",
+        "hevSocks5Core": "c234519072ff5b928b90b304da9a666bcb440455",
+        "hevTaskSystem": "b1afa0e21fb4ed5a69560e78e54baf0efdebe171",
+        "lwip": "2a11c14c7a32887af25a034e82ef18b0b12076ac",
+        "yaml": "efa36117a8646d26d12b58e05bac472d7854a70d",
+        "binaryTarget": "HevSocks5Tunnel",
+        "artifactLock": "NativeDependencies/manifest.json",
+        "artifactFileSha256": {
+          "Info.plist": "15776a6df6737716ebe50524ab19d20f7c9d8016ff81a5d1ee7fd5a843333a2b",
+          "ios-arm64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "ios-arm64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "ios-arm64/libhev-socks5-tunnel.a": "2570b7bf64136e65e97c9865c2210105dfa4c355c07ecf35c80c4ddf98436674",
+          "ios-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "ios-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "ios-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "00050a67773588ac7438abc8cb52af23b0bb8ca92dee7d316f603186bd1e629c",
+          "macos-arm64_x86_64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "macos-arm64_x86_64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "macos-arm64_x86_64/libhev-socks5-tunnel.a": "f6bdda3e182049877dc449c670f8a2300007461e3ac3e4c5d2c1b0394de91eee",
+          "tvos-arm64/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "tvos-arm64/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "tvos-arm64/libhev-socks5-tunnel.a": "6a9ee19492602185ec17a41ece2833666d3df7b6a1c7300cfceaed11231c5951",
+          "tvos-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/hev-main.h": "112aac057c3f80f55fc9ec15b56b6e4e18d6dfba43ef8351bcd65590ec48a7f3",
+          "tvos-arm64_x86_64-simulator/Headers/HevSocks5Tunnel/module.modulemap": "8e6ce6741dcabb438b860f88a7927e290155fcfbeb9117ef052e60cf72e98c6b",
+          "tvos-arm64_x86_64-simulator/libhev-socks5-tunnel.a": "225e871674f38d2299f9a7f62ab26849c850ec77282f1b7875d889af4943b6e1"
+        }
+      },
+      "requiredCapabilities": [
+        "public PacketFlowAdapterBoundary and PacketFlowBridge.start call path",
+        "IPv4, native IPv6, and dual-stack framing",
+        "bounded backpressure, fatal-frame classification, count/time yielding, and hostile-frame allocation bounds",
+        "single process HEV lease, join-before-close lifecycle, exact traffic accounting, and zero owned-resource cleanup",
+        "static Apple XCFramework packaging with embedded HEV and lwIP notices"
+      ],
+      "bindings": {
+        "bridge": "AF_UNIX/SOCK_DGRAM PacketFlowBridge with HEV borrowing the retained peer endpoint",
+        "mtuBytes": 1500,
+        "socketSendBufferRequestedBytes": 32768,
+        "socketReceiveBufferRequestedBytes": 32768,
+        "socketEffectiveValueRequirement": "read back both effective values; report clamp; never assume requested equals effective",
+        "pumpPacketBudget": 64,
+        "pumpTimeBudgetMilliseconds": 5,
+        "hevSocks5UDPMode": "tcp",
+        "hevTaskStackBytes": 24576,
+        "hevTCPBufferBytesPerSession": 4096,
+        "hevUDPCopyBufferCount": 2,
+        "hevMaximumSessionCount": 500,
+        "memoryEnvelope": {
+          "scope": "incremental HEV/bridge only",
+          "worstMeasuredBytesAt500Sessions": 9715712,
+          "residualBytesIn25MiBEnvelope": 16498688,
+          "wholeExtensionBudgetStatus": "blocked"
+        },
+        "forkDisposition": "rejected; unmodified pinned graph required",
+        "explicitlyRejectedOrDeferred": [
+          "MTU 8500 default",
+          "MTU 4096 without end-to-end path proof",
+          "1200-session candidate",
+          "physical iPhone, NAT64, sleep/wake, whole-extension memory, and global pressure ordering"
+        ]
+      },
+      "licenseAndMaintenanceObligations": [
+        "ship aggregated MIT notices and the complete BSD-3-Clause lwIP notice",
+        "compare shipped notices against the actual SBOM; Wintun remains outside the Apple notice set",
+        "authorize a fork only after target Instruments evidence, an improving callback prototype, unchanged regression gates, and reviewed patch/upstream/rebase disposition"
+      ],
+      "revalidationTriggers": [
+        "new baseline Mac class, major macOS, Swift/Xcode SDK affecting NetworkExtension or Darwin sockets",
+        "bridge I/O, buffers, batching, framing, HEV lifecycle, native artifact, compiler flags, or selected HEV graph changes",
+        "SSH/DNS/relay/cache/reconnect memory lands or residual 25 MiB allowance is exceeded",
+        "MTU 4096 selection, unexplained loss, family-specific red, EMSGSIZE, clamp, or fragmentation change",
+        "HEV issue 315 reproduces on Apple, upstream lifecycle changes, or abnormal stop occurs"
+      ]
+    },
+    {
+      "kind": "sshEngine",
+      "taskId": "TASK-260715-1gjxer",
+      "acceptedOutcome": {
+        "resourceName": "TASK-260715-1gjxer_ssh-engine-selection-adr.md",
+        "sha256": "f1d2369a694c7a6f6642cff4324b46a6727b7a6aef3d65a9cf13ee8821ea2282"
+      },
+      "reviewerVerdict": {
+        "resourceName": "TASK-260715-1gjxer_results.md",
+        "sha256": "3583369777a0d897ef2a156ddddeea92cd15b5c0b3b290582015667a37044a31",
+        "verdict": "accepted",
+        "acceptedAt": "2026-08-18",
+        "timestampPrecision": "date"
+      },
+      "supersession": {
+        "status": "current",
+        "supersededBy": null
+      },
+      "sourceOrBinaryPins": {
+        "selectedAdapter": "ReluxTunnelLibSSH2Adapter",
+        "binaryTarget": "ReluxLibSSH2",
+        "libssh2Commit": "a34302491c164d53c900fec9b3cbb050ecebe719",
+        "libssh2ArchiveSha256": "744ba3e9a8e7a877038e94a74459340052a105ad599605a5b6d0d6bc5ec2c87c",
+        "libssh2CopyingSha256": "a83a4da224ebeaaaea5efb4cd1ef1ab0998c1bd719d6f70b05e1d5c491372137",
+        "opensslTag": "openssl-3.5.7",
+        "opensslCommit": "8cf17aaeb4599f8af87fefd810b5b5fee90fe69e",
+        "opensslArchiveSha256": "a8c0d28a529ca480f9f36cf5792e2cd21984552a3c8e4aa11a24aa31aeac98e8",
+        "opensslLicenseSha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+        "opensslAcknowledgementsSha256": "58dee45791f007ced048114717f86672778fe75c551827c57e760861446ce3c3",
+        "patchSha256": "79e2464813e3c3add9486b2fb8c9e50004b48b246bbc771b5dd1675a152fa30e",
+        "publicHeaderSha256": "aa542cff4e0e64927983da8c50b0315cd24c6d097fcdd42809d2e3b0878625bf",
+        "retainedReluxNIOSSHCommit": "31cdc3c3391a10460dedf1170530cf651d2ca496",
+        "retainedReluxNIOSSHArchiveSha256": "0b135087e76cb03e33f544484f21e1c3ba3b967f8a0ba2aead960ce4d0d06e6a",
+        "retainedReluxNIOSSHPatchSha256": "1241622deca47f05a139998a94b2ce988935bb0e288f26cf57dc71f3d23317a4",
+        "retainedReluxNIOSSHLicenseSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "retainedReluxNIOSSHTreeDigestSchema": "relux.sorted-path-file-sha256/1",
+        "retainedReluxNIOSSHTreeFileCount": 148,
+        "retainedReluxNIOSSHTreeSha256": "1a5ace3525dfce906a9108ce3a595759fa96e2f2c13707348820d9bcfbdb7c6c"
+      },
+      "requiredCapabilities": [
+        "host-key policy receives raw evidence before credential lookup and fails closed",
+        "opaque external-signer public-key authentication with Keychain-only secret posture",
+        "approved algorithm allowlists with exact negotiated-value reporting and no silent downgrade",
+        "concurrent direct-tcpip, long-lived exec, bounded stdin upload, and sibling isolation",
+        "client byte/time/manual rekey and server-initiated rekey under traffic",
+        "bounded buffers, cancellation, keepalive, privacy-safe diagnostics, and leak-free lifecycle",
+        "real relux-server compatibility through the selected LibSSH2TransportFactory"
+      ],
+      "bindings": {
+        "primaryAlgorithms": {
+          "kex": "curve25519-sha256",
+          "hostKey": "ssh-ed25519",
+          "cipher": "aes256-ctr",
+          "mac": "hmac-sha2-256"
+        },
+        "fallbackAlgorithms": {
+          "kex": "diffie-hellman-group14-sha256",
+          "hostKey": "ecdsa-sha2-nistp256",
+          "cipher": "aes128-ctr",
+          "mac": "hmac-sha2-512"
+        },
+        "initialReceiveWindowBytes": {
+          "minimum": 32768,
+          "maximum": 65536,
+          "acceptedM0Value": 65536
+        },
+        "transportBufferBytes": 65536,
+        "readBufferBytes": 16384,
+        "queuedWriteBytes": 32768,
+        "writeCallBytes": 8192,
+        "pendingOperationLimit": 64,
+        "rekeyProtectedBytesPerDirection": {
+          "minimum": 4096,
+          "maximum": 5368709120
+        },
+        "rekeyElapsedMilliseconds": {
+          "minimum": 100,
+          "maximum": 3600000
+        },
+        "rekeyCompletionTimeoutMilliseconds": 10000,
+        "sessionOwnership": "one serialized adapter owner per mutable libssh2 session/socket/channels/KEX/timers/callbacks/allocations/teardown",
+        "retainedCandidateDisposition": "ReluxNIOSSH frozen as comparative evidence; no fork work unless ADR-014 reopens"
+      },
+      "licenseAndMaintenanceObligations": [
+        "ship libssh2 BSD-3-Clause and OpenSSL Apache-2.0 notices and acknowledgements in the combined notice",
+        "verify both source archives before extraction plus exact patch/header/artifact locks, static slices, minimum OS, forbidden symbols, and notices",
+        "keep the libssh2 delta within one patch and six changed paths with no crypto/algorithm changes or private-header export",
+        "monitor libssh2/OpenSSL advisories and recorded upstream issues; re-audit before every signed artifact",
+        "TASK-260728-3cveay owns future rebase; no silent pin movement"
+      ],
+      "revalidationTriggers": [
+        "a selected-engine mandatory row becomes red, leaks, corrupts traffic, violates host-before-auth, exports secrets, or needs weaker thresholds",
+        "a libssh2/OpenSSL advisory affects the pin or a signed release changes relevant code",
+        "patch ceiling, crypto/algorithm policy, public-header boundary, or clean rebase condition changes",
+        "macOS/Xcode/deployment target, OpenSSH policy, approved algorithms, real-host policy, Keychain boundary, or adapter/core boundary changes",
+        "M3 scale, memory, soak, DNS, or deep-observability evidence is red",
+        "ReluxNIOSSH becomes conforming at materially lower security, maintenance, or footprint cost"
+      ]
+    }
+  ],
+  "compatibilityChecks": [
+    {
+      "id": "M1-CONTRACT-SCHEMA",
+      "result": "pass",
+      "condition": "runtime contract schema is exactly m1-runtime-contract/1"
+    },
+    {
+      "id": "M1-GRAPH-DIRECTION",
+      "result": "pass",
+      "condition": "provider consumes only ReluxTunnelMacOSAdapter plus the verified relay resource; adapter closure is Core + libssh2 adapter + native adapter"
+    },
+    {
+      "id": "M1-CANDIDATE-NEUTRAL-CORE",
+      "result": "pass",
+      "condition": "NetworkExtension, HEV, and selected SSH engine types do not cross ReluxTunnelCore public contracts"
+    },
+    {
+      "id": "M1-PACKET-ACTIVATION-ORDER",
+      "result": "pass",
+      "condition": "bound packet preflight is resource-free before routes; PacketFlowBridge.start and HEV acquisition occur only after settings apply"
+    },
+    {
+      "id": "M1-SSH-BEFORE-ROUTES",
+      "result": "pass",
+      "condition": "selected SSH host verification and authentication complete before TCP/DNS preparation or route apply"
+    },
+    {
+      "id": "M1-BOUND-VALUES",
+      "result": "pass",
+      "condition": "MTU, buffers, batching, HEV session ceiling, SSH windows, rekey envelope, lifecycle, notices, and fork dispositions exactly match accepted outcomes"
+    },
+    {
+      "id": "M1-DEFERRED-NOT-PROMOTED",
+      "result": "pass",
+      "condition": "iOS, general UDP, lanes, reconnect, fail-closed routes, physical extension memory, and M3 tuning remain deferred and are not defaults"
+    },
+    {
+      "id": "M1-SOLE-BINDING-SOURCE",
+      "result": "pass",
+      "condition": "TASK-260715-3ejhyy consumes this manifest without copying or reinterpreting M0 decisions"
+    }
+  ],
+  "productionCompositionPermitted": true,
+  "consumerContract": {
+    "taskId": "TASK-260715-3ejhyy",
+    "soleM0BindingSource": "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json",
+    "productionCallSite": "the TASK-260715-3ejhyy macOS production factory entry point before construction of concrete SSH, PacketFlowBridge, or HEV dependencies and before NetworkSettingsApplier.apply",
+    "failureBehavior": "do not construct the production root and do not apply network settings when validation is absent, unreadable, unknown, stale, superseded, incompatible, or digest-mismatched"
+  }
+}

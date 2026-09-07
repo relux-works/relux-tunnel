@@ -1,0 +1,25 @@
+current_branch=task-board/story/STORY-260715-1y04r0
+head=9bf4d0892db03035b989a4c040cfee37636ff8df
+remote_story=9bf4d0892db03035b989a4c040cfee37636ff8df
+base=b3422b05226253a17676b9b84c764071fe3dbe74
+remote_main=b3422b05226253a17676b9b84c764071fe3dbe74
+candidate_tree=d3c3fd9b443a69cb20b6234c97dfaee1c0b7fc48
+ahead_behind_remote_story=0	0
+ahead_behind_main=0	5
+main_ancestor_exit=0
+signed_story_commits:
+9bf4d0892db03035b989a4c040cfee37636ff8df G 2026-08-30T21:02:00+04:00 2026-08-30T21:02:00+04:00 TASK-260715-2rcvr0: Document M1 runtime ownership, operation, and extension seams
+de5f11fec32edc353c8563ad1500609190b2aed9 G 2026-08-30T21:01:00+04:00 2026-08-30T21:01:00+04:00 TASK-260715-3qqbbm: Verify migration isolation from the legacy SwiftPM SOCKS product
+8b49b792541339d82408804988d9b4a4778297ac G 2026-08-30T21:00:00+04:00 2026-08-30T21:00:00+04:00 TASK-260715-m8bi8i: Add composed M1 runtime integration scenarios to ReluxTunnelHarness
+5d47bca7b5742dc97d41510081b10968dc281b22 G 2026-08-30T09:49:03+04:00 2026-08-30T09:49:03+04:00 TASK-260715-3ejhyy: Compose M0-bound runtime sessions behind production factories
+12b1a72e0d9d76712ab5bca75bdbd828a08ada1b G 2026-08-30T08:06:14+04:00 2026-08-30T08:06:14+04:00 TASK-260720-1qhxqa: Bind accepted M0 revisions for M1 production composition
+working_delta:
+M	LOGBOOK.md
+M	scripts/tests/test-credential-free-validation.sh
+M	task-board.config.json
+working_status:
+## task-board/story/STORY-260715-1y04r0...origin/task-board/story/STORY-260715-1y04r0
+ M LOGBOOK.md
+ M scripts/tests/test-credential-free-validation.sh
+ M task-board.config.json
+configured_validation_command=LEGACY_ROOT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/../relux-proxy" make credential-free-validate

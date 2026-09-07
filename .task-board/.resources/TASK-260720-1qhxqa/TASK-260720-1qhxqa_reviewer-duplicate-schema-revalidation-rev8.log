@@ -1,0 +1,11 @@
+{
+  "failures": [
+    {
+      "detail": "duplicate JSON key 'schemaVersion' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/.temp/TASK-260720-1qhxqa/reviewer-rev7/duplicate-schema-mutant.json",
+      "row": "MANIFEST-JSON"
+    }
+  ],
+  "manifestSha256": "46904b5790f20d94ecf2f9ef77b7bac89b67c77e140f883abe049a29893c6cec",
+  "productionCompositionPermitted": false,
+  "schemaVersion": 1
+}

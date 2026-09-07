@@ -1,0 +1,7 @@
+$ make credential-free-validate
+./scripts/validate-credential-free.sh --legacy-root "../relux-proxy"
+error: expected a legacy Git checkout at ../relux-proxy
+Clone relux-works/relux-proxy with tags, or pass --legacy-root PATH.
+make: *** [credential-free-validate] Error 2
+[exit 2]
+suite stopped at command 1 of 1

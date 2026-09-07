@@ -1,0 +1,4 @@
+python3 -m py_compile scripts/validate-m0-production-bindings.py scripts/tests/test_m0_production_bindings.py
+process_exit=0
+git diff --check
+process_exit=0

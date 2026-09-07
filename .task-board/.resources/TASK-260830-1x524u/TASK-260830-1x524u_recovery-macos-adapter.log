@@ -1,0 +1,7 @@
+COMMAND ['swift', 'build', '--target', 'ReluxTunnelMacOSAdapter']
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+[2/2] Emitting module ReluxTunnelMacOSAdapter
+Build of target: 'ReluxTunnelMacOSAdapter' complete! (0.46s)
+
+exit=0

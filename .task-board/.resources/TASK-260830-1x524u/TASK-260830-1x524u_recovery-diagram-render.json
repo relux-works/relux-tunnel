@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "comparisons": {
+    "TASK-260715-2rcvr0_m1-runtime-lifecycle.svg": true,
+    "TASK-260715-2rcvr0_m1-runtime-lifecycle_003.svg": true,
+    "TASK-260715-2rcvr0_m1-runtime-lifecycle_002.svg": true,
+    "TASK-260715-2rcvr0_m1-runtime-lifecycle_001.svg": true
+  }
+}

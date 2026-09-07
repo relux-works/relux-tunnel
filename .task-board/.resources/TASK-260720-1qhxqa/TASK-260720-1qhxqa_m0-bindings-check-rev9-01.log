@@ -1,0 +1,13 @@
+mkdir -p .temp/TASK-260720-1qhxqa
+task-board q --format json 'get(TASK-260715-nphtib) { id status outcomeResources }; get(TASK-260715-2jatnd) { id status outcomeResources }; get(TASK-260715-1gjxer) { id status outcomeResources }; get(TASK-260715-30zng6) { id status outcomeResources }' > .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json
+python3 scripts/validate-m0-production-bindings.py \
+		--resources-root "/Users/iv/Developer/relux-tunnel/.task-board/.resources" \
+		--board-state .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json \
+		--report .temp/TASK-260720-1qhxqa/m0-bindings-validation.json
+{
+  "failures": [],
+  "manifestSha256": "095372d61bd2baf46a72c701e0b94ee18cece67b8d51d445b30f50e2b5c39c73",
+  "productionCompositionPermitted": true,
+  "schemaVersion": 1
+}
+exit_code=0

@@ -1,0 +1,15 @@
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/M1RuntimeComposition.swift	97	94	96.907216494845358	37	34	91.891891891891902
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift	1043	935	89.645254074784276	344	283	82.267441860465112
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/RuntimeMessageModels.swift	888	866	97.522522522522522	418	391	93.540669856459331
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift	655	624	95.267175572519079	262	241	91.984732824427482
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift	107	85	79.43925233644859	43	34	79.069767441860463
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift	322	268	83.229813664596278	100	78	78
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift	839	776	92.491060786650763	343	282	82.21574344023324
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift	534	482	90.262172284644194	158	130	82.278481012658233
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift	190	125	65.789473684210535	52	29	55.769230769230774
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift	499	418	83.767535070140269	164	117	71.341463414634148
+selected_lines_coverage=4673/5174=90.31696946269811%
+selected_regions_coverage=1619/1921=84.27902134305049%
+package_line_coverage=52440/56441=92.911181587852795%
+package_region_coverage=14937/17528=85.217937015061622%
+selected_file_count=10

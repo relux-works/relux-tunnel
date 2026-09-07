@@ -1,0 +1,14 @@
+{
+  "explicit_config_exists": true,
+  "config_env": {
+    "TASK_BOARD_CONFIG": "/Users/iv/Developer/relux-tunnel/.temp/deadline-20260908/task-board.config.json",
+    "TASK_BOARD_DIR": "/Users/iv/Developer/relux-tunnel/.task-board",
+    "TASK_BOARD_RUN_ID": "RUN-260907-587288"
+  },
+  "max_parallel": 1,
+  "validation": {
+    "commands": [
+      "LEGACY_ROOT=\"$(dirname \"$(git rev-parse --path-format=absolute --git-common-dir)\")/../relux-proxy\" make credential-free-validate"
+    ]
+  }
+}

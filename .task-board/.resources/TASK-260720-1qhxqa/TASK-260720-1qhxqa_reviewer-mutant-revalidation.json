@@ -1,0 +1,11 @@
+{
+  "failures": [
+    {
+      "detail": "normalized binding contract differs from the reviewer-accepted immutable payload: expected fda46421ae6a6c24cf58f5bfb520399b9ebc8d31800b7d61ed18a38231aea43e, got e0df2c224c6797cd84eef0410d58110d07829755958d85ae928a4aec7cae9bdb",
+      "row": "NORMALIZED-CONTRACT"
+    }
+  ],
+  "manifestSha256": "51c57c01bbba71cc2cfac251b79d9ffa57ce693b1413a47e70b2d8f9f9253808",
+  "productionCompositionPermitted": false,
+  "schemaVersion": 1
+}

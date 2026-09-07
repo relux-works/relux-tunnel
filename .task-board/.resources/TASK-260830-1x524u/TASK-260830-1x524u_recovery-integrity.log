@@ -1,0 +1,33 @@
+COMMAND ['git', 'ls-remote', '--symref', 'origin', 'HEAD']
+ref: refs/heads/main	HEAD
+b3422b05226253a17676b9b84c764071fe3dbe74	HEAD
+exit=0
+COMMAND ['git', 'fetch', 'origin', 'main', 'task-board/story/STORY-260715-1y04r0']
+From github.com:relux-works/relux-tunnel
+ * branch            main       -> FETCH_HEAD
+ * branch            task-board/story/STORY-260715-1y04r0 -> FETCH_HEAD
+exit=0
+COMMAND ['git', 'rev-parse', 'HEAD', 'origin/main', 'origin/task-board/story/STORY-260715-1y04r0']
+9bf4d0892db03035b989a4c040cfee37636ff8df
+b3422b05226253a17676b9b84c764071fe3dbe74
+9bf4d0892db03035b989a4c040cfee37636ff8df
+exit=0
+COMMAND ['git', 'diff', '--exit-code', '0ca11378213cc02a78eeac937f94aef6c5209545', '--', '.']
+exit=0
+COMMAND ['git', 'diff', '--check', 'b3422b05226253a17676b9b84c764071fe3dbe74', '0ca11378213cc02a78eeac937f94aef6c5209545']
+exit=0
+COMMAND ['git', 'verify-commit', '9bf4d0892db03035b989a4c040cfee37636ff8df']
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+exit=0
+COMMAND ['git', 'verify-commit', 'de5f11fec32edc353c8563ad1500609190b2aed9']
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+exit=0
+COMMAND ['git', 'verify-commit', '8b49b792541339d82408804988d9b4a4778297ac']
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+exit=0
+COMMAND ['git', 'verify-commit', '5d47bca7b5742dc97d41510081b10968dc281b22']
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+exit=0
+COMMAND ['git', 'verify-commit', '12b1a72e0d9d76712ab5bca75bdbd828a08ada1b']
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+exit=0

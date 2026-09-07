@@ -1,0 +1,19 @@
+task-board: /Users/iv/.local/bin/task-board
+task-board version 0.24.3-170-g727aa32c (commit 727aa32c, built 2026-08-30T08:37:25Z)
+rg: /Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
+ripgrep 15.2.0 (rev e89fff89ac)
+git: /usr/bin/git
+git version 2.50.1 (Apple Git-155)
+go: /Users/iv/.goenv/shims/go
+go version go1.25.5 darwin/arm64
+swift: /usr/bin/swift
+swift-driver version: 1.148.6 Apple Swift version 6.3.2 (swiftlang-6.3.2.1.108 clang-2100.1.1.101)
+Target: arm64-apple-macosx26.0
+xcodebuild: /usr/bin/xcodebuild
+Xcode 26.5
+Build version 17F42
+
+Initial required lifecycle command:
+task-board m 'set_status(TASK-260830-1x524u, status=development)'
+exit: 1
+result: refused because an estimate is required before development

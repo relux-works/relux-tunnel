@@ -1,5 +1,5 @@
 ## Status
-backlog
+done
 
 ## Assigned To
 (none)
@@ -8,12 +8,12 @@ backlog
 2026-07-15T00:46:59Z
 
 ## Last Update
-2026-07-28T00:47:23Z
+2026-09-07T22:27:44Z
 
 ## Blocked By
-- STORY-260715-l2i2oo
 - STORY-260715-jnpbyz
 - STORY-260715-lkshfz
+- TASK-260715-nphtib
 
 ## Blocks
 - STORY-260715-2wjwuf
@@ -28,6 +28,7 @@ backlog
 (empty)
 
 ## Notes
+MACOS-FIRST DEPENDENCY NARROWING 2026-08-30: replace the broad target-project Story blocker with accepted macOS architecture verification TASK-260715-nphtib. Deferred iOS target work and the separate signed-build gate remain outside the SPM shared-runtime path under ADR-011.
 
 ## Precondition Resources
 (none)

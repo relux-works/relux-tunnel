@@ -1,0 +1,7 @@
+ M LOGBOOK.md
+ M Makefile
+ M README.md
+?? Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+?? docs/TASK-260720-1qhxqa_m0-production-bindings.md
+?? scripts/tests/test_m0_production_bindings.py
+?? scripts/validate-m0-production-bindings.py

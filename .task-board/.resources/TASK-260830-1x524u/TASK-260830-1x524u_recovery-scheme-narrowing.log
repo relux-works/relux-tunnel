@@ -1,0 +1,3 @@
+Mutation: reject only missing schemes; permit extra schemes. Production caller: validate-credential-free.sh -> tests/test-credential-free-validation.sh -> check-workspace-schemes.sh
+exit=1
+error: invalid scheme fixture unexpectedly passed: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T//relux-credential-free-contract.6qdG5T/unexpected.log

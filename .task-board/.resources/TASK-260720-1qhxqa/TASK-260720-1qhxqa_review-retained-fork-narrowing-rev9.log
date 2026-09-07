@@ -1,0 +1,10 @@
+{
+  "failures": [],
+  "manifestSha256": "4a6cc822b54355d00894195ae86d6b05e13bcd6b00e0c9bb06105d71d1e9fc95",
+  "productionCompositionPermitted": true,
+  "schemaVersion": 1
+}
+VALIDATOR_EXIT=0
+MUTANT_PERMITTED=True
+MUTATION=retained ReluxNIOSSH maximumPayloadBytes 32768 -> 1; accepted retained patch SHA-256 unchanged
+HARNESS_EXIT=0

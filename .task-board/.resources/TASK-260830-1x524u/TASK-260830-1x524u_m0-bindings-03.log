@@ -1,0 +1,52 @@
+RUN make m0-bindings-check m0-bindings-test
+mkdir -p .temp/TASK-260720-1qhxqa
+task-board q --format json 'get(TASK-260715-nphtib) { id status outcomeResources }; get(TASK-260715-2jatnd) { id status outcomeResources }; get(TASK-260715-1gjxer) { id status outcomeResources }; get(TASK-260715-30zng6) { id status outcomeResources }' > .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json
+python3 scripts/validate-m0-production-bindings.py \
+		--resources-root "/Users/iv/Developer/relux-tunnel/.task-board/.resources" \
+		--board-state .temp/TASK-260720-1qhxqa/m0-bindings-board-state.json \
+		--report .temp/TASK-260720-1qhxqa/m0-bindings-validation.json
+{
+  "failures": [],
+  "manifestSha256": "40333862b46b7af04cdd966ade91e8c9cc917e573c6601e26e7fa956d11ae161",
+  "productionCompositionPermitted": true,
+  "schemaVersion": 1
+}
+python3 -m unittest -v scripts.tests.test_m0_production_bindings
+test_absent_evidence_is_reported_as_missing (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_absent_evidence_is_reported_as_missing) ... ok
+test_changed_upstream_resource_cannot_silently_retain_permission (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_changed_upstream_resource_cannot_silently_retain_permission) ... ok
+test_changed_upstream_resource_with_rebound_manifest_digest_is_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_changed_upstream_resource_with_rebound_manifest_digest_is_rejected) ... ok
+test_malformed_manifest_is_unknown_not_absent (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_malformed_manifest_is_unknown_not_absent) ... ok
+test_manifest_preserves_every_selected_m0_value_without_tuning (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_manifest_preserves_every_selected_m0_value_without_tuning) ... ok
+test_narrowed_two_of_three_gate_is_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_narrowed_two_of_three_gate_is_rejected) ... ok
+test_negative_or_missing_compatibility_row_is_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_negative_or_missing_compatibility_row_is_rejected) ... ok
+test_production_entry_point_accepts_exact_current_bindings (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_accepts_exact_current_bindings) ... ok
+test_production_entry_point_ignores_comment_and_string_target_decoys (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_ignores_comment_and_string_target_decoys) ... ok
+test_production_entry_point_rejects_ambiguous_target_declaration (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_ambiguous_target_declaration) ... ok
+test_production_entry_point_rejects_duplicate_board_state_keys (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_duplicate_board_state_keys) ... ok
+test_production_entry_point_rejects_duplicate_direct_dependency (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_duplicate_direct_dependency) ... ok
+test_production_entry_point_rejects_duplicate_manifest_keys (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_duplicate_manifest_keys) ... ok
+test_production_entry_point_rejects_extra_dependency_in_every_protected_closure (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_extra_dependency_in_every_protected_closure) ... ok
+test_production_entry_point_rejects_hev_artifact_byte_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_hev_artifact_byte_drift) ... ok
+test_production_entry_point_rejects_hev_artifact_file_set_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_hev_artifact_file_set_drift) ... ok
+test_production_entry_point_rejects_hev_artifact_lock_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_hev_artifact_lock_drift) ... ok
+test_production_entry_point_rejects_missing_malformed_or_duplicate_hev_locks (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_missing_malformed_or_duplicate_hev_locks) ... ok
+test_production_entry_point_rejects_missing_malformed_or_duplicate_ssh_pin_records (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_missing_malformed_or_duplicate_ssh_pin_records) ... ok
+test_production_entry_point_rejects_narrowed_values_and_obligations (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_narrowed_values_and_obligations) ... ok
+test_production_entry_point_rejects_one_public_header_byte_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_one_public_header_byte_drift) ... ok
+test_production_entry_point_rejects_one_public_header_lock_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_one_public_header_lock_drift) ... ok
+test_production_entry_point_rejects_retained_niossh_pin_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_retained_niossh_pin_drift) ... ok
+test_production_entry_point_rejects_retained_niossh_source_narrowing (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_retained_niossh_source_narrowing) ... ok
+test_production_entry_point_rejects_selected_license_pin_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_selected_license_pin_drift) ... ok
+test_production_entry_point_rejects_selected_patch_byte_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_selected_patch_byte_drift) ... ok
+test_production_entry_point_rejects_selected_patch_lock_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_selected_patch_lock_drift) ... ok
+test_reopened_or_undeclared_board_evidence_is_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_reopened_or_undeclared_board_evidence_is_rejected) ... ok
+test_repository_pin_drift_is_rejected_at_production_entry_point (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_repository_pin_drift_is_rejected_at_production_entry_point) ... ok
+test_selected_ssh_integrity_bindings_cannot_be_mutated_or_removed (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_selected_ssh_integrity_bindings_cannot_be_mutated_or_removed) ... ok
+test_superseded_evidence_is_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_superseded_evidence_is_rejected) ... ok
+test_unknown_field_and_schema_version_are_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_unknown_field_and_schema_version_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 17.170s
+
+OK
+EXIT make m0-bindings-check m0-bindings-test 0

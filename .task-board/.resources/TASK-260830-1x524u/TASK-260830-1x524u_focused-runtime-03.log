@@ -1,0 +1,425 @@
+RUN RuntimeMessageCodecTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.26s)
+Test Suite 'Selected tests' started at 2026-08-30 13:43:56.520.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:43:56.527.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:43:56.528.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:43:56.528.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Legacy provider version compatibility" started.
+􀟈  Suite "Versioned runtime message codecs" started.
+􀟈  Test "legacy messages reject additive fields duplicates and oversize input" started.
+􀟈  Test "legacy request and response keep the exact two-field v1 encoding" started.
+􀟈  Test "unknown output modes and lifecycle values project all capabilities false" started.
+􀟈  Test "diagnostics default absent aggregates to empty while position remains required" started.
+􀟈  Test "profile start request is exact bounded versioned and digest validated" started.
+􀟈  Test "unknown object fields are ignored and omitted when re-encoded" started.
+􀟈  Test "missing required fields and encoded or decoded oversize payloads reject" started.
+􀟈  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" started.
+􀟈  Test "configuration shapes cannot carry private-key or passphrase bytes" started.
+􀟈  Test "redacted runtime errors accept finite codes and reject free-form text" started.
+􀟈  Test "unknown commands and provider-input values reject before decoding" started.
+􀟈  Test "old and future protocol and schema versions reject with stable errors" started.
+􀟈  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" started.
+􁁛  Test "TCP safe DNS UDP route and health remain independent without a full-mode claim" passed after 0.001 seconds.
+􁁛  Test "unknown commands and provider-input values reject before decoding" passed after 0.001 seconds.
+􀟈  Test "sorted-key golden output is stable" started.
+􁁛  Test "unknown output modes and lifecycle values project all capabilities false" passed after 0.001 seconds.
+􁁛  Test "redacted runtime errors accept finite codes and reject free-form text" passed after 0.001 seconds.
+􁁛  Test "legacy request and response keep the exact two-field v1 encoding" passed after 0.001 seconds.
+􀟈  Test "snapshot ordering rejects lower generations and non-increasing sequences" started.
+􁁛  Test "snapshot ordering rejects lower generations and non-increasing sequences" passed after 0.001 seconds.
+􁁛  Test "diagnostics default absent aggregates to empty while position remains required" passed after 0.001 seconds.
+􀟈  Test "all v1 provider and message models round-trip deterministically" started.
+􁁛  Test "profile start request is exact bounded versioned and digest validated" passed after 0.001 seconds.
+􁁛  Test "sorted-key golden output is stable" passed after 0.001 seconds.
+􁁛  Test "corrupt UTF-8 syntax numbers duplicates trailing bytes and depth reject" passed after 0.001 seconds.
+􁁛  Test "unknown object fields are ignored and omitted when re-encoded" passed after 0.001 seconds.
+􁁛  Test "legacy messages reject additive fields duplicates and oversize input" passed after 0.001 seconds.
+􁁛  Test "old and future protocol and schema versions reject with stable errors" passed after 0.001 seconds.
+􁁛  Suite "Legacy provider version compatibility" passed after 0.001 seconds.
+􁁛  Test "all v1 provider and message models round-trip deterministically" passed after 0.002 seconds.
+􁁛  Test "configuration shapes cannot carry private-key or passphrase bytes" passed after 0.008 seconds.
+􁁛  Test "missing required fields and encoded or decoded oversize payloads reject" passed after 0.011 seconds.
+􁁛  Suite "Versioned runtime message codecs" passed after 0.012 seconds.
+􁁛  Test run with 16 tests in 2 suites passed after 0.012 seconds.
+EXIT RuntimeMessageCodecTests 0
+RUN TunnelRuntimeCoordinatorTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.14s)
+Test Suite 'Selected tests' started at 2026-08-30 13:43:57.264.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:43:57.271.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:43:57.271.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:43:57.271.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Tunnel runtime coordinator" started.
+􀟈  Test "stale health events cannot mutate the active generation" started.
+􀟈  Test "concurrent starts are rejected and stop cancels an in-flight generation" started.
+􀟈  Test "latest snapshot store rejects older generations and sequences" started.
+􀟈  Test "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "startup gates settings and publishes M1 usability only after reads" started.
+􀟈  Test "repeated stop and health races clean exactly one generation" started.
+􀟈  Test "caller cancellation during startup completion owns cleanup" started.
+􀟈  Test "repeated concurrent stop joins one reverse-order cleanup" started.
+􀟈  Test "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "clear failure preserves truthful route state and no capability" started.
+􀟈  Test "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test "mandatory health loss during startup completion owns cleanup" started.
+􀟈  Test "stop before start consumes the generation and releases configuration" started.
+􀟈  Test "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test "one hundred generations return all owned resources to baseline" started.
+􀟈  Test "stop wins a concurrent pre-start ordering and cannot be revived" started.
+􀟈  Test "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test "concurrent starts create exactly one usable runtime" started.
+􀟈  Test "invalid SSH profiles stop at coordinator before Keychain and network fakes" started.
+􀟈  Test "settings apply error dispositions preserve failure and clear exactly when required" started.
+􀟈  Test case passing 1 argument point → .beforePacketPreparation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "caller task cancellation is propagated and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .duringSettingsApply to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeTCP to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringConfiguration to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeSSH to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringPacketActivation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeDNS to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .duringFinalHealth to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument control → .startWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .callbackWhileFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .startWhileStarting to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument point → .ssh to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .dns to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument control → .startAfterFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument stopCase → .startupFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test case passing 1 argument point → .packetPrepare to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .beforeConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .settingsApplyCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .configuration to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .afterConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .tcp to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsApplyUncertain to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument control → .callbackWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument point → .packetActivation to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsApplyNotCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument boundary → .afterSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .settingsPlan to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .finalHealth to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument component → .dns to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument component → .tcp to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument component → .packetPlane to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument boundary → .afterTCP to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument control → .callbackWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .stopWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument control → .startWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .startAfterStopped to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketReads to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument stopCase → .providerFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforeDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument control → .healthyAndStaleWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument boundary → .beforeTCP to "failure before and after every ownership boundary rolls back once" started.
+􁁛  Test "latest snapshot store rejects older generations and sequences" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument component → .ssh to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument boundary → .beforeSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforeSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketReads to "failure before and after every ownership boundary rolls back once" started.
+􁁛  Test "stop before start consumes the generation and releases configuration" passed after 0.003 seconds.
+􁁛  Test "clear failure preserves truthful route state and no capability" passed after 0.003 seconds.
+􁁛  Test "mandatory dependency health loss revokes capability before cleanup" with 4 test cases passed after 0.003 seconds.
+􁁛  Test "failure stop reasons map exactly and revoke capability before one cleanup" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "repeated concurrent stop joins one reverse-order cleanup" passed after 0.004 seconds.
+􁁛  Test "startup gates settings and publishes M1 usability only after reads" passed after 0.004 seconds.
+􁁛  Test "legal and illegal coordinator controls follow the transition table" with 10 test cases passed after 0.004 seconds.
+􁁛  Test "caller cancellation during startup completion owns cleanup" passed after 0.004 seconds.
+􁁛  Test "mandatory health loss during startup completion owns cleanup" passed after 0.004 seconds.
+􁁛  Test "cancellation after each startup acquisition rolls back in reverse order" with 8 test cases passed after 0.004 seconds.
+􁁛  Test "settings apply error dispositions preserve failure and clear exactly when required" passed after 0.004 seconds.
+􁁛  Test "stop wins a concurrent pre-start ordering and cannot be revived" passed after 0.005 seconds.
+􁁛  Test "caller task cancellation is propagated and cleanup remains shielded" passed after 0.005 seconds.
+􁁛  Test "concurrent starts are rejected and stop cancels an in-flight generation" passed after 0.005 seconds.
+􁁛  Test "concurrent starts create exactly one usable runtime" passed after 0.005 seconds.
+􁁛  Test "stale health events cannot mutate the active generation" passed after 0.005 seconds.
+􁁛  Test "failure before and after every ownership boundary rolls back once" with 14 test cases passed after 0.005 seconds.
+􁁛  Test "every partial startup acquisition rolls back only acquired resources" with 11 test cases passed after 0.005 seconds.
+􁁛  Test "repeated stop and health races clean exactly one generation" passed after 0.010 seconds.
+􁁛  Test "invalid SSH profiles stop at coordinator before Keychain and network fakes" passed after 0.012 seconds.
+􁁛  Test "one hundred generations return all owned resources to baseline" passed after 0.052 seconds.
+􁁛  Suite "Tunnel runtime coordinator" passed after 0.052 seconds.
+􁁛  Test run with 22 tests in 1 suite passed after 0.052 seconds.
+EXIT TunnelRuntimeCoordinatorTests 0
+RUN ProviderAdapterContractTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.17s)
+Test Suite 'Selected tests' started at 2026-08-30 13:43:58.079.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:43:58.086.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:43:58.086.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:43:58.086.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Provider adapter contracts" started.
+􀟈  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "fifty sequential double failures always deliver the first call error" started.
+􀟈  Test "concurrent and reentrant provider failures cancel exactly once" started.
+􀟈  Test "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test "every public Apple stop reason maps identically" started.
+􀟈  Test "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test "a fresh generation readmits provider failure after the previous handoff" started.
+􀟈  Test case passing 1 argument seam → iOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 1 argument seam → macOS to "one hundred cycles release every runtime and callback gate" started.
+􀟈  Test case passing 1 argument seam → macOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 1 argument seam → iOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test case passing 1 argument seam → macOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → iOS to "fifty sequential double failures always deliver the first call error" started.
+􀟈  Test case passing 1 argument seam → iOS to "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → iOS to "malformed future mutating and missing-request inputs receive one bounded error" started.
+􀟈  Test case passing 1 argument seam → macOS to "the injected 60-second startup budget cancels and joins rollback" started.
+􀟈  Test "macOS provider configuration selects the pinned libssh2 candidate" started.
+􀟈  Test case passing 1 argument seam → macOS to "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" started.
+􀟈  Test case passing 1 argument seam → iOS to "concurrent and reentrant provider failures cancel exactly once" started.
+􀟈  Test "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test "both provider adapters link the pinned HEV production runtime" started.
+􀟈  Test case passing 1 argument seam → iOS to "cleanup expiry force-closes handles and records redacted evidence" started.
+􀟈  Test case passing 1 argument seam → macOS to "every public Apple stop reason maps identically" started.
+􀟈  Test case passing 1 argument seam → macOS to "concurrent and reentrant provider failures cancel exactly once" started.
+􀟈  Test case passing 1 argument seam → macOS to "fifty sequential double failures always deliver the first call error" started.
+􀟈  Test case passing 1 argument seam → iOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument seam → macOS to "provider failure cancels once and later system stop joins cleanup" started.
+􀟈  Test case passing 1 argument seam → iOS to "a fresh generation readmits provider failure after the previous handoff" started.
+􀟈  Test case passing 1 argument seam → macOS to "a fresh generation readmits provider failure after the previous handoff" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 7 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 2 arguments seam → macOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → iOS to "both roots route exactly the four read-only v1 commands" started.
+􀟈  Test case passing 2 arguments seam → iOS, rawReason → 14 to "stop during start completes start before stop and maps startup Apple reasons" started.
+􀟈  Test case passing 1 argument seam → macOS to "both roots route exactly the four read-only v1 commands" started.
+􁁛  Test "both provider adapters link the pinned HEV production runtime" passed after 0.002 seconds.
+􁁛  Test "macOS provider configuration selects the pinned libssh2 candidate" passed after 0.003 seconds.
+􁁛  Test "concurrent and reentrant provider failures cancel exactly once" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "stop during start completes start before stop and maps startup Apple reasons" with 4 test cases passed after 0.003 seconds.
+􁁛  Test "provider failure cancels once and later system stop joins cleanup" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "a fresh generation readmits provider failure after the previous handoff" with 2 test cases passed after 0.003 seconds.
+􁁛  Test "the injected 60-second startup budget cancels and joins rollback" with 2 test cases passed after 0.004 seconds.
+􁁛  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" with 2 test cases passed after 0.004 seconds.
+􁁛  Test "cleanup expiry force-closes handles and records redacted evidence" with 2 test cases passed after 0.005 seconds.
+􁁛  Test "malformed future mutating and missing-request inputs receive one bounded error" with 2 test cases passed after 0.005 seconds.
+􁁛  Test "every public Apple stop reason maps identically" with 2 test cases passed after 0.006 seconds.
+􁁛  Test "one hundred cycles release every runtime and callback gate" with 2 test cases passed after 0.010 seconds.
+􁁛  Test "fifty sequential double failures always deliver the first call error" with 2 test cases passed after 0.011 seconds.
+􁁛  Test "both roots route exactly the four read-only v1 commands" with 2 test cases passed after 0.027 seconds.
+􁁛  Suite "Provider adapter contracts" passed after 0.028 seconds.
+􁁛  Test run with 14 tests in 1 suite passed after 0.028 seconds.
+EXIT ProviderAdapterContractTests 0
+RUN VPNSessionControllerTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.14s)
+Test Suite 'Selected tests' started at 2026-08-30 13:43:58.848.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:43:58.855.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:43:58.855.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:43:58.855.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "VPN session controller" started.
+􀟈  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" started.
+􀟈  Test "stop maps every status and never duplicates the stop call" started.
+􀟈  Test "start timeout stops once and never projects connected" started.
+􀟈  Test "stale and out-of-order provider facts clear capability" started.
+􀟈  Test "synchronous start errors use stable mappings" started.
+􀟈  Test "provider message timeout cancellation and late response cannot publish capability" started.
+􀟈  Test "start preflight maps every system status without duplicate start calls" started.
+􀟈  Test "a newer provider generation resets the sequence baseline" started.
+􀟈  Test "concurrent stops join one fresh load one system stop and one terminal wait" started.
+􀟈  Test "controller retirement cancels start wait without stopping the tunnel" started.
+􀟈  Test "every non-connected system status clears provider capability" started.
+􀟈  Test "start-stop race uses one system stop and converges from fresh status" started.
+􀟈  Test "connected projection recovers only from matching current provider snapshots" started.
+􀟈  Test "caller cancellation after accepted start stops once" started.
+􀟈  Test "recreated controller accepts a fresh response without app-owned history" started.
+􀟈  Test "start sends exactly one bounded v1 request matching stored snapshot bytes" started.
+􀟈  Test "terminal start fetches and maps the last disconnect error exactly once" started.
+􀟈  Test "non-running provider lifecycle facts suppress every capability claim" started.
+􀟈  Test "all public system and provider disconnect codes map exactly" started.
+􀟈  Test "controller deallocation releases its exact-session observer without stopping" started.
+􀟈  Test "last disconnect timeout and cancellation supplement but never change system status" started.
+􀟈  Test "stop timeout never claims cleanup and cancellation does not issue another stop" started.
+􀟈  Test "initial observer registration race reads authoritative status and retirement releases it" started.
+􁁛  Test "non-running provider lifecycle facts suppress every capability claim" passed after 0.001 seconds.
+􁁛  Test "all public system and provider disconnect codes map exactly" passed after 0.001 seconds.
+􁁛  Test "controller deallocation releases its exact-session observer without stopping" passed after 0.001 seconds.
+􁁛  Test "initial observer registration race reads authoritative status and retirement releases it" passed after 0.001 seconds.
+􁁛  Test "concurrent stops join one fresh load one system stop and one terminal wait" passed after 0.001 seconds.
+􁁛  Test "caller cancellation after accepted start stops once" passed after 0.001 seconds.
+􁁛  Test "every non-connected system status clears provider capability" passed after 0.001 seconds.
+􁁛  Test "last disconnect timeout and cancellation supplement but never change system status" passed after 0.001 seconds.
+􁁛  Test "terminal start fetches and maps the last disconnect error exactly once" passed after 0.001 seconds.
+􁁛  Test "start-stop race uses one system stop and converges from fresh status" passed after 0.001 seconds.
+􁁛  Test "start timeout stops once and never projects connected" passed after 0.001 seconds.
+􁁛  Test "stop timeout never claims cleanup and cancellation does not issue another stop" passed after 0.001 seconds.
+􁁛  Test "stop maps every status and never duplicates the stop call" passed after 0.001 seconds.
+􁁛  Test "start sends exactly one bounded v1 request matching stored snapshot bytes" passed after 0.001 seconds.
+􁁛  Test "connected projection recovers only from matching current provider snapshots" passed after 0.001 seconds.
+􁁛  Test "controller retirement cancels start wait without stopping the tunnel" passed after 0.001 seconds.
+􁁛  Test "a newer provider generation resets the sequence baseline" passed after 0.002 seconds.
+􁁛  Test "stale and out-of-order provider facts clear capability" passed after 0.002 seconds.
+􁁛  Test "start preflight maps every system status without duplicate start calls" passed after 0.002 seconds.
+􁁛  Test "synchronous start errors use stable mappings" passed after 0.002 seconds.
+􁁛  Test "provider message timeout cancellation and late response cannot publish capability" passed after 0.002 seconds.
+􁁛  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" passed after 0.002 seconds.
+􁁛  Test "recreated controller accepts a fresh response without app-owned history" passed after 0.002 seconds.
+􁁛  Suite "VPN session controller" passed after 0.002 seconds.
+􁁛  Test run with 23 tests in 1 suite passed after 0.002 seconds.
+EXIT VPNSessionControllerTests 0
+RUN M1RuntimeCompositionTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.14s)
+Test Suite 'Selected tests' started at 2026-08-30 13:43:59.557.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:43:59.564.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:43:59.564.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:43:59.564.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "M1 runtime composition" started.
+􀟈  Test "private ingress sends only virtual DNS UDP to DNS" started.
+􀟈  Test "production creates one selected object graph per runtime generation" started.
+􀟈  Test "numeric boolean permits fail semantic and production gates before graph construction" started.
+􀟈  Test "production call site constructs nothing before manifest validation" started.
+􀟈  Test "packet prepare is pure and activation is the only PacketFlow read path" started.
+􀟈  Test "semantic integer gate rejects booleans, fractions, and overflow" started.
+􀟈  Test "production distinguishes absent and unreadable manifests before construction" started.
+􀟈  Test "semantic gates reject disabled permit, supersession, pin drift, and missing capability" started.
+􀟈  Test "accepted binding manifest resolves exact M0 values" started.
+􀟈  Test "production digest gate rejects a narrowed manifest" started.
+􁁛  Test "private ingress sends only virtual DNS UDP to DNS" passed after 0.001 seconds.
+􁁛  Test "production distinguishes absent and unreadable manifests before construction" passed after 0.001 seconds.
+􁁛  Test "packet prepare is pure and activation is the only PacketFlow read path" passed after 0.001 seconds.
+􁁛  Test "production call site constructs nothing before manifest validation" passed after 0.001 seconds.
+􁁛  Test "production digest gate rejects a narrowed manifest" passed after 0.001 seconds.
+􁁛  Test "production creates one selected object graph per runtime generation" passed after 0.001 seconds.
+􁁛  Test "accepted binding manifest resolves exact M0 values" passed after 0.001 seconds.
+􁁛  Test "numeric boolean permits fail semantic and production gates before graph construction" passed after 0.006 seconds.
+􁁛  Test "semantic gates reject disabled permit, supersession, pin drift, and missing capability" passed after 0.007 seconds.
+􁁛  Test "semantic integer gate rejects booleans, fractions, and overflow" passed after 0.007 seconds.
+􁁛  Suite "M1 runtime composition" passed after 0.007 seconds.
+􁁛  Test run with 10 tests in 1 suite passed after 0.008 seconds.
+EXIT M1RuntimeCompositionTests 0
+RUN MacOSProductionRuntimeOwnershipTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.13s)
+Test Suite 'Selected tests' started at 2026-08-30 13:44:00.302.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:44:00.309.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:44:00.309.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:44:00.309.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "macOS production runtime ownership" started.
+􀟈  Test "exact returned graph authenticates, activates after settings, and releases in reverse" started.
+􁁛  Test "exact returned graph authenticates, activates after settings, and releases in reverse" passed after 0.001 seconds.
+􁁛  Suite "macOS production runtime ownership" passed after 0.001 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 0.001 seconds.
+EXIT MacOSProductionRuntimeOwnershipTests 0
+RUN RuntimeDiagnosticsTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.23s)
+Test Suite 'Selected tests' started at 2026-08-30 13:44:01.164.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:44:01.171.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:44:01.171.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:44:01.171.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Privacy-safe runtime diagnostics" started.
+􀟈  Test "concurrent updates and requests return consistent bounded snapshots" started.
+􀟈  Test "maximum aggregate state remains well below the wire bound" started.
+􀟈  Test "populated output rejects prohibited nested values and identifiers" started.
+􀟈  Test "unknown high-cardinality labels are discarded without retention" started.
+􀟈  Test "typed sources project aggregate health flow DNS route memory SSH and errors" started.
+􀟈  Test "populated snapshot recursively contains only approved stable fields" started.
+􀟈  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" started.
+􀟈  Test "schema v1 contains exactly the reviewed aggregate names" started.
+􀟈  Test "generation reset rejects stale handles and preserves monotonic counters" started.
+RUNTIME_DIAGNOSTICS_SCHEMA counters=139 gauges=75 histograms=2 errors=11
+􁁛  Test "schema v1 contains exactly the reviewed aggregate names" passed after 0.002 seconds.
+􁁛  Test "typed sources project aggregate health flow DNS route memory SSH and errors" passed after 0.002 seconds.
+􁁛  Test "generation reset rejects stale handles and preserves monotonic counters" passed after 0.003 seconds.
+􁁛  Test "maximum aggregate state remains well below the wire bound" passed after 0.003 seconds.
+RUNTIME_DIAGNOSTICS_MAX_ENCODED_BYTES 13568
+􁁛  Test "bounded sink enqueue never stalls packet or SSH progress behind a snapshot" passed after 0.003 seconds.
+􁁛  Test "populated snapshot recursively contains only approved stable fields" passed after 0.003 seconds.
+􁁛  Test "populated output rejects prohibited nested values and identifiers" passed after 0.012 seconds.
+􁁛  Test "concurrent updates and requests return consistent bounded snapshots" passed after 0.029 seconds.
+􁁛  Test "unknown high-cardinality labels are discarded without retention" passed after 0.047 seconds.
+􁁛  Suite "Privacy-safe runtime diagnostics" passed after 0.047 seconds.
+􁁛  Test run with 9 tests in 1 suite passed after 0.047 seconds.
+EXIT RuntimeDiagnosticsTests 0
+RUN SSHBootstrapErrorMappingTests
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+Build complete! (0.12s)
+Test Suite 'Selected tests' started at 2026-08-30 13:44:01.896.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 13:44:01.904.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 13:44:01.904.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 13:44:01.904.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "SSH bootstrap privacy-safe error mapping" started.
+􀟈  Test "configuration trust credential and authentication gates remain terminal" started.
+􀟈  Test "cancellation and explicit user stop never receive trust or authentication labels" started.
+􀟈  Test "hostile underlying errors and prohibited values are never projected" started.
+􀟈  Test "authentication timeout and transport loss remain operational failures" started.
+􀟈  Test "socket and URL errors map by numeric class without descriptions" started.
+􀟈  Test "stage code action and retry taxonomy is a stable golden contract" started.
+􀟈  Test "typed internal cause is preserved while public projection stays finite" started.
+􀟈  Test "only bounded timeout and selected transient transport classes are retryable later" started.
+􁁛  Test "only bounded timeout and selected transient transport classes are retryable later" passed after 0.001 seconds.
+􁁛  Test "authentication timeout and transport loss remain operational failures" passed after 0.001 seconds.
+􁁛  Test "socket and URL errors map by numeric class without descriptions" passed after 0.001 seconds.
+􀟈  Test "all bootstrap stages have an explicit public projection" started.
+􀟈  Test "runtime diagnostics snapshot stores and clears only the bounded projection" started.
+􁁛  Test "configuration trust credential and authentication gates remain terminal" passed after 0.001 seconds.
+􁁛  Test "typed internal cause is preserved while public projection stays finite" passed after 0.001 seconds.
+􁁛  Test "cancellation and explicit user stop never receive trust or authentication labels" passed after 0.001 seconds.
+􁁛  Test "all bootstrap stages have an explicit public projection" passed after 0.001 seconds.
+􁁛  Test "stage code action and retry taxonomy is a stable golden contract" passed after 0.001 seconds.
+􁁛  Test "hostile underlying errors and prohibited values are never projected" passed after 0.001 seconds.
+􁁛  Test "runtime diagnostics snapshot stores and clears only the bounded projection" passed after 0.002 seconds.
+􁁛  Suite "SSH bootstrap privacy-safe error mapping" passed after 0.003 seconds.
+􁁛  Test run with 10 tests in 1 suite passed after 0.003 seconds.
+EXIT SSHBootstrapErrorMappingTests 0

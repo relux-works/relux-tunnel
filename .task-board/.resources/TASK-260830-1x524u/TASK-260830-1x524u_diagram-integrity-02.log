@@ -1,0 +1,7 @@
+plantuml_check_exit=0
+plantuml_render_exit=0
+diagram_cmp TASK-260715-2rcvr0_m1-runtime-lifecycle.svg exit=0
+diagram_cmp TASK-260715-2rcvr0_m1-runtime-lifecycle_001.svg exit=0
+diagram_cmp TASK-260715-2rcvr0_m1-runtime-lifecycle_002.svg exit=0
+diagram_cmp TASK-260715-2rcvr0_m1-runtime-lifecycle_003.svg exit=0
+diagram_render_dir=.temp/TASK-260830-1x524u/diagram-render-03.fUb8xn

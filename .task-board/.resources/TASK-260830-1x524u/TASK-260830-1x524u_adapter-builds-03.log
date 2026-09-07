@@ -1,0 +1,12 @@
+RUN swift build --target ReluxTunnelIOSAdapter
+[0/1] Planning build
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+Build of target: 'ReluxTunnelIOSAdapter' complete! (0.78s)
+EXIT ReluxTunnelIOSAdapter 0
+RUN swift build --target ReluxTunnelMacOSAdapter
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+[2/2] Emitting module ReluxTunnelMacOSAdapter
+Build of target: 'ReluxTunnelMacOSAdapter' complete! (1.37s)
+EXIT ReluxTunnelMacOSAdapter 0

@@ -1,42 +1,78 @@
-# TASK-260715-3ejhyy stop-line evidence
+# TASK-260715-3ejhyy — developer rework 3 outcome
 
-Date: 2026-08-11
-Role: developer
-Result: BLOCKED before implementation
+## Result
 
-## Constraint
+Ready for review. Revision-2 finding F1 is closed without widening the accepted
+M0 graph or exposing a production override.
 
-This task may compose production dependencies only from the accepted binding manifest owned by TASK-260720-1qhxqa. Generating, selecting, tuning, or reinterpreting M0 decisions is explicitly out of scope. The accepted runtime contract also forbids a production factory from entering development while productionCompositionPermitted remains false.
+## Change
 
-## Evidence
+- `MacOSProductionBindingManifestValidator.bool(_:)` now accepts only an
+  `NSNumber` whose Core Foundation type is exactly `CFBoolean`. Foundation's
+  numeric `NSNumber(0)` and `NSNumber(1)` values no longer bridge into the
+  `productionCompositionPermitted` gate.
+- The Swift Testing regression changes only
+  `productionCompositionPermitted` to numeric `0` and `1`. The semantic layer
+  requires `.compositionNotPermitted`; the real production entry point
+  `MacOSProductionDependencyFactory.makeRuntime()` independently requires the
+  immutable digest and proves zero component-factory calls before refusal.
+- `LOGBOOK.md` records the type-confusion, fix, adversarial mutant, and final
+  verification.
 
-- Required FIRST command: task-board m set_status(TASK-260715-3ejhyy, status=development)
-- Exit code: 1
-- Board error: cannot set TASK-260715-3ejhyy to development; TASK-260720-1qhxqa is backlog and blocks start.
-- TASK-260720-1qhxqa status: backlog.
-- TASK-260720-1qhxqa outcome resources: none.
-- TASK-260720-1qhxqa checklist: all three items unchecked.
-- Its three required M0 inputs TASK-260715-nphtib, TASK-260715-2jatnd, and TASK-260715-1gjxer are each backlog with no outcome resources.
-- Repository search found no accepted binding manifest or productionCompositionPermitted=true input. Existing accepted runtime-contract evidence says the permit remains false and TASK-260720-1qhxqa alone may bind exact accepted resource names and SHA-256 digests.
+## Accepted dependency pin
 
-## Failed attempts
+- Sole accepted source:
+  `Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json`
+- Repository and task precondition copies are each 17,492 bytes.
+- Both SHA-256 values are
+  `40333862b46b7af04cdd966ade91e8c9cc917e573c6601e26e7fa956d11ae161`.
+- Live M0 validation reports `productionCompositionPermitted=true`, no
+  failures, schema version 1, and the same digest.
 
-1. The mandatory development transition was attempted exactly and rejected by the dependency gate.
-2. Board resources and repository content were checked for a committed or attached accepted equivalent; none exists.
-3. Upstream M0 decision tasks were checked directly; all remain backlog without accepted outcomes.
+## Negative evidence
 
-## Options and tradeoffs
+The exact current test was attacked by restoring the rejected production
+implementation `value as? Bool`. The named
+`semanticBooleanTypes` Swift test then exited 1 because numeric `1` returned a
+complete `MacOSAcceptedM0Bindings` value. After restoring the exact-CFBoolean
+guard, the same test exited 0. The test also drives
+`MacOSProductionDependencyFactory.makeRuntime()` for numeric `0` and `1` and
+requires the immutable digest gate to stop both with zero graph construction.
 
-1. Complete and review the three M0 decision tasks, then complete and review TASK-260720-1qhxqa. This preserves the accepted fail-closed architecture and is the only compliant option.
-2. Implement against local defaults, notes, or inferred pins. This would violate task scope and AC3 and risks shipping incompatible packet, HEV, or SSH bindings.
-3. Remove or bypass the dependency. This would defeat the board and production safety gate and is not authorized.
+Production call site: `MacOSProductionDependencyFactory.makeRuntime()`.
 
-## Recommendation
+## Verification
 
-Use option 1. Do not begin production composition until TASK-260720-1qhxqa is accepted with its exact machine-readable manifest, human-readable evidence, resource digests, selected pins, required capabilities, supersession state, and productionCompositionPermitted=true.
+| Gate | Result | Evidence |
+| --- | --- | --- |
+| Focused composition | exit 0; 10/10 | `.temp/TASK-260715-3ejhyy/swift-test-composition-bool-rework-02.log` |
+| Exact boolean mutant | expected exit 1; numeric `1` admitted | `.temp/TASK-260715-3ejhyy/swift-test-bool-mutant-expected-failure-02.log` |
+| Restored boolean gate | exit 0; 1/1 | `.temp/TASK-260715-3ejhyy/swift-test-bool-restored-02.log` |
+| Exact macOS production ownership | exit 0; 1/1 | `.temp/TASK-260715-3ejhyy/swift-test-ownership-bool-rework-01.log` |
+| Exact deterministic harness ownership | exit 0; 3/3 | `.temp/TASK-260715-3ejhyy/swift-test-harness-bool-rework-01.log` |
+| Full SwiftPM suite | exit 0; 508 tests / 43 suites; 25 known unavailable-ReluxNIOSSH issues | `.temp/TASK-260715-3ejhyy/swift-test-full-bool-rework-02.log` |
+| macOS adapter build | exit 0 | `.temp/TASK-260715-3ejhyy/swift-build-macos-adapter-bool-rework-01.log` |
+| Deterministic harness build | exit 0 | `.temp/TASK-260715-3ejhyy/swift-build-harness-bool-rework-01.log` |
+| Unsigned macOS host/provider Debug+Release matrix | exit 0 | `.temp/TASK-260715-3ejhyy/macos-targets-validate-bool-rework-02.log` |
+| Core boundary guard | exit 0 | `.temp/TASK-260715-3ejhyy/check-core-boundaries-bool-rework-01.log` |
+| Native HEV/libssh2 pins and linkage | exit 0 | `.temp/TASK-260715-3ejhyy/check-native-dependencies-bool-rework-01.log` |
+| Accepted M0 live validation | exit 0; permitted, no failures | `.temp/TASK-260715-3ejhyy/m0-bindings-check-bool-rework-01.log` |
+| M0 adversarial suite | exit 0; 32/32 | `.temp/TASK-260715-3ejhyy/m0-bindings-test-bool-rework-02.log` |
+| Strict recursive Swift format and diff check | exit 0 | `.temp/TASK-260715-3ejhyy/final-lint-diff-hashes-bool-rework-01.log` |
+| Manifest size/digest verification | exit 0; both copies exact | `.temp/TASK-260715-3ejhyy/final-diff-and-pin-bool-rework-01.log` |
 
-## Exact input required to resume
+## Preserved evidence and safety
 
-TASK-260720-1qhxqa must reach done with a reviewer-accepted outcome resource that identifies and validates the accepted M0 resources, digests, pins, capability set, schema/version, supersession state, compatibility with TASK-260715-30zng6, and productionCompositionPermitted=true. The board dependency must then permit TASK-260715-3ejhyy to enter development.
-
-No source code, tests, pins, or configuration values were changed.
+- The initial tool-readiness command exited 1 because `status` is readonly in
+  zsh; the corrected task-scoped readiness probe exited 0.
+- The first M0 negative-suite wrapper and first provider-matrix wrapper yielded
+  without a final exit code. Neither was treated as a pass. Both gates were
+  rerun to observed exit 0; the provider rerun was polled to terminal state.
+- `task-board validate` returned process exit 0 while reporting the pre-existing
+  owning Story aggregate mismatch (`to-dev` versus child aggregate
+  `development`). The result is retained at
+  `.temp/TASK-260715-3ejhyy/task-board-validate-bool-rework-01.log` and is not
+  described as a clean board validation.
+- No signing, installation, application/provider launch, VPN start, live
+  Keychain lookup, SSH network connection, route/DNS mutation, or live
+  PacketFlow/HEV runtime was performed.

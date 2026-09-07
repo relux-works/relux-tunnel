@@ -1,0 +1,9 @@
+MATCH Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+MATCH LOGBOOK.md
+MATCH Makefile
+MATCH README.md
+MATCH docs/TASK-260720-1qhxqa_m0-production-bindings.md
+MATCH scripts/tests/test_m0_production_bindings.py
+MATCH scripts/validate-m0-production-bindings.py
+DIFF_CHECK_EXIT=0
+EXIT_CODE=0

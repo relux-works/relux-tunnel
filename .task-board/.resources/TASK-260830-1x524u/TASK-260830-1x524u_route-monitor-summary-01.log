@@ -1,0 +1,5 @@
+harness_exit=0
+route_monitor_event_count=35
+route_monitor_output_sha256=99693cc95f5ff257efa147acd7b4a0d86aeafb076da6e977ed1b52dc42306e28
+full_tunnel_state_compare_exit=0
+raw_monitor_path=.temp/TASK-260830-1x524u/route-monitor.06xtu0 (local scratch only; not attached)

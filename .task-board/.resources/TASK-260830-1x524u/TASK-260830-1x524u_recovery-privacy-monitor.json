@@ -1,0 +1,17 @@
+{
+  "harness_exit": 0,
+  "monitor_exit": -15,
+  "monitor_stderr": "",
+  "event_counts": {},
+  "mutation_events": 0,
+  "pre": {
+    "rows": 10,
+    "hash": "a1a9ae370a997d84806ec488fc75663a8cf73eba47642463725253f27f12b807"
+  },
+  "post": {
+    "rows": 10,
+    "hash": "a1a9ae370a997d84806ec488fc75663a8cf73eba47642463725253f27f12b807"
+  },
+  "selectors_identical": true,
+  "bound": "Read-only route monitor during deterministic seven-fixture harness only. Earlier whole routing table hash changed; cause unknown. No assertion of machine-wide route immutability."
+}
