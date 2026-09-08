@@ -1,0 +1,9 @@
+PASS: baseline
+PASS: generated-cross-link rejected at the production isolation gate
+PASS: legacy-cross-link rejected at the production isolation gate
+PASS: identifier-collision rejected at the production isolation gate
+PASS: defaults-key-collision rejected at the production isolation gate
+PASS: keychain-namespace-collision rejected at the production isolation gate
+PASS: release-script-substitution rejected at the production isolation gate
+PASS: build-product-collision rejected at the production isolation gate
+Migration isolation guard tests passed

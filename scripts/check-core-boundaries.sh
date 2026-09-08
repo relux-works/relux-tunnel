@@ -107,4 +107,45 @@ if dependency_names(targets["ReluxTunnelHarness"]) != {
     raise SystemExit("ReluxTunnelHarness must link ReluxTunnelCore and its support target")
 '
 
+python3 - <<'PY'
+from pathlib import Path
+
+source = Path(
+    "Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift"
+).read_text()
+component_surface = source.split(
+    "public struct MacOSProductionComponentFactories", 1
+)[1].split("/// macOS-only production factory entry point.", 1)[0]
+for forbidden in (
+    "makeSSHBootstrap",
+    "credentialProvider",
+    "makeHostKeyPolicy",
+    "mapCredentialError",
+    "SSHTransportFactory",
+):
+    if forbidden in component_surface:
+        raise SystemExit(
+            "MacOSProductionComponentFactories exposes bypassable SSH security input: "
+            + forbidden
+        )
+
+required_production_bindings = (
+    "transportFactory: MacOSProviderSSHConfiguration.makeTransportFactory(",
+    "credentialProvider: MacOSProviderSSHConfiguration.makeCredentialProvider()",
+    "try MacOSProviderSSHConfiguration.makeHostKeyPolicy(snapshot: $0)",
+    "MacOSSSHBootstrapErrorMapper.credential($0, configurationGeneration: $1)",
+    "let selectedSSH = makeSelectedSSH(bindings)",
+    "let sshBootstrap = MacOSProductionSSHBootstrap(",
+)
+for required in required_production_bindings:
+    if required not in source:
+        raise SystemExit(
+            "MacOSProductionDependencyFactory.makeRuntime mandatory SSH composition missing: "
+            + required
+        )
+
+if "public typealias SelectedSSHBuilder" in source or "public let makeSelectedSSH" in source:
+    raise SystemExit("selected SSH dependency override escaped the internal test boundary")
+PY
+
 echo "ReluxTunnelCore dependency and import boundaries are valid"

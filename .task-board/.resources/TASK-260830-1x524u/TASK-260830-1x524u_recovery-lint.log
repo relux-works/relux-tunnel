@@ -1,0 +1,42 @@
+Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json JSON parse exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelCore/M1RuntimeComposition.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift']
+exit=0
+['bash', '-n', 'scripts/check-core-boundaries.sh']
+exit=0
+['bash', '-n', 'scripts/tests/test-credential-free-validation.sh']
+exit=0
+['bash', '-n', 'scripts/tests/test-migration-isolation-guard.sh']
+exit=0
+['bash', '-n', 'scripts/validate-credential-free.sh']
+exit=0
+task-board.config.json JSON parse exit=0

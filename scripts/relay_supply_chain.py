@@ -1217,12 +1217,17 @@ def swift_contents_of_surface(tokens: list[tuple[str, str]]) -> str | None:
         if initializer_type not in loader_types | {"ambiguous"}:
             continue
 
+        # Accept only an inline Foundation file-URL constructor. Do not infer
+        # localness from variable names, nearby guards, comments, or file paths.
         explicit_local_url = False
         if (
             token_is(tokens, index + 1, ":")
             and token_is(tokens, index + 2, "URL")
             and token_is(tokens, index + 3, "(")
-            and token_is(tokens, index + 4, "fileURLWithPath")
+            and (
+                token_is(tokens, index + 4, "fileURLWithPath")
+                or token_is(tokens, index + 4, "filePath")
+            )
             and token_is(tokens, index + 5, ":")
         ):
             depth = 1

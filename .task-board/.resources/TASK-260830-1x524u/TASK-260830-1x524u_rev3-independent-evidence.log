@@ -1,0 +1,714 @@
+
+FILE readiness.log
+git version 2.50.1 (Apple Git-155)
+task-board version dev
+Apple Swift version 6.3.2 (swiftlang-6.3.2.1.108 clang-2100.1.1.101)
+Target: arm64-apple-macosx26.0
+GNU Make 3.81
+Copyright (C) 2006  Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+This program built for i386-apple-darwin11.3.0
+
+
+FILE workspace.json
+{
+  "workspaces": [
+    {
+      "change_requests": [
+        {
+          "id": "CR-TASK-260715-2rcvr0-2",
+          "element_id": "TASK-260715-2rcvr0",
+          "revision": 2,
+          "state": "checkpointed",
+          "kind": "task_delta",
+          "repository_delta": "present",
+          "branch_ref": "refs/heads/task-board/story/STORY-260715-1y04r0",
+          "base_oid": "de5f11fec32edc353c8563ad1500609190b2aed9",
+          "candidate_tree_oid": "f17349ef3060b2eaf39903bcc790b3fd2cf7c896",
+          "diff_resource_name": "TASK-260715-2rcvr0_change-request_rev2.patch",
+          "diff_sha256": "feb0a1582384fa84241bdf46425d314f377fc2746d56fca981f06d0d90e7668f",
+          "changed_paths": [
+            "LOGBOOK.md",
+            "README.md",
+            "diagrams/TASK-260715-2rcvr0_m1-runtime-lifecycle.puml",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle.svg",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_001.svg",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_002.svg",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_003.svg",
+            "docs/core-adapter-boundaries.md",
+            "docs/m1-runtime-ownership-and-operations.md"
+          ],
+          "producer_run_id": "RUN-260830-682cd1",
+          "reviewer_run_id": "RUN-260830-f7ad98",
+          "workspace_id": "WS-44685f41d17b"
+        },
+        {
+          "id": "CR-TASK-260715-3ejhyy-3",
+          "element_id": "TASK-260715-3ejhyy",
+          "revision": 3,
+          "state": "checkpointed",
+          "kind": "task_delta",
+          "repository_delta": "present",
+          "branch_ref": "refs/heads/task-board/story/STORY-260715-1y04r0",
+          "base_oid": "12b1a72e0d9d76712ab5bca75bdbd828a08ada1b",
+          "candidate_tree_oid": "7c91cd2d8ecc986af1ca7bfc4a16a9b4c46070c3",
+          "diff_resource_name": "TASK-260715-3ejhyy_change-request_rev3.patch",
+          "diff_sha256": "667b5ac869b2ef05bf6595a87ed44adaefbb6b320999f97a74658eab7270c264",
+          "changed_paths": [
+            "LOGBOOK.md",
+            "README.md",
+            "Sources/ReluxTunnelCore/M1RuntimeComposition.swift",
+            "Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift",
+            "Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift",
+            "Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift",
+            "Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift",
+            "Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift",
+            "Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift",
+            "Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift",
+            "scripts/check-core-boundaries.sh"
+          ],
+          "producer_run_id": "RUN-260830-0efcad",
+          "reviewer_run_id": "RUN-260830-a6022e",
+          "workspace_id": "WS-44685f41d17b"
+        },
+        {
+          "id": "CR-TASK-260715-3qqbbm-1",
+          "element_id": "TASK-260715-3qqbbm",
+          "revision": 1,
+          "state": "checkpointed",
+          "kind": "task_delta",
+          "repository_delta": "present",
+          "branch_ref": "refs/heads/task-board/story/STORY-260715-1y04r0",
+          "base_oid": "8b49b792541339d82408804988d9b4a4778297ac",
+          "candidate_tree_oid": "bf9b73d562a89f87b50163b97e3e4bf29736e025",
+          "diff_resource_name": "TASK-260715-3qqbbm_change-request_rev1.patch",
+          "diff_sha256": "138aeaf89c922cb8a25a308976561436b5feeebd84e905e913f2c658707c9720",
+          "changed_paths": [
+            "LOGBOOK.md",
+            "Makefile",
+            "README.md",
+            "docs/migration-isolation.md",
+            "scripts/check-migration-isolation.py",
+            "scripts/tests/test-migration-isolation-guard.sh",
+            "scripts/validate-credential-free.sh"
+          ],
+          "producer_run_id": "RUN-260830-ecdf27",
+          "reviewer_run_id": "RUN-260830-4ace66",
+          "workspace_id": "WS-44685f41d17b"
+        },
+        {
+          "id": "CR-TASK-260715-m8bi8i-2",
+          "element_id": "TASK-260715-m8bi8i",
+          "revision": 2,
+          "state": "checkpointed",
+          "kind": "task_delta",
+          "repository_delta": "present",
+          "branch_ref": "refs/heads/task-board/story/STORY-260715-1y04r0",
+          "base_oid": "5d47bca7b5742dc97d41510081b10968dc281b22",
+          "candidate_tree_oid": "3f84a08ab1590b3a5649ed40b003eef051385bbf",
+          "diff_resource_name": "TASK-260715-m8bi8i_change-request_rev2.patch",
+          "diff_sha256": "dee8de3c4fb01a0d13b4f32cbf1cf8c9d91daa45e02fb4b35962fedd1b102d4b",
+          "changed_paths": [
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json",
+            "LOGBOOK.md",
+            "Makefile",
+            "README.md",
+            "Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift",
+            "Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift",
+            "Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift",
+            "Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift",
+            "Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift",
+            "scripts/validate-m1-runtime-harness.py"
+          ],
+          "producer_run_id": "RUN-260830-0aec52",
+          "reviewer_run_id": "RUN-260830-bd7760",
+          "workspace_id": "WS-44685f41d17b"
+        },
+        {
+          "id": "CR-TASK-260720-1qhxqa-10",
+          "element_id": "TASK-260720-1qhxqa",
+          "revision": 10,
+          "state": "checkpointed",
+          "kind": "task_delta",
+          "repository_delta": "present",
+          "branch_ref": "refs/heads/task-board/story/STORY-260715-1y04r0",
+          "base_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+          "candidate_tree_oid": "6974ca29be65fa051e59e56d177e57835c91678a",
+          "diff_resource_name": "TASK-260720-1qhxqa_change-request_rev10.patch",
+          "diff_sha256": "5548d1ad73a87a67fbd9ca6d5b073de0c3e38cf18780801e1f973b487c3f8281",
+          "changed_paths": [
+            "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json",
+            "LOGBOOK.md",
+            "Makefile",
+            "README.md",
+            "docs/TASK-260720-1qhxqa_m0-production-bindings.md",
+            "scripts/tests/test_m0_production_bindings.py",
+            "scripts/validate-m0-production-bindings.py"
+          ],
+          "producer_run_id": "RUN-260830-47449f",
+          "reviewer_run_id": "RUN-260830-9d4551",
+          "workspace_id": "WS-44685f41d17b"
+        },
+        {
+          "id": "CR-TASK-260830-1x524u-3",
+          "element_id": "TASK-260830-1x524u",
+          "revision": 3,
+          "state": "ready",
+          "kind": "story_final",
+          "repository_delta": "present",
+          "branch_ref": "refs/heads/task-board/story/STORY-260715-1y04r0",
+          "base_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+          "candidate_tree_oid": "0ca11378213cc02a78eeac937f94aef6c5209545",
+          "index_tree_oid": "f17349ef3060b2eaf39903bcc790b3fd2cf7c896",
+          "diff_resource_name": "TASK-260830-1x524u_change-request_rev3.patch",
+          "diff_sha256": "3d83cba34a6917d95c34fdc68ff0435ba27e3ef70402e9d215f960f164f1c888",
+          "changed_paths": [
+            "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json",
+            "Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json",
+            "LOGBOOK.md",
+            "Makefile",
+            "README.md",
+            "Sources/ReluxTunnelCore/M1RuntimeComposition.swift",
+            "Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift",
+            "Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift",
+            "Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift",
+            "Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift",
+            "Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift",
+            "Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift",
+            "Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift",
+            "Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift",
+            "Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift",
+            "Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift",
+            "Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift",
+            "diagrams/TASK-260715-2rcvr0_m1-runtime-lifecycle.puml",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle.svg",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_001.svg",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_002.svg",
+            "diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_003.svg",
+            "docs/TASK-260720-1qhxqa_m0-production-bindings.md",
+            "docs/core-adapter-boundaries.md",
+            "docs/m1-runtime-ownership-and-operations.md",
+            "docs/migration-isolation.md",
+            "scripts/check-core-boundaries.sh",
+            "scripts/check-migration-isolation.py",
+            "scripts/tests/test-credential-free-validation.sh",
+            "scripts/tests/test-migration-isolation-guard.sh",
+            "scripts/tests/test_m0_production_bindings.py",
+            "scripts/validate-credential-free.sh",
+            "scripts/validate-m0-production-bindings.py",
+            "scripts/validate-m1-runtime-harness.py",
+            "task-board.config.json"
+          ],
+          "producer_run_id": "RUN-260907-a8cf65",
+          "producer_role": "tester",
+          "producer_archetype": "tester",
+          "workspace_id": "WS-44685f41d17b"
+        }
+      ],
+      "status": {
+        "workspace": {
+          "id": "WS-44685f41d17b",
+          "story_id": "STORY-260715-1y04r0",
+          "repository_id": "repo-7bca9b4f22ea4c55",
+          "owner_client_id": "client-aa06a1f9e5309099",
+          "branch_ref": "refs/heads/task-board/story/STORY-260715-1y04r0",
+          "integration_base_ref": "refs/heads/main",
+          "integration_base_branch": "main",
+          "trunk_source": "remote_head_tracking",
+          "authority_source": "fresh_protected_authority",
+          "upstream_remote": "origin",
+          "upstream_merge_ref": "refs/heads/main",
+          "upstream_ref": "refs/remotes/origin/main",
+          "upstream_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+          "selected_base_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+          "protected_authority": {
+            "remote_name": "origin",
+            "canonical_remote_url": "ssh://git@github.com/relux-works/relux-tunnel",
+            "repository_source": "runtime_control_repository_binding",
+            "repository_digest": "99c7e7d46a5cf792f9e254d26146ded2a1cbc08c5ec127f4d7d0db4c8d9e4f10",
+            "protected_ref": "refs/heads/main",
+            "advertised_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+            "fetched_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+            "observation_source": "git_ls_remote_symref_head_exact_ref_fetch",
+            "observed_at": "2026-09-07T21:14:37.207793Z",
+            "raw_response_sha256": "87d3167586c2ec5918276c09ee3f56e56e249f101a45539879a01f498eecfc99"
+          },
+          "initial_base_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+          "current_base_oid": "b3422b05226253a17676b9b84c764071fe3dbe74",
+          "checkpoint_oid": "9bf4d0892db03035b989a4c040cfee37636ff8df",
+          "relative_path": ".temp/STORY-260715-1y04r0/worktree",
+          "state": "active",
+          "active_run_id": "RUN-260907-178550",
+          "created_at": "2026-08-29T22:03:28.537591Z",
+          "updated_at": "2026-09-07T21:14:43.265858Z"
+        },
+        "worktree_present": true,
+        "worktree_present_known": true,
+        "worktree_registered": true,
+        "path_present": true,
+        "path_present_known": true,
+        "branch_present": true,
+        "branch_present_known": true,
+        "branch_tip_oid": "9bf4d0892db03035b989a4c040cfee37636ff8df",
+        "checkpoint_reachable": true,
+        "checkpoint_reachable_known": true,
+        "dirty": true,
+        "dirty_known": true,
+        "lease_run_id": "RUN-260907-178550",
+        "lease_known": true,
+        "ownership_known": true,
+        "diagnostics": [
+          "story lease is held by run RUN-260907-178550",
+          "managed worktree has uncommitted or untracked changes"
+        ]
+      }
+    }
+  ]
+}
+
+
+FILE dependencies.json
+[{"id":"BUG-260728-3jfjkh","isBlocked":false,"status":"done"},{"id":"TASK-260715-1i49fm","isBlocked":false,"status":"done"},{"id":"TASK-260715-2rcvr0","isBlocked":false,"status":"done"},{"id":"TASK-260715-30zng6","isBlocked":false,"status":"done"},{"id":"TASK-260715-32virr","isBlocked":false,"status":"done"},{"id":"TASK-260715-3ejhyy","isBlocked":false,"status":"done"},{"id":"TASK-260715-3qqbbm","isBlocked":false,"status":"done"},{"id":"TASK-260715-3tlgwm","isBlocked":false,"status":"done"},{"id":"TASK-260715-lovbdz","isBlocked":false,"status":"done"},{"id":"TASK-260715-m8bi8i","isBlocked":false,"status":"done"},{"id":"TASK-260720-1qhxqa","isBlocked":false,"status":"done"},{"id":"TASK-260830-1x524u","isBlocked":false,"status":"reviewing"},{"id":"STORY-260715-jnpbyz","isBlocked":false,"status":"done"},{"id":"STORY-260715-lkshfz","isBlocked":false,"status":"done"},{"id":"TASK-260715-nphtib","isBlocked":false,"status":"done"}]
+
+
+FILE integrity.log
+['git', 'diff', '--exit-code', '0ca11378213cc02a78eeac937f94aef6c5209545', '--', '.']
+
+exit=0
+['git', 'diff', '--check', 'b3422b05226253a17676b9b84c764071fe3dbe74', '0ca11378213cc02a78eeac937f94aef6c5209545']
+
+exit=0
+['git', 'ls-files', '--others', '--exclude-standard']
+
+exit=0
+['git', 'verify-commit', '9bf4d0892db03035b989a4c040cfee37636ff8df']
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+
+exit=0
+['git', 'ls-remote', '--symref', 'ssh://git@github.com/relux-works/relux-tunnel', 'HEAD', 'refs/heads/main', 'refs/heads/task-board/story/STORY-260715-1y04r0']
+ref: refs/heads/main	HEAD
+b3422b05226253a17676b9b84c764071fe3dbe74	HEAD
+b3422b05226253a17676b9b84c764071fe3dbe74	refs/heads/main
+9bf4d0892db03035b989a4c040cfee37636ff8df	refs/heads/task-board/story/STORY-260715-1y04r0
+
+exit=0
+.temp/review-rev3/rev3.patch sha256=3d83cba34a6917d95c34fdc68ff0435ba27e3ef70402e9d215f960f164f1c888
+.temp/TASK-260830-1x524u-review-recovery/rev2.patch sha256=3d83cba34a6917d95c34fdc68ff0435ba27e3ef70402e9d215f960f164f1c888
+
+
+FILE fetch.log
+From github.com:relux-works/relux-tunnel
+ * branch            main       -> FETCH_HEAD
+exit=0
+b3422b05226253a17676b9b84c764071fe3dbe74
+
+
+FILE patch-proof.log
+['git', 'read-tree', 'b3422b05226253a17676b9b84c764071fe3dbe74']
+exit=0
+['git', 'apply', '--cached', '--binary', '.temp/review-rev3/rev3.patch']
+exit=0
+['git', 'write-tree']
+0ca11378213cc02a78eeac937f94aef6c5209545
+exit=0
+
+
+FILE contract.log
+credential-free validation contract tests passed
+exit=0
+
+
+FILE negative.log
+Narrow exact-set refusal to missing-only, admitting extras.
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/.temp/review-rev3/mutant/scripts/check-workspace-schemes.sh: command substitution: line 33: syntax error near unexpected token `('
+error: invalid scheme fixture unexpectedly passed: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T//relux-credential-free-contract.yfaRpp/missing.log
+
+exit=1
+
+
+FILE call-sites.log
+scripts/validate-credential-free.sh:133:run_step validation-contract-tests ./scripts/tests/test-credential-free-validation.sh
+scripts/tests/test-credential-free-validation.sh:46:"$repo_root/scripts/check-workspace-schemes.sh" "$valid" >/dev/null
+scripts/tests/test-credential-free-validation.sh:48:  if "$repo_root/scripts/check-workspace-schemes.sh" "$invalid" >/dev/null 2>&1; then
+
+
+FILE harness.log
+swift test --filter M1RuntimeHarnessTests
+[0/1] Planning build
+Building for debugging...
+[0/7] Write swift-version-45881B103DA9D485.txt
+[2/7] Emitting module ReluxTunnelMacOSAdapter
+[3/7] Emitting module ReluxTunnelHarnessSupport
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[3/4] Linking ReluxTunnelPackageTests
+Build complete! (2.41s)
+Test Suite 'Selected tests' started at 2026-09-08 01:16:44.471.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-09-08 01:16:44.482.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-09-08 01:16:44.482.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-08 01:16:44.482.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.011) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "M1 composed runtime harness" started.
+􀟈  Test "production command completes traffic, diagnostics, host-loss, stop, and repeated cleanup" started.
+􁁛  Test "production command completes traffic, diagnostics, host-loss, stop, and repeated cleanup" passed after 0.008 seconds.
+􀟈  Test "production command emits stable codes for every mandatory failure scenario" started.
+􁁛  Test "production command emits stable codes for every mandatory failure scenario" passed after 0.004 seconds.
+􀟈  Test "HarnessApplication.run requires coordinator-observed SSH loss before mandatory exit" started.
+􁁛  Test "HarnessApplication.run requires coordinator-observed SSH loss before mandatory exit" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run requires coordinator-observed DNS loss before mandatory exit" started.
+􁁛  Test "HarnessApplication.run requires coordinator-observed DNS loss before mandatory exit" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run forwards after releasing its real composition bootstrap owner" started.
+􁁛  Test "HarnessApplication.run forwards after releasing its real composition bootstrap owner" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run production gate admits exact repetition bound and rejects narrower violations" started.
+􁁛  Test "HarnessApplication.run production gate admits exact repetition bound and rejects narrower violations" passed after 0.012 seconds.
+􁁛  Suite "M1 composed runtime harness" passed after 0.031 seconds.
+􁁛  Test run with 6 tests in 1 suite passed after 0.031 seconds.
+swift build --product ReluxTunnelHarness
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version-45881B103DA9D485.txt
+Build of product 'ReluxTunnelHarness' complete! (0.36s)
+python3 scripts/validate-m1-runtime-harness.py \
+		--executable .build/debug/ReluxTunnelHarness \
+		--output .temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json
+m1 runtime fixtures: passed=True fixtures=7 report=.temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json
+exit=0
+
+
+FILE focused.log
+[0/1] Planning build
+Building for debugging...
+[0/8] Write swift-version-45881B103DA9D485.txt
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[1/6] Linking ReluxTunnelHarness
+[2/6] Applying ReluxTunnelHarness
+[4/6] Emitting module ReluxTunnelCoreTests
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[4/5] Linking ReluxTunnelPackageTests
+Build complete! (5.94s)
+Test Suite 'Selected tests' started at 2026-09-08 01:17:25.293.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-09-08 01:17:25.304.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-09-08 01:17:25.304.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-08 01:17:25.304.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.011) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "macOS production runtime ownership" started.
+􀟈  Suite "M1 runtime composition" started.
+􀟈  Test "exact returned graph authenticates, activates after settings, and releases in reverse" started.
+􀟈  Test "production call site constructs nothing before manifest validation" started.
+􀟈  Test "production creates one selected object graph per runtime generation" started.
+􀟈  Test "semantic integer gate rejects booleans, fractions, and overflow" started.
+􀟈  Test "numeric boolean permits fail semantic and production gates before graph construction" started.
+􀟈  Test "packet prepare is pure and activation is the only PacketFlow read path" started.
+􀟈  Test "accepted binding manifest resolves exact M0 values" started.
+􀟈  Test "semantic gates reject disabled permit, supersession, pin drift, and missing capability" started.
+􀟈  Test "production distinguishes absent and unreadable manifests before construction" started.
+􀟈  Test "private ingress sends only virtual DNS UDP to DNS" started.
+􀟈  Test "production digest gate rejects a narrowed manifest" started.
+􁁛  Test "production call site constructs nothing before manifest validation" passed after 0.004 seconds.
+􁁛  Test "production creates one selected object graph per runtime generation" passed after 0.005 seconds.
+􁁛  Test "packet prepare is pure and activation is the only PacketFlow read path" passed after 0.005 seconds.
+􁁛  Test "accepted binding manifest resolves exact M0 values" passed after 0.005 seconds.
+􁁛  Test "production distinguishes absent and unreadable manifests before construction" passed after 0.005 seconds.
+􁁛  Test "private ingress sends only virtual DNS UDP to DNS" passed after 0.005 seconds.
+􁁛  Test "exact returned graph authenticates, activates after settings, and releases in reverse" passed after 0.005 seconds.
+􁁛  Test "production digest gate rejects a narrowed manifest" passed after 0.005 seconds.
+􁁛  Suite "macOS production runtime ownership" passed after 0.006 seconds.
+􁁛  Test "numeric boolean permits fail semantic and production gates before graph construction" passed after 0.011 seconds.
+􁁛  Test "semantic integer gate rejects booleans, fractions, and overflow" passed after 0.014 seconds.
+􁁛  Test "semantic gates reject disabled permit, supersession, pin drift, and missing capability" passed after 0.015 seconds.
+􁁛  Suite "M1 runtime composition" passed after 0.015 seconds.
+􁁛  Test run with 11 tests in 2 suites passed after 0.016 seconds.
+exit=0
+
+
+FILE final-tree.log
+exit=0
+
+
+FILE publisher.log
+$ LEGACY_ROOT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/../relux-proxy" make credential-free-validate
+./scripts/validate-credential-free.sh --legacy-root "/Users/iv/Developer/relux-tunnel/../relux-proxy"
+RUN: relay-tool-bootstrap
+PASS: relay-tool-bootstrap (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-tool-bootstrap.log)
+mise WARN  mise version 2026.9.1 available
+mise WARN  To update, run mise self-update
+RUN: relay-packaging
+PASS: relay-packaging (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-packaging.log)
+RUN: validation-contract-tests
+PASS: validation-contract-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/validation-contract-tests.log)
+RUN: deterministic-generation
+PASS: deterministic-generation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/deterministic-generation.log)
+RUN: macos-target-builds-and-contracts
+PASS: macos-target-builds-and-contracts (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-target-builds-and-contracts.log)
+RUN: core-boundaries
+PASS: core-boundaries (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/core-boundaries.log)
+RUN: swift-testing
+PASS: swift-testing (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-testing.log)
+RUN: swift-release-build
+PASS: swift-release-build (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-release-build.log)
+RUN: native-packaging
+PASS: native-packaging (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/native-packaging.log)
+RUN: legacy-clone
+PASS: legacy-clone (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-clone.log)
+RUN: legacy-checkout
+PASS: legacy-checkout (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-checkout.log)
+RUN: legacy-preservation
+PASS: legacy-preservation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-preservation.log)
+RUN: legacy-guard-tests
+PASS: legacy-guard-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-guard-tests.log)
+RUN: migration-isolation
+PASS: migration-isolation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/migration-isolation.log)
+RUN: migration-isolation-negative-tests
+PASS: migration-isolation-negative-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/migration-isolation-negative-tests.log)
+RUN: legacy-swift-test
+PASS: legacy-swift-test (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-swift-test.log)
+RUN: legacy-swift-release-build
+PASS: legacy-swift-release-build (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-swift-release-build.log)
+NOT RUN: production signing, physical Gate P0, Developer ID archive, notarization, and DMG publication require credentials or belong to downstream release gates.
+NOT RUN: ReluxProxyIOS and ReluxProxyIOSTunnel are deferred by ADR-024/ADR-027 and must remain absent from the macOS-only graph.
+PASS: credential-free generated-project validation
+metadata: .temp/TASK-260715-sbrrp7/credential-free-validation/environment.log
+logs: .temp/TASK-260715-sbrrp7/credential-free-validation/logs
+[exit 0]
+
+
+FILE reused-evidence.log
+
+completion-01.log
+n-contract-tests.log)
+RUN: deterministic-generation
+PASS: deterministic-generation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/deterministic-generation.log)
+RUN: macos-target-builds-and-contracts
+PASS: macos-target-builds-and-contracts (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-target-builds-and-contracts.log)
+RUN: core-boundaries
+PASS: core-boundaries (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/core-boundaries.log)
+RUN: swift-testing
+PASS: swift-testing (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-testing.log)
+RUN: swift-release-build
+PASS: swift-release-build (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-release-build.log)
+RUN: native-packaging
+PASS: native-packaging (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/native-packaging.log)
+RUN: legacy-clone
+PASS: legacy-clone (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-clone.log)
+RUN: legacy-checkout
+PASS: legacy-checkout (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-checkout.log)
+RUN: legacy-preservation
+PASS: legacy-preservation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-preservation.log)
+RUN: legacy-guard-tests
+PASS: legacy-guard-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-guard-tests.log)
+RUN: migration-isolation
+PASS: migration-isolation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/migration-isolation.log)
+RUN: migration-isolation-negative-tests
+PASS: migration-isolation-negative-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/migration-isolation-negative-tests.log)
+RUN: legacy-swift-test
+PASS: legacy-swift-test (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-swift-test.log)
+RUN: legacy-swift-release-build
+PASS: legacy-swift-release-build (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-swift-release-build.log)
+NOT RUN: production signing, physical Gate P0, Developer ID archive, notarization, and DMG publication require credentials or belong to downstream release gates.
+NOT RUN: ReluxProxyIOS and ReluxProxyIOSTunnel are deferred by ADR-024/ADR-027 and must remain absent from the macOS-only graph.
+PASS: credential-free generated-project validation
+metadata: .temp/TASK-260715-sbrrp7/credential-free-validation/environment.log
+logs: .temp/TASK-260715-sbrrp7/credential-free-validation/logs
+exit=0
+
+
+focused-runtime.log
+stem status" passed after 0.025 seconds.
+􁁛  Test "provider message timeout cancellation and late response cannot publish capability" passed after 0.025 seconds.
+􁁛  Test "nil wrong-request corrupt unsupported future-schema and mismatched snapshots stay unknown" passed after 0.025 seconds.
+􁁛  Test "synchronous start errors use stable mappings" passed after 0.026 seconds.
+􁁛  Test "concurrent starts create exactly one usable runtime" passed after 0.025 seconds.
+􁁛  Test "stop timeout never claims cleanup and cancellation does not issue another stop" passed after 0.026 seconds.
+􁁛  Test "start preflight maps every system status without duplicate start calls" passed after 0.026 seconds.
+􁁛  Test "stop maps every status and never duplicates the stop call" passed after 0.025 seconds.
+􁁛  Test "a fresh generation readmits provider failure after the previous handoff" with 2 test cases passed after 0.027 seconds.
+􁁛  Test "duplicate concurrent nil-handler and retired-generation callbacks stay isolated" with 2 test cases passed after 0.027 seconds.
+􁁛  Suite "VPN session controller" passed after 0.028 seconds.
+􁁛  Test "malformed future mutating and missing-request inputs receive one bounded error" with 2 test cases passed after 0.027 seconds.
+􁁛  Test "invalid SSH profiles stop at coordinator before Keychain and network fakes" passed after 0.029 seconds.
+􁁛  Test "every public Apple stop reason maps identically" with 2 test cases passed after 0.031 seconds.
+􁁛  Test "repeated stop and health races clean exactly one generation" passed after 0.035 seconds.
+􁁛  Test "one hundred cycles release every runtime and callback gate" with 2 test cases passed after 0.037 seconds.
+􁁛  Test "fifty sequential double failures always deliver the first call error" with 2 test cases passed after 0.038 seconds.
+􁁛  Test "concurrent updates and requests return consistent bounded snapshots" passed after 0.043 seconds.
+􁁛  Test "both roots route exactly the four read-only v1 commands" with 2 test cases passed after 0.063 seconds.
+􁁛  Suite "Provider adapter contracts" passed after 0.064 seconds.
+􁁛  Test "unknown high-cardinality labels are discarded without retention" passed after 0.070 seconds.
+􁁛  Suite "Privacy-safe runtime diagnostics" passed after 0.072 seconds.
+􁁛  Test "one hundred generations return all owned resources to baseline" passed after 0.090 seconds.
+􁁛  Suite "Tunnel runtime coordinator" passed after 0.091 seconds.
+􁁛  Test run with 105 tests in 9 suites passed after 0.092 seconds.
+
+exit=0
+
+
+m0-bindings.log
+es_and_obligations) ... ok
+test_production_entry_point_rejects_one_public_header_byte_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_one_public_header_byte_drift) ... ok
+test_production_entry_point_rejects_one_public_header_lock_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_one_public_header_lock_drift) ... ok
+test_production_entry_point_rejects_retained_niossh_pin_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_retained_niossh_pin_drift) ... ok
+test_production_entry_point_rejects_retained_niossh_source_narrowing (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_retained_niossh_source_narrowing) ... ok
+test_production_entry_point_rejects_selected_license_pin_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_selected_license_pin_drift) ... ok
+test_production_entry_point_rejects_selected_patch_byte_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_selected_patch_byte_drift) ... ok
+test_production_entry_point_rejects_selected_patch_lock_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_selected_patch_lock_drift) ... ok
+test_reopened_or_undeclared_board_evidence_is_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_reopened_or_undeclared_board_evidence_is_rejected) ... ok
+test_repository_pin_drift_is_rejected_at_production_entry_point (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_repository_pin_drift_is_rejected_at_production_entry_point) ... ok
+test_selected_ssh_integrity_bindings_cannot_be_mutated_or_removed (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_selected_ssh_integrity_bindings_cannot_be_mutated_or_removed) ... ok
+test_superseded_evidence_is_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_superseded_evidence_is_rejected) ... ok
+test_unknown_field_and_schema_version_are_rejected (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_unknown_field_and_schema_version_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 68.151s
+
+OK
+exit=0
+
+
+macos-adapter.log
+COMMAND ['swift', 'build', '--target', 'ReluxTunnelMacOSAdapter']
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+[2/2] Emitting module ReluxTunnelMacOSAdapter
+Build of target: 'ReluxTunnelMacOSAdapter' complete! (0.46s)
+
+exit=0
+
+
+ios-adapter.log
+COMMAND ['swift', 'build', '--target', 'ReluxTunnelIOSAdapter']
+[0/1] Planning build
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+Build of target: 'ReluxTunnelIOSAdapter' complete! (0.25s)
+
+exit=0
+
+
+lint.log
+Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json JSON parse exit=0
+Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json JSON parse exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelCore/M1RuntimeComposition.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelHarnessSupport/SmokeCommand.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift']
+exit=0
+['swift', 'format', 'lint', '--strict', 'Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift']
+exit=0
+['bash', '-n', 'scripts/check-core-boundaries.sh']
+exit=0
+['bash', '-n', 'scripts/tests/test-credential-free-validation.sh']
+exit=0
+['bash', '-n', 'scripts/tests/test-migration-isolation-guard.sh']
+exit=0
+['bash', '-n', 'scripts/validate-credential-free.sh']
+exit=0
+task-board.config.json JSON parse exit=0
+
+
+diagram-check.log
+
+exit=0
+
+
+documentation.json
+{
+  "documents": 5,
+  "links": 52,
+  "unresolved": []
+}
+
+accepted-coverage.log
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/M1RuntimeComposition.swift	97	94	96.907216494845358	37	34	91.891891891891902
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift	1043	935	89.645254074784276	344	283	82.267441860465112
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/RuntimeMessageModels.swift	888	866	97.522522522522522	418	391	93.540669856459331
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift	655	624	95.267175572519079	262	241	91.984732824427482
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift	107	85	79.43925233644859	43	34	79.069767441860463
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelHarnessSupport/HarnessRuntime.swift	322	268	83.229813664596278	100	78	78
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift	839	776	92.491060786650763	343	282	82.21574344023324
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift	534	482	90.262172284644194	158	130	82.278481012658233
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift	190	125	65.789473684210535	52	29	55.769230769230774
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift	499	418	83.767535070140269	164	117	71.341463414634148
+selected_lines_coverage=4673/5174=90.31696946269811%
+selected_regions_coverage=1619/1921=84.27902134305049%
+package_line_coverage=52440/56441=92.911181587852795%
+package_region_coverage=14937/17528=85.217937015061622%
+selected_file_count=10
+
+
+system-compare.json
+{
+  "dns": true,
+  "vpn": true,
+  "routes": false
+}
+
+privacy-monitor.json
+{
+  "harness_exit": 0,
+  "monitor_exit": -15,
+  "monitor_stderr": "",
+  "event_counts": {},
+  "mutation_events": 0,
+  "pre": {
+    "rows": 10,
+    "hash": "a1a9ae370a997d84806ec488fc75663a8cf73eba47642463725253f27f12b807"
+  },
+  "post": {
+    "rows": 10,
+    "hash": "a1a9ae370a997d84806ec488fc75663a8cf73eba47642463725253f27f12b807"
+  },
+  "selectors_identical": true,
+  "bound": "Read-only route monitor during deterministic seven-fixture harness only. Earlier whole routing table hash changed; cause unknown. No assertion of machine-wide route immutability."
+}
+
+
+FILE checklist.json
+{"checklist":[{"text":"Verify exact Story branch and dependency terminality without changing product behavior","done":true},{"text":"Reproduce configured completion, focused runtime, harness, adapter, macOS target, documentation, and privacy gates","done":true},{"text":"Attach landing-readiness evidence and publish the story_final Change Request","done":true},{"text":"New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Tests written and passing","done":true},{"text":"Coverage target ~80%+ for affected code","done":true},{"text":"Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, proven by narrowing the gate rather than deleting it","done":true},{"text":"Lint clean","done":true},{"text":"Implementation matches AC","done":true},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":true},{"text":"Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted","done":true},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}],"status":"reviewing"}

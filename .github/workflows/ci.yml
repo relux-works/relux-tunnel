@@ -39,6 +39,10 @@ jobs:
           install: false
           cache: false
 
+      - name: Exercise validation boundary narrowing mutants
+        working-directory: relux-tunnel
+        run: python3 scripts/tests/test_pr6_boundary_mutants.py
+
       - name: Run the local credential-free gate
         working-directory: relux-tunnel
         run: make credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"
@@ -90,26 +94,8 @@ jobs:
 
       - name: Check board structure
         run: |
-          python3 - <<'PY'
-          import os, sys
-          root = ".task-board"
-          bad = False
-          if not os.path.isdir(root):
-              print("no .task-board directory"); sys.exit(1)
-          n = 0
-          for dirpath, dirnames, filenames in os.walk(root):
-              # .resources/ holds resource payloads keyed by element id, not board elements
-              if ".resources" in dirnames:
-                  dirnames.remove(".resources")
-              base = os.path.basename(dirpath)
-              if base.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
-                  n += 1
-                  for req in ("README.md", "progress.md"):
-                      if req not in filenames:
-                          print(f"FAIL {dirpath}: missing {req}"); bad = True
-          print(f"checked {n} board elements")
-          sys.exit(1 if bad or n == 0 else 0)
-          PY
+          python3 -m unittest scripts/tests/test_check_board_structure.py
+          python3 scripts/check_board_structure.py
 
   relay-toolchain:
     name: pinned offline relay toolchain

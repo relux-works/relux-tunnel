@@ -1,0 +1,19 @@
+error: generated workspace scheme set does not match the active macOS graph
+expected schemes:
+ReluxProxyMac
+ReluxProxyMacTunnel
+ReluxProxyMacUITests
+ReluxTunnelCore
+ReluxTunnelHarness
+relux-relay
+relux-relay-protocol-test
+actual schemes:
+ReluxProxyIOSUITests
+ReluxProxyMac
+ReluxProxyMacTunnel
+ReluxProxyMacUITests
+ReluxTunnelCore
+ReluxTunnelHarness
+relux-relay
+relux-relay-protocol-test
+mutant_test_exit_code=1

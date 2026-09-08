@@ -1,0 +1,7 @@
+provider_read=success
+composition_root_absent=true
+10:    completionHandler(nil)
+24:    completionHandler()
+lifecycle_shell_completion_search_exit=0
+15:The checked-in generated macOS provider subclass is still a lifecycle shell:
+documented_limitation_search_exit=0

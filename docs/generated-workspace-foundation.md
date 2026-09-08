@@ -324,3 +324,20 @@ legacy `ReluxProxy` sources, defaults, `/usr/bin/ssh` behavior, bundle identity,
 packaging, or release history. No defaults/profile conversion, artifact-name
 takeover, rollback, uninstall, EOL, or user migration is authorized without a
 separate approved migration decision.
+
+### Failed macOS build diagnostics
+
+The macOS target validator retains the four unsigned build logs, target-contract
+test log, and both build-settings logs under
+`.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/`.
+The existing always-upload CI artifact includes that directory. A failed Xcode
+child prints its command, original exit status, log path, and complete captured
+stdout/stderr before the validator exits with the same status. The outer gate
+prints its final 80 lines; the artifact retains the complete child log.
+
+BUG-260908-33iyb1 is a diagnostic repair, not proof that PR 6's hosted build
+failure is fixed. The failing merge revision used Xcode 16.4 / Swift 6.1.2,
+which satisfies the documented Swift tools 6.1 prerequisite. The locally
+validated Xcode 26.5 / Swift 6.3.2 matrix alone does not prove a toolchain
+incompatibility. Preserve the hosted toolchain for the next diagnostic run;
+choose any baseline/configuration or compile repair from its actual error.

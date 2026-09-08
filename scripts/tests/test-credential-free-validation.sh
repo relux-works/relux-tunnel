@@ -30,16 +30,18 @@ adversarial="$work_root/adversarial.log"
 
 write_list "$valid" \
   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
 write_list "$missing" \
   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
 write_list "$unexpected" \
   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
+  UnexpectedScheme
 write_list "$adversarial" \
   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
+  UnexpectedScheme
 
 "$repo_root/scripts/check-workspace-schemes.sh" "$valid" >/dev/null
 for invalid in "$missing" "$unexpected" "$adversarial"; do
@@ -69,5 +71,8 @@ test "$mise_line" -lt "$checksum_line"
 test "$mise_line" -lt "$gate_line"
 
 "$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
+
+python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
+python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
 
 echo "credential-free validation contract tests passed"

@@ -1,0 +1,7 @@
+test_production_entry_point_rejects_selected_patch_byte_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_selected_patch_byte_drift) ... ok
+test_production_entry_point_rejects_one_public_header_byte_drift (scripts.tests.test_m0_production_bindings.M0ProductionBindingsTests.test_production_entry_point_rejects_one_public_header_byte_drift) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.136s
+
+OK

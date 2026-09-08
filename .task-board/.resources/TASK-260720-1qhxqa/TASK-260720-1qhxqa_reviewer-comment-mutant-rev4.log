@@ -1,0 +1,13 @@
+{
+  "failures": [
+    {
+      "detail": "provider direct dependency closure drift: missing=[]; extra=['ReluxTunnelCore']",
+      "row": "REPOSITORY-GRAPH"
+    }
+  ],
+  "manifestSha256": "39b3428d6cf778fa6b682bb0853a177d6b85f03b8062309f0d198dcdfd49fae6",
+  "productionCompositionPermitted": false,
+  "schemaVersion": 1
+}
+REVIEWER_MUTANT_EXIT=1
+REPORT_ASSERT_EXIT=0

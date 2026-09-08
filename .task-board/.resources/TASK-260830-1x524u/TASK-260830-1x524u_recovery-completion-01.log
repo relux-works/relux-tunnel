@@ -1,0 +1,43 @@
+./scripts/validate-credential-free.sh --legacy-root "/Users/iv/Developer/relux-tunnel/../relux-proxy"
+RUN: relay-tool-bootstrap
+PASS: relay-tool-bootstrap (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-tool-bootstrap.log)
+mise WARN  mise version 2026.9.1 available
+mise WARN  To update, run mise self-update
+RUN: relay-packaging
+PASS: relay-packaging (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-packaging.log)
+RUN: validation-contract-tests
+PASS: validation-contract-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/validation-contract-tests.log)
+RUN: deterministic-generation
+PASS: deterministic-generation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/deterministic-generation.log)
+RUN: macos-target-builds-and-contracts
+PASS: macos-target-builds-and-contracts (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-target-builds-and-contracts.log)
+RUN: core-boundaries
+PASS: core-boundaries (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/core-boundaries.log)
+RUN: swift-testing
+PASS: swift-testing (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-testing.log)
+RUN: swift-release-build
+PASS: swift-release-build (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-release-build.log)
+RUN: native-packaging
+PASS: native-packaging (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/native-packaging.log)
+RUN: legacy-clone
+PASS: legacy-clone (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-clone.log)
+RUN: legacy-checkout
+PASS: legacy-checkout (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-checkout.log)
+RUN: legacy-preservation
+PASS: legacy-preservation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-preservation.log)
+RUN: legacy-guard-tests
+PASS: legacy-guard-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-guard-tests.log)
+RUN: migration-isolation
+PASS: migration-isolation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/migration-isolation.log)
+RUN: migration-isolation-negative-tests
+PASS: migration-isolation-negative-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/migration-isolation-negative-tests.log)
+RUN: legacy-swift-test
+PASS: legacy-swift-test (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-swift-test.log)
+RUN: legacy-swift-release-build
+PASS: legacy-swift-release-build (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/legacy-swift-release-build.log)
+NOT RUN: production signing, physical Gate P0, Developer ID archive, notarization, and DMG publication require credentials or belong to downstream release gates.
+NOT RUN: ReluxProxyIOS and ReluxProxyIOSTunnel are deferred by ADR-024/ADR-027 and must remain absent from the macOS-only graph.
+PASS: credential-free generated-project validation
+metadata: .temp/TASK-260715-sbrrp7/credential-free-validation/environment.log
+logs: .temp/TASK-260715-sbrrp7/credential-free-validation/logs
+exit=0

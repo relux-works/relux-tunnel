@@ -1,0 +1,6 @@
+[31m[PARENT_STATUS_MISMATCH][0m STORY-260715-1zzt0c: status backlog does not match child aggregate development; update the parent status or correct child statuses
+[31m[PARENT_STATUS_MISMATCH][0m STORY-260715-1y04r0: status to-dev does not match child aggregate development; update the parent status or correct child statuses
+[31m[PARENT_STATUS_MISMATCH][0m STORY-260717-1ecq74: status backlog does not match child aggregate development; update the parent status or correct child statuses
+
+3 issue(s) found.
+TASK_BOARD_VALIDATE_EXIT=0

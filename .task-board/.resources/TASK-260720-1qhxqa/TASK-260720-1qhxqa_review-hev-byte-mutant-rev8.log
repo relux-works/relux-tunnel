@@ -1,0 +1,10 @@
+{
+  "failures": [],
+  "manifestSha256": "0deddb2a2692cecb17a0650741f74577c945600de97c9a41970b035b452f0361",
+  "productionCompositionPermitted": true,
+  "schemaVersion": 1
+}
+MUTANT_EXIT=0
+MUTATED_FILE=.temp/TASK-260720-1qhxqa-review/hev-byte-mutant.NUDIUN/NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework/macos-arm64_x86_64/libhev-socks5-tunnel.a
+ORIGINAL_SIZE=1351136
+MUTATED_SIZE=1351137

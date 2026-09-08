@@ -1,0 +1,12 @@
+validatorExit=1
+{
+  "failures": [
+    {
+      "detail": "retained ReluxNIOSSH tree bytes drift",
+      "row": "REPOSITORY-SSH-PIN"
+    }
+  ],
+  "manifestSha256": "cd2caaa59eeb6efa22e732310f59544b88303b0afd3a2b938e1a88ea912d869a",
+  "productionCompositionPermitted": false,
+  "schemaVersion": 1
+}

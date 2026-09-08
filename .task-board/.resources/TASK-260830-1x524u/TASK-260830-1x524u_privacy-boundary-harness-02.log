@@ -1,0 +1,40 @@
+swift test --filter M1RuntimeHarnessTests
+[0/1] Planning build
+Building for debugging...
+[0/6] Write swift-version-45881B103DA9D485.txt
+[2/5] Emitting module ReluxTunnelHarnessSupport
+Build complete! (1.92s)
+Test Suite 'Selected tests' started at 2026-08-30 12:55:57.184.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-08-30 12:55:57.191.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-08-30 12:55:57.191.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-08-30 12:55:57.191.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.007) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "M1 composed runtime harness" started.
+􀟈  Test "production command completes traffic, diagnostics, host-loss, stop, and repeated cleanup" started.
+􁁛  Test "production command completes traffic, diagnostics, host-loss, stop, and repeated cleanup" passed after 0.015 seconds.
+􀟈  Test "production command emits stable codes for every mandatory failure scenario" started.
+􁁛  Test "production command emits stable codes for every mandatory failure scenario" passed after 0.003 seconds.
+􀟈  Test "HarnessApplication.run requires coordinator-observed SSH loss before mandatory exit" started.
+􁁛  Test "HarnessApplication.run requires coordinator-observed SSH loss before mandatory exit" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run requires coordinator-observed DNS loss before mandatory exit" started.
+􁁛  Test "HarnessApplication.run requires coordinator-observed DNS loss before mandatory exit" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run forwards after releasing its real composition bootstrap owner" started.
+􁁛  Test "HarnessApplication.run forwards after releasing its real composition bootstrap owner" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run production gate admits exact repetition bound and rejects narrower violations" started.
+􁁛  Test "HarnessApplication.run production gate admits exact repetition bound and rejects narrower violations" passed after 0.009 seconds.
+􁁛  Suite "M1 composed runtime harness" passed after 0.033 seconds.
+􁁛  Test run with 6 tests in 1 suite passed after 0.033 seconds.
+swift build --product ReluxTunnelHarness
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version-45881B103DA9D485.txt
+[2/4] Emitting module ReluxTunnelHarnessSupport
+Build of product 'ReluxTunnelHarness' complete! (1.16s)
+python3 scripts/validate-m1-runtime-harness.py \
+		--executable .build/debug/ReluxTunnelHarness \
+		--output .temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json
+m1 runtime fixtures: passed=True fixtures=7 report=.temp/TASK-260715-m8bi8i/m1-runtime-fixture-report.json

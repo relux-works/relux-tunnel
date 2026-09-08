@@ -8,10 +8,10 @@ backlog
 2026-07-15T00:46:31Z
 
 ## Last Update
-2026-08-22T20:29:59Z
+2026-09-07T22:27:44Z
 
 ## Blocked By
-- EPIC-260715-2mqgvm
+- TASK-260715-nphtib
 
 ## Blocks
 - EPIC-260715-2lz67t
@@ -37,6 +37,7 @@ spawn run started: [analyst] solution-architect (codex) (run=RUN-260715-7e3c91)
 Solution-architect handoff: refined all five stories and created 54 atomic backlog tasks with explicit in/out scope, five numbered AC, and three task-specific handoff items each. Added 135 direct within-M1 dependencies. Exact M0 handoffs are attached as task precondition resources rather than unfinished cross-epic blockers. Canonical path is shared runtime -> SSH auth -> TCP -> DNS/routing -> provider lifecycle and physical iPhone/Mac acceptance. TASK-260715-1tnjlu is the explicit unblocked resolver-policy decision. Attached canonical plan, decomposition summary, logbook, task-scoped dependency and startup diagrams, and Graphviz environment anomaly. No implementation or source/specification edit was performed.
 agent completed: [analyst] solution-architect (codex) (exit=0)
 spawn run completed: codex (run=RUN-260715-7e3c91, pid=31977, exit=0)
+MACOS-FIRST DEPENDENCY NARROWING 2026-08-30: replace the broad viability/foundation Epic blocker with accepted macOS architecture verification TASK-260715-nphtib. Deferred iOS target work and separate signed-build evidence remain tracked but do not block SPM M1 implementation under ADR-011.
 
 ## Precondition Resources
 - [EPIC-260715-3810we_product.md](file://EPIC-260715-3810we/EPIC-260715-3810we_product.md) — Product behavior and acceptance

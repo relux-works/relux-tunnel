@@ -1,0 +1,7 @@
+COMMAND ['swift', 'build', '--target', 'ReluxTunnelIOSAdapter']
+[0/1] Planning build
+Building for debugging...
+[0/1] Write swift-version-45881B103DA9D485.txt
+Build of target: 'ReluxTunnelIOSAdapter' complete! (0.25s)
+
+exit=0

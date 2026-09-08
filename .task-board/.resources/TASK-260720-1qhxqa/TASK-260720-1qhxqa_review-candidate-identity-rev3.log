@@ -1,0 +1,4 @@
+py_compile_exit=0
+candidate_diff_check_exit=0
+63fbd075860a0f5f92cac92f5631c6d1b9d499cc5f744bef95b58d61a66e4537  .temp/TASK-260720-1qhxqa-review/candidate.patch
+cr_patch_cmp_exit=0

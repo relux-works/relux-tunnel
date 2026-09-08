@@ -24,6 +24,41 @@ struct SnapshotDiffSupportTests {
     }
   }
 
+  @Test("non-file URLs are refused before reading either image or writing output")
+  func nonFileURLs() throws {
+    let local = URL(filePath: "/nonexistent-snapshot.png")
+    for scheme in ["http", "https", "ftp", "data"] {
+      let remote = try #require(URL(string: "\(scheme)://example.invalid/image.png"))
+      for position in 0..<3 {
+        var urls = [local, local, local]
+        urls[position] = remote
+        do {
+          _ = try SnapshotDiff.compare(
+            reference: urls[0], failed: urls[1], outputDirectory: urls[2])
+          Issue.record("non-file URL was accepted")
+        } catch SnapshotDiffError.nonFileURL(let rejected) {
+          #expect(rejected == remote)
+        } catch {
+          Issue.record("expected nonFileURL before I/O, received \(error)")
+        }
+      }
+    }
+  }
+
+  @Test("identical local images match")
+  func matchingLocalImages() throws {
+    let root = FileManager.default.temporaryDirectory
+      .appendingPathComponent("relux-snapshot-match-\(UUID().uuidString)")
+    defer { try? FileManager.default.removeItem(at: root) }
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    let reference = root.appendingPathComponent("expected.png")
+    try png(color: .blue).write(to: reference)
+    #expect(
+      try SnapshotDiff.compare(
+        reference: reference, failed: reference,
+        outputDirectory: root.appendingPathComponent("artifacts")))
+  }
+
   private func png(color: NSColor) throws -> Data {
     let image = NSImage(size: NSSize(width: 2, height: 2))
     image.lockFocus()

@@ -1,0 +1,57 @@
+{
+  "acceptedResourceBindings": [
+    {
+      "resourceName": "TASK-260715-30zng6_runtime-contract.md",
+      "sha256": "c13bbb54a455da89f3e66121c81532b298eab73fac30b6d14d2e2df43fff8851",
+      "taskId": "TASK-260715-30zng6"
+    },
+    {
+      "resourceName": "TASK-260715-30zng6_review.md",
+      "sha256": "7a64ad098efd8cff52e0c6d144763b29e4d4008aab8e0967ce805c6134b0b756",
+      "taskId": "TASK-260715-30zng6"
+    },
+    {
+      "resourceName": "TASK-260715-nphtib_results.md",
+      "sha256": "63faf7a35b1c3554bbe5c23def6edddb9bc8454d40bfc1fb94071e1461f23ddd",
+      "taskId": "TASK-260715-nphtib"
+    },
+    {
+      "resourceName": "TASK-260715-nphtib_final-delta-review-results.md",
+      "sha256": "d9278fb1baec644d27c2fbd4a263758dee8f583b796f9c8ae7cc5e2e80985679",
+      "taskId": "TASK-260715-nphtib"
+    },
+    {
+      "resourceName": "TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md",
+      "sha256": "f2dc587541386cdc5eb7e10328adda21b8bbba3af32d5c722e62616a2abca173",
+      "taskId": "TASK-260715-2jatnd"
+    },
+    {
+      "resourceName": "TASK-260715-2jatnd_review-verdict-rev2.md",
+      "sha256": "73de6f96adadbd4b9469e26d760c3edbe6bd56120b97ab4f3d752812d3df8246",
+      "taskId": "TASK-260715-2jatnd"
+    },
+    {
+      "resourceName": "TASK-260715-1gjxer_ssh-engine-selection-adr.md",
+      "sha256": "f1d2369a694c7a6f6642cff4324b46a6727b7a6aef3d65a9cf13ee8821ea2282",
+      "taskId": "TASK-260715-1gjxer"
+    },
+    {
+      "resourceName": "TASK-260715-1gjxer_results.md",
+      "sha256": "3583369777a0d897ef2a156ddddeea92cd15b5c0b3b290582015667a37044a31",
+      "taskId": "TASK-260715-1gjxer"
+    }
+  ],
+  "authorityStatuses": {
+    "TASK-260715-1gjxer": "done",
+    "TASK-260715-2jatnd": "done",
+    "TASK-260715-30zng6": "done",
+    "TASK-260715-nphtib": "done"
+  },
+  "manifestSha256": "095372d61bd2baf46a72c701e0b94ee18cece67b8d51d445b30f50e2b5c39c73",
+  "ownerAttachmentSha256": "095372d61bd2baf46a72c701e0b94ee18cece67b8d51d445b30f50e2b5c39c73",
+  "productionCompositionPermitted": true,
+  "result": "pass",
+  "soleConsumerPreconditionSha256": "095372d61bd2baf46a72c701e0b94ee18cece67b8d51d445b30f50e2b5c39c73",
+  "supersession": "all-current"
+}
+exit_code=0

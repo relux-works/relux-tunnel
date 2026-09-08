@@ -1,0 +1,5 @@
+event_type_counts:
+  35 RTM_MISS
+route_mutation_event_count=0
+full_tunnel_state_compare_exit=0
+harness_exit=0

@@ -1,0 +1,3229 @@
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index 1c2359a..3bf0011 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1419,3 +1419,15 @@
+ - REVIEW FINDING: Revision 9 validated the accepted retained ReluxNIOSSH commit, archive, patch, and license metadata but not the checked-in retained source bytes. Narrowing `ReluxPolicies.maximumPayloadBytes` to `1` therefore retained `productionCompositionPermitted=true`.
+ - FIX: The immutable binding now pins the deterministic sorted path/file-SHA-256 identity and exact 148-file count of the retained tree, excluding only build caches. The production call site recomputes both and fails with stable `REPOSITORY-SSH-PIN` evidence on any missing, extra, narrowed, or changed retained file.
+ - NEGATIVE EVIDENCE: The durable reviewer-equivalent narrowing test requires validator exit `1`, `productionCompositionPermitted=false`, and exact `retained ReluxNIOSSH tree bytes drift` detail. No M0 implementation or selection changed.
++
++### 0825 — M0-bound macOS and deterministic harness runtime factories (TASK-260715-3ejhyy)
++- IMPLEMENTATION: The macOS production call site validates the exact accepted manifest SHA-256 and semantic evidence before any component closure runs, derives the accepted packet/HEV/SSH values from that manifest, and creates one fresh coordinator graph per generation. The graph selects `LibSSH2TransportFactory`, the system-domain Keychain resolver, mandatory approved-host-policy and privacy-safe mapper inputs, injected TCP/DNS and network-settings seams, and a bridge-backed M1 packet plane. The deterministic SPM harness implements the same candidate-neutral `TunnelRuntimeFactory` without a production-manifest bypass.
++- OWNERSHIP: Packet-plane `prepare` constructs only Swift owners. The first descriptor, readiness source, private listener, HEV lease/thread, and PacketFlow read remain inside `PacketFlowBridge.start`, reached only by the separate post-settings `activateReads` call. Stop is idempotent; existing coordinator and bridge owners retain reverse cleanup ordering.
++- NEGATIVE EVIDENCE: Runtime tests distinguish absent and unreadable manifests and reject both before every component factory, along with digest narrowing, disabled permission, supersession, selected libssh2 pin drift, and a missing mandatory PacketBridge capability. Dispatch tests admit ordinary TCP CONNECT, route virtual-DNS TCP/UDP to DNS, and reject all other UDP as deferred.
++- VERIFICATION: The focused composition and harness suites pass 10/10; the final full SwiftPM run passes 504 tests in 42 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Strict Swift format, Core boundary guard, 32 M0 binding negatives, accepted manifest/repository validation, native/libssh2 pin inspection, three SPM target builds, and unsigned macOS Debug/Release host/provider generation, target tests, linkage, and graph validation all exit 0. The first focused compile and first lint run exited 1 on test-double types and mechanical formatting, then passed after correction. The first provider gate exited 2 before generation because the task worktree's two-line Tuist pin was untrusted; after explicitly trusting that exact `mise.toml`, pinned Tuist 4.202.5 validation passed.
++- VALIDATION ANOMALY: The first final full SwiftPM run exited 1 when the pre-existing libssh2 pressure fixture observed `.cancelled` instead of `.resourceLimitExceeded` under full-suite concurrency. The exact isolated pressure test then passed 1/1, and an immediate full rerun passed all 504 tests; both the failing and passing logs are retained under `.temp/TASK-260715-3ejhyy/` rather than hiding the transient.
++- REVIEW REWORK: Revision 1 exposed a real production-boundary bypass: the public component factory could return an `SSHBootstrap` that ignored the selected libssh2 transport, approved-host policy, system-domain Keychain resolver, and diagnostic mapper. The production root now constructs one concrete candidate-neutral bootstrap/session itself. Public injections contain only profile/configuration and transport-service seams; the selected security dependencies are root-owned, and the Core boundary exposes only `M1SSHChannelSession` rather than the concrete transport.
++- EXACT-GRAPH EVIDENCE: The macOS smoke now drives the runtime returned by `MacOSProductionDependencyFactory` through immutable profile load, host-policy evaluation, credential lookup, authentication, TCP/DNS prepare, packet preflight, settings application, and packet activation. It proves zero descriptor/listener/HEV/read acquisition through preflight, one acquisition per generation after settings, and reverse idempotent teardown after repeated stop. The deterministic harness drives its own returned runtime through the same lifecycle and cleanup contract.
++- NEGATIVE EVIDENCE: Semantic manifest validation now rejects JSON booleans, fractional numbers, and overflow wherever an integer is required. The Core boundary gate rejects any reintroduced public SSH-bootstrap/security injection and requires the production `makeRuntime` call site to retain all four mandatory selected dependencies. The accepted manifest remains byte-identical at SHA-256 `40333862b46b7af04cdd966ade91e8c9cc917e573c6601e26e7fa956d11ae161`.
++- REWORK VERIFICATION: Focused composition, exact macOS ownership, and exact harness ownership suites pass 13/13. The full SwiftPM suite passes 507 tests in 43 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Core, macOS adapter, and harness-support target builds; strict recursive Swift format; Core/security-boundary checks; accepted M0 validation; all 32 M0 negative tests; native/libssh2 pin checks; `git diff --check`; and unsigned generated macOS host/provider Debug+Release validation all exit 0. Three intermediate compile attempts and the first task-scoped lint correctly exited 1 during the API/test-double rework and remain in `.temp/TASK-260715-3ejhyy/`.
++- BOARD ANOMALY: Final `task-board validate` returned process exit 0 while reporting the owning Story stored as `to-dev` versus child aggregate `development`. The Task checklist and outcome are complete; the parent status is orchestrator-owned and the validation output is retained without calling it clean.
+diff --git a/README.md b/README.md
+index bfb5c8e..1ac83e0 100644
+--- a/README.md
++++ b/README.md
+@@ -43,6 +43,16 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
+ - **M0 bridge baseline**: MTU, socket buffers, batching, HEV settings, session
+   ceiling, memory evidence, and the no-fork disposition are bound by the
+   [`TASK-260715-2jatnd decision`](docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md).
++- **M0 production composition**: `MacOSProductionDependencyFactory` validates
++  the exact accepted binding-manifest digest and semantic gate before creating
++  any concrete dependency. Its public factory surface cannot replace the
++  root-owned selected libssh2 transport, system-domain Keychain resolver,
++  immutable-profile approved-host policy, or privacy-safe diagnostic mapper;
++  only candidate-neutral network, policy-value, TCP/DNS, and settings seams are
++  injected. Packet-plane `prepare` constructs a resource-free private-ingress
++  adapter and bridge owner only; `activateReads` is the separate post-settings
++  call that acquires descriptors, the private listener, the HEV lease/thread,
++  and PacketFlow reads.
+ 
+ ## macOS experiment harness
+ 
+@@ -50,6 +60,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
+ packet, SSH, relay, fault-injection, and metrics experiments without a Network
+ Extension lifecycle or generated workspace. Its support module composes the
+ same `ReluxTunnelCore` runtime contracts used by the providers.
++`DeterministicHarnessSessionFactory` implements the same candidate-neutral
++`TunnelRuntimeFactory` boundary with explicit deterministic substitutions and
++does not accept or bypass a production binding manifest.
+ 
+ The initial stable subcommand is `smoke`. It accepts a versioned JSON document
+ from a file or inline, exercises temporary-file, Unix-socket, and managed-task
+diff --git a/Sources/ReluxTunnelCore/M1RuntimeComposition.swift b/Sources/ReluxTunnelCore/M1RuntimeComposition.swift
+new file mode 100644
+index 0000000..b4d5200
+--- /dev/null
++++ b/Sources/ReluxTunnelCore/M1RuntimeComposition.swift
+@@ -0,0 +1,230 @@
++import Foundation
++
++/// TCP admission used by the private M1 packet ingress. Concrete TCP
++/// implementations remain outside the composition layer.
++public protocol M1TCPIngressConsumer: TCPConsumer {
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel
++}
++
++/// Safe-DNS admission used by the private M1 packet ingress. Only the
++/// composition-owned virtual DNS endpoints are routed here.
++public protocol M1DNSIngressConsumer: DNSConsumer {
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel
++
++  func exchangeUDP(
++    _ query: Data,
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> Data
++}
++
++/// Candidate-neutral channel surface retained by an authenticated M1 SSH
++/// session. TCP and DNS consumers never receive the concrete transport.
++public protocol M1SSHChannelSession: SSHBootstrapSession {
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel
++}
++
++public enum M1PrivateIngressRequest: Sendable {
++  case tcp(destination: TunnelEndpoint, originator: TunnelEndpoint)
++  case udp(
++    payload: Data,
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  )
++}
++
++public enum M1PrivateIngressDispatch: Sendable {
++  case tcp(any SSHByteChannel)
++  case dnsTCP(any SSHByteChannel)
++  case dnsUDP(Data)
++}
++
++public enum M1PrivateIngressError: Error, Equatable, Sendable {
++  case incompatibleTCPConsumer
++  case incompatibleDNSConsumer
++  case generalUDPDeferred
++}
++
++public protocol M1PrivateIngressDispatching: Sendable {
++  func dispatch(_ request: M1PrivateIngressRequest) async throws
++    -> M1PrivateIngressDispatch
++}
++
++/// M1's only private-ingress routing decision.
++///
++/// TCP CONNECT is admitted by TCP except for the explicitly supplied virtual
++/// DNS endpoints. UDP is admitted only for those virtual DNS endpoints; all
++/// other UDP fails closed until the later general-UDP milestone.
++public struct M1PrivateIngressDispatcher: M1PrivateIngressDispatching {
++  private let tcp: any M1TCPIngressConsumer
++  private let dns: any M1DNSIngressConsumer
++  private let virtualDNSEndpoints: Set<TunnelEndpoint>
++
++  public init(
++    tcp: any M1TCPIngressConsumer,
++    dns: any M1DNSIngressConsumer,
++    virtualDNSEndpoints: Set<TunnelEndpoint>
++  ) {
++    self.tcp = tcp
++    self.dns = dns
++    self.virtualDNSEndpoints = virtualDNSEndpoints
++  }
++
++  public func dispatch(
++    _ request: M1PrivateIngressRequest
++  ) async throws -> M1PrivateIngressDispatch {
++    switch request {
++    case .tcp(let destination, let originator):
++      if virtualDNSEndpoints.contains(destination) {
++        return .dnsTCP(
++          try await dns.openTCP(destination: destination, originator: originator)
++        )
++      }
++      return .tcp(
++        try await tcp.openTCP(destination: destination, originator: originator)
++      )
++    case .udp(let payload, let destination, let originator):
++      guard virtualDNSEndpoints.contains(destination) else {
++        throw M1PrivateIngressError.generalUDPDeferred
++      }
++      return .dnsUDP(
++        try await dns.exchangeUDP(
++          payload,
++          destination: destination,
++          originator: originator
++        )
++      )
++    }
++  }
++}
++
++public typealias M1PacketBridgeBuilder =
++  @Sendable (
++    _ ingress: any M1PrivateIngressDispatching,
++    _ runtimeGeneration: UInt64
++  ) throws -> any PacketBridge
++
++/// Resource-free packet-plane preflight.
++///
++/// The builder may construct owners but must not create descriptors, listeners,
++/// native leases/threads, or PacketFlow reads. Those operations belong to the
++/// returned bridge's `start` call, reached only through `activateReads`.
++public struct BridgeBackedM1PacketPlaneFactory: M1PacketPlaneFactory {
++  private let configuration: PacketBridgeConfiguration
++  private let virtualDNSEndpoints: Set<TunnelEndpoint>
++  private let makeBridge: M1PacketBridgeBuilder
++
++  public init(
++    configuration: PacketBridgeConfiguration,
++    virtualDNSEndpoints: Set<TunnelEndpoint>,
++    makeBridge: @escaping M1PacketBridgeBuilder
++  ) {
++    self.configuration = configuration
++    self.virtualDNSEndpoints = virtualDNSEndpoints
++    self.makeBridge = makeBridge
++  }
++
++  public func prepare(
++    configuration: RuntimeConfigurationSnapshot,
++    tcp: any TCPConsumer,
++    dns: any DNSConsumer,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any M1PacketPlaneSession {
++    guard let tcp = tcp as? any M1TCPIngressConsumer else {
++      throw M1PrivateIngressError.incompatibleTCPConsumer
++    }
++    guard let dns = dns as? any M1DNSIngressConsumer else {
++      throw M1PrivateIngressError.incompatibleDNSConsumer
++    }
++    let ingress = M1PrivateIngressDispatcher(
++      tcp: tcp,
++      dns: dns,
++      virtualDNSEndpoints: virtualDNSEndpoints
++    )
++    let bridge = try makeBridge(ingress, runtimeGeneration)
++    return BridgeBackedM1PacketPlaneSession(
++      bridge: bridge,
++      configuration: self.configuration,
++      runtimeGeneration: runtimeGeneration,
++      healthSink: healthSink
++    )
++  }
++}
++
++/// One-generation owner of the accepted PacketBridge.
++public actor BridgeBackedM1PacketPlaneSession: M1PacketPlaneSession {
++  private enum State {
++    case prepared
++    case activating
++    case active
++    case failed
++    case stopped
++  }
++
++  private let bridge: any PacketBridge
++  private let configuration: PacketBridgeConfiguration
++  private let runtimeGeneration: UInt64
++  private let healthSink: any TunnelRuntimeHealthEventSink
++  private var state = State.prepared
++
++  public init(
++    bridge: any PacketBridge,
++    configuration: PacketBridgeConfiguration,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) {
++    self.bridge = bridge
++    self.configuration = configuration
++    self.runtimeGeneration = runtimeGeneration
++    self.healthSink = healthSink
++  }
++
++  public func activateReads(packetFlow: any PacketFlow) async throws {
++    guard state == .prepared else {
++      throw PacketFlowBridgeError.alreadyActive
++    }
++    state = .activating
++    do {
++      _ = try await bridge.start(
++        packetFlow: packetFlow,
++        configuration: configuration
++      )
++      state = .active
++    } catch {
++      state = .failed
++      await healthSink.receive(
++        TunnelRuntimeHealthEvent(
++          runtimeGeneration: runtimeGeneration,
++          component: .packetPlane,
++          health: .unhealthy
++        )
++      )
++      throw error
++    }
++  }
++
++  public func stop() async {
++    guard state != .stopped else { return }
++    await bridge.stop()
++    state = .stopped
++  }
++
++  public func health() async -> TunnelRuntimeComponentHealth {
++    switch state {
++    case .prepared, .activating, .active:
++      .healthy
++    case .failed, .stopped:
++      .unhealthy
++    }
++  }
++}
+diff --git a/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift b/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift
+index ada1c2b..fdfc323 100644
+--- a/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift
++++ b/Sources/ReluxTunnelHarnessSupport/HarnessContracts.swift
+@@ -160,6 +160,44 @@ public struct HarnessCoreComposition: Sendable {
+   }
+ }
+ 
++/// Deterministic SPM root for the same candidate-neutral runtime interface used
++/// by the macOS production factory. Harness composition intentionally has no
++/// production-manifest requirement and supplies all substitutes explicitly.
++public actor DeterministicHarnessSessionFactory: TunnelRuntimeFactory {
++  public typealias GenerationBuilder =
++    @Sendable (
++      _ context: TunnelRuntimeContext,
++      _ runtimeGeneration: UInt64
++    ) async throws -> TunnelRuntimeCoordinatorDependencies
++
++  private let makeDependencies: GenerationBuilder
++  private var latestGeneration: UInt64
++
++  public init(
++    initialGeneration: UInt64 = 0,
++    makeDependencies: @escaping GenerationBuilder
++  ) {
++    latestGeneration = initialGeneration
++    self.makeDependencies = makeDependencies
++  }
++
++  public func makeRuntime(
++    context: TunnelRuntimeContext
++  ) async throws -> any TunnelRuntime {
++    guard latestGeneration < UInt64.max else {
++      throw TunnelRuntimeCoordinatorError.generationExhausted
++    }
++    let generation = latestGeneration + 1
++    let dependencies = try await makeDependencies(context, generation)
++    latestGeneration = generation
++    return TunnelRuntimeCoordinator(
++      runtimeGeneration: generation,
++      context: context,
++      dependencies: dependencies
++    )
++  }
++}
++
+ public struct HarnessCommandContext: Sendable {
+   public let configuration: HarnessConfigurationDocument
+   public let dependencies: HarnessCommandDependencies
+diff --git a/Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift b/Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift
+new file mode 100644
+index 0000000..ca166e9
+--- /dev/null
++++ b/Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift
+@@ -0,0 +1,673 @@
++import CoreFoundation
++import CryptoKit
++import Foundation
++import ReluxTunnelCore
++import ReluxTunnelLibSSH2Adapter
++import ReluxTunnelNativeAdapter
++
++public enum MacOSProductionBindingError: Error, Equatable, Sendable {
++  case manifestAbsent
++  case manifestUnreadable
++  case digestMismatch
++  case malformedManifest
++  case incompatibleSchema
++  case compositionNotPermitted
++  case staleOrSupersededBinding(String)
++  case resourceDigestMismatch(String)
++  case pinMismatch(String)
++  case mandatoryCapabilityMissing(String)
++  case incompatibleBinding(String)
++}
++
++public struct MacOSAcceptedM0Bindings: Sendable {
++  public static let manifestSHA256 =
++    "40333862b46b7af04cdd966ade91e8c9cc917e573c6601e26e7fa956d11ae161"
++
++  public let packetBridgeConfiguration: PacketBridgeConfiguration
++  public let internalSOCKSConfiguration: InternalSOCKSConfiguration
++  public let sshTransportBufferBytes: Int
++  public let sshInitialReceiveWindowBytes: Int
++  public let sshReadBufferBytes: Int
++  public let sshQueuedWriteBytes: Int
++  public let sshWriteCallBytes: Int
++
++  fileprivate init(
++    packetBridgeConfiguration: PacketBridgeConfiguration,
++    internalSOCKSConfiguration: InternalSOCKSConfiguration,
++    sshTransportBufferBytes: Int,
++    sshInitialReceiveWindowBytes: Int,
++    sshReadBufferBytes: Int,
++    sshQueuedWriteBytes: Int,
++    sshWriteCallBytes: Int
++  ) {
++    self.packetBridgeConfiguration = packetBridgeConfiguration
++    self.internalSOCKSConfiguration = internalSOCKSConfiguration
++    self.sshTransportBufferBytes = sshTransportBufferBytes
++    self.sshInitialReceiveWindowBytes = sshInitialReceiveWindowBytes
++    self.sshReadBufferBytes = sshReadBufferBytes
++    self.sshQueuedWriteBytes = sshQueuedWriteBytes
++    self.sshWriteCallBytes = sshWriteCallBytes
++  }
++}
++
++/// Runtime gate for the sole accepted M0 binding artifact.
++///
++/// Production always verifies the immutable artifact digest before decoding.
++/// Semantic validation is intentionally retained as a second fail-closed layer
++/// so a future digest update cannot silently authorize a stale or incomplete
++/// binding shape.
++public enum MacOSProductionBindingManifestValidator {
++  public static func validate(
++    _ data: Data,
++    diagnosticsWindow: Duration
++  ) throws -> MacOSAcceptedM0Bindings {
++    try validate(
++      data,
++      diagnosticsWindow: diagnosticsWindow,
++      expectedDigest: MacOSAcceptedM0Bindings.manifestSHA256
++    )
++  }
++
++  static func validate(
++    _ data: Data,
++    diagnosticsWindow: Duration,
++    expectedDigest: String?
++  ) throws -> MacOSAcceptedM0Bindings {
++    guard !data.isEmpty else { throw MacOSProductionBindingError.manifestAbsent }
++    if let expectedDigest, sha256(data) != expectedDigest {
++      throw MacOSProductionBindingError.digestMismatch
++    }
++    guard diagnosticsWindow > .zero else {
++      throw MacOSProductionBindingError.incompatibleBinding("diagnosticsWindow")
++    }
++
++    let root: [String: Any]
++    do {
++      guard
++        let value = try JSONSerialization.jsonObject(
++          with: data,
++          options: [.fragmentsAllowed]
++        ) as? [String: Any]
++      else {
++        throw MacOSProductionBindingError.malformedManifest
++      }
++      root = value
++    } catch let error as MacOSProductionBindingError {
++      throw error
++    } catch {
++      throw MacOSProductionBindingError.malformedManifest
++    }
++
++    guard int(root["schemaVersion"]) == 1,
++      string(root["schemaIdentifier"]) == "relux.m0-production-bindings/1",
++      string(root["taskId"]) == "TASK-260720-1qhxqa"
++    else {
++      throw MacOSProductionBindingError.incompatibleSchema
++    }
++    guard bool(root["productionCompositionPermitted"]) == true else {
++      throw MacOSProductionBindingError.compositionNotPermitted
++    }
++
++    let runtime = try object(root["runtimeContract"])
++    try validateEvidence(
++      runtime,
++      label: "runtimeContract",
++      taskID: "TASK-260715-30zng6",
++      outcomeDigest: "c13bbb54a455da89f3e66121c81532b298eab73fac30b6d14d2e2df43fff8851",
++      reviewDigest: "7a64ad098efd8cff52e0c6d144763b29e4d4008aab8e0967ce805c6134b0b756"
++    )
++    guard string(runtime["schema"]) == "m1-runtime-contract/1" else {
++      throw MacOSProductionBindingError.incompatibleSchema
++    }
++
++    let inputs = try array(root["acceptedInputs"])
++    guard inputs.count == 3 else {
++      throw MacOSProductionBindingError.incompatibleBinding("acceptedInputs")
++    }
++    var byKind: [String: [String: Any]] = [:]
++    for rawInput in inputs {
++      let input = try object(rawInput)
++      guard let kind = string(input["kind"]), byKind[kind] == nil else {
++        throw MacOSProductionBindingError.incompatibleBinding("acceptedInputs")
++      }
++      byKind[kind] = input
++    }
++
++    let graph = try requiredInput(
++      byKind,
++      kind: "generatedProjectArchitecture",
++      taskID: "TASK-260715-nphtib",
++      outcomeDigest: "63faf7a35b1c3554bbe5c23def6edddb9bc8454d40bfc1fb94071e1461f23ddd",
++      reviewDigest: "d9278fb1baec644d27c2fbd4a263758dee8f583b796f9c8ae7cc5e2e80985679"
++    )
++    try requireCapability(
++      graph,
++      "static HEV and libssh2 linkage with system-only dynamic dependencies"
++    )
++    let graphPins = try object(graph["sourceOrBinaryPins"])
++    try requirePin(
++      graphPins,
++      "acceptedRepositoryRevision",
++      "069e23bdbbef71be194762d275b003a40a6cfc72"
++    )
++    try requirePin(
++      graphPins,
++      "acceptedGraphRevision",
++      "7dc73ac6e7325f86a4a178a0558619f0fc9d1490"
++    )
++
++    let packet = try requiredInput(
++      byKind,
++      kind: "packetBridgeAndHEV",
++      taskID: "TASK-260715-2jatnd",
++      outcomeDigest: "f2dc587541386cdc5eb7e10328adda21b8bbba3af32d5c722e62616a2abca173",
++      reviewDigest: "73de6f96adadbd4b9469e26d760c3edbe6bd56120b97ab4f3d752812d3df8246"
++    )
++    try requireCapability(
++      packet,
++      "public PacketFlowAdapterBoundary and PacketFlowBridge.start call path"
++    )
++    try requireCapability(
++      packet,
++      "single process HEV lease, join-before-close lifecycle, exact traffic accounting, and zero owned-resource cleanup"
++    )
++    let packetPins = try object(packet["sourceOrBinaryPins"])
++    try requirePin(
++      packetPins,
++      "hevSocks5Tunnel",
++      "ad7600497931205105b08367bd1b450048157e40"
++    )
++    try requirePin(
++      packetPins,
++      "hevSocks5Core",
++      "c234519072ff5b928b90b304da9a666bcb440455"
++    )
++    try requirePin(packetPins, "binaryTarget", "HevSocks5Tunnel")
++    let packetBindings = try object(packet["bindings"])
++    guard
++      let mtuBytes = int(packetBindings["mtuBytes"]), mtuBytes == 1_500,
++      let sendBufferBytes = int(packetBindings["socketSendBufferRequestedBytes"]),
++      sendBufferBytes == 32_768,
++      let receiveBufferBytes = int(packetBindings["socketReceiveBufferRequestedBytes"]),
++      receiveBufferBytes == 32_768,
++      let pumpPacketBudget = int(packetBindings["pumpPacketBudget"]), pumpPacketBudget == 64,
++      let pumpTimeBudgetMilliseconds = int(packetBindings["pumpTimeBudgetMilliseconds"]),
++      pumpTimeBudgetMilliseconds == 5,
++      string(packetBindings["hevSocks5UDPMode"]) == "tcp",
++      let taskStackBytes = int(packetBindings["hevTaskStackBytes"]),
++      taskStackBytes == 24_576,
++      let tcpBufferBytes = int(packetBindings["hevTCPBufferBytesPerSession"]),
++      tcpBufferBytes == 4_096,
++      let udpCopyBufferCount = int(packetBindings["hevUDPCopyBufferCount"]),
++      udpCopyBufferCount == 2,
++      let maximumSessionCount = int(packetBindings["hevMaximumSessionCount"]),
++      maximumSessionCount == 500
++    else {
++      throw MacOSProductionBindingError.incompatibleBinding("packetBridgeAndHEV")
++    }
++
++    let ssh = try requiredInput(
++      byKind,
++      kind: "sshEngine",
++      taskID: "TASK-260715-1gjxer",
++      outcomeDigest: "f1d2369a694c7a6f6642cff4324b46a6727b7a6aef3d65a9cf13ee8821ea2282",
++      reviewDigest: "3583369777a0d897ef2a156ddddeea92cd15b5c0b3b290582015667a37044a31"
++    )
++    try requireCapability(
++      ssh,
++      "host-key policy receives raw evidence before credential lookup and fails closed"
++    )
++    try requireCapability(
++      ssh,
++      "real relux-server compatibility through the selected LibSSH2TransportFactory"
++    )
++    let sshPins = try object(ssh["sourceOrBinaryPins"])
++    try requirePin(sshPins, "selectedAdapter", "ReluxTunnelLibSSH2Adapter")
++    try requirePin(sshPins, "binaryTarget", "ReluxLibSSH2")
++    try requirePin(
++      sshPins,
++      "libssh2Commit",
++      "a34302491c164d53c900fec9b3cbb050ecebe719"
++    )
++    try requirePin(
++      sshPins,
++      "libssh2ArchiveSha256",
++      "744ba3e9a8e7a877038e94a74459340052a105ad599605a5b6d0d6bc5ec2c87c"
++    )
++    try requirePin(sshPins, "opensslTag", "openssl-3.5.7")
++    try requirePin(
++      sshPins,
++      "patchSha256",
++      "79e2464813e3c3add9486b2fb8c9e50004b48b246bbc771b5dd1675a152fa30e"
++    )
++    let sshBindings = try object(ssh["bindings"])
++    let receiveWindow = try object(sshBindings["initialReceiveWindowBytes"])
++    guard
++      let transportBufferBytes = int(sshBindings["transportBufferBytes"]),
++      transportBufferBytes == 65_536,
++      let readBufferBytes = int(sshBindings["readBufferBytes"]),
++      readBufferBytes == 16_384,
++      let queuedWriteBytes = int(sshBindings["queuedWriteBytes"]),
++      queuedWriteBytes == 32_768,
++      let writeCallBytes = int(sshBindings["writeCallBytes"]),
++      writeCallBytes == 8_192,
++      int(sshBindings["pendingOperationLimit"]) == 64,
++      let initialReceiveWindowBytes = int(receiveWindow["acceptedM0Value"]),
++      initialReceiveWindowBytes == 65_536
++    else {
++      throw MacOSProductionBindingError.incompatibleBinding("sshEngine")
++    }
++
++    let checks = try array(root["compatibilityChecks"]).map(object)
++    let requiredChecks: Set<String> = [
++      "M1-CONTRACT-SCHEMA", "M1-GRAPH-DIRECTION", "M1-CANDIDATE-NEUTRAL-CORE",
++      "M1-PACKET-ACTIVATION-ORDER", "M1-SSH-BEFORE-ROUTES", "M1-BOUND-VALUES",
++      "M1-DEFERRED-NOT-PROMOTED", "M1-SOLE-BINDING-SOURCE",
++    ]
++    let passingChecks = Set(
++      checks.compactMap { check -> String? in
++        guard string(check["result"]) == "pass" else { return nil }
++        return string(check["id"])
++      }
++    )
++    guard passingChecks == requiredChecks else {
++      throw MacOSProductionBindingError.mandatoryCapabilityMissing(
++        "compatibilityChecks"
++      )
++    }
++
++    let consumer = try object(root["consumerContract"])
++    guard
++      string(consumer["taskId"]) == "TASK-260715-3ejhyy",
++      string(consumer["soleM0BindingSource"])
++        == "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json",
++      string(consumer["productionCallSite"])?.contains("before construction") == true,
++      string(consumer["failureBehavior"])?.contains("do not construct") == true
++    else {
++      throw MacOSProductionBindingError.incompatibleBinding("consumerContract")
++    }
++
++    return MacOSAcceptedM0Bindings(
++      packetBridgeConfiguration: PacketBridgeConfiguration(
++        mtu: mtuBytes,
++        sendBufferBytes: sendBufferBytes,
++        receiveBufferBytes: receiveBufferBytes,
++        maximumWorkCount: pumpPacketBudget,
++        workTimeBudget: .milliseconds(pumpTimeBudgetMilliseconds),
++        diagnosticsWindow: diagnosticsWindow
++      ),
++      internalSOCKSConfiguration: InternalSOCKSConfiguration(
++        mtuBytes: mtuBytes,
++        taskStackSizeBytes: taskStackBytes,
++        tcpBufferSizeBytes: tcpBufferBytes,
++        udpCopyBufferCount: udpCopyBufferCount,
++        maximumSessionCount: maximumSessionCount
++      ),
++      sshTransportBufferBytes: transportBufferBytes,
++      sshInitialReceiveWindowBytes: initialReceiveWindowBytes,
++      sshReadBufferBytes: readBufferBytes,
++      sshQueuedWriteBytes: queuedWriteBytes,
++      sshWriteCallBytes: writeCallBytes
++    )
++  }
++
++  private static func validateEvidence(
++    _ evidence: [String: Any],
++    label: String,
++    taskID: String,
++    outcomeDigest: String,
++    reviewDigest: String
++  ) throws {
++    guard string(evidence["taskId"]) == taskID else {
++      throw MacOSProductionBindingError.incompatibleBinding(label)
++    }
++    if let digest = string(evidence["sha256"]) {
++      guard digest == outcomeDigest else {
++        throw MacOSProductionBindingError.resourceDigestMismatch(label)
++      }
++    } else {
++      let outcome = try object(evidence["acceptedOutcome"])
++      guard string(outcome["sha256"]) == outcomeDigest else {
++        throw MacOSProductionBindingError.resourceDigestMismatch(label)
++      }
++    }
++    let verdict = try object(evidence["reviewerVerdict"])
++    guard string(verdict["sha256"]) == reviewDigest else {
++      throw MacOSProductionBindingError.resourceDigestMismatch(label)
++    }
++    guard string(verdict["verdict"]) == "accepted" else {
++      throw MacOSProductionBindingError.staleOrSupersededBinding(label)
++    }
++    let supersession = try object(evidence["supersession"])
++    guard string(supersession["status"]) == "current",
++      supersession["supersededBy"] is NSNull
++    else {
++      throw MacOSProductionBindingError.staleOrSupersededBinding(label)
++    }
++  }
++
++  private static func requiredInput(
++    _ inputs: [String: [String: Any]],
++    kind: String,
++    taskID: String,
++    outcomeDigest: String,
++    reviewDigest: String
++  ) throws -> [String: Any] {
++    guard let input = inputs[kind] else {
++      throw MacOSProductionBindingError.incompatibleBinding(kind)
++    }
++    try validateEvidence(
++      input,
++      label: kind,
++      taskID: taskID,
++      outcomeDigest: outcomeDigest,
++      reviewDigest: reviewDigest
++    )
++    return input
++  }
++
++  private static func requireCapability(
++    _ input: [String: Any],
++    _ capability: String
++  ) throws {
++    let capabilities = try array(input["requiredCapabilities"])
++    guard capabilities.contains(where: { string($0) == capability }) else {
++      throw MacOSProductionBindingError.mandatoryCapabilityMissing(capability)
++    }
++  }
++
++  private static func requirePin(
++    _ pins: [String: Any],
++    _ name: String,
++    _ value: String
++  ) throws {
++    guard string(pins[name]) == value else {
++      throw MacOSProductionBindingError.pinMismatch(name)
++    }
++  }
++
++  private static func sha256(_ data: Data) -> String {
++    SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
++  }
++
++  private static func object(_ value: Any?) throws -> [String: Any] {
++    guard let value = value as? [String: Any] else {
++      throw MacOSProductionBindingError.malformedManifest
++    }
++    return value
++  }
++
++  private static func array(_ value: Any?) throws -> [Any] {
++    guard let value = value as? [Any] else {
++      throw MacOSProductionBindingError.malformedManifest
++    }
++    return value
++  }
++
++  private static func string(_ value: Any?) -> String? { value as? String }
++  private static func bool(_ value: Any?) -> Bool? { value as? Bool }
++  private static func int(_ value: Any?) -> Int? {
++    guard let number = value as? NSNumber,
++      CFGetTypeID(number) != CFBooleanGetTypeID()
++    else { return nil }
++    let decimal = number.decimalValue
++    var source = decimal
++    var integral = Decimal()
++    NSDecimalRound(&integral, &source, 0, .plain)
++    guard integral == decimal else { return nil }
++    return Int(NSDecimalNumber(decimal: decimal).stringValue)
++  }
++}
++
++public struct MacOSProductionRuntimeInputs: Sendable {
++  public let diagnosticsWindow: Duration
++  public let virtualDNSEndpoints: Set<TunnelEndpoint>
++  public let maximumPendingPrivateConnections: Int
++  public let privateAuthenticationTimeoutMilliseconds: Int
++
++  public init(
++    diagnosticsWindow: Duration,
++    virtualDNSEndpoints: Set<TunnelEndpoint>,
++    maximumPendingPrivateConnections: Int,
++    privateAuthenticationTimeoutMilliseconds: Int
++  ) {
++    self.diagnosticsWindow = diagnosticsWindow
++    self.virtualDNSEndpoints = virtualDNSEndpoints
++    self.maximumPendingPrivateConnections = maximumPendingPrivateConnections
++    self.privateAuthenticationTimeoutMilliseconds =
++      privateAuthenticationTimeoutMilliseconds
++  }
++}
++
++public struct MacOSProductionComponentFactories: Sendable {
++  public let makeConfigurationSource: @Sendable () throws -> any ConfigurationSnapshotSource
++  public let makeSSHRuntimeServices: @Sendable () throws -> MacOSProductionSSHRuntimeServices
++  public let makeTCPFactory: @Sendable () throws -> any TCPConsumerFactory
++  public let makeDNSFactory: @Sendable () throws -> any DNSConsumerFactory
++  public let makePrivateIngressHandler:
++    @Sendable () throws -> any M1HEVAuthenticatedConnectionHandler
++  public let makeSettingsPlanBuilder: @Sendable () throws -> any NetworkSettingsPlanBuilder
++  public let makeSettingsApplier: @Sendable () throws -> any NetworkSettingsApplier
++  public let makeSnapshotStore: @Sendable () throws -> any RuntimeSnapshotStore
++
++  public init(
++    makeConfigurationSource:
++      @escaping @Sendable () throws
++      -> any ConfigurationSnapshotSource,
++    makeSSHRuntimeServices:
++      @escaping @Sendable () throws
++      -> MacOSProductionSSHRuntimeServices,
++    makeTCPFactory: @escaping @Sendable () throws -> any TCPConsumerFactory,
++    makeDNSFactory: @escaping @Sendable () throws -> any DNSConsumerFactory,
++    makePrivateIngressHandler:
++      @escaping @Sendable () throws
++      -> any M1HEVAuthenticatedConnectionHandler,
++    makeSettingsPlanBuilder:
++      @escaping @Sendable () throws
++      -> any NetworkSettingsPlanBuilder,
++    makeSettingsApplier: @escaping @Sendable () throws -> any NetworkSettingsApplier,
++    makeSnapshotStore: @escaping @Sendable () throws -> any RuntimeSnapshotStore
++  ) {
++    self.makeConfigurationSource = makeConfigurationSource
++    self.makeSSHRuntimeServices = makeSSHRuntimeServices
++    self.makeTCPFactory = makeTCPFactory
++    self.makeDNSFactory = makeDNSFactory
++    self.makePrivateIngressHandler = makePrivateIngressHandler
++    self.makeSettingsPlanBuilder = makeSettingsPlanBuilder
++    self.makeSettingsApplier = makeSettingsApplier
++    self.makeSnapshotStore = makeSnapshotStore
++  }
++}
++
++/// macOS-only production factory entry point.
++///
++/// Manifest validation completes before any component factory closure runs.
++/// Every `makeRuntime` call then creates one fresh coordinator dependency graph
++/// and one monotonically increasing runtime generation.
++public actor MacOSProductionDependencyFactory: TunnelRuntimeFactory {
++  public typealias BindingManifestSource = @Sendable () throws -> Data?
++
++  typealias SelectedSSHBuilder =
++    @Sendable (MacOSAcceptedM0Bindings) -> MacOSSelectedSSHDependencies
++  typealias PacketBridgeBuilder =
++    @Sendable (
++      _ ingress: any M1PrivateIngressDispatching,
++      _ runtimeGeneration: UInt64,
++      _ bindings: MacOSAcceptedM0Bindings,
++      _ inputs: MacOSProductionRuntimeInputs,
++      _ handler: any M1HEVAuthenticatedConnectionHandler,
++      _ environment: TunnelRuntimeDependencies
++    ) throws -> any PacketBridge
++
++  private let bindingManifestSource: BindingManifestSource
++  private let runtimeInputs: MacOSProductionRuntimeInputs
++  private let componentFactories: MacOSProductionComponentFactories
++  private let makeSelectedSSH: SelectedSSHBuilder
++  private let makePacketBridge: PacketBridgeBuilder
++  private var latestGeneration: UInt64
++
++  public init(
++    bindingManifestSource: @escaping BindingManifestSource,
++    runtimeInputs: MacOSProductionRuntimeInputs,
++    componentFactories: MacOSProductionComponentFactories,
++    initialGeneration: UInt64 = 0
++  ) {
++    self.bindingManifestSource = bindingManifestSource
++    self.runtimeInputs = runtimeInputs
++    self.componentFactories = componentFactories
++    makeSelectedSSH = { bindings in
++      MacOSSelectedSSHDependencies(
++        transportFactory: MacOSProviderSSHConfiguration.makeTransportFactory(
++          maximumTransportBufferBytes: bindings.sshTransportBufferBytes
++        ),
++        credentialProvider: MacOSProviderSSHConfiguration.makeCredentialProvider(),
++        makeHostKeyPolicy: {
++          try MacOSProviderSSHConfiguration.makeHostKeyPolicy(snapshot: $0)
++        },
++        mapCredentialError: {
++          MacOSSSHBootstrapErrorMapper.credential($0, configurationGeneration: $1)
++        }
++      )
++    }
++    makePacketBridge = Self.productionPacketBridge
++    latestGeneration = initialGeneration
++  }
++
++  init(
++    bindingManifestSource: @escaping BindingManifestSource,
++    runtimeInputs: MacOSProductionRuntimeInputs,
++    componentFactories: MacOSProductionComponentFactories,
++    initialGeneration: UInt64 = 0,
++    makeSelectedSSH: @escaping SelectedSSHBuilder,
++    makePacketBridge: @escaping PacketBridgeBuilder
++  ) {
++    self.bindingManifestSource = bindingManifestSource
++    self.runtimeInputs = runtimeInputs
++    self.componentFactories = componentFactories
++    self.makeSelectedSSH = makeSelectedSSH
++    self.makePacketBridge = makePacketBridge
++    latestGeneration = initialGeneration
++  }
++
++  public func makeRuntime(
++    context: TunnelRuntimeContext
++  ) async throws -> any TunnelRuntime {
++    let manifest: Data
++    do {
++      guard let loaded = try bindingManifestSource() else {
++        throw MacOSProductionBindingError.manifestAbsent
++      }
++      manifest = loaded
++    } catch let error as MacOSProductionBindingError {
++      throw error
++    } catch {
++      throw MacOSProductionBindingError.manifestUnreadable
++    }
++    let bindings = try MacOSProductionBindingManifestValidator.validate(
++      manifest,
++      diagnosticsWindow: runtimeInputs.diagnosticsWindow
++    )
++    guard runtimeInputs.maximumPendingPrivateConnections > 0,
++      runtimeInputs.privateAuthenticationTimeoutMilliseconds > 0,
++      !runtimeInputs.virtualDNSEndpoints.isEmpty
++    else {
++      throw MacOSProductionBindingError.incompatibleBinding("runtimeInputs")
++    }
++    guard latestGeneration < UInt64.max else {
++      throw TunnelRuntimeCoordinatorError.generationExhausted
++    }
++    let generation = latestGeneration + 1
++
++    let channelPolicy: SSHChannelPolicy
++    do {
++      channelPolicy = try SSHChannelPolicy(
++        initialReceiveWindowBytes: bindings.sshInitialReceiveWindowBytes,
++        consumerReceiveWindowCredit: .unsupported,
++        maximumBufferedReadBytes: bindings.sshReadBufferBytes,
++        maximumQueuedWriteBytes: bindings.sshQueuedWriteBytes,
++        maximumWriteCallBytes: bindings.sshWriteCallBytes
++      )
++    } catch {
++      throw MacOSProductionBindingError.incompatibleBinding("sshChannelPolicy")
++    }
++
++    // Selected security dependencies are root-owned and created only after the
++    // manifest gate. Public component factories cannot replace or omit them.
++    let selectedSSH = makeSelectedSSH(bindings)
++    let configurationSource = try componentFactories.makeConfigurationSource()
++    let sshServices = try componentFactories.makeSSHRuntimeServices()
++    let sshBootstrap = MacOSProductionSSHBootstrap(
++      selected: selectedSSH,
++      services: sshServices,
++      environment: context.dependencies,
++      channelPolicy: channelPolicy
++    )
++    let tcpFactory = try componentFactories.makeTCPFactory()
++    let dnsFactory = try componentFactories.makeDNSFactory()
++    let settingsPlanBuilder = try componentFactories.makeSettingsPlanBuilder()
++    let settingsApplier = try componentFactories.makeSettingsApplier()
++    let snapshotStore = try componentFactories.makeSnapshotStore()
++    let privateIngressHandler = try componentFactories.makePrivateIngressHandler()
++    let environment = context.dependencies
++    let inputs = runtimeInputs
++    let bridgeBuilder = makePacketBridge
++    let packetPlaneFactory = BridgeBackedM1PacketPlaneFactory(
++      configuration: bindings.packetBridgeConfiguration,
++      virtualDNSEndpoints: inputs.virtualDNSEndpoints
++    ) { ingress, _ in
++      try bridgeBuilder(
++        ingress,
++        generation,
++        bindings,
++        inputs,
++        privateIngressHandler,
++        environment
++      )
++    }
++
++    latestGeneration = generation
++    return TunnelRuntimeCoordinator(
++      runtimeGeneration: generation,
++      context: context,
++      dependencies: TunnelRuntimeCoordinatorDependencies(
++        configurationSource: configurationSource,
++        sshBootstrap: sshBootstrap,
++        tcpFactory: tcpFactory,
++        dnsFactory: dnsFactory,
++        packetPlaneFactory: packetPlaneFactory,
++        settingsPlanBuilder: settingsPlanBuilder,
++        settingsApplier: settingsApplier,
++        snapshotStore: snapshotStore
++      )
++    )
++  }
++
++  private static func productionPacketBridge(
++    ingress: any M1PrivateIngressDispatching,
++    runtimeGeneration: UInt64,
++    bindings: MacOSAcceptedM0Bindings,
++    inputs: MacOSProductionRuntimeInputs,
++    handler: any M1HEVAuthenticatedConnectionHandler,
++    environment: TunnelRuntimeDependencies
++  ) throws -> any PacketBridge {
++    let adapter = M1HEVSOCKSConnectionAdapter(ingress: ingress, handler: handler)
++    let boundaryFactory = HEVLoopbackSOCKSBoundaryFactory(
++      adapter: adapter,
++      maximumPendingConnections: inputs.maximumPendingPrivateConnections,
++      authenticationTimeoutMilliseconds: inputs.privateAuthenticationTimeoutMilliseconds
++    )
++    let descriptorConsumer = HEVDescriptorBorrowConsumer(
++      configuration: bindings.internalSOCKSConfiguration,
++      boundaryFactory: boundaryFactory,
++      logger: environment.logger,
++      metrics: environment.metrics
++    )
++    _ = runtimeGeneration
++    return PacketFlowBridge(
++      descriptorConsumer: descriptorConsumer,
++      clock: environment.clock,
++      logger: environment.logger,
++      metrics: environment.metrics
++    )
++  }
++}
+diff --git a/Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift b/Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift
+new file mode 100644
+index 0000000..458ebe1
+--- /dev/null
++++ b/Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift
+@@ -0,0 +1,290 @@
++import Foundation
++import ReluxTunnelCore
++
++/// Immutable profile lookup captured by the provider before runtime startup.
++/// Live provider objects and callbacks never cross this boundary.
++public protocol MacOSProductionSSHProfileSource: Sendable {
++  func loadProfile(
++    for configuration: RuntimeConfigurationSnapshot
++  ) async throws -> SSHProfileSnapshotV1
++}
++
++/// Builds non-secret connection policy from an immutable validated profile.
++/// The production root separately owns transport, host policy, and credentials.
++public protocol MacOSProductionSSHConnectionConfigurationBuilding: Sendable {
++  func makeConnectionConfiguration(
++    profile: SSHProfileSnapshotV1,
++    runtimeConfiguration: RuntimeConfigurationSnapshot,
++    capabilities: SSHAdapterCapabilities
++  ) throws -> SSHConnectionConfiguration
++}
++
++/// Candidate-neutral platform services required by the selected SSH adapter.
++/// Security-critical host-policy and credential dependencies are deliberately
++/// absent: the production root supplies those itself.
++public struct MacOSProductionSSHRuntimeServices: Sendable {
++  public let profileSource: any MacOSProductionSSHProfileSource
++  public let configurationBuilder: any MacOSProductionSSHConnectionConfigurationBuilding
++  public let resolver: any SSHNetworkResolver
++  public let connector: any SSHTCPConnector
++  public let logger: any SSHTransportLogger
++  public let observer: any SSHTransportObserver
++  public let metrics: any SSHTransportMetricsSink
++  public let identityGenerator: any SSHIdentityGenerator
++
++  public init(
++    profileSource: any MacOSProductionSSHProfileSource,
++    configurationBuilder: any MacOSProductionSSHConnectionConfigurationBuilding,
++    resolver: any SSHNetworkResolver,
++    connector: any SSHTCPConnector,
++    logger: any SSHTransportLogger,
++    observer: any SSHTransportObserver,
++    metrics: any SSHTransportMetricsSink,
++    identityGenerator: any SSHIdentityGenerator
++  ) {
++    self.profileSource = profileSource
++    self.configurationBuilder = configurationBuilder
++    self.resolver = resolver
++    self.connector = connector
++    self.logger = logger
++    self.observer = observer
++    self.metrics = metrics
++    self.identityGenerator = identityGenerator
++  }
++}
++
++struct MacOSSelectedSSHDependencies: Sendable {
++  let transportFactory: any SSHTransportFactory
++  let credentialProvider: any SSHCredentialProvider
++  let makeHostKeyPolicy: @Sendable (SSHProfileSnapshotV1) throws -> any SSHHostKeyPolicy
++  let mapCredentialError:
++    @Sendable (MacOSCredentialResolverError, UInt64) -> SSHBootstrapProviderError
++}
++
++struct MacOSProductionSSHBootstrap: SSHBootstrap {
++  let selected: MacOSSelectedSSHDependencies
++  let services: MacOSProductionSSHRuntimeServices
++  let environment: TunnelRuntimeDependencies
++  let channelPolicy: SSHChannelPolicy
++
++  func authenticate(
++    configuration: RuntimeConfigurationSnapshot,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any SSHBootstrapSession {
++    let profile: SSHProfileSnapshotV1
++    do {
++      profile = try await services.profileSource.loadProfile(for: configuration)
++      try Self.validate(profile: profile, runtimeConfiguration: configuration)
++    } catch let error as SSHProfileSnapshotLoaderError {
++      throw SSHBootstrapErrorMapper.profile(
++        error,
++        configurationGeneration: configuration.configurationGeneration
++      )
++    } catch let error as SSHBootstrapProviderError {
++      throw error
++    } catch {
++      throw SSHBootstrapErrorMapper.profile(
++        .profileCorrupt,
++        configurationGeneration: configuration.configurationGeneration
++      )
++    }
++
++    let hostPolicy: any SSHHostKeyPolicy
++    let connectionConfiguration: SSHConnectionConfiguration
++    do {
++      hostPolicy = try selected.makeHostKeyPolicy(profile)
++      connectionConfiguration = try services.configurationBuilder.makeConnectionConfiguration(
++        profile: profile,
++        runtimeConfiguration: configuration,
++        capabilities: selected.transportFactory.capabilities
++      )
++      try Self.validate(
++        connectionConfiguration: connectionConfiguration,
++        profile: profile,
++        runtimeConfiguration: configuration,
++        capabilities: selected.transportFactory.capabilities
++      )
++    } catch let error as SSHBootstrapProviderError {
++      throw error
++    } catch {
++      throw SSHBootstrapErrorMapper.profile(
++        .profileInvalidField(.providerConfiguration),
++        configurationGeneration: configuration.configurationGeneration
++      )
++    }
++
++    let lane = services.identityGenerator.makeLaneIdentity()
++    let dependencies = SSHTransportDependencies(
++      resolver: services.resolver,
++      connector: services.connector,
++      hostKeyPolicy: hostPolicy,
++      credentialProvider: selected.credentialProvider,
++      clock: environment.clock,
++      cancellation: environment.cancellation,
++      logger: services.logger,
++      observer: services.observer,
++      metrics: services.metrics,
++      identityGenerator: services.identityGenerator
++    )
++
++    let transport: any SSHTransport
++    do {
++      transport = try await selected.transportFactory.makeTransport(
++        lane: lane,
++        dependencies: dependencies
++      )
++    } catch {
++      throw Self.map(
++        error,
++        configurationGeneration: configuration.configurationGeneration,
++        selected: selected
++      )
++    }
++
++    do {
++      _ = try await transport.connect(configuration: connectionConfiguration)
++      return MacOSProductionSSHBootstrapSession(
++        transport: transport,
++        connectedEndpoint: connectionConfiguration.endpoint,
++        channelPolicy: channelPolicy,
++        runtimeGeneration: runtimeGeneration,
++        healthSink: healthSink
++      )
++    } catch {
++      await transport.close()
++      throw Self.map(
++        error,
++        configurationGeneration: configuration.configurationGeneration,
++        selected: selected
++      )
++    }
++  }
++
++  private static func validate(
++    profile: SSHProfileSnapshotV1,
++    runtimeConfiguration: RuntimeConfigurationSnapshot
++  ) throws {
++    guard profile.configurationGeneration == runtimeConfiguration.configurationGeneration else {
++      throw SSHProfileSnapshotLoaderError.profileGenerationMismatch
++    }
++    guard profile.profileID == runtimeConfiguration.profileIdentifier else {
++      throw SSHProfileSnapshotLoaderError.profileInvalidField(.profileID)
++    }
++    guard profile.credential.reference == runtimeConfiguration.credentialReference else {
++      throw SSHProfileSnapshotLoaderError.profileInvalidField(.credentialReference)
++    }
++  }
++
++  private static func validate(
++    connectionConfiguration: SSHConnectionConfiguration,
++    profile: SSHProfileSnapshotV1,
++    runtimeConfiguration: RuntimeConfigurationSnapshot,
++    capabilities: SSHAdapterCapabilities
++  ) throws {
++    let algorithms = connectionConfiguration.algorithms
++    guard
++      connectionConfiguration.canonicalHostname == profile.canonicalHost.value,
++      connectionConfiguration.endpoint
++        == TunnelEndpoint(host: profile.canonicalHost.value, port: profile.port),
++      connectionConfiguration.username == profile.account,
++      connectionConfiguration.profileReference.profileIdentifier
++        == runtimeConfiguration.profileIdentifier,
++      connectionConfiguration.credentialReference.rawValue
++        == profile.credential.reference.rawValue.uuidString.lowercased(),
++      connectionConfiguration.credentialGeneration == profile.credential.generation,
++      connectionConfiguration.trustRecordReference?.rawValue
++        == runtimeConfiguration.trustReference.rawValue.uuidString.lowercased(),
++      Set(algorithms.keyExchange).isSubset(of: capabilities.keyExchangeAlgorithms),
++      Set(algorithms.hostKey).isSubset(of: capabilities.hostKeyAlgorithms),
++      Set(algorithms.cipher).isSubset(of: capabilities.cipherAlgorithms),
++      Set(algorithms.mac).isSubset(of: capabilities.macAlgorithms),
++      Set(algorithms.hostKey)
++        == Set(profile.hostPolicy.allowedAlgorithms.map(\.rawValue))
++    else {
++      throw SSHProfileSnapshotLoaderError.profileInvalidField(.providerConfiguration)
++    }
++  }
++
++  private static func map(
++    _ error: any Error,
++    configurationGeneration: UInt64,
++    selected: MacOSSelectedSSHDependencies
++  ) -> SSHBootstrapProviderError {
++    if let error = error as? SSHBootstrapProviderError {
++      return error
++    }
++    if let error = error as? MacOSCredentialResolverError {
++      return selected.mapCredentialError(error, configurationGeneration)
++    }
++    if let error = error as? SSHTransportError {
++      return SSHBootstrapErrorMapper.transport(
++        error,
++        configurationGeneration: configurationGeneration
++      )
++    }
++    return SSHBootstrapErrorMapper.transport(
++      error,
++      stage: .algorithmNegotiation,
++      configurationGeneration: configurationGeneration
++    )
++  }
++}
++
++private actor MacOSProductionSSHBootstrapSession: M1SSHChannelSession {
++  nonisolated let connectedEndpoint: TunnelEndpoint
++
++  private let transport: any SSHTransport
++  private let channelPolicy: SSHChannelPolicy
++  private let runtimeGeneration: UInt64
++  private weak var healthSink: (any TunnelRuntimeHealthEventSink)?
++  private var isClosed = false
++
++  init(
++    transport: any SSHTransport,
++    connectedEndpoint: TunnelEndpoint,
++    channelPolicy: SSHChannelPolicy,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) {
++    self.transport = transport
++    self.connectedEndpoint = connectedEndpoint
++    self.channelPolicy = channelPolicy
++    self.runtimeGeneration = runtimeGeneration
++    self.healthSink = healthSink
++  }
++
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel {
++    guard !isClosed else {
++      throw SSHBootstrapErrorMapper.sessionClose(
++        .transportFailure,
++        configurationGeneration: 0
++      )
++    }
++    return try await transport.openDirectTCPIP(
++      destination: destination,
++      originator: originator,
++      policy: channelPolicy
++    )
++  }
++
++  func close() async {
++    guard !isClosed else { return }
++    isClosed = true
++    await transport.close()
++    await healthSink?.receive(
++      TunnelRuntimeHealthEvent(
++        runtimeGeneration: runtimeGeneration,
++        component: .ssh,
++        health: .unhealthy
++      )
++    )
++  }
++
++  func health() async -> TunnelRuntimeComponentHealth {
++    isClosed ? .unhealthy : .healthy
++  }
++}
+diff --git a/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift b/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift
+index 404cf94..090a233 100644
+--- a/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift
++++ b/Sources/ReluxTunnelNativeAdapter/HEVSOCKSBoundary.swift
+@@ -1,6 +1,7 @@
+ import Darwin
+ import Dispatch
+ import Foundation
++import ReluxTunnelCore
+ 
+ public protocol HEVSOCKSConnectionAdapter: Sendable {
+   /// Receives an authenticated, exclusively owned channel positioned at the
+@@ -8,6 +9,36 @@ public protocol HEVSOCKSConnectionAdapter: Sendable {
+   func acceptAuthenticatedConnection(_ channel: HEVSOCKSChannel)
+ }
+ 
++/// Parser/connection owner selected by the TCP/DNS implementation task. It is
++/// invoked only after the loopback listener has authenticated a connection.
++public protocol M1HEVAuthenticatedConnectionHandler: Sendable {
++  func acceptAuthenticatedConnection(
++    _ channel: HEVSOCKSChannel,
++    ingress: any M1PrivateIngressDispatching
++  )
++}
++
++/// Resource-free adapter between the accepted HEV boundary and M1 ingress.
++/// Construction performs no socket, listener, thread, lease, or read work.
++public final class M1HEVSOCKSConnectionAdapter: HEVSOCKSConnectionAdapter,
++  @unchecked Sendable
++{
++  private let ingress: any M1PrivateIngressDispatching
++  private let handler: any M1HEVAuthenticatedConnectionHandler
++
++  public init(
++    ingress: any M1PrivateIngressDispatching,
++    handler: any M1HEVAuthenticatedConnectionHandler
++  ) {
++    self.ingress = ingress
++    self.handler = handler
++  }
++
++  public func acceptAuthenticatedConnection(_ channel: HEVSOCKSChannel) {
++    handler.acceptAuthenticatedConnection(channel, ingress: ingress)
++  }
++}
++
+ public final class HEVSOCKSChannel: @unchecked Sendable {
+   private let lock = NSLock()
+   private var descriptor: Int32?
+diff --git a/Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift b/Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift
+new file mode 100644
+index 0000000..2e328ed
+--- /dev/null
++++ b/Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift
+@@ -0,0 +1,663 @@
++import Foundation
++import Testing
++
++@testable import ReluxTunnelCore
++@testable import ReluxTunnelMacOSAdapter
++@testable import ReluxTunnelNativeAdapter
++
++@Suite("M1 runtime composition")
++struct M1RuntimeCompositionTests {
++  @Test("accepted binding manifest resolves exact M0 values")
++  func acceptedManifest() throws {
++    let bindings = try MacOSProductionBindingManifestValidator.validate(
++      manifestData(),
++      diagnosticsWindow: .seconds(2)
++    )
++
++    #expect(bindings.packetBridgeConfiguration.mtu == 1_500)
++    #expect(bindings.packetBridgeConfiguration.sendBufferBytes == 32_768)
++    #expect(bindings.packetBridgeConfiguration.receiveBufferBytes == 32_768)
++    #expect(bindings.packetBridgeConfiguration.maximumWorkCount == 64)
++    #expect(bindings.packetBridgeConfiguration.workTimeBudget == .milliseconds(5))
++    #expect(bindings.internalSOCKSConfiguration.taskStackSizeBytes == 24_576)
++    #expect(bindings.internalSOCKSConfiguration.maximumSessionCount == 500)
++    #expect(bindings.sshTransportBufferBytes == 65_536)
++    #expect(bindings.sshInitialReceiveWindowBytes == 65_536)
++  }
++
++  @Test("production digest gate rejects a narrowed manifest")
++  func digestGateRejectsNarrowing() throws {
++    var bytes = manifestData()
++    bytes[bytes.startIndex] ^= 0x01
++    #expect(throws: MacOSProductionBindingError.digestMismatch) {
++      try MacOSProductionBindingManifestValidator.validate(
++        bytes,
++        diagnosticsWindow: .seconds(2)
++      )
++    }
++  }
++
++  @Test("semantic gates reject disabled permit, supersession, pin drift, and missing capability")
++  func semanticNegativeEvidence() throws {
++    let disabled = try mutatedManifest { root in
++      root["productionCompositionPermitted"] = false
++    }
++    #expect(throws: MacOSProductionBindingError.compositionNotPermitted) {
++      try semanticValidation(disabled)
++    }
++
++    let superseded = try mutatedManifest { root in
++      var inputs = root["acceptedInputs"] as! [[String: Any]]
++      var ssh = inputs[2]
++      ssh["supersession"] = ["status": "superseded", "supersededBy": "TASK-x"]
++      inputs[2] = ssh
++      root["acceptedInputs"] = inputs
++    }
++    #expect(
++      throws: MacOSProductionBindingError.staleOrSupersededBinding("sshEngine")
++    ) {
++      try semanticValidation(superseded)
++    }
++
++    let pinDrift = try mutatedManifest { root in
++      var inputs = root["acceptedInputs"] as! [[String: Any]]
++      var ssh = inputs[2]
++      var pins = ssh["sourceOrBinaryPins"] as! [String: Any]
++      pins["libssh2Commit"] = String(repeating: "0", count: 40)
++      ssh["sourceOrBinaryPins"] = pins
++      inputs[2] = ssh
++      root["acceptedInputs"] = inputs
++    }
++    #expect(throws: MacOSProductionBindingError.pinMismatch("libssh2Commit")) {
++      try semanticValidation(pinDrift)
++    }
++
++    let missingCapability = try mutatedManifest { root in
++      var inputs = root["acceptedInputs"] as! [[String: Any]]
++      var packet = inputs[1]
++      var capabilities = packet["requiredCapabilities"] as! [String]
++      capabilities.removeAll {
++        $0 == "public PacketFlowAdapterBoundary and PacketFlowBridge.start call path"
++      }
++      packet["requiredCapabilities"] = capabilities
++      inputs[1] = packet
++      root["acceptedInputs"] = inputs
++    }
++    #expect(
++      throws: MacOSProductionBindingError.mandatoryCapabilityMissing(
++        "public PacketFlowAdapterBoundary and PacketFlowBridge.start call path"
++      )
++    ) {
++      try semanticValidation(missingCapability)
++    }
++  }
++
++  @Test("semantic integer gate rejects booleans, fractions, and overflow")
++  func semanticIntegerTypes() throws {
++    for invalidSchemaVersion: Any in [true, 1.5, 1e100] {
++      let manifest = try mutatedManifest { root in
++        root["schemaVersion"] = invalidSchemaVersion
++      }
++      #expect(throws: MacOSProductionBindingError.incompatibleSchema) {
++        try semanticValidation(manifest)
++      }
++    }
++
++    for invalidMTU: Any in [true, 1_500.5, 1e100] {
++      let manifest = try mutatedManifest { root in
++        var inputs = root["acceptedInputs"] as! [[String: Any]]
++        var packet = inputs[1]
++        var bindings = packet["bindings"] as! [String: Any]
++        bindings["mtuBytes"] = invalidMTU
++        packet["bindings"] = bindings
++        inputs[1] = packet
++        root["acceptedInputs"] = inputs
++      }
++      #expect(
++        throws: MacOSProductionBindingError.incompatibleBinding("packetBridgeAndHEV")
++      ) {
++        try semanticValidation(manifest)
++      }
++    }
++  }
++
++  @Test("production call site constructs nothing before manifest validation")
++  func invalidManifestCannotConstructGraph() async throws {
++    let probe = CompositionFactoryProbe()
++    let factory = productionFactory(
++      manifest: Data("{}".utf8),
++      probe: probe
++    )
++
++    await #expect(throws: MacOSProductionBindingError.digestMismatch) {
++      _ = try await factory.makeRuntime(context: runtimeContext())
++    }
++    #expect(probe.totalFactoryCalls == 0)
++  }
++
++  @Test("production distinguishes absent and unreadable manifests before construction")
++  func absentAndUnreadableManifests() async throws {
++    let absentProbe = CompositionFactoryProbe()
++    let absent = productionFactory(manifestSource: { nil }, probe: absentProbe)
++    await #expect(throws: MacOSProductionBindingError.manifestAbsent) {
++      _ = try await absent.makeRuntime(context: runtimeContext())
++    }
++    #expect(absentProbe.totalFactoryCalls == 0)
++
++    let unreadableProbe = CompositionFactoryProbe()
++    let unreadable = productionFactory(
++      manifestSource: { throw CompositionTestError.unreadable },
++      probe: unreadableProbe
++    )
++    await #expect(throws: MacOSProductionBindingError.manifestUnreadable) {
++      _ = try await unreadable.makeRuntime(context: runtimeContext())
++    }
++    #expect(unreadableProbe.totalFactoryCalls == 0)
++  }
++
++  @Test("production creates one selected object graph per runtime generation")
++  func productionGraphPerGeneration() async throws {
++    let probe = CompositionFactoryProbe()
++    let factory = productionFactory(manifest: manifestData(), probe: probe)
++
++    let first = try await factory.makeRuntime(context: runtimeContext())
++    let second = try await factory.makeRuntime(context: runtimeContext())
++
++    #expect((first as? TunnelRuntimeCoordinator)?.runtimeGeneration == 1)
++    #expect((second as? TunnelRuntimeCoordinator)?.runtimeGeneration == 2)
++    #expect(probe.configurationSources == 2)
++    #expect(probe.sshRuntimeServices == 2)
++    #expect(probe.tcpFactories == 2)
++    #expect(probe.dnsFactories == 2)
++    #expect(probe.settingsBuilders == 2)
++    #expect(probe.settingsAppliers == 2)
++    #expect(probe.snapshotStores == 2)
++    #expect(probe.privateIngressHandlers == 2)
++  }
++
++  @Test("packet prepare is pure and activation is the only PacketFlow read path")
++  func prepareThenActivate() async throws {
++    let bridge = StartProbeBridge()
++    let tcp = RoutingTCPConsumer()
++    let dns = RoutingDNSConsumer()
++    let factory = BridgeBackedM1PacketPlaneFactory(
++      configuration: packetConfiguration(),
++      virtualDNSEndpoints: [dnsEndpoint]
++    ) { _, _ in bridge }
++    let flow = CountingPacketFlow()
++
++    let session = try await factory.prepare(
++      configuration: runtimeSnapshot(),
++      tcp: tcp,
++      dns: dns,
++      runtimeGeneration: 1,
++      healthSink: NullHealthSink()
++    )
++    #expect(bridge.startCalls == 0)
++    #expect(flow.readCalls == 0)
++    #expect(await session.health() == .healthy)
++
++    await #expect(throws: CompositionTestError.activationProbe) {
++      try await session.activateReads(packetFlow: flow)
++    }
++    #expect(bridge.startCalls == 1)
++    #expect(flow.readCalls == 1)
++    #expect(await session.health() == .unhealthy)
++
++    await session.stop()
++    await session.stop()
++    #expect(bridge.stopCalls == 1)
++    #expect(await session.health() == .unhealthy)
++  }
++
++  @Test("private ingress sends only virtual DNS UDP to DNS")
++  func dnsOnlyUDPDispatch() async throws {
++    let tcp = RoutingTCPConsumer()
++    let dns = RoutingDNSConsumer()
++    let dispatcher = M1PrivateIngressDispatcher(
++      tcp: tcp,
++      dns: dns,
++      virtualDNSEndpoints: [dnsEndpoint]
++    )
++    let origin = TunnelEndpoint(host: "198.51.100.7", port: 49_152)
++    let web = TunnelEndpoint(host: "203.0.113.9", port: 443)
++
++    if case .tcp = try await dispatcher.dispatch(
++      .tcp(destination: web, originator: origin)
++    ) {
++    } else {
++      Issue.record("ordinary TCP was not routed to TCP")
++    }
++    if case .dnsTCP = try await dispatcher.dispatch(
++      .tcp(destination: dnsEndpoint, originator: origin)
++    ) {
++    } else {
++      Issue.record("virtual DNS TCP was not routed to DNS")
++    }
++    if case .dnsUDP(let response) = try await dispatcher.dispatch(
++      .udp(payload: Data([1, 2]), destination: dnsEndpoint, originator: origin)
++    ) {
++      #expect(response == Data([2, 1]))
++    } else {
++      Issue.record("virtual DNS UDP was not routed to DNS")
++    }
++    await #expect(throws: M1PrivateIngressError.generalUDPDeferred) {
++      _ = try await dispatcher.dispatch(
++        .udp(payload: Data([3]), destination: web, originator: origin)
++      )
++    }
++    #expect(tcp.openCalls == 1)
++    #expect(dns.tcpCalls == 1)
++    #expect(dns.udpCalls == 1)
++  }
++
++  private func semanticValidation(_ data: Data) throws -> MacOSAcceptedM0Bindings {
++    try MacOSProductionBindingManifestValidator.validate(
++      data,
++      diagnosticsWindow: .seconds(2),
++      expectedDigest: nil
++    )
++  }
++
++  private func mutatedManifest(
++    _ mutation: (inout [String: Any]) -> Void
++  ) throws -> Data {
++    var root = try #require(
++      JSONSerialization.jsonObject(with: manifestData()) as? [String: Any]
++    )
++    mutation(&root)
++    return try JSONSerialization.data(withJSONObject: root, options: [.sortedKeys])
++  }
++
++  private func productionFactory(
++    manifest: Data,
++    probe: CompositionFactoryProbe
++  ) -> MacOSProductionDependencyFactory {
++    productionFactory(manifestSource: { manifest }, probe: probe)
++  }
++
++  private func productionFactory(
++    manifestSource: @escaping MacOSProductionDependencyFactory.BindingManifestSource,
++    probe: CompositionFactoryProbe
++  ) -> MacOSProductionDependencyFactory {
++    MacOSProductionDependencyFactory(
++      bindingManifestSource: manifestSource,
++      runtimeInputs: MacOSProductionRuntimeInputs(
++        diagnosticsWindow: .seconds(2),
++        virtualDNSEndpoints: [dnsEndpoint],
++        maximumPendingPrivateConnections: 8,
++        privateAuthenticationTimeoutMilliseconds: 1_000
++      ),
++      componentFactories: MacOSProductionComponentFactories(
++        makeConfigurationSource: {
++          probe.recordConfigurationSource()
++          return StubConfigurationSource()
++        },
++        makeSSHRuntimeServices: {
++          probe.recordSSHRuntimeServices()
++          return stubSSHRuntimeServices()
++        },
++        makeTCPFactory: {
++          probe.recordTCPFactory()
++          return StubTCPFactory()
++        },
++        makeDNSFactory: {
++          probe.recordDNSFactory()
++          return StubDNSFactory()
++        },
++        makePrivateIngressHandler: {
++          probe.recordPrivateIngressHandler()
++          return StubPrivateIngressHandler()
++        },
++        makeSettingsPlanBuilder: {
++          probe.recordSettingsBuilder()
++          return StubSettingsPlanBuilder()
++        },
++        makeSettingsApplier: {
++          probe.recordSettingsApplier()
++          return StubSettingsApplier()
++        },
++        makeSnapshotStore: {
++          probe.recordSnapshotStore()
++          return StubSnapshotStore()
++        }
++      )
++    )
++  }
++}
++
++private let dnsEndpoint = TunnelEndpoint(host: "192.0.2.53", port: 53)
++
++private func manifestData() -> Data {
++  let root = URL(fileURLWithPath: #filePath)
++    .deletingLastPathComponent()
++    .deletingLastPathComponent()
++    .deletingLastPathComponent()
++  return try! Data(
++    contentsOf: root.appendingPathComponent(
++      "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json"
++    )
++  )
++}
++
++private func runtimeSnapshot() -> RuntimeConfigurationSnapshot {
++  RuntimeConfigurationSnapshot(
++    configurationGeneration: 1,
++    profileIdentifier: OpaqueProfileIdentifier(
++      UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
++    ),
++    profileRevision: OpaqueProfileRevision(
++      UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
++    ),
++    credentialReference: OpaqueCredentialReference(
++      UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
++    ),
++    trustReference: OpaqueTrustReference(
++      UUID(uuidString: "44444444-4444-4444-4444-444444444444")!
++    )
++  )
++}
++
++private func runtimeContext() -> TunnelRuntimeContext {
++  TunnelRuntimeContext(
++    configuration: TunnelConfiguration(
++      profileReference: TunnelConfigurationReference(
++        profileIdentifier: runtimeSnapshot().profileIdentifier
++      )
++    ),
++    packetFlow: CountingPacketFlow(),
++    dependencies: TunnelRuntimeDependencies(
++      clock: ContinuousTunnelClock(),
++      logger: SilentLogger(),
++      metrics: EmptyMetrics(),
++      cancellation: TaskCancellationChecker(),
++      memoryPressure: NormalMemoryPressure()
++    )
++  )
++}
++
++private func packetConfiguration() -> PacketBridgeConfiguration {
++  PacketBridgeConfiguration(
++    mtu: 1_500,
++    sendBufferBytes: 32_768,
++    receiveBufferBytes: 32_768,
++    maximumWorkCount: 64,
++    workTimeBudget: .milliseconds(5),
++    diagnosticsWindow: .seconds(2)
++  )
++}
++
++private enum CompositionTestError: Error {
++  case notUsed
++  case activationProbe
++  case unreadable
++}
++
++private final class CompositionFactoryProbe: @unchecked Sendable {
++  private let lock = NSLock()
++  private var values: [String: Int] = [:]
++
++  var totalFactoryCalls: Int { lock.withLock { values.values.reduce(0, +) } }
++  var configurationSources: Int { count("configuration") }
++  var sshRuntimeServices: Int { count("sshServices") }
++  var tcpFactories: Int { count("tcp") }
++  var dnsFactories: Int { count("dns") }
++  var privateIngressHandlers: Int { count("ingressHandler") }
++  var settingsBuilders: Int { count("settingsBuilder") }
++  var settingsAppliers: Int { count("settingsApplier") }
++  var snapshotStores: Int { count("snapshot") }
++
++  func recordConfigurationSource() { increment("configuration") }
++  func recordTCPFactory() { increment("tcp") }
++  func recordDNSFactory() { increment("dns") }
++  func recordSSHRuntimeServices() { increment("sshServices") }
++  func recordPrivateIngressHandler() { increment("ingressHandler") }
++  func recordSettingsBuilder() { increment("settingsBuilder") }
++  func recordSettingsApplier() { increment("settingsApplier") }
++  func recordSnapshotStore() { increment("snapshot") }
++
++  private func increment(_ key: String) {
++    lock.withLock { values[key, default: 0] += 1 }
++  }
++
++  private func count(_ key: String) -> Int {
++    lock.withLock { values[key, default: 0] }
++  }
++}
++
++private final class CountingPacketFlow: PacketFlow, @unchecked Sendable {
++  private let lock = NSLock()
++  private var reads = 0
++  var readCalls: Int { lock.withLock { reads } }
++
++  func readPackets() async throws -> PacketReadBatch {
++    lock.withLock { reads += 1 }
++    return PacketReadBatch(results: [])
++  }
++
++  func writePackets(_ packets: [TunnelPacket]) async throws {}
++}
++
++private final class StartProbeBridge: PacketBridge, @unchecked Sendable {
++  private let lock = NSLock()
++  private var starts = 0
++  private var stops = 0
++  var startCalls: Int { lock.withLock { starts } }
++  var stopCalls: Int { lock.withLock { stops } }
++
++  func start(
++    packetFlow: any PacketFlow,
++    configuration: PacketBridgeConfiguration
++  ) async throws -> PacketFlowBridgeRunHandle {
++    lock.withLock { starts += 1 }
++    _ = try await packetFlow.readPackets()
++    throw CompositionTestError.activationProbe
++  }
++
++  func stop() async { lock.withLock { stops += 1 } }
++  func metrics() async -> TunnelMetricsSnapshot {
++    TunnelMetricsSnapshot(schemaVersion: 1, counters: [:], gauges: [:])
++  }
++}
++
++private final class RoutingTCPConsumer: M1TCPIngressConsumer, @unchecked Sendable {
++  private let lock = NSLock()
++  private var opens = 0
++  var openCalls: Int { lock.withLock { opens } }
++
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel {
++    lock.withLock { opens += 1 }
++    return StubSSHByteChannel()
++  }
++
++  func closeAdmission() async {}
++  func stop() async {}
++  func health() async -> TunnelRuntimeComponentHealth { .healthy }
++}
++
++private final class RoutingDNSConsumer: M1DNSIngressConsumer, @unchecked Sendable {
++  private let lock = NSLock()
++  private var tcp = 0
++  private var udp = 0
++  var tcpCalls: Int { lock.withLock { tcp } }
++  var udpCalls: Int { lock.withLock { udp } }
++
++  func openTCP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> any SSHByteChannel {
++    lock.withLock { tcp += 1 }
++    return StubSSHByteChannel()
++  }
++
++  func exchangeUDP(
++    _ query: Data,
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> Data {
++    lock.withLock { udp += 1 }
++    return Data(query.reversed())
++  }
++
++  func closeAdmission() async {}
++  func stop() async {}
++  func health() async -> TunnelRuntimeComponentHealth { .healthy }
++}
++
++private final class StubSSHByteChannel: SSHByteChannel, @unchecked Sendable {
++  let identity = SSHChannelIdentity(
++    rawValue: UUID(uuidString: "55555555-5555-5555-5555-555555555555")!
++  )
++  func read(maximumBytes: Int) async throws -> Data? { nil }
++  func writeSome(_ bytes: Data) async throws -> Int { bytes.count }
++  func finishWriting() async throws {}
++  func receiveWindow() async -> SSHDeferredSemanticReport<SSHReceiveWindowSnapshot> {
++    .unsupported
++  }
++  func cancel() async {}
++  func reset() async {}
++  func close() async {}
++}
++
++private final class NullHealthSink: TunnelRuntimeHealthEventSink, @unchecked Sendable {
++  func receive(_ event: TunnelRuntimeHealthEvent) async {}
++}
++
++private struct StubConfigurationSource: ConfigurationSnapshotSource {
++  func loadValidatedSnapshot(
++    for reference: TunnelConfigurationReference
++  ) async throws -> RuntimeConfigurationSnapshot { throw CompositionTestError.notUsed }
++}
++
++private func stubSSHRuntimeServices() -> MacOSProductionSSHRuntimeServices {
++  MacOSProductionSSHRuntimeServices(
++    profileSource: StubSSHProfileSource(),
++    configurationBuilder: StubSSHConfigurationBuilder(),
++    resolver: StubSSHResolver(),
++    connector: StubSSHConnector(),
++    logger: StubSSHTransportLogger(),
++    observer: StubSSHTransportObserver(),
++    metrics: StubSSHTransportMetrics(),
++    identityGenerator: StubSSHIdentityGenerator()
++  )
++}
++
++private struct StubSSHProfileSource: MacOSProductionSSHProfileSource {
++  func loadProfile(
++    for configuration: RuntimeConfigurationSnapshot
++  ) async throws -> SSHProfileSnapshotV1 { throw CompositionTestError.notUsed }
++}
++
++private struct StubSSHConfigurationBuilder:
++  MacOSProductionSSHConnectionConfigurationBuilding
++{
++  func makeConnectionConfiguration(
++    profile: SSHProfileSnapshotV1,
++    runtimeConfiguration: RuntimeConfigurationSnapshot,
++    capabilities: SSHAdapterCapabilities
++  ) throws -> SSHConnectionConfiguration { throw CompositionTestError.notUsed }
++}
++
++private struct StubSSHResolver: SSHNetworkResolver {
++  func resolve(hostname: String, port: UInt16) async throws -> [SSHResolvedEndpoint] {
++    throw CompositionTestError.notUsed
++  }
++}
++
++private struct StubSSHConnector: SSHTCPConnector {
++  func connect(to endpoint: SSHResolvedEndpoint) async throws -> any SSHTCPConnection {
++    throw CompositionTestError.notUsed
++  }
++}
++
++private struct StubSSHTransportLogger: SSHTransportLogger {
++  func log(level: TunnelLogLevel, event: SSHTransportEvent) async {}
++}
++
++private struct StubSSHTransportObserver: SSHTransportObserver {
++  func observe(_ event: SSHTransportEvent) async {}
++}
++
++private struct StubSSHTransportMetrics: SSHTransportMetricsSink {
++  func record(_ update: SSHMetricUpdate) async {}
++}
++
++private struct StubSSHIdentityGenerator: SSHIdentityGenerator {
++  func makeLaneIdentity() -> SSHLaneIdentity {
++    SSHLaneIdentity(rawValue: UUID(uuidString: "66666666-6666-6666-6666-666666666666")!)
++  }
++
++  func makeSessionIdentity() -> SSHSessionIdentity {
++    SSHSessionIdentity(rawValue: UUID(uuidString: "77777777-7777-7777-7777-777777777777")!)
++  }
++
++  func makeChannelIdentity() -> SSHChannelIdentity {
++    SSHChannelIdentity(rawValue: UUID(uuidString: "88888888-8888-8888-8888-888888888888")!)
++  }
++}
++
++private struct StubPrivateIngressHandler: M1HEVAuthenticatedConnectionHandler {
++  func acceptAuthenticatedConnection(
++    _ channel: HEVSOCKSChannel,
++    ingress: any M1PrivateIngressDispatching
++  ) {
++    channel.close()
++  }
++}
++
++private struct StubTCPFactory: TCPConsumerFactory {
++  func prepare(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any TCPConsumer { throw CompositionTestError.notUsed }
++}
++
++private struct StubDNSFactory: DNSConsumerFactory {
++  func prepareSafeDNS(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any DNSConsumer { throw CompositionTestError.notUsed }
++}
++
++private struct StubSettingsPlan: NetworkSettingsPlan {}
++private struct StubSettingsPlanBuilder: NetworkSettingsPlanBuilder {
++  func makePlan(
++    configuration: RuntimeConfigurationSnapshot,
++    connectedEndpoint: TunnelEndpoint,
++    runtimeGeneration: UInt64
++  ) throws -> any NetworkSettingsPlan { StubSettingsPlan() }
++}
++
++private struct StubSettingsApplier: NetworkSettingsApplier {
++  func apply(_ plan: any NetworkSettingsPlan, runtimeGeneration: UInt64) async throws {}
++  func clear(runtimeGeneration: UInt64) async throws {}
++}
++
++private struct StubSnapshotStore: RuntimeSnapshotStore {
++  func publish(_ snapshot: TunnelRuntimePublishedSnapshot) async {}
++}
++
++private struct SilentLogger: TunnelLogger {
++  func log(
++    level: TunnelLogLevel,
++    message: String,
++    fields: [String: TunnelLogField]
++  ) {}
++}
++
++private actor EmptyMetrics: TunnelMetrics {
++  func incrementCounter(named name: String, by amount: UInt64) {}
++  func setGauge(named name: String, to value: Int64) {}
++  func snapshot() -> TunnelMetricsSnapshot {
++    TunnelMetricsSnapshot(schemaVersion: 1, counters: [:], gauges: [:])
++  }
++}
++
++private struct NormalMemoryPressure: TunnelMemoryPressureSource {
++  func currentPressure() async -> TunnelMemoryPressure { .normal }
++}
+diff --git a/Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift b/Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift
+new file mode 100644
+index 0000000..120410f
+--- /dev/null
++++ b/Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift
+@@ -0,0 +1,697 @@
++import Foundation
++import Testing
++
++@testable import ReluxTunnelCore
++@testable import ReluxTunnelMacOSAdapter
++@testable import ReluxTunnelNativeAdapter
++
++@Suite("macOS production runtime ownership")
++struct MacOSProductionRuntimeOwnershipTests {
++  @Test("exact returned graph authenticates, activates after settings, and releases in reverse")
++  func exactGraphLifecycle() async throws {
++    let trace = ProductionOwnershipTrace()
++    let runtimeConfiguration = ownershipRuntimeConfiguration()
++    let factory = MacOSProductionDependencyFactory(
++      bindingManifestSource: { ownershipManifestData() },
++      runtimeInputs: MacOSProductionRuntimeInputs(
++        diagnosticsWindow: .seconds(2),
++        virtualDNSEndpoints: [TunnelEndpoint(host: "192.0.2.53", port: 53)],
++        maximumPendingPrivateConnections: 8,
++        privateAuthenticationTimeoutMilliseconds: 1_000
++      ),
++      componentFactories: ownershipComponentFactories(
++        trace: trace,
++        runtimeConfiguration: runtimeConfiguration
++      ),
++      makeSelectedSSH: { _ in
++        trace.record("ssh.selection")
++        return MacOSSelectedSSHDependencies(
++          transportFactory: OwnershipSSHTransportFactory(trace: trace),
++          credentialProvider: OwnershipCredentialProvider(trace: trace),
++          makeHostKeyPolicy: { _ in
++            trace.record("ssh.host-policy.create")
++            return OwnershipHostPolicy(trace: trace)
++          },
++          mapCredentialError: {
++            MacOSSSHBootstrapErrorMapper.credential($0, configurationGeneration: $1)
++          }
++        )
++      },
++      makePacketBridge: { _, generation, _, _, _, _ in
++        trace.record("packet.prepare-owner")
++        #expect(generation == 1)
++        return OwnershipPacketBridge(trace: trace)
++      }
++    )
++    let packetFlow = OwnershipPacketFlow(trace: trace)
++    let runtime = try await factory.makeRuntime(
++      context: ownershipRuntimeContext(packetFlow: packetFlow)
++    )
++
++    #expect(trace.count("packet.prepare-owner") == 0)
++    #expect(trace.resourceAcquisitionCount == 0)
++
++    try await runtime.start()
++
++    let startup = trace.events
++    #expect(trace.count("ssh.transport.create") == 1)
++    #expect(trace.count("ssh.host-policy.evaluate") == 1)
++    #expect(trace.count("ssh.credential.lookup") == 1)
++    #expect(trace.count("tcp.prepare") == 1)
++    #expect(trace.count("dns.prepare") == 1)
++    #expect(trace.count("packet.prepare-owner") == 1)
++    #expect(trace.count("packet.descriptor") == 1)
++    #expect(trace.count("packet.hev-lease") == 1)
++    #expect(trace.count("packet.hev-thread") == 1)
++    #expect(trace.count("packet.private-listener") == 1)
++    #expect(trace.count("packet.read") == 1)
++    #expect(
++      startup.firstIndex(of: "settings.apply")! < startup.firstIndex(of: "packet.descriptor")!)
++    #expect(
++      startup.firstIndex(of: "packet.prepare-owner")!
++        < startup.firstIndex(of: "settings.apply")!
++    )
++    #expect(
++      startup[startup.startIndex..<startup.firstIndex(of: "settings.apply")!]
++        .allSatisfy {
++          !$0.hasPrefix("packet.descriptor") && !$0.hasPrefix("packet.hev-")
++            && $0 != "packet.private-listener" && $0 != "packet.read"
++        }
++    )
++
++    await runtime.stop(reason: .userInitiated)
++    await runtime.stop(reason: .userInitiated)
++
++    let cleanup = trace.events
++    assertOrdered(
++      [
++        "tcp.close-admission", "dns.close-admission", "packet.stop", "settings.clear",
++        "dns.stop", "tcp.stop", "ssh.transport.close",
++      ],
++      in: cleanup
++    )
++    #expect(trace.count("packet.stop") == 1)
++    #expect(trace.count("settings.clear") == 1)
++    #expect(trace.count("dns.stop") == 1)
++    #expect(trace.count("tcp.stop") == 1)
++    #expect(trace.count("ssh.transport.close") == 1)
++  }
++
++  private func assertOrdered(_ expected: [String], in actual: [String]) {
++    var previous = -1
++    for event in expected {
++      guard let index = actual.firstIndex(of: event) else {
++        Issue.record("missing lifecycle event: \(event)")
++        return
++      }
++      #expect(index > previous)
++      previous = index
++    }
++  }
++}
++
++private func ownershipComponentFactories(
++  trace: ProductionOwnershipTrace,
++  runtimeConfiguration: RuntimeConfigurationSnapshot
++) -> MacOSProductionComponentFactories {
++  MacOSProductionComponentFactories(
++    makeConfigurationSource: {
++      trace.record("configuration-source.create")
++      return OwnershipConfigurationSource(
++        trace: trace,
++        configuration: runtimeConfiguration
++      )
++    },
++    makeSSHRuntimeServices: {
++      trace.record("ssh.services.create")
++      return MacOSProductionSSHRuntimeServices(
++        profileSource: OwnershipProfileSource(trace: trace),
++        configurationBuilder: OwnershipSSHConfigurationBuilder(trace: trace),
++        resolver: OwnershipResolver(),
++        connector: OwnershipConnector(),
++        logger: OwnershipSSHLogger(),
++        observer: OwnershipSSHObserver(),
++        metrics: OwnershipSSHMetrics(),
++        identityGenerator: OwnershipIdentities()
++      )
++    },
++    makeTCPFactory: {
++      trace.record("tcp.factory.create")
++      return OwnershipTCPFactory(trace: trace)
++    },
++    makeDNSFactory: {
++      trace.record("dns.factory.create")
++      return OwnershipDNSFactory(trace: trace)
++    },
++    makePrivateIngressHandler: {
++      trace.record("packet.handler.create")
++      return OwnershipPrivateIngressHandler()
++    },
++    makeSettingsPlanBuilder: {
++      trace.record("settings.builder.create")
++      return OwnershipSettingsBuilder(trace: trace)
++    },
++    makeSettingsApplier: {
++      trace.record("settings.applier.create")
++      return OwnershipSettingsApplier(trace: trace)
++    },
++    makeSnapshotStore: { OwnershipSnapshotStore() }
++  )
++}
++
++private final class ProductionOwnershipTrace: @unchecked Sendable {
++  private let lock = NSLock()
++  private var recorded: [String] = []
++
++  var events: [String] { lock.withLock { recorded } }
++
++  var resourceAcquisitionCount: Int {
++    lock.withLock {
++      recorded.count {
++        $0 == "packet.descriptor" || $0 == "packet.hev-lease"
++          || $0 == "packet.hev-thread" || $0 == "packet.private-listener"
++          || $0 == "packet.read"
++      }
++    }
++  }
++
++  func record(_ event: String) { lock.withLock { recorded.append(event) } }
++  func count(_ event: String) -> Int { lock.withLock { recorded.count { $0 == event } } }
++}
++
++private struct OwnershipConfigurationSource: ConfigurationSnapshotSource {
++  let trace: ProductionOwnershipTrace
++  let configuration: RuntimeConfigurationSnapshot
++
++  func loadValidatedSnapshot(
++    for reference: TunnelConfigurationReference
++  ) async throws -> RuntimeConfigurationSnapshot {
++    trace.record("configuration.load")
++    return configuration
++  }
++}
++
++private struct OwnershipProfileSource: MacOSProductionSSHProfileSource {
++  let trace: ProductionOwnershipTrace
++
++  func loadProfile(
++    for configuration: RuntimeConfigurationSnapshot
++  ) async throws -> SSHProfileSnapshotV1 {
++    trace.record("ssh.profile.load")
++    return ownershipProfile(configuration: configuration)
++  }
++}
++
++private struct OwnershipSSHConfigurationBuilder:
++  MacOSProductionSSHConnectionConfigurationBuilding
++{
++  let trace: ProductionOwnershipTrace
++
++  func makeConnectionConfiguration(
++    profile: SSHProfileSnapshotV1,
++    runtimeConfiguration: RuntimeConfigurationSnapshot,
++    capabilities: SSHAdapterCapabilities
++  ) throws -> SSHConnectionConfiguration {
++    trace.record("ssh.configuration.build")
++    return try SSHConnectionConfiguration(
++      canonicalHostname: profile.canonicalHost.value,
++      endpoint: TunnelEndpoint(host: profile.canonicalHost.value, port: profile.port),
++      username: profile.account,
++      profileReference: TunnelConfigurationReference(
++        profileIdentifier: runtimeConfiguration.profileIdentifier
++      ),
++      credentialReference: SSHCredentialReference(
++        rawValue: profile.credential.reference.rawValue.uuidString.lowercased()
++      ),
++      credentialGeneration: profile.credential.generation,
++      trustRecordReference: SSHTrustRecordReference(
++        rawValue: runtimeConfiguration.trustReference.rawValue.uuidString.lowercased()
++      ),
++      algorithms: SSHAlgorithmPolicy(
++        keyExchange: ["curve25519-sha256"],
++        hostKey: ["ssh-ed25519"],
++        cipher: ["aes256-ctr"],
++        mac: ["hmac-sha2-256"]
++      ),
++      timeouts: try ownershipTimeouts(),
++      rekey: SSHRekeyPolicy(
++        protectedByteThresholdPerDirection: 4_096,
++        elapsedTimeThreshold: .milliseconds(100),
++        timeout: .seconds(10)
++      ),
++      keepalive: SSHKeepalivePolicy(
++        interval: .seconds(60),
++        replyTimeout: .seconds(10),
++        allowedConsecutiveMisses: 1
++      )
++    )
++  }
++}
++
++private struct OwnershipSSHTransportFactory: SSHTransportFactory {
++  let trace: ProductionOwnershipTrace
++  let capabilities = ownershipCapabilities()
++
++  func makeTransport(
++    lane: SSHLaneIdentity,
++    dependencies: SSHTransportDependencies
++  ) async throws -> any SSHTransport {
++    trace.record("ssh.transport.create")
++    return OwnershipSSHTransport(
++      trace: trace,
++      lane: lane,
++      dependencies: dependencies
++    )
++  }
++}
++
++private actor OwnershipSSHTransport: SSHTransport {
++  let trace: ProductionOwnershipTrace
++  let lane: SSHLaneIdentity
++  let dependencies: SSHTransportDependencies
++  var closed = false
++
++  init(
++    trace: ProductionOwnershipTrace,
++    lane: SSHLaneIdentity,
++    dependencies: SSHTransportDependencies
++  ) {
++    self.trace = trace
++    self.lane = lane
++    self.dependencies = dependencies
++  }
++
++  func connect(configuration: SSHConnectionConfiguration) async throws -> SSHSession {
++    trace.record("ssh.transport.connect")
++    let evidence = try SSHHostKeyEvidence(algorithm: "ssh-ed25519", keyBytes: Data([1]))
++    let input = SSHHostKeyPolicyInput(
++      canonicalHostname: configuration.canonicalHostname,
++      connectedEndpoint: configuration.endpoint,
++      evidence: evidence,
++      lane: lane,
++      trustRecordReference: configuration.trustRecordReference
++    )
++    let decision = try await dependencies.hostKeyPolicy.evaluate(input)
++    let acceptance = try decision.acceptance(for: input)
++    let credential = try await dependencies.credentialProvider.credential(
++      for: SSHCredentialRequest(
++        credentialReference: configuration.credentialReference,
++        credentialGeneration: configuration.credentialGeneration,
++        username: configuration.username,
++        allowedPublicKeyAlgorithms: ["ssh-ed25519"],
++        acceptedHost: acceptance
++      )
++    )
++    credential.retire()
++    trace.record("ssh.transport.ready")
++    return SSHSession(
++      identity: dependencies.identityGenerator.makeSessionIdentity(),
++      acceptedHost: acceptance,
++      negotiatedAlgorithms: ownershipNegotiatedAlgorithms(),
++      keyExchangeGeneration: .unsupported
++    )
++  }
++
++  func openDirectTCPIP(
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint,
++    policy: SSHChannelPolicy
++  ) async throws -> any SSHByteChannel { throw OwnershipError.notUsed }
++
++  func openExecChannel(
++    request: SSHExecRequest,
++    policy: SSHChannelPolicy
++  ) async throws -> any SSHExecChannel { throw OwnershipError.notUsed }
++
++  func upload(_ request: SSHExecUploadRequest) async throws -> SSHExecExit {
++    throw OwnershipError.notUsed
++  }
++
++  func requestRekey(reason: SSHClientRekeyReason) async throws {}
++  func sendKeepalive() async throws -> SSHDeferredSemanticReport<Duration> { .unsupported }
++  func snapshot() async -> SSHTransportSnapshot { ownershipTransportSnapshot(lane: lane) }
++
++  func close() async {
++    guard !closed else { return }
++    closed = true
++    trace.record("ssh.transport.close")
++  }
++}
++
++private struct OwnershipHostPolicy: SSHHostKeyPolicy {
++  let trace: ProductionOwnershipTrace
++
++  func evaluate(_ input: SSHHostKeyPolicyInput) async throws -> SSHHostKeyDecision {
++    trace.record("ssh.host-policy.evaluate")
++    return .acceptMatch(
++      input.trustRecordReference
++        ?? SSHTrustRecordReference(rawValue: "missing-trust-reference")
++    )
++  }
++}
++
++private struct OwnershipCredentialProvider: SSHCredentialProvider {
++  let trace: ProductionOwnershipTrace
++
++  func credential(for request: SSHCredentialRequest) async throws
++    -> any SSHPublicKeyCredential
++  {
++    trace.record("ssh.credential.lookup")
++    return OwnershipCredential()
++  }
++}
++
++private struct OwnershipCredential: SSHPublicKeyCredential {
++  let algorithm = "ssh-ed25519"
++  let publicKeyBytes = Data([1])
++  func sign(_ payload: Data) async throws -> Data { Data([2]) }
++}
++
++private struct OwnershipTCPFactory: TCPConsumerFactory {
++  let trace: ProductionOwnershipTrace
++
++  func prepare(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any TCPConsumer {
++    guard session is any M1SSHChannelSession else { throw OwnershipError.wrongSSHSession }
++    trace.record("tcp.prepare")
++    return OwnershipTCPConsumer(trace: trace)
++  }
++}
++
++private final class OwnershipTCPConsumer: M1TCPIngressConsumer, @unchecked Sendable {
++  let trace: ProductionOwnershipTrace
++  init(trace: ProductionOwnershipTrace) { self.trace = trace }
++  func openTCP(destination: TunnelEndpoint, originator: TunnelEndpoint) async throws
++    -> any SSHByteChannel
++  { throw OwnershipError.notUsed }
++  func closeAdmission() async { trace.record("tcp.close-admission") }
++  func stop() async { trace.record("tcp.stop") }
++  func health() async -> TunnelRuntimeComponentHealth { .healthy }
++}
++
++private struct OwnershipDNSFactory: DNSConsumerFactory {
++  let trace: ProductionOwnershipTrace
++
++  func prepareSafeDNS(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any DNSConsumer {
++    guard session is any M1SSHChannelSession else { throw OwnershipError.wrongSSHSession }
++    trace.record("dns.prepare")
++    return OwnershipDNSConsumer(trace: trace)
++  }
++}
++
++private final class OwnershipDNSConsumer: M1DNSIngressConsumer, @unchecked Sendable {
++  let trace: ProductionOwnershipTrace
++  init(trace: ProductionOwnershipTrace) { self.trace = trace }
++  func openTCP(destination: TunnelEndpoint, originator: TunnelEndpoint) async throws
++    -> any SSHByteChannel
++  { throw OwnershipError.notUsed }
++  func exchangeUDP(
++    _ query: Data,
++    destination: TunnelEndpoint,
++    originator: TunnelEndpoint
++  ) async throws -> Data { throw OwnershipError.notUsed }
++  func closeAdmission() async { trace.record("dns.close-admission") }
++  func stop() async { trace.record("dns.stop") }
++  func health() async -> TunnelRuntimeComponentHealth { .healthy }
++}
++
++private final class OwnershipPacketBridge: PacketBridge, @unchecked Sendable {
++  let trace: ProductionOwnershipTrace
++  private let lock = NSLock()
++  private var stopped = false
++
++  init(trace: ProductionOwnershipTrace) { self.trace = trace }
++
++  func start(
++    packetFlow: any PacketFlow,
++    configuration: PacketBridgeConfiguration
++  ) async throws -> PacketFlowBridgeRunHandle {
++    trace.record("packet.descriptor")
++    trace.record("packet.private-listener")
++    trace.record("packet.hev-lease")
++    trace.record("packet.hev-thread")
++    _ = try await packetFlow.readPackets()
++    return PacketFlowBridgeRunHandle(completion: PacketBridgeRunCompletion())
++  }
++
++  func stop() async {
++    let shouldRecord = lock.withLock { () -> Bool in
++      guard !stopped else { return false }
++      stopped = true
++      return true
++    }
++    if shouldRecord { trace.record("packet.stop") }
++  }
++
++  func metrics() async -> TunnelMetricsSnapshot {
++    TunnelMetricsSnapshot(schemaVersion: 1, counters: [:], gauges: [:])
++  }
++}
++
++private final class OwnershipPacketFlow: PacketFlow, @unchecked Sendable {
++  let trace: ProductionOwnershipTrace
++  init(trace: ProductionOwnershipTrace) { self.trace = trace }
++  func readPackets() async throws -> PacketReadBatch {
++    trace.record("packet.read")
++    return PacketReadBatch(results: [])
++  }
++  func writePackets(_ packets: [TunnelPacket]) async throws {}
++}
++
++private struct OwnershipSettingsPlan: NetworkSettingsPlan {}
++
++private struct OwnershipSettingsBuilder: NetworkSettingsPlanBuilder {
++  let trace: ProductionOwnershipTrace
++  func makePlan(
++    configuration: RuntimeConfigurationSnapshot,
++    connectedEndpoint: TunnelEndpoint,
++    runtimeGeneration: UInt64
++  ) throws -> any NetworkSettingsPlan {
++    trace.record("settings.plan")
++    return OwnershipSettingsPlan()
++  }
++}
++
++private struct OwnershipSettingsApplier: NetworkSettingsApplier {
++  let trace: ProductionOwnershipTrace
++  func apply(_ plan: any NetworkSettingsPlan, runtimeGeneration: UInt64) async throws {
++    trace.record("settings.apply")
++  }
++  func clear(runtimeGeneration: UInt64) async throws { trace.record("settings.clear") }
++}
++
++private struct OwnershipSnapshotStore: RuntimeSnapshotStore {
++  func publish(_ snapshot: TunnelRuntimePublishedSnapshot) async {}
++}
++
++private struct OwnershipPrivateIngressHandler: M1HEVAuthenticatedConnectionHandler {
++  func acceptAuthenticatedConnection(
++    _ channel: HEVSOCKSChannel,
++    ingress: any M1PrivateIngressDispatching
++  ) {
++    channel.close()
++  }
++}
++
++private struct OwnershipResolver: SSHNetworkResolver {
++  func resolve(hostname: String, port: UInt16) async throws -> [SSHResolvedEndpoint] {
++    throw OwnershipError.notUsed
++  }
++}
++
++private struct OwnershipConnector: SSHTCPConnector {
++  func connect(to endpoint: SSHResolvedEndpoint) async throws -> any SSHTCPConnection {
++    throw OwnershipError.notUsed
++  }
++}
++
++private struct OwnershipSSHLogger: SSHTransportLogger {
++  func log(level: TunnelLogLevel, event: SSHTransportEvent) async {}
++}
++
++private struct OwnershipSSHObserver: SSHTransportObserver {
++  func observe(_ event: SSHTransportEvent) async {}
++}
++
++private struct OwnershipSSHMetrics: SSHTransportMetricsSink {
++  func record(_ update: SSHMetricUpdate) async {}
++}
++
++private struct OwnershipIdentities: SSHIdentityGenerator {
++  func makeLaneIdentity() -> SSHLaneIdentity {
++    SSHLaneIdentity(rawValue: UUID(uuidString: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")!)
++  }
++  func makeSessionIdentity() -> SSHSessionIdentity {
++    SSHSessionIdentity(rawValue: UUID(uuidString: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")!)
++  }
++  func makeChannelIdentity() -> SSHChannelIdentity {
++    SSHChannelIdentity(rawValue: UUID(uuidString: "cccccccc-cccc-cccc-cccc-cccccccccccc")!)
++  }
++}
++
++private func ownershipRuntimeConfiguration() -> RuntimeConfigurationSnapshot {
++  RuntimeConfigurationSnapshot(
++    configurationGeneration: 1,
++    profileIdentifier: OpaqueProfileIdentifier(
++      UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
++    ),
++    profileRevision: OpaqueProfileRevision(
++      UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
++    ),
++    credentialReference: OpaqueCredentialReference(
++      UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
++    ),
++    trustReference: OpaqueTrustReference(
++      UUID(uuidString: "44444444-4444-4444-4444-444444444444")!
++    )
++  )
++}
++
++private func ownershipProfile(
++  configuration: RuntimeConfigurationSnapshot
++) -> SSHProfileSnapshotV1 {
++  SSHProfileSnapshotV1(
++    configurationGeneration: configuration.configurationGeneration,
++    profileID: configuration.profileIdentifier,
++    createdAt: SSHProfileTimestamp("2026-08-30T00:00:00.000Z"),
++    updatedAt: SSHProfileTimestamp("2026-08-30T00:00:00.000Z"),
++    displayName: "fixture",
++    canonicalHost: SSHProfileCanonicalHost(kind: .dns, value: "fixture.example"),
++    port: 22,
++    account: "fixture-user",
++    credential: SSHProfileCredentialReferenceV1(
++      reference: configuration.credentialReference,
++      generation: 1
++    ),
++    hostPolicy: SSHHostPolicyV1(allowedAlgorithms: [.sshEd25519], records: [])
++  )
++}
++
++private func ownershipRuntimeContext(
++  packetFlow: any PacketFlow
++) -> TunnelRuntimeContext {
++  TunnelRuntimeContext(
++    configuration: TunnelConfiguration(
++      profileReference: TunnelConfigurationReference(
++        profileIdentifier: ownershipRuntimeConfiguration().profileIdentifier
++      )
++    ),
++    packetFlow: packetFlow,
++    dependencies: TunnelRuntimeDependencies(
++      clock: ContinuousTunnelClock(),
++      logger: OwnershipTunnelLogger(),
++      metrics: OwnershipTunnelMetrics(),
++      cancellation: TaskCancellationChecker(),
++      memoryPressure: OwnershipMemoryPressure()
++    )
++  )
++}
++
++private struct OwnershipTunnelLogger: TunnelLogger {
++  func log(level: TunnelLogLevel, message: String, fields: [String: TunnelLogField]) {}
++}
++
++private actor OwnershipTunnelMetrics: TunnelMetrics {
++  func incrementCounter(named name: String, by amount: UInt64) {}
++  func setGauge(named name: String, to value: Int64) {}
++  func snapshot() -> TunnelMetricsSnapshot {
++    TunnelMetricsSnapshot(schemaVersion: 1, counters: [:], gauges: [:])
++  }
++}
++
++private struct OwnershipMemoryPressure: TunnelMemoryPressureSource {
++  func currentPressure() async -> TunnelMemoryPressure { .normal }
++}
++
++private func ownershipTimeouts() throws -> SSHTimeoutPolicy {
++  try SSHTimeoutPolicy(
++    resolution: .seconds(1),
++    tcpConnect: .seconds(1),
++    initialKeyExchange: .seconds(1),
++    hostDecision: .seconds(1),
++    credentialLookup: .seconds(1),
++    authentication: .seconds(1),
++    channelOpen: .seconds(1),
++    writeCreditWait: .seconds(1),
++    explicitRekey: .seconds(1),
++    keepaliveReply: .seconds(1),
++    execExit: .seconds(1),
++    upload: .seconds(1),
++    channelClose: .seconds(1),
++    transportClose: .seconds(1)
++  )
++}
++
++private func ownershipCapabilities() -> SSHAdapterCapabilities {
++  SSHAdapterCapabilities(
++    features: Set(SSHAdapterFeature.allCases),
++    deferredSemantics: SSHDeferredSemanticCapabilities(
++      consumerDrivenReceiveWindowCredit: .unsupported,
++      rfcChannelOpenFailureReasons: .unsupported,
++      exactExecExitMetadata: .unsupported,
++      deepRekeyAndKeepaliveObservability: .unsupported
++    ),
++    keyExchangeAlgorithms: ["curve25519-sha256"],
++    hostKeyAlgorithms: ["ssh-ed25519"],
++    cipherAlgorithms: ["aes256-ctr"],
++    macAlgorithms: ["hmac-sha2-256"],
++    publicKeyAuthenticationAlgorithms: ["ssh-ed25519"]
++  )
++}
++
++private func ownershipNegotiatedAlgorithms() -> SSHNegotiatedAlgorithms {
++  SSHNegotiatedAlgorithms(
++    keyExchange: "curve25519-sha256",
++    hostKey: "ssh-ed25519",
++    cipherClientToServer: "aes256-ctr",
++    cipherServerToClient: "aes256-ctr",
++    macClientToServer: "hmac-sha2-256",
++    macServerToClient: "hmac-sha2-256"
++  )
++}
++
++private func ownershipTransportSnapshot(lane: SSHLaneIdentity) -> SSHTransportSnapshot {
++  SSHTransportSnapshot(
++    lane: lane,
++    connectionState: .ready,
++    negotiatedAlgorithms: ownershipNegotiatedAlgorithms(),
++    keyExchangeGeneration: .unsupported,
++    counters: SSHTransportCounters(
++      windowAdjustments: .unsupported,
++      windowAdjustmentBytes: .unsupported,
++      serverRekeys: .unsupported,
++      keepalivesAcknowledged: .unsupported,
++      keepalivesTimedOut: .unsupported
++    ),
++    gauges: SSHTransportGauges(
++      remainingReceiveWindowBytes: .unsupported,
++      activeKeyExchange: .unsupported,
++      consecutiveKeepaliveMisses: .unsupported,
++      lastKeepaliveRTTNanoseconds: .unsupported
++    )
++  )
++}
++
++private func ownershipManifestData() -> Data {
++  let root = URL(fileURLWithPath: #filePath)
++    .deletingLastPathComponent()
++    .deletingLastPathComponent()
++    .deletingLastPathComponent()
++  return try! Data(
++    contentsOf: root.appendingPathComponent(
++      "Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json"
++    )
++  )
++}
++
++private enum OwnershipError: Error {
++  case notUsed
++  case wrongSSHSession
++}
+diff --git a/Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift b/Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift
+new file mode 100644
+index 0000000..4e801d9
+--- /dev/null
++++ b/Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift
+@@ -0,0 +1,441 @@
++import Foundation
++import ReluxTunnelCore
++import Testing
++
++@testable import ReluxTunnelHarnessSupport
++
++@Suite("Deterministic harness session factory")
++struct DeterministicSessionFactoryTests {
++  @Test("harness root uses candidate-neutral runtime factory with deterministic generations")
++  func candidateNeutralGenerations() async throws {
++    let probe = HarnessGenerationProbe()
++    let factory = DeterministicHarnessSessionFactory { _, generation in
++      probe.record(generation)
++      return harnessDependencies()
++    }
++    assertCandidateNeutral(factory)
++
++    let first = try await factory.makeRuntime(context: harnessContext())
++    let second = try await factory.makeRuntime(context: harnessContext())
++
++    #expect((first as? TunnelRuntimeCoordinator)?.runtimeGeneration == 1)
++    #expect((second as? TunnelRuntimeCoordinator)?.runtimeGeneration == 2)
++    #expect(probe.generations == [1, 2])
++  }
++
++  @Test("failed deterministic substitution does not consume a generation")
++  func failedSubstitutionDoesNotConsumeGeneration() async throws {
++    let probe = HarnessGenerationProbe(failFirst: true)
++    let factory = DeterministicHarnessSessionFactory { _, generation in
++      try probe.recordOrFail(generation)
++      return harnessDependencies()
++    }
++
++    await #expect(throws: HarnessFactoryTestError.injected) {
++      _ = try await factory.makeRuntime(context: harnessContext())
++    }
++    let retry = try await factory.makeRuntime(context: harnessContext())
++
++    #expect((retry as? TunnelRuntimeCoordinator)?.runtimeGeneration == 1)
++    #expect(probe.generations == [1, 1])
++  }
++
++  @Test("exact harness graph preserves pure prepare and repeated reverse cleanup")
++  func exactHarnessOwnership() async throws {
++    let trace = HarnessOwnershipTrace()
++    let factory = DeterministicHarnessSessionFactory { _, generation in
++      trace.record("graph.create")
++      #expect(generation == 1)
++      return harnessOwnershipDependencies(trace: trace)
++    }
++    let runtime = try await factory.makeRuntime(
++      context: harnessOwnershipContext(trace: trace)
++    )
++
++    #expect(trace.count("packet.prepare") == 0)
++    #expect(trace.count("packet.read") == 0)
++    try await runtime.start()
++
++    let startup = trace.events
++    #expect(trace.count("ssh.authenticate") == 1)
++    #expect(trace.count("tcp.prepare") == 1)
++    #expect(trace.count("dns.prepare") == 1)
++    #expect(trace.count("packet.prepare") == 1)
++    #expect(trace.count("settings.apply") == 1)
++    #expect(trace.count("packet.activate") == 1)
++    #expect(trace.count("packet.read") == 1)
++    #expect(startup.firstIndex(of: "packet.prepare")! < startup.firstIndex(of: "settings.apply")!)
++    #expect(startup.firstIndex(of: "settings.apply")! < startup.firstIndex(of: "packet.activate")!)
++
++    await runtime.stop(reason: .userInitiated)
++    await runtime.stop(reason: .userInitiated)
++
++    assertHarnessOrder(
++      [
++        "tcp.close-admission", "dns.close-admission", "packet.stop", "settings.clear",
++        "dns.stop", "tcp.stop", "ssh.close",
++      ],
++      in: trace.events
++    )
++    #expect(trace.count("packet.stop") == 1)
++    #expect(trace.count("settings.clear") == 1)
++    #expect(trace.count("dns.stop") == 1)
++    #expect(trace.count("tcp.stop") == 1)
++    #expect(trace.count("ssh.close") == 1)
++  }
++
++  private func assertCandidateNeutral(_ factory: any TunnelRuntimeFactory) {}
++}
++
++private func assertHarnessOrder(_ expected: [String], in actual: [String]) {
++  var previous = -1
++  for event in expected {
++    guard let index = actual.firstIndex(of: event) else {
++      Issue.record("missing harness lifecycle event: \(event)")
++      return
++    }
++    #expect(index > previous)
++    previous = index
++  }
++}
++
++private enum HarnessFactoryTestError: Error {
++  case injected
++  case notUsed
++}
++
++private final class HarnessGenerationProbe: @unchecked Sendable {
++  private let lock = NSLock()
++  private var values: [UInt64] = []
++  private var shouldFail: Bool
++
++  init(failFirst: Bool = false) {
++    shouldFail = failFirst
++  }
++
++  var generations: [UInt64] { lock.withLock { values } }
++
++  func record(_ generation: UInt64) {
++    lock.withLock { values.append(generation) }
++  }
++
++  func recordOrFail(_ generation: UInt64) throws {
++    let fail = lock.withLock { () -> Bool in
++      values.append(generation)
++      defer { shouldFail = false }
++      return shouldFail
++    }
++    if fail { throw HarnessFactoryTestError.injected }
++  }
++}
++
++private func harnessContext() -> TunnelRuntimeContext {
++  let profileID = OpaqueProfileIdentifier(
++    UUID(uuidString: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")!
++  )
++  return TunnelRuntimeContext(
++    configuration: TunnelConfiguration(
++      profileReference: TunnelConfigurationReference(profileIdentifier: profileID)
++    ),
++    packetFlow: HarnessFactoryPacketFlow(),
++    dependencies: TunnelRuntimeDependencies(
++      clock: ContinuousTunnelClock(),
++      logger: HarnessFactoryLogger(),
++      metrics: HarnessFactoryMetrics(),
++      cancellation: TaskCancellationChecker(),
++      memoryPressure: HarnessFactoryMemoryPressure()
++    )
++  )
++}
++
++private func harnessDependencies() -> TunnelRuntimeCoordinatorDependencies {
++  TunnelRuntimeCoordinatorDependencies(
++    configurationSource: HarnessFactoryConfigurationSource(),
++    sshBootstrap: HarnessFactorySSHBootstrap(),
++    tcpFactory: HarnessFactoryTCPFactory(),
++    dnsFactory: HarnessFactoryDNSFactory(),
++    packetPlaneFactory: HarnessFactoryPacketPlaneFactory(),
++    settingsPlanBuilder: HarnessFactorySettingsBuilder(),
++    settingsApplier: HarnessFactorySettingsApplier(),
++    snapshotStore: HarnessFactorySnapshotStore()
++  )
++}
++
++private final class HarnessFactoryPacketFlow: PacketFlow, @unchecked Sendable {
++  func readPackets() async throws -> PacketReadBatch { PacketReadBatch(results: []) }
++  func writePackets(_ packets: [TunnelPacket]) async throws {}
++}
++
++private struct HarnessFactoryConfigurationSource: ConfigurationSnapshotSource {
++  func loadValidatedSnapshot(
++    for reference: TunnelConfigurationReference
++  ) async throws -> RuntimeConfigurationSnapshot { throw HarnessFactoryTestError.notUsed }
++}
++
++private struct HarnessFactorySSHBootstrap: SSHBootstrap {
++  func authenticate(
++    configuration: RuntimeConfigurationSnapshot,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any SSHBootstrapSession { throw HarnessFactoryTestError.notUsed }
++}
++
++private struct HarnessFactoryTCPFactory: TCPConsumerFactory {
++  func prepare(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any TCPConsumer { throw HarnessFactoryTestError.notUsed }
++}
++
++private struct HarnessFactoryDNSFactory: DNSConsumerFactory {
++  func prepareSafeDNS(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any DNSConsumer { throw HarnessFactoryTestError.notUsed }
++}
++
++private struct HarnessFactoryPacketPlaneFactory: M1PacketPlaneFactory {
++  func prepare(
++    configuration: RuntimeConfigurationSnapshot,
++    tcp: any TCPConsumer,
++    dns: any DNSConsumer,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any M1PacketPlaneSession { throw HarnessFactoryTestError.notUsed }
++}
++
++private struct HarnessFactorySettingsPlan: NetworkSettingsPlan {}
++private struct HarnessFactorySettingsBuilder: NetworkSettingsPlanBuilder {
++  func makePlan(
++    configuration: RuntimeConfigurationSnapshot,
++    connectedEndpoint: TunnelEndpoint,
++    runtimeGeneration: UInt64
++  ) throws -> any NetworkSettingsPlan { HarnessFactorySettingsPlan() }
++}
++
++private struct HarnessFactorySettingsApplier: NetworkSettingsApplier {
++  func apply(_ plan: any NetworkSettingsPlan, runtimeGeneration: UInt64) async throws {}
++  func clear(runtimeGeneration: UInt64) async throws {}
++}
++
++private struct HarnessFactorySnapshotStore: RuntimeSnapshotStore {
++  func publish(_ snapshot: TunnelRuntimePublishedSnapshot) async {}
++}
++
++private struct HarnessFactoryLogger: TunnelLogger {
++  func log(
++    level: TunnelLogLevel,
++    message: String,
++    fields: [String: TunnelLogField]
++  ) {}
++}
++
++private actor HarnessFactoryMetrics: TunnelMetrics {
++  func incrementCounter(named name: String, by amount: UInt64) {}
++  func setGauge(named name: String, to value: Int64) {}
++  func snapshot() -> TunnelMetricsSnapshot {
++    TunnelMetricsSnapshot(schemaVersion: 1, counters: [:], gauges: [:])
++  }
++}
++
++private struct HarnessFactoryMemoryPressure: TunnelMemoryPressureSource {
++  func currentPressure() async -> TunnelMemoryPressure { .normal }
++}
++
++private final class HarnessOwnershipTrace: @unchecked Sendable {
++  private let lock = NSLock()
++  private var recorded: [String] = []
++  var events: [String] { lock.withLock { recorded } }
++  func record(_ event: String) { lock.withLock { recorded.append(event) } }
++  func count(_ event: String) -> Int { lock.withLock { recorded.count { $0 == event } } }
++}
++
++private func harnessOwnershipContext(trace: HarnessOwnershipTrace) -> TunnelRuntimeContext {
++  TunnelRuntimeContext(
++    configuration: TunnelConfiguration(
++      profileReference: TunnelConfigurationReference(
++        profileIdentifier: harnessOwnershipSnapshot().profileIdentifier
++      )
++    ),
++    packetFlow: HarnessOwnershipPacketFlow(trace: trace),
++    dependencies: TunnelRuntimeDependencies(
++      clock: ContinuousTunnelClock(),
++      logger: HarnessFactoryLogger(),
++      metrics: HarnessFactoryMetrics(),
++      cancellation: TaskCancellationChecker(),
++      memoryPressure: HarnessFactoryMemoryPressure()
++    )
++  )
++}
++
++private func harnessOwnershipDependencies(
++  trace: HarnessOwnershipTrace
++) -> TunnelRuntimeCoordinatorDependencies {
++  TunnelRuntimeCoordinatorDependencies(
++    configurationSource: HarnessOwnershipConfigurationSource(trace: trace),
++    sshBootstrap: HarnessOwnershipSSHBootstrap(trace: trace),
++    tcpFactory: HarnessOwnershipTCPFactory(trace: trace),
++    dnsFactory: HarnessOwnershipDNSFactory(trace: trace),
++    packetPlaneFactory: HarnessOwnershipPacketFactory(trace: trace),
++    settingsPlanBuilder: HarnessOwnershipSettingsBuilder(trace: trace),
++    settingsApplier: HarnessOwnershipSettingsApplier(trace: trace),
++    snapshotStore: HarnessFactorySnapshotStore()
++  )
++}
++
++private func harnessOwnershipSnapshot() -> RuntimeConfigurationSnapshot {
++  RuntimeConfigurationSnapshot(
++    configurationGeneration: 1,
++    profileIdentifier: OpaqueProfileIdentifier(
++      UUID(uuidString: "dddddddd-dddd-dddd-dddd-dddddddddddd")!
++    ),
++    profileRevision: OpaqueProfileRevision(
++      UUID(uuidString: "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee")!
++    ),
++    credentialReference: OpaqueCredentialReference(
++      UUID(uuidString: "ffffffff-ffff-ffff-ffff-ffffffffffff")!
++    ),
++    trustReference: OpaqueTrustReference(
++      UUID(uuidString: "12121212-1212-1212-1212-121212121212")!
++    )
++  )
++}
++
++private struct HarnessOwnershipConfigurationSource: ConfigurationSnapshotSource {
++  let trace: HarnessOwnershipTrace
++  func loadValidatedSnapshot(
++    for reference: TunnelConfigurationReference
++  ) async throws -> RuntimeConfigurationSnapshot {
++    trace.record("configuration.load")
++    return harnessOwnershipSnapshot()
++  }
++}
++
++private struct HarnessOwnershipSSHBootstrap: SSHBootstrap {
++  let trace: HarnessOwnershipTrace
++  func authenticate(
++    configuration: RuntimeConfigurationSnapshot,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any SSHBootstrapSession {
++    trace.record("ssh.authenticate")
++    return HarnessOwnershipSSHSession(trace: trace)
++  }
++}
++
++private actor HarnessOwnershipSSHSession: SSHBootstrapSession {
++  nonisolated let connectedEndpoint = TunnelEndpoint(host: "198.51.100.10", port: 22)
++  let trace: HarnessOwnershipTrace
++  var closed = false
++  init(trace: HarnessOwnershipTrace) { self.trace = trace }
++  func close() async {
++    guard !closed else { return }
++    closed = true
++    trace.record("ssh.close")
++  }
++  func health() async -> TunnelRuntimeComponentHealth { closed ? .unhealthy : .healthy }
++}
++
++private struct HarnessOwnershipTCPFactory: TCPConsumerFactory {
++  let trace: HarnessOwnershipTrace
++  func prepare(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any TCPConsumer {
++    trace.record("tcp.prepare")
++    return HarnessOwnershipTCPConsumer(trace: trace)
++  }
++}
++
++private final class HarnessOwnershipTCPConsumer: TCPConsumer, @unchecked Sendable {
++  let trace: HarnessOwnershipTrace
++  init(trace: HarnessOwnershipTrace) { self.trace = trace }
++  func closeAdmission() async { trace.record("tcp.close-admission") }
++  func stop() async { trace.record("tcp.stop") }
++  func health() async -> TunnelRuntimeComponentHealth { .healthy }
++}
++
++private struct HarnessOwnershipDNSFactory: DNSConsumerFactory {
++  let trace: HarnessOwnershipTrace
++  func prepareSafeDNS(
++    session: any SSHBootstrapSession,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any DNSConsumer {
++    trace.record("dns.prepare")
++    return HarnessOwnershipDNSConsumer(trace: trace)
++  }
++}
++
++private final class HarnessOwnershipDNSConsumer: DNSConsumer, @unchecked Sendable {
++  let trace: HarnessOwnershipTrace
++  init(trace: HarnessOwnershipTrace) { self.trace = trace }
++  func closeAdmission() async { trace.record("dns.close-admission") }
++  func stop() async { trace.record("dns.stop") }
++  func health() async -> TunnelRuntimeComponentHealth { .healthy }
++}
++
++private struct HarnessOwnershipPacketFactory: M1PacketPlaneFactory {
++  let trace: HarnessOwnershipTrace
++  func prepare(
++    configuration: RuntimeConfigurationSnapshot,
++    tcp: any TCPConsumer,
++    dns: any DNSConsumer,
++    runtimeGeneration: UInt64,
++    healthSink: any TunnelRuntimeHealthEventSink
++  ) async throws -> any M1PacketPlaneSession {
++    trace.record("packet.prepare")
++    return HarnessOwnershipPacketSession(trace: trace)
++  }
++}
++
++private actor HarnessOwnershipPacketSession: M1PacketPlaneSession {
++  let trace: HarnessOwnershipTrace
++  var stopped = false
++  init(trace: HarnessOwnershipTrace) { self.trace = trace }
++  func activateReads(packetFlow: any PacketFlow) async throws {
++    trace.record("packet.activate")
++    _ = try await packetFlow.readPackets()
++  }
++  func stop() async {
++    guard !stopped else { return }
++    stopped = true
++    trace.record("packet.stop")
++  }
++  func health() async -> TunnelRuntimeComponentHealth { stopped ? .unhealthy : .healthy }
++}
++
++private final class HarnessOwnershipPacketFlow: PacketFlow, @unchecked Sendable {
++  let trace: HarnessOwnershipTrace
++  init(trace: HarnessOwnershipTrace) { self.trace = trace }
++  func readPackets() async throws -> PacketReadBatch {
++    trace.record("packet.read")
++    return PacketReadBatch(results: [])
++  }
++  func writePackets(_ packets: [TunnelPacket]) async throws {}
++}
++
++private struct HarnessOwnershipSettingsPlan: NetworkSettingsPlan {}
++
++private struct HarnessOwnershipSettingsBuilder: NetworkSettingsPlanBuilder {
++  let trace: HarnessOwnershipTrace
++  func makePlan(
++    configuration: RuntimeConfigurationSnapshot,
++    connectedEndpoint: TunnelEndpoint,
++    runtimeGeneration: UInt64
++  ) throws -> any NetworkSettingsPlan {
++    trace.record("settings.plan")
++    return HarnessOwnershipSettingsPlan()
++  }
++}
++
++private struct HarnessOwnershipSettingsApplier: NetworkSettingsApplier {
++  let trace: HarnessOwnershipTrace
++  func apply(_ plan: any NetworkSettingsPlan, runtimeGeneration: UInt64) async throws {
++    trace.record("settings.apply")
++  }
++  func clear(runtimeGeneration: UInt64) async throws { trace.record("settings.clear") }
++}
+diff --git a/scripts/check-core-boundaries.sh b/scripts/check-core-boundaries.sh
+index f51e313..4e7422f 100755
+--- a/scripts/check-core-boundaries.sh
++++ b/scripts/check-core-boundaries.sh
+@@ -107,4 +107,45 @@ if dependency_names(targets["ReluxTunnelHarness"]) != {
+     raise SystemExit("ReluxTunnelHarness must link ReluxTunnelCore and its support target")
+ '
+ 
++python3 - <<'PY'
++from pathlib import Path
++
++source = Path(
++    "Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift"
++).read_text()
++component_surface = source.split(
++    "public struct MacOSProductionComponentFactories", 1
++)[1].split("/// macOS-only production factory entry point.", 1)[0]
++for forbidden in (
++    "makeSSHBootstrap",
++    "credentialProvider",
++    "makeHostKeyPolicy",
++    "mapCredentialError",
++    "SSHTransportFactory",
++):
++    if forbidden in component_surface:
++        raise SystemExit(
++            "MacOSProductionComponentFactories exposes bypassable SSH security input: "
++            + forbidden
++        )
++
++required_production_bindings = (
++    "transportFactory: MacOSProviderSSHConfiguration.makeTransportFactory(",
++    "credentialProvider: MacOSProviderSSHConfiguration.makeCredentialProvider()",
++    "try MacOSProviderSSHConfiguration.makeHostKeyPolicy(snapshot: $0)",
++    "MacOSSSHBootstrapErrorMapper.credential($0, configurationGeneration: $1)",
++    "let selectedSSH = makeSelectedSSH(bindings)",
++    "let sshBootstrap = MacOSProductionSSHBootstrap(",
++)
++for required in required_production_bindings:
++    if required not in source:
++        raise SystemExit(
++            "MacOSProductionDependencyFactory.makeRuntime mandatory SSH composition missing: "
++            + required
++        )
++
++if "public typealias SelectedSSHBuilder" in source or "public let makeSelectedSSH" in source:
++    raise SystemExit("selected SSH dependency override escaped the internal test boundary")
++PY
++
+ echo "ReluxTunnelCore dependency and import boundaries are valid"

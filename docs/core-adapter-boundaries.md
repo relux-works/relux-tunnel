@@ -70,9 +70,12 @@ ingestion events and may conservatively undercount when that signal increases.
 - `SSHTransport` is injectable; it does not choose ReluxNIOSSH or libssh2
   (ADR-014). Upload is explicitly exec-stdin rather than SFTP (ADR-006).
 - Internal SOCKS is a process-local component seam and not a user proxy.
-- The provider codec implements only the M0 version query. State snapshots,
-  commands, compatibility ranges, and host-side projection belong to later
-  lifecycle specifications.
+- The frozen M0 version query remains supported. Versioned v1 runtime commands,
+  compatibility ranges, snapshots, diagnostics, and host-side projection are
+  now implemented in the shared package; see
+  [`m1-runtime-ownership-and-operations.md`](m1-runtime-ownership-and-operations.md).
+  Concrete generated provider-subclass wiring remains outside this package
+  boundary.
 - Route, DNS, reconnect, relay framing, profile persistence, Keychain access,
   UI, and concrete provider subclasses are outside this package change.
 

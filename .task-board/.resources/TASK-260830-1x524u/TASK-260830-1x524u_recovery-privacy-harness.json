@@ -1,0 +1,78 @@
+{
+  "command": "m1-runtime",
+  "fixtureCount": 7,
+  "fixtures": [
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json",
+      "expectedExitCode": 0,
+      "name": "success-repeated",
+      "observedExitCode": 0,
+      "outputSHA256": "bd807a8ea28967b16c5139fa40bb2de3ae050febbb359ce3739f21bd1f93eb1f",
+      "passed": true,
+      "privacySafe": true,
+      "validation": "matched"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json",
+      "expectedExitCode": 70,
+      "name": "authentication-failure",
+      "observedExitCode": 70,
+      "outputSHA256": "300682d23ddf1599dc2d8c0cedda2ad479066ebe6c2e9ebef55ee81d16f2cd84",
+      "passed": true,
+      "privacySafe": true,
+      "validation": "matched"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json",
+      "expectedExitCode": 71,
+      "name": "packet-failure",
+      "observedExitCode": 71,
+      "outputSHA256": "bf4f339e76acd8ffaf208bdf55651097f6f419c568a045df18b3c5c520812f64",
+      "passed": true,
+      "privacySafe": true,
+      "validation": "matched"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json",
+      "expectedExitCode": 72,
+      "name": "dns-failure",
+      "observedExitCode": 72,
+      "outputSHA256": "a5dfd2b58926af8a7468d1f1317a5ab07d1a6564fa69755cbba4ee264e9dfa7a",
+      "passed": true,
+      "privacySafe": true,
+      "validation": "matched"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json",
+      "expectedExitCode": 73,
+      "name": "route-apply-failure",
+      "observedExitCode": 73,
+      "outputSHA256": "fb8fb8b46502a9b952ac296bd85b2d8d4518c9a6ecd7bbf26694e6d0f0046b17",
+      "passed": true,
+      "privacySafe": true,
+      "validation": "matched"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json",
+      "expectedExitCode": 74,
+      "name": "mid-session-ssh-failure",
+      "observedExitCode": 74,
+      "outputSHA256": "a35a9e49e7a2c161af4de9770839c1dd3019e26be9bca47e6f44ebc142d72d08",
+      "passed": true,
+      "privacySafe": true,
+      "validation": "matched"
+    },
+    {
+      "configuration": "Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json",
+      "expectedExitCode": 74,
+      "name": "mid-session-dns-failure",
+      "observedExitCode": 74,
+      "outputSHA256": "40388a14acc7060d862d9ce0705aacb017ee80d9ab43cf57e5789e12dbaed224",
+      "passed": true,
+      "privacySafe": true,
+      "validation": "matched"
+    }
+  ],
+  "passed": true,
+  "schemaVersion": 1
+}

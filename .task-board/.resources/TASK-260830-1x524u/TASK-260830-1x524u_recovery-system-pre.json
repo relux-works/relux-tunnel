@@ -1,0 +1,14 @@
+{
+  "dns": {
+    "exit": 0,
+    "sha256": "d51577c79ff6e0bb20ad35d6faab0b99f064861d2a41fc65f1f44d5aa1fa0780"
+  },
+  "vpn": {
+    "exit": 0,
+    "sha256": "115a990626455e6e97df38b47f8731efcd23a36eee30c3c352d9a7d8b427932d"
+  },
+  "routes": {
+    "exit": 0,
+    "sha256": "006100550bca5ab7d6c431a510875e56d6ae1ff42acf76ad2a01cbfebe8b7d83"
+  }
+}

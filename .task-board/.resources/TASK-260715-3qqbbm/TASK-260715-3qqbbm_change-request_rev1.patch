@@ -1,0 +1,913 @@
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index de1d64c..c80ec86 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1441,3 +1441,10 @@
+ - REVIEW REWORK: Revision 1 exposed two self-minted claims. Mid-session loss called `stop(.providerFailure)` before checking `.failed`, so a dropped SSH/DNS health event still passed; the host-owner sentinel was an unrelated empty object. `M1RuntimeHarnessCommand.run` now waits for the coordinator-produced failure before the idempotent cleanup stop. The simulated host owner now owns the real `HarnessCoreComposition` bootstrap boundary, is released after runtime readiness, and must deallocate before runtime-owned TCP/DNS forwarding begins.
+ - REWORK NEGATIVE EVIDENCE: Narrowing SSH and DNS `healthSink.receive` delivery to impossible generation zero made their named `HarnessApplication.run` production-entry tests exit `1` after the bounded one-second observation deadline. Narrowing host-owner release to impossible generation zero made the named forwarding/ownership test exit `1`. The source was restored from a byte-identical task-scoped copy after every mutant and returned to SHA-256 `f247f10825bcb255ad08adbc9735d29067751ec6c5d7b482128c40c53097c5c5`.
+ - REWORK VERIFICATION: `make m1-runtime-harness-test` passes six focused tests and all seven manifest rows. Two additional unchanged-binary manifest runs also pass 7/7 with every row privacy-safe and exact exits `0/70/71/72/73/74/74`. The complete harness filter passes 38 tests in three suites; the full SwiftPM run passes 514 tests in 44 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Strict task-scoped Swift format, Core boundaries, fixture build, and diff checks exit `0`. One invalid Go-style `swift test ... -count=1` invocation exited `64` before tests and was immediately replaced by the valid Swift invocation; it is retained as command-error evidence rather than reported as a test failure.
++
++### 1111 — M1 integration remains isolated from the legacy SwiftPM release lane (TASK-260715-3qqbbm)
++- BOUNDARY: The accepted `ReluxProxy` v0.1.0 SwiftPM package, `works.relux.proxy` defaults domain, product paths, and `ReluxProxy.dmg` release entries remain owned by the separate legacy repository. Generated M1 products use `ReluxProxyMac.app`, `works.relux.tunnel.mac`, `works.relux.tunnel.mac.tunnel`, and Keychain service `works.relux.tunnel.credential.v1`; they do not define or link an exact legacy product identity.
++- GATE: `scripts/check-migration-isolation.py`, called by the credential-free validation path, now inventories both lanes and fails closed on unreadable required inputs, cross-repository target links, identifier/defaults/Keychain collisions, generated legacy artifact names, or release-script substitution. The command can also validate the generated PBX project and both Debug/Release product trees.
++- NEGATIVE EVIDENCE: The CLI-level mutation suite attacks the production gate with generated and legacy cross-links, bundle/defaults/Keychain/build-product collisions, and an active workflow substitution of `ReluxProxy.dmg`; every case must fail for its named reason. Narrowing only the `ReluxProxy.dmg` release marker made that named test fail while the other six rows remained green; restoring the marker returned the suite to green.
++- OWNERSHIP: User/coexistence/import or retirement behavior remains M4 `TASK-260715-35nc5m`; release identity, entitlement, and data migration remain M5 `TASK-260715-1tzaed`. No migration is implemented by M1.
++- BOARD ANOMALY: Pre-handoff `task-board validate` returned process exit `0` while reporting the owning Story stored as `backlog` versus child aggregate `development`. The task checklist and outcomes are complete; parent normalization remains orchestrator-owned and the validation output is retained without calling it clean.
+diff --git a/Makefile b/Makefile
+index abcc6cb..b7056d6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,6 @@
+-.PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
++.PHONY: credential-free-validate check-legacy test-legacy-guard \
++	check-migration-isolation test-migration-isolation \
++	check-core-boundaries core-build core-test \
+ 	m0-bindings-check m0-bindings-test \
+ 	m1-runtime-harness-test \
+ 	workspace-generate workspace-validate macos-targets-validate \
+@@ -70,6 +72,14 @@ check-legacy:
+ test-legacy-guard:
+ 	./scripts/tests/test-legacy-preservation-guard.sh --legacy-root "$(LEGACY_ROOT)"
+ 
++check-migration-isolation: check-legacy
++	python3 scripts/check-migration-isolation.py \
++		--legacy-root "$(LEGACY_ROOT)" \
++		--workspace-root .
++
++test-migration-isolation:
++	./scripts/tests/test-migration-isolation-guard.sh --legacy-root "$(LEGACY_ROOT)"
++
+ check-core-boundaries:
+ 	./scripts/check-core-boundaries.sh
+ 
+diff --git a/README.md b/README.md
+index 66649f4..b2e47d9 100644
+--- a/README.md
++++ b/README.md
+@@ -266,6 +266,8 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Packet-frame fuzz suite | Deterministic hostile-frame fuzz plus allocation/runtime bounds for the packet bridge; seed, iteration, and ceiling knobs documented in [`docs/packet-frame-fuzzing.md`](docs/packet-frame-fuzzing.md) | `swift test --filter PacketFrameFuzzTests` (bounded run is part of `swift test`) | `PACKET_FRAME_FUZZ_REPORT` evidence lines; task logs under `.temp/` |
+ | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
+ | Legacy guard mutation tests | Prove accidental removal and identity/path migration fail closed | `make test-legacy-guard LEGACY_ROOT=/path/to/relux-proxy` | Disposable files under the system temporary directory; removed on exit |
++| Migration-isolation guard | Compare the accepted legacy SwiftPM lane with the generated M1 target graph, identifiers, storage, launch, release entries, generated project, and optional Debug/Release products | `make check-migration-isolation LEGACY_ROOT=/path/to/legacy-v0.1.0`; full generated-product coverage runs through `make credential-free-validate`; see [`docs/migration-isolation.md`](docs/migration-isolation.md) | JSON evidence at `.temp/TASK-260715-sbrrp7/credential-free-validation/migration-isolation.json`; task-scoped logs under `.temp/` |
++| Migration-isolation negative tests | Prove the production isolation CLI rejects cross-linking, bundle/defaults/Keychain/product collisions, and release-script substitution | `make test-migration-isolation LEGACY_ROOT=/path/to/legacy-v0.1.0` | Disposable fixture copies under the system temporary directory; removed on exit |
+ 
+ Build/test evidence and other task-scoped scratch logs belong under `.temp/`.
+ 
+diff --git a/docs/migration-isolation.md b/docs/migration-isolation.md
+new file mode 100644
+index 0000000..c76c4d2
+--- /dev/null
++++ b/docs/migration-isolation.md
+@@ -0,0 +1,67 @@
++# Legacy-to-generated migration isolation
++
++This repository integrates the generated M1 tunnel runtime without replacing
++or migrating the legacy `relux-works/relux-proxy` SwiftPM application. The
++accepted M0 preservation baseline is `TASK-260715-14lk3y`; its frozen source is
++the signed `v0.1.0` tag at
++`2557aba1c030d0643d76e0bc3b185f6d5fd172e1`.
++
++## Product boundary
++
++| Surface | Legacy lane — unchanged | Generated M1 lane | Isolation rule |
++| --- | --- | --- | --- |
++| Repository | `relux-works/relux-proxy` | `relux-works/relux-tunnel` | Separate Git roots; the generated repository does not recreate legacy-owned paths. |
++| Package/product | SwiftPM `ReluxProxy` executable | SwiftPM `ReluxTunnel` libraries and `ReluxTunnelHarness`; Tuist `ReluxProxyMac` host | The legacy package imports no `ReluxTunnelCore`, adapter, HEV, or native product. The generated package defines no exact `ReluxProxy` product or target. |
++| Tests | `ReluxProxyTests` | Generated host/provider and package test targets | No shared target or test product identity. |
++| Application | `dist/ReluxProxy.app` | `ReluxProxyMac.app` | Build roots and executable names are distinct. |
++| Provider | None | `works.relux.tunnel.mac.tunnel.systemextension` | The provider exists only in the generated application bundle. |
++| Bundle identifiers | `works.relux.proxy` | Host `works.relux.tunnel.mac`; provider `works.relux.tunnel.mac.tunnel` | Exact identifiers must remain unequal. |
++| Launch behavior | SwiftUI `MenuBarExtra`, macOS 14 | Accessory `NSApplication` host plus NetworkExtension system-extension mode, macOS 15 | Generated launch code neither opens the legacy bundle nor installs a legacy LaunchAgent. The generated host's installer-launcher service remains under its distinct bundle identity. |
++| Defaults | Standard bundle domain `works.relux.proxy`; `sshHost=relux`, `sshAccount=administrator`, `localPort=1080` | Standard bundle domain `works.relux.tunnel.mac`; no reuse of the three legacy keys | No implicit defaults import or write-through. |
++| Keychain | No v0.1.0 product Keychain namespace | Read-only system-domain service `works.relux.tunnel.credential.v1`; deferred iOS group `$(AppIdentifierPrefix)works.relux.tunnel.shared` | No generated lookup uses the legacy defaults domain or a legacy-owned service. |
++| Launch agents | None in the v0.1.0 product/release baseline | None owned by M1 | Runner or updater operations may not substitute a legacy label or path. |
++| Release entry points | `make app`, `make dmg`, `scripts/build-app.sh`, `scripts/create-dmg.sh`, legacy release workflow | Credential-free generated build/validation only; no application release path is claimed by M1 | Generated scripts and workflows must not create `ReluxProxy.dmg`, `ReluxProxy-v*`, or `dist/ReluxProxy.app`. |
++| Stable artifacts | `ReluxProxy-v<version>-universal.dmg`, `ReluxProxy.dmg` | No generated stable application artifact in M1 | The legacy names remain exclusively owned by the legacy release lane. |
++
++The complete legacy product-bearing byte inventory remains pinned by
++`config/legacy-v0.1.0.sha256` and is verified by
++`scripts/check-legacy-preservation.sh`. The complementary
++`scripts/check-migration-isolation.py` command verifies the cross-repository
++dependency, identity, storage, launch, release, generated-project, and optional
++built-product boundary.
++
++## Automated gates
++
++Run the source and release boundary plus its adversarial checks against a
++detached v0.1.0 checkout:
++
++```sh
++make check-migration-isolation LEGACY_ROOT=/path/to/legacy-v0.1.0
++make test-migration-isolation LEGACY_ROOT=/path/to/legacy-v0.1.0
++```
++
++`scripts/validate-credential-free.sh` is the production integration call site.
++It runs the accepted legacy preservation guard, the migration-isolation CLI,
++and the negative suite after generated host/provider validation. The negative
++suite drives that same CLI and narrows the boundary with generated and legacy
++cross-links, bundle/defaults/Keychain collisions, built-product collisions,
++and release-script substitution. Each mutation must be refused for its named
++reason.
++
++When `--generated-project` and `--products-root` are supplied, the gate also
++checks the generated PBX target/product inventory and both Debug and Release
++host/provider bundles. An exact legacy target, app, executable, or DMG name in
++those products is a failure.
++
++## Deferred ownership
++
++This task does not migrate users or data, delete legacy code, change either
++release path, reconcile UI, ship both products, or decide retirement timing.
++
++- M4 `TASK-260715-35nc5m` owns the coexistence, replacement, or retirement
++  decision and any user-facing/import behavior.
++- M5 `TASK-260715-1tzaed` owns the macOS release identity, entitlement, and data
++  migration contract after the M4 decision.
++
++Until both decisions are accepted, the only valid behavior is independent
++coexistence with zero implicit migration.
+diff --git a/scripts/check-migration-isolation.py b/scripts/check-migration-isolation.py
+new file mode 100755
+index 0000000..725ab2e
+--- /dev/null
++++ b/scripts/check-migration-isolation.py
+@@ -0,0 +1,588 @@
++#!/usr/bin/env python3
++"""Fail closed when the generated tunnel product overlaps the legacy app lane."""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import plistlib
++import re
++import sys
++from pathlib import Path
++from typing import Any
++
++
++LEGACY_BUNDLE_ID = "works.relux.proxy"
++GENERATED_HOST_BUNDLE_ID = "works.relux.tunnel.mac"
++GENERATED_PROVIDER_BUNDLE_ID = "works.relux.tunnel.mac.tunnel"
++GENERATED_KEYCHAIN_SERVICE = "works.relux.tunnel.credential.v1"
++
++LEGACY_DEFAULTS = {
++    "sshHost": "relux",
++    "sshAccount": "administrator",
++    "localPort": "1080",
++}
++
++GENERATED_RUNTIME_TOKENS = (
++    "ReluxTunnelCore",
++    "ReluxTunnelNativeAdapter",
++    "ReluxTunnelMacOSAdapter",
++    "HevSocks5Tunnel",
++    "ReluxLibSSH2",
++    "CReluxNativeFixture",
++)
++
++LEGACY_RELEASE_MARKERS = (
++    "ReluxProxy.dmg",
++    "dist/ReluxProxy.app",
++    "ReluxProxy-v",
++)
++
++LEGACY_OWNED_PATHS = (
++    "Sources/ReluxProxy",
++    "Tests/ReluxProxyTests",
++    "Resources/Info.plist",
++    "scripts/build-app.sh",
++    "scripts/create-dmg.sh",
++)
++
++
++class IsolationError(RuntimeError):
++    """A migration-isolation invariant could not be established."""
++
++
++def read_text(path: Path) -> str:
++    try:
++        return path.read_text(encoding="utf-8")
++    except (OSError, UnicodeError) as error:
++        raise IsolationError(
++            f"cannot read required text file {path}: {error}"
++        ) from error
++
++
++def read_plist(path: Path) -> dict[str, Any]:
++    try:
++        with path.open("rb") as stream:
++            value = plistlib.load(stream)
++    except (OSError, plistlib.InvalidFileException) as error:
++        raise IsolationError(f"cannot read required plist {path}: {error}") from error
++    if not isinstance(value, dict):
++        raise IsolationError(f"required plist is not a dictionary: {path}")
++    return value
++
++
++def require(condition: bool, message: str) -> None:
++    if not condition:
++        raise IsolationError(message)
++
++
++def parse_xcconfig(path: Path) -> dict[str, str]:
++    values: dict[str, str] = {}
++    for line in read_text(path).splitlines():
++        stripped = line.strip()
++        if not stripped or stripped.startswith("//") or stripped.startswith("#"):
++            continue
++        if "=" not in stripped:
++            raise IsolationError(f"malformed xcconfig assignment in {path}: {line}")
++        key, value = stripped.split("=", 1)
++        values[key.strip()] = value.strip()
++    return values
++
++
++def production_swift_files(root: Path) -> list[Path]:
++    files: list[Path] = []
++    for relative in ("App", "Sources"):
++        directory = root / relative
++        if not directory.is_dir():
++            raise IsolationError(
++                f"required generated source directory is missing: {directory}"
++            )
++        files.extend(sorted(directory.rglob("*.swift")))
++    return files
++
++
++def release_entry_files(root: Path) -> list[Path]:
++    files = [root / "Makefile"]
++    workflows = root / ".github" / "workflows"
++    if not workflows.is_dir():
++        raise IsolationError(f"required workflow directory is missing: {workflows}")
++    files.extend(sorted(workflows.glob("*.yml")))
++    files.extend(sorted(workflows.glob("*.yaml")))
++
++    scripts = root / "scripts"
++    if not scripts.is_dir():
++        raise IsolationError(f"required scripts directory is missing: {scripts}")
++    excluded = {
++        "check-legacy-preservation.sh",
++        "check-migration-isolation.py",
++    }
++    files.extend(
++        path
++        for path in sorted(scripts.iterdir())
++        if path.is_file() and path.name not in excluded
++    )
++    return files
++
++
++def verify_preservation_manifest(legacy_root: Path, manifest: Path) -> list[str]:
++    entries: list[str] = []
++    for line_number, line in enumerate(read_text(manifest).splitlines(), start=1):
++        if not line.strip():
++            continue
++        parts = line.split(maxsplit=1)
++        require(
++            len(parts) == 2 and re.fullmatch(r"[0-9a-f]{64}", parts[0]) is not None,
++            f"malformed legacy preservation manifest line {line_number}",
++        )
++        expected, relative = parts
++        relative_path = Path(relative)
++        require(
++            not relative_path.is_absolute() and ".." not in relative_path.parts,
++            f"unsafe legacy preservation manifest path: {relative}",
++        )
++        require(relative not in entries, f"duplicate legacy manifest path: {relative}")
++        path = legacy_root / relative_path
++        try:
++            actual = hashlib.sha256(path.read_bytes()).hexdigest()
++        except OSError as error:
++            raise IsolationError(
++                f"cannot read pinned legacy file {path}: {error}"
++            ) from error
++        require(actual == expected, f"pinned legacy file bytes drifted: {relative}")
++        entries.append(relative)
++    require(entries, "legacy preservation manifest is empty")
++    return entries
++
++
++def project_target_block(project: str, name: str) -> str:
++    marker = f'  .target(\n    name: "{name}",'
++    require(
++        project.count(marker) == 1,
++        f"generated target graph must contain exactly one {name} target",
++    )
++    start = project.index(marker)
++    next_target = project.find("\n  .target(", start + len(marker))
++    array_end = project.find("\n]", start + len(marker))
++    candidates = [position for position in (next_target, array_end) if position >= 0]
++    require(candidates, f"cannot parse generated target block: {name}")
++    return project[start : min(candidates)]
++
++
++def target_dependencies(block: str, name: str) -> list[str]:
++    match = re.search(
++        r"dependencies:\s*\[(.*?)\]\s*,\s*\n\s*settings:",
++        block,
++        re.DOTALL,
++    )
++    require(match is not None, f"cannot parse generated dependencies for {name}")
++    return re.findall(
++        r'\.(?:target\(name:|package\(product:)\s*"([^"]+)"', match.group(1)
++    )
++
++
++def verify_legacy(legacy_root: Path, preservation_manifest: Path) -> dict[str, Any]:
++    package = read_text(legacy_root / "Package.swift")
++    require('name: "ReluxProxy"' in package, "legacy SwiftPM package identity drifted")
++    require(
++        '.executable(name: "ReluxProxy", targets: ["ReluxProxy"])' in package,
++        "legacy SwiftPM executable product drifted",
++    )
++    require('name: "ReluxProxyTests"' in package, "legacy SwiftPM test target drifted")
++
++    product_files = [legacy_root / "Package.swift"]
++    for relative in ("Sources/ReluxProxy", "Tests/ReluxProxyTests"):
++        directory = legacy_root / relative
++        require(directory.is_dir(), f"legacy product directory is missing: {relative}")
++        product_files.extend(sorted(directory.rglob("*.swift")))
++    for path in product_files:
++        text = read_text(path)
++        for token in GENERATED_RUNTIME_TOKENS:
++            require(
++                token not in text,
++                f"legacy SwiftPM path cross-links generated runtime token {token}: "
++                f"{path.relative_to(legacy_root)}",
++            )
++
++    plist = read_plist(legacy_root / "Resources" / "Info.plist")
++    require(
++        plist.get("CFBundleIdentifier") == LEGACY_BUNDLE_ID,
++        "legacy bundle identifier drifted",
++    )
++    require(
++        plist.get("CFBundleExecutable") == "ReluxProxy", "legacy executable drifted"
++    )
++
++    defaults_source = read_text(
++        legacy_root / "Sources" / "ReluxProxy" / "MenuContentView.swift"
++    )
++    expected_defaults = (
++        '@AppStorage("sshHost") private var host = "relux"',
++        '@AppStorage("sshAccount") private var account = "administrator"',
++        '@AppStorage("localPort") private var localPort = 1_080',
++    )
++    for literal in expected_defaults:
++        require(
++            literal in defaults_source, f"legacy defaults contract drifted: {literal}"
++        )
++
++    release_contract = {
++        "Makefile": (
++            "app:\n\tscripts/build-app.sh",
++            "dmg: app\n\tscripts/create-dmg.sh",
++        ),
++        "scripts/build-app.sh": ('APP_NAME="ReluxProxy"',),
++        "scripts/create-dmg.sh": ("ReluxProxy-v$VERSION-universal.dmg",),
++        ".github/workflows/release.yml": (
++            "cp dist/ReluxProxy-*.dmg dist/ReluxProxy.dmg",
++            "dist/ReluxProxy.dmg",
++        ),
++    }
++    for relative, literals in release_contract.items():
++        text = read_text(legacy_root / relative)
++        for literal in literals:
++            require(
++                literal in text,
++                f"legacy release entry point drifted: {relative}: {literal}",
++            )
++
++    keychain_or_launch_tokens = (
++        "SecItem",
++        "kSecAttrService",
++        "SMAppService",
++        "LaunchAgent",
++    )
++    for path in product_files:
++        text = read_text(path)
++        for token in keychain_or_launch_tokens:
++            require(
++                token not in text,
++                f"legacy v0.1.0 unexpectedly gained Keychain/launch ownership: "
++                f"{path.relative_to(legacy_root)} ({token})",
++            )
++
++    pinned_files = verify_preservation_manifest(legacy_root, preservation_manifest)
++
++    return {
++        "repository": "relux-works/relux-proxy (separate checkout)",
++        "pinnedFiles": pinned_files,
++        "swiftpm": {
++            "package": "ReluxProxy",
++            "product": "ReluxProxy",
++            "target": "ReluxProxy",
++            "testTarget": "ReluxProxyTests",
++            "generatedRuntimeDependencies": [],
++        },
++        "bundle": {
++            "path": "dist/ReluxProxy.app",
++            "identifier": LEGACY_BUNDLE_ID,
++            "executable": "ReluxProxy",
++        },
++        "storage": {
++            "defaultsDomain": LEGACY_BUNDLE_ID,
++            "defaults": LEGACY_DEFAULTS,
++            "keychainNamespaces": [],
++        },
++        "launch": {"kind": "SwiftUI MenuBarExtra", "launchAgents": []},
++        "release": {
++            "entries": ["make app", "make dmg", ".github/workflows/release.yml"],
++            "artifacts": ["ReluxProxy-v<version>-universal.dmg", "ReluxProxy.dmg"],
++        },
++    }
++
++
++def verify_workspace(workspace_root: Path) -> dict[str, Any]:
++    for relative in LEGACY_OWNED_PATHS:
++        require(
++            not (workspace_root / relative).exists(),
++            f"generated workspace claims legacy-owned path: {relative}",
++        )
++
++    package = read_text(workspace_root / "Package.swift")
++    require(
++        'name: "ReluxTunnel"' in package, "generated SwiftPM package identity drifted"
++    )
++    require(
++        'name: "ReluxProxy"' not in package,
++        "generated SwiftPM manifest defines the legacy ReluxProxy identity",
++    )
++
++    project = read_text(workspace_root / "Project.swift")
++    require(
++        re.search(r'name:\s*"ReluxProxy"\s*[,)]', project) is None,
++        "generated target graph defines the legacy ReluxProxy target",
++    )
++    require(
++        '.package(product: "ReluxProxy")' not in project,
++        "generated target graph cross-links the legacy ReluxProxy product",
++    )
++    host_block = project_target_block(project, "ReluxProxyMac")
++    provider_block = project_target_block(project, "ReluxProxyMacTunnel")
++    host_dependencies = target_dependencies(host_block, "ReluxProxyMac")
++    provider_dependencies = target_dependencies(provider_block, "ReluxProxyMacTunnel")
++    require(
++        host_dependencies
++        == ["ReluxProxyMacTunnel", "ReluxAppleUITestShared", "ReluxTunnelCore"],
++        f"generated host dependency graph drifted: {host_dependencies}",
++    )
++    require(
++        provider_dependencies == ["ReluxTunnelMacOSAdapter"],
++        f"generated provider dependency graph drifted: {provider_dependencies}",
++    )
++    require(
++        'bundleId: "$(RELUX_MACOS_HOST_BUNDLE_ID)"' in host_block,
++        "generated host bundle identity binding drifted",
++    )
++    require(
++        'bundleId: "$(RELUX_MACOS_PROVIDER_BUNDLE_ID)"' in provider_block,
++        "generated provider bundle identity binding drifted",
++    )
++
++    identities = parse_xcconfig(workspace_root / "Configuration" / "Identity.xcconfig")
++    expected_identities = {
++        "RELUX_MACOS_HOST_BUNDLE_ID": GENERATED_HOST_BUNDLE_ID,
++        "RELUX_MACOS_PROVIDER_BUNDLE_ID": GENERATED_PROVIDER_BUNDLE_ID,
++        "RELUX_IOS_HOST_BUNDLE_ID": "works.relux.tunnel.ios",
++        "RELUX_IOS_PROVIDER_BUNDLE_ID": "works.relux.tunnel.ios.tunnel",
++        "RELUX_IOS_APP_GROUP": "group.works.relux.tunnel",
++    }
++    for key, expected in expected_identities.items():
++        require(identities.get(key) == expected, f"generated identity drifted: {key}")
++        require(
++            identities[key] != LEGACY_BUNDLE_ID,
++            f"generated identifier collides with legacy bundle identifier: {key}",
++        )
++
++    keychain_source = read_text(
++        workspace_root
++        / "Sources"
++        / "ReluxTunnelMacOSAdapter"
++        / "MacOSSystemKeychainCredentialResolver.swift"
++    )
++    require(
++        f'public static let service = "{GENERATED_KEYCHAIN_SERVICE}"'
++        in keychain_source,
++        "generated Keychain service namespace drifted",
++    )
++    require(
++        GENERATED_KEYCHAIN_SERVICE != LEGACY_BUNDLE_ID,
++        "generated Keychain service collides with legacy defaults domain",
++    )
++
++    production_sources = production_swift_files(workspace_root)
++    for path in production_sources:
++        text = read_text(path)
++        require(
++            LEGACY_BUNDLE_ID not in text,
++            f"generated production source references legacy defaults/bundle domain: "
++            f"{path.relative_to(workspace_root)}",
++        )
++        for key in LEGACY_DEFAULTS:
++            require(
++                f'@AppStorage("{key}")' not in text,
++                f"generated production source reuses legacy defaults key {key}: "
++                f"{path.relative_to(workspace_root)}",
++            )
++        for token in ("SMAppService.agent", "/Library/LaunchAgents", "LaunchAgents/"):
++            require(
++                token not in text,
++                f"generated M1 product claims a launch-agent path: "
++                f"{path.relative_to(workspace_root)} ({token})",
++            )
++
++    host_main = read_text(
++        workspace_root / "App" / "ReluxProxyMac" / "Sources" / "main.swift"
++    )
++    provider_main = read_text(
++        workspace_root / "App" / "ReluxProxyMacTunnel" / "Sources" / "main.swift"
++    )
++    require(
++        "application.setActivationPolicy(.accessory)" in host_main
++        and "application.run()" in host_main,
++        "generated host launch behavior drifted",
++    )
++    require(
++        "NEProvider.startSystemExtensionMode()" in provider_main,
++        "generated provider launch behavior drifted",
++    )
++
++    for path in release_entry_files(workspace_root):
++        text = read_text(path)
++        for marker in LEGACY_RELEASE_MARKERS:
++            require(
++                marker not in text,
++                f"generated release entry substitutes legacy artifact {marker}: "
++                f"{path.relative_to(workspace_root)}",
++            )
++
++    return {
++        "repository": "relux-works/relux-tunnel",
++        "swiftpm": {
++            "package": "ReluxTunnel",
++            "hostDependencies": host_dependencies,
++            "providerDependencies": provider_dependencies,
++            "legacyProductDependencies": [],
++        },
++        "products": {
++            "host": "ReluxProxyMac.app",
++            "provider": f"{GENERATED_PROVIDER_BUNDLE_ID}.systemextension",
++        },
++        "identifiers": expected_identities,
++        "storage": {
++            "defaultsDomain": GENERATED_HOST_BUNDLE_ID,
++            "legacyDefaultsKeysReused": [],
++            "keychainService": GENERATED_KEYCHAIN_SERVICE,
++            "iosKeychainGroup": identities.get("RELUX_IOS_KEYCHAIN_GROUP"),
++        },
++        "launch": {
++            "host": "accessory NSApplication",
++            "provider": "NetworkExtension system-extension mode",
++            "launchAgents": [],
++        },
++        "release": {
++            "legacyPackagingEntries": [],
++            "legacyArtifactNames": [],
++            "generatedReleaseDecision": "M5",
++        },
++    }
++
++
++def verify_generated_project(path: Path) -> dict[str, Any]:
++    text = read_text(path)
++    forbidden_patterns = (
++        r"\bname\s*=\s*ReluxProxy\s*;",
++        r"\bproductName\s*=\s*ReluxProxy\s*;",
++        r"\bpath\s*=\s*ReluxProxy\.app\s*;",
++    )
++    for pattern in forbidden_patterns:
++        require(
++            re.search(pattern, text) is None,
++            f"generated Xcode project contains legacy product identity: {pattern}",
++        )
++    require(
++        text.count("ReluxProxyMac.app") >= 1,
++        "generated Xcode project does not contain the host product",
++    )
++    require(
++        "ReluxProxyMacTunnel.systemextension" in text
++        and re.search(r"\bproductName\s*=\s*ReluxProxyMacTunnel\s*;", text) is not None,
++        "generated Xcode project does not contain the provider product identity",
++    )
++    return {
++        "path": str(path),
++        "legacyTargets": [],
++        "hostProduct": "ReluxProxyMac.app",
++        "providerProduct": "ReluxProxyMacTunnel.systemextension",
++    }
++
++
++def verify_products(products_root: Path) -> dict[str, Any]:
++    collisions: list[str] = []
++    for path in products_root.rglob("*"):
++        if path.name in {"ReluxProxy", "ReluxProxy.app", "ReluxProxy.dmg"}:
++            collisions.append(str(path.relative_to(products_root)))
++    require(
++        not collisions,
++        f"generated build products collide with legacy artifacts: {collisions}",
++    )
++
++    configurations: dict[str, Any] = {}
++    for configuration in ("Debug", "Release"):
++        host = products_root / configuration / "ReluxProxyMac.app"
++        host_plist = read_plist(host / "Contents" / "Info.plist")
++        provider = (
++            host
++            / "Contents"
++            / "Library"
++            / "SystemExtensions"
++            / f"{GENERATED_PROVIDER_BUNDLE_ID}.systemextension"
++        )
++        provider_plist = read_plist(provider / "Contents" / "Info.plist")
++        host_executable = host / "Contents" / "MacOS" / "ReluxProxyMac"
++        provider_executable = (
++            provider / "Contents" / "MacOS" / GENERATED_PROVIDER_BUNDLE_ID
++        )
++        require(
++            host_executable.is_file(),
++            f"generated host executable missing: {host_executable}",
++        )
++        require(
++            provider_executable.is_file(),
++            f"generated provider executable missing: {provider_executable}",
++        )
++        require(
++            host_plist.get("CFBundleIdentifier") == GENERATED_HOST_BUNDLE_ID,
++            f"generated {configuration} host bundle identifier collides or drifted",
++        )
++        require(
++            provider_plist.get("CFBundleIdentifier") == GENERATED_PROVIDER_BUNDLE_ID,
++            f"generated {configuration} provider bundle identifier collides or drifted",
++        )
++        configurations[configuration] = {
++            "host": str(host.relative_to(products_root)),
++            "hostIdentifier": GENERATED_HOST_BUNDLE_ID,
++            "provider": str(provider.relative_to(products_root)),
++            "providerIdentifier": GENERATED_PROVIDER_BUNDLE_ID,
++        }
++    return {
++        "root": str(products_root),
++        "configurations": configurations,
++        "collisions": [],
++    }
++
++
++def parse_args() -> argparse.Namespace:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--legacy-root", type=Path, required=True)
++    parser.add_argument("--workspace-root", type=Path, required=True)
++    parser.add_argument("--generated-project", type=Path)
++    parser.add_argument("--products-root", type=Path)
++    parser.add_argument("--report", type=Path)
++    return parser.parse_args()
++
++
++def main() -> int:
++    arguments = parse_args()
++    try:
++        legacy_root = arguments.legacy_root.resolve(strict=True)
++        workspace_root = arguments.workspace_root.resolve(strict=True)
++        require(
++            legacy_root != workspace_root,
++            "legacy and generated products must remain in separate repositories",
++        )
++        report: dict[str, Any] = {
++            "schemaVersion": 1,
++            "task": "TASK-260715-3qqbbm",
++            "legacy": verify_legacy(
++                legacy_root, workspace_root / "config" / "legacy-v0.1.0.sha256"
++            ),
++            "generated": verify_workspace(workspace_root),
++            "boundary": {
++                "legacyMutation": "forbidden",
++                "userMigration": "M4 / TASK-260715-35nc5m",
++                "releaseMigration": "M5 / TASK-260715-1tzaed",
++            },
++        }
++        if arguments.generated_project is not None:
++            report["generatedProject"] = verify_generated_project(
++                arguments.generated_project.resolve(strict=True)
++            )
++        if arguments.products_root is not None:
++            report["buildProducts"] = verify_products(
++                arguments.products_root.resolve(strict=True)
++            )
++        if arguments.report is not None:
++            arguments.report.parent.mkdir(parents=True, exist_ok=True)
++            arguments.report.write_text(
++                json.dumps(report, indent=2, sort_keys=True) + "\n",
++                encoding="utf-8",
++            )
++    except (IsolationError, OSError) as error:
++        print(f"error: migration isolation check failed: {error}", file=sys.stderr)
++        return 1
++    print("migration isolation contract passed")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/tests/test-migration-isolation-guard.sh b/scripts/tests/test-migration-isolation-guard.sh
+new file mode 100755
+index 0000000..d45c1bc
+--- /dev/null
++++ b/scripts/tests/test-migration-isolation-guard.sh
+@@ -0,0 +1,166 @@
++#!/bin/bash
++
++set -u
++
++SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
++PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
++GUARD="$PROJECT_ROOT/scripts/check-migration-isolation.py"
++LEGACY_ROOT="${LEGACY_ROOT:-$PROJECT_ROOT/../relux-proxy}"
++FAILURES=0
++
++usage() {
++    echo "Usage: scripts/tests/test-migration-isolation-guard.sh [--legacy-root PATH]"
++}
++
++while [ "$#" -gt 0 ]; do
++    case "$1" in
++        --legacy-root)
++            [ "$#" -ge 2 ] || { echo "error: --legacy-root requires a path" >&2; exit 2; }
++            LEGACY_ROOT="$2"
++            shift 2
++            ;;
++        -h|--help)
++            usage
++            exit 0
++            ;;
++        *)
++            echo "error: unknown option: $1" >&2
++            usage >&2
++            exit 2
++            ;;
++    esac
++done
++
++if [ ! -d "$LEGACY_ROOT/.git" ]; then
++    echo "error: expected a legacy Git checkout at $LEGACY_ROOT" >&2
++    exit 2
++fi
++
++TEST_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/relux-migration-isolation.XXXXXX")"
++
++cleanup() {
++    case "$TEST_ROOT" in
++        "${TMPDIR:-/tmp}"/relux-migration-isolation.*)
++            chmod -R u+w "$TEST_ROOT" 2>/dev/null || true
++            rm -rf "$TEST_ROOT"
++            ;;
++        *)
++            echo "refusing to clean unexpected test path: $TEST_ROOT" >&2
++            ;;
++    esac
++}
++trap cleanup EXIT INT TERM
++
++legacy="$TEST_ROOT/legacy-v0.1.0"
++git clone --quiet --local --no-hardlinks "$LEGACY_ROOT" "$legacy"
++git -C "$legacy" checkout --quiet v0.1.0
++
++copy_workspace() {
++    destination="$1"
++    mkdir -p "$destination"
++    for relative in App config Configuration Sources .github scripts; do
++        cp -R "$PROJECT_ROOT/$relative" "$destination/$relative"
++    done
++    cp "$PROJECT_ROOT/Makefile" "$PROJECT_ROOT/Package.swift" \
++        "$PROJECT_ROOT/Project.swift" "$destination/"
++}
++
++expect_pass() {
++    name="$1"
++    legacy_root="$2"
++    workspace_root="$3"
++    log="$TEST_ROOT/$name.log"
++    if python3 "$GUARD" --legacy-root "$legacy_root" \
++        --workspace-root "$workspace_root" >"$log" 2>&1; then
++        echo "PASS: $name"
++    else
++        echo "FAIL: $name (expected success)" >&2
++        sed -n '1,220p' "$log" >&2
++        FAILURES=$((FAILURES + 1))
++    fi
++}
++
++expect_failure() {
++    name="$1"
++    expected="$2"
++    legacy_root="$3"
++    workspace_root="$4"
++    shift 4
++    log="$TEST_ROOT/$name.log"
++    if python3 "$GUARD" --legacy-root "$legacy_root" \
++        --workspace-root "$workspace_root" "$@" >"$log" 2>&1; then
++        echo "FAIL: $name (guard unexpectedly admitted the mutation)" >&2
++        FAILURES=$((FAILURES + 1))
++    elif ! grep -Fq -- "$expected" "$log"; then
++        echo "FAIL: $name rejected for the wrong reason" >&2
++        sed -n '1,220p' "$log" >&2
++        FAILURES=$((FAILURES + 1))
++    else
++        echo "PASS: $name rejected at the production isolation gate"
++    fi
++}
++
++baseline="$TEST_ROOT/workspace-baseline"
++copy_workspace "$baseline"
++expect_pass "baseline" "$legacy" "$baseline"
++
++cross_link="$TEST_ROOT/workspace-cross-link"
++copy_workspace "$cross_link"
++perl -0pi -e 's/\.package\(product: "ReluxTunnelCore"\)/.package(product: "ReluxProxy")/' \
++    "$cross_link/Project.swift"
++expect_failure "generated-cross-link" \
++    "generated target graph cross-links the legacy ReluxProxy product" \
++    "$legacy" "$cross_link"
++
++legacy_cross_link="$TEST_ROOT/legacy-cross-link"
++cp -R "$legacy" "$legacy_cross_link"
++perl -0pi -e 's/import PackageDescription/import PackageDescription\n\/\/ ReluxTunnelCore/' \
++    "$legacy_cross_link/Package.swift"
++expect_failure "legacy-cross-link" \
++    "legacy SwiftPM path cross-links generated runtime token ReluxTunnelCore" \
++    "$legacy_cross_link" "$baseline"
++
++identifier_collision="$TEST_ROOT/workspace-identifier-collision"
++copy_workspace "$identifier_collision"
++perl -0pi -e 's/works\.relux\.tunnel\.mac$/works.relux.proxy/m' \
++    "$identifier_collision/Configuration/Identity.xcconfig"
++expect_failure "identifier-collision" \
++    "generated identity drifted: RELUX_MACOS_HOST_BUNDLE_ID" \
++    "$legacy" "$identifier_collision"
++
++defaults_collision="$TEST_ROOT/workspace-defaults-collision"
++copy_workspace "$defaults_collision"
++perl -0pi -e 's/application\.run\(\)/\/\/ \@AppStorage("sshHost")\napplication.run()/' \
++    "$defaults_collision/App/ReluxProxyMac/Sources/main.swift"
++expect_failure "defaults-key-collision" \
++    "generated production source reuses legacy defaults key sshHost" \
++    "$legacy" "$defaults_collision"
++
++keychain_collision="$TEST_ROOT/workspace-keychain-collision"
++copy_workspace "$keychain_collision"
++perl -0pi -e 's/works\.relux\.tunnel\.credential\.v1/works.relux.proxy/' \
++    "$keychain_collision/Sources/ReluxTunnelMacOSAdapter/MacOSSystemKeychainCredentialResolver.swift"
++expect_failure "keychain-namespace-collision" \
++    "generated Keychain service namespace drifted" \
++    "$legacy" "$keychain_collision"
++
++release_substitution="$TEST_ROOT/workspace-release-substitution"
++copy_workspace "$release_substitution"
++perl -0pi -e 's/run: make credential-free-validate[^\n]*/run: cp candidate.dmg dist\/ReluxProxy.dmg/' \
++    "$release_substitution/.github/workflows/ci.yml"
++expect_failure "release-script-substitution" \
++    "generated release entry substitutes legacy artifact ReluxProxy.dmg" \
++    "$legacy" "$release_substitution"
++
++product_collision="$TEST_ROOT/generated-product-collision"
++mkdir -p "$product_collision/Debug/ReluxProxy.app"
++expect_failure "build-product-collision" \
++    "generated build products collide with legacy artifacts" \
++    "$legacy" "$baseline" --products-root "$product_collision"
++
++if [ "$FAILURES" -ne 0 ]; then
++    echo "Migration isolation guard tests failed: $FAILURES" >&2
++    exit 1
++fi
++
++echo "Migration isolation guard tests passed"
+diff --git a/scripts/validate-credential-free.sh b/scripts/validate-credential-free.sh
+index 9cef71d..f3635a2 100755
+--- a/scripts/validate-credential-free.sh
++++ b/scripts/validate-credential-free.sh
+@@ -144,6 +144,14 @@ run_step legacy-preservation ./scripts/check-legacy-preservation.sh \
+   --legacy-root "$legacy_fixture" --workspace-root "$repo_root"
+ run_step legacy-guard-tests ./scripts/tests/test-legacy-preservation-guard.sh \
+   --legacy-root "$legacy_fixture"
++run_step migration-isolation python3 ./scripts/check-migration-isolation.py \
++  --legacy-root "$legacy_fixture" \
++  --workspace-root "$repo_root" \
++  --generated-project "$repo_root/ReluxTunnelApp.xcodeproj/project.pbxproj" \
++  --products-root "$repo_root/.temp/TASK-260715-uyju7n/Products" \
++  --report "$task_output/migration-isolation.json"
++run_step migration-isolation-negative-tests \
++  ./scripts/tests/test-migration-isolation-guard.sh --legacy-root "$legacy_fixture"
+ run_step legacy-swift-test swift test --package-path "$legacy_fixture"
+ run_step legacy-swift-release-build swift build -c release --package-path "$legacy_fixture"
+ 

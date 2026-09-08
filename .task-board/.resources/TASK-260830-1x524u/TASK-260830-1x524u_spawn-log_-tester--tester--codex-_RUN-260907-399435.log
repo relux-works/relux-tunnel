@@ -1,0 +1,1698 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07dbe-4ca3-7440-9d28-7f45f759ddad
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260830-1x524u, status=integrating)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `tester` (`tester`) — Writes tests — unit, integration, e2e, UI, snapshot
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+
+### Definition of Done
+
+- [ ] Verify exact Story branch and dependency terminality without changing product behavior
+- [ ] Reproduce configured completion, focused runtime, harness, adapter, macOS target, documentation, and privacy gates
+- [ ] Attach landing-readiness evidence and publish the story_final Change Request
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Tests written and passing
+- [ ] Coverage target ~80%+ for affected code
+- [ ] Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, proven by narrowing the gate rather than deleting it
+- [ ] Lint clean
+- [ ] New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** TASK-260830-1x524u
+- **Title:** TASK-260830-1x524u: revalidate-shared-runtime-story-for-integration
+- **Parent:** STORY-260715-1y04r0
+
+### Description
+
+Revalidate the complete Shared Tunnel Runtime Story candidate after its upstream macOS architecture and libssh2 SSH-engine dependencies are terminal, and publish the final Story integration Change Request without changing product behavior.
+
+### Scope
+
+In scope: exact Story-branch integrity, all child and blocker states, configured completion validation, focused runtime/harness/macOS target gates, documentation and diagram integrity, provider-shell limitation, privacy checks, and story_final Change Request handoff. Out of scope: new runtime behavior, live provider wiring, signed-provider execution, route or DNS changes, and real VPN activation on this Mac.
+
+### Acceptance Criteria
+
+1. Every prior Story child is terminal and every active blocker is satisfied. 2. The exact Story candidate passes the configured completion suite plus focused runtime, harness, adapter, macOS target, documentation, and privacy gates. 3. Evidence explicitly preserves the no-live-provider-wiring boundary and proves no system VPN, route, or DNS mutation occurred. 4. The handoff publishes a story_final Change Request whose base and candidate cover the complete Shared Runtime Story delta. 5. Independent review can reproduce candidate integrity and landing readiness without product edits.
+
+## Instructions
+
+### TASK-260830-1x524u_deadline-recovery.md
+> Deadline, model policy and reviewer recovery scope
+
+Resume independent review of existing CR revision 2, not a new implementation. Previous reviewer RUN-260830-4bfcbd terminated on provider usage limit without verdict. Reuse exact-tree evidence where justified; execute required independent checks without broad unrelated re-audits. HARD DEADLINE 2026-09-08T05:00:00+04:00: finish a durable handoff before then; never start successors. Do not activate, install, configure or connect any system VPN on this Mac. Preserve foreign work. Use the explicit inherited operational config; it preserves serial max_parallel=1 and landing validation, admits only gpt-6-astra low. The control-root tracked config was restored byte-identically to HEAD only after its prior bytes were preserved at .temp/deadline-20260908/config-before.json; the existing Story candidate retains its config delta unchanged. Operational config: /Users/iv/Developer/relux-tunnel/.temp/deadline-20260908/task-board.config.json. Do not edit product files during review. Accept only via accept_cr with your own evidence and completed checklist, otherwise write exact findings. Never claim the lifecycle-shell provider is a live system VPN.
+
+
+### TASK-260830-1x524u_provenance-republish.md
+> Bounded original-role legacy CR provenance recovery
+
+Producer recovery only. Original producer role is tester. Preserve existing product candidate tree 0ca11378213cc02a78eeac937f94aef6c5209545 and signed Story checkpoint 9bf4d0892db03035b989a4c040cfee37636ff8df. Independent reviewer RUN-260907-587288 has just passed full completion and focused checks; read its review-verdict-rev2 outcome and exact-tree evidence. accept_cr refused legacy rev2 because immutable producer role/archetype binding is missing. Use supported tester handoff/publication to create valid provenance for unchanged candidate. Do not reimplement code, hand-edit CR/registry, manually commit Story branch, weaken gates, or replace evidence. Reuse current exact-tree evidence where the contract allows; run only mandatory additional publisher gates or checks necessary to prove unchanged candidate. Attach concise new outcome and handoff with role tester. If public tooling refuses, persist exact command and error plus clean supported recovery route; no invented migration. This recovery is not a human-only product blocker. No VPN activation. No successors. Stop before 2026-09-08T04:59:00+04:00; all work paused by 05:00. Inherited operational config authorizes only Astra low, one worker.
+
+
+### TASK-260830-1x524u_rev3-review-scope.md
+> Independent provenance-only rev3 review with exact-tree evidence reuse
+
+Current assignment is independent review of CR revision 3, superseding prior recovery briefs that name revision 2 or producer-only work. Rev3 is ready from original-role tester RUN-260907-a8cf65. Candidate tree remains 0ca11378213cc02a78eeac937f94aef6c5209545. Recovery changed provenance only, not product files. Verify that claim independently from current CR, tree, patch and producer binding. Read previous independent review-verdict-rev2 and fresh rev3 validation log; distinguish old reviewed technical evidence from current binding facts. Both the preceding independent reviewer and the new mandatory publisher suite passed full credential-free validation tonight. Use delta-focused verification: rerun relevant narrow integrity/behavior checks; do not repeat the whole expensive build matrix solely because this is a fresh context when same-tree evidence remains applicable. Do not waive any actual failed or missing gate. Own the verdict; do not simply stamp the earlier verdict. Complete live checklist, attach your own scoped outcome, accept_cr revision 3 only if all required evidence holds. No manual CR edits, no commits or integration by reviewer. No real VPN activation. Deadline: orderly handoff before 04:59 Tbilisi 2026-09-08, all activity paused by 05:00. No successors.
+
+
+### TASK-260830-1x524u_accepted-delivery.md
+> Accepted rev3 producer-role delivery with strict signing and deadline
+
+Current assignment is producer-bound DELIVERY of accepted story_final CR revision 3, not reimplementation, not republish, not reviewer. Supersedes earlier role/revision-specific briefs. Immutable producer binding is tester/tester, original producer RUN-260907-a8cf65, accepted by RUN-260907-178550. Task status integrating. Candidate 0ca11378213cc02a78eeac937f94aef6c5209545, base b3422b05226253a17676b9b84c764071fe3dbe74, Story checkpoint 9bf4d0892db03035b989a4c040cfee37636ff8df. Deliver through supported worktree integration and canonical signed PR flow; do not claim done before actual verified landing. Preserve unrelated dirty authoritative board paths. Signing identity Ivan Oparin <oparin@me.com>, SSH key /Users/iv/.ssh/ivanopcode. User requires chronological commit times with >=1 minute spacing in Tbilisi night window (21:00-10:00 local), all commits signed; preserve reviewed signed objects and never use unsigned hosted squash/rebase. Inspect tool semantics before mutation: current integrate help describes signed squash plus board commit with identical timestamp, which may conflict with stricter timestamp/history policy. Do not silently bypass a refusal or weaken user constraints. If no supported compliant delivery route exists, persist exact constraint, commands/source evidence, and minimal source-tool correction needed; do not hand-edit CR/transaction/workspace metadata or create a project-local workaround. No runtime product edits, no VPN activity, no successors. Explicit config is inherited from .temp/deadline-20260908/task-board.config.json and must stay in effect (Astra low, max_parallel 1, required validation). Hard user pause at 05:00 Tbilisi 2026-09-08; stop and preserve all work before 04:59. A positive review already exists; do not repeat broad audits unless changed-tree evidence requires it.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `TASK-260830-1x524u_*` before handoff:
+  `task-board m 'add_resource(TASK-260830-1x524u, name=TASK-260830-1x524u_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `integrating` is the role handoff status; use it only after the evidence contract is satisfied.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff TASK-260830-1x524u --role tester
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260715-1y04r0.
+
+- Workspace path: `.temp/STORY-260715-1y04r0/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260715-1y04r0`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+## Integration Assignment
+
+This is the integration run for accepted Change Request `CR-TASK-260830-1x524u-3` revision 3. The immutable producer binding is role `tester` (archetype `tester`). Keep the board at `integrating`; only the integration transaction may write `done`.
+
+codex
+Проверю поддерживаемый путь доставки принятого CR rev3, особенно подписи и timestamps. Сначала выставлю требуемый статус; продуктовые файлы трогать не буду.
+
+exec
+/bin/zsh -lc "task-board m 'set_status(TASK-260830-1x524u, status=integrating)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 1288ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"TASK-260830-1x524u","field":"status","new_value":"integrating","old_value":"integrating"}}}
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/SKILL.md /Users/iv/.claude/skills/go-testing-tools/SKILL.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+---
+name: go-testing-tools
+description: >
+  Go testing toolkit with tuitestkit library and a closed-loop development
+  cycle for Go applications. Covers test helpers, reducer tests,
+  snapshot/golden testing, mock executor patterns, and view assertions.
+triggers:
+  - go test
+  - bubbletea test
+  - tuitestkit
+  - go test helpers
+  - reducer test
+  - snapshot test go
+  - golden file go
+  - тесты го
+  - го тест хелперы
+  - тесты баблти
+  - тест утилиты го
+  - замкнутый цикл тестирования
+---
+
+# Go Testing Tools
+
+Testing toolkit for Go TUI applications built with bubbletea. Provides a Go library (`tuitestkit`), reference documentation, and templates that enable a closed-loop development cycle: write code, write tests, run tests, validate, fix, repeat -- all without human intervention.
+
+Core philosophy: **Elm architecture makes TUI testable.** The reducer is a pure function -- given the same state and action, it always returns the same result. No I/O, no randomness, no terminal. Test everything as function calls.
+
+---
+
+## Prerequisites
+
+- **Go 1.21+**
+- **bubbletea** (`github.com/charmbracelet/bubbletea`)
+- **lipgloss** (`github.com/charmbracelet/lipgloss`) -- used by most bubbletea apps for styling
+
+Install the library in your project:
+
+```bash
+go get github.com/relux-works/skill-go-testing-tools/tuitestkit
+```
+
+---
+
+## Quick Start
+
+Minimal test showing the core workflow: build a message, send it to a model, assert on the view.
+
+```go
+package myscreen_test
+
+import (
+    "testing"
+
+    "github.com/relux-works/skill-go-testing-tools/tuitestkit"
+)
+
+func TestBasicNavigation(t *testing.T) {
+    m := NewMyModel(testData)
+    m = tuitestkit.Send(m, tuitestkit.WindowSize(80, 24))
+
+    // Press down twice
+    m = tuitestkit.Send(m, tuitestkit.Key("down"), tuitestkit.Key("down"))
+
+    // Assert the view contains expected content
+    tuitestkit.ViewContains(t, m, "third item")
+    tuitestkit.ViewNotContains(t, m, "ERROR")
+}
+```
+
+---
+
+## Testing Pyramid
+
+Five levels, from fastest/most numerous to slowest/fewest:
+
+| Level | What | Speed | Investment |
+|-------|------|-------|------------|
+| 1. Pure Reducer | `func(State, Action) State` | Nanoseconds | ~60% |
+| 2. Component | `Update` + `View` | Microseconds | ~20% |
+| 3. Integration | Multi-component with mocks | Milliseconds | ~10% |
+| 4. Snapshot | Golden file comparison | Milliseconds | ~5% |
+| 5. Behavioral | Full user workflows | Milliseconds | ~5% |
+
+When time is limited: **Level 1 > Level 2 > Level 3**. Pure reducer tests catch the most bugs per line of test code.
+
+Full details: `references/testing-pyramid.md`
+
+---
+
+## Library API Reference
+
+All functions are in the `tuitestkit` package.
+
+### Message Builders (`messages.go`)
+
+Build `tea.Msg` values for driving model updates.
+
+```go
+// Key builds a tea.KeyMsg from a human-readable string.
+// Supports: "enter", "tab", "esc", "space", "backspace", "up", "down",
+// "left", "right", "home", "end", "pgup", "pgdown", "delete", "insert",
+// "f1"-"f20", "ctrl+c", "ctrl+a"..."ctrl+z", "alt+h", "alt+enter",
+// single runes: "a", "/", "1", etc.
+func Key(k string) tea.KeyMsg
+
+// Keys builds a slice of tea.Msg from multiple key strings.
+func Keys(keys ...string) []tea.Msg
+
+// WindowSize builds a tea.WindowSizeMsg with the given dimensions.
+func WindowSize(w, h int) tea.WindowSizeMsg
+
+// MouseClick builds a tea.MouseMsg for a left-button click at (x, y).
+func MouseClick(x, y int) tea.MouseMsg
+
+// MouseClickRight builds a tea.MouseMsg for a right-button click at (x, y).
+func MouseClickRight(x, y int) tea.MouseMsg
+
+// MouseScroll builds a tea.MouseMsg for a scroll event.
+// Direction constants: ScrollUp, ScrollDown, ScrollLeft, ScrollRight.
+func MouseScroll(dir ScrollDir) tea.MouseMsg
+
+// MouseRelease builds a tea.MouseMsg for a button release at (x, y).
+func MouseRelease(x, y int) tea.MouseMsg
+```
+
+### Model Harness (`harness.go`)
+
+Send messages to bubbletea models and handle commands.
+
+```go
+// Send sends messages to a model sequentially, returns the final model.
+// Preserves concrete type via generics -- no type assertion needed.
+// Panics if Update returns a different type (broken implementation).
+// Init() is NOT called.
+func Send[M tea.Model](model M, msgs ...tea.Msg) M
+
+// SendAndCollect sends messages, collects all non-nil Cmds returned by Update.
+// Returns final model + collected commands.
+func SendAndCollect[M tea.Model](model M, msgs ...tea.Msg) (M, []tea.Cmd)
+
+// ExecCmds executes tea.Cmd functions synchronously, collects resulting messages.
+// Recursively handles tea.BatchMsg. Nil cmds/messages are skipped.
+func ExecCmds(cmds ...tea.Cmd) []tea.Msg
+```
+
+**Common pattern -- command pipeline:**
+
+```go
+m, cmds := tuitestkit.SendAndCollect(m, tuitestkit.Key("r"))
+msgs := tuitestkit.ExecCmds(cmds...)
+m = tuitestkit.Send(m, msgs...)
+```
+
+### Reducer Harness (`reducer.go`)
+
+Table-driven testing for pure reducer functions.
+
+```go
+// ReducerTest defines a single test case for a pure reducer.
+// S = state type, A = action type.
+type ReducerTest[S any, A any] struct {
+    Name    string
+    Initial S
+    Action  A
+    Assert  func(t *testing.T, got S)
+}
+
+// Step defines one step in a multi-action reducer sequence.
+// Assert is optional -- if nil, applied without per-step validation.
+type Step[S any, A any] struct {
+    Name   string
+    Action A
+    Assert func(t *testing.T, got S)
+}
+
+// ReducerSequence defines a multi-step test scenario.
+// Actions applied sequentially from Initial. Final runs on end state.
+type ReducerSequence[S, A any] struct {
+    Name    string
+    Initial S
+    Steps   []Step[S, A]
+    Final   func(t *testing.T, got S)
+}
+
+// RunReducerTests executes table-driven reducer tests as subtests.
+func RunReducerTests[S, A any](t *testing.T, reduce func(S, A) S, tests []ReducerTest[S, A])
+
+// RunReducerSequences executes multi-step sequence tests.
+// Per-step Assert runs after each step (if non-nil). Final runs on end state.
+func RunReducerSequences[S, A any](t *testing.T, reduce func(S, A) S, sequences []ReducerSequence[S, A])
+```
+
+**Invariant checking:**
+
+```go
+// Invariant defines a property that must hold for any state.
+type Invariant[S any] struct {
+    Name  string
+    Check func(s S) error
+}
+
+// InvariantChecker holds invariants and validates state against all of them.
+type InvariantChecker[S any] struct { /* ... */ }
+
+// NewInvariantChecker creates a checker with the given invariants.
+func NewInvariantChecker[S any](invariants ...Invariant[S]) *InvariantChecker[S]
+
+// Check validates state against all invariants. Returns combined error or nil.
+func (ic *InvariantChecker[S]) Check(s S) error
+
+// WrapWithInvariants wraps a reducer with invariant checking.
+// After every reduce call, all invariants are validated.
+// t.Fatalf on violation.
+func WrapWithInvariants[S, A any](t *testing.T, reduce func(S, A) S, checker *InvariantChecker[S]) func(S, A) S
+```
+
+**Example:**
+
+```go
+checker := tuitestkit.NewInvariantChecker(
+    tuitestkit.Invariant[AppState]{
+        Name: "cursor in bounds",
+        Check: func(s AppState) error {
+            if s.Cursor < 0 || s.Cursor >= len(s.Items) {
+                return fmt.Errorf("cursor %d out of [0, %d)", s.Cursor, len(s.Items))
+            }
+            return nil
+        },
+    },
+)
+safeReduce := tuitestkit.WrapWithInvariants(t, Reduce, checker)
+tuitestkit.RunReducerTests(t, safeReduce, tests)
+```
+
+### Mock Building Blocks (`mock.go`)
+
+Composable primitives for building project-specific mocks.
+
+```go
+// MockCall represents a single recorded method invocation.
+type MockCall struct {
+    Method string
+    Args   []any
+}
+
+// MockCallRecorder provides thread-safe recording of method calls.
+// Embed into project-specific mock structs.
+type MockCallRecorder struct { /* ... */ }
+
+func (r *MockCallRecorder) Record(method string, args ...any)
+func (r *MockCallRecorder) CallCount(method string) int
+func (r *MockCallRecorder) Calls() []MockCall
+func (r *MockCallRecorder) CallsFor(method string) []MockCall
+func (r *MockCallRecorder) Reset()
+
+// MockResponseMap provides thread-safe canned response storage.
+type MockResponseMap struct { /* ... */ }
+
+func NewMockResponseMap() *MockResponseMap
+func (m *MockResponseMap) Set(key string, data []byte, err error)
+func (m *MockResponseMap) Get(key string) ([]byte, error)
+func (m *MockResponseMap) SetError(key string, err error)
+
+// Assertion helpers
+func AssertCalled(t testing.TB, r *MockCallRecorder, method string)
+func AssertNotCalled(t testing.TB, r *MockCallRecorder, method string)
+func AssertCalledN(t testing.TB, r *MockCallRecorder, method string, n int)
+func AssertCalledWith(t testing.TB, r *MockCallRecorder, method string, args ...any)
+```
+
+**Building a mock (two lines per method):**
+
+```go
+type TaskBoardMock struct {
+    tuitestkit.MockCallRecorder
+    Responses *tuitestkit.MockResponseMap
+}
+
+func NewTaskBoardMock() *TaskBoardMock {
+    return &TaskBoardMock{Responses: tuitestkit.NewMockResponseMap()}
+}
+
+func (m *TaskBoardMock) TreeJSON() ([]byte, error) {
+    m.Record("TreeJSON")
+    return m.Responses.Get("TreeJSON")
+}
+
+func (m *TaskBoardMock) Execute(cmd string, args ...string) ([]byte, error) {
+    m.Record("Execute", cmd, args)
+    return m.Responses.Get("Execute:" + cmd)
+}
+```
+
+### View Assertions (`view.go`)
+
+Assert on rendered output. All functions strip ANSI escape codes before comparison.
+
+```go
+// StripANSI removes all ANSI escape sequences from a string.
+func StripANSI(s string) string
+
+// --- Model-based (call model.View() internally) ---
+
+func ViewContains(t testing.TB, model tea.Model, text string)
+func ViewNotContains(t testing.TB, model tea.Model, text string)
+func ViewLines(model tea.Model) []string
+func ViewLineContains(t testing.TB, model tea.Model, lineIdx int, text string)
+func ViewLineEquals(t testing.TB, model tea.Model, lineIdx int, text string)
+func ViewMatchesRegex(t testing.TB, model tea.Model, pattern string)
+
+// --- String-based (when you already have the view string) ---
+
+func ContainsStr(t testing.TB, view string, text string)
+func NotContainsStr(t testing.TB, view string, text string)
+func LinesFromStr(view string) []string
+func MatchesRegexStr(t testing.TB, view string, pattern string)
+```
+
+### Snapshot Testing (`snapshot.go`)
+
+Golden file comparison for visual regression testing.
+
+```go
+// UpdateSnapshots controls whether snapshots are written (true) or compared (false).
+// Set via UPDATE_SNAPSHOTS=1 environment variable.
+var UpdateSnapshots bool
+
+// SnapshotView captures model.View(), strips ANSI, compares against golden file.
+func SnapshotView(t *testing.T, model tea.Model, name string)
+
+// SnapshotViewRaw captures model.View() with raw ANSI codes intact.
+func SnapshotViewRaw(t *testing.T, model tea.Model, name string)
+
+// SnapshotStr compares a pre-rendered string (ANSI-stripped) against golden file.
+func SnapshotStr(t *testing.T, view string, name string)
+
+// SnapshotStrRaw compares a pre-rendered string (raw ANSI) against golden file.
+func SnapshotStrRaw(t *testing.T, view string, name string)
+```
+
+Golden files stored at `testdata/snapshots/<name>.golden` relative to the test file.
+
+```bash
+# Create or update golden files
+UPDATE_SNAPSHOTS=1 go test ./...
+
+# Update for a single package
+UPDATE_SNAPSHOTS=1 go test ./internal/ui/screens/board/ -run TestSnapshot
+```
+
+Mismatches produce a line-by-line diff with `-`/`+` markers.
+
+---
+
+## Closed-Loop Workflow
+
+The agent development cycle for writing tests:
+
+```
+1. UNDERSTAND: Read screen/component code
+2. IDENTIFY:   What behaviors need tests?
+3. EXTRACT:    If exec.Command present, extract to interface (use mock template)
+4. WRITE:      Tests using tuitestkit helpers
+5. RUN:        go test ./... -v
+6. VALIDATE:   All pass? Check coverage with go test -cover
+7. FIX:        If failures, read error, fix code or test, goto 5
+8. SNAPSHOT:   Optionally capture view golden files
+9. DONE:       Tests green, coverage acceptable
+```
+
+### Step Details
+
+**UNDERSTAND:** Read the component source. Identify:
+- What state does it manage?
+- What messages does it handle in Update?
+- Does it have a pure reducer (`func(State, Action) State`)?
+- Does it shell out to external commands (exec.Command)?
+- What does View() render?
+
+**IDENTIFY:** Map behaviors to test levels:
+- Pure state logic -> Level 1 (reducer tests)
+- Key bindings, view rendering -> Level 2 (component tests)
+- Data loading, command execution -> Level 3 (integration tests with mocks)
+- Visual appearance -> Level 4 (snapshot tests)
+
+**EXTRACT:** If the component uses `exec.Command` or any I/O directly:
+1. Define an interface with only the methods this component needs
+2. Move `exec.Command` calls to a production implementation
+3. Build a mock using `MockCallRecorder` + `MockResponseMap`
+4. See `assets/templates/executor_interface.go.tmpl` and `assets/templates/mock_executor.go.tmpl`
+
+**WRITE:** Use the appropriate tuitestkit helpers per level:
+- Level 1: `RunReducerTests`, `RunReducerSequences`, `WrapWithInvariants`
+- Level 2: `Send`, `ViewContains`, `ViewLines`, `Key`, `MouseClick`
+- Level 3: `SendAndCollect`, `ExecCmds`, `AssertCalled`, `AssertCalledWith`
+- Level 4: `SnapshotView`, `SnapshotStr`
+
+**RUN:** `go test ./... -v` -- all tests must run in under 1 second (no I/O, no network).
+
+**VALIDATE:** `go test ./... -cover` -- target 80%+ for code under test.
+
+**FIX:** Read error messages carefully. Common issues:
+- Type assertion panic -> `Update` returns wrong type (broken implementation)
+- View assertion failure -> check ANSI stripping, check exact text
+- Snapshot mismatch -> run with `UPDATE_SNAPSHOTS=1` if the change is intentional
+- Mock assertion failure -> check response key matches (`"Execute:list"` not `"Execute"`)
+
+---
+
+## Templates
+
+Scaffolding templates in `assets/templates/`:
+
+| Template | Purpose |
+|----------|---------|
+| `reducer_test.go.tmpl` | Table-driven reducer tests with invariants |
+| `component_test.go.tmpl` | Component model tests (keyboard, mouse, commands, view) |
+| `snapshot_test.go.tmpl` | Snapshot golden file tests |
+| `executor_interface.go.tmpl` | Executor interface + production stub |
+| `mock_executor.go.tmpl` | Mock executor using MockCallRecorder + MockResponseMap |
+| `PROJECT_STRUCTURE.md` | Recommended directory layout for test files |
+
+Copy templates into your project, replace `TODO` markers with your actual types and import paths.
+
+---
+
+## References
+
+In-depth documentation in `references/`:
+
+| Document | Content |
+|----------|---------|
+| `elm-architecture.md` | Why Elm makes TUI testable, state/action/reducer/view cycle, nested reducers, dependency injection, the executor pattern |
+| `mock-patterns.md` | Interface extraction, when to mock vs test pure functions, stubs vs mocks vs fakes, callback capture, full mock lifecycle example |
+| `testing-pyramid.md` | All 5 test levels with code examples, decision table for which level to use, coverage strategy |
+
+---
+
+## Setup
+
+Run the setup script to create symlinks:
+
+```bash
+./scripts/setup.sh
+```
+
+This links the skill to `~/.agents/skills/go-testing-tools`, `~/.claude/skills/go-testing-tools`, and `~/.codex/skills/go-testing-tools`.
+
+To remove:
+
+```bash
+./scripts/deinit.sh
+```
+
+exec
+/bin/zsh -lc 'task-board worktree integrate --help' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 0ms:
+Land the accepted story_final Change Request for a Story as ONE squash commit on
+trunk, perform the Story's done transition, and commit the Story's board delta
+as a second, board-only commit.
+
+This command runs in the control root — the repository's main working tree, on
+the configured trunk branch — but only from the tracked integration run whose
+role and archetype match the accepted revision's immutable producer binding.
+Reviewers, orchestrators, and other producer archetypes are refused. No other
+checkout is ever advanced.
+
+It is idempotent. A crashed run leaves one durable transaction record; re-running
+resumes the recorded phase rather than starting a second integration, and the
+only phase that offers a rollback is 'prepared' with trunk unmoved.
+
+On a remote board it refuses with worktree_isolation_requires_local_board before
+the integration lock and before the transaction opens. The rationale is data
+locality, not authority: admission compares worktree bytes against the store's
+own rendering, and no single process holds both operands on a remote board.
+
+Usage:
+  task-board worktree integrate <STORY-ID> [flags]
+
+Flags:
+      --commit-time string   explicit RFC3339 commit time; required when version_control.confirm is enabled, and applied to both the author and the committer date
+      --cr string            Change Request ID (the element the accepted story_final CR is attached to)
+  -h, --help                 help for integrate
+      --revision int         accepted Change Request revision
+      --rollback             roll back a transaction at phase prepared with trunk unmoved instead of resuming it; available in no other phase
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/references/change-request-lifecycle.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 0ms:
+# Change Request Lifecycle Runbook
+
+Orchestrator-owned. An accepted Change Request is accepted work, not delivered
+work. This page states the order, the recovery paths, and the republish
+semantics that used to live only in an operator's head.
+
+The full typed contract — how a candidate is snapshotted, what
+`repository_delta` means, what a `stale` revision is, and every refusal you can
+hit — stays in
+[tracked background spawn](tracked-background-spawn.md), section
+`Change Requests, review, rework, and checkpoint`. This page is the order of
+operations on top of it.
+
+---
+
+## The Change Request lifecycle, in order
+
+1. **Accept.** The reviewer runs
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N>, evidence=<ELEMENT-ID>_review-verdict.md)'`.
+   The element moves to `integrating`. It is accepted, not delivered. Only the
+   reviewer run that was handed the revision may accept it.
+2. **Checkpoint immediately.** For every non-final leaf, run
+   `task-board worktree checkpoint <ELEMENT-ID>` as the next action after
+   acceptance. The accepted tree lands on the Story branch only, and the leaf
+   stays `integrating` until Story integration lands it on trunk. Delay here is
+   what makes the next producer's Change Request go `stale`.
+3. **Checkpoint refreshes the real index automatically.** Candidate capture
+   records (but never mutates) the real-index tree. Under the bound run's Story
+   lease and the candidate-captured index CAS, checkpoint replaces only that
+   captured state and independently verifies branch/HEAD/index/worktree
+   identity. A typed
+   `change_request_checkpoint_index_unsynced` refusal is retried after its named
+   lock, I/O, or ownership condition is resolved; do not use a broad manual
+   reset that can erase unreviewed staged state.
+4. **Final leaf: integrate, do not checkpoint.** `checkpoint` refuses the
+   Story's last open leaf with `change_request_final_leaf_checkpoint`, because
+   closing it would promote a Story whose branch has never reached trunk. Land
+   the Story with
+   `task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N>`.
+5. **When `integrate` refuses, report the refusal.** `validation_not_configured`
+   (`BUG-260807-1o5092`, the as-shipped behavior) and
+   `integration_indeterminate` for a board that lives outside the control root
+   are blockers, not detours. Report the refusal as the blocker it is and land
+   only by the documented manual signed substitute — an isolated clone, signed
+   cherry-pick of the exact reviewed head, a platform review record, and a
+   fail-closed plain push. Never route around a typed refusal by moving board
+   files or the branch by hand.
+6. **A lost run is recovered by republish, never by re-running the producer.** A
+   run that died after producing content but before the board recorded it still
+   has its content on disk. Republish it with provenance. Re-running the
+   producer discards work that already exists and costs the run again.
+7. **A republish of an unchanged accepted tree is an annotation, not a new
+   revision.** A candidate whose `repository_delta` is byte-identical to the
+   accepted one, and whose acceptance still stands, is not a new candidate.
+   Recording it as a revision turns the revision count — the only rework
+   measure the board has — into process noise.
+8. **Never commit manually on the Story branch.** The managed worktree's tree is
+   published by the producer's handoff and landed by `checkpoint` or
+   `integrate`. A hand commit on that branch makes the accepted snapshot and the
+   branch head disagree, and the disagreement surfaces later as an unexplained
+   `stale` or an integration that lands the wrong tree. A `task_delta` handoff
+   now fails closed on it: the tip is compared to the workspace record's
+   `checkpoint_oid` before the validation suite runs and before anything is
+   written, and a disagreement is refused with
+   `change_request_candidate_committed_past_checkpoint`. The producer repairs it
+   inside its own run with `git reset --soft <checkpoint_oid>` — the work stays
+   in the worktree — and completes the handoff again.
+
+## A revision that will never be integrated
+
+Two shapes end a Change Request revision without a reviewer verdict, and they
+are different facts.
+
+### An empty delta does not block the Story
+
+A revision whose `repository_delta` is `empty` — an analyst or research run that
+changed no repository file — is created `ready` like any other, because
+emptiness is an attribute of the candidate and never a state. What changed with
+`BUG-260906-37s3ps` is what that revision does to everybody else: while it sits
+`ready` or `reviewing`, it no longer refuses a sibling producer with
+`change_request_sibling_producer_blocked`.
+
+The gate's argument is contamination — the new producer writes into the same
+Story worktree the pending candidate was snapshotted from — and an empty
+candidate has no repository work product for those writes to reach. Its
+checkpoint writes no commit, and its integration is a no-op. Before the fix a
+research-only run deadlocked its whole Story: nothing was routed at a candidate
+with nothing to review, and every later producer was refused with a blocker
+nobody could clear.
+
+The exemption is scoped, and the scope is deliberate:
+
+| Blocking state | `repository_delta=present` | `repository_delta=empty` |
+| --- | --- | --- |
+| `ready`, `reviewing` | refuses siblings | **admits siblings** |
+| `draft`, `changes_requested`, `stale`, `conflicted` | refuses siblings | refuses siblings |
+
+The bottom row expects a REPUBLISH, and the next snapshot of the shared worktree
+would pick up the sibling's writes. Emptiness today says nothing about the
+revision that replaces it. A revision with no readable `repository_delta` —
+legacy, or from a newer build — refuses: a value this build cannot read is not
+evidence that the candidate is empty.
+
+The revision is still fully auditable. It is not deleted, not hidden, and not
+given a special state; it simply stops being a blocker.
+
+### Retiring a revision: `withdraw_cr`
+
+An empty delta is not the only revision that never reaches integration. A
+candidate can be superseded, abandoned, or published by a run whose deliverable
+turned out to belong somewhere else. Before `BUG-260906-37s3ps` there was no
+route for that at all: `accept_cr` needs a reviewer verdict and a merged
+checklist, `worktree abort` discards the entire workspace, and republishing only
+produces another revision in the same unresolved state.
+
+```bash
+task-board m 'withdraw_cr(<ELEMENT-ID>, revision=<N>, reason="why this revision will never be integrated")'
+```
+
+It moves the revision to `aborted`, which is terminal on both predicates that
+read the state: it stops refusing sibling producers, and it stops withholding
+the Story workspace's base convergence. The revision file and its ledger row
+stay readable.
+
+Four things it refuses, and why:
+
+- **A revision that is `accepted`, `checkpointing`, `checkpointed`,
+  `integrating` or `integrated`** — `change_request_state_conflict`. Those
+  carry a reviewer's attestation, or commits that are already on the Story
+  branch or in trunk. Recording one as never integrated would make the board
+  disagree with git history.
+- **A missing or whitespace-only `reason`** —
+  `change_request_withdraw_reason_missing`. The ledger row is the only surviving
+  explanation of why the revision exists and was never integrated.
+- **A call from inside a tracked spawn run** —
+  `change_request_withdraw_unauthorized`. Withdrawal is an ORCHESTRATOR route.
+  A producer refused by `change_request_sibling_producer_blocked` must not clear
+  its own blocker, and a producer handed `changes_requested` must not retire the
+  rework signal instead of answering it.
+- **A revision number that is not the current one** —
+  `change_request_revision_conflict`, the same CAS every other transition takes.
+
+`withdraw_cr` deliberately does NOT move the board element. Where the element
+goes next — back to development, `blocked`, or closed as a duplicate — is a
+routing decision the orchestrator makes with information the mutation does not
+have; make it explicitly, in a separate call.
+
+## Two same-class findings mean a missing gate
+
+When two consecutive reviews of one leaf raise the same finding class, stop
+routing another rework revision. Spawn one task to add a gate for the class — a
+conformance vector set, a checker, a mutant harness — and let the next revision
+be reviewed against the gate rather than against a reviewer's memory. The
+reviewer's `repeat-of:` verdict field is the signal to route on.
+
+## Recovery surfaces
+
+- Stopped or refused integration: `task-board worktree transaction show <STORY-ID>`,
+  then the disposition surface it names.
+- A leaf whose handoff guard refused for artifact naming: attach the correctly
+  named `<ELEMENT-ID>_<slug>.<ext>` outcome resource and re-run the handoff. Do
+  not respawn the producer to satisfy a naming rule.
+
+exec
+/bin/zsh -lc "git status --short
+printenv TASK_BOARD_CONFIG TASK_BOARD_RUN_ID TASK_BOARD_DIR
+command -v task-board
+rg --files -g AGENTS.md -g '*SKILL.md' -g 'task-board.config.json' -g 'README.md' .agents .codex agents 2>/dev/null" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ exited 2 in 87ms:
+ M LOGBOOK.md
+ M scripts/tests/test-credential-free-validation.sh
+ M task-board.config.json
+/Users/iv/Developer/relux-tunnel/.temp/deadline-20260908/task-board.config.json
+/Users/iv/.local/bin/task-board
+
+codex
+Применяю `project-management` для integration lifecycle; обязательный `go-testing-tools` тоже прочитан. У `integrate` обнаружилось существенное ограничение: он создаёт squash на trunk и отдельный board commit. Проверю реализацию timestamps и PR-порядка до запуска этой мутации.
+
+exec
+/bin/zsh -lc "mkdir -p .temp/TASK-260830-1x524u-delivery
+task-board worktree integrate --help > .temp/TASK-260830-1x524u-delivery/integrate-help-01.log
+ls -l /Users/iv/.local/bin/task-board
+rg -n 'integrat|commit.time|squash' /Users/iv/.claude/skills/project-management/references/tracked-background-spawn.md | tail -35
+ task-board q 'change_request(TASK-260830-1x524u)'
+task-board worktree transaction show STORY-260715-1y04r0" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 470ms:
+query error: parse error at 1:1: unknown operation "change_request" (got "change_request"); known operations: activity, agents, context, context_boundary, context_candidates, context_retention, contexts, count, get, list, models, plan, project_config, provider_limits, schema, summary, whoami; see schema() for the contract and schema(operation=NAME) for one signature
+No integration transaction is recorded for STORY-260715-1y04r0
+
+exec
+/bin/zsh -lc "ls /Users/iv/Developer
+ git log -3 --format='%H %aI %cI %s'
+ git config --get user.name
+ git config --get user.email
+ git config --get user.signingkey" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 137ms:
+9bf4d0892db03035b989a4c040cfee37636ff8df 2026-08-30T21:02:00+04:00 2026-08-30T21:02:00+04:00 TASK-260715-2rcvr0: Document M1 runtime ownership, operation, and extension seams
+de5f11fec32edc353c8563ad1500609190b2aed9 2026-08-30T21:01:00+04:00 2026-08-30T21:01:00+04:00 TASK-260715-3qqbbm: Verify migration isolation from the legacy SwiftPM SOCKS product
+8b49b792541339d82408804988d9b4a4778297ac 2026-08-30T21:00:00+04:00 2026-08-30T21:00:00+04:00 TASK-260715-m8bi8i: Add composed M1 runtime integration scenarios to ReluxTunnelHarness
+Ivan Oparin
+oparin@me.com
+/Users/iv/.ssh/ivanopcode
+
+exec
+/bin/zsh -lc "cat /Users/iv/.local/bin/task-board
+ task-board q 'schema(operation=get)'
+ task-board worktree --help
+sed -n '815,895p' /Users/iv/.claude/skills/project-management/references/tracked-background-spawn.md
+ls -l /Users/iv/.claude/skills/project-management" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 38ms:
+Inspect and repair the Story-scoped Git workspaces that repository-mutating
+spawns run in.
+
+Each Story gets one managed worktree under .temp/<STORY-ID>/worktree on a
+short-lived task-board/story/<STORY-ID> branch forked from trunk. Trunk is
+spawn.worktree_isolation.integration_base_branch when configured, and otherwise
+resolves from refs/remotes/origin/HEAD and then the current branch.
+
+These commands require a local authoritative board. On a remote board they
+refuse with worktree_isolation_requires_local_board and do nothing else.
+
+Usage:
+  task-board worktree [command]
+
+Available Commands:
+  abort                 Stop using a Story workspace, preserving its work by default
+  checkpoint            Commit an accepted leaf onto its Story branch while preserving integrating
+  gc                    Release Story leases whose holding runs are provably terminal
+  integrate             Land an accepted Story candidate on trunk and commit its board state
+  invalidate-acceptance Release an element whose acceptance §6.2 already invalidated back to rework
+  repair                Re-materialize a recorded workspace whose worktree is missing
+  status                Report managed Story workspaces and what blocks their cleanup
+  transaction           Inspect and dispose of a refused or abandoned integration transaction
+
+Flags:
+  -h, --help   help for worktree
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board worktree [command] --help" for more information about a command.
+|---|---|---|
+| `validation_not_configured` | no suite is configured; nothing ran | **No** — configure the suite |
+| `revalidation_failed` | the suite ran on the landing tree and failed | **Yes** — the only one that is |
+| `revalidation_unavailable` | the suite could not be executed at all | **No** — not a pass either; integration stays blocked and retryable |
+
+Two further codes are `unavailable`-class rather than failures:
+`revalidation_materialization_failed`, when the merged tree could not be
+materialized as the commit integration would land, and
+`revalidation_stale_ref`, when a `refs/task-board/revalidate/<STORY-ID>` left by
+a crashed attempt is present — that ref is never silently adopted and no suite
+is run over it. Every one of these leaves trunk unmoved, board status unchanged
+and acceptance intact. Repeated revalidation of one accepted revision is capped;
+past the cap the revision is demoted to `stale`, which *is* a rework signal.
+
+#### When trunk advanced under an accepted Change Request
+
+Acceptance is invalidated by **changed paths, not by trunk's OID**. A Story that
+was reviewed against a trunk that has since moved is not automatically stale;
+whether the acceptance survives depends on what moved.
+
+| Trunk since the reviewed OID | Result |
+|---|---|
+| Unchanged | Nothing to do; the accepted tree is the landing tree |
+| Advanced, **no** path intersection with `changed_paths` | Three-way merge of the candidate onto trunk; on success the revision is **re-parented** — same revision, still `accepted`, `reparent_count` incremented — and revalidation is then forced because the candidate tree changed |
+| Advanced, **intersecting** a path this Change Request also changes | `integration_base_moved`; the revision is demoted to `stale` — nobody has reviewed the combination |
+| Advanced path-disjoint, but the three-way merge **conflicts** | `stale`, same route: rework and republish |
+| Merged tree diffs against trunk to a **different path set** than the reviewer read | `stale`; the merge would have landed something outside the reviewed surface |
+
+The path-intersection test is a fast reject, never a proof of mergeability —
+renames, mode changes and directory/file transitions can conflict without a
+name-level intersection — which is why the three-way merge runs anyway and its
+resulting shape is compared against the paths the reviewer actually read.
+
+A `stale` revision is ordinary rework: the producer republishes revision N+1 on
+the same branch and worktree, and a new reviewer accepts it. Nothing about a
+stale acceptance moves trunk, board status, or the recorded workspace.
+
+Two adjacent refusals belong to the same family. `integration_checkout_busy`
+reports a merge, rebase or cherry-pick in progress in the control root, and
+`integration_blocked` reports a checkout integration may not act on at all: trunk
+checked out elsewhere, a non-empty index, or a dirty path that overlaps the
+Story's landing paths. Overlapping local edits are refused rather than
+stashed, committed, or overwritten.
+
+#### How board paths are admitted
+
+**Admission is decided by the Orchestrator, from content it re-derives itself.**
+A board path may be committed only when the bytes in the control root equal what
+the authoritative store renders for the owning element — content equality
+against the store's own rendering, computed by the integrating process under its
+own lock — and only when nothing under the Story's board paths moved inside the
+integration window that the transaction cannot account for, which is enforced as
+a compare-and-swap over that window. A path whose bytes the store does not
+reproduce, or whose presence contradicts ownership, refuses
+`board_path_content_unrecognized`; drift inside the window refuses
+`board_delta_moved`.
+
+**Nothing a child authors decides any of this.** Local boards keep a board write
+journal at `.task-board/.board-write-ledger.json` so a process killed mid-write
+can be resolved by content afterwards. It is **non-authorizing**: no admission
+decision and no membership decision reads it, and deleting every record in it
+changes no outcome. There is likewise **no lane attestation and no per-lane
+board-write authority** — no record by which a lane claims the right to a board
+byte, and none is emulated. Three revisions of the design tried to make such a
+record unforgeable and none could, because every input lives inside the trust
+domain of the process it would attest.
+
+**What the no-widen claim is, stated narrowly.** The committed board path set is
+contained in `board_paths(<STORY-ID>)` intersected with the transaction's
+`precondition_delta`, the transition element's own escalation projection, and
+the corresponding exact activity-stream projection for those status writes.
+Content is whatever the authoritative store renders at freeze or recovery time.
+The command does **not** claim to reproduce the byte state at the instant of the
+transition, and **it does not claim to identify which lane wrote a board byte**.
+It claims exactly two things: every byte committed is a byte the store
+reproduces, and nothing under the Story's board paths changed inside the
+integration window that the transaction cannot account for.
+
+If a lane path drifts after the manifest is frozen, integration refuses
+`board_delta_moved` naming the `integrated_board_uncommitted` condition: the
+Story commit is already on trunk and its board delta is not. The transaction
+lrwxr-xr-x@ 1 iv  staff  47 Sep  7 16:48 /Users/iv/.claude/skills/project-management -> ../../.curator/global/skills/project-management
+
+exec
+/bin/zsh -lc "task-board q 'get(TASK-260830-1x524u) { overview resources change_request }'
+rg -n 'resolved_commit_time|commit-time|ONE squash' /Users/iv/Developer/ReluxWorks/task-board /Users/iv/Developer/task-board /Users/iv/.curator/global/skills/project-management --glob '*.go' --glob '*.md' 2>/dev/null | head -45" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 28ms:
+query error: parse error at 1:38: unknown field "resources" (got "resources"); see schema() for valid fields and preset names
+/Users/iv/.curator/global/skills/project-management/references/tracked-background-spawn.md:702:  --commit-time <RFC3339>
+/Users/iv/.curator/global/skills/project-management/references/tracked-background-spawn.md:714:timestamp on the author and the committer date; the commit-time contract itself
+/Users/iv/.curator/global/skills/project-management/references/tracked-background-spawn.md:975:transaction's `resolved_commit_time` could ever render `post_digest` — which
+/Users/iv/.curator/global/skills/project-management/references/tracked-background-spawn.md:1104:task-board worktree integrate STORY-ID --cr ELEMENT --revision N --commit-time RFC3339
+/Users/iv/.curator/global/skills/project-management/references/statuses.md:166:backdated per the project's commit-time policy when one is configured. Human
+/Users/iv/.curator/global/skills/project-management/references/statuses.md:377:  --commit-time 2026-08-06T20:01:00+03:00
+/Users/iv/.curator/global/skills/project-management/references/statuses.md:389:fast-forwarded. When `version_control.confirm` is `true`, `--commit-time` is
+
+exec
+/bin/zsh -lc "task-board q 'get(TASK-260830-1x524u) { overview }'
+rg -n 'resource|change_request|schema\\(' /Users/iv/.claude/skills/project-management/references/querying.md | head -35
+ls /Users/iv/Developer/ReluxWorks
+sed -n '360,408p' /Users/iv/.claude/skills/project-management/references/statuses.md
+sed -n '688,720p' /Users/iv/.claude/skills/project-management/references/tracked-background-spawn.md" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 645ms:
+{"assignee":"[tester] tester (codex)","id":"TASK-260830-1x524u","name":"revalidate-shared-runtime-story-for-integration","parent":"STORY-260715-1y04r0","status":"integrating"}
+15:Do not add routine `summary()`, `plan()`, `schema()`, or `{ full }` orientation.
+16:Use `schema(operation=NAME)` or `schema(mutation=NAME)` only after an unknown
+61:task-board q 'schema()'
+62:task-board q 'schema(operation=project_config)'
+63:task-board q 'schema(mutation=set_status)'
+69:**Operations:** `get(ID)`, `activity(ID, cursor?, limit?, order?, kinds?, view?)`, `list(filters...)`, `count(filters...)`, `summary()`, `plan(scope?, mode=?, active=?)`, `agents(stale=N?)`, `models(agent?)`, `project_config(view?, role?, agent?)`, `whoami()`, `schema(operation?|mutation?)`
+74:**First-time setup:** Under the full profile, `schema()` returns the complete API contract. Under lite, skip the proactive full read and request only the failed/unknown call with `schema(operation=NAME)` or `schema(mutation=NAME)`. Parser errors for a known call include that same typed signature directly.
+93:spawn run lifecycle mirrored onto the run's task, `change_request` returns the
+98:task-board q --format compact 'activity(TASK-260211-abc, kinds="run,change_request", limit=25)'
+149:`schema(operation=NAME)` and `schema(mutation=NAME)` return one flat signature object: `kind`, `name`, a typed `signature`, description, parameters, and examples; mutations also report `destructive` and `idempotent`. They do not include unrelated fields, presets, operations, or mutation contracts. Provide exactly one scope. `schema()` without a scope retains the full legacy response.
+169:An unknown operation lists the known query operations and points to `schema()` for discovery and `schema(operation=NAME)` for one signature.
+178:query error: parse error at 1:1: unknown operation "fetch" (got "fetch"); known operations: activity, agents, context, context_boundary, context_candidates, context_retention, contexts, count, get, list, models, plan, project_config, provider_limits, schema, summary, whoami; see schema() for the contract and schema(operation=NAME) for one signature
+186:.temp/TASK-260907-bg79el/task-board q 'schema(operation=get)'
+197:A misspelled projection field suggests `updated` and points to `schema()` for valid fields and presets.
+206:query error: parse error at 1:29: unknown field "updated_at" (got "updated_at"); did you mean `updated`?; see schema() for valid fields and preset names
+380:# Rename overview name/slug while preserving ID, README, progress, children, and resources
+404:task-board m 'add_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="...", description="Design doc")'
+405:task-board m 'update_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="revised", description="Design doc v2")'
+406:task-board m --confirm 'delete_resource(TASK-12, name="TASK-12_design.md")'
+420:- `--confirm` — required for destructive mutations (`delete`, `delete_resource`)
+426:**Introspection:** Run `task-board q 'schema(mutation=NAME)'` for one mutation signature, or full `schema()` for the entire contract.
+526:| Discover full API contract | DSL | `task-board q 'schema()'` |
+527:| Repair one operation/mutation call | DSL | `task-board q 'schema(operation=NAME)'` / `schema(mutation=NAME)` |
+537:| Resource management | DSL mutation / CLI | `task-board m 'add_resource(TASK-XX, name=TASK-XX_results.md, content="...", type=outcome)'` |
+FireAuthKit
+FireAuthKitDemo
+FireAuthRelux
+agent-session-manager
+agent-session-manager-spec
+agent-session-manager-spec:ro
+agent-skills
+alexis-agents-infra
+apiary-docs
+apps
+blog
+calendary-vision
+cartools
+cocoaskills-production
+converter
+converter-neo
+converter-neo-TASK-260719-3v67rl
+converter-neo-TASK-260720-25vqc3
+curator
+curator-agent-launcher
+curator-agent-runtime
+curator-parity
+curator-production
+curator-skill-registry-production
+curator-spec
+curator-spec-parity
+curator-spec-production
+hkfacade-ios
+ios-app-manager
+licenses
+memor-_depr
+memori
+memori-fresh
+ota-distribution
+output
+pedometer
+relux-codes-landing
+relux-product-web-design
+relux-product-web-identity
+relux-remote-infra
+relux-works-landing
+relux-works-landing.zip
+repos
+skill-agent-facing-api
+skill-agents-management
+skill-ios-app-manager
+skill-ios-app-manager-plan
+skill-ios-testing-tools
+skill-project-management
+skill-project-management-opus5
+task-board.config.json
+tgfs
+xflow
+`task-board worktree integrate`, which lands a Story developed in a managed
+Story workspace. The mechanics of the managed workspace itself live in
+[tracked background spawn](tracked-background-spawn.md#story-worktree-isolation);
+what belongs here is the ordering and the exact scope of the acknowledgement.
+
+**Accepted comes before done, always.** A reviewer records acceptance with
+`accept_cr`, which routes the element to `integrating` and binds the revision to
+its producer role and archetype. No Git operation has happened at that point and
+nothing is `done`. The Orchestrator then routes a new tracked run with that
+producer binding; that run integrates, and the `done` transition is the *last*
+board effect of a run that has already moved trunk. The superseded order — close the
+board first, land the work afterwards — is withdrawn, because it produced an
+acknowledgement that attested a scope no repository had yet seen.
+
+```bash
+task-board worktree integrate STORY-260205-def456 \
+  --cr TASK-260205-abc123 --revision 3 \
+  --commit-time 2026-08-06T20:01:00+03:00
+```
+
+**The landing gate defaults to refusing.** `integrate` requires the
+`spawn.worktree_isolation.validation.commands` suite to be configured; with no
+suite it refuses `validation_not_configured` before any ref moves. A project
+with nothing to run states that explicitly as `{"commands": []}`. See
+[task-board config](task-board-config.md#the-landing-gate-suite).
+
+**Squash, fast-forward-only, and one explicit time.** The accepted Story
+candidate lands as one squash commit on trunk; the branch's internal Task
+checkpoints are discarded rather than replayed, and trunk is only ever
+fast-forwarded. When `version_control.confirm` is `true`, `--commit-time` is
+required, must parse as RFC3339, and is applied to the author date and the
+committer date of both commits this command creates. The example above is this
+repository's own policy expressed concretely: the previous day at 20:01 MSK,
+that is `2026-08-06T20:01:00+03:00` for an integration run on 2026-08-07. With
+confirmation disabled and no flag, the current time is used instead.
+
+**What the acknowledgement asserts here, and what it does not.** The command
+supplies `commit_ack=scope_committed` on the `done` transition itself, and that
+transition is not reachable until the Story's squash commit is genuinely
+contained in trunk — a resumed run whose trunk no longer carries the recorded
+candidate refuses rather than stamping the acknowledgement. So the assertion is
+exactly: *the repository scope of this Story is on trunk.* It is narrower than
+a clean tree in three specific ways, and each of them is a normal, expected
+state at the moment the acknowledgement is written:
+
+- **The Story's own board delta is still uncommitted.** The board-state commit
+  is created *after* the transition, precisely because the transition is what
+  produces the board bytes it records.
+- **Board paths outside this Story are untouched.** The second commit stages an
+elsewhere. It moves the revision to `aborted`, which stops it refusing sibling
+producers and stops it withholding the Story workspace's base convergence; the
+revision file and its ledger row stay readable. It refuses an `accepted`,
+`checkpointing`, `checkpointed`, `integrating` or `integrated` revision, an
+absent or whitespace-only `reason`, a stale revision number, and any call from
+inside a tracked spawn run. It does not move the board element: routing the
+element afterwards is a separate, explicit decision.
+
+### Landing a Story: `worktree integrate`
+
+The Orchestrator closes a Story with:
+
+```bash
+task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N> \
+  --commit-time <RFC3339>
+```
+
+It runs in the **control root** — the repository's main working tree, on the
+configured trunk branch. No other checkout is ever advanced, and a control root
+whose `HEAD` is an *ancestor* of trunk on a side branch refuses
+`integration_checkout_not_trunk` rather than being fast-forwarded silently.
+
+The command produces at most two commits: one squash commit carrying the
+accepted candidate tree, and a second **board-only** commit titled
+`Record <STORY-ID> board state`, staged by an explicit pathspec of exactly the
+manifest paths and never by `git add -A`. Both carry the same resolved commit
+timestamp on the author and the committer date; the commit-time contract itself
+is owned by [statuses.md](statuses.md) and is not restated here. A Story whose
+accepted candidate has no repository delta produces **no** Story commit and still
+produces the board-only one — its board record is the Story's entire work
+product.
+
+All managed commit objects are explicitly signed with `-S`: the temporary
+
+exec
+/bin/zsh -lc "rg -n 'ResolvedCommitTime|resolved_commit_time|ONE squash' /Users/iv/Developer/ReluxWorks/skill-project-management --glob '*.go' | head -40
+ task-board --help | head -65
+ git diff --stat
+ git rev-parse HEAD
+ git rev-parse '0ca11378213cc02a78eeac937f94aef6c5209545"'^{tree}'"'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 264ms:
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/move_source_integration_test.go:587:		ResolvedCommitTime: f.commitTime, PhaseASnapshot: []DigestEntry{}, PreconditionDelta: []DeltaEntry{},
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/move_source_integration_test.go:1041:		ResolvedCommitTime: f.commitTime, MoveSources: forged,
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/integrate.go:387:		ResolvedCommitTime:   commitTime,
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/integrate.go:818:	dated := s.g.withDates(txn.ResolvedCommitTime)
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/integrate.go:1271:	at, err := time.Parse(time.RFC3339, txn.ResolvedCommitTime)
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/integrate.go:1274:			fmt.Sprintf("the transaction's resolved commit time %q is not RFC3339", txn.ResolvedCommitTime), err, nil)
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/txn.go:199:	ResolvedCommitTime   string        `json:"resolved_commit_time"`
+/Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/cmd/worktree_integrate.go:33:	Long: `Land the accepted story_final Change Request for a Story as ONE squash commit on
+Manage a file-based task board with epics, stories, tasks, and bugs.
+
+Usage:
+  task-board [command]
+
+Available Commands:
+  admin                  Server administration (users, tokens, access)
+  boards                 List boards accessible to the current user (remote mode)
+  claude                 Launch Claude through the Task-board Session Manager
+  codex                  Attach Codex to the Task-board Session Manager
+  completion             Generate the autocompletion script for the specified shell
+  export                 Export current board into a tar.gz archive
+  goal                   Read and align the board-scoped parent primary goal
+  grep                   Full-text search across board files
+  handoff                Verify role handoff evidence and move to the role end status
+  help                   Help about any command
+  import                 Import a tar.gz archive into the current board
+  limits                 Inspect and control provider rate-limit state
+  login                  Store a token for the current remote
+  logout                 Remove active user's token for current remote
+  m                      Execute a mutation (write operation)
+  migrate-keychain       Import legacy remote credentials into macOS Keychain
+  migrate-project-config Preview or apply guarded deprecated project-config alias migration
+  plan                   Show execution plan with phases and critical path
+  q                      Query the board with a mini DSL
+  repair-links           List or remove unsupported container dependency links
+  resource               Upload, update, download, and delete board resources
+  self-update            Update task-board to the latest version
+  session                Inspect and stop Task-board Session Manager sessions
+  spawn                  Queue an agent spawn run for a board task
+  switch-user            Switch active user for current remote
+  tree                   Show board as hierarchical tree
+  tui                    Launch interactive TUI
+  validate               Validate board structure
+  whoami                 Show current remote and active user
+  worktree               Inspect and repair managed Story workspaces
+
+Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+  -h, --help                     help for task-board
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+  -v, --version                  version for task-board
+
+Use "task-board [command] --help" for more information about a command.
+ LOGBOOK.md                                       |  9 +++++++++
+ scripts/tests/test-credential-free-validation.sh | 10 ++++++----
+ task-board.config.json                           | 12 ++++++++++--
+ 3 files changed, 25 insertions(+), 6 deletions(-)
+9bf4d0892db03035b989a4c040cfee37636ff8df
+0ca11378213cc02a78eeac937f94aef6c5209545
+
+exec
+/bin/zsh -lc "sed -n '790,855p' /Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/integrate.go
+rg -n 'withDates|commit-tree|update-ref|commitTime|pull.request' /Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/integrate.go
+ task-board resource --help
+ task-board handoff --help" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 0ms:
+	}
+	if len(phaseC.LaneMismatch) > 0 {
+		reset := append([]string{"reset", "--"}, pathsOf(pending)...)
+		_, _ = s.g.run(reset...)
+		return &Error{
+			Code:    ErrorBoardDeltaMoved,
+			Message: fmt.Sprintf("%s: a staged lane blob is not the content the manifest froze", txn.StoryID),
+			Details: map[string]string{"story_id": txn.StoryID},
+			Paths:   phaseC.LaneMismatch,
+		}
+	}
+	if len(phaseC.Deferred) > 0 {
+		reset := append([]string{"reset", "--"}, phaseC.Deferred...)
+		if _, err := s.g.run(reset...); err != nil {
+			return err
+		}
+		result.Deferred = append(result.Deferred, phaseC.Deferred...)
+		sort.Strings(result.Deferred)
+	}
+
+	staged, err := s.g.stagedPaths()
+	if err != nil {
+		return err
+	}
+	if len(staged) == 0 {
+		return s.txnStore.Advance(txn, PhaseIntegrated)
+	}
+
+	dated := s.g.withDates(txn.ResolvedCommitTime)
+	// Keep the board-only half under the same unconditional managed-commit
+	// contract. Explicit -S prevents a repository-local commit.gpgsign=false
+	// override from silently turning only this recovery-sensitive commit
+	// unsigned; failure leaves HEAD and the durable phase unchanged for retry.
+	if _, err := dated.run("commit", "-S", "-m", "Record "+txn.StoryID+" board state"); err != nil {
+		return err
+	}
+	boardCommit, err := s.g.revParse("HEAD")
+	if err != nil {
+		return err
+	}
+	result.BoardCommitOID = boardCommit
+	return s.txnStore.Advance(txn, PhaseIntegrated)
+}
+
+// step8 performs safe cleanup. Force removal or deletion is never automatic.
+func (s *session) step8(txn *Txn, result *Result) error {
+	if txn.Phase != PhaseIntegrated {
+		return nil
+	}
+	integrationFault(faultAfterIntegrated)
+	// Cleanup of the managed worktree and branch is owned by the worktree
+	// lifecycle surface, which already refuses on unmet preconditions. What this
+	// step owns is recording that cleanup is now permitted, and leaving the
+	// transaction at cleanup_pending so `worktree repair`/`gc` retries it.
+	if err := s.txnStore.Advance(txn, PhaseCleanupPending); err != nil {
+		return err
+	}
+	result.Notes = append(result.Notes,
+		"safe cleanup is now eligible; `worktree cleanup` removes the workspace and branch only after exact commit ancestry, Story done, a committed board record, a clean workspace, and no active lease or RUN")
+	return nil
+}
+
+// ---------------------------------------------------------------------------
+// Recovery.
+// ---------------------------------------------------------------------------
+
+96://	step 1  build the candidate commit with `commit-tree` — moves NO ref
+279:	commitTime, err := s.resolveCommitTime()
+325:			record, err = s.revalidate(record, commitTime)
+354:		dated := s.g.withDates(commitTime)
+355:		// commit-tree ignores commit.gpgsign, so -S is explicit. A missing or
+358:		candidateCommit, err = dated.run("commit-tree", "-S", record.CandidateTreeOID,
+387:		ResolvedCommitTime:   commitTime,
+818:	dated := s.g.withDates(txn.ResolvedCommitTime)
+Manage attached resources such as screenshots, docs, logs, and other files.
+
+Use "task-board resource add" to create a new attached resource, "task-board
+resource adopt" to register an orphaned local payload, "task-board resource
+update" to replace an existing one, "task-board resource delete" to remove it,
+and "task-board resource get" to materialize a resource back to the local
+filesystem for inspection.
+
+Usage:
+  task-board resource [command]
+
+Available Commands:
+  add         Attach a new file resource to an element
+  adopt       Register an existing unreferenced local resource payload
+  delete      Delete a resource from an element (requires --confirm)
+  get         Download a resource to the local filesystem
+  update      Replace an existing file resource on an element
+
+Flags:
+  -h, --help   help for resource
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board resource [command] --help" for more information about a command.
+Resolve the configured role end status, verify every checklist item and
+at least one stored task-scoped outcome resource, and apply the ordinary
+cascading status transition under one mutation lock.
+
+The command fails closed with all missing evidence and does not change status.
+Attach or update the outcome with the resource or mutation CLI before handoff.
+
+Usage:
+  task-board handoff <ELEMENT-ID> [flags]
+
+Flags:
+      --commit-ack string   Mover acknowledgement for an enforced done transition
+      --format string       Output format: compact or json (default "compact")
+  -h, --help                help for handoff
+      --role string         Role whose configured end_status must be applied
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+codex
+Конфликт подтверждён исходниками: оба новых commit получают один `ResolvedCommitTime`, а Story checkpoints заменяются squash commit. Это нарушает требование интервала ≥1 минуты и сохранения подписанных объектов. Интеграцию не запускал; сохраню точные ссылки на код и необходимую коррекцию shared tool в outcome.
+
+exec
+/bin/zsh -lc "task-board q 'schema()' > .temp/TASK-260830-1x524u-delivery/schema-01.json
+python3 - <<'PY'
+import json
+p=json.load(open('.temp/TASK-260830-1x524u-delivery/schema-01.json'))
+print(json.dumps(p.get('presets',{})))
+print(json.dumps(p.get('fields',{})))
+PY
+sed -n '342,365p' /Users/iv/Developer/ReluxWorks/skill-project-management/tools/board-cli/internal/integration/integrate.go
+ task-board resource add --help" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 89ms:
+{"context-full": ["identity", "binding", "lineage", "lifecycle", "freshness", "actualization", "security", "payload"], "default": ["id", "name", "status"], "full": ["id", "type", "name", "title", "status", "integrationCheckpointed", "review", "task_class", "estimate", "observability", "parent", "assignee", "description", "scope", "ac", "blockedBy", "blocks", "derivedBlockedBy", "derivedBlocks", "checklist", "notes", "created", "updated", "isBlocked", "isAdvisoryBlocked", "children", "preconditionResources", "outcomeResources"], "minimal": ["id", "status"], "observability-epic": ["id", "name", "status", "observability"], "observability-project": ["observability"], "observability-story": ["id", "name", "status", "observability"], "observability-task": ["id", "name", "status", "observability"], "overview": ["id", "name", "status", "assignee", "parent"], "planning": ["id", "name", "status", "integrationCheckpointed", "blockedBy", "blocks", "derivedBlockedBy", "derivedBlocks", "parent"], "progress": ["id", "status", "integrationCheckpointed", "review", "task_class", "estimate", "checklist", "notes", "blockedBy", "derivedBlockedBy", "isBlocked", "isAdvisoryBlocked"], "selection": ["identity", "binding", "lineage", "lifecycle", "security"]}
+["id", "type", "name", "title", "status", "integrationCheckpointed", "review", "task_class", "estimate", "observability", "parent", "assignee", "description", "scope", "ac", "blockedBy", "blocks", "derivedBlockedBy", "derivedBlocks", "checklist", "notes", "created", "updated", "isBlocked", "isAdvisoryBlocked", "children", "preconditionResources", "outcomeResources", "identity", "binding", "lineage", "lifecycle", "freshness", "actualization", "security", "payload"]
+	if err != nil {
+		return nil, err
+	}
+	if err := s.requireIntegratingStatus(record); err != nil {
+		return nil, err
+	}
+
+	// Step 1 — build the candidate commit object. This writes a loose object
+	// and MOVES NO REF: it is inert, unreachable and collectable, so it is not
+	// yet an irreversible act.
+	candidateCommit := ""
+	if !repositoryDeltaEmpty {
+		dated := s.g.withDates(commitTime)
+		// commit-tree ignores commit.gpgsign, so -S is explicit. A missing or
+		// failing configured signer refuses before the transaction is opened and
+		// before any ref or board state can move.
+		candidateCommit, err = dated.run("commit-tree", "-S", record.CandidateTreeOID,
+			"-p", state.HeadOID, "-m", s.storyCommitMessage(record))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Step 4 — the phase-A closing re-read, and THEN the transaction open, in
+Attach a new file resource to a board element.
+
+SOURCE may be:
+  - a local filesystem path
+  - a file:// URL
+  - an http:// or https:// URL
+
+Examples:
+  task-board resource add TASK-260311-abc ./screenshot.png --type precondition
+  task-board resource add TASK-260311-abc file:///tmp/report.pdf --name ui-report.pdf
+  task-board resource add TASK-260311-abc ./report.md --name reports/review/report.md
+  task-board resource add TASK-260311-abc https://example.com/spec.pdf --type outcome
+
+Usage:
+  task-board resource add <ELEMENT-ID> <SOURCE> [flags]
+
+Flags:
+  -d, --description string   Optional one-line description
+  -h, --help                 help for add
+      --name string          Override stored resource filename
+      --type string          Resource type: precondition or outcome (default "outcome")
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+exec
+/bin/zsh -lc "task-board q 'get(TASK-260830-1x524u) { id status review }' > .temp/TASK-260830-1x524u-delivery/review-01.json
+cat .temp/TASK-260830-1x524u-delivery/review-01.json
+ git diff --binary > .temp/TASK-260830-1x524u-delivery/preserved-diff-01.patch
+ git status --short > .temp/TASK-260830-1x524u-delivery/status-01.log
+ git -C /Users/iv/Developer/ReluxWorks/skill-project-management rev-parse HEAD
+ task-board --version" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 750ms:
+{"id":"TASK-260830-1x524u","review":"required","status":"integrating"}
+14e2483be64c817a76a19ac8dd5608e717e56285
+task-board version dev
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('.temp/TASK-260830-1x524u-delivery/TASK-260830-1x524u_delivery-constraint.md')
+p.write_text('''# Accepted rev3 delivery constraint
+
+Outcome: NOT LANDED. Task remains integrating. No integration transaction was opened. No successor started.
+
+## Independently observed
+- Required initial set_status integrating returned exit 0 (integrating -> integrating).
+- Story HEAD is 9bf4d0892db03035b989a4c040cfee37636ff8df. Candidate tree object 0ca11378213cc02a78eeac937f94aef6c5209545 exists. This run did not independently revalidate the full candidate tree or repeat technical suites; previous positive acceptance is inherited from the assignment, not a new review verdict.
+- Existing modifications remain in LOGBOOK.md, scripts/tests/test-credential-free-validation.sh, and task-board.config.json. Preserved diff: .temp/TASK-260830-1x524u-delivery/preserved-diff-01.patch. No product edits, commits, branch switches, resets, pushes, VPN commands, route changes, or DNS changes were performed.
+- Explicit TASK_BOARD_CONFIG remains /Users/iv/Developer/relux-tunnel/.temp/deadline-20260908/task-board.config.json.
+- Git identity reads Ivan Oparin <oparin@me.com>, signing key /Users/iv/.ssh/ivanopcode. Signing was not exercised because no commit was authorized under the incompatible delivery semantics.
+- task-board worktree transaction show STORY-260715-1y04r0 returned exit 0: No integration transaction is recorded.
+
+## Exact incompatible contract
+Command inspected (exit 0): task-board worktree integrate --help.
+It lands ONE squash commit on trunk and a second board-only commit. Only one --commit-time argument exists.
+Source repository: /Users/iv/Developer/ReluxWorks/skill-project-management, observed HEAD 14e2483be64c817a76a19ac8dd5608e717e56285. Installed CLI reports task-board version dev; source/build equivalence was not established, but installed help and installed skill agree on this contract.
+- tools/board-cli/internal/integration/integrate.go:354-359 uses withDates(commitTime), then signed commit-tree of CandidateTreeOID with one trunk parent.
+- integrate.go:387 persists that value as ResolvedCommitTime.
+- integrate.go:818-823 uses withDates(txn.ResolvedCommitTime) for the signed board commit.
+- Installed project-management/references/statuses.md:386-393 explicitly applies the same timestamp to both commits and discards internal checkpoints instead of replaying them.
+- Installed references/tracked-background-spawn.md:709-715 confirms identical timestamps.
+
+This cannot meet the requested >= 1 minute chronological spacing for every commit, nor preservation of reviewed signed checkpoint objects. The documented operation also advances local trunk before a canonical hosted PR acceptance sequence. No flag documented by the installed command provides a prepare/publish/review/exact-head-finalize mode.
+
+No mutating integrate command was attempted: this is a preflight contract incompatibility, NOT a claimed runtime refusal. Changing dates after creation, manually editing transaction metadata, or hand-committing the Story would violate explicit instructions.
+
+## Minimal supported recovery
+Correct the shared tool at its source: add a durable prepare-and-finalize delivery route that preserves accepted signed ancestry, supports separately persisted chronological commit times with >=60 seconds spacing and the Tbilisi night-window gate, prepares a non-default branch for real PR review/checks, and finalizes only the exact verified signed head after authoritative landing. Preserve immutable producer binding, validation, foreign board paths, CAS and recovery semantics. Add negative tests for equal/reversed/out-of-window dates and head drift; retain signatures through publication.
+Do not implement a project-local workaround. The active managed session must not install/replace the task-board runtime (project-management SKILL.md invariant 14); deployment must occur outside hosted sessions. No tool correction, installation, migration or successor was started in this run.
+
+## Handoff
+The latest delivery assignment requires keeping integrating and permits only the integration transaction to write done. AC delivery is unmet; ordinary producer handoff/republish was therefore not invoked, to preserve accepted rev3. Resume supported producer-bound delivery after the shared-tool contract is corrected. No human product decision or VPN action is needed. This is durable incomplete-delivery evidence, not completion or a fresh acceptance.
+
+## Read failures
+Initial unsupported query change_request(...) and invalid resources projection produced parse errors. Recovered with scoped schema and get overview/review; these failures are not evidence of missing CR/resources. No CR metadata was edited.
+''')
+PY
+task-board resource add TASK-260830-1x524u .temp/TASK-260830-1x524u-delivery/TASK-260830-1x524u_delivery-constraint.md --type outcome --description 'Accepted rev3 delivery paused: signed-history and commit-time contract incompatibility' " in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree
+ succeeded in 1149ms:
+Attached TASK-260830-1x524u_delivery-constraint.md on TASK-260830-1x524u as outcome
+
+codex
+Landing не выполнен; статус сохранён `integrating`.
+
+`integrate` создаёт squash и board commit с одинаковым timestamp — это нарушает требования сохранения подписанной истории и интервала ≥1 минуты. Мутацию не запускал.
+
+Outcome `TASK-260830-1x524u_delivery-constraint.md` прикреплён к задаче: доказательства и необходимая коррекция shared tool. Продуктовые файлы, чужие изменения и VPN не затронуты.
+tokens used
+47,947
+Landing не выполнен; статус сохранён `integrating`.
+
+`integrate` создаёт squash и board commit с одинаковым timestamp — это нарушает требования сохранения подписанной истории и интервала ≥1 минуты. Мутацию не запускал.
+
+Outcome `TASK-260830-1x524u_delivery-constraint.md` прикреплён к задаче: доказательства и необходимая коррекция shared tool. Продуктовые файлы, чужие изменения и VPN не затронуты.

@@ -1,0 +1,23 @@
+relay asset manifest generate passed
+Loading and constructing the graph
+It might take a while if the cache is empty
+Using cache binaries for the following targets: 
+Generating workspace ReluxTunnel.xcworkspace
+Generating project ReluxTunnelApp
+Resolving package dependencies using xcodebuild
+Total time taken: 3.614s
+! Warning 
+  The following items may need attention: 
+   ▸ The target 'ReluxProxyMacTunnel' has a PRODUCT_NAME build setting containing variables that are resolved at build time, and might cause unpredictable behaviours.
+✔ Success 
+  Project generated. 
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00006031-001471020ED9001C, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00006031-001471020ED9001C, name:My Mac }
+{ platform:macOS, name:Any Mac }
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00006031-001471020ED9001C, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00006031-001471020ED9001C, name:My Mac }
+{ platform:macOS, name:Any Mac }
+generated provider graph and relay resource contract passed
+macOS host/provider target validation passed

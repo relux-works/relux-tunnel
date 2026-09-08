@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 
 public enum SnapshotDiffError: Error {
+  case nonFileURL(URL)
   case unreadableImage(URL)
   case incompatibleDimensions
   case cannotCreateBitmap
@@ -15,14 +16,18 @@ public enum SnapshotDiff {
     failed failedURL: URL,
     outputDirectory: URL
   ) throws -> Bool {
+    // Snapshot artifacts are local test files; reject other schemes before any I/O.
+    for url in [referenceURL, failedURL, outputDirectory] {
+      guard url.isFileURL else { throw SnapshotDiffError.nonFileURL(url) }
+    }
     guard
-      let referenceData = try? Data(contentsOf: referenceURL),
+      let referenceData = try? Data(contentsOf: URL(filePath: referenceURL.path)),
       let reference = NSBitmapImageRep(data: referenceData)
     else {
       throw SnapshotDiffError.unreadableImage(referenceURL)
     }
     guard
-      let failedData = try? Data(contentsOf: failedURL),
+      let failedData = try? Data(contentsOf: URL(filePath: failedURL.path)),
       let failed = NSBitmapImageRep(data: failedData)
     else {
       throw SnapshotDiffError.unreadableImage(failedURL)

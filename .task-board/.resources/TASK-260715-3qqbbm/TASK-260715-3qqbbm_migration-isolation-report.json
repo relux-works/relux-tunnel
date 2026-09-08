@@ -1,0 +1,130 @@
+{
+  "boundary": {
+    "legacyMutation": "forbidden",
+    "releaseMigration": "M5 / TASK-260715-1tzaed",
+    "userMigration": "M4 / TASK-260715-35nc5m"
+  },
+  "buildProducts": {
+    "collisions": [],
+    "configurations": {
+      "Debug": {
+        "host": "Debug/ReluxProxyMac.app",
+        "hostIdentifier": "works.relux.tunnel.mac",
+        "provider": "Debug/ReluxProxyMac.app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension",
+        "providerIdentifier": "works.relux.tunnel.mac.tunnel"
+      },
+      "Release": {
+        "host": "Release/ReluxProxyMac.app",
+        "hostIdentifier": "works.relux.tunnel.mac",
+        "provider": "Release/ReluxProxyMac.app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension",
+        "providerIdentifier": "works.relux.tunnel.mac.tunnel"
+      }
+    },
+    "root": "/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/.temp/TASK-260715-3qqbbm/generated-clean/Products"
+  },
+  "generated": {
+    "identifiers": {
+      "RELUX_IOS_APP_GROUP": "group.works.relux.tunnel",
+      "RELUX_IOS_HOST_BUNDLE_ID": "works.relux.tunnel.ios",
+      "RELUX_IOS_PROVIDER_BUNDLE_ID": "works.relux.tunnel.ios.tunnel",
+      "RELUX_MACOS_HOST_BUNDLE_ID": "works.relux.tunnel.mac",
+      "RELUX_MACOS_PROVIDER_BUNDLE_ID": "works.relux.tunnel.mac.tunnel"
+    },
+    "launch": {
+      "host": "accessory NSApplication",
+      "launchAgents": [],
+      "provider": "NetworkExtension system-extension mode"
+    },
+    "products": {
+      "host": "ReluxProxyMac.app",
+      "provider": "works.relux.tunnel.mac.tunnel.systemextension"
+    },
+    "release": {
+      "generatedReleaseDecision": "M5",
+      "legacyArtifactNames": [],
+      "legacyPackagingEntries": []
+    },
+    "repository": "relux-works/relux-tunnel",
+    "storage": {
+      "defaultsDomain": "works.relux.tunnel.mac",
+      "iosKeychainGroup": "$(AppIdentifierPrefix)works.relux.tunnel.shared",
+      "keychainService": "works.relux.tunnel.credential.v1",
+      "legacyDefaultsKeysReused": []
+    },
+    "swiftpm": {
+      "hostDependencies": [
+        "ReluxProxyMacTunnel",
+        "ReluxAppleUITestShared",
+        "ReluxTunnelCore"
+      ],
+      "legacyProductDependencies": [],
+      "package": "ReluxTunnel",
+      "providerDependencies": [
+        "ReluxTunnelMacOSAdapter"
+      ]
+    }
+  },
+  "generatedProject": {
+    "hostProduct": "ReluxProxyMac.app",
+    "legacyTargets": [],
+    "path": "/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1y04r0/worktree/ReluxTunnelApp.xcodeproj/project.pbxproj",
+    "providerProduct": "ReluxProxyMacTunnel.systemextension"
+  },
+  "legacy": {
+    "bundle": {
+      "executable": "ReluxProxy",
+      "identifier": "works.relux.proxy",
+      "path": "dist/ReluxProxy.app"
+    },
+    "launch": {
+      "kind": "SwiftUI MenuBarExtra",
+      "launchAgents": []
+    },
+    "pinnedFiles": [
+      "Package.swift",
+      "Sources/ReluxProxy/ReluxProxyApp.swift",
+      "Sources/ReluxProxy/MenuContentView.swift",
+      "Sources/ReluxProxy/TunnelConfiguration.swift",
+      "Sources/ReluxProxy/SSHCommandBuilder.swift",
+      "Sources/ReluxProxy/TunnelController.swift",
+      "Tests/ReluxProxyTests/TunnelConfigurationTests.swift",
+      "Resources/Info.plist",
+      "Makefile",
+      "scripts/build-app.sh",
+      "scripts/create-dmg.sh",
+      "scripts/generate-icon.swift",
+      ".github/workflows/ci.yml",
+      ".github/workflows/release.yml"
+    ],
+    "release": {
+      "artifacts": [
+        "ReluxProxy-v<version>-universal.dmg",
+        "ReluxProxy.dmg"
+      ],
+      "entries": [
+        "make app",
+        "make dmg",
+        ".github/workflows/release.yml"
+      ]
+    },
+    "repository": "relux-works/relux-proxy (separate checkout)",
+    "storage": {
+      "defaults": {
+        "localPort": "1080",
+        "sshAccount": "administrator",
+        "sshHost": "relux"
+      },
+      "defaultsDomain": "works.relux.proxy",
+      "keychainNamespaces": []
+    },
+    "swiftpm": {
+      "generatedRuntimeDependencies": [],
+      "package": "ReluxProxy",
+      "product": "ReluxProxy",
+      "target": "ReluxProxy",
+      "testTarget": "ReluxProxyTests"
+    }
+  },
+  "schemaVersion": 1,
+  "task": "TASK-260715-3qqbbm"
+}

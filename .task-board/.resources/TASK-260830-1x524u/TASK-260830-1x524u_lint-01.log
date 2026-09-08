@@ -1,0 +1,4 @@
+swift_format_lint_exit=0
+shell_syntax_exit=0
+config_json_exit=0
+git_diff_check_exit=0
