@@ -741,6 +741,46 @@ class RelaySupplyChainTests(unittest.TestCase):
             )
             supply_chain.scan_runtime(self.config, root)
 
+    def test_snapshot_support_local_loads_pass_actual_runtime_scan(self) -> None:
+        supply_chain.scan_runtime(self.config)
+
+    def test_snapshot_support_network_mutants_preserve_file_tokens_and_fail(self) -> None:
+        relative = "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"
+        original = (supply_chain.ROOT / relative).read_text()
+        local = "Data(contentsOf: URL(filePath: referenceURL.path))"
+        self.assertIn(local, original)
+        mutations = (
+            "Data(contentsOf: referenceURL) /* URL(filePath: referenceURL.path) */",
+            "Data(contentsOf: URL(string: referenceURL.absoluteString)!) /* filePath */",
+            "Data(contentsOf: URL(filePath: referenceURL.path).appendingPathComponent(\"x\"))",
+        )
+        for mutation in mutations:
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                self.make_runtime_root(root)
+                path = root / relative
+                path.parent.mkdir(parents=True)
+                # Retain both searched-for tokens while making HTTPS reachable.
+                changed = original.replace(local, mutation).replace(
+                    "guard url.isFileURL else",
+                    'guard url.isFileURL || url.scheme == "https" else',
+                )
+                path.write_text(changed)
+                with self.assertRaisesRegex(
+                    supply_chain.SupplyChainError, "Foundation Data URL loader"
+                ):
+                    supply_chain.scan_runtime(self.config, root)
+
+    def test_runtime_scan_rejects_string_constructor_even_with_file_path_token(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.make_runtime_root(root)
+            (root / "Sources" / "Download.swift").write_text(
+                "let bytes = try Data(contentsOf: URL(string: address)!) // filePath\n"
+            )
+            with self.assertRaisesRegex(supply_chain.SupplyChainError, "Foundation Data URL loader"):
+                supply_chain.scan_runtime(self.config, root)
+
     def test_asset_linkage_drift_fails_clean_audit(self) -> None:
         contract = supply_chain.load_json(supply_chain.ASSET_SOURCE_PATH)
         contract["supplyChain"]["manifestLinkageSHA256"] = "0" * 64

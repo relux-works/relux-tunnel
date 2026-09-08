@@ -72,4 +72,7 @@ test "$mise_line" -lt "$gate_line"
 
 "$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
 
+python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
+python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
+
 echo "credential-free validation contract tests passed"

@@ -1464,3 +1464,47 @@
 - SCOPE: This task makes documentation and diagram changes only. It does not wire a provider, change lifecycle behavior, claim full UDP from TCP plus safe DNS, or define migration and future-mode policy.
 - VERIFICATION: Eight focused Swift suites pass 105 tests across messages, coordinator, provider adapter, host retirement/projection, composition gates, exact macOS graph ownership, aggregate diagnostics, and SSH redaction. The manifest-driven harness passes six tests and all seven scenario rows; both SwiftPM platform adapter targets and unsigned generated macOS host/provider Debug+Release validation pass. PlantUML source checking, four-page SVG rendering and visual inspection, 52 local-link checks, source-contract checks, and `git diff --check` pass.
 - REVIEW REWORK: CR revision 1 correctly identified that the partial-failure diagram placed packet activation after failed settings applies with `committed` or `uncertain` disposition. The corrected page separates `notCommitted` failure (no clear), `committed`/`uncertain` failure (clear, no activation), and successful committed apply followed by activation failure (clear). The production coordinator and its 22-test negative lifecycle suite verify this boundary.
+## 2026-09-08 — BUG-260908-7c5iv4: PR 6 validation boundaries
+
+Reproduced board exit 1 and relay audit make exit 2 on exact PR head
+`87451b53960ceabe88a01c44c287fee7f9ebf386`; old main has no activity failure,
+but has the same SnapshotDiff loader failure. These are repository failures.
+The CI board entry point now excludes only root activity/resource stores.
+SnapshotDiff rejects non-file input/output URLs before I/O and explicitly
+constructs file URLs for image reads; the scanner recognizes Foundation's
+`URL(filePath:)` alongside `URL(fileURLWithPath:)`, without excluding test support.
+This small loader change is necessary because the previous public URL API could
+load network URLs; a scanner-only exemption would hide that behavior.
+Named negative tests and three narrowing mutants cover hidden elements, arbitrary
+URL loading, and token-preserving HTTP admission through the actual Swift API.
+The existing validation fixture correction is reused verbatim from accepted
+`6e8a1988`; generated schemes are unchanged. Exact-base and PR-composition evidence
+are attached to the bug separately. Delivery remains the parent's review/landing
+step; no signed objects are rewritten by this producer.
+
+The first simultaneous full-suite PR-composition run failed two unchanged
+HEV/SSH integration tests. The sequential full-suite retry passed with the same
+behavioral source (516 Swift tests, 25 pre-existing known issues); Story-base
+validation also passed (496 tests, 25 known issues). The initial failing attempt
+remains attached, and scheduling interference is not claimed as a proven cause.
+
+
+## 2026-09-08 — BUG-260908-33iyb1 macOS hosted diagnostics
+
+- Verified hosted revision `3279036094620772262dbd04a6d8930ec7691e75` has
+  parents `b3422b05226253a17676b9b84c764071fe3dbe74` and PR 6 head
+  `87451b53960ceabe88a01c44c287fee7f9ebf386`; its tree equals that PR head.
+- The supplied artifact omits redirected Xcode child logs. Build exit 65 is
+  known; the compiler cause remains unknown. No unsupported toolchain claim
+  or runtime product change is justified by that evidence.
+- Added complete child-log retention under the already-uploaded log directory,
+  inline failure context, and unchanged nonzero child status. Behavioral tests
+  drive all four build invocations and the test invocation with exit 65. Two
+  narrowing mutants admit only exit 65 or suppress only its diagnostic; both
+  fail the named production-entry test.
+- The local macOS validator passed on Xcode 26.5 / Swift 6.3.2, including four
+  unsigned builds, target-contract tests, packaging, and provider graph checks.
+  This is local evidence, not hosted proof. Parent owns publication and the
+  exact-head hosted rerun. Diagnostic propagation is scoped to this leaf; the
+  original hosted repair and green-check requirement remain open in
+  BUG-260908-shki8p. Independent immutable review is still required.

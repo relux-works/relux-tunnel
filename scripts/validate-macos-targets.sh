@@ -7,7 +7,9 @@ products="$task_output/Products"
 intermediates="$task_output/Intermediates"
 derived_data="$task_output/DerivedData-validation"
 
-mkdir -p "$task_output"
+build_logs="$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"
+mkdir -p "$task_output" "$build_logs"
+. "$repo_root/scripts/logged-command.sh"
 cd "$repo_root"
 
 ./scripts/generate-workspace.sh --clean
@@ -16,7 +18,7 @@ build_unsigned() {
   scheme=$1
   configuration=$2
   log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
-  xcodebuild \
+  run_logged_command "$build_logs/credential-free-$log_name-build.log" xcodebuild \
     -workspace ReluxTunnel.xcworkspace \
     -scheme "$scheme" \
     -configuration "$configuration" \
@@ -26,7 +28,7 @@ build_unsigned() {
     CODE_SIGNING_REQUIRED=NO \
     SYMROOT="$products" \
     OBJROOT="$intermediates" \
-    build > "$task_output/credential-free-$log_name-build.log" 2>&1
+    build
 }
 
 for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
@@ -34,7 +36,7 @@ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
   build_unsigned "$scheme" Release
 done
 
-xcodebuild \
+run_logged_command "$build_logs/target-contract-tests.log" xcodebuild \
   -workspace ReluxTunnel.xcworkspace \
   -scheme ReluxProxyMac \
   -configuration Debug \
@@ -44,7 +46,7 @@ xcodebuild \
   CODE_SIGNING_REQUIRED=NO \
   SYMROOT="$products" \
   OBJROOT="$intermediates" \
-  test > "$task_output/target-contract-tests.log" 2>&1
+  test
 
 host="$products/Debug/ReluxProxyMac.app"
 extensions="$host/Contents/Library/SystemExtensions"
@@ -107,16 +109,16 @@ for entitlements in "$provider_entitlements" "$developer_id_provider_entitlement
 done
 
 for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
-  xcodebuild \
+  run_logged_command "$build_logs/$scheme-build-settings.log" xcodebuild \
     -workspace ReluxTunnel.xcworkspace \
     -scheme "$scheme" \
     -configuration Debug \
-    -showBuildSettings > "$task_output/$scheme-build-settings.log"
+    -showBuildSettings
 done
 grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
-  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
+  "$build_logs/ReluxProxyMac-build-settings.log" >/dev/null
 grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
-  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+  "$build_logs/ReluxProxyMacTunnel-build-settings.log" >/dev/null
 
 provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
 test "$provider_architectures" = 'arm64 x86_64 '
