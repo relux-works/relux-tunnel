@@ -1,0 +1,64 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write swift-version-45881B103DA9D485.txt
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[1/2] Linking ReluxTunnelPackageTests
+Build complete! (1.69s)
+Test Suite 'Selected tests' started at 2026-09-16 15:35:24.224.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-09-16 15:35:24.231.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-09-16 15:35:24.231.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-16 15:35:24.231.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.006) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "M1 composed runtime harness" started.
+􀟈  Suite "Deterministic harness session factory" started.
+􀟈  Suite "macOS production runtime ownership" started.
+􀟈  Test "harness root uses candidate-neutral runtime factory with deterministic generations" started.
+􀟈  Suite "M1 runtime composition" started.
+􀟈  Test "exact harness graph preserves pure prepare and repeated reverse cleanup" started.
+􀟈  Test "production command completes traffic, diagnostics, host-loss, stop, and repeated cleanup" started.
+􀟈  Test "exact returned graph authenticates, activates after settings, and releases in reverse" started.
+􀟈  Test "packet prepare is pure and activation is the only PacketFlow read path" started.
+􀟈  Test "production call site constructs nothing before manifest validation" started.
+􀟈  Test "production creates one selected object graph per runtime generation" started.
+􀟈  Test "production distinguishes absent and unreadable manifests before construction" started.
+􀟈  Test "semantic gates reject disabled permit, supersession, pin drift, and missing capability" started.
+􀟈  Test "numeric boolean permits fail semantic and production gates before graph construction" started.
+􀟈  Test "production digest gate rejects a narrowed manifest" started.
+􀟈  Test "accepted binding manifest resolves exact M0 values" started.
+􀟈  Test "private ingress sends only virtual DNS UDP to DNS" started.
+􀟈  Test "semantic integer gate rejects booleans, fractions, and overflow" started.
+􀟈  Test "failed deterministic substitution does not consume a generation" started.
+􁁛  Test "packet prepare is pure and activation is the only PacketFlow read path" passed after 0.001 seconds.
+􁁛  Test "production digest gate rejects a narrowed manifest" passed after 0.001 seconds.
+􁁛  Test "production call site constructs nothing before manifest validation" passed after 0.001 seconds.
+􁁛  Test "production distinguishes absent and unreadable manifests before construction" passed after 0.001 seconds.
+􁁛  Test "failed deterministic substitution does not consume a generation" passed after 0.001 seconds.
+􁁛  Test "private ingress sends only virtual DNS UDP to DNS" passed after 0.001 seconds.
+􁁛  Test "harness root uses candidate-neutral runtime factory with deterministic generations" passed after 0.001 seconds.
+􁁛  Test "exact harness graph preserves pure prepare and repeated reverse cleanup" passed after 0.002 seconds.
+􁁛  Suite "Deterministic harness session factory" passed after 0.002 seconds.
+􁁛  Test "exact returned graph authenticates, activates after settings, and releases in reverse" passed after 0.002 seconds.
+􁁛  Suite "macOS production runtime ownership" passed after 0.002 seconds.
+􁁛  Test "accepted binding manifest resolves exact M0 values" passed after 0.002 seconds.
+􁁛  Test "production creates one selected object graph per runtime generation" passed after 0.002 seconds.
+􁁛  Test "numeric boolean permits fail semantic and production gates before graph construction" passed after 0.007 seconds.
+􁁛  Test "production command completes traffic, diagnostics, host-loss, stop, and repeated cleanup" passed after 0.007 seconds.
+􀟈  Test "production command emits stable codes for every mandatory failure scenario" started.
+􁁛  Test "semantic gates reject disabled permit, supersession, pin drift, and missing capability" passed after 0.008 seconds.
+􁁛  Test "semantic integer gate rejects booleans, fractions, and overflow" passed after 0.008 seconds.
+􁁛  Suite "M1 runtime composition" passed after 0.009 seconds.
+􁁛  Test "production command emits stable codes for every mandatory failure scenario" passed after 0.003 seconds.
+􀟈  Test "HarnessApplication.run requires coordinator-observed SSH loss before mandatory exit" started.
+􁁛  Test "HarnessApplication.run requires coordinator-observed SSH loss before mandatory exit" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run requires coordinator-observed DNS loss before mandatory exit" started.
+􁁛  Test "HarnessApplication.run requires coordinator-observed DNS loss before mandatory exit" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run forwards after releasing its real composition bootstrap owner" started.
+􁁛  Test "HarnessApplication.run forwards after releasing its real composition bootstrap owner" passed after 0.001 seconds.
+􀟈  Test "HarnessApplication.run production gate admits exact repetition bound and rejects narrower violations" started.
+􁁛  Test "HarnessApplication.run production gate admits exact repetition bound and rejects narrower violations" passed after 0.009 seconds.
+􁁛  Suite "M1 composed runtime harness" passed after 0.024 seconds.
+􁁛  Test run with 20 tests in 4 suites passed after 0.024 seconds.

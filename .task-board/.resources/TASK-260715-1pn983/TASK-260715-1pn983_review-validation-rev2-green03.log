@@ -1,0 +1,8 @@
+reviewed-base=b3422b05226253a17676b9b84c764071fe3dbe74
+reviewed-candidate-tree=fc4cf7e50c4221458822ca6eb82b1fad5b879f5f
+git-diff-check=PASS
+plantuml-checkonly=PASS
+fresh-svg-byte-match=PASS
+formula-revision1-counterexample-and-action-coverage=PASS
+visual-qa=PASS (fresh original-resolution PNGs inspected)
+board-validate-exit=0 with 3 reported parent-status anomalies; current Story anomaly is reviewer-state aggregation, other 2 are out of scope

@@ -1,0 +1,86 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write swift-version-45881B103DA9D485.txt
+[2/4] Emitting module ReluxTunnelMacOSAdapter
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[2/3] Linking ReluxTunnelPackageTests
+Build complete! (1.55s)
+Test Suite 'Selected tests' started at 2026-09-16 14:53:26.285.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-09-16 14:53:26.291.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-09-16 14:53:26.291.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-16 14:53:26.291.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.006) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "SSH bootstrap privacy-safe error mapping" started.
+􀟈  Suite "macOS system-domain Keychain credential resolver" started.
+􀟈  Test "only bounded timeout and selected transient transport classes are retryable later" started.
+􀟈  Test "socket and URL errors map by numeric class without descriptions" started.
+􀟈  Test "stage code action and retry taxonomy is a stable golden contract" started.
+􀟈  Test "runtime diagnostics snapshot stores and clears only the bounded projection" started.
+􀟈  Test "typed internal cause is preserved while public projection stays finite" started.
+􀟈  Test "every credential resolver error has one bounded bootstrap projection" started.
+􀟈  Test "all bootstrap stages have an explicit public projection" started.
+􀟈  Test "imported and generated registry representations produce libssh2 credentials" started.
+􀟈  Test "authentication timeout and transport loss remain operational failures" started.
+􀟈  Test "live client rejects fixture query before the Security matcher" started.
+􀟈  Test "optional passphrase preserves absent empty and present states" started.
+􀟈  Test "malformed references stop before any Keychain client call" started.
+􀟈  Test "cancellation and explicit user stop never receive trust or authentication labels" started.
+􀟈  Test "bounded repetitions leave no secret or query-count growth" started.
+􀟈  Test "cancellation after a Security call clears and releases returned bytes" started.
+􀟈  Test "exact opaque reference and fixed service shape the only lookup" started.
+􀟈  Test "errors and credential reflection are redacted" started.
+􀟈  Test "hostile underlying errors and prohibited values are never projected" started.
+􀟈  Test "decoded buffers clear before return and signer retirement releases parsed state" started.
+􀟈  Test "record generation digest truncation and trailing bytes fail closed" started.
+􀟈  Test "not found inaccessible malformed and platform cancellation remain distinct" started.
+􀟈  Test "NW and POSIX classes map without endpoint or underlying prose" started.
+􀟈  Test case passing 1 argument format → 1 to "imported and generated registry representations produce libssh2 credentials" started.
+􀟈  Test "wrong class and mismatched identity fail distinctly" started.
+􀟈  Test "OSStatus bootstrap projection is stable and contains no platform status" started.
+􀟈  Test case passing 1 argument format → 2 to "imported and generated registry representations produce libssh2 credentials" started.
+􀟈  Test case passing 1 argument testCase → absent to "optional passphrase preserves absent empty and present states" started.
+􀟈  Test "wifiAware maps to unavailable without platform values" started.
+􀟈  Test case passing 1 argument testCase → present to "optional passphrase preserves absent empty and present states" started.
+􀟈  Test "configuration trust credential and authentication gates remain terminal" started.
+􀟈  Test "one fake-only scoped query performs no enumeration or fallback" started.
+􀟈  Test case passing 1 argument testCase → empty to "optional passphrase preserves absent empty and present states" started.
+􀟈  Test "passphrase and key-format outcomes stay stable" started.
+􁁛  Test "typed internal cause is preserved while public projection stays finite" passed after 0.001 seconds.
+􁁛  Test "stage code action and retry taxonomy is a stable golden contract" passed after 0.001 seconds.
+􁁛  Test "only bounded timeout and selected transient transport classes are retryable later" passed after 0.001 seconds.
+􁁛  Test "socket and URL errors map by numeric class without descriptions" passed after 0.001 seconds.
+􁁛  Test "every credential resolver error has one bounded bootstrap projection" passed after 0.001 seconds.
+􁁛  Test "cancellation and explicit user stop never receive trust or authentication labels" passed after 0.001 seconds.
+􀟈  Test case passing 1 argument testCase → credentialKeyUnsupported to "passphrase and key-format outcomes stay stable" started.
+􀟈  Test case passing 1 argument testCase → credentialMalformed to "passphrase and key-format outcomes stay stable" started.
+􁁛  Test "NW and POSIX classes map without endpoint or underlying prose" passed after 0.001 seconds.
+􁁛  Test "live client rejects fixture query before the Security matcher" passed after 0.001 seconds.
+􁁛  Test "hostile underlying errors and prohibited values are never projected" passed after 0.001 seconds.
+􁁛  Test "authentication timeout and transport loss remain operational failures" passed after 0.001 seconds.
+􁁛  Test "all bootstrap stages have an explicit public projection" passed after 0.001 seconds.
+􁁛  Test "optional passphrase preserves absent empty and present states" with 3 test cases passed after 0.001 seconds.
+􀟈  Test case passing 1 argument testCase → credentialPassphraseInvalid to "passphrase and key-format outcomes stay stable" started.
+􁁛  Test "imported and generated registry representations produce libssh2 credentials" with 2 test cases passed after 0.001 seconds.
+􀟈  Test case passing 1 argument testCase → credentialPassphraseRequired to "passphrase and key-format outcomes stay stable" started.
+􁁛  Test "wrong class and mismatched identity fail distinctly" passed after 0.001 seconds.
+􁁛  Test "decoded buffers clear before return and signer retirement releases parsed state" passed after 0.001 seconds.
+􁁛  Test "wifiAware maps to unavailable without platform values" passed after 0.001 seconds.
+􁁛  Test "record generation digest truncation and trailing bytes fail closed" passed after 0.001 seconds.
+􁁛  Test "not found inaccessible malformed and platform cancellation remain distinct" passed after 0.001 seconds.
+􁁛  Test "one fake-only scoped query performs no enumeration or fallback" passed after 0.001 seconds.
+􁁛  Test "OSStatus bootstrap projection is stable and contains no platform status" passed after 0.001 seconds.
+􁁛  Test "malformed references stop before any Keychain client call" passed after 0.001 seconds.
+􁁛  Test "exact opaque reference and fixed service shape the only lookup" passed after 0.001 seconds.
+􁁛  Test "errors and credential reflection are redacted" passed after 0.001 seconds.
+􁁛  Test "configuration trust credential and authentication gates remain terminal" passed after 0.001 seconds.
+􁁛  Test "cancellation after a Security call clears and releases returned bytes" passed after 0.001 seconds.
+􁁛  Test "passphrase and key-format outcomes stay stable" with 4 test cases passed after 0.001 seconds.
+􁁛  Test "bounded repetitions leave no secret or query-count growth" passed after 0.001 seconds.
+􁁛  Suite "macOS system-domain Keychain credential resolver" passed after 0.002 seconds.
+􁁛  Test "runtime diagnostics snapshot stores and clears only the bounded projection" passed after 0.003 seconds.
+􁁛  Suite "SSH bootstrap privacy-safe error mapping" passed after 0.003 seconds.
+􁁛  Test run with 28 tests in 2 suites passed after 0.004 seconds.

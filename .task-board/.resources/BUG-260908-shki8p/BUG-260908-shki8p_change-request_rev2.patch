@@ -1,0 +1,76 @@
+diff --git a/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift b/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift
+index d74f5a8..6b843d1 100644
+--- a/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift
++++ b/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift
+@@ -678,7 +678,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
+     cleanupRegistry.register(controllable)
+   }
+ 
+-  private func mapped<T>(
++  private func mapped<T: Sendable>(
+     fallback: RedactedRuntimeError,
+     operation: () async throws -> T
+   ) async throws -> T {
+diff --git a/Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift b/Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift
+index bfcad70..c0cc562 100644
+--- a/Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift
++++ b/Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift
+@@ -310,10 +310,16 @@ struct TunnelRuntimeCoordinatorTests {
+     #expect(!fixture.recorder.events().contains("snapshot.connectedDegraded.1.1"))
+   }
+ 
+-  @Test("caller task cancellation is propagated and cleanup remains shielded")
+-  func callerCancellation() async {
++  @Test(
++    "caller cancellation crosses every mapped acquisition and cleanup remains shielded",
++    arguments: [
++      StartupCancellationPoint.duringConfiguration, .beforeSSH, .beforeTCP,
++      .beforeDNS, .beforePacketPreparation,
++    ]
++  )
++  func callerCancellation(point: StartupCancellationPoint) async {
+     let gate = SuspensionGate()
+-    let fixture = CoordinatorFixture(cancellationPoint: .beforeDNS, gate: gate)
++    let fixture = CoordinatorFixture(cancellationPoint: point, gate: gate)
+     let start = Task { try await fixture.coordinator.start() }
+     await gate.waitUntilReached()
+ 
+@@ -324,10 +330,7 @@ struct TunnelRuntimeCoordinatorTests {
+       try await start.value
+     }
+     #expect(await fixture.coordinator.coordinatorState() == .disconnected)
+-    #expect(
+-      fixture.recorder.cleanupEvents()
+-        == ["tcp.closeAdmission", "tcp.stop", "ssh.close"]
+-    )
++    #expect(fixture.recorder.cleanupEvents() == point.expectedCleanup)
+     #expect(fixture.recorder.activeResources() == 0)
+     #expect(await fixture.coordinator.resourceFootprint() == .baseline)
+   }
+diff --git a/scripts/tests/test-credential-free-validation.sh b/scripts/tests/test-credential-free-validation.sh
+index 91010e7..9c5543d 100755
+--- a/scripts/tests/test-credential-free-validation.sh
++++ b/scripts/tests/test-credential-free-validation.sh
+@@ -30,16 +30,18 @@ adversarial="$work_root/adversarial.log"
+ 
+ write_list "$valid" \
+   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+ write_list "$missing" \
+   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+ write_list "$unexpected" \
+   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
++  UnexpectedScheme
+ write_list "$adversarial" \
+   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
++  UnexpectedScheme
+ 
+ "$repo_root/scripts/check-workspace-schemes.sh" "$valid" >/dev/null
+ for invalid in "$missing" "$unexpected" "$adversarial"; do

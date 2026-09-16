@@ -1,0 +1,29 @@
+
+SwiftCompile normal arm64 /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayDatagramCodec.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+    
+
+SwiftCompile normal arm64 /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelayHandshake.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+    
+
+SwiftCompile normal arm64 /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RelayProtocol/RelaySession.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+    
+
+SwiftCompile normal arm64 /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeContracts.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+    
+
+SwiftCompile normal x86_64 Compiling\ RuntimeDiagnostics.swift,\ RuntimeMessageModels.swift,\ SSHBootstrapDiagnostics.swift,\ SSHContracts.swift,\ SSHProfileSnapshot.swift,\ TCPAdmissionRegistry.swift,\ TunnelRuntimeCoordinator.swift,\ VPNManagerRepository.swift,\ VPNSessionController.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeMessageModels.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/SSHBootstrapDiagnostics.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/SSHContracts.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/SSHProfileSnapshot.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/TCPAdmissionRegistry.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/VPNManagerRepository.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/VPNSessionController.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+SwiftCompile normal x86_64 /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+    cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+    
+/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift:687:24: error: non-sendable result type 'T' cannot be sent from nonisolated context in call to parameter 'operation'
+      return try await operation()
+                       ^
+/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift:681:23: note: consider making generic parameter 'T' conform to the 'Sendable' protocol
+  private func mapped<T>(
+                      ^
+                       : Sendable
+

@@ -1,0 +1,88 @@
+diff --git a/Sources/ReluxTunnelMacOSAdapter/MacOSSSHBootstrapErrorMapper.swift b/Sources/ReluxTunnelMacOSAdapter/MacOSSSHBootstrapErrorMapper.swift
+index 5b47bd8..6fdffde 100644
+--- a/Sources/ReluxTunnelMacOSAdapter/MacOSSSHBootstrapErrorMapper.swift
++++ b/Sources/ReluxTunnelMacOSAdapter/MacOSSSHBootstrapErrorMapper.swift
+@@ -34,13 +34,16 @@ public enum MacOSSSHBootstrapErrorMapper {
+         configurationGeneration: configurationGeneration,
+         context: context
+       )
+-    case .wifiAware:
+-      return SSHBootstrapErrorMapper.transport(
+-        .unavailable,
+-        stage: stage,
+-        configurationGeneration: configurationGeneration,
+-        context: context
+-      )
++    // NWError.wifiAware exists only in the macOS 26 SDK (Swift 6.2+ toolchain).
++    #if compiler(>=6.2)
++      case .wifiAware:
++        return SSHBootstrapErrorMapper.transport(
++          .unavailable,
++          stage: stage,
++          configurationGeneration: configurationGeneration,
++          context: context
++        )
++    #endif
+     @unknown default:
+       return SSHBootstrapErrorMapper.transport(
+         .unexpected,
+diff --git a/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift b/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift
+index 13db247..3add91a 100644
+--- a/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift
++++ b/Tests/ReluxTunnelCoreTests/MacOSSystemKeychainCredentialResolverTests.swift
+@@ -183,6 +183,28 @@ struct MacOSSystemKeychainCredentialResolverTests {
+     #expect(tls.diagnostic.retryDisposition == .terminal)
+   }
+ 
++  // NWError.wifiAware exists only in the macOS 26 SDK (Swift 6.2+ toolchain).
++  #if compiler(>=6.2)
++    @Test("wifiAware maps to unavailable without platform values")
++    func wifiAwareBootstrapProjection() throws {
++      guard #available(macOS 26, *) else { return }
++      let context = SSHBootstrapDiagnosticContext(endpointFamily: .ipv6)
++      let error = MacOSSSHBootstrapErrorMapper.network(
++        NWError.wifiAware(987_456),
++        stage: .endpointConnect,
++        configurationGeneration: 5,
++        context: context
++      )
++
++      #expect(error.diagnostic.code == .endpointConnectFailed)
++      #expect(error.diagnostic.retryDisposition == .retryableLater)
++      #expect(error.diagnostic.context.endpointFamily == .ipv6)
++      #expect(error.diagnostic.configurationGeneration == 5)
++      let encoded = try JSONEncoder().encode(error.diagnostic)
++      #expect(!String(data: encoded, encoding: .utf8)!.contains("987456"))
++    }
++  #endif
++
+   @Test("record generation digest truncation and trailing bytes fail closed")
+   func strictRecordFormat() async throws {
+     let reference = UUID(uuidString: "dddddddd-dddd-dddd-dddd-dddddddddddd")!
+diff --git a/scripts/tests/test-credential-free-validation.sh b/scripts/tests/test-credential-free-validation.sh
+index 91010e7..9c5543d 100755
+--- a/scripts/tests/test-credential-free-validation.sh
++++ b/scripts/tests/test-credential-free-validation.sh
+@@ -30,16 +30,18 @@ adversarial="$work_root/adversarial.log"
+ 
+ write_list "$valid" \
+   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+ write_list "$missing" \
+   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+ write_list "$unexpected" \
+   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
++  UnexpectedScheme
+ write_list "$adversarial" \
+   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
++  UnexpectedScheme
+ 
+ "$repo_root/scripts/check-workspace-schemes.sh" "$valid" >/dev/null
+ for invalid in "$missing" "$unexpected" "$adversarial"; do

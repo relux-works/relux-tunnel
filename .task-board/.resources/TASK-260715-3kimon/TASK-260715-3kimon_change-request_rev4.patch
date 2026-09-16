@@ -1,0 +1,326 @@
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index 06faeac..9efad2a 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -20,7 +20,8 @@
+ - IMPLEMENTATION: Core selects control, ordinary, capped-BDP bulk, and relay control-plus-UDP-burst initial windows with checked configuration and saturating arithmetic. Initial and earned adjustment credit reserve per-channel, per-lane, global-window, and global-ledger capacity before admission; releases are exact and idempotent.
+ - GATES: Soft caps only new initial windows. Pressure withholds every adjustment and nonessential opens; Critical, rekeying, failed, closing, closed, stale-generation, low-water, and insufficient-reservation paths refuse without changing or queueing credit. Previously advertised credit is never represented as revoked.
+ - ADAPTER: Both libssh2 `libssh2_channel_open_ex` call sites use one tested initial-window conversion. The adapter still truthfully reports consumer-driven adjustment as unsupported; no protocol message is sent outside that adapter.
+-- VERIFICATION: Eleven policy tests cover tables, 32/64 KiB, capped and overflowing BDP, relay bursts, all budget ceilings, pressure/lane/generation gates, exact lifecycle reconciliation, and 2,000 deterministic randomized transitions. One selected-adapter test covers all four classes. The full 506-test Swift suite passed with the existing 25 known unavailable-ReluxNIOSSH issues; recursive Swift format, core boundaries, diff check, and `swift build` exited 0.
++- REVIEW REWORK: Revision-1 review found that `reserveAdjustment` treated reserved capacity as one-shot credit and retained an unbounded UUID tombstone set. Adjustment now separates reusable capacity from `newlyReservedBytes`, repeatedly restores outstanding credit to the immutable cap without growing lane/global/ledger totals, rejects impossible outstanding-credit reports, and makes absent release an idempotent zero-release without retaining channel identity.
++- VERIFICATION: Fourteen policy tests cover tables, 32/64 KiB, capped and overflowing BDP, relay bursts, all budget ceilings, the complete pressure-by-class matrix, invalid outstanding credit, lane/generation gates, exact lifecycle reconciliation, four repeated replenishments, 10,000 unknown/released-channel churn cycles, and 2,000 deterministic randomized transitions. One selected-adapter test covers all four classes. The final full 522-test Swift rerun passed with the existing 25 known unavailable-ReluxNIOSSH issues; an unrelated libssh2 authentication-timeout cleanup test failed once in the first full run, then passed by exact identifier and in the full rerun. Strict recursive Swift format, core boundaries, exact-baseline diff check, and `swift build` exited 0.
+ 
+ ### Cross-layer memory authority separates reservation from physical evidence (TASK-260715-1pn983)
+ 
+diff --git a/Sources/ReluxTunnelCore/SSHReceiveWindowBudgetPolicy.swift b/Sources/ReluxTunnelCore/SSHReceiveWindowBudgetPolicy.swift
+index 52c2bd3..954d2c5 100644
+--- a/Sources/ReluxTunnelCore/SSHReceiveWindowBudgetPolicy.swift
++++ b/Sources/ReluxTunnelCore/SSHReceiveWindowBudgetPolicy.swift
+@@ -360,7 +360,6 @@ public struct SSHReceiveWindowBudgetLedger: Sendable {
+   private let otherLedgerCommittedBytes: Int
+   private let otherGlobalWindowReservedBytes: Int
+   private var reservations: [SSHChannelIdentity: SSHReceiveWindowReservation] = [:]
+-  private var releasedChannels: Set<SSHChannelIdentity> = []
+   private var metrics = SSHReceiveWindowMetrics()
+ 
+   public init(
+@@ -426,7 +425,7 @@ public struct SSHReceiveWindowBudgetLedger: Sendable {
+     bulkMeasurement: SSHBulkPathMeasurement? = nil
+   ) throws -> SSHReceiveWindowInitialDecision {
+     do {
+-      guard reservations[channel] == nil, !releasedChannels.contains(channel) else {
++      guard reservations[channel] == nil else {
+         throw SSHReceiveWindowRefusal.duplicateChannel
+       }
+       let currentLane = try availableLane(lane, generation: generation)
+@@ -500,15 +499,15 @@ public struct SSHReceiveWindowBudgetLedger: Sendable {
+     do {
+       guard generation == self.generation else { throw SSHReceiveWindowRefusal.staleGeneration }
+       guard var reservation = reservations[channel] else {
+-        throw releasedChannels.contains(channel)
+-          ? SSHReceiveWindowRefusal.staleGeneration : SSHReceiveWindowRefusal.unknownChannel
++        throw SSHReceiveWindowRefusal.unknownChannel
+       }
+       _ = try availableLane(reservation.lane, generation: generation)
+       guard pressure == .normal || pressure == .soft else {
+         throw SSHReceiveWindowRefusal.memoryPressure
+       }
+       guard outstandingAdvertisedCreditBytes >= 0,
+-        outstandingAdvertisedCreditBytes <= reservation.capBytes
++        outstandingAdvertisedCreditBytes <= reservation.capBytes,
++        outstandingAdvertisedCreditBytes <= reservation.reservedWindowBytes
+       else { throw SSHReceiveWindowRefusal.invalidOutstandingCredit }
+       guard outstandingAdvertisedCreditBytes <= reservation.lowWaterBytes else {
+         throw SSHReceiveWindowRefusal.aboveLowWater
+@@ -516,30 +515,35 @@ public struct SSHReceiveWindowBudgetLedger: Sendable {
+ 
+       let advertisedHeadroom = reservation.capBytes - outstandingAdvertisedCreditBytes
+       let reservationHeadroom = reservation.capBytes - reservation.reservedWindowBytes
++      let reusableReservedBytes =
++        reservation.reservedWindowBytes - outstandingAdvertisedCreditBytes
+       let laneHeadroom =
+         configuration.perLaneWindowCeilingBytes - laneReservedBytes(reservation.lane)
+       let globalHeadroom = configuration.globalWindowCeilingBytes - globalWindowReservedBytes
+       let ledgerHeadroom = configuration.globalLedgerCeilingBytes - ledgerCommittedBytes
+-      let delta = min(
+-        advertisedHeadroom, reservationHeadroom, laneHeadroom, globalHeadroom, ledgerHeadroom)
+-      guard delta > 0 else {
+-        throw reservationHeadroom == 0
+-          ? SSHReceiveWindowRefusal.noCreditNeeded : SSHReceiveWindowRefusal.insufficientReservation
++      let newlyReservableBytes = min(
++        reservationHeadroom, laneHeadroom, globalHeadroom, ledgerHeadroom)
++      let availableAdjustmentBytes = reusableReservedBytes + newlyReservableBytes
++      let adjustmentBytes = min(advertisedHeadroom, availableAdjustmentBytes)
++      guard adjustmentBytes > 0 else {
++        throw SSHReceiveWindowRefusal.insufficientReservation
+       }
+-      let (after, overflow) = outstandingAdvertisedCreditBytes.addingReportingOverflow(delta)
++      let newlyReservedBytes = max(0, adjustmentBytes - reusableReservedBytes)
++      let (after, overflow) = outstandingAdvertisedCreditBytes.addingReportingOverflow(
++        adjustmentBytes)
+       guard !overflow, after <= reservation.capBytes else {
+         throw SSHReceiveWindowRefusal.immutableChannelCap
+       }
+-      reservation.reservedWindowBytes += delta
++      reservation.reservedWindowBytes += newlyReservedBytes
+       reservations[channel] = reservation
+       metrics.adjustmentReservations += 1
+-      metrics.adjustmentBytes = metrics.adjustmentBytes.saturatingAdd(UInt64(delta))
++      metrics.adjustmentBytes = metrics.adjustmentBytes.saturatingAdd(UInt64(adjustmentBytes))
+       return SSHReceiveWindowAdjustmentDecision(
+         channel: channel,
+         beforeOutstandingCreditBytes: outstandingAdvertisedCreditBytes,
+-        adjustmentBytes: delta,
++        adjustmentBytes: adjustmentBytes,
+         afterOutstandingCreditBytes: after,
+-        newlyReservedBytes: delta)
++        newlyReservedBytes: newlyReservedBytes)
+     } catch let refusal as SSHReceiveWindowRefusal {
+       recordRefusal(refusal)
+       throw refusal
+@@ -552,7 +556,6 @@ public struct SSHReceiveWindowBudgetLedger: Sendable {
+     cause: SSHReceiveWindowReleaseCause
+   ) -> SSHReceiveWindowRelease {
+     guard let reservation = reservations.removeValue(forKey: channel) else {
+-      releasedChannels.insert(channel)
+       metrics.duplicateReleases += 1
+       return SSHReceiveWindowRelease(
+         channel: channel,
+@@ -561,7 +564,6 @@ public struct SSHReceiveWindowBudgetLedger: Sendable {
+         releasedLedgerBytes: 0,
+         wasAlreadyReleased: true)
+     }
+-    releasedChannels.insert(channel)
+     metrics.releases += 1
+     metrics.releasedLedgerBytes = metrics.releasedLedgerBytes.saturatingAdd(
+       UInt64(reservation.ledgerChargeBytes))
+diff --git a/Tests/ReluxTunnelCoreTests/SSHReceiveWindowBudgetPolicyTests.swift b/Tests/ReluxTunnelCoreTests/SSHReceiveWindowBudgetPolicyTests.swift
+index e4afc4d..8447d4e 100644
+--- a/Tests/ReluxTunnelCoreTests/SSHReceiveWindowBudgetPolicyTests.swift
++++ b/Tests/ReluxTunnelCoreTests/SSHReceiveWindowBudgetPolicyTests.swift
+@@ -116,7 +116,7 @@ struct SSHReceiveWindowBudgetPolicyTests {
+     }
+   }
+ 
+-  @Test("adjustment requires low water and atomically reserves all available bounded credit")
++  @Test("adjustment reuses reserved capacity across repeated low-water cycles")
+   func adjustmentPolicy() throws {
+     let lane = fixtureLane()
+     var ledger = try fixtureLedger(lane: lane)
+@@ -130,30 +130,53 @@ struct SSHReceiveWindowBudgetPolicyTests {
+ 
+     let adjustment = try ledger.reserveAdjustment(
+       channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 16 * 1_024)
+-    #expect(adjustment.adjustmentBytes == 32 * 1_024)
+-    #expect(adjustment.afterOutstandingCreditBytes == 48 * 1_024)
++    #expect(adjustment.adjustmentBytes == 48 * 1_024)
++    #expect(adjustment.newlyReservedBytes == 32 * 1_024)
++    #expect(adjustment.afterOutstandingCreditBytes == 64 * 1_024)
+     #expect(ledger.snapshot().managedWindowReservedBytes == 64 * 1_024)
+     #expect(initial.maximumAdvertisedWindowBytes == 64 * 1_024)
+-    #expect(throws: SSHReceiveWindowRefusal.noCreditNeeded) {
+-      _ = try ledger.reserveAdjustment(
++
++    let fullyReserved = ledger.snapshot()
++    for _ in 0..<4 {
++      let replenishment = try ledger.reserveAdjustment(
+         channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++      #expect(replenishment.adjustmentBytes == 64 * 1_024)
++      #expect(replenishment.afterOutstandingCreditBytes == 64 * 1_024)
++      #expect(replenishment.newlyReservedBytes == 0)
++      let after = ledger.snapshot()
++      #expect(after.managedWindowReservedBytes == fullyReserved.managedWindowReservedBytes)
++      #expect(after.globalWindowReservedBytes == fullyReserved.globalWindowReservedBytes)
++      #expect(after.ledgerCommittedBytes == fullyReserved.ledgerCommittedBytes)
++      #expect(after.laneWindowReservedBytes == fullyReserved.laneWindowReservedBytes)
+     }
+-    #expect(ledger.snapshot().managedWindowReservedBytes == 64 * 1_024)
+   }
+ 
+   @Test("insufficient window reservation withholds adjustment without a side queue")
+   func insufficientAdjustmentReservation() throws {
+     let lane = fixtureLane()
+-    var ledger = try fixtureLedger(
+-      lane: lane,
+-      otherGlobalWindowReservedBytes: 1_024 * 1_024 - 32 * 1_024)
++    var limits = fixtureClassLimits()
++    limits[.control] = SSHReceiveWindowClassLimits(
++      maximumAdvertisedWindowBytes: 64 * 1_024,
++      lowWaterBytes: 32 * 1_024,
++      readBufferCapacityBytes: 16 * 1_024,
++      writeCapacityBytes: 16 * 1_024,
++      metadataCapacityBytes: 1 * 1_024)
++    let configuration = try fixtureConfiguration(classLimits: limits)
++    var ledger = try SSHReceiveWindowBudgetLedger(
++      configuration: configuration,
++      generation: 7,
++      lanes: [lane],
++      otherGlobalWindowReservedBytes:
++        configuration.globalWindowCeilingBytes - configuration.controlInitialWindowBytes)
+     let channel = fixtureChannel(15)
+     _ = try ledger.reserveInitial(
+       channel: channel, lane: lane.identity, channelClass: .control, generation: 7)
+     let before = ledger.snapshot()
+     #expect(throws: SSHReceiveWindowRefusal.insufficientReservation) {
+       _ = try ledger.reserveAdjustment(
+-        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++        channel: channel,
++        generation: 7,
++        outstandingAdvertisedCreditBytes: configuration.controlInitialWindowBytes)
+     }
+     let after = ledger.snapshot()
+     #expect(after.managedWindowReservedBytes == before.managedWindowReservedBytes)
+@@ -161,6 +184,89 @@ struct SSHReceiveWindowBudgetPolicyTests {
+     #expect(after.metrics.refusals[.insufficientReservation] == 1)
+   }
+ 
++  @Test("adjustment rejects outstanding credit above the reserved window without mutation")
++  func adjustmentRejectsCreditAboveReservation() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++    let channel = fixtureChannel(16)
++    let initial = try ledger.reserveInitial(
++      channel: channel, lane: lane.identity, channelClass: .control, generation: 7)
++    #expect(initial.initialWindowBytes == 32 * 1_024)
++    #expect(initial.maximumAdvertisedWindowBytes == 64 * 1_024)
++    let before = ledger.snapshot()
++
++    #expect(throws: SSHReceiveWindowRefusal.invalidOutstandingCredit) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel,
++        generation: 7,
++        outstandingAdvertisedCreditBytes: 32 * 1_024 + 1)
++    }
++
++    let after = ledger.snapshot()
++    #expect(after.reservedChannelCount == before.reservedChannelCount)
++    #expect(after.managedWindowReservedBytes == before.managedWindowReservedBytes)
++    #expect(after.globalWindowReservedBytes == before.globalWindowReservedBytes)
++    #expect(after.ledgerCommittedBytes == before.ledgerCommittedBytes)
++    #expect(after.laneWindowReservedBytes == before.laneWindowReservedBytes)
++    #expect(after.metrics.initialReservations == before.metrics.initialReservations)
++    #expect(after.metrics.adjustmentReservations == before.metrics.adjustmentReservations)
++    #expect(after.metrics.adjustmentBytes == before.metrics.adjustmentBytes)
++    #expect(after.metrics.refusals[.invalidOutstandingCredit] == 1)
++  }
++
++  @Test("pressure gates every channel class and never mutates rejected reservations")
++  func pressureClassMatrix() throws {
++    let lane = fixtureLane()
++    let bulkMeasurement = SSHBulkPathMeasurement(
++      bandwidthBitsPerSecond: 8_000_000,
++      roundTripTimeNanoseconds: 64_000_000)
++    let cases: [(SSHReceiveWindowPressure, SSHReceiveWindowClass, Bool)] = [
++      (.pressure, .control, true),
++      (.pressure, .ordinary, false),
++      (.pressure, .bulk, false),
++      (.pressure, .relay, true),
++      (.critical, .control, false),
++      (.critical, .ordinary, false),
++      (.critical, .bulk, false),
++      (.critical, .relay, false),
++    ]
++
++    for (index, testCase) in cases.enumerated() {
++      let (pressure, channelClass, permitted) = testCase
++      var ledger = try fixtureLedger(lane: lane)
++      ledger.setPressure(pressure)
++      let before = ledger.snapshot()
++      let measurement = channelClass == .bulk ? bulkMeasurement : nil
++
++      if permitted {
++        _ = try ledger.reserveInitial(
++          channel: fixtureChannel(50 + index),
++          lane: lane.identity,
++          channelClass: channelClass,
++          generation: 7,
++          bulkMeasurement: measurement)
++        #expect(ledger.snapshot().reservedChannelCount == 1)
++      } else {
++        #expect(throws: SSHReceiveWindowRefusal.memoryPressure) {
++          _ = try ledger.reserveInitial(
++            channel: fixtureChannel(50 + index),
++            lane: lane.identity,
++            channelClass: channelClass,
++            generation: 7,
++            bulkMeasurement: measurement)
++        }
++        let after = ledger.snapshot()
++        #expect(after.reservedChannelCount == before.reservedChannelCount)
++        #expect(after.managedWindowReservedBytes == before.managedWindowReservedBytes)
++        #expect(after.globalWindowReservedBytes == before.globalWindowReservedBytes)
++        #expect(after.ledgerCommittedBytes == before.ledgerCommittedBytes)
++        #expect(after.laneWindowReservedBytes == before.laneWindowReservedBytes)
++        #expect(after.metrics.initialReservations == before.metrics.initialReservations)
++        #expect(after.metrics.refusals[.memoryPressure] == 1)
++      }
++    }
++  }
++
+   @Test("pressure, rekey, failure, closing, stale generation, and late callbacks reject credit")
+   func negativeGates() throws {
+     let lane = fixtureLane()
+@@ -204,7 +310,7 @@ struct SSHReceiveWindowBudgetPolicyTests {
+         channel: channel, generation: 6, outstandingAdvertisedCreditBytes: 0)
+     }
+     _ = ledger.release(channel: channel, cause: .normalClose)
+-    #expect(throws: SSHReceiveWindowRefusal.staleGeneration) {
++    #expect(throws: SSHReceiveWindowRefusal.unknownChannel) {
+       _ = try ledger.reserveAdjustment(
+         channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
+     }
+@@ -253,6 +359,34 @@ struct SSHReceiveWindowBudgetPolicyTests {
+     }
+   }
+ 
++  @Test("release idempotency retains no channel tombstones under high churn")
++  func releaseChurnRetainsNoChannelTombstones() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++
++    for index in 0..<10_000 {
++      let channel = fixtureChannel(20_000 + index)
++      let unknown = ledger.release(channel: channel, cause: .lateCallback)
++      #expect(unknown.wasAlreadyReleased)
++      #expect(unknown.releasedLedgerBytes == 0)
++
++      _ = try ledger.reserveInitial(
++        channel: channel,
++        lane: lane.identity,
++        channelClass: .control,
++        generation: 7)
++      let released = ledger.release(channel: channel, cause: .normalClose)
++      #expect(!released.wasAlreadyReleased)
++    }
++
++    let snapshot = ledger.snapshot()
++    #expect(snapshot.reservedChannelCount == 0)
++    #expect(snapshot.managedWindowReservedBytes == 0)
++    #expect(snapshot.ledgerCommittedBytes == 0)
++    #expect(snapshot.metrics.releases == 10_000)
++    #expect(snapshot.metrics.duplicateReleases == 10_000)
++  }
++
+   @Test("rekey preserves reservations and lane failure releases them exactly once")
+   func rekeyAndLaneFailureReconciliation() throws {
+     let lane = fixtureLane()

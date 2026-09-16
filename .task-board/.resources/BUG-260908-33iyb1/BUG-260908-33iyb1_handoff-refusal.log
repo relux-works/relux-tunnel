@@ -1,0 +1,1 @@
+cannot hand off BUG-260908-33iyb1: unchecked checklist items [1] (Diagnose exact hosted build failure, repair proven cause and diagnostic propagation with positive/negative tests, publish reviewed fix and require the previously failing hosted job to pass before completion): handoff evidence missing

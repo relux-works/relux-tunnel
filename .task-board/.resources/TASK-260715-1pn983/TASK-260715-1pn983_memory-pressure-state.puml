@@ -1,0 +1,34 @@
+@startuml
+!theme plain
+title TASK-260715-1pn983 — memory pressure and recovery
+hide empty description
+state Normal #lightgreen
+state Soft #lightyellow
+state Pressure #orange
+state Critical #pink
+state Stopping #lightgray
+[*] --> Normal
+Normal --> Soft : [any fresh signal <= softEnter]
+Normal --> Pressure : [warning || signal <= pressureEnter]
+Normal --> Critical : [signal <= criticalEnter]
+Soft --> Pressure : [warning || signal <= pressureEnter]
+Soft --> Critical : [signal <= criticalEnter]
+Pressure --> Critical : [signal <= criticalEnter]
+Critical --> Pressure : [all > criticalExit\nactions ack + dwell]
+Pressure --> Soft : [all > pressureExit\nactions ack + dwell]
+Soft --> Normal : [all > softExit\nactions ack + dwell]
+Critical --> Stopping : release/replace cannot fit or finish
+Stopping --> [*] : owned cleanup reaches baseline
+note right of Normal
+Each observation calls advisory memory anew.
+Ledger fit remains admission authority.
+end note
+note right of Pressure
+Stale/unavailable/malformed/failed reads
+cannot recover and are never cached or zeroed.
+end note
+note right of Critical
+Release old transport first; reserve replacement,
+or stop explicitly.
+end note
+@enduml

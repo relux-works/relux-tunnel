@@ -1,0 +1,7 @@
+# Repository-state curation
+
+User explicitly authorized committing and pushing all accumulated root changes. Inspected scope: 52 modified tracked board files and 479 untracked board payload files (531 files before this receipt), about 100 MB untracked evidence. No executable product changes in the root. Preserve all existing bytes; this snapshot records historical work, not fresh acceptance of pending implementations. Restore both additive LOGBOOK stash entries into LOGBOOK.md while retaining original stashes as safety copies. Group commits into evidence/resources and board state/LOGBOOK.
+
+Validation: board validator exits 0 after moving an ignored Finder .DS_Store from .activity into .temp/session-transfer-20260917/activity.DS_Store.preserved. Remaining legacy advisory cycles/missing activity are reported without fabricated backfill. Credential-pattern scan covered pending files and 132 archive entries; the only matches were literal prohibited-key strings in historical Swift negative tests, not key material. No tests or acceptance gates are weakened.
+
+All source/product candidates in other worktrees remain preserved. This metadata publication does not complete bootstrap, tooling validation, product CI repair or WIP release. Independent landing review remains required. Full workspace cleanup means all root changes committed and pushed; it does not imply managed candidate worktrees contain no pending code.

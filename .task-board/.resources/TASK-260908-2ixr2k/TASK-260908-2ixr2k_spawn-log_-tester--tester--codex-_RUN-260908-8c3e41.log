@@ -1,0 +1,2587 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07e5d-d898-75a2-a4d1-00c03ac3418a
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260908-2ixr2k, status=development)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `tester` (`tester`) — Writes tests — unit, integration, e2e, UI, snapshot
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+
+### Definition of Done
+
+- [ ] Independently verify exact signed PR6 composition and submit real GitHub COMMENTED review verdict; no remote landing or false CI green
+- [ ] New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** TASK-260908-2ixr2k
+- **Title:** TASK-260908-2ixr2k: independent-pr6-signed-composition-review
+- **Parent:** STORY-260908-23tefs
+
+### Description
+
+Independently review published PR6 head018c9d9672767fd02f42fb4ab4f2dfe3800646b8 composed from original signed Shared Runtime plus accepted CI repair/diagnostics. This is exact-head delivery review, not implementation or root-cause repair.
+
+### Scope
+
+Read exact hosted diff and signatures, compare prior accepted immutable trees and composition resolutions, targeted verification, real GitHub COMMENTED review verdict, evidence only; no source writes or landing.
+
+### Acceptance Criteria
+
+Prove PR head and remote branch equal exact reviewed commit; verify all introduced human signatures and original signed ancestry; account for every composition path/resolution, preserve runtime; independently run relevant focused checks on exact head; submit truthful real hosting review verdict for exact head; record current CI without treating pending/failure as success; do not land or close unresolved hosted repair.
+
+## Instructions
+
+### TASK-260908-2ixr2k_review-inputs.md
+> Independent external exact-head review scope
+
+Independent tester/auditor role, not the producer. PR6 head018c9d9672767fd02f42fb4ab4f2dfe3800646b8, previous87451b53960ceabe88a01c44c287fee7f9ebf386, accepted CI Story candidate d6c873383db09c59cf5d6d437e0767615e5ae704 vsbaseb3422b05. Read BUG-33iyb1_publication-018c9d9.md, review-verdict-rev2.md and BUG-7c5iv4_review-verdict-rev1.md at root .task-board/.resources. Dedicated delivery worktree root .temp/BUG-260908-33iyb1/delivery is exacthead; use read-only or separate exacthead scratch validation, no edits to source. Verify all signatures and complete ancestry introduced from remote main, account complete paginated hosted file list (gh pr diff may406 >300files, not empty), inspect exact current delta against old PR and all 16 accepted CI paths. Prior Shared Runtime independent review can be reused for unchanged bytes; do not repeat full broad audit. LOGBOOK additive composition must retain both histories; README and validation fixture must preserve both changes; all other CI code blobs exact acceptedtree. Run focused board/scanner/diagnostic tests from exacthead; a source checkout copy is not proof of omitted artifacts unless assembled as normal build lane. Submit actual GitHub COMMENTED review with explicit independent ACCEPT or findings for exacthead (samehumanaccount cannotapprove own PR, do not inventidentity). CI34172537905 running: record real states; acceptance of composition not claim allCIgreen or rootcausefixed. No landing, implementation, manual commits, tool source changes, VPN or successors. Stop04:59 Tbilisi Sep8. Attach scoped evidence and tester handoff; metadata task reviewnone simply records this independent review, not code acceptance through falseCR. All tools curator main and Astra low serial.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `TASK-260908-2ixr2k_*` before handoff:
+  `task-board m 'add_resource(TASK-260908-2ixr2k, name=TASK-260908-2ixr2k_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `to-review` is a role handoff, not accepted completion. Report **ready for review** or **handed off to review**.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff TASK-260908-2ixr2k --role tester
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+codex
+Проверю точный head PR6, подписи, состав изменений и focused checks. Результат запишу в board и реальный GitHub review, без landing. Использую project-management и go-testing-tools.
+
+exec
+/bin/zsh -lc "task-board m 'set_status(TASK-260908-2ixr2k, status=development)'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 923ms:
+{"ok":true,"result":{"agent_reminders":[{"code":"story_worktree_base_preflight_required","timestamp":"2026-09-08T00:14:46.175252Z","message":"Resolve and refresh the configured integration branch upstream, compare exact OIDs, and record the selected Story worktree base before provisioning or trusting it.","story_id":"STORY-260908-23tefs","trunk_ref":null,"trunk_oid":null,"upstream_ref":null,"upstream_oid":null,"selected_base_oid":null}],"primary":{"action":"status_changed","element_id":"TASK-260908-2ixr2k","field":"status","new_value":"development","old_value":"backlog"},"side_effects":[{"action":"escalated","element_id":"STORY-260908-23tefs","field":"status","new_value":"development","old_value":"backlog"}]}}
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/SKILL.md /Users/iv/.claude/skills/go-testing-tools/SKILL.md' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+---
+name: go-testing-tools
+description: >
+  Go testing toolkit with tuitestkit library and a closed-loop development
+  cycle for Go applications. Covers test helpers, reducer tests,
+  snapshot/golden testing, mock executor patterns, and view assertions.
+triggers:
+  - go test
+  - bubbletea test
+  - tuitestkit
+  - go test helpers
+  - reducer test
+  - snapshot test go
+  - golden file go
+  - тесты го
+  - го тест хелперы
+  - тесты баблти
+  - тест утилиты го
+  - замкнутый цикл тестирования
+---
+
+# Go Testing Tools
+
+Testing toolkit for Go TUI applications built with bubbletea. Provides a Go library (`tuitestkit`), reference documentation, and templates that enable a closed-loop development cycle: write code, write tests, run tests, validate, fix, repeat -- all without human intervention.
+
+Core philosophy: **Elm architecture makes TUI testable.** The reducer is a pure function -- given the same state and action, it always returns the same result. No I/O, no randomness, no terminal. Test everything as function calls.
+
+---
+
+## Prerequisites
+
+- **Go 1.21+**
+- **bubbletea** (`github.com/charmbracelet/bubbletea`)
+- **lipgloss** (`github.com/charmbracelet/lipgloss`) -- used by most bubbletea apps for styling
+
+Install the library in your project:
+
+```bash
+go get github.com/relux-works/skill-go-testing-tools/tuitestkit
+```
+
+---
+
+## Quick Start
+
+Minimal test showing the core workflow: build a message, send it to a model, assert on the view.
+
+```go
+package myscreen_test
+
+import (
+    "testing"
+
+    "github.com/relux-works/skill-go-testing-tools/tuitestkit"
+)
+
+func TestBasicNavigation(t *testing.T) {
+    m := NewMyModel(testData)
+    m = tuitestkit.Send(m, tuitestkit.WindowSize(80, 24))
+
+    // Press down twice
+    m = tuitestkit.Send(m, tuitestkit.Key("down"), tuitestkit.Key("down"))
+
+    // Assert the view contains expected content
+    tuitestkit.ViewContains(t, m, "third item")
+    tuitestkit.ViewNotContains(t, m, "ERROR")
+}
+```
+
+---
+
+## Testing Pyramid
+
+Five levels, from fastest/most numerous to slowest/fewest:
+
+| Level | What | Speed | Investment |
+|-------|------|-------|------------|
+| 1. Pure Reducer | `func(State, Action) State` | Nanoseconds | ~60% |
+| 2. Component | `Update` + `View` | Microseconds | ~20% |
+| 3. Integration | Multi-component with mocks | Milliseconds | ~10% |
+| 4. Snapshot | Golden file comparison | Milliseconds | ~5% |
+| 5. Behavioral | Full user workflows | Milliseconds | ~5% |
+
+When time is limited: **Level 1 > Level 2 > Level 3**. Pure reducer tests catch the most bugs per line of test code.
+
+Full details: `references/testing-pyramid.md`
+
+---
+
+## Library API Reference
+
+All functions are in the `tuitestkit` package.
+
+### Message Builders (`messages.go`)
+
+Build `tea.Msg` values for driving model updates.
+
+```go
+// Key builds a tea.KeyMsg from a human-readable string.
+// Supports: "enter", "tab", "esc", "space", "backspace", "up", "down",
+// "left", "right", "home", "end", "pgup", "pgdown", "delete", "insert",
+// "f1"-"f20", "ctrl+c", "ctrl+a"..."ctrl+z", "alt+h", "alt+enter",
+// single runes: "a", "/", "1", etc.
+func Key(k string) tea.KeyMsg
+
+// Keys builds a slice of tea.Msg from multiple key strings.
+func Keys(keys ...string) []tea.Msg
+
+// WindowSize builds a tea.WindowSizeMsg with the given dimensions.
+func WindowSize(w, h int) tea.WindowSizeMsg
+
+// MouseClick builds a tea.MouseMsg for a left-button click at (x, y).
+func MouseClick(x, y int) tea.MouseMsg
+
+// MouseClickRight builds a tea.MouseMsg for a right-button click at (x, y).
+func MouseClickRight(x, y int) tea.MouseMsg
+
+// MouseScroll builds a tea.MouseMsg for a scroll event.
+// Direction constants: ScrollUp, ScrollDown, ScrollLeft, ScrollRight.
+func MouseScroll(dir ScrollDir) tea.MouseMsg
+
+// MouseRelease builds a tea.MouseMsg for a button release at (x, y).
+func MouseRelease(x, y int) tea.MouseMsg
+```
+
+### Model Harness (`harness.go`)
+
+Send messages to bubbletea models and handle commands.
+
+```go
+// Send sends messages to a model sequentially, returns the final model.
+// Preserves concrete type via generics -- no type assertion needed.
+// Panics if Update returns a different type (broken implementation).
+// Init() is NOT called.
+func Send[M tea.Model](model M, msgs ...tea.Msg) M
+
+// SendAndCollect sends messages, collects all non-nil Cmds returned by Update.
+// Returns final model + collected commands.
+func SendAndCollect[M tea.Model](model M, msgs ...tea.Msg) (M, []tea.Cmd)
+
+// ExecCmds executes tea.Cmd functions synchronously, collects resulting messages.
+// Recursively handles tea.BatchMsg. Nil cmds/messages are skipped.
+func ExecCmds(cmds ...tea.Cmd) []tea.Msg
+```
+
+**Common pattern -- command pipeline:**
+
+```go
+m, cmds := tuitestkit.SendAndCollect(m, tuitestkit.Key("r"))
+msgs := tuitestkit.ExecCmds(cmds...)
+m = tuitestkit.Send(m, msgs...)
+```
+
+### Reducer Harness (`reducer.go`)
+
+Table-driven testing for pure reducer functions.
+
+```go
+// ReducerTest defines a single test case for a pure reducer.
+// S = state type, A = action type.
+type ReducerTest[S any, A any] struct {
+    Name    string
+    Initial S
+    Action  A
+    Assert  func(t *testing.T, got S)
+}
+
+// Step defines one step in a multi-action reducer sequence.
+// Assert is optional -- if nil, applied without per-step validation.
+type Step[S any, A any] struct {
+    Name   string
+    Action A
+    Assert func(t *testing.T, got S)
+}
+
+// ReducerSequence defines a multi-step test scenario.
+// Actions applied sequentially from Initial. Final runs on end state.
+type ReducerSequence[S, A any] struct {
+    Name    string
+    Initial S
+    Steps   []Step[S, A]
+    Final   func(t *testing.T, got S)
+}
+
+// RunReducerTests executes table-driven reducer tests as subtests.
+func RunReducerTests[S, A any](t *testing.T, reduce func(S, A) S, tests []ReducerTest[S, A])
+
+// RunReducerSequences executes multi-step sequence tests.
+// Per-step Assert runs after each step (if non-nil). Final runs on end state.
+func RunReducerSequences[S, A any](t *testing.T, reduce func(S, A) S, sequences []ReducerSequence[S, A])
+```
+
+**Invariant checking:**
+
+```go
+// Invariant defines a property that must hold for any state.
+type Invariant[S any] struct {
+    Name  string
+    Check func(s S) error
+}
+
+// InvariantChecker holds invariants and validates state against all of them.
+type InvariantChecker[S any] struct { /* ... */ }
+
+// NewInvariantChecker creates a checker with the given invariants.
+func NewInvariantChecker[S any](invariants ...Invariant[S]) *InvariantChecker[S]
+
+// Check validates state against all invariants. Returns combined error or nil.
+func (ic *InvariantChecker[S]) Check(s S) error
+
+// WrapWithInvariants wraps a reducer with invariant checking.
+// After every reduce call, all invariants are validated.
+// t.Fatalf on violation.
+func WrapWithInvariants[S, A any](t *testing.T, reduce func(S, A) S, checker *InvariantChecker[S]) func(S, A) S
+```
+
+**Example:**
+
+```go
+checker := tuitestkit.NewInvariantChecker(
+    tuitestkit.Invariant[AppState]{
+        Name: "cursor in bounds",
+        Check: func(s AppState) error {
+            if s.Cursor < 0 || s.Cursor >= len(s.Items) {
+                return fmt.Errorf("cursor %d out of [0, %d)", s.Cursor, len(s.Items))
+            }
+            return nil
+        },
+    },
+)
+safeReduce := tuitestkit.WrapWithInvariants(t, Reduce, checker)
+tuitestkit.RunReducerTests(t, safeReduce, tests)
+```
+
+### Mock Building Blocks (`mock.go`)
+
+Composable primitives for building project-specific mocks.
+
+```go
+// MockCall represents a single recorded method invocation.
+type MockCall struct {
+    Method string
+    Args   []any
+}
+
+// MockCallRecorder provides thread-safe recording of method calls.
+// Embed into project-specific mock structs.
+type MockCallRecorder struct { /* ... */ }
+
+func (r *MockCallRecorder) Record(method string, args ...any)
+func (r *MockCallRecorder) CallCount(method string) int
+func (r *MockCallRecorder) Calls() []MockCall
+func (r *MockCallRecorder) CallsFor(method string) []MockCall
+func (r *MockCallRecorder) Reset()
+
+// MockResponseMap provides thread-safe canned response storage.
+type MockResponseMap struct { /* ... */ }
+
+func NewMockResponseMap() *MockResponseMap
+func (m *MockResponseMap) Set(key string, data []byte, err error)
+func (m *MockResponseMap) Get(key string) ([]byte, error)
+func (m *MockResponseMap) SetError(key string, err error)
+
+// Assertion helpers
+func AssertCalled(t testing.TB, r *MockCallRecorder, method string)
+func AssertNotCalled(t testing.TB, r *MockCallRecorder, method string)
+func AssertCalledN(t testing.TB, r *MockCallRecorder, method string, n int)
+func AssertCalledWith(t testing.TB, r *MockCallRecorder, method string, args ...any)
+```
+
+**Building a mock (two lines per method):**
+
+```go
+type TaskBoardMock struct {
+    tuitestkit.MockCallRecorder
+    Responses *tuitestkit.MockResponseMap
+}
+
+func NewTaskBoardMock() *TaskBoardMock {
+    return &TaskBoardMock{Responses: tuitestkit.NewMockResponseMap()}
+}
+
+func (m *TaskBoardMock) TreeJSON() ([]byte, error) {
+    m.Record("TreeJSON")
+    return m.Responses.Get("TreeJSON")
+}
+
+func (m *TaskBoardMock) Execute(cmd string, args ...string) ([]byte, error) {
+    m.Record("Execute", cmd, args)
+    return m.Responses.Get("Execute:" + cmd)
+}
+```
+
+### View Assertions (`view.go`)
+
+Assert on rendered output. All functions strip ANSI escape codes before comparison.
+
+```go
+// StripANSI removes all ANSI escape sequences from a string.
+func StripANSI(s string) string
+
+// --- Model-based (call model.View() internally) ---
+
+func ViewContains(t testing.TB, model tea.Model, text string)
+func ViewNotContains(t testing.TB, model tea.Model, text string)
+func ViewLines(model tea.Model) []string
+func ViewLineContains(t testing.TB, model tea.Model, lineIdx int, text string)
+func ViewLineEquals(t testing.TB, model tea.Model, lineIdx int, text string)
+func ViewMatchesRegex(t testing.TB, model tea.Model, pattern string)
+
+// --- String-based (when you already have the view string) ---
+
+func ContainsStr(t testing.TB, view string, text string)
+func NotContainsStr(t testing.TB, view string, text string)
+func LinesFromStr(view string) []string
+func MatchesRegexStr(t testing.TB, view string, pattern string)
+```
+
+### Snapshot Testing (`snapshot.go`)
+
+Golden file comparison for visual regression testing.
+
+```go
+// UpdateSnapshots controls whether snapshots are written (true) or compared (false).
+// Set via UPDATE_SNAPSHOTS=1 environment variable.
+var UpdateSnapshots bool
+
+// SnapshotView captures model.View(), strips ANSI, compares against golden file.
+func SnapshotView(t *testing.T, model tea.Model, name string)
+
+// SnapshotViewRaw captures model.View() with raw ANSI codes intact.
+func SnapshotViewRaw(t *testing.T, model tea.Model, name string)
+
+// SnapshotStr compares a pre-rendered string (ANSI-stripped) against golden file.
+func SnapshotStr(t *testing.T, view string, name string)
+
+// SnapshotStrRaw compares a pre-rendered string (raw ANSI) against golden file.
+func SnapshotStrRaw(t *testing.T, view string, name string)
+```
+
+Golden files stored at `testdata/snapshots/<name>.golden` relative to the test file.
+
+```bash
+# Create or update golden files
+UPDATE_SNAPSHOTS=1 go test ./...
+
+# Update for a single package
+UPDATE_SNAPSHOTS=1 go test ./internal/ui/screens/board/ -run TestSnapshot
+```
+
+Mismatches produce a line-by-line diff with `-`/`+` markers.
+
+---
+
+## Closed-Loop Workflow
+
+The agent development cycle for writing tests:
+
+```
+1. UNDERSTAND: Read screen/component code
+2. IDENTIFY:   What behaviors need tests?
+3. EXTRACT:    If exec.Command present, extract to interface (use mock template)
+4. WRITE:      Tests using tuitestkit helpers
+5. RUN:        go test ./... -v
+6. VALIDATE:   All pass? Check coverage with go test -cover
+7. FIX:        If failures, read error, fix code or test, goto 5
+8. SNAPSHOT:   Optionally capture view golden files
+9. DONE:       Tests green, coverage acceptable
+```
+
+### Step Details
+
+**UNDERSTAND:** Read the component source. Identify:
+- What state does it manage?
+- What messages does it handle in Update?
+- Does it have a pure reducer (`func(State, Action) State`)?
+- Does it shell out to external commands (exec.Command)?
+- What does View() render?
+
+**IDENTIFY:** Map behaviors to test levels:
+- Pure state logic -> Level 1 (reducer tests)
+- Key bindings, view rendering -> Level 2 (component tests)
+- Data loading, command execution -> Level 3 (integration tests with mocks)
+- Visual appearance -> Level 4 (snapshot tests)
+
+**EXTRACT:** If the component uses `exec.Command` or any I/O directly:
+1. Define an interface with only the methods this component needs
+2. Move `exec.Command` calls to a production implementation
+3. Build a mock using `MockCallRecorder` + `MockResponseMap`
+4. See `assets/templates/executor_interface.go.tmpl` and `assets/templates/mock_executor.go.tmpl`
+
+**WRITE:** Use the appropriate tuitestkit helpers per level:
+- Level 1: `RunReducerTests`, `RunReducerSequences`, `WrapWithInvariants`
+- Level 2: `Send`, `ViewContains`, `ViewLines`, `Key`, `MouseClick`
+- Level 3: `SendAndCollect`, `ExecCmds`, `AssertCalled`, `AssertCalledWith`
+- Level 4: `SnapshotView`, `SnapshotStr`
+
+**RUN:** `go test ./... -v` -- all tests must run in under 1 second (no I/O, no network).
+
+**VALIDATE:** `go test ./... -cover` -- target 80%+ for code under test.
+
+**FIX:** Read error messages carefully. Common issues:
+- Type assertion panic -> `Update` returns wrong type (broken implementation)
+- View assertion failure -> check ANSI stripping, check exact text
+- Snapshot mismatch -> run with `UPDATE_SNAPSHOTS=1` if the change is intentional
+- Mock assertion failure -> check response key matches (`"Execute:list"` not `"Execute"`)
+
+---
+
+## Templates
+
+Scaffolding templates in `assets/templates/`:
+
+| Template | Purpose |
+|----------|---------|
+| `reducer_test.go.tmpl` | Table-driven reducer tests with invariants |
+| `component_test.go.tmpl` | Component model tests (keyboard, mouse, commands, view) |
+| `snapshot_test.go.tmpl` | Snapshot golden file tests |
+| `executor_interface.go.tmpl` | Executor interface + production stub |
+| `mock_executor.go.tmpl` | Mock executor using MockCallRecorder + MockResponseMap |
+| `PROJECT_STRUCTURE.md` | Recommended directory layout for test files |
+
+Copy templates into your project, replace `TODO` markers with your actual types and import paths.
+
+---
+
+## References
+
+In-depth documentation in `references/`:
+
+| Document | Content |
+|----------|---------|
+| `elm-architecture.md` | Why Elm makes TUI testable, state/action/reducer/view cycle, nested reducers, dependency injection, the executor pattern |
+| `mock-patterns.md` | Interface extraction, when to mock vs test pure functions, stubs vs mocks vs fakes, callback capture, full mock lifecycle example |
+| `testing-pyramid.md` | All 5 test levels with code examples, decision table for which level to use, coverage strategy |
+
+---
+
+## Setup
+
+Run the setup script to create symlinks:
+
+```bash
+./scripts/setup.sh
+```
+
+This links the skill to `~/.agents/skills/go-testing-tools`, `~/.claude/skills/go-testing-tools`, and `~/.codex/skills/go-testing-tools`.
+
+To remove:
+
+```bash
+./scripts/deinit.sh
+```
+
+exec
+/bin/zsh -lc "mkdir -p .temp/TASK-260908-2ixr2k
+{ git --version; gh --version; go version; task-board --version; } > .temp/TASK-260908-2ixr2k/readiness.log 2>&1
+cat .temp/TASK-260908-2ixr2k/readiness.log
+rg --files -g AGENTS.md -g SKILL.md -g go.mod -g '*publication-018c9d9*' -g '*review-verdict-rev*' --hidden .task-board/.resources .temp/BUG-260908-33iyb1/delivery/agents .temp/BUG-260908-33iyb1/delivery/.codex 2>/dev/null" in /Users/iv/Developer/relux-tunnel
+ exited 2 in 175ms:
+git version 2.50.1 (Apple Git-155)
+gh version 2.97.0 (2026-07-31)
+https://github.com/cli/cli/releases/tag/v2.97.0
+go version go1.25.5 darwin/arm64
+task-board version dev
+.task-board/.resources/BUG-260908-33iyb1/BUG-260908-33iyb1_review-verdict-rev2.md
+.task-board/.resources/BUG-260908-33iyb1/BUG-260908-33iyb1_publication-018c9d9.md
+.task-board/.resources/BUG-260908-33iyb1/BUG-260908-33iyb1_review-verdict-rev1.md
+.task-board/.resources/TASK-260715-135rr8/TASK-260715-135rr8_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-135rr8/TASK-260715-135rr8_review-verdict-rev3.md
+.task-board/.resources/TASK-260715-135rr8/TASK-260715-135rr8_review-verdict-rev4.md
+.task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_review-verdict-rev4.md
+.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_review-verdict-rev3.md
+.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-2jatnd/TASK-260715-2jatnd_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-1pn983/TASK-260715-1pn983_review-verdict-rev2.md
+.task-board/.resources/BUG-260908-7c5iv4/BUG-260908-7c5iv4_review-verdict-rev1.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev2.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev3.md
+.task-board/.resources/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-3kimon/TASK-260715-3kimon_review-verdict-rev4.md
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_review-verdict-rev3.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev5.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev2.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev6.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev7.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev3.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev8.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev10.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev9.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev4.md
+
+exec
+/bin/zsh -lc "cat /Users/iv/.claude/skills/project-management/references/resources-and-bugs.md /Users/iv/.claude/skills/project-management/references/negative-evidence.md
+rg --files --hidden .task-board/.resources | rg '(publication-018c9d9|review-verdict-rev2|BUG-7c5iv4_review-verdict-rev1)'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+# Resources
+
+Resources are owned by the board element they are attached to. Use explicit
+CRUD operations against that element ID. Local payloads are grouped under
+`.task-board/.resources/<elementID>/`; remote board-server uses the equivalent
+element-scoped filesystem or MinIO object-key prefix.
+
+## Resource Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **precondition** | Inputs needed before work starts | Design docs, specs, instructions, API schemas |
+| **outcome** | Results produced by work | Research findings, implementation notes, analysis |
+
+## Commands
+
+```bash
+# Create a resource
+task-board m 'add_resource(TASK-260218-abc, name=TASK-260218-abc_design.md, type=precondition, content="...", description="Architecture design")'
+task-board m 'add_resource(TASK-260218-abc, name=reports/TASK-260218-abc_results.md, type=outcome, content="...", description="Research findings")'
+
+# Replace an existing resource
+task-board m 'update_resource(TASK-260218-abc, name=reports/TASK-260218-abc_results.md, type=outcome, content="revised findings", description="Research findings v2")'
+task-board resource update TASK-260218-abc ./TASK-260218-abc_results.md --name reports/TASK-260218-abc_results.md --type outcome
+
+# Adopt an existing orphaned local payload without rewriting it
+task-board resource adopt TASK-260218-abc revisions/2/TASK-260218-abc_results.md --type outcome --description "Recovered result"
+
+# Delete a resource (destructive — requires --confirm)
+task-board m --confirm 'delete_resource(TASK-260218-abc, name=artifacts/obsolete/TASK-260218-abc_design.md)'
+task-board resource delete TASK-260218-abc artifacts/obsolete/TASK-260218-abc_design.md --confirm
+
+# View resources on an element
+task-board q --format compact 'get(TASK-260218-abc) { preconditionResources outcomeResources }'
+```
+
+## Element-Owned Storage
+
+Resources from different tasks are not stored in one shared file pile. Each
+element gets its own directory, and every resource attached to that element is
+stored below it:
+
+```
+.task-board/.resources/
+├── TASK-260203-g7h8i9/
+│   ├── findings/
+│   │   └── investigation.md
+│   ├── artifacts/
+│   │   └── run-1/
+│   │       └── output.json
+│   ├── reports/
+│   │   └── TASK-260203-g7h8i9_results.md
+│   └── revisions/
+│       └── 2/
+│           └── review.md
+└── STORY-260203-d4e5f6/
+    └── research.md         # outcome
+```
+
+The resource `name` is a safe forward-slash-relative path. Agents may choose
+the hierarchy that fits the artifact and nest it further as needed. Every
+segment must be non-empty printable UTF-8 and must not be `.`, `..`, an
+absolute/drive-qualified path, or contain a backslash. Raw forward slashes are
+the only hierarchy delimiter; malformed URL escapes and encoded or repeatedly
+encoded separators/traversal are rejected. Attach related files to the same
+owning element; do not invent a generic board-wide resource task or write
+payloads into `.task-board/.resources/` manually.
+
+Directories are structural nodes, not payloads. Resource CRUD, validation, and
+handoff evidence recognize regular files only; a directory named like a report
+cannot be adopted or used to satisfy outcome evidence.
+
+Local and board-server filesystem element deletion is journaled and
+crash-recoverable. Direct resource CRUD first resolves any pending staged
+element delete under the board mutation lock. MinIO element/subtree deletion
+currently fails before mutation with the typed
+`ErrAtomicResourceDeleteUnsupported` capability error; ordinary resource CRUD
+remains available.
+
+References are tracked in `progress.md` as markdown links:
+```markdown
+## Precondition Resources
+- [specs/auth/design.md](board-resource://TASK-260203-g7h8i9/precondition/specs/auth/design.md) — Architecture design
+
+## Outcome Resources
+- [reports/TASK-260203-g7h8i9_results.md](board-resource://TASK-260203-g7h8i9/outcome/reports/TASK-260203-g7h8i9_results.md) — Research findings
+```
+
+## Spawn Integration
+
+Precondition resources are automatically injected into agent prompts by `task-board spawn`. Full prompts preserve normal text inlining. Lite prompts use the resolved `agent_context.prompt.preconditions` policy: by default, text below `inline_bytes` is rendered inline, while larger text and binary resources are written read-only under `.temp/resources/` and represented by their name, description, byte count, SHA-256 digest, and local path. This means:
+
+1. Attach instructions/specs as precondition resources to a task
+2. Run `task-board spawn TASK-XX --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort max` — agent gets everything automatically
+3. Agent saves results via `task-board m 'add_resource(..., type=outcome)'` on first write, then `update_resource(...)` for revisions
+
+## Best Practices
+
+- **Use preconditions for agent instructions** — attach design docs, specs, or step-by-step instructions before spawning
+- **Use outcomes for work products** — research findings, analysis, implementation notes
+- **Attach to the owning element** — pass the Task, Bug, Story, or Epic ID that owns the artifact; the storage layer groups its payloads under that element directory automatically
+- **Use explicit create/update/delete** — `add_resource` / `resource add` must not silently overwrite; use `update_resource` / `resource update` when replacing an existing payload
+- **Use adopt only for local repair** — `resource adopt` registers bytes already stored at `.resources/<elementID>/<relative-resource-path>` without rewriting them; a missing payload returns resource-not-found and an existing declaration returns resource-exists
+- **Choose a useful hierarchy inside the owning element** — `findings/`, `artifacts/`, `reports/`, and `revisions/` are conventions, not a fixed schema; nest further when it makes the handoff easier to navigate
+- **Use safe relative resource paths** — `/` separates validated path segments; empty, dot/traversal, absolute/drive-qualified, backslash, control-character, malformed escape, and encoded/repeatedly encoded separator or traversal forms are rejected in local and remote storage
+- **Attach files, not folders** — directories only organize resource files and never satisfy resource existence or handoff evidence
+- **Always use board commands** — never create/edit resource files or progress.md resource sections manually
+- **Name handoff evidence with task scope** — keep the task ID in the resource path, for example `reports/TASK-260218-abc_architecture-design.md`, so `task-board handoff` can recognize it
+- **Add descriptions** — the `description=` param adds a one-line description shown in spawn prompts
+
+---
+
+# Bugs
+
+Bugs are elements of the board, living inside stories alongside tasks.
+
+```bash
+# Create bug
+task-board m 'create(type=bug, parent=STORY-260218-abc, name=crash-on-start, description="App crashes when starting recording")'
+
+# Track like any element
+task-board m 'set_status(BUG-260218-abc, status=development)'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Reproduce the issue")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Find root cause")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Write fix")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Add regression test")'
+```
+# Negative Evidence Contract
+
+A passing suite means nothing unless something in it would have failed. This
+file is the single source of truth for the rules that make a green check mean
+something, and for the incident record behind each one. The operative wording
+that reaches every spawned child lives in the spawn template section
+`Evidence That Counts`; the reviewer's licence lives in `.roles/reviewer/role.md`;
+the repeated-variant heuristic lives in `.roles/orchestrator/role.md`. Read this
+file when you need the shapes, the failure vocabulary, or the incidents that
+produced a rule — do not restate these rules in other documents.
+
+| Rule | Operative statement | Evidence record |
+| --- | --- | --- |
+| Negative tests for gates | spawn template, `Evidence That Counts` | this file |
+| Narrowing, not deleting | spawn template, `Evidence That Counts` | this file |
+| Production call site | spawn template, `Evidence That Counts` | this file |
+| Absence vs failure to read | spawn template, `Evidence That Counts` | this file |
+| Prove, or report nothing | spawn template, `Evidence That Counts` | this file |
+| Reviewer licence to defeat a gate | `.roles/reviewer/role.md` | this file |
+| Many variants, one unowned decision | `.roles/orchestrator/role.md` | this file |
+
+## Negative Tests For Gates
+
+Any feature that GATES, REFUSES, VALIDATES, AUTHORIZES, or ATTESTS must ship
+with negative tests that fail when the gate admits what it is supposed to
+reject. A positive test proving the happy path passes is not evidence that the
+gate works; it is evidence that the gate is reachable.
+
+This is the dominant defect class in this repository's 2026-07-28..08-03 waves.
+Every instance below was found because a reviewer deliberately attacked the
+gate, not because anyone read the code:
+
+- the fact-assay attested a COLD child that never inherited the context, because
+  it checked inventory, session id, digests, and output shape, but never
+  inheritance;
+- the assay fork had repository tool access, so it could answer from disk while
+  the base was false;
+- the builder attestation accepted a correctly-shaped forged digest that the
+  caller minted itself;
+- clearance enforcement existed but no production path called it, and counting
+  tests around a fake proved nothing;
+- an unknown assay event preserved a false zero-tool observation;
+- a provider capability was declared absent to disable a flaky check, and the
+  claim did not reproduce (9/11 success).
+
+## Standard Negative Shapes
+
+Use these names in checklists, verdicts, and test names. They are the shapes a
+negative test must cover and the shapes a reviewer looks for first.
+
+| Shape | What it looks like when nobody tests for it | What the negative test must do |
+| --- | --- | --- |
+| Forged or self-minted evidence | The caller supplies the proof that the gate checks, and a correctly-shaped value passes. | Mint the evidence in the test the way a caller could, and require refusal. |
+| Absent evidence treated as satisfied | Missing input takes the permissive branch; the suite only ever supplies the input. | Remove the evidence entirely and require refusal, not a default-pass. |
+| Check present but uncalled from production | The guard is implemented and unit-tested by direct call; no production path invokes it. | Drive the real entry point — launch, materialize, resolve, publish — and name the production call site. |
+| Bypass path around the check | One entry point enforces; a second, older, or retry/renewal path does not. | Exercise every entry point that reaches the protected state, including retry, renewal, resume, and recovery, and every delivery surface that carries the rule — a contract clause reaching one context profile and not the other is this shape. |
+| Capability claim that does not reproduce | A capability is declared absent or present to make a flaky check go away. | Re-run the claim enough times to state a real rate, or report unknown. |
+
+## Derive Completeness From An Independent Source
+
+Completeness is derived from the pinned source or generated artifact, never
+enumerated by hand. When a registry, schema set, or declared scope defines the
+members, derive the expected set from that source and fail when any member lacks
+enforcement. This rule comes from five consecutive review rounds that each
+closed exactly the hand-picked members named by the previous reviewer; the next
+unlisted member defeated every list.
+
+A completeness test that reads the implementation's own table is circular and
+can never detect a missing entry: removing the entry also removes it from the
+test's expected set. Derive the expectation from the normative source of truth,
+not from the code under test. This distinction was what let the next Story's
+round-1 review demand a source-derived completeness test instead of accepting
+the producer's two selected cases.
+
+## Prove Exact Bounds At The Production Entry
+
+Prove every bound in both directions at the production entry: accept at the
+limit and refuse past the limit. Character bounds count characters rather than
+bytes. The motivating failure was a value containing 3,999 characters but
+5,999 bytes that production rejected with a byte comparison even though the
+normative `string[1..4096]` bound permitted it; helper-only or ASCII-only tests
+could not expose that narrowing.
+
+## Disable Every Refusal Clause
+
+Disable each refusal clause individually. If the suite stays green, that clause
+is a hole unless the test or evidence documents it as provably subsumed and
+names the check that subsumes it. This is measured rather than hypothetical: in
+one file, disabling 110 clause sites produced 45 surviving mutants, and 12 of
+those survivors were genuine widenings.
+
+Numeric-bound mutation and clause-disablement are different classes, and one
+harness rarely generates both. Numeric mutation finds off-by-one defects but
+cannot express disabling a tagged-union arm, cross-field equality, or grammar
+predicate; clause disablement finds those omissions but cannot move a numeric
+boundary. The 110-site clause run exposed widenings that the numeric harness
+could not generate, so run both classes.
+
+## Check Refusals Against The Normative Source
+
+A green test can defend a bug when it asserts a refusal that the normative
+source does not require. One observed test required production to reject values
+that the pinned specification permitted, so the suite protected the narrowing
+instead of detecting it. Whenever a test encodes a refusal, check that refusal
+against the pinned source rather than copying current behaviour into the
+assertion.
+
+## Eliminate Ambient Test Inputs
+
+No test may depend on ambient environment. Fixtures set explicit identity and
+all other values that could otherwise come from global configuration, the OS,
+or developer-machine state. A developer machine let Git derive an author name
+from the OS and passed the suite, while a CI runner with an empty GECOS field
+failed with `empty ident name`; only CI can catch this class, so the fixture
+must make its identity deterministic before CI exercises it.
+
+## Prove A Bound By Narrowing, Not By Deleting
+
+A test that removes a gate entirely proves only that the gate exists. It says
+nothing about whether the gate covers the right class. Restrict the gate to a
+narrower condition instead and require a named test to fail.
+
+Two repository incidents where a narrowed gate survived a green suite:
+
+- **BUG-260801-3kiloe F1** — the recovery successor cap was proven only by total
+  removal. Narrowing it to provider-limit signals left every other recoverable
+  failure unbounded, with the whole suite still green.
+- **TASK-260802-17wetr F16** — thirteen cycles later, the same shape: the
+  probe-lease cap survived deletion tests while the renewal path escaped it.
+- **TASK-260730-2c1e8l cycle 1** — this contract itself. The reviewer clauses
+  landed in the role body and the shipped test checked the role file and the
+  lite template separately, so both halves were green while the composed lite
+  prompt carried neither. Assert on the composed production artifact, not on the
+  pieces it is built from.
+- **TASK-260730-2c1e8l cycle 2** — the same contract, one level up, and the
+  clearest statement of the difference between the two shapes. The cycle-1 fix
+  did assert on the composed prompt, but it called the composition helper
+  directly and handed it the role, task-class filter, and profile itself.
+  Production builds those inputs inside the spawn entry point, so a mutant
+  narrowing only the real lite-reviewer routing just before composition left the
+  test green while an actual lite reviewer lost its gate-defeat licence. A test
+  that supplies the inputs is testing the helper, not the path. Obtain the
+  artifact the way the consumer does — here, read the prompt file recorded on
+  the run manifest after driving the entry point — so role resolution, the
+  task-class filter, and profile resolution are all under test rather than
+  assumed.
+
+Three traps when running the mutants themselves, all hit while proving this file:
+
+- **The mutant must be re-run with `-count=1`.** `go test` caches on package
+  sources; a test that reads `.roles/*.md` or any file outside its package at
+  runtime returns a stale cached PASS after that file is mutated. A cached green
+  is not a surviving mutant, it is an unexecuted test.
+- **A passing assertion may be satisfied by the wrong source.** Two mutants of
+  the producer DoD entries survived because the phrase asserted also appears,
+  differently worded, in the shared spawn template. Choose assertion wording
+  that only the intended source can supply, then narrow that source and require
+  the named test to fail.
+- **Restore the mutant from a copy, not from git.** `git checkout <file>`
+  restores from the index, which silently discards uncommitted work in that file
+  — during this task it reverted the whole cycle-2 change, not just the mutant.
+  Copy the file aside before mutating, restore from the copy, and verify the
+  restoration by diffing against it before rerunning the gates.
+
+## A Gate Publishes Its Coverage As A Ratio
+
+Prose about what a gate checks cannot distinguish 7 of 7 from 3 of 7. Every
+statement such a description makes is usually true — it is true of what the gate
+can see, and silent about what it cannot. The longer and more careful the
+description, the more thorough the gate looks.
+
+Report the fraction of intended targets the gate actually reaches, and assert
+that fraction so it reddens when a target drops out of reach. A target no mutant
+can redden is not covered, however elaborate the structure around it.
+
+Three defects of this exact shape, each found only once a ratio existed:
+
+- an AST call graph that recorded an edge only for a direct identifier call
+  covered 3 of 7 guarded functions while every pin passed; the package's real
+  dispatch was a function-value table, and the blind spot was invisible from
+  inside;
+- a classifier keyed on prose that a sibling gate was actively rewriting silently
+  dropped 8 rows, taking a suite from 107 executed subtests to 66, while its
+  completeness check `count == 0` reported nothing, because four is not zero;
+- an ownership gate that proved a symbol exists and a case is linked reported 48
+  sections as owned; measured against the specification, those bindings
+  discharged 2 of 394 normative clauses.
+
+A non-empty check on a derived set is the recurring form. `len(x) > 0` answers a
+different question from `len(x) == expected`, and only the second notices a
+narrowing.
+
+## A Blind Spot Is Not An Empty Set
+
+"Nothing is there" and "nothing this checker can see" are different facts, and
+only the second is a statement about the checker. Reporting the first when you
+mean the second converts a limitation into a clean bill of health, and the reader
+has no way to tell.
+
+An ownership gate scanned for uppercase RFC 2119 keywords. Sections stating their
+obligations in declarative present tense scored zero, were bucketed as carrying
+no obligations, and were admitted with no evidence required. Its documentation
+said "there is no obligation to enumerate". The true sentence was "the section
+carries no keyword line, so the scanner cannot see its obligations" — and 19 of
+151 headings were free-admission surface the moment they were bound, including a
+19-row exit-code registry and a closed manifest specification.
+
+Two rules follow:
+
+- State the bound of what the checker can see, next to what it reports. A
+  residual class that is named can be attacked later; one that is implied cannot.
+- Do not let the bucket for "nothing to check" also be the bucket that skips the
+  check. Where absence of measurable obligation is a legitimate state, require an
+  explicit reviewed justification for it, so the weakest entries are the ones
+  that must say the most rather than the least.
+
+## An Absence And A Failure To Read Are Different Facts
+
+Absence is a legitimate state with a defined fallback. A failed, partial, or
+malformed read is evidence of a problem. Treating the second as the first lets
+the fallback launder a fault into a normal-looking value, and a fallback defined
+for absence must never fire on a read failure.
+
+Each of these was a separate defect in this repository:
+
+- a non-empty value read as verified;
+- an unknown scanner version read as clean;
+- a partial provenance record read as absent;
+- a zero pid start time read as alive;
+- a malformed `api_error_status` read as missing;
+- an unparsed envelope read as no envelope — this one produced a false provider
+  suppression that would have hidden a healthy provider for hours.
+
+## Prove, Or Report Nothing
+
+Where a property cannot be established, report unparsed or unknown rather than
+inferring it from a proxy signal. A plausible guess is worse than an explicit
+unknown, because callers act on it.
+
+Incident: headless top-level inference in the Claude classifier was unsound in
+principle and produced six variants before it was deleted rather than
+strengthened.
+
+## Many Variants, One Unowned Decision
+
+A long run of same-shaped variants usually means a decision has more than one
+owner, not that there are many bugs. Eleven framing variants stopped reproducing
+only when structure got a single scanner and a single state type; every per-site
+patch before that produced the next variant. The operative wording is in
+`.roles/orchestrator/role.md`: unify the decision, do not patch each site.
+
+## Reviewer Licence
+
+Reviewers are explicitly licensed to attempt to defeat a gate and to reject a
+change whose only evidence is positive-path. Grep for callers before believing a
+guard is in force. The operative wording is in `.roles/reviewer/role.md`.
+.task-board/.resources/BUG-260908-33iyb1/BUG-260908-33iyb1_review-verdict-rev2.md
+.task-board/.resources/BUG-260908-33iyb1/BUG-260908-33iyb1_publication-018c9d9.md
+.task-board/.resources/TASK-260715-135rr8/TASK-260715-135rr8_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-2jatnd/TASK-260715-2jatnd_review-verdict-rev2.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev2.md
+.task-board/.resources/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-1pn983/TASK-260715-1pn983_review-verdict-rev2.md
+.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev2.md
+
+exec
+/bin/zsh -lc "cat .task-board/.resources/BUG-260908-33iyb1/BUG-260908-33iyb1_publication-018c9d9.md .task-board/.resources/BUG-260908-33iyb1/BUG-260908-33iyb1_review-verdict-rev2.md .task-board/.resources/BUG-260908-7c5iv4/BUG-260908-7c5iv4_review-verdict-rev1.md
+ git -C .temp/BUG-260908-33iyb1/delivery status --short
+ git remote -v
+rg --files --hidden -g AGENTS.md -g go.mod -g SKILL.md -g '"'!'"\\.git' .temp/BUG-260908-33iyb1/delivery | head -40" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+Producer composition review for exact head 018c9d9672767fd02f42fb4ab4f2dfe3800646b8. Source: accepted sibling BUG-260908-7c5iv4 checkpoint dc68c158 and diagnostic CR-BUG-260908-33iyb1-2 candidate d6c87338, accepted by independent reviewer RUN-260908-353271. All 13 non-composed paths match the accepted candidate exactly; README additions merged cleanly, LOGBOOK retains both histories, existing PR validation fixture correction retained. All three introduced commits verify with Ivan Oparin identity; prior PR commits remain ancestors. Diagnostic baseline passes 3 tests; all 3 narrowing mutants are killed, including exit1-only admission. GitHub diff endpoint returned HTTP 406 (>300 files); paginated hosted path list was checked against exact local base-to-head diff. Independent combined-head review is PENDING; this comment is not approval. Hosted CI is pending; original hosted root-cause/green requirement BUG-260908-shki8p remains open. Remote main was not advanced. Prior real macOS evidence is reused for unchanged accepted scope, not represented as a build of this new commit.
+
+Delivery evidence
+
+- Candidate SHA: 018c9d9672767fd02f42fb4ab4f2dfe3800646b8; tree: 52eec29030b5a33f79b2b1b5ca10cf84c74dec5f. PR: https://github.com/relux-works/relux-tunnel/pull/6. CI: https://github.com/relux-works/relux-tunnel/actions/runs/34172537905 (in_progress; no green claim).
+- Current route supersedes integration retry: no integrate/handoff/status mutation performed. Managed Story worktree and root main preserved. Only isolated delivery branch committed.
+- Exact reviewed Story patch applied to exact PR6 head. git apply --3way exited 1 solely for additive LOGBOOK conflict; removed the three conflict marker lines and retained both sides verbatim. README merged automatically. Fixture delta is only the three diagnostic test runner lines; pre-existing correction retained.
+- Personally reran diagnostic baseline (3 tests, exit 0), narrowing harness (3 mutants, each inner behavioral suite exit 1; harness exit 0), diff check (0), commit signature verification (0), signed ancestry inspection, hosted/local path set equality (0). Coverage: 10 of 10 failure invocation/status rows driven (5 Xcode invocation positions each for exit1 and exit65) through validate-macos-targets.sh -> run_logged_command, plus successful child stdout/stderr retention. This is the narrow rerun matrix, not a replacement claim for all AC. Prior real macOS candidate/composition build evidence remains reused with its recorded Xcode/version and initial HEV/SSH failure limitations; no broad or real macOS rebuild in this publication run.
+- Narrowing names: admit-exit-1-only, admit-exit-65-only, hide-exit-65-diagnostic-only. Named tests: test_exit_one_stops_each_build_and_test_with_exact_status; test_each_failing_build_and_test_retains_status_and_context. Later invocations stop.
+- gh pr diff failed HTTP406 (>300 files), not treated as empty diff; fallback paginated files and exact local full diff saved. COMMENTED review submitted successfully with independent combined-head review explicitly pending.
+- Local evidence directory: /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1; composed.patch, full-pr6.patch, hosted-files.txt, hosted-pr6.json, hosted-runs.json, diagnostics-tests.log, diagnostics-mutants.log.
+- Parent next action: independent exact-head review and actual CI observation; no remote landing authorized in this run. Original BUG-260908-shki8p remains open.
+# Independent rev2 review — accepted
+
+CR-BUG-260908-33iyb1-2, immutable tree d6c873383db09c59cf5d6d437e0767615e5ae704; compared against rev1 tree 2c7c37ffdf1f3a5ea8d4392c74e6f9739bb1ce5c. Only the two diagnostic Python test files changed. All 16 candidate changed blobs match working files. The eight-file diagnostic delta preserves signed sibling dc68c1584f7cc4ddcdf770acd8ace79790f0b404 and runtime product bytes. No repository edits, commits, integration, publication, shared-tool changes or VPN actions performed.
+
+## F1 resolved
+
+Independently extracted production scripts and tests from the immutable rev2 tree into scratch and ran:
+- python3 scripts/tests/test_macos_build_diagnostics.py -v: exit 0, all 3 named tests passed.
+- python3 scripts/tests/test_macos_build_diagnostic_mutants.py: harness exit 0; each of three behavioral mutant children exited 1 with assertion failures.
+- git diff --check between rev1 and rev2: exit 0.
+
+The named test_exit_one_stops_each_build_and_test_with_exact_status drives actual validate-macos-targets.sh -> build_unsigned / target-contract test -> run_logged_command with exit 1 at all five build/test invocations. Baseline asserts exact status, no subsequent Xcode invocation, useful diagnostic and full artifact logs. The admit-exit-1-only mutant retains the original return and all other statuses, inserting only `[ "$command_status" -ne 1 ] || return 0`. It now fails the named test: invocation counter reaches 5 instead of 1/2/3/4. This is the requested production-entry narrowing defeat. Bound: its fifth subcase alone is masked by a later missing-product exit 1; the named test as a whole decisively kills the mutant. Exit65 baseline still passes; admit-exit-65-only and token-preserving hide-exit-65-diagnostic-only each fail all five subcases. No static checker substitutes for behavior.
+
+## Coverage: 2 of 6 AC rows driven
+
+1. Failure status: test_each_failing_build_and_test_retains_status_and_context (65) and test_exit_one_stops_each_build_and_test_with_exact_status (1), production validate-macos-targets.sh build_unsigned / target test -> run_logged_command. Other status values are not exhaustively injected.
+2. Full logs: those production-entry tests plus test_successful_child_retains_both_streams -> run_logged_command. Negative invocation coverage 5 of 7 Xcode sites for each status; two build-settings calls retain prior positive real evidence only.
+3. Bounded tail: unchanged validate-credential-free.sh run_step -> tail -n 80, inspected; no named behavioral boundary test. Bound is outer CI entry only; direct macOS validator intentionally emits complete child output.
+4. Named narrowing tests: three shipped mutants killed as above; operational test evidence, not an additional AC behavior row.
+5. Real macOS evidence: reused prior evidence.zip macos-build-01.log and composition-build-02.log and their Xcode build/test logs, as accepted in rev1. Exact PR6 composition is recorded as 87451b53960ceabe88a01c44c287fee7f9ebf386 plus sibling and diagnostic delta. Local Xcode 26.5 / Swift 6.3.2 success is not hosted Xcode16.4 proof. Initial composition mise trust failure and prior HEV/SSH limitations remain; no determinism claim. Rev2 managed publication validation log separately ends [exit 0] for full credential-free validation. These builds were inspected/reused, not rerun by this reviewer for the test-only delta.
+6. Immutable review/original repair: this verdict accepts only named rev2 diagnostics. BUG-260908-shki8p independently read as backlog; root cause and required hosted green remain open.
+
+No new credential source, environment dump, or secret access is introduced by rev2; unchanged production intentionally retains Xcode output under the existing artifact root. This is scoped code-path inspection, not an exhaustive secret scan. Producer item12 was self-assessment; this verdict supplies the independent review. Reviewed live merged checklist is satisfied within the stated diagnostic bounds; rejection-routing item is not applicable to acceptance.
+
+Verdict: accept revision 2 via accept_cr, route to integrating, never done here. Bound developer/implementer owns final integration; parent owns routing and signed hosted delivery. No original hosted repair or green-check claim.
+
+New reviewer evidence: BUG-260908-33iyb1_review-tests-rev2.log. Prior evidence: BUG-260908-33iyb1_review-verdict-rev1.md, BUG-260908-33iyb1_evidence.zip, BUG-260908-33iyb1_change-request_rev2-validation.log.
+# Independent review: CR-BUG-260908-7c5iv4-1 revision 1
+
+Verdict: ACCEPT. No blocking finding in the scoped boundary repair. Acceptance is for immutable candidate tree ff711bcf8335bd2394bd06e38e6bbb514fd58d63 against b3422b05226253a17676b9b84c764071fe3dbe74, not hosted delivery or determinism. Parent must route the bound developer/implementer for the non-final leaf checkpoint. Reviewer performed no product edits, commits, branch changes, integration, hosted updates, tool installation/source edits, VPN actions, subagents, or successors.
+
+## Scope and architecture
+
+Reviewed all 11 changed paths. All current worktree bytes equal the immutable tree. CI calls the extracted board CLI and its tests; only root .activity and .resources are excluded, while genuine incomplete elements under other hidden or nested activity directories fail. SnapshotDiff.compare checks all three URLs before I/O, constructs file URLs explicitly, and retains existing image and artifact behavior. Scanner adds only filePath to the existing inline fileURLWithPath lexical constructor boundary; it does not exempt a directory or test-support file. Arbitrary URL variables, string constructors, and trailing expression transformations remain rejected. It is a conservative lexical scanner, not type resolution/data-flow proof; shadowed Foundation symbols and arbitrary language obfuscation are outside this repair's attestation.
+
+The validation fixture correction matches the accepted runtime dependency and is already present at PR6 head. No generated scheme or runtime/protocol change is introduced. README documents both tools, LOGBOOK preserves the failure/retry limitation.
+
+## AC coverage
+
+**2 of 5 AC rows driven by named candidate tests; 3 of 5 explicitly stated process/environment bounds.** Tests are included in the immutable CR tree, pending the producer-owned signed checkpoint; reviewer cannot create their commit.
+
+1. Automated: CI Check board structure -> scripts/check_board_structure.py::main -> check. BoardStructureTests.test_activity_and_resource_payloads_are_not_elements, test_incomplete_element_fails, test_unknown_hidden_directory_is_not_exempt, test_nested_activity_name_is_not_exempt, test_empty_or_missing_board_fails execute the actual CLI and assert exits/diagnostics.
+2. Automated: relay_supply_chain.audit -> scan_runtime -> forbidden_runtime_surface -> swift_contents_of_surface. RelaySupplyChainTests.test_checked_in_metadata_passes_clean_audit, test_snapshot_support_local_loads_pass_actual_runtime_scan, test_snapshot_support_network_mutants_preserve_file_tokens_and_fail, test_runtime_scan_rejects_string_constructor_even_with_file_path_token exercise the production audit/scanner. SnapshotDiffSupportTests.nonFileURLs, matchingLocalImages, mismatchArtifacts drive SnapshotDiff.compare; HTTP/HTTPS/FTP/data are rejected at each of three URL positions before I/O.
+3. Process bound: independently reran clean exact PR 87451b53960ceabe88a01c44c287fee7f9ebf386 before/after real CI board block and make relay-supply-chain-audit; retained separate full-suite producer evidence for old-main candidate and PR composition. No claim of hosted execution.
+4. Process bound: independently verified signatures on 87451b53960ceabe88a01c44c287fee7f9ebf386 and 6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51; preserved objects and all managed-worktree bytes. Acceptance binds the immutable CR; publication/landing is not this role's action.
+5. Environment bound: completed before 2026-09-08 04:59 Asia/Tbilisi, with no VPN, successors, subagents, tool source patches or installs.
+
+## Independent execution
+
+- Tool readiness: installed task-board status/read operations, git --version, python3 --version, swift --version succeeded; versions retained.
+- 29 board/supply-chain Python tests: exit 0 in managed candidate whose 11 paths were verified byte-identical to immutable CR.
+- python3 scripts/tests/test_pr6_boundary_mutants.py from a git archive of the immutable tree: exit 0. All three production positive runs passed; all three weakened-gate runs exited 1 with their named failures. Board mutant admits exactly .hidden. Scanner mutant additionally admits referenceURL and is caught by token-preserving network variants. Swift mutant retains isFileURL but admits HTTP; compiled behavioral suite fails nonFileURLs in all three positions while the file constructor prevents network access. This is not delete-only or grep-only evidence.
+- Clean exact PR before repair: actual original CI board block exit 1 (activity IDs misclassified), make relay-supply-chain-audit exit 2 (SnapshotDiff Foundation Data URL loader).
+- Clean exact PR plus candidate: actual repaired CI board block exit 0 (5 tests, 412 elements), make relay-supply-chain-audit exit 0, 29 board/supply-chain Python tests exit 0.
+- git diff --check base candidate: exit 0; strict swift-format lint both changed Swift files: exit 0; Python py_compile changed/new scripts: exit 0.
+
+The first scratch composition script exited 1 because git merge-file reported a LOGBOOK append conflict; its log is preserved. A second scratch-only composition explicitly appends the candidate LOGBOOK addition to PR6's existing log and merges README, preserving both histories; code/workflow/test files are exact candidate bytes. This resolves diagnostic composition, not the parent's later integration transaction. Initial check_item dry-run used unsupported index argument and was refused without mutation; scoped schema identified the correct 1-based item argument.
+
+## Evidence accepted from the producer (not rerun as full suites)
+
+Read the four required TASK-260830-1x524u delivery resources and BUG developer results, identity/lint logs, and validation.zip. Inspected separate base and PR-composition summaries, environment, and original failed Swift transcript.
+
+Old-main candidate full credential-free suite passed (496 Swift tests, 25 known issues). First full PR-composition attempt failed: make exit 2 / Swift exit 1; HEVBridgeIntegrationTests.swift:178 observed maximumOutstandingReadCount 0 instead of 1; LibSSH2AdapterIntegrationTests.swift:579 observed writeCallCount 0. Those files are unchanged by this repair and between base and PR head. Sequential full PR-composition retry passed (516 Swift tests, 25 known issues), including Shared Runtime migration-isolation gates, builds, packaging and legacy checks. The first failure remains a failure. Scheduling interference is unproven; a single successful retry does not establish determinism or green hosted CI. Acceptance of this scoped repair does not waive future required checks.
+
+Native Linux/Intel, physical device/release/signing/notarization and hosted green status are not independently attested here. SnapshotDiff uses AppKit, so its bounded compiled behavioral proof runs on macOS.
+
+## Checklist disposition and evidence
+
+Implementation fits AC and architecture; relevant targeted tests and mutants pass; gating behavior was attacked through production entry points. The conditional rejection-routing checklist is satisfied by recording this explicit acceptance verdict and using accept_cr instead of done. All producer checklist evidence was reviewed with the limitations above.
+
+BUG-260908-7c5iv4_review-evidence-rev1.zip contains independent commands, real exits, initial scratch conflict, successful retry, mutant output, integrity hashes, lint/readiness, diff shape and the scratch reproduction script. Existing BUG-260908-7c5iv4_validation.zip remains the source of the full-suite failure/retry evidence. No hosted landing authorization is inferred from local results.
+origin	git@github.com:relux-works/relux-tunnel.git (fetch)
+origin	git@github.com:relux-works/relux-tunnel.git (push)
+.temp/BUG-260908-33iyb1/delivery/relay/go.mod
+
+exec
+/bin/zsh -lc "gh api repos/relux-works/relux-tunnel/pulls/6 > .temp/TASK-260908-2ixr2k/pr.json
+gh api --paginate --slurp 'repos/relux-works/relux-tunnel/pulls/6/files?per_page=100' > .temp/TASK-260908-2ixr2k/files.json
+git ls-remote --symref origin HEAD > .temp/TASK-260908-2ixr2k/remote.txt
+git fetch origin main
+python3 - <<'PY'
+import json
+p=json.load(open('.temp/TASK-260908-2ixr2k/pr.json'));print(p['head']['sha'],p['head']['ref'],p['base']['sha'],p['changed_files'])
+PY
+cat .temp/TASK-260908-2ixr2k/remote.txt
+git diff --name-status b3422b05 d6c873383db09c59cf5d6d437e0767615e5ae704
+git diff --stat 87451b53960ceabe88a01c44c287fee7f9ebf386 018c9d9672767fd02f42fb4ab4f2dfe3800646b8
+rg -n '(python|swift|test|diagnostic)' .temp/BUG-260908-33iyb1/delivery/scripts/tests/test_pr6_boundary_mutants.py | tail -25" in /Users/iv/Developer/relux-tunnel
+ succeeded in 7668ms:
+From github.com:relux-works/relux-tunnel
+ * branch            main       -> FETCH_HEAD
+018c9d9672767fd02f42fb4ab4f2dfe3800646b8 delivery/STORY-260715-1y04r0-rev3 b3422b05226253a17676b9b84c764071fe3dbe74 408
+ref: refs/heads/main	HEAD
+b3422b05226253a17676b9b84c764071fe3dbe74	HEAD
+M	.github/workflows/ci.yml
+M	LOGBOOK.md
+M	README.md
+M	Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+M	Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+M	docs/generated-workspace-foundation.md
+A	scripts/check_board_structure.py
+A	scripts/logged-command.sh
+M	scripts/relay_supply_chain.py
+M	scripts/tests/test-credential-free-validation.sh
+A	scripts/tests/test_check_board_structure.py
+A	scripts/tests/test_macos_build_diagnostic_mutants.py
+A	scripts/tests/test_macos_build_diagnostics.py
+A	scripts/tests/test_pr6_boundary_mutants.py
+M	scripts/tests/test_relay_supply_chain.py
+M	scripts/validate-macos-targets.sh
+ .github/workflows/ci.yml                           | 26 ++-----
+ LOGBOOK.md                                         | 44 ++++++++++++
+ README.md                                          |  3 +
+ .../ReluxSnapshotDiffSupport/SnapshotDiff.swift    |  9 ++-
+ .../SnapshotDiffSupportTests.swift                 | 35 ++++++++++
+ docs/generated-workspace-foundation.md             | 17 +++++
+ scripts/check_board_structure.py                   | 36 ++++++++++
+ scripts/logged-command.sh                          | 14 ++++
+ scripts/relay_supply_chain.py                      |  7 +-
+ scripts/tests/test-credential-free-validation.sh   |  3 +
+ scripts/tests/test_check_board_structure.py        | 75 ++++++++++++++++++++
+ .../tests/test_macos_build_diagnostic_mutants.py   | 44 ++++++++++++
+ scripts/tests/test_macos_build_diagnostics.py      | 75 ++++++++++++++++++++
+ scripts/tests/test_pr6_boundary_mutants.py         | 80 ++++++++++++++++++++++
+ scripts/tests/test_relay_supply_chain.py           | 40 +++++++++++
+ scripts/validate-macos-targets.sh                  | 20 +++---
+ 16 files changed, 496 insertions(+), 32 deletions(-)
+3:Run: python3 scripts/tests/test_pr6_boundary_mutants.py
+5:must fail its named regression test. Swift tests exercise the production source.
+16:def run(command, root, expected, diagnostic):
+21:    if (result.returncode == 0) != (expected == 0) or diagnostic not in result.stdout:
+22:        raise SystemExit("mutant proof failed: unexpected exit or missing named diagnostic")
+30:            "scripts/tests/test_check_board_structure.py",
+31:            "scripts/tests/test_relay_supply_chain.py", "relay/supply-chain-source-v1.json",
+32:            "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift",
+39:        command = [sys.executable, "-m", "unittest", "-v",
+40:                   "scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt"]
+44:        run(command, root, 1, "FAIL: test_unknown_hidden_directory_is_not_exempt")
+48:        command = [sys.executable, "-m", "unittest", "-v",
+49:                   "scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail"]
+53:        run(command, root, 1, "FAIL: test_snapshot_support_network_mutants_preserve_file_tokens_and_fail")
+57:        source = package / "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"
+58:        test = package / "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift"
+59:        for target, relative in ((source, "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"),
+60:                                 (test, "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift")):
+63:        (package / "Package.swift").write_text('''// swift-tools-version: 6.1
+67:  .testTarget(name: "ReluxSnapshotDiffSupportTests", dependencies: ["ReluxSnapshotDiffSupport"]),
+70:        command = ["swift", "test", "--package-path", str(package)]
+71:        run(command, root, 0, "Test run with 3 tests")
+
+exec
+/bin/zsh -lc "git ls-remote origin refs/heads/delivery/STORY-260715-1y04r0-rev3 > .temp/TASK-260908-2ixr2k/branch.txt
+ git log --format='%H %P %an <%ae>' origin/main..018c9d9672767fd02f42fb4ab4f2dfe3800646b8
+ git diff 87451b53960ceabe88a01c44c287fee7f9ebf386 018c9d9672767fd02f42fb4ab4f2dfe3800646b8 -- README.md LOGBOOK.md scripts/tests/test-credential-free-validation.sh
+cat .temp/BUG-260908-33iyb1/delivery/scripts/logged-command.sh .temp/BUG-260908-33iyb1/delivery/scripts/tests/test_macos_build_diagnostics.py
+ task-board q 'get(TASK-260908-2ixr2k) { checklist }'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 2339ms:
+018c9d9672767fd02f42fb4ab4f2dfe3800646b8 87451b53960ceabe88a01c44c287fee7f9ebf386 Ivan Oparin <oparin@me.com>
+87451b53960ceabe88a01c44c287fee7f9ebf386 6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51 Ivan Oparin <oparin@me.com>
+6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51 b3422b05226253a17676b9b84c764071fe3dbe74 Ivan Oparin <oparin@me.com>
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index 05a25c7..67cb07a 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1464,3 +1464,47 @@
+ - SCOPE: This task makes documentation and diagram changes only. It does not wire a provider, change lifecycle behavior, claim full UDP from TCP plus safe DNS, or define migration and future-mode policy.
+ - VERIFICATION: Eight focused Swift suites pass 105 tests across messages, coordinator, provider adapter, host retirement/projection, composition gates, exact macOS graph ownership, aggregate diagnostics, and SSH redaction. The manifest-driven harness passes six tests and all seven scenario rows; both SwiftPM platform adapter targets and unsigned generated macOS host/provider Debug+Release validation pass. PlantUML source checking, four-page SVG rendering and visual inspection, 52 local-link checks, source-contract checks, and `git diff --check` pass.
+ - REVIEW REWORK: CR revision 1 correctly identified that the partial-failure diagram placed packet activation after failed settings applies with `committed` or `uncertain` disposition. The corrected page separates `notCommitted` failure (no clear), `committed`/`uncertain` failure (clear, no activation), and successful committed apply followed by activation failure (clear). The production coordinator and its 22-test negative lifecycle suite verify this boundary.
++## 2026-09-08 — BUG-260908-7c5iv4: PR 6 validation boundaries
++
++Reproduced board exit 1 and relay audit make exit 2 on exact PR head
++`87451b53960ceabe88a01c44c287fee7f9ebf386`; old main has no activity failure,
++but has the same SnapshotDiff loader failure. These are repository failures.
++The CI board entry point now excludes only root activity/resource stores.
++SnapshotDiff rejects non-file input/output URLs before I/O and explicitly
++constructs file URLs for image reads; the scanner recognizes Foundation's
++`URL(filePath:)` alongside `URL(fileURLWithPath:)`, without excluding test support.
++This small loader change is necessary because the previous public URL API could
++load network URLs; a scanner-only exemption would hide that behavior.
++Named negative tests and three narrowing mutants cover hidden elements, arbitrary
++URL loading, and token-preserving HTTP admission through the actual Swift API.
++The existing validation fixture correction is reused verbatim from accepted
++`6e8a1988`; generated schemes are unchanged. Exact-base and PR-composition evidence
++are attached to the bug separately. Delivery remains the parent's review/landing
++step; no signed objects are rewritten by this producer.
++
++The first simultaneous full-suite PR-composition run failed two unchanged
++HEV/SSH integration tests. The sequential full-suite retry passed with the same
++behavioral source (516 Swift tests, 25 pre-existing known issues); Story-base
++validation also passed (496 tests, 25 known issues). The initial failing attempt
++remains attached, and scheduling interference is not claimed as a proven cause.
++
++
++## 2026-09-08 — BUG-260908-33iyb1 macOS hosted diagnostics
++
++- Verified hosted revision `3279036094620772262dbd04a6d8930ec7691e75` has
++  parents `b3422b05226253a17676b9b84c764071fe3dbe74` and PR 6 head
++  `87451b53960ceabe88a01c44c287fee7f9ebf386`; its tree equals that PR head.
++- The supplied artifact omits redirected Xcode child logs. Build exit 65 is
++  known; the compiler cause remains unknown. No unsupported toolchain claim
++  or runtime product change is justified by that evidence.
++- Added complete child-log retention under the already-uploaded log directory,
++  inline failure context, and unchanged nonzero child status. Behavioral tests
++  drive all four build invocations and the test invocation with exit 65. Two
++  narrowing mutants admit only exit 65 or suppress only its diagnostic; both
++  fail the named production-entry test.
++- The local macOS validator passed on Xcode 26.5 / Swift 6.3.2, including four
++  unsigned builds, target-contract tests, packaging, and provider graph checks.
++  This is local evidence, not hosted proof. Parent owns publication and the
++  exact-head hosted rerun. Diagnostic propagation is scoped to this leaf; the
++  original hosted repair and green-check requirement remain open in
++  BUG-260908-shki8p. Independent immutable review is still required.
+diff --git a/README.md b/README.md
+index 0e7ec0e..c4f3fe2 100644
+--- a/README.md
++++ b/README.md
+@@ -261,10 +261,13 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Relay protocol schema/codegen, canonical vectors, conformance, and hostile-input diagnostics | Validate the canonical relay protocol v1 schema, deterministic Swift/Go bindings, production-code-independent vectors, shared hostile corpus, bounded decoder work/allocation/cleanup, and runtime diagnostics; the gates reject schema/vector/generated/semantic drift | `make relay-protocol-generate`; `make relay-protocol-vectors-generate`; `make relay-protocol-conformance-check`; `make relay-protocol-hostile-diagnostics`; `make relay-protocol-check`; `./scripts/tests/test-relay-protocol-go.sh -fuzz FuzzHostileInputDecoder -fuzztime 30s` | `Protocol/Relay/relay-v1.schema.json` (authority); `Protocol/Relay/Vectors/v1/corpus.json`; `Protocol/Relay/Fuzz/v1/regression-seeds.json`; generated bindings plus handwritten codecs/session tests; scratch under `.temp/relay-protocol-check/` and `.temp/TASK-*/` |
+ | Relay portable toolchain and target-shell builder | Verify `relay/toolchain-manifest-v1.json`; offline-provision and whole-tree-verify checksum-pinned Go 1.26.5 plus Syft 1.48.0; run credential-isolated clean or incremental builds with no-follow, resolved-containment checks for each Darwin/Linux amd64/arm64 target; verify the exact four-asset layout, compiler/internal-linker and CPU metadata, format, linkage, stripped debug disposition, minimum runtime, explicit total bundle budget, exact missing/tampered-input failures, reproducibility, native unprivileged Ubuntu 24.04 amd64/arm64 smoke, SBOM, and licenses | `make relay-toolchain-check`; `make relay-provision-go RELAY_GO_ARCHIVE=.temp/relay-tools/<official-go-archive>`; `make relay-build-linux-amd64 RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUILD_CLEAN_FLAG=--require-clean` (replace target suffix for the other three); `make relay-portable-assets RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUNDLE_BUDGET_BYTES=<approved-total-bytes> RELAY_BUILD_CLEAN_FLAG=--require-clean`; `make relay-toolchain-ci ...`; `make relay-toolchain-native-linux-smoke ...`; `make relay-shell-validate ...` | Manifest in `relay/toolchain-manifest-v1.json`; exact target outputs under `.build/relay/portable/`; inspection report at `.build/relay/portable-assets-v1.json`; isolated work under `.build/relay/work/`; extracted licenses under `.build/relay/toolchain-licenses/`; release bundle/test/reproducibility outputs under `.build/relay/` |
+ | Trusted relay asset manifest | Verify the accepted board archive digest, exact four executable members, platform headers, embedded build identity, canonical manifest schema/order, bundle byte sizes and SHA-256 values, immutable generated Swift lookup, and generated-workspace resource inclusion | `make relay-asset-bundle-generate`; `make relay-asset-bundle-check`; `make relay-asset-manifest-test` | Source/schema under `relay/`; typed lookup under `Sources/ReluxTunnelCore/RelayAssets/`; ignored application resource folder under `.build/relay/relay-assets-v1/` |
++| CI board structure checker | Require README/progress for elements, excluding only root `.activity` and `.resources` stores; unknown hidden directories remain checked | `python3 scripts/check_board_structure.py`; `python3 -m unittest scripts/tests/test_check_board_structure.py` | Diagnostics on stdout; task evidence under `.temp/` |
++| PR 6 boundary mutation proof | Exercise board/scanner narrowing mutants and compile the production SnapshotDiff loader with a token-preserving HTTP-admission mutant; all three must fail named behavioral tests | `python3 scripts/tests/test_pr6_boundary_mutants.py` (macOS, Python 3, Swift 6.1+) | Disposable fixtures under the system temporary directory; commands, exits, and test diagnostics on stdout |
+ | Relay supply-chain audit | Generate and fail-closed audit exact source/build provenance, commit/version-specific source URLs, approved license/notice mappings, scoped dependency inventory, asset-manifest linkage, M2/M5 ownership, and an immutable application/runtime scan for executable-download surfaces | `make relay-supply-chain-generate`; `make relay-supply-chain-test`; `make relay-supply-chain-audit` | Authoritative metadata and generated inventory/provenance/notices under `relay/`; temporary relay bundle under `.build/relay/relay-assets-v1/` |
+ | Native dependency validator | Rebuild and inspect pinned static XCFramework slices, checksums, notices, required HEV symbols, and extension-safe linkage | `make validate-native`; `./scripts/native-dependency-tool.py verify --dependency hev-lwip --source-dir /path/to/pinned/hev-socks5-tunnel` | `NativeDependencies/Artifacts/`; bundled notices; `.build/native-apple-matrix/` |
+ | ReluxLibSSH2 fork builder | Verify the six-file rekey/global-request observation patch, exact libssh2/OpenSSL source pins, static XCFramework lock, public headers, notices, and real client/server rekey plus reply/timeout behavior | `make validate-libssh2`; `make test-libssh2-source-gates`; `make build-libssh2 LIBSSH2_SOURCE_ARCHIVE=/path/to/libssh2.tar.gz OPENSSL_SOURCE_ARCHIVE=/path/to/openssl-3.5.7.tar.gz` | `Dependencies/ReluxLibSSH2/`; `NativeDependencies/Artifacts/ReluxLibSSH2.xcframework`; `NativeDependencies/Generated/LIBSSH2_OPENSSL_THIRD_PARTY_NOTICES.txt`; task logs under `.temp/` |
+ | ReluxNIOSSH fork verifier | Verify the audited SwiftNIO SSH pin, license, exact patch allowlist, full fork tests, and build; generate an upstream diff or rebase conflict report | `make validate-reluxniossh`; `python3 scripts/reluxniossh-fork-tool.py diff --output .temp/TASK-260715-nzdzv3/ReluxNIOSSH-upstream.patch`; `python3 scripts/reluxniossh-fork-tool.py conflict-test --upstream-ref <ref>` | `Dependencies/ReluxNIOSSH/`; requested diffs under `.temp/` |
++| macOS build diagnostics | Retain each unsigned Xcode build/test log in the existing CI artifact tree and preserve failing child status and compiler context | `python3 scripts/tests/test_macos_build_diagnostics.py`; `python3 scripts/tests/test_macos_build_diagnostic_mutants.py`; `./scripts/validate-macos-targets.sh` | `.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/` |
+ | Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
+ | Packet-frame fuzz suite | Deterministic hostile-frame fuzz plus allocation/runtime bounds for the packet bridge; seed, iteration, and ceiling knobs documented in [`docs/packet-frame-fuzzing.md`](docs/packet-frame-fuzzing.md) | `swift test --filter PacketFrameFuzzTests` (bounded run is part of `swift test`) | `PACKET_FRAME_FUZZ_REPORT` evidence lines; task logs under `.temp/` |
+ | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
+diff --git a/scripts/tests/test-credential-free-validation.sh b/scripts/tests/test-credential-free-validation.sh
+index 9c5543d..156fc56 100755
+--- a/scripts/tests/test-credential-free-validation.sh
++++ b/scripts/tests/test-credential-free-validation.sh
+@@ -72,4 +72,7 @@ test "$mise_line" -lt "$gate_line"
+ 
+ "$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
+ 
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
++
+ echo "credential-free validation contract tests passed"
+#!/bin/sh
+# Retain complete child output in the uploaded log tree and expose failures inline.
+run_logged_command() {
+  command_log=$1
+  shift
+  if "$@" > "$command_log" 2>&1; then
+    return 0
+  else
+    command_status=$?
+    printf 'FAIL: %s (exit %s; log: %s)\n' "$*" "$command_status" "$command_log" >&2
+    cat "$command_log" >&2
+    return "$command_status"
+  fi
+}
+"""Behavioral diagnostics tests; fixtures never launch Xcode or activate a VPN."""
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class MacOSBuildDiagnosticsTests(unittest.TestCase):
+    def test_successful_child_retains_both_streams(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / 'child.log'
+            result = subprocess.run(
+                ['sh', '-c', '. "$1"; run_logged_command "$2" sh -c '
+                 '\'echo compiler-output; echo compiler-warning >&2\'',
+                 'test', str(ROOT / 'scripts/logged-command.sh'), str(log)],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(log.read_text(), 'compiler-output\ncompiler-warning\n')
+
+    def test_each_failing_build_and_test_retains_status_and_context(self):
+        self.assert_failing_build_and_test_status(65)
+
+    def test_exit_one_stops_each_build_and_test_with_exact_status(self):
+        self.assert_failing_build_and_test_status(1)
+
+    def assert_failing_build_and_test_status(self, status):
+        # Four unsigned builds followed by the target-contract test invocation.
+        for failing_call in range(1, 6):
+            with self.subTest(failing_call=failing_call), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                scripts = root / 'scripts'
+                scripts.mkdir()
+                for name in ('validate-macos-targets.sh', 'logged-command.sh'):
+                    shutil.copyfile(ROOT / 'scripts' / name, scripts / name)
+                generate = scripts / 'generate-workspace.sh'
+                generate.write_text('#!/bin/sh\nexit 0\n')
+                generate.chmod(0o755)
+                binary = root / 'bin'
+                binary.mkdir()
+                xcodebuild = binary / 'xcodebuild'
+                xcodebuild.write_text('''#!/bin/sh
+count=0
+[ ! -f "$COUNTER" ] || count=$(cat "$COUNTER")
+count=$((count + 1))
+echo "$count" > "$COUNTER"
+echo "compiler invocation $count: $*"
+if [ "$count" -eq "$FAIL_CALL" ]; then
+  echo 'ConcreteCompile.swift:42: error: diagnostic sentinel' >&2
+  exit "$FAIL_STATUS"
+fi
+''')
+                xcodebuild.chmod(0o755)
+                counter = root / 'counter'
+                result = subprocess.run(
+                    ['sh', str(scripts / 'validate-macos-targets.sh')],
+                    env={**os.environ, 'PATH': f'{binary}:/usr/bin:/bin',
+                         'COUNTER': str(counter), 'FAIL_CALL': str(failing_call),
+                         'FAIL_STATUS': str(status)},
+                    capture_output=True, text=True)
+                self.assertEqual(result.returncode, status, result.stderr)
+                self.assertEqual(counter.read_text().strip(), str(failing_call))
+                self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+                self.assertIn(f'exit {status}', result.stderr)
+                logs = root / '.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets'
+                self.assertEqual(len(list(logs.glob('*.log'))), failing_call)
+                self.assertTrue(any('diagnostic sentinel' in log.read_text()
+                                    for log in logs.glob('*.log')))
+
+
+if __name__ == '__main__':
+    unittest.main()
+{"checklist":[{"text":"Independently verify exact signed PR6 composition and submit real GitHub COMMENTED review verdict; no remote landing or false CI green","done":false},{"text":"New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence","done":false},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":false}]}
+
+codex
+PR и remote main прочитаны: head совпадает с заданным, полный hosted список содержит 408 файлов. Между прежним PR head и новым — ровно 16 CI-путей; отдельно проверяю три составных файла и неизменность остальных blobs.
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+import subprocess as s,json,pathlib
+out=pathlib.Path('.temp/TASK-260908-2ixr2k'); h='018c9d9672767fd02f42fb4ab4f2dfe3800646b8'; old='87451b53960ceabe88a01c44c287fee7f9ebf386'; c='d6c873383db09c59cf5d6d437e0767615e5ae704'; b='b3422b05226253a17676b9b84c764071fe3dbe74'
+def g(*a): return s.check_output(['git',*a])
+lines=[]
+assert json.loads((out/'pr.json').read_text())['head']['sha']==h
+assert (out/'branch.txt').read_text().split()[0]==h
+assert g('-C','.temp/BUG-260908-33iyb1/delivery','rev-parse','HEAD').decode().strip()==h
+assert not g('-C','.temp/BUG-260908-33iyb1/delivery','status','--porcelain')
+local=set(g('diff','--name-only',b,h).decode().splitlines()); hosted={f['filename'] for p in json.loads((out/'files.json').read_text()) for f in p};assert local==hosted and len(local)==408
+lines.append('Hosted files: 408/408 equal exact local base/head set; all paginated patches saved.')
+paths=g('diff','--name-only',b,c).decode().splitlines();assert set(paths)==set(g('diff','--name-only',old,h).decode().splitlines()) and len(paths)==16
+for p in paths:
+ same=g('show',f'{c}:{p}')==g('show',f'{h}:{p}');lines.append(f'{p}: '+('exact accepted blob' if same else 'composed'))
+ if p not in ['README.md','LOGBOOK.md','scripts/tests/test-credential-free-validation.sh']: assert same
+for p in ['README.md','LOGBOOK.md']:
+ before=g('show',f'{old}:{p}').splitlines();after=g('show',f'{h}:{p}').splitlines();it=iter(after);assert all(any(x==y for y in it) for x in before)
+ base=g('show',f'{b}:{p}').splitlines();candidate=g('show',f'{c}:{p}').splitlines()
+ import difflib
+ added=[x[2:] for x in difflib.ndiff(base,candidate) if x.startswith('+ ')]; assert all(x in after for x in added)
+ lines.append(p+': all old lines retained in order; every candidate-added line retained')
+p='scripts/tests/test-credential-free-validation.sh';assert g('show',f'{c}:{p}')==g('show',f'{h}:{p}')
+for commit in g('rev-list',f'{b}..{h}').decode().splitlines():
+ r=s.run(['git','verify-commit',commit],capture_output=True,text=True);lines.append(f'verify-commit {commit}: exit {r.returncode}\\n{r.stdout}{r.stderr}');assert r.returncode==0
+assert s.run(['git','merge-base','--is-ancestor',old,h]).returncode==0
+(out/'integrity.log').write_text('\\n'.join(lines));print('\\n'.join(lines))
+(out/'composition.patch').write_bytes(g('diff',old,h));(out/'full-pr.patch').write_bytes(g('diff',b,h))
+PY
+ gh run view 34172537905 --json status,conclusion,headSha,jobs,url > .temp/TASK-260908-2ixr2k/ci.json" in /Users/iv/Developer/relux-tunnel
+ succeeded in 2131ms:
+Traceback (most recent call last):
+  File "<stdin>", line 19, in <module>
+AssertionError
+
+exec
+/bin/zsh -lc 'git diff --name-status d6c873383db09c59cf5d6d437e0767615e5ae704 018c9d9672767fd02f42fb4ab4f2dfe3800646b8 -- .github LOGBOOK.md README.md Sources/ReluxSnapshotDiffSupport Tests/ReluxSnapshotDiffSupportTests docs/generated-workspace-foundation.md scripts
+cat .temp/TASK-260908-2ixr2k/ci.json
+ git diff d6c873383db09c59cf5d6d437e0767615e5ae704 018c9d9672767fd02f42fb4ab4f2dfe3800646b8 -- scripts/tests/test-credential-free-validation.sh' in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+M	LOGBOOK.md
+M	README.md
+M	scripts/check-core-boundaries.sh
+A	scripts/check-migration-isolation.py
+A	scripts/tests/test-migration-isolation-guard.sh
+A	scripts/tests/test_m0_production_bindings.py
+M	scripts/validate-credential-free.sh
+A	scripts/validate-m0-production-bindings.py
+A	scripts/validate-m1-runtime-harness.py
+{"conclusion":"failure","headSha":"018c9d9672767fd02f42fb4ab4f2dfe3800646b8","jobs":[{"completedAt":"2026-09-08T00:12:19Z","conclusion":"success","databaseId":101895476515,"name":"board + spec validation","startedAt":"2026-09-08T00:11:57Z","status":"completed","steps":[{"completedAt":"2026-09-08T00:11:59Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-09-08T00:11:58Z","status":"completed"},{"completedAt":"2026-09-08T00:12:15Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":2,"startedAt":"2026-09-08T00:11:59Z","status":"completed"},{"completedAt":"2026-09-08T00:12:15Z","conclusion":"success","name":"Validate workflow YAML","number":3,"startedAt":"2026-09-08T00:12:15Z","status":"completed"},{"completedAt":"2026-09-08T00:12:15Z","conclusion":"success","name":"Check spec presence","number":4,"startedAt":"2026-09-08T00:12:15Z","status":"completed"},{"completedAt":"2026-09-08T00:12:16Z","conclusion":"success","name":"Check board structure","number":5,"startedAt":"2026-09-08T00:12:15Z","status":"completed"},{"completedAt":"2026-09-08T00:12:16Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":10,"startedAt":"2026-09-08T00:12:16Z","status":"completed"},{"completedAt":"2026-09-08T00:12:16Z","conclusion":"success","name":"Complete job","number":11,"startedAt":"2026-09-08T00:12:16Z","status":"completed"}],"url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905/job/101895476515"},{"completedAt":"2026-09-08T00:13:42Z","conclusion":"success","databaseId":101895476677,"name":"portable runtime darwin/arm64 on macos-15","startedAt":"2026-09-08T00:12:04Z","status":"completed","steps":[{"completedAt":"2026-09-08T00:12:05Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-09-08T00:12:04Z","status":"completed"},{"completedAt":"2026-09-08T00:12:24Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":2,"startedAt":"2026-09-08T00:12:05Z","status":"completed"},{"completedAt":"2026-09-08T00:12:27Z","conclusion":"success","name":"Verify checked-in pins and runtime-gate tests","number":3,"startedAt":"2026-09-08T00:12:24Z","status":"completed"},{"completedAt":"2026-09-08T00:12:43Z","conclusion":"success","name":"Fetch the approved checksum-pinned host tools","number":4,"startedAt":"2026-09-08T00:12:27Z","status":"completed"},{"completedAt":"2026-09-08T00:13:36Z","conclusion":"success","name":"Clean-build the exact four-asset manifest offline","number":5,"startedAt":"2026-09-08T00:12:43Z","status":"completed"},{"completedAt":"2026-09-08T00:13:37Z","conclusion":"success","name":"Gate native rootless stdio and runtime boundaries","number":6,"startedAt":"2026-09-08T00:13:36Z","status":"completed"},{"completedAt":"2026-09-08T00:13:38Z","conclusion":"success","name":"Retain exact gated asset and privacy-safe runner evidence","number":7,"startedAt":"2026-09-08T00:13:37Z","status":"completed"},{"completedAt":"2026-09-08T00:13:39Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":14,"startedAt":"2026-09-08T00:13:38Z","status":"completed"},{"completedAt":"2026-09-08T00:13:40Z","conclusion":"success","name":"Complete job","number":15,"startedAt":"2026-09-08T00:13:39Z","status":"completed"}],"url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905/job/101895476677"},{"completedAt":"2026-09-08T00:13:07Z","conclusion":"success","databaseId":101895476678,"name":"portable runtime linux/arm64 on ubuntu-24.04-arm","startedAt":"2026-09-08T00:11:59Z","status":"completed","steps":[{"completedAt":"2026-09-08T00:12:01Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-09-08T00:12:00Z","status":"completed"},{"completedAt":"2026-09-08T00:12:13Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":2,"startedAt":"2026-09-08T00:12:01Z","status":"completed"},{"completedAt":"2026-09-08T00:12:14Z","conclusion":"success","name":"Verify checked-in pins and runtime-gate tests","number":3,"startedAt":"2026-09-08T00:12:13Z","status":"completed"},{"completedAt":"2026-09-08T00:12:25Z","conclusion":"success","name":"Fetch the approved checksum-pinned host tools","number":4,"startedAt":"2026-09-08T00:12:14Z","status":"completed"},{"completedAt":"2026-09-08T00:13:04Z","conclusion":"success","name":"Clean-build the exact four-asset manifest offline","number":5,"startedAt":"2026-09-08T00:12:25Z","status":"completed"},{"completedAt":"2026-09-08T00:13:04Z","conclusion":"success","name":"Gate native rootless stdio and runtime boundaries","number":6,"startedAt":"2026-09-08T00:13:04Z","status":"completed"},{"completedAt":"2026-09-08T00:13:06Z","conclusion":"success","name":"Retain exact gated asset and privacy-safe runner evidence","number":7,"startedAt":"2026-09-08T00:13:04Z","status":"completed"},{"completedAt":"2026-09-08T00:13:06Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":14,"startedAt":"2026-09-08T00:13:06Z","status":"completed"},{"completedAt":"2026-09-08T00:13:06Z","conclusion":"success","name":"Complete job","number":15,"startedAt":"2026-09-08T00:13:06Z","status":"completed"}],"url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905/job/101895476678"},{"completedAt":"2026-09-08T00:13:24Z","conclusion":"success","databaseId":101895476706,"name":"portable runtime linux/amd64 on ubuntu-24.04","startedAt":"2026-09-08T00:11:58Z","status":"completed","steps":[{"completedAt":"2026-09-08T00:12:00Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-09-08T00:11:59Z","status":"completed"},{"completedAt":"2026-09-08T00:12:13Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":2,"startedAt":"2026-09-08T00:12:00Z","status":"completed"},{"completedAt":"2026-09-08T00:12:13Z","conclusion":"success","name":"Verify checked-in pins and runtime-gate tests","number":3,"startedAt":"2026-09-08T00:12:13Z","status":"completed"},{"completedAt":"2026-09-08T00:12:27Z","conclusion":"success","name":"Fetch the approved checksum-pinned host tools","number":4,"startedAt":"2026-09-08T00:12:13Z","status":"completed"},{"completedAt":"2026-09-08T00:13:19Z","conclusion":"success","name":"Clean-build the exact four-asset manifest offline","number":5,"startedAt":"2026-09-08T00:12:27Z","status":"completed"},{"completedAt":"2026-09-08T00:13:20Z","conclusion":"success","name":"Gate native rootless stdio and runtime boundaries","number":6,"startedAt":"2026-09-08T00:13:19Z","status":"completed"},{"completedAt":"2026-09-08T00:13:21Z","conclusion":"success","name":"Retain exact gated asset and privacy-safe runner evidence","number":7,"startedAt":"2026-09-08T00:13:20Z","status":"completed"},{"completedAt":"2026-09-08T00:13:21Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":14,"startedAt":"2026-09-08T00:13:21Z","status":"completed"},{"completedAt":"2026-09-08T00:13:21Z","conclusion":"success","name":"Complete job","number":15,"startedAt":"2026-09-08T00:13:21Z","status":"completed"}],"url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905/job/101895476706"},{"completedAt":"2026-09-08T00:14:08Z","conclusion":"success","databaseId":101895476743,"name":"pinned offline relay toolchain","startedAt":"2026-09-08T00:11:57Z","status":"completed","steps":[{"completedAt":"2026-09-08T00:11:59Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-09-08T00:11:58Z","status":"completed"},{"completedAt":"2026-09-08T00:12:11Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":2,"startedAt":"2026-09-08T00:11:59Z","status":"completed"},{"completedAt":"2026-09-08T00:12:57Z","conclusion":"success","name":"Verify checked-in pins and missing-input failure","number":3,"startedAt":"2026-09-08T00:12:11Z","status":"completed"},{"completedAt":"2026-09-08T00:13:09Z","conclusion":"success","name":"Fetch the approved checksum-pinned Go input","number":4,"startedAt":"2026-09-08T00:12:57Z","status":"completed"},{"completedAt":"2026-09-08T00:14:06Z","conclusion":"success","name":"Test, vet, license-extract, and clean-build all four targets offline","number":5,"startedAt":"2026-09-08T00:13:09Z","status":"completed"},{"completedAt":"2026-09-08T00:14:06Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":10,"startedAt":"2026-09-08T00:14:06Z","status":"completed"},{"completedAt":"2026-09-08T00:14:06Z","conclusion":"success","name":"Complete job","number":11,"startedAt":"2026-09-08T00:14:06Z","status":"completed"}],"url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905/job/101895476743"},{"completedAt":"2026-09-08T00:16:13Z","conclusion":"failure","databaseId":101895476744,"name":"generated project credential-free validation","startedAt":"2026-09-08T00:12:01Z","status":"completed","steps":[{"completedAt":"2026-09-08T00:12:02Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-09-08T00:12:01Z","status":"completed"},{"completedAt":"2026-09-08T00:12:17Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":2,"startedAt":"2026-09-08T00:12:02Z","status":"completed"},{"completedAt":"2026-09-08T00:12:20Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":3,"startedAt":"2026-09-08T00:12:17Z","status":"completed"},{"completedAt":"2026-09-08T00:12:21Z","conclusion":"success","name":"Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518","number":4,"startedAt":"2026-09-08T00:12:20Z","status":"completed"},{"completedAt":"2026-09-08T00:12:38Z","conclusion":"success","name":"Exercise validation boundary narrowing mutants","number":5,"startedAt":"2026-09-08T00:12:21Z","status":"completed"},{"completedAt":"2026-09-08T00:16:06Z","conclusion":"failure","name":"Run the local credential-free gate","number":6,"startedAt":"2026-09-08T00:12:38Z","status":"completed"},{"completedAt":"2026-09-08T00:16:08Z","conclusion":"success","name":"Upload privacy-safe validation evidence","number":7,"startedAt":"2026-09-08T00:16:06Z","status":"completed"},{"completedAt":"2026-09-08T00:16:09Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":13,"startedAt":"2026-09-08T00:16:08Z","status":"completed"},{"completedAt":"2026-09-08T00:16:09Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":14,"startedAt":"2026-09-08T00:16:09Z","status":"completed"},{"completedAt":"2026-09-08T00:16:11Z","conclusion":"success","name":"Complete job","number":15,"startedAt":"2026-09-08T00:16:09Z","status":"completed"}],"url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905/job/101895476744"},{"completedAt":"2026-09-08T00:14:02Z","conclusion":"success","databaseId":101895476769,"name":"portable runtime darwin/amd64 on macos-15-intel","startedAt":"2026-09-08T00:11:57Z","status":"completed","steps":[{"completedAt":"2026-09-08T00:11:59Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-09-08T00:11:58Z","status":"completed"},{"completedAt":"2026-09-08T00:12:19Z","conclusion":"success","name":"Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":2,"startedAt":"2026-09-08T00:11:59Z","status":"completed"},{"completedAt":"2026-09-08T00:12:22Z","conclusion":"success","name":"Verify checked-in pins and runtime-gate tests","number":3,"startedAt":"2026-09-08T00:12:19Z","status":"completed"},{"completedAt":"2026-09-08T00:12:47Z","conclusion":"success","name":"Fetch the approved checksum-pinned host tools","number":4,"startedAt":"2026-09-08T00:12:22Z","status":"completed"},{"completedAt":"2026-09-08T00:13:58Z","conclusion":"success","name":"Clean-build the exact four-asset manifest offline","number":5,"startedAt":"2026-09-08T00:12:47Z","status":"completed"},{"completedAt":"2026-09-08T00:13:59Z","conclusion":"success","name":"Gate native rootless stdio and runtime boundaries","number":6,"startedAt":"2026-09-08T00:13:58Z","status":"completed"},{"completedAt":"2026-09-08T00:14:00Z","conclusion":"success","name":"Retain exact gated asset and privacy-safe runner evidence","number":7,"startedAt":"2026-09-08T00:13:59Z","status":"completed"},{"completedAt":"2026-09-08T00:14:01Z","conclusion":"success","name":"Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1","number":14,"startedAt":"2026-09-08T00:14:00Z","status":"completed"},{"completedAt":"2026-09-08T00:14:01Z","conclusion":"success","name":"Complete job","number":15,"startedAt":"2026-09-08T00:14:01Z","status":"completed"}],"url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905/job/101895476769"}],"status":"completed","url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905"}
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+import subprocess as s,difflib
+for p in ['README.md','LOGBOOK.md']:
+ def t(r):return s.check_output(['git','show',r+':'+p]).decode().splitlines()
+ for a,b in [('87451b53','018c9d96'),('b3422b05','d6c87338')]:
+  d=list(difflib.ndiff(t(a),t(b)));print(p,a,'deleted', [x for x in d if x.startswith('- ')][:8]);print('missing additions',[x for x in d if x.startswith('+ ') and x[2:] not in t('018c9d96')][:8])
+PY
+python3 --version
+swift --version
+sed -n '1,160p' .temp/BUG-260908-33iyb1/delivery/Package.swift
+cat .temp/BUG-260908-33iyb1/delivery/scripts/tests/test_pr6_boundary_mutants.py" in /Users/iv/Developer/relux-tunnel
+ succeeded in 2479ms:
+README.md 87451b53 deleted []
+missing additions []
+README.md b3422b05 deleted []
+missing additions []
+LOGBOOK.md 87451b53 deleted []
+missing additions []
+LOGBOOK.md b3422b05 deleted []
+missing additions []
+Python 3.14.7
+swift-driver version: 1.148.6 Apple Swift version 6.3.2 (swiftlang-6.3.2.1.108 clang-2100.1.1.101)
+Target: arm64-apple-macosx26.0
+// swift-tools-version: 6.1
+
+import PackageDescription
+
+let package = Package(
+  name: "ReluxTunnel",
+  platforms: [
+    .iOS(.v18),
+    .macOS(.v15),
+  ],
+  products: [
+    .library(name: "ReluxAppleUITestShared", targets: ["ReluxAppleUITestShared"]),
+    .library(name: "ReluxTunnelCore", targets: ["ReluxTunnelCore"]),
+    .library(name: "ReluxTunnelLibSSH2Adapter", targets: ["ReluxTunnelLibSSH2Adapter"]),
+    .library(name: "ReluxTunnelNativeAdapter", targets: ["ReluxTunnelNativeAdapter"]),
+    .library(name: "ReluxTunnelIOSAdapter", targets: ["ReluxTunnelIOSAdapter"]),
+    .library(name: "ReluxTunnelMacOSAdapter", targets: ["ReluxTunnelMacOSAdapter"]),
+    .executable(name: "ReluxTunnelHarness", targets: ["ReluxTunnelHarness"]),
+    .executable(name: "relux-snapshot-diff", targets: ["ReluxSnapshotDiff"]),
+  ],
+  targets: [
+    .target(name: "ReluxAppleUITestShared"),
+    .target(name: "ReluxSnapshotDiffSupport"),
+    .executableTarget(
+      name: "ReluxSnapshotDiff",
+      dependencies: ["ReluxSnapshotDiffSupport"]
+    ),
+    .target(name: "ReluxTunnelCore"),
+    .binaryTarget(
+      name: "CReluxNativeFixture",
+      path: "NativeDependencies/Artifacts/ReluxNativeFixture.xcframework"
+    ),
+    .binaryTarget(
+      name: "HevSocks5Tunnel",
+      path: "NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework"
+    ),
+    .binaryTarget(
+      name: "ReluxLibSSH2",
+      path: "NativeDependencies/Artifacts/ReluxLibSSH2.xcframework"
+    ),
+    .target(
+      name: "ReluxTunnelLibSSH2Adapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxLibSSH2",
+      ],
+      linkerSettings: [
+        .linkedFramework("Security"),
+        .linkedFramework("CoreFoundation"),
+      ]
+    ),
+    .target(
+      name: "ReluxTunnelNativeAdapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "HevSocks5Tunnel",
+      ]
+    ),
+    .target(
+      name: "ReluxTunnelIOSAdapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelNativeAdapter",
+      ]
+    ),
+    .target(
+      name: "ReluxTunnelMacOSAdapter",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelLibSSH2Adapter",
+        "ReluxTunnelNativeAdapter",
+      ],
+      linkerSettings: [.linkedFramework("Security")]
+    ),
+    .target(
+      name: "ReluxTunnelHarnessSupport",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelLibSSH2Adapter",
+        "ReluxTunnelNativeAdapter",
+      ]
+    ),
+    .executableTarget(
+      name: "ReluxTunnelHarness",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelHarnessSupport",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxAppleUITestSharedTests",
+      dependencies: ["ReluxAppleUITestShared"]
+    ),
+    .testTarget(
+      name: "ReluxSnapshotDiffSupportTests",
+      dependencies: ["ReluxSnapshotDiffSupport"]
+    ),
+    .testTarget(
+      name: "ReluxTunnelLibSSH2AdapterTests",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelLibSSH2Adapter",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxTunnelCoreTests",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelIOSAdapter",
+        "ReluxTunnelMacOSAdapter",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxTunnelHarnessTests",
+      dependencies: [
+        "ReluxTunnelCore",
+        "ReluxTunnelHarnessSupport",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxTunnelNativeAdapterTests",
+      dependencies: [
+        "CReluxNativeFixture",
+        "ReluxTunnelCore",
+        "ReluxTunnelMacOSAdapter",
+        "ReluxTunnelNativeAdapter",
+      ]
+    ),
+    .testTarget(
+      name: "ReluxLibSSH2PackagingTests",
+      dependencies: ["ReluxLibSSH2"],
+      linkerSettings: [
+        .linkedFramework("Security"),
+        .linkedFramework("CoreFoundation"),
+      ]
+    ),
+  ]
+)
+"""Behavioral narrowing mutants for BUG-260908-7c5iv4; no network or VPN use.
+
+Run: python3 scripts/tests/test_pr6_boundary_mutants.py
+Each mutant runs in a disposable fixture, never edits the active checkout, and
+must fail its named regression test. Swift tests exercise the production source.
+"""
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def run(command, root, expected, diagnostic):
+    result = subprocess.run(command, cwd=root, text=True, stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, timeout=240)
+    print("COMMAND:", " ".join(command), "EXIT:", result.returncode)
+    print(result.stdout)
+    if (result.returncode == 0) != (expected == 0) or diagnostic not in result.stdout:
+        raise SystemExit("mutant proof failed: unexpected exit or missing named diagnostic")
+
+
+def main():
+    with tempfile.TemporaryDirectory(prefix="pr6-boundary-mutants-") as temporary:
+        root = Path(temporary)
+        for relative in (
+            "scripts/check_board_structure.py", "scripts/relay_supply_chain.py",
+            "scripts/tests/test_check_board_structure.py",
+            "scripts/tests/test_relay_supply_chain.py", "relay/supply-chain-source-v1.json",
+            "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift",
+        ):
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / relative, target)
+        board = root / "scripts/check_board_structure.py"
+        original = board.read_text()
+        command = [sys.executable, "-m", "unittest", "-v",
+                   "scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt"]
+        run(command, root, 0, "OK")
+        board.write_text(original.replace('(".resources", ".activity")',
+                                          '(".resources", ".activity", ".hidden")'))
+        run(command, root, 1, "FAIL: test_unknown_hidden_directory_is_not_exempt")
+        board.write_text(original)
+        scanner = root / "scripts/relay_supply_chain.py"
+        original = scanner.read_text()
+        command = [sys.executable, "-m", "unittest", "-v",
+                   "scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail"]
+        run(command, root, 0, "OK")
+        scanner.write_text(original.replace("if explicit_local_url:",
+                                            'if explicit_local_url or token_is(tokens, index + 2, "referenceURL"):'))
+        run(command, root, 1, "FAIL: test_snapshot_support_network_mutants_preserve_file_tokens_and_fail")
+        scanner.write_text(original)
+
+        package = root / "snapshot"
+        source = package / "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"
+        test = package / "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift"
+        for target, relative in ((source, "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"),
+                                 (test, "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift")):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / relative, target)
+        (package / "Package.swift").write_text('''// swift-tools-version: 6.1
+import PackageDescription
+let package = Package(name: "SnapshotBoundaryProof", platforms: [.macOS(.v15)], targets: [
+  .target(name: "ReluxSnapshotDiffSupport"),
+  .testTarget(name: "ReluxSnapshotDiffSupportTests", dependencies: ["ReluxSnapshotDiffSupport"]),
+])
+''')
+        command = ["swift", "test", "--package-path", str(package)]
+        run(command, root, 0, "Test run with 3 tests")
+        # Keep isFileURL and the refusal; admit only HTTP from the forbidden schemes.
+        source.write_text(source.read_text().replace("guard url.isFileURL else",
+                                                     'guard url.isFileURL || url.scheme == "http" else'))
+        run(command, root, 1, "expected nonFileURL before I/O")
+    print("All three narrowing mutants killed by named behavioral regressions.")
+
+
+if __name__ == "__main__":
+    main()
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+import subprocess as s,json,pathlib,difflib
+out=pathlib.Path('.temp/TASK-260908-2ixr2k');h='018c9d9672767fd02f42fb4ab4f2dfe3800646b8';old='87451b53960ceabe88a01c44c287fee7f9ebf386';c='d6c873383db09c59cf5d6d437e0767615e5ae704';b='b3422b05226253a17676b9b84c764071fe3dbe74'
+def g(*a):return s.check_output(['git',*a]).decode()
+lines=[]
+assert json.loads((out/'pr.json').read_text())['head']['sha']==h==(out/'branch.txt').read_text().split()[0]
+assert g('-C','.temp/BUG-260908-33iyb1/delivery','rev-parse','HEAD').strip()==h
+assert not g('-C','.temp/BUG-260908-33iyb1/delivery','status','--porcelain')
+local=set(g('diff','--name-only',b,h).splitlines());hosted={f['filename'] for page in json.loads((out/'files.json').read_text()) for f in page};assert local==hosted and len(local)==408
+lines.append('PR/remote/worktree exact head; clean; hosted/local 408/408 paths equal')
+paths=g('diff','--name-only',b,c).splitlines();assert set(paths)==set(g('diff','--name-only',old,h).splitlines()) and len(paths)==16
+for p in paths:
+ same=g('show',c+':'+p)==g('show',h+':'+p);lines.append(p+': '+('exact accepted blob' if same else 'composed'))
+ if p not in ['README.md','LOGBOOK.md']:assert same
+for p in ['README.md','LOGBOOK.md']:
+ after=g('show',h+':'+p).splitlines()
+ assert not [x for x in difflib.ndiff(g('show',old+':'+p).splitlines(),after) if x.startswith('- ')]
+ added=[x[2:] for x in difflib.ndiff(g('show',b+':'+p).splitlines(),g('show',c+':'+p).splitlines()) if x.startswith('+ ')]
+ assert all(x in after for x in added)
+ lines.append(p+': no old line removed; every accepted addition retained')
+for commit in g('rev-list',b+'..'+h).splitlines():
+ r=s.run(['git','verify-commit',commit],capture_output=True,text=True);lines.append(f'{commit}: exit {r.returncode}\\n{r.stdout}{r.stderr}');assert r.returncode==0
+assert s.run(['git','merge-base','--is-ancestor',old,h]).returncode==0
+(out/'integrity.log').write_text('\\n'.join(lines));print('\\n'.join(lines));(out/'composition.patch').write_text(g('diff',old,h));(out/'full-pr.patch').write_text(g('diff',b,h))
+PY" in /Users/iv/Developer/relux-tunnel
+ succeeded in 1544ms:
+PR/remote/worktree exact head; clean; hosted/local 408/408 paths equal
+.github/workflows/ci.yml: exact accepted blob
+LOGBOOK.md: composed
+README.md: composed
+Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift: exact accepted blob
+Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift: exact accepted blob
+docs/generated-workspace-foundation.md: exact accepted blob
+scripts/check_board_structure.py: exact accepted blob
+scripts/logged-command.sh: exact accepted blob
+scripts/relay_supply_chain.py: exact accepted blob
+scripts/tests/test-credential-free-validation.sh: exact accepted blob
+scripts/tests/test_check_board_structure.py: exact accepted blob
+scripts/tests/test_macos_build_diagnostic_mutants.py: exact accepted blob
+scripts/tests/test_macos_build_diagnostics.py: exact accepted blob
+scripts/tests/test_pr6_boundary_mutants.py: exact accepted blob
+scripts/tests/test_relay_supply_chain.py: exact accepted blob
+scripts/validate-macos-targets.sh: exact accepted blob
+README.md: no old line removed; every accepted addition retained
+LOGBOOK.md: no old line removed; every accepted addition retained
+018c9d9672767fd02f42fb4ab4f2dfe3800646b8: exit 0
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+
+87451b53960ceabe88a01c44c287fee7f9ebf386: exit 0
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+
+6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51: exit 0
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+
+
+exec
+/bin/zsh -lc 'python3 -m unittest -v scripts.tests.test_check_board_structure scripts.tests.test_relay_supply_chain scripts.tests.test_macos_build_diagnostics > /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/focused-tests.log 2>&1
+result=$?
+tail -6 /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/focused-tests.log
+exit $result' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+codex
+Подписи всех трёх введённых коммитов валидны, исходная ancestry сохранена. 14 из 16 файлов совпадают с accepted tree целиком; README и LOGBOOK сохраняют обе стороны. Hosted CI уже завершился с failure в credential-free gate — это останется явным ограничением verdict.
+
+exec
+/bin/zsh -lc 'python3 scripts/tests/test_pr6_boundary_mutants.py > /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/boundary-mutants.log 2>&1
+result=$?
+tail -6 /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/boundary-mutants.log
+exit $result' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+exec
+/bin/zsh -lc "gh run view 34172537905 --log-failed > .temp/TASK-260908-2ixr2k/ci-failed.log
+rg -n 'error:|FAIL:|Error |failed|exit 65' .temp/TASK-260908-2ixr2k/ci-failed.log | tail -18
+ task-board m --help | head -20
+ task-board resource add --help | head -30
+ task-board q 'schema(mutation=add_logbook_entry)'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 25827ms:
+test_successful_child_retains_both_streams (scripts.tests.test_macos_build_diagnostics.MacOSBuildDiagnosticsTests.test_successful_child_retains_both_streams) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 25.806s
+
+OK
+
+ exited 1 in 1284ms:
+25:generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6038020Z FAIL: macos-target-builds-and-contracts (exit 65; log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-target-builds-and-contracts.log)
+87:generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6323420Z Command SwiftCompile failed with a nonzero exit code
+92:generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6324070Z The following build commands failed:
+106:generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6404500Z make: *** [credential-free-validate] Error 65
+Execute a write operation against the board using the DSL.
+
+Mutations:
+  set_status(ID, status=..., commit_ack=scope_committed?)
+                                        Change status; acknowledge enforced done transitions
+  normalize_legacy_status(ID, expected_raw=..., status=...)
+                                        Repair one exact unparseable raw status (local boards)
+  handoff(ID, role=..., status=...)     Verify checklist/outcome evidence and change status
+  set_estimate(ID, estimate=..., ...)  Set Task/Bug story-point estimate
+  create(type=..., name=..., ...)      Create element
+  set_details(ID, title=..., ...)      Update README fields
+  rename(ID, name=...)                 Rename element name/slug
+  delete(ID)                           Delete element (destructive)
+  assign(ID, agent=...)                Assign agent
+  unassign(ID)                         Remove assignment
+  link(ID, blocked_by=...)             Add dependency
+  unlink(ID, blocked_by=...)           Remove dependency
+  check_item(ID, item=N)              Check checklist item
+  uncheck_item(ID, item=N)            Uncheck checklist item
+  add_checklist_item(ID, text=...)     Add checklist item
+Attach a new file resource to a board element.
+
+SOURCE may be:
+  - a local filesystem path
+  - a file:// URL
+  - an http:// or https:// URL
+
+Examples:
+  task-board resource add TASK-260311-abc ./screenshot.png --type precondition
+  task-board resource add TASK-260311-abc file:///tmp/report.pdf --name ui-report.pdf
+  task-board resource add TASK-260311-abc ./report.md --name reports/review/report.md
+  task-board resource add TASK-260311-abc https://example.com/spec.pdf --type outcome
+
+Usage:
+  task-board resource add <ELEMENT-ID> <SOURCE> [flags]
+
+Flags:
+  -d, --description string   Optional one-line description
+  -h, --help                 help for add
+      --name string          Override stored resource filename
+      --type string          Resource type: precondition or outcome (default "outcome")
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+{"error":{"message":"unknown mutation \"add_logbook_entry\"; relevant operation signature: schema(operation?:string, mutation?:string)"}}
+
+ succeeded in 16976ms:
+􁁛  Test "identical local images match" passed after 0.082 seconds.
+􁁛  Test "mismatch writes reference failed and visual diff images" passed after 0.084 seconds.
+􀢄  Suite "Snapshot failure artifacts" failed after 0.084 seconds with 3 issues.
+􀢄  Test run with 3 tests in 1 suite failed after 0.084 seconds with 3 issues.
+
+All three narrowing mutants killed by named behavioral regressions.
+
+exec
+/bin/zsh -lc "task-board m --help | rg -n 'log|note'
+sed -n '27,55p' .temp/TASK-260908-2ixr2k/ci-failed.log
+sed -n '1,100p' .temp/BUG-260908-33iyb1/delivery/scripts/tests/test_relay_supply_chain.py" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+22:  set_notes(ID, text=..., set=bool?)   Append/set notes
+32:  login(user=..., token=...)           Store token in credentials file
+33:  logout()                             Remove active user's token
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6100640Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6104940Z Copy /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftmodule /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6109320Z     cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6110940Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftmodule /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftmodule
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6126430Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6128450Z Copy /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftdoc /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftdoc (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6132730Z     cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6135390Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftdoc /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.swiftdoc
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6140970Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6146170Z Copy /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.abi.json /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.abi.json (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6153680Z     cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6158690Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.abi.json /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/arm64-apple-macos.abi.json
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6164030Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6167680Z Copy /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftsourceinfo (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6174520Z     cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6211130Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/x86_64/ReluxTunnelCore.swiftsourceinfo /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6217550Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6219030Z Copy /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftsourceinfo (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6221830Z     cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6226060Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnel.build/Debug/ReluxTunnelCore.build/Objects-normal/arm64/ReluxTunnelCore.swiftsourceinfo /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-uyju7n/Products/Debug/ReluxTunnelCore.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6237190Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6244800Z SwiftCompile normal arm64 Compiling\ RuntimeDiagnostics.swift,\ RuntimeMessageModels.swift,\ SSHBootstrapDiagnostics.swift,\ SSHContracts.swift,\ SSHProfileSnapshot.swift,\ TCPAdmissionRegistry.swift,\ TunnelRuntimeCoordinator.swift,\ VPNManagerRepository.swift,\ VPNSessionController.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeMessageModels.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/SSHBootstrapDiagnostics.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/SSHContracts.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/SSHProfileSnapshot.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/TCPAdmissionRegistry.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/VPNManagerRepository.swift /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/VPNSessionController.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6267640Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6269600Z SwiftCompile normal arm64 /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeDiagnostics.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6271760Z     cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6272700Z     
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6273020Z 
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6274470Z SwiftCompile normal arm64 /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/Sources/ReluxTunnelCore/RuntimeMessageModels.swift (in target 'ReluxTunnelCore' from project 'ReluxTunnel')
+generated project credential-free validation	Run the local credential-free gate	2026-09-08T00:16:06.6276650Z     cd /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+from __future__ import annotations
+
+import copy
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest import mock
+
+from scripts import relay_supply_chain as supply_chain
+
+
+class RelaySupplyChainTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.config = supply_chain.load_json(supply_chain.SOURCE_PATH)
+
+    @staticmethod
+    def component(config: dict, identifier: str) -> dict:
+        return next(item for item in config["components"] if item["id"] == identifier)
+
+    @staticmethod
+    def make_runtime_root(root: Path) -> None:
+        for relative in supply_chain.APPROVED_RUNTIME_POLICY["scanRoots"]:
+            (root / relative).mkdir(parents=True)
+
+    def test_checked_in_metadata_passes_clean_audit(self) -> None:
+        supply_chain.audit()
+
+    def test_every_byte_affecting_dependency_requires_approved_metadata(self) -> None:
+        for field in (
+            "revision",
+            "contentSHA256",
+            "license",
+            "licenseTextPath",
+            "licenseTextSHA256",
+            "noticeObligation",
+        ):
+            with self.subTest(field=field):
+                config = copy.deepcopy(self.config)
+                del config["components"][0][field]
+                with self.assertRaisesRegex(
+                    supply_chain.SupplyChainError, "dependency lacks approved metadata"
+                ):
+                    supply_chain.validate_config(config)
+
+    def test_every_component_is_bound_to_authoritative_provenance(self) -> None:
+        cases = (
+            ("relux-relay-source", "revision", "0" * 40),
+            ("relux-relay-source", "contentSHA256", "0" * 64),
+            ("relay-build-recipe", "revision", "0" * 40),
+            ("relay-build-recipe", "contentSHA256", "0" * 64),
+            ("go-compiler-linker", "version", "go1.26.4"),
+            ("go-compiler-linker", "revision", "go1.26.4"),
+            ("go-compiler-linker", "contentSHA256", "0" * 64),
+            ("go-standard-library", "version", "go1.26.4"),
+            ("go-standard-library", "revision", "go1.26.4"),
+            ("go-standard-library", "contentSHA256", "0" * 64),
+        )
+        for identifier, field, value in cases:
+            with self.subTest(identifier=identifier, field=field):
+                config = copy.deepcopy(self.config)
+                self.component(config, identifier)[field] = value
+                with self.assertRaisesRegex(
+                    supply_chain.SupplyChainError, "authoritative provenance"
+                ):
+                    supply_chain.validate_config(config)
+
+    def test_dependency_sources_use_strict_pinned_allowlists(self) -> None:
+        cases = (
+            "https://github.com/relux-works/relux-tunnel/tree/main",
+            "https://github.com/relux-works/relux-tunnel/tree/v0.1.0",
+            "https://github.com/relux-works/relux-tunnel/tree/latest",
+            "https://github.com/relux-works/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c?download=1",
+            "https://github.com/relux-works/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c#files",
+            "https://github.com/relux-works/relux-tunnel/tree/${REVISION}",
+            "http://github.com/relux-works/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c",
+            "https://example.test/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c",
+            "https://github.com/relux-works/relux-tunnel/tree/4326036a26a515d5d349e669574323d4d1c7259c/",
+        )
+        for source in cases:
+            with self.subTest(source=source):
+                config = copy.deepcopy(self.config)
+                config["build"]["recipeSource"] = source
+                self.component(config, "relay-build-recipe")["source"] = source
+                with self.assertRaisesRegex(
+                    supply_chain.SupplyChainError, "immutable pinned allowlist"
+                ):
+                    supply_chain.validate_config(config)
+
+    def test_component_source_cannot_diverge_from_pinned_authority(self) -> None:
+        cases = (
+            (
+                "relux-relay-source",
+                "https://github.com/relux-works/relux-tunnel/tree/main/relay",
+            ),
+
+exec
+/bin/zsh -lc 'python3 scripts/tests/test_macos_build_diagnostic_mutants.py > /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/diagnostic-mutants.log 2>&1
+result=$?
+tail -4 /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/diagnostic-mutants.log
+exit $result' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+exec
+/bin/zsh -lc "task-board --help | rg -n 'log'
+python3 - <<'PY'
+import json,subprocess as s,pathlib
+p=pathlib.Path('.temp/TASK-260908-2ixr2k');files=[f for page in json.loads((p/'files.json').read_text()) for f in page]; n=0
+for f in files:
+ if f['status']=='removed':continue
+ actual=s.check_output(['git','rev-parse','018c9d96:'+f['filename']],text=True).strip();assert actual==f['sha'],f['filename'];n+=1
+with (p/'integrity.log').open('a') as o:o.write(f'\\nHosted nonremoved file blob SHA equality: {n}/{n}.\\n')
+print('Hosted blob SHA matches',n)
+c=json.loads((p/'ci.json').read_text());print([(j['name'],j['conclusion']) for j in c['jobs']])
+PY
+ git diff --check 87451b53 018c9d96
+ git -C .temp/BUG-260908-33iyb1/delivery status --short" in /Users/iv/Developer/relux-tunnel
+ succeeded in 8689ms:
+
+FAILED (failures=5)
+
+All 3 narrowing mutants killed by production-entry behavioral tests
+
+ succeeded in 8265ms:
+Hosted blob SHA matches 408
+[('board + spec validation', 'success'), ('portable runtime darwin/arm64 on macos-15', 'success'), ('portable runtime linux/arm64 on ubuntu-24.04-arm', 'success'), ('portable runtime linux/amd64 on ubuntu-24.04', 'success'), ('pinned offline relay toolchain', 'success'), ('generated project credential-free validation', 'failure'), ('portable runtime darwin/amd64 on macos-15-intel', 'success')]
+
+exec
+/bin/zsh -lc "git diff 87451b53 018c9d96 -- .github/workflows/ci.yml scripts/validate-macos-targets.sh scripts/relay_supply_chain.py Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift scripts/check_board_structure.py docs/generated-workspace-foundation.md
+rg --files .task-board/.resources/TASK-260830-1x524u | rg 'review|delivery'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 0ms:
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index c286967..740e64f 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -39,6 +39,10 @@ jobs:
+           install: false
+           cache: false
+ 
++      - name: Exercise validation boundary narrowing mutants
++        working-directory: relux-tunnel
++        run: python3 scripts/tests/test_pr6_boundary_mutants.py
++
+       - name: Run the local credential-free gate
+         working-directory: relux-tunnel
+         run: make credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"
+@@ -90,26 +94,8 @@ jobs:
+ 
+       - name: Check board structure
+         run: |
+-          python3 - <<'PY'
+-          import os, sys
+-          root = ".task-board"
+-          bad = False
+-          if not os.path.isdir(root):
+-              print("no .task-board directory"); sys.exit(1)
+-          n = 0
+-          for dirpath, dirnames, filenames in os.walk(root):
+-              # .resources/ holds resource payloads keyed by element id, not board elements
+-              if ".resources" in dirnames:
+-                  dirnames.remove(".resources")
+-              base = os.path.basename(dirpath)
+-              if base.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
+-                  n += 1
+-                  for req in ("README.md", "progress.md"):
+-                      if req not in filenames:
+-                          print(f"FAIL {dirpath}: missing {req}"); bad = True
+-          print(f"checked {n} board elements")
+-          sys.exit(1 if bad or n == 0 else 0)
+-          PY
++          python3 -m unittest scripts/tests/test_check_board_structure.py
++          python3 scripts/check_board_structure.py
+ 
+   relay-toolchain:
+     name: pinned offline relay toolchain
+diff --git a/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift b/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+index 7e8a7fc..963888b 100644
+--- a/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
++++ b/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+@@ -2,6 +2,7 @@ import AppKit
+ import Foundation
+ 
+ public enum SnapshotDiffError: Error {
++  case nonFileURL(URL)
+   case unreadableImage(URL)
+   case incompatibleDimensions
+   case cannotCreateBitmap
+@@ -15,14 +16,18 @@ public enum SnapshotDiff {
+     failed failedURL: URL,
+     outputDirectory: URL
+   ) throws -> Bool {
++    // Snapshot artifacts are local test files; reject other schemes before any I/O.
++    for url in [referenceURL, failedURL, outputDirectory] {
++      guard url.isFileURL else { throw SnapshotDiffError.nonFileURL(url) }
++    }
+     guard
+-      let referenceData = try? Data(contentsOf: referenceURL),
++      let referenceData = try? Data(contentsOf: URL(filePath: referenceURL.path)),
+       let reference = NSBitmapImageRep(data: referenceData)
+     else {
+       throw SnapshotDiffError.unreadableImage(referenceURL)
+     }
+     guard
+-      let failedData = try? Data(contentsOf: failedURL),
++      let failedData = try? Data(contentsOf: URL(filePath: failedURL.path)),
+       let failed = NSBitmapImageRep(data: failedData)
+     else {
+       throw SnapshotDiffError.unreadableImage(failedURL)
+diff --git a/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift b/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+index 69e4119..3291cb4 100644
+--- a/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
++++ b/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+@@ -24,6 +24,41 @@ struct SnapshotDiffSupportTests {
+     }
+   }
+ 
++  @Test("non-file URLs are refused before reading either image or writing output")
++  func nonFileURLs() throws {
++    let local = URL(filePath: "/nonexistent-snapshot.png")
++    for scheme in ["http", "https", "ftp", "data"] {
++      let remote = try #require(URL(string: "\(scheme)://example.invalid/image.png"))
++      for position in 0..<3 {
++        var urls = [local, local, local]
++        urls[position] = remote
++        do {
++          _ = try SnapshotDiff.compare(
++            reference: urls[0], failed: urls[1], outputDirectory: urls[2])
++          Issue.record("non-file URL was accepted")
++        } catch SnapshotDiffError.nonFileURL(let rejected) {
++          #expect(rejected == remote)
++        } catch {
++          Issue.record("expected nonFileURL before I/O, received \(error)")
++        }
++      }
++    }
++  }
++
++  @Test("identical local images match")
++  func matchingLocalImages() throws {
++    let root = FileManager.default.temporaryDirectory
++      .appendingPathComponent("relux-snapshot-match-\(UUID().uuidString)")
++    defer { try? FileManager.default.removeItem(at: root) }
++    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
++    let reference = root.appendingPathComponent("expected.png")
++    try png(color: .blue).write(to: reference)
++    #expect(
++      try SnapshotDiff.compare(
++        reference: reference, failed: reference,
++        outputDirectory: root.appendingPathComponent("artifacts")))
++  }
++
+   private func png(color: NSColor) throws -> Data {
+     let image = NSImage(size: NSSize(width: 2, height: 2))
+     image.lockFocus()
+diff --git a/docs/generated-workspace-foundation.md b/docs/generated-workspace-foundation.md
+index b931a6a..a4948d2 100644
+--- a/docs/generated-workspace-foundation.md
++++ b/docs/generated-workspace-foundation.md
+@@ -324,3 +324,20 @@ legacy `ReluxProxy` sources, defaults, `/usr/bin/ssh` behavior, bundle identity,
+ packaging, or release history. No defaults/profile conversion, artifact-name
+ takeover, rollback, uninstall, EOL, or user migration is authorized without a
+ separate approved migration decision.
++
++### Failed macOS build diagnostics
++
++The macOS target validator retains the four unsigned build logs, target-contract
++test log, and both build-settings logs under
++`.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/`.
++The existing always-upload CI artifact includes that directory. A failed Xcode
++child prints its command, original exit status, log path, and complete captured
++stdout/stderr before the validator exits with the same status. The outer gate
++prints its final 80 lines; the artifact retains the complete child log.
++
++BUG-260908-33iyb1 is a diagnostic repair, not proof that PR 6's hosted build
++failure is fixed. The failing merge revision used Xcode 16.4 / Swift 6.1.2,
++which satisfies the documented Swift tools 6.1 prerequisite. The locally
++validated Xcode 26.5 / Swift 6.3.2 matrix alone does not prove a toolchain
++incompatibility. Preserve the hosted toolchain for the next diagnostic run;
++choose any baseline/configuration or compile repair from its actual error.
+diff --git a/scripts/check_board_structure.py b/scripts/check_board_structure.py
+new file mode 100644
+index 0000000..ff742bb
+--- /dev/null
++++ b/scripts/check_board_structure.py
+@@ -0,0 +1,36 @@
++#!/usr/bin/env python3
++"""Validate element files, excluding only board-root resource/activity stores."""
++
++import argparse
++import os
++from pathlib import Path
++
++
++def check(root: Path) -> int:
++    if not root.is_dir():
++        print(f"no {root} directory")
++        return 1
++    bad = False
++    count = 0
++    for dirpath, dirnames, filenames in os.walk(root):
++        # These exact root stores contain ID-keyed payloads, not elements.
++        if Path(dirpath) == root:
++            dirnames[:] = [name for name in dirnames if name not in (".resources", ".activity")]
++        if Path(dirpath).name.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
++            count += 1
++            for required in ("README.md", "progress.md"):
++                if required not in filenames:
++                    print(f"FAIL {dirpath}: missing {required}")
++                    bad = True
++    print(f"checked {count} board elements")
++    return 1 if bad or count == 0 else 0
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("root", nargs="?", type=Path, default=Path(".task-board"))
++    return check(parser.parse_args().root)
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/relay_supply_chain.py b/scripts/relay_supply_chain.py
+index 41496dc..020aeb3 100644
+--- a/scripts/relay_supply_chain.py
++++ b/scripts/relay_supply_chain.py
+@@ -1217,12 +1217,17 @@ def swift_contents_of_surface(tokens: list[tuple[str, str]]) -> str | None:
+         if initializer_type not in loader_types | {"ambiguous"}:
+             continue
+ 
++        # Accept only an inline Foundation file-URL constructor. Do not infer
++        # localness from variable names, nearby guards, comments, or file paths.
+         explicit_local_url = False
+         if (
+             token_is(tokens, index + 1, ":")
+             and token_is(tokens, index + 2, "URL")
+             and token_is(tokens, index + 3, "(")
+-            and token_is(tokens, index + 4, "fileURLWithPath")
++            and (
++                token_is(tokens, index + 4, "fileURLWithPath")
++                or token_is(tokens, index + 4, "filePath")
++            )
+             and token_is(tokens, index + 5, ":")
+         ):
+             depth = 1
+diff --git a/scripts/validate-macos-targets.sh b/scripts/validate-macos-targets.sh
+index 635a1b1..f58001d 100755
+--- a/scripts/validate-macos-targets.sh
++++ b/scripts/validate-macos-targets.sh
+@@ -7,7 +7,9 @@ products="$task_output/Products"
+ intermediates="$task_output/Intermediates"
+ derived_data="$task_output/DerivedData-validation"
+ 
+-mkdir -p "$task_output"
++build_logs="$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"
++mkdir -p "$task_output" "$build_logs"
++. "$repo_root/scripts/logged-command.sh"
+ cd "$repo_root"
+ 
+ ./scripts/generate-workspace.sh --clean
+@@ -16,7 +18,7 @@ build_unsigned() {
+   scheme=$1
+   configuration=$2
+   log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
+-  xcodebuild \
++  run_logged_command "$build_logs/credential-free-$log_name-build.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration "$configuration" \
+@@ -26,7 +28,7 @@ build_unsigned() {
+     CODE_SIGNING_REQUIRED=NO \
+     SYMROOT="$products" \
+     OBJROOT="$intermediates" \
+-    build > "$task_output/credential-free-$log_name-build.log" 2>&1
++    build
+ }
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+@@ -34,7 +36,7 @@ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+   build_unsigned "$scheme" Release
+ done
+ 
+-xcodebuild \
++run_logged_command "$build_logs/target-contract-tests.log" xcodebuild \
+   -workspace ReluxTunnel.xcworkspace \
+   -scheme ReluxProxyMac \
+   -configuration Debug \
+@@ -44,7 +46,7 @@ xcodebuild \
+   CODE_SIGNING_REQUIRED=NO \
+   SYMROOT="$products" \
+   OBJROOT="$intermediates" \
+-  test > "$task_output/target-contract-tests.log" 2>&1
++  test
+ 
+ host="$products/Debug/ReluxProxyMac.app"
+ extensions="$host/Contents/Library/SystemExtensions"
+@@ -107,16 +109,16 @@ for entitlements in "$provider_entitlements" "$developer_id_provider_entitlement
+ done
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+-  xcodebuild \
++  run_logged_command "$build_logs/$scheme-build-settings.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration Debug \
+-    -showBuildSettings > "$task_output/$scheme-build-settings.log"
++    -showBuildSettings
+ done
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+-  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMac-build-settings.log" >/dev/null
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+-  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+ 
+ provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+ test "$provider_architectures" = 'arm64 x86_64 '
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_accepted-delivery.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-reviewer--reviewer--codex-_RUN-260907-178550.log
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_delivery-hosted-checks.log
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_rev3-review-scope.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_hosted-delivery-verdict.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-reviewer--reviewer--codex-_RUN-260907-587288.log
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_delivery-board-check-exact.log
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_delivery-constraint.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_delivery-relay-audit-exact.log
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_source-delivery-readiness.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_curator-main-delivery.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-reviewer--reviewer--codex-_RUN-260830-4bfcbd.log
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev2.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev3.md
+.task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_curator-main-delivery-results.md
+
+exec
+/bin/zsh -lc 'python3 scripts/check_board_structure.py > /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/board-check.log 2>&1
+result=$?
+cat /Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k/board-check.log
+exit $result' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ succeeded in 224ms:
+checked 412 board elements
+
+exec
+/bin/zsh -lc "cat .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev3.md .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_hosted-delivery-verdict.md
+ task-board q 'schema(mutation=set_notes)'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 363ms:
+{"description":"Append or replace notes on an element","destructive":false,"examples":["set_notes(TASK-260218-abc123, text=\"Started implementation\")","set_notes(TASK-260218-abc123, text=\"Full replacement\", set=true)"],"idempotent":false,"kind":"mutation","name":"set_notes","parameters":[{"name":"id","type":"string","optional":false,"description":"Element ID","required":true},{"name":"text","type":"string","optional":false,"description":"Notes text","required":true},{"name":"set","type":"bool","optional":true,"default":false,"description":"Replace all notes instead of appending"},{"name":"txn_id","type":"string","optional":true,"description":"Integration transaction token presented to satisfy a transition lease; it authorizes nothing else"}],"signature":"set_notes(id:string, text:string, set?:bool, txn_id?:string)","syntax":"OPERATION(element-or-identifier, key=value, key=\"quoted string\") { field preset }; statements separated by ';'; the first bare positional value is the element/identifier argument; remaining arguments use key=value (no operators or lists); string escapes: \\\" \\\\ \\n \\t"}
+
+codex
+Независимо прошли 32 focused tests и оба mutation harness: все шесть narrowing mutants пойманы. Board checker проверил 412 элементов. Verdict будет ACCEPT для композиции exact head, с явным DO NOT LAND: hosted macOS gate завершился exit 65.
+
+exec
+/bin/zsh -lc "git rev-parse '6e8a1988"'^{tree}'"'
+git show --format=fuller --no-patch 6e8a1988
+python3 - <<'PY'
+import json,pathlib
+p=pathlib.Path('.temp/TASK-260908-2ixr2k')
+body='''Independent composition review: ACCEPT exact head 018c9d9672767fd02f42fb4ab4f2dfe3800646b8. DO NOT LAND: hosted CI is failing.
+
+Independently checked PR head, advertised remote feature branch, clean delivery checkout, and fetched/advertised main b3422b05226253a17676b9b84c764071fe3dbe74. All 408 paginated hosted files and all 408 hosted blob SHAs match the exact local diff/tree. All three introduced commits (6e8a1988, 87451b53, 018c9d96) verify with Ivan Oparin / oparin@me.com signing key; original signed PR ancestry is unchanged.
+
+The complete old-head-to-new-head delta is exactly the 16 accepted CI paths. Fourteen blobs, including the validation fixture, equal accepted immutable d6c873383db09c59cf5d6d437e0767615e5ae704. README and LOGBOOK retain every old line and every accepted addition. The fixture retains the prior dependency correction and adds only diagnostic runners relative to old PR. All other Shared Runtime bytes are unchanged; prior independent Shared Runtime review is reused, not represented as a fresh broad audit.
+
+Personally reran from the exact clean delivery head: 32 board/scanner/diagnostic Python tests (exit 0); actual board CLI (412 elements, exit 0); PR boundary mutation harness (exit 0, three expected failing mutant children); diagnostics mutation harness (exit 0, three expected failing mutant children); composition diff whitespace check (exit 0). Swift SnapshotDiff baseline and HTTP-admission negative compile through the shipped scratch harness on macOS/Swift 6.3.2. No full Xcode/application build or Go suite rerun. This is not proof of normally assembled build artifacts.
+
+Negative coverage: board root-only exclusion via actual CLI; scanner arbitrary-URL admission via runtime scanner; SnapshotDiff.compare rejects four non-file schemes at three URL positions before I/O. validate-macos-targets.sh -> run_logged_command drives five build/test positions for each of statuses 1 and 65 (10/10 injected rows; 5/7 Xcode sites); two build-settings failure paths and arbitrary other statuses are not exhaustively tested. The fifth exit-1 case alone is masked by a later missing-product exit; the named test kills admission through its earlier positions. No broad lexical/dataflow or complete diagnostic-tail boundary claim.
+
+CI run 34172537905 at this exact head is completed FAILURE: six jobs succeeded; generated project credential-free validation failed, macos-target-builds-and-contracts exit 65 / SwiftCompile nonzero. The visible tail does not establish the compiler root cause. Local green tests do not override this repository gate. BUG-260908-shki8p remains unresolved; no root-cause fix, hosted green, external-CI waiver, or landing authorization is claimed. Prior full local build evidence is accepted only with its documented initial HEV/SSH failures and later successful retry, not as determinism proof.
+
+COMMENTED is intentional because the authenticated human account is the PR author. This independent ACCEPT is scoped to signed composition, not overall merge readiness. No source changes, commits, landing, VPN actions, or successors.
+'''
+(p/'review.md').write_text(body)
+(p/'review-request.json').write_text(json.dumps({'commit_id':'018c9d9672767fd02f42fb4ab4f2dfe3800646b8','event':'COMMENT','body':body}))
+PY
+ gh api repos/relux-works/relux-tunnel/pulls/6 --jq .head.sha
+ git ls-remote origin refs/heads/delivery/STORY-260715-1y04r0-rev3" in /Users/iv/Developer/relux-tunnel
+ succeeded in 11786ms:
+0ca11378213cc02a78eeac937f94aef6c5209545
+commit 6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51
+Author:     Ivan Oparin <oparin@me.com>
+AuthorDate: Tue Sep 8 02:27:44 2026 +0400
+Commit:     Ivan Oparin <oparin@me.com>
+CommitDate: Tue Sep 8 02:27:44 2026 +0400
+
+    STORY-260715-1y04r0: Shared tunnel runtime and extension-owned orchestration
+    
+    Change-Request: CR-TASK-260830-1x524u-3 rev 3
+018c9d9672767fd02f42fb4ab4f2dfe3800646b8
+018c9d9672767fd02f42fb4ab4f2dfe3800646b8	refs/heads/delivery/STORY-260715-1y04r0-rev3
+
+exec
+/bin/zsh -lc "gh api --method POST repos/relux-works/relux-tunnel/pulls/6/reviews --input .temp/TASK-260908-2ixr2k/review-request.json > .temp/TASK-260908-2ixr2k/review-response.json
+python3 - <<'PY'
+import json,pathlib
+p=pathlib.Path('.temp/TASK-260908-2ixr2k');r=json.loads((p/'review-response.json').read_text());assert r['state']=='COMMENTED' and r['commit_id']=='018c9d9672767fd02f42fb4ab4f2dfe3800646b8';print(r['html_url'],r['state'])
+body=(p/'review.md').read_text();body+='\\nHosting review: '+r['html_url']+' (state COMMENTED, exact commit verified).\\n\\nExecution logbook: first integrity probe exited 1 from an audit-script assertion; corrected comparison using text-line diff then passed every invariant (no product defect inferred). Initial optional skill-path inventory included absent directories (exit 2); known skills were read. Unknown add_logbook_entry schema call was refused (exit 1); board set_notes is used additively. Focused Python tests and boundary harness briefly overlapped; their independent disposable fixtures passed, but this was a serial-run constraint deviation, not serial execution evidence. No source mutation occurred.\\n\\nEvidence includes integrity.log, hosted files/PR JSON, CI job states and failed step log, focused test and mutation logs, complete composition and full PR patches. Shared Runtime accepted tree 0ca11378213cc02a78eeac937f94aef6c5209545 equals original signed 6e8a1988 tree. LOGBOOK source is preserved read-only; this task logbook is attached and appended through board notes.\\n'
+(p/'TASK-260908-2ixr2k_results.md').write_text(body)
+PY
+ task-board resource add TASK-260908-2ixr2k .temp/TASK-260908-2ixr2k/TASK-260908-2ixr2k_results.md --type outcome --description 'Independent exact-head review and tester handoff'" in /Users/iv/Developer/relux-tunnel
+ succeeded in 1924ms:
+https://github.com/relux-works/relux-tunnel/pull/6#pullrequestreview-5136089848 COMMENTED
+Attached TASK-260908-2ixr2k_results.md on TASK-260908-2ixr2k as outcome
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+import subprocess,pathlib
+out=pathlib.Path('/Users/iv/Developer/relux-tunnel/.temp/TASK-260908-2ixr2k')
+commands=[['python3','-m','unittest','-v','scripts.tests.test_check_board_structure','scripts.tests.test_relay_supply_chain','scripts.tests.test_macos_build_diagnostics'],['python3','scripts/tests/test_pr6_boundary_mutants.py']]
+with (out/'serial-confirmation.log').open('w') as f:
+ for cmd in commands:
+  f.write('COMMAND: '+' '.join(cmd)+'\\n');f.flush();r=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,timeout=300);f.write(f'EXIT: {r.returncode}\\n');f.flush();print(cmd[-1],r.returncode,flush=True)
+  if r.returncode:raise SystemExit(r.returncode)
+PY" in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+exec
+/bin/zsh -lc "task-board m 'set_notes(TASK-260908-2ixr2k, text=\"Review logbook: independent exact-head composition ACCEPT posted as real COMMENTED review 5136089848 for 018c9d9672767fd02f42fb4ab4f2dfe3800646b8. Hosted CI 34172537905 completed FAILURE: generated credential-free macOS gate exit 65; six jobs success. DO NOT LAND; BUG-260908-shki8p unresolved. Signatures 3/3 and hosted blob identities 408/408 verified. Source LOGBOOK and all source files preserved read-only; task outcome contains detailed evidence and limitations.\")'
+ git -C .temp/BUG-260908-33iyb1/delivery status --porcelain" in /Users/iv/Developer/relux-tunnel
+ succeeded in 1106ms:
+{"ok":true,"result":{"id":"TASK-260908-2ixr2k","notes":"spawn agent resolution: Agent selection: codex via explicit_override (preferred_agentic_system: exclusive[codex], config: spawn.preferred_agentic_system)\nspawn launch composition: empty; contract=agents-infra.child-launch-composition; provider=codex; schema=1; producer=v1.6.1-128-gab60e0d; diagnostic=launch_composition_empty; no project MCP servers enabled\nspawn queued: [tester] tester (codex) (run=RUN-260908-8c3e41, max_parallel=1)\nspawn run started: [tester] tester (codex) (run=RUN-260908-8c3e41)\nReview logbook: independent exact-head composition ACCEPT posted as real COMMENTED review 5136089848 for 018c9d9672767fd02f42fb4ab4f2dfe3800646b8. Hosted CI 34172537905 completed FAILURE: generated credential-free macOS gate exit 65; six jobs success. DO NOT LAND; BUG-260908-shki8p unresolved. Signatures 3/3 and hosted blob identities 408/408 verified. Source LOGBOOK and all source files preserved read-only; task outcome contains detailed evidence and limitations."}}
+
+codex
+Реальный COMMENTED review опубликован и привязан к `018c9d96`. Evidence уже прикреплено; завершаю последовательный контрольный повтор проверок и передаю tester handoff. Исходники и remote main не менялись.
+
+ succeeded in 62076ms:
+scripts.tests.test_macos_build_diagnostics 0
+scripts/tests/test_pr6_boundary_mutants.py 0
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+import zipfile
+p=Path('.temp/TASK-260908-2ixr2k');report=p/'TASK-260908-2ixr2k_results.md'
+with report.open('a') as f:f.write('\\nFinal serial confirmation: reran all 32 focused tests followed sequentially by the boundary harness, both exit 0; serial-confirmation.log preserves commands and outputs. This supersedes the earlier overlapping run for serial validation evidence. Final delivery checkout remained clean.\\n')
+with zipfile.ZipFile(p/'TASK-260908-2ixr2k_evidence.zip','w',zipfile.ZIP_DEFLATED) as z:
+ for f in sorted(p.iterdir()):
+  if f.is_file() and f.suffix"'!='"'.zip':z.write(f,f.name)
+PY
+ task-board resource update TASK-260908-2ixr2k .temp/TASK-260908-2ixr2k/TASK-260908-2ixr2k_results.md --type outcome
+ task-board resource add TASK-260908-2ixr2k .temp/TASK-260908-2ixr2k/TASK-260908-2ixr2k_evidence.zip --type outcome --description 'Exact hosted identities, signatures, CI states, patches and independent test logs'
+ task-board m 'check_item(TASK-260908-2ixr2k, item=1); check_item(TASK-260908-2ixr2k, item=2); check_item(TASK-260908-2ixr2k, item=3)'
+ task-board handoff TASK-260908-2ixr2k --role tester" in /Users/iv/Developer/relux-tunnel
+ succeeded in 4736ms:
+Updated TASK-260908-2ixr2k_results.md on TASK-260908-2ixr2k as outcome
+Attached TASK-260908-2ixr2k_evidence.zip on TASK-260908-2ixr2k as outcome
+[{"ok":true,"result":{"checked":true,"id":"TASK-260908-2ixr2k","item":1,"text":"Independently verify exact signed PR6 composition and submit real GitHub COMMENTED review verdict; no remote landing or false CI green"}},{"ok":true,"result":{"checked":true,"id":"TASK-260908-2ixr2k","item":2,"text":"New task-scoped outcome artifact attached on the board for reports, logs, screenshots, or other produced evidence"}},{"ok":true,"result":{"checked":true,"id":"TASK-260908-2ixr2k","item":3,"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant"}}]
+id:TASK-260908-2ixr2k role:tester status:to-review checklist:3/3 outcomes:[TASK-260908-2ixr2k_results.md,TASK-260908-2ixr2k_evidence.zip]
+
+codex
+Передано в review, checklist 3/3, evidence прикреплено.
+
+[COMMENTED review](https://github.com/relux-works/relux-tunnel/pull/6#pullrequestreview-5136089848): **ACCEPT композиции `018c9d96`**. Проверены 3 подписи, 408 hosted blobs, 32 теста и 6 narrowing mutants.
+
+**DO NOT LAND:** hosted macOS gate упал с exit 65. Исходники и remote main не изменены.
+tokens used
+77,270
+Передано в review, checklist 3/3, evidence прикреплено.
+
+[COMMENTED review](https://github.com/relux-works/relux-tunnel/pull/6#pullrequestreview-5136089848): **ACCEPT композиции `018c9d96`**. Проверены 3 подписи, 408 hosted blobs, 32 теста и 6 narrowing mutants.
+
+**DO NOT LAND:** hosted macOS gate упал с exit 65. Исходники и remote main не изменены.

@@ -1,0 +1,10 @@
+TASK-260715-1pn983 contract validation attempt 1
+
+formula assertions: PASS 3686706 7635554 8110080
+exit code: 1
+
+Diagnosis: the non-claim assertion searched for one uninterrupted phrase,
+"whole-extension production authorization remains false", while Markdown wraps
+"whole-extension" and "production authorization" across two lines. The
+contract contained the required statement; the assertion predicate was too
+narrow. No contract content or safety bound was changed.

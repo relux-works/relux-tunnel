@@ -1,0 +1,288 @@
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index f86a812..7366a3e 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1420,3 +1420,22 @@ HEV/SSH integration tests. The sequential full-suite retry passed with the same
+ behavioral source (516 Swift tests, 25 pre-existing known issues); Story-base
+ validation also passed (496 tests, 25 known issues). The initial failing attempt
+ remains attached, and scheduling interference is not claimed as a proven cause.
++
++
++## 2026-09-08 — BUG-260908-33iyb1 macOS hosted diagnostics
++
++- Verified hosted revision `3279036094620772262dbd04a6d8930ec7691e75` has
++  parents `b3422b05226253a17676b9b84c764071fe3dbe74` and PR 6 head
++  `87451b53960ceabe88a01c44c287fee7f9ebf386`; its tree equals that PR head.
++- The supplied artifact omits redirected Xcode child logs. Build exit 65 is
++  known; the compiler cause remains unknown. No unsupported toolchain claim
++  or runtime product change is justified by that evidence.
++- Added complete child-log retention under the already-uploaded log directory,
++  inline failure context, and unchanged nonzero child status. Behavioral tests
++  drive all four build invocations and the test invocation with exit 65. Two
++  narrowing mutants admit only exit 65 or suppress only its diagnostic; both
++  fail the named production-entry test.
++- The local macOS validator passed on Xcode 26.5 / Swift 6.3.2, including four
++  unsigned builds, target-contract tests, packaging, and provider graph checks.
++  This is local evidence, not hosted proof. Parent owns publication and the
++  exact-head hosted rerun; keep the bug open until the failing job passes.
+diff --git a/README.md b/README.md
+index 80d7355..9c42e82 100644
+--- a/README.md
++++ b/README.md
+@@ -225,6 +225,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Native dependency validator | Rebuild and inspect pinned static XCFramework slices, checksums, notices, required HEV symbols, and extension-safe linkage | `make validate-native`; `./scripts/native-dependency-tool.py verify --dependency hev-lwip --source-dir /path/to/pinned/hev-socks5-tunnel` | `NativeDependencies/Artifacts/`; bundled notices; `.build/native-apple-matrix/` |
+ | ReluxLibSSH2 fork builder | Verify the six-file rekey/global-request observation patch, exact libssh2/OpenSSL source pins, static XCFramework lock, public headers, notices, and real client/server rekey plus reply/timeout behavior | `make validate-libssh2`; `make test-libssh2-source-gates`; `make build-libssh2 LIBSSH2_SOURCE_ARCHIVE=/path/to/libssh2.tar.gz OPENSSL_SOURCE_ARCHIVE=/path/to/openssl-3.5.7.tar.gz` | `Dependencies/ReluxLibSSH2/`; `NativeDependencies/Artifacts/ReluxLibSSH2.xcframework`; `NativeDependencies/Generated/LIBSSH2_OPENSSL_THIRD_PARTY_NOTICES.txt`; task logs under `.temp/` |
+ | ReluxNIOSSH fork verifier | Verify the audited SwiftNIO SSH pin, license, exact patch allowlist, full fork tests, and build; generate an upstream diff or rebase conflict report | `make validate-reluxniossh`; `python3 scripts/reluxniossh-fork-tool.py diff --output .temp/TASK-260715-nzdzv3/ReluxNIOSSH-upstream.patch`; `python3 scripts/reluxniossh-fork-tool.py conflict-test --upstream-ref <ref>` | `Dependencies/ReluxNIOSSH/`; requested diffs under `.temp/` |
++| macOS build diagnostics | Retain each unsigned Xcode build/test log in the existing CI artifact tree and preserve failing child status and compiler context | `python3 scripts/tests/test_macos_build_diagnostics.py`; `python3 scripts/tests/test_macos_build_diagnostic_mutants.py`; `./scripts/validate-macos-targets.sh` | `.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/` |
+ | Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
+ | Packet-frame fuzz suite | Deterministic hostile-frame fuzz plus allocation/runtime bounds for the packet bridge; seed, iteration, and ceiling knobs documented in [`docs/packet-frame-fuzzing.md`](docs/packet-frame-fuzzing.md) | `swift test --filter PacketFrameFuzzTests` (bounded run is part of `swift test`) | `PACKET_FRAME_FUZZ_REPORT` evidence lines; task logs under `.temp/` |
+ | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
+diff --git a/docs/generated-workspace-foundation.md b/docs/generated-workspace-foundation.md
+index b931a6a..a4948d2 100644
+--- a/docs/generated-workspace-foundation.md
++++ b/docs/generated-workspace-foundation.md
+@@ -324,3 +324,20 @@ legacy `ReluxProxy` sources, defaults, `/usr/bin/ssh` behavior, bundle identity,
+ packaging, or release history. No defaults/profile conversion, artifact-name
+ takeover, rollback, uninstall, EOL, or user migration is authorized without a
+ separate approved migration decision.
++
++### Failed macOS build diagnostics
++
++The macOS target validator retains the four unsigned build logs, target-contract
++test log, and both build-settings logs under
++`.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/`.
++The existing always-upload CI artifact includes that directory. A failed Xcode
++child prints its command, original exit status, log path, and complete captured
++stdout/stderr before the validator exits with the same status. The outer gate
++prints its final 80 lines; the artifact retains the complete child log.
++
++BUG-260908-33iyb1 is a diagnostic repair, not proof that PR 6's hosted build
++failure is fixed. The failing merge revision used Xcode 16.4 / Swift 6.1.2,
++which satisfies the documented Swift tools 6.1 prerequisite. The locally
++validated Xcode 26.5 / Swift 6.3.2 matrix alone does not prove a toolchain
++incompatibility. Preserve the hosted toolchain for the next diagnostic run;
++choose any baseline/configuration or compile repair from its actual error.
+diff --git a/scripts/tests/test-credential-free-validation.sh b/scripts/tests/test-credential-free-validation.sh
+index 9c5543d..156fc56 100755
+--- a/scripts/tests/test-credential-free-validation.sh
++++ b/scripts/tests/test-credential-free-validation.sh
+@@ -72,4 +72,7 @@ test "$mise_line" -lt "$gate_line"
+ 
+ "$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
+ 
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
++
+ echo "credential-free validation contract tests passed"
+diff --git a/scripts/validate-macos-targets.sh b/scripts/validate-macos-targets.sh
+index 635a1b1..f58001d 100755
+--- a/scripts/validate-macos-targets.sh
++++ b/scripts/validate-macos-targets.sh
+@@ -7,7 +7,9 @@ products="$task_output/Products"
+ intermediates="$task_output/Intermediates"
+ derived_data="$task_output/DerivedData-validation"
+ 
+-mkdir -p "$task_output"
++build_logs="$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"
++mkdir -p "$task_output" "$build_logs"
++. "$repo_root/scripts/logged-command.sh"
+ cd "$repo_root"
+ 
+ ./scripts/generate-workspace.sh --clean
+@@ -16,7 +18,7 @@ build_unsigned() {
+   scheme=$1
+   configuration=$2
+   log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
+-  xcodebuild \
++  run_logged_command "$build_logs/credential-free-$log_name-build.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration "$configuration" \
+@@ -26,7 +28,7 @@ build_unsigned() {
+     CODE_SIGNING_REQUIRED=NO \
+     SYMROOT="$products" \
+     OBJROOT="$intermediates" \
+-    build > "$task_output/credential-free-$log_name-build.log" 2>&1
++    build
+ }
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+@@ -34,7 +36,7 @@ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+   build_unsigned "$scheme" Release
+ done
+ 
+-xcodebuild \
++run_logged_command "$build_logs/target-contract-tests.log" xcodebuild \
+   -workspace ReluxTunnel.xcworkspace \
+   -scheme ReluxProxyMac \
+   -configuration Debug \
+@@ -44,7 +46,7 @@ xcodebuild \
+   CODE_SIGNING_REQUIRED=NO \
+   SYMROOT="$products" \
+   OBJROOT="$intermediates" \
+-  test > "$task_output/target-contract-tests.log" 2>&1
++  test
+ 
+ host="$products/Debug/ReluxProxyMac.app"
+ extensions="$host/Contents/Library/SystemExtensions"
+@@ -107,16 +109,16 @@ for entitlements in "$provider_entitlements" "$developer_id_provider_entitlement
+ done
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+-  xcodebuild \
++  run_logged_command "$build_logs/$scheme-build-settings.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration Debug \
+-    -showBuildSettings > "$task_output/$scheme-build-settings.log"
++    -showBuildSettings
+ done
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+-  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMac-build-settings.log" >/dev/null
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+-  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+ 
+ provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+ test "$provider_architectures" = 'arm64 x86_64 '
+diff --git a/scripts/logged-command.sh b/scripts/logged-command.sh
+new file mode 100644
+index 0000000..5024443
+--- /dev/null
++++ b/scripts/logged-command.sh
+@@ -0,0 +1,14 @@
++#!/bin/sh
++# Retain complete child output in the uploaded log tree and expose failures inline.
++run_logged_command() {
++  command_log=$1
++  shift
++  if "$@" > "$command_log" 2>&1; then
++    return 0
++  else
++    command_status=$?
++    printf 'FAIL: %s (exit %s; log: %s)\n' "$*" "$command_status" "$command_log" >&2
++    cat "$command_log" >&2
++    return "$command_status"
++  fi
++}
+diff --git a/scripts/tests/test_macos_build_diagnostic_mutants.py b/scripts/tests/test_macos_build_diagnostic_mutants.py
+new file mode 100644
+index 0000000..c89132d
+--- /dev/null
++++ b/scripts/tests/test_macos_build_diagnostic_mutants.py
+@@ -0,0 +1,40 @@
++"""Require behavioral tests to kill status-65-only diagnostic/status regressions."""
++from pathlib import Path
++import shutil
++import subprocess
++import tempfile
++
++ROOT = Path(__file__).resolve().parents[2]
++MUTANTS = {
++    'admit-exit-65-only': ('return "$command_status"',
++                         '[ "$command_status" -ne 65 ] || return 0\n    return "$command_status"'),
++    'hide-exit-65-diagnostic-only': ('cat "$command_log" >&2',
++                                   'if [ "$command_status" -ne 65 ]; then cat "$command_log" >&2; fi'),
++}
++
++
++def main():
++    for name, (before, after) in MUTANTS.items():
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            (root / 'scripts/tests').mkdir(parents=True)
++            for relative in ('scripts/validate-macos-targets.sh', 'scripts/logged-command.sh',
++                             'scripts/tests/test_macos_build_diagnostics.py'):
++                shutil.copyfile(ROOT / relative, root / relative)
++            helper = root / 'scripts/logged-command.sh'
++            source = helper.read_text()
++            assert source.count(before) == 1
++            helper.write_text(source.replace(before, after))
++            result = subprocess.run(
++                ['python3', 'scripts/tests/test_macos_build_diagnostics.py',
++                 'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context'],
++                cwd=root, capture_output=True, text=True)
++            print(f'{name}: behavioral suite exit {result.returncode}')
++            print(result.stdout + result.stderr)
++            if result.returncode != 1 or 'AssertionError' not in result.stderr:
++                raise SystemExit(f'mutant survived or test infrastructure failed: {name}')
++    print('Both narrowing mutants killed by production-entry behavioral tests')
++
++
++if __name__ == '__main__':
++    main()
+diff --git a/scripts/tests/test_macos_build_diagnostics.py b/scripts/tests/test_macos_build_diagnostics.py
+new file mode 100644
+index 0000000..520cb15
+--- /dev/null
++++ b/scripts/tests/test_macos_build_diagnostics.py
+@@ -0,0 +1,68 @@
++"""Behavioral diagnostics tests; fixtures never launch Xcode or activate a VPN."""
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import tempfile
++import unittest
++
++ROOT = Path(__file__).resolve().parents[2]
++
++
++class MacOSBuildDiagnosticsTests(unittest.TestCase):
++    def test_successful_child_retains_both_streams(self):
++        with tempfile.TemporaryDirectory() as directory:
++            log = Path(directory) / 'child.log'
++            result = subprocess.run(
++                ['sh', '-c', '. "$1"; run_logged_command "$2" sh -c '
++                 '\'echo compiler-output; echo compiler-warning >&2\'',
++                 'test', str(ROOT / 'scripts/logged-command.sh'), str(log)],
++                capture_output=True, text=True)
++            self.assertEqual(result.returncode, 0, result.stderr)
++            self.assertEqual(log.read_text(), 'compiler-output\ncompiler-warning\n')
++
++    def test_each_failing_build_and_test_retains_status_and_context(self):
++        # Four unsigned builds followed by the target-contract test invocation.
++        for failing_call in range(1, 6):
++            with self.subTest(failing_call=failing_call), tempfile.TemporaryDirectory() as directory:
++                root = Path(directory)
++                scripts = root / 'scripts'
++                scripts.mkdir()
++                for name in ('validate-macos-targets.sh', 'logged-command.sh'):
++                    shutil.copyfile(ROOT / 'scripts' / name, scripts / name)
++                generate = scripts / 'generate-workspace.sh'
++                generate.write_text('#!/bin/sh\nexit 0\n')
++                generate.chmod(0o755)
++                binary = root / 'bin'
++                binary.mkdir()
++                xcodebuild = binary / 'xcodebuild'
++                xcodebuild.write_text('''#!/bin/sh
++count=0
++[ ! -f "$COUNTER" ] || count=$(cat "$COUNTER")
++count=$((count + 1))
++echo "$count" > "$COUNTER"
++echo "compiler invocation $count: $*"
++if [ "$count" -eq "$FAIL_CALL" ]; then
++  echo 'ConcreteCompile.swift:42: error: diagnostic sentinel' >&2
++  exit 65
++fi
++''')
++                xcodebuild.chmod(0o755)
++                counter = root / 'counter'
++                result = subprocess.run(
++                    ['sh', str(scripts / 'validate-macos-targets.sh')],
++                    env={**os.environ, 'PATH': f'{binary}:/usr/bin:/bin',
++                         'COUNTER': str(counter), 'FAIL_CALL': str(failing_call)},
++                    capture_output=True, text=True)
++                self.assertEqual(result.returncode, 65, result.stderr)
++                self.assertEqual(counter.read_text().strip(), str(failing_call))
++                self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
++                self.assertIn('exit 65', result.stderr)
++                logs = root / '.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets'
++                self.assertEqual(len(list(logs.glob('*.log'))), failing_call)
++                self.assertTrue(any('diagnostic sentinel' in log.read_text()
++                                    for log in logs.glob('*.log')))
++
++
++if __name__ == '__main__':
++    unittest.main()

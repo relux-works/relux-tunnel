@@ -1,0 +1,8 @@
+reviewed-base=b3422b05226253a17676b9b84c764071fe3dbe74
+reviewed-candidate-tree=fc4cf7e50c4221458822ca6eb82b1fad5b879f5f
+git-diff-check=PASS
+plantuml-checkonly=PASS
+fresh-svg-byte-match=PASS
+Traceback (most recent call last):
+  File "<stdin>", line 15, in <module>
+AssertionError: KEX reservation exists in idle and active states

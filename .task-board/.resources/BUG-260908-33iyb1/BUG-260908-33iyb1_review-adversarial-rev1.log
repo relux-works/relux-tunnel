@@ -1,0 +1,130 @@
+test_macos_build_diagnostics.py exit 0
+..
+----------------------------------------------------------------------
+Ran 2 tests in 4.012s
+
+OK
+
+test_macos_build_diagnostic_mutants.py exit 0
+admit-exit-65-only: behavioral suite exit 1
+FFFFF
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmprxvvplm1/scripts/tests/test_macos_build_diagnostics.py", line 57, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertEqual(result.returncode, 65, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmptfpqi0yz/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmptfpqi0yz/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmptfpqi0yz/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmptfpqi0yz/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-debug-build.log)
+compiler invocation 1: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmptfpqi0yz/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmptfpqi0yz/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmptfpqi0yz/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmprxvvplm1/scripts/tests/test_macos_build_diagnostics.py", line 57, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertEqual(result.returncode, 65, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphwpp7obk/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphwpp7obk/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphwpp7obk/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphwpp7obk/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-release-build.log)
+compiler invocation 2: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphwpp7obk/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphwpp7obk/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphwpp7obk/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmprxvvplm1/scripts/tests/test_macos_build_diagnostics.py", line 57, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertEqual(result.returncode, 65, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpixj0b_v0/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpixj0b_v0/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpixj0b_v0/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpixj0b_v0/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-debug-build.log)
+compiler invocation 3: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpixj0b_v0/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpixj0b_v0/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpixj0b_v0/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmprxvvplm1/scripts/tests/test_macos_build_diagnostics.py", line 57, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertEqual(result.returncode, 65, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpzapkvner/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpzapkvner/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpzapkvner/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpzapkvner/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-release-build.log)
+compiler invocation 4: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpzapkvner/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpzapkvner/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpzapkvner/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmprxvvplm1/scripts/tests/test_macos_build_diagnostics.py", line 57, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertEqual(result.returncode, 65, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp6r5b6s5a/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp6r5b6s5a/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp6r5b6s5a/.temp/TASK-260715-uyju7n/Intermediates test (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp6r5b6s5a/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/target-contract-tests.log)
+compiler invocation 5: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp6r5b6s5a/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp6r5b6s5a/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp6r5b6s5a/.temp/TASK-260715-uyju7n/Intermediates test
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+----------------------------------------------------------------------
+Ran 1 test in 2.984s
+
+FAILED (failures=5)
+
+hide-exit-65-diagnostic-only: behavioral suite exit 1
+FFFFF
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpxf1ljub6/scripts/tests/test_macos_build_diagnostics.py", line 59, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphf255t35/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphf255t35/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphf255t35/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmphf255t35/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-debug-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpxf1ljub6/scripts/tests/test_macos_build_diagnostics.py", line 59, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpqhv39qwc/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpqhv39qwc/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpqhv39qwc/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpqhv39qwc/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-release-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpxf1ljub6/scripts/tests/test_macos_build_diagnostics.py", line 59, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpmb0d01bg/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpmb0d01bg/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpmb0d01bg/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpmb0d01bg/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-debug-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpxf1ljub6/scripts/tests/test_macos_build_diagnostics.py", line 59, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9d081nov/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9d081nov/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9d081nov/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9d081nov/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-release-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpxf1ljub6/scripts/tests/test_macos_build_diagnostics.py", line 59, in test_each_failing_build_and_test_retains_status_and_context
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmppeok_y8p/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmppeok_y8p/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmppeok_y8p/.temp/TASK-260715-uyju7n/Intermediates test (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmppeok_y8p/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/target-contract-tests.log)\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 3.772s
+
+FAILED (failures=5)
+
+Both narrowing mutants killed by production-entry behavioral tests
+
+Narrowing exit-1 admission survived both shipped suites; original candidate unchanged.

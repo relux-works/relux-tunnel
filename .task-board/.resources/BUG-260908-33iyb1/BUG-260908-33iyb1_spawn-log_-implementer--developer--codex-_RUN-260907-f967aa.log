@@ -1,0 +1,2327 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07e33-ba67-7a20-a7ed-db74503f6595
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(BUG-260908-33iyb1, status=development)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `developer` (`implementer`) — Writes code, fixes bugs, writes tests
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `swiftui`: `/Users/iv/.claude/skills/swiftui/SKILL.md`
+- `core-data`: `/Users/iv/.claude/skills/core-data/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Diagnose exact hosted build failure, repair proven cause and diagnostic propagation with positive/negative tests, publish reviewed fix and require the previously failing hosted job to pass before completion
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.
+- [ ] Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named
+- [ ] Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.
+- [ ] A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [ ] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** BUG-260908-33iyb1
+- **Title:** BUG-260908-33iyb1: diagnose-and-fix-pr6-macos-generated-build-failure
+- **Parent:** STORY-260908-h39ajh
+
+### Description
+
+Hosted PR 6 generated-project credential-free validation failed at macos-target-builds-and-contracts with exit 65 after packaging, validation-contract tests and deterministic generation passed. Run 34167625590 job 101881722247. Uploaded artifact 10034792775 reports macOS 15.7.9 arm64, Xcode 16.4 build16F6, Swift6.1.2, source revision3279036094620772262dbd04a6d8930ec7691e75. Its top-level child log stops after successful Tuist generation and omits redirected individual xcodebuild logs. Root cause is not yet proven; do not assume the toolchain mismatch alone explains it.
+
+### Scope
+
+Establish actual build failure with reproducible evidence; repair only necessary supported toolchain/CI build configuration or real compile defect, plus failure-log propagation/artifact coverage needed to diagnose it. Do not weaken successful build requirement or fake tests. Keep runtime protocol/security invariants and no actual VPN activation.
+
+### Acceptance Criteria
+
+1. Obtain a concrete compiler/build failure, or establish and repair missing diagnostic propagation so the next exact-head hosted run reveals it. 2. Enforce the repository-supported Xcode/Swift baseline with evidence, not arbitrary version changes. 3. Positive build evidence and a negative failing-child test prove errors retain diagnostic context and nonzero status. 4. Exact PR composition passes the previously failing hosted job before claiming fixed; local-only success is not hosted proof. 5. Preserve all signed commits/unrelated work; Astra low serial; park before 04:59 Tbilisi September8.
+
+## Instructions
+
+### BUG-260908-33iyb1_hosted-evidence.md
+> Exact CI evidence and serial sequencing
+
+PR6 head87451b53960ceabe88a01c44c287fee7f9ebf386. Run34167625590 job101881722247 failed macos-target-builds-and-contracts exit65. Exact log .temp/deadline-20260908/ci-credential-failure-01.log; downloaded artifact .temp/deadline-20260908/ci-generated-artifact-01 under control root. Xcode16.4 Swift6.1.2 macOS15.7.9 arm64. Hosted source revision3279036094620772262dbd04a6d8930ec7691e75: verify merge-tree relationship, not silently label it PRhead. Individual xcodebuild logs redirected in validate-macos-targets.sh are missing from artifact; root cause unproven. Four portable runtime jobs passed. Run ONLY AFTER BUG-260908-7c5iv4 accepted/checkpointed, avoiding overlapping workflow changes. Parent attempted formal sibling dependency but CLI rejected the complete batch because of existing unrelated container cycles; no link persisted and parent will enforce this conservative serial prerequisite. Do not rewrite global dependency graph as part of this fix. No main rewind, shared-tool source patches, or VPN operations. Hard stop04:59 Tbilisi2026-09-08; no successors.
+
+
+### BUG-260908-33iyb1_execution-routing.md
+> Proceed from signed sibling checkpoint; preserve pending PR
+
+Prerequisite completed: BUG-260908-7c5iv4 accepted rev1 and signed checkpoint dc68c1584f7cc4ddcdf770acd8ace79790f0b404 on this Story. Preserve its bytes. Diagnose/fix the remaining generated macOS CI failure, using attached exact hosted evidence. Root local main 87451b53960ceabe88a01c44c287fee7f9ebf386 contains pending signed PR6 delivery; origin/main remains b3422b05226253a17676b9b84c764071fe3dbe74. Never rewind/reset/overwrite either pending work or signed commits. Parent owns final remote delivery. Candidate is based on managed Story checkpoint; separately validate composition with exact PR6 head, preserve README/LOGBOOK additions from both, and keep all runtime product bytes unchanged unless evidence proves a scoped compile fix necessary. Prior candidate full old-main suite and PR composition passed, but initial composition run failed unchanged HEV/SSH tests; one retry is not determinism evidence. Do not expand into unrelated flakes without evidence. User authorizes current normal commit timestamps; human signed objects mandatory. All tools via current curator-installed skill-project-management main; no source patches/installs or command bypasses. If hosted failure can only be revealed by publishing diagnostic propagation, provide exact minimal diagnostic candidate and required next hosted step honestly, rather than guessing a cause or calling the overall bug fixed. Do not manually commit on Story branch, integrate, land PR, spawn successors/subagents, or enable VPN. Stop with preserved evidence before 04:59 Asia/Tbilisi September 8 2026. Execute producer handoff for immutable CR when justified; hosted green status remains a delivery gate, not a local claim.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `BUG-260908-33iyb1_*` before handoff:
+  `task-board m 'add_resource(BUG-260908-33iyb1, name=BUG-260908-33iyb1_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `to-review` is a role handoff, not accepted completion. Report **ready for review** or **handed off to review**.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff BUG-260908-33iyb1 --role developer
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260908-h39ajh.
+
+- Workspace path: `.temp/STORY-260908-h39ajh/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260908-h39ajh`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+codex
+Сначала отмечу задачу в development, затем проверю инструкции и время: жёсткий стоп ограничивает дальнейшую работу.
+
+exec
+/bin/zsh -lc "task-board m 'set_status(BUG-260908-33iyb1, status=development)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 945ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"BUG-260908-33iyb1","field":"status","new_value":"development","old_value":"backlog"},"side_effects":[{"action":"escalated","element_id":"STORY-260908-h39ajh","field":"status","new_value":"development","old_value":"integrating"}]}}
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/SKILL.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+
+codex
+Применяю skill project-management для producer handoff и фиксации доказательств. Сейчас 03:28 Тбилиси; до стопа остаётся около 90 минут.
+
+exec
+/bin/zsh -lc "pwd; git status --short; rg --files -g AGENTS.md -g '*validate*' -g '*test*' -g '*workflow*' -g '*SKILL.md' .scripts .github agents .codex .claude 2>/dev/null" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 2 in 19ms:
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/references/change-request-lifecycle.md /Users/iv/.claude/skills/project-management/references/negative-evidence.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+# Change Request Lifecycle Runbook
+
+Orchestrator-owned. An accepted Change Request is accepted work, not delivered
+work. This page states the order, the recovery paths, and the republish
+semantics that used to live only in an operator's head.
+
+The full typed contract — how a candidate is snapshotted, what
+`repository_delta` means, what a `stale` revision is, and every refusal you can
+hit — stays in
+[tracked background spawn](tracked-background-spawn.md), section
+`Change Requests, review, rework, and checkpoint`. This page is the order of
+operations on top of it.
+
+---
+
+## The Change Request lifecycle, in order
+
+1. **Accept.** The reviewer runs
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N>, evidence=<ELEMENT-ID>_review-verdict.md)'`.
+   The element moves to `integrating`. It is accepted, not delivered. Only the
+   reviewer run that was handed the revision may accept it.
+2. **Checkpoint immediately.** For every non-final leaf, run
+   `task-board worktree checkpoint <ELEMENT-ID>` as the next action after
+   acceptance. The accepted tree lands on the Story branch only, and the leaf
+   stays `integrating` until Story integration lands it on trunk. Delay here is
+   what makes the next producer's Change Request go `stale`.
+3. **Checkpoint refreshes the real index automatically.** Candidate capture
+   records (but never mutates) the real-index tree. Under the bound run's Story
+   lease and the candidate-captured index CAS, checkpoint replaces only that
+   captured state and independently verifies branch/HEAD/index/worktree
+   identity. A typed
+   `change_request_checkpoint_index_unsynced` refusal is retried after its named
+   lock, I/O, or ownership condition is resolved; do not use a broad manual
+   reset that can erase unreviewed staged state.
+4. **Final leaf: integrate, do not checkpoint.** `checkpoint` refuses the
+   Story's last open leaf with `change_request_final_leaf_checkpoint`, because
+   closing it would promote a Story whose branch has never reached trunk. Land
+   the Story with
+   `task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N>`.
+5. **When `integrate` refuses, report the refusal.** `validation_not_configured`
+   (`BUG-260807-1o5092`, the as-shipped behavior) and
+   `integration_indeterminate` for a board that lives outside the control root
+   are blockers, not detours. Report the refusal as the blocker it is and land
+   only by the documented manual signed substitute — an isolated clone, signed
+   cherry-pick of the exact reviewed head, a platform review record, and a
+   fail-closed plain push. Never route around a typed refusal by moving board
+   files or the branch by hand.
+6. **A lost run is recovered by republish, never by re-running the producer.** A
+   run that died after producing content but before the board recorded it still
+   has its content on disk. Republish it with provenance. Re-running the
+   producer discards work that already exists and costs the run again.
+7. **A republish of an unchanged accepted tree is an annotation, not a new
+   revision.** A candidate whose `repository_delta` is byte-identical to the
+   accepted one, and whose acceptance still stands, is not a new candidate.
+   Recording it as a revision turns the revision count — the only rework
+   measure the board has — into process noise.
+8. **Never commit manually on the Story branch.** The managed worktree's tree is
+   published by the producer's handoff and landed by `checkpoint` or
+   `integrate`. A hand commit on that branch makes the accepted snapshot and the
+   branch head disagree, and the disagreement surfaces later as an unexplained
+   `stale` or an integration that lands the wrong tree. A `task_delta` handoff
+   now fails closed on it: the tip is compared to the workspace record's
+   `checkpoint_oid` before the validation suite runs and before anything is
+   written, and a disagreement is refused with
+   `change_request_candidate_committed_past_checkpoint`. The producer repairs it
+   inside its own run with `git reset --soft <checkpoint_oid>` — the work stays
+   in the worktree — and completes the handoff again.
+
+## A revision that will never be integrated
+
+Two shapes end a Change Request revision without a reviewer verdict, and they
+are different facts.
+
+### An empty delta does not block the Story
+
+A revision whose `repository_delta` is `empty` — an analyst or research run that
+changed no repository file — is created `ready` like any other, because
+emptiness is an attribute of the candidate and never a state. What changed with
+`BUG-260906-37s3ps` is what that revision does to everybody else: while it sits
+`ready` or `reviewing`, it no longer refuses a sibling producer with
+`change_request_sibling_producer_blocked`.
+
+The gate's argument is contamination — the new producer writes into the same
+Story worktree the pending candidate was snapshotted from — and an empty
+candidate has no repository work product for those writes to reach. Its
+checkpoint writes no commit, and its integration is a no-op. Before the fix a
+research-only run deadlocked its whole Story: nothing was routed at a candidate
+with nothing to review, and every later producer was refused with a blocker
+nobody could clear.
+
+The exemption is scoped, and the scope is deliberate:
+
+| Blocking state | `repository_delta=present` | `repository_delta=empty` |
+| --- | --- | --- |
+| `ready`, `reviewing` | refuses siblings | **admits siblings** |
+| `draft`, `changes_requested`, `stale`, `conflicted` | refuses siblings | refuses siblings |
+
+The bottom row expects a REPUBLISH, and the next snapshot of the shared worktree
+would pick up the sibling's writes. Emptiness today says nothing about the
+revision that replaces it. A revision with no readable `repository_delta` —
+legacy, or from a newer build — refuses: a value this build cannot read is not
+evidence that the candidate is empty.
+
+The revision is still fully auditable. It is not deleted, not hidden, and not
+given a special state; it simply stops being a blocker.
+
+### Retiring a revision: `withdraw_cr`
+
+An empty delta is not the only revision that never reaches integration. A
+candidate can be superseded, abandoned, or published by a run whose deliverable
+turned out to belong somewhere else. Before `BUG-260906-37s3ps` there was no
+route for that at all: `accept_cr` needs a reviewer verdict and a merged
+checklist, `worktree abort` discards the entire workspace, and republishing only
+produces another revision in the same unresolved state.
+
+```bash
+task-board m 'withdraw_cr(<ELEMENT-ID>, revision=<N>, reason="why this revision will never be integrated")'
+```
+
+It moves the revision to `aborted`, which is terminal on both predicates that
+read the state: it stops refusing sibling producers, and it stops withholding
+the Story workspace's base convergence. The revision file and its ledger row
+stay readable.
+
+Four things it refuses, and why:
+
+- **A revision that is `accepted`, `checkpointing`, `checkpointed`,
+  `integrating` or `integrated`** — `change_request_state_conflict`. Those
+  carry a reviewer's attestation, or commits that are already on the Story
+  branch or in trunk. Recording one as never integrated would make the board
+  disagree with git history.
+- **A missing or whitespace-only `reason`** —
+  `change_request_withdraw_reason_missing`. The ledger row is the only surviving
+  explanation of why the revision exists and was never integrated.
+- **A call from inside a tracked spawn run** —
+  `change_request_withdraw_unauthorized`. Withdrawal is an ORCHESTRATOR route.
+  A producer refused by `change_request_sibling_producer_blocked` must not clear
+  its own blocker, and a producer handed `changes_requested` must not retire the
+  rework signal instead of answering it.
+- **A revision number that is not the current one** —
+  `change_request_revision_conflict`, the same CAS every other transition takes.
+
+`withdraw_cr` deliberately does NOT move the board element. Where the element
+goes next — back to development, `blocked`, or closed as a duplicate — is a
+routing decision the orchestrator makes with information the mutation does not
+have; make it explicitly, in a separate call.
+
+## Two same-class findings mean a missing gate
+
+When two consecutive reviews of one leaf raise the same finding class, stop
+routing another rework revision. Spawn one task to add a gate for the class — a
+conformance vector set, a checker, a mutant harness — and let the next revision
+be reviewed against the gate rather than against a reviewer's memory. The
+reviewer's `repeat-of:` verdict field is the signal to route on.
+
+## Recovery surfaces
+
+- Stopped or refused integration: `task-board worktree transaction show <STORY-ID>`,
+  then the disposition surface it names.
+- A leaf whose handoff guard refused for artifact naming: attach the correctly
+  named `<ELEMENT-ID>_<slug>.<ext>` outcome resource and re-run the handoff. Do
+  not respawn the producer to satisfy a naming rule.
+# Negative Evidence Contract
+
+A passing suite means nothing unless something in it would have failed. This
+file is the single source of truth for the rules that make a green check mean
+something, and for the incident record behind each one. The operative wording
+that reaches every spawned child lives in the spawn template section
+`Evidence That Counts`; the reviewer's licence lives in `.roles/reviewer/role.md`;
+the repeated-variant heuristic lives in `.roles/orchestrator/role.md`. Read this
+file when you need the shapes, the failure vocabulary, or the incidents that
+produced a rule — do not restate these rules in other documents.
+
+| Rule | Operative statement | Evidence record |
+| --- | --- | --- |
+| Negative tests for gates | spawn template, `Evidence That Counts` | this file |
+| Narrowing, not deleting | spawn template, `Evidence That Counts` | this file |
+| Production call site | spawn template, `Evidence That Counts` | this file |
+| Absence vs failure to read | spawn template, `Evidence That Counts` | this file |
+| Prove, or report nothing | spawn template, `Evidence That Counts` | this file |
+| Reviewer licence to defeat a gate | `.roles/reviewer/role.md` | this file |
+| Many variants, one unowned decision | `.roles/orchestrator/role.md` | this file |
+
+## Negative Tests For Gates
+
+Any feature that GATES, REFUSES, VALIDATES, AUTHORIZES, or ATTESTS must ship
+with negative tests that fail when the gate admits what it is supposed to
+reject. A positive test proving the happy path passes is not evidence that the
+gate works; it is evidence that the gate is reachable.
+
+This is the dominant defect class in this repository's 2026-07-28..08-03 waves.
+Every instance below was found because a reviewer deliberately attacked the
+gate, not because anyone read the code:
+
+- the fact-assay attested a COLD child that never inherited the context, because
+  it checked inventory, session id, digests, and output shape, but never
+  inheritance;
+- the assay fork had repository tool access, so it could answer from disk while
+  the base was false;
+- the builder attestation accepted a correctly-shaped forged digest that the
+  caller minted itself;
+- clearance enforcement existed but no production path called it, and counting
+  tests around a fake proved nothing;
+- an unknown assay event preserved a false zero-tool observation;
+- a provider capability was declared absent to disable a flaky check, and the
+  claim did not reproduce (9/11 success).
+
+## Standard Negative Shapes
+
+Use these names in checklists, verdicts, and test names. They are the shapes a
+negative test must cover and the shapes a reviewer looks for first.
+
+| Shape | What it looks like when nobody tests for it | What the negative test must do |
+| --- | --- | --- |
+| Forged or self-minted evidence | The caller supplies the proof that the gate checks, and a correctly-shaped value passes. | Mint the evidence in the test the way a caller could, and require refusal. |
+| Absent evidence treated as satisfied | Missing input takes the permissive branch; the suite only ever supplies the input. | Remove the evidence entirely and require refusal, not a default-pass. |
+| Check present but uncalled from production | The guard is implemented and unit-tested by direct call; no production path invokes it. | Drive the real entry point — launch, materialize, resolve, publish — and name the production call site. |
+| Bypass path around the check | One entry point enforces; a second, older, or retry/renewal path does not. | Exercise every entry point that reaches the protected state, including retry, renewal, resume, and recovery, and every delivery surface that carries the rule — a contract clause reaching one context profile and not the other is this shape. |
+| Capability claim that does not reproduce | A capability is declared absent or present to make a flaky check go away. | Re-run the claim enough times to state a real rate, or report unknown. |
+
+## Derive Completeness From An Independent Source
+
+Completeness is derived from the pinned source or generated artifact, never
+enumerated by hand. When a registry, schema set, or declared scope defines the
+members, derive the expected set from that source and fail when any member lacks
+enforcement. This rule comes from five consecutive review rounds that each
+closed exactly the hand-picked members named by the previous reviewer; the next
+unlisted member defeated every list.
+
+A completeness test that reads the implementation's own table is circular and
+can never detect a missing entry: removing the entry also removes it from the
+test's expected set. Derive the expectation from the normative source of truth,
+not from the code under test. This distinction was what let the next Story's
+round-1 review demand a source-derived completeness test instead of accepting
+the producer's two selected cases.
+
+## Prove Exact Bounds At The Production Entry
+
+Prove every bound in both directions at the production entry: accept at the
+limit and refuse past the limit. Character bounds count characters rather than
+bytes. The motivating failure was a value containing 3,999 characters but
+5,999 bytes that production rejected with a byte comparison even though the
+normative `string[1..4096]` bound permitted it; helper-only or ASCII-only tests
+could not expose that narrowing.
+
+## Disable Every Refusal Clause
+
+Disable each refusal clause individually. If the suite stays green, that clause
+is a hole unless the test or evidence documents it as provably subsumed and
+names the check that subsumes it. This is measured rather than hypothetical: in
+one file, disabling 110 clause sites produced 45 surviving mutants, and 12 of
+those survivors were genuine widenings.
+
+Numeric-bound mutation and clause-disablement are different classes, and one
+harness rarely generates both. Numeric mutation finds off-by-one defects but
+cannot express disabling a tagged-union arm, cross-field equality, or grammar
+predicate; clause disablement finds those omissions but cannot move a numeric
+boundary. The 110-site clause run exposed widenings that the numeric harness
+could not generate, so run both classes.
+
+## Check Refusals Against The Normative Source
+
+A green test can defend a bug when it asserts a refusal that the normative
+source does not require. One observed test required production to reject values
+that the pinned specification permitted, so the suite protected the narrowing
+instead of detecting it. Whenever a test encodes a refusal, check that refusal
+against the pinned source rather than copying current behaviour into the
+assertion.
+
+## Eliminate Ambient Test Inputs
+
+No test may depend on ambient environment. Fixtures set explicit identity and
+all other values that could otherwise come from global configuration, the OS,
+or developer-machine state. A developer machine let Git derive an author name
+from the OS and passed the suite, while a CI runner with an empty GECOS field
+failed with `empty ident name`; only CI can catch this class, so the fixture
+must make its identity deterministic before CI exercises it.
+
+## Prove A Bound By Narrowing, Not By Deleting
+
+A test that removes a gate entirely proves only that the gate exists. It says
+nothing about whether the gate covers the right class. Restrict the gate to a
+narrower condition instead and require a named test to fail.
+
+Two repository incidents where a narrowed gate survived a green suite:
+
+- **BUG-260801-3kiloe F1** — the recovery successor cap was proven only by total
+  removal. Narrowing it to provider-limit signals left every other recoverable
+  failure unbounded, with the whole suite still green.
+- **TASK-260802-17wetr F16** — thirteen cycles later, the same shape: the
+  probe-lease cap survived deletion tests while the renewal path escaped it.
+- **TASK-260730-2c1e8l cycle 1** — this contract itself. The reviewer clauses
+  landed in the role body and the shipped test checked the role file and the
+  lite template separately, so both halves were green while the composed lite
+  prompt carried neither. Assert on the composed production artifact, not on the
+  pieces it is built from.
+- **TASK-260730-2c1e8l cycle 2** — the same contract, one level up, and the
+  clearest statement of the difference between the two shapes. The cycle-1 fix
+  did assert on the composed prompt, but it called the composition helper
+  directly and handed it the role, task-class filter, and profile itself.
+  Production builds those inputs inside the spawn entry point, so a mutant
+  narrowing only the real lite-reviewer routing just before composition left the
+  test green while an actual lite reviewer lost its gate-defeat licence. A test
+  that supplies the inputs is testing the helper, not the path. Obtain the
+  artifact the way the consumer does — here, read the prompt file recorded on
+  the run manifest after driving the entry point — so role resolution, the
+  task-class filter, and profile resolution are all under test rather than
+  assumed.
+
+Three traps when running the mutants themselves, all hit while proving this file:
+
+- **The mutant must be re-run with `-count=1`.** `go test` caches on package
+  sources; a test that reads `.roles/*.md` or any file outside its package at
+  runtime returns a stale cached PASS after that file is mutated. A cached green
+  is not a surviving mutant, it is an unexecuted test.
+- **A passing assertion may be satisfied by the wrong source.** Two mutants of
+  the producer DoD entries survived because the phrase asserted also appears,
+  differently worded, in the shared spawn template. Choose assertion wording
+  that only the intended source can supply, then narrow that source and require
+  the named test to fail.
+- **Restore the mutant from a copy, not from git.** `git checkout <file>`
+  restores from the index, which silently discards uncommitted work in that file
+  — during this task it reverted the whole cycle-2 change, not just the mutant.
+  Copy the file aside before mutating, restore from the copy, and verify the
+  restoration by diffing against it before rerunning the gates.
+
+## A Gate Publishes Its Coverage As A Ratio
+
+Prose about what a gate checks cannot distinguish 7 of 7 from 3 of 7. Every
+statement such a description makes is usually true — it is true of what the gate
+can see, and silent about what it cannot. The longer and more careful the
+description, the more thorough the gate looks.
+
+Report the fraction of intended targets the gate actually reaches, and assert
+that fraction so it reddens when a target drops out of reach. A target no mutant
+can redden is not covered, however elaborate the structure around it.
+
+Three defects of this exact shape, each found only once a ratio existed:
+
+- an AST call graph that recorded an edge only for a direct identifier call
+  covered 3 of 7 guarded functions while every pin passed; the package's real
+  dispatch was a function-value table, and the blind spot was invisible from
+  inside;
+- a classifier keyed on prose that a sibling gate was actively rewriting silently
+  dropped 8 rows, taking a suite from 107 executed subtests to 66, while its
+  completeness check `count == 0` reported nothing, because four is not zero;
+- an ownership gate that proved a symbol exists and a case is linked reported 48
+  sections as owned; measured against the specification, those bindings
+  discharged 2 of 394 normative clauses.
+
+A non-empty check on a derived set is the recurring form. `len(x) > 0` answers a
+different question from `len(x) == expected`, and only the second notices a
+narrowing.
+
+## A Blind Spot Is Not An Empty Set
+
+"Nothing is there" and "nothing this checker can see" are different facts, and
+only the second is a statement about the checker. Reporting the first when you
+mean the second converts a limitation into a clean bill of health, and the reader
+has no way to tell.
+
+An ownership gate scanned for uppercase RFC 2119 keywords. Sections stating their
+obligations in declarative present tense scored zero, were bucketed as carrying
+no obligations, and were admitted with no evidence required. Its documentation
+said "there is no obligation to enumerate". The true sentence was "the section
+carries no keyword line, so the scanner cannot see its obligations" — and 19 of
+151 headings were free-admission surface the moment they were bound, including a
+19-row exit-code registry and a closed manifest specification.
+
+Two rules follow:
+
+- State the bound of what the checker can see, next to what it reports. A
+  residual class that is named can be attacked later; one that is implied cannot.
+- Do not let the bucket for "nothing to check" also be the bucket that skips the
+  check. Where absence of measurable obligation is a legitimate state, require an
+  explicit reviewed justification for it, so the weakest entries are the ones
+  that must say the most rather than the least.
+
+## An Absence And A Failure To Read Are Different Facts
+
+Absence is a legitimate state with a defined fallback. A failed, partial, or
+malformed read is evidence of a problem. Treating the second as the first lets
+the fallback launder a fault into a normal-looking value, and a fallback defined
+for absence must never fire on a read failure.
+
+Each of these was a separate defect in this repository:
+
+- a non-empty value read as verified;
+- an unknown scanner version read as clean;
+- a partial provenance record read as absent;
+- a zero pid start time read as alive;
+- a malformed `api_error_status` read as missing;
+- an unparsed envelope read as no envelope — this one produced a false provider
+  suppression that would have hidden a healthy provider for hours.
+
+## Prove, Or Report Nothing
+
+Where a property cannot be established, report unparsed or unknown rather than
+inferring it from a proxy signal. A plausible guess is worse than an explicit
+unknown, because callers act on it.
+
+Incident: headless top-level inference in the Claude classifier was unsound in
+principle and produced six variants before it was deleted rather than
+strengthened.
+
+## Many Variants, One Unowned Decision
+
+A long run of same-shaped variants usually means a decision has more than one
+owner, not that there are many bugs. Eleven framing variants stopped reproducing
+only when structure got a single scanner and a single state type; every per-site
+patch before that produced the next variant. The operative wording is in
+`.roles/orchestrator/role.md`: unify the decision, do not patch each site.
+
+## Reviewer Licence
+
+Reviewers are explicitly licensed to attempt to defeat a gate and to reject a
+change whose only evidence is positive-path. Grep for callers before believing a
+guard is in force. The operative wording is in `.roles/reviewer/role.md`.
+
+exec
+/bin/zsh -lc "ls -la; command -v rg; git --version; task-board q 'get(BUG-260908-33iyb1) { id status checklist }'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 136ms:
+{"checklist":[{"text":"Diagnose exact hosted build failure, repair proven cause and diagnostic propagation with positive/negative tests, publish reviewed fix and require the previously failing hosted job to pass before completion","done":false},{"text":"Code written per task description and AC","done":false},{"text":"Relevant tests written for new or changed behavior and passing","done":false},{"text":"Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.","done":false},{"text":"Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named","done":false},{"text":"Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.","done":false},{"text":"A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.","done":false},{"text":"Lint clean","done":false},{"text":"Relevant build/validation commands run after changes and build not broken","done":false},{"text":"New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables","done":false},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":false}],"id":"BUG-260908-33iyb1","status":"development"}
+
+exec
+/bin/zsh -lc "cat scripts/validate-macos-targets.sh; cat .github/workflows/*.yml; ls scripts; head -35 Package.swift; rg -n 'Xcode|Swift 6|26\\.' README.md CONTRIBUTING.md Configuration scripts/validate*; git log -3 --oneline" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+#!/bin/sh
+set -eu
+
+repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+task_output="$repo_root/.temp/TASK-260715-uyju7n"
+products="$task_output/Products"
+intermediates="$task_output/Intermediates"
+derived_data="$task_output/DerivedData-validation"
+
+mkdir -p "$task_output"
+cd "$repo_root"
+
+./scripts/generate-workspace.sh --clean
+
+build_unsigned() {
+  scheme=$1
+  configuration=$2
+  log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
+  xcodebuild \
+    -workspace ReluxTunnel.xcworkspace \
+    -scheme "$scheme" \
+    -configuration "$configuration" \
+    -destination 'generic/platform=macOS' \
+    -derivedDataPath "$derived_data" \
+    CODE_SIGNING_ALLOWED=NO \
+    CODE_SIGNING_REQUIRED=NO \
+    SYMROOT="$products" \
+    OBJROOT="$intermediates" \
+    build > "$task_output/credential-free-$log_name-build.log" 2>&1
+}
+
+for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+  build_unsigned "$scheme" Debug
+  build_unsigned "$scheme" Release
+done
+
+xcodebuild \
+  -workspace ReluxTunnel.xcworkspace \
+  -scheme ReluxProxyMac \
+  -configuration Debug \
+  -destination 'platform=macOS' \
+  -derivedDataPath "$derived_data" \
+  CODE_SIGNING_ALLOWED=NO \
+  CODE_SIGNING_REQUIRED=NO \
+  SYMROOT="$products" \
+  OBJROOT="$intermediates" \
+  test > "$task_output/target-contract-tests.log" 2>&1
+
+host="$products/Debug/ReluxProxyMac.app"
+extensions="$host/Contents/Library/SystemExtensions"
+provider="$extensions/works.relux.tunnel.mac.tunnel.systemextension"
+provider_binary="$provider/Contents/MacOS/works.relux.tunnel.mac.tunnel"
+release_provider="$products/Release/ReluxProxyMac.app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension"
+release_provider_binary="$release_provider/Contents/MacOS/works.relux.tunnel.mac.tunnel"
+
+test -d "$host"
+test "$(find "$extensions" -mindepth 1 -maxdepth 1 -type d -name '*.systemextension' | wc -l | tr -d ' ')" -eq 1
+test -d "$provider"
+test -x "$provider_binary"
+test -x "$release_provider_binary"
+test "$(plutil -extract CFBundleIdentifier raw "$host/Contents/Info.plist")" = \
+  'works.relux.tunnel.mac'
+test "$(plutil -extract CFBundleIdentifier raw "$provider/Contents/Info.plist")" = \
+  'works.relux.tunnel.mac.tunnel'
+test "$(plutil -extract LSMinimumSystemVersion raw "$host/Contents/Info.plist")" = '15.0'
+test "$(plutil -extract LSMinimumSystemVersion raw "$provider/Contents/Info.plist")" = '15.0'
+test "$(plutil -extract CFBundleShortVersionString raw "$host/Contents/Info.plist")" = \
+  "$(plutil -extract CFBundleShortVersionString raw "$provider/Contents/Info.plist")"
+test "$(plutil -extract CFBundleVersion raw "$host/Contents/Info.plist")" = \
+  "$(plutil -extract CFBundleVersion raw "$provider/Contents/Info.plist")"
+provider_identifier=$(plutil -extract CFBundleIdentifier raw "$provider/Contents/Info.plist")
+provider_module=$(printf '%s' "$provider_identifier" | tr '.-' '__')
+test "$(/usr/libexec/PlistBuddy -c 'Print :NetworkExtension:NEProviderClasses:com.apple.networkextension.packet-tunnel' "$provider/Contents/Info.plist")" = \
+  "$provider_module.PacketTunnelProvider"
+
+if find "$extensions" -mindepth 1 -maxdepth 1 -type d ! -name '*.systemextension' | grep -q .; then
+  echo "error: unexpected embedded item in SystemExtensions" >&2
+  exit 1
+fi
+
+host_entitlements=Configuration/Entitlements/ReluxProxyMac-Development.entitlements
+provider_entitlements=Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements
+developer_id_host_entitlements=Configuration/Entitlements/ReluxProxyMac-DeveloperID.entitlements
+developer_id_provider_entitlements=Configuration/Entitlements/ReluxProxyMacTunnel-DeveloperID.entitlements
+
+for entitlements in \
+  "$host_entitlements" "$provider_entitlements" \
+  "$developer_id_host_entitlements" "$developer_id_provider_entitlements"; do
+  plutil -lint "$entitlements" >/dev/null
+done
+
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$host_entitlements")" = \
+  'packet-tunnel-provider'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$provider_entitlements")" = \
+  'packet-tunnel-provider'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$developer_id_host_entitlements")" = \
+  'packet-tunnel-provider-systemextension'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$developer_id_provider_entitlements")" = \
+  'packet-tunnel-provider-systemextension'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$host_entitlements")" = true
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$developer_id_host_entitlements")" = true
+for entitlements in "$provider_entitlements" "$developer_id_provider_entitlements"; do
+  if /usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$entitlements" >/dev/null 2>&1; then
+    echo "error: provider entitlement file must not install system extensions: $entitlements" >&2
+    exit 1
+  fi
+done
+
+for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+  xcodebuild \
+    -workspace ReluxTunnel.xcworkspace \
+    -scheme "$scheme" \
+    -configuration Debug \
+    -showBuildSettings > "$task_output/$scheme-build-settings.log"
+done
+grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
+grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+
+provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+test "$provider_architectures" = 'arm64 x86_64 '
+otool -L "$release_provider_binary" > "$task_output/provider-release-linkage.log"
+awk '/^[[:space:]]+\// { print $1 }' "$task_output/provider-release-linkage.log" |
+  while IFS= read -r dependency; do
+    case "$dependency" in
+      /usr/lib/*|/System/Library/Frameworks/*) ;;
+      *)
+        echo "error: disallowed provider dynamic dependency: $dependency" >&2
+        exit 1
+        ;;
+    esac
+  done
+nm -u "$release_provider_binary" > "$task_output/provider-release-undefined-symbols.log"
+nm "$release_provider_binary" > "$task_output/provider-release-symbols.log"
+./scripts/check-generated-provider-graph.py \
+  --project Project.swift \
+  --package Package.swift \
+  --relay-root .build/relay/relay-assets-v1 \
+  --generated-project ReluxTunnelApp.xcodeproj/project.pbxproj \
+  --provider-bundle "$release_provider" \
+  --linked-libraries "$task_output/provider-release-linkage.log" \
+  --undefined-symbols "$task_output/provider-release-undefined-symbols.log" \
+  --all-symbols "$task_output/provider-release-symbols.log"
+
+echo "macOS host/provider target validation passed"
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generated-project-credential-free:
+    name: generated project credential-free validation
+    # macos-15 is the arm64 image; keep this label paired with the arm64 Mise checksum.
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: relux-tunnel
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: relux-works/relux-proxy
+          ref: 2557aba1c030d0643d76e0bc3b185f6d5fd172e1
+          fetch-depth: 0
+          persist-credentials: false
+          path: relux-proxy
+
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4.2.5
+        with:
+          version: 2026.3.10
+          sha256: c7a0eb1035de974b42d36b69c4b55b836c06b455b990dd6ac530aaf05d4a8a17 # mise-v2026.3.10-macos-arm64
+          install: false
+          cache: false
+
+      - name: Exercise validation boundary narrowing mutants
+        working-directory: relux-tunnel
+        run: python3 scripts/tests/test_pr6_boundary_mutants.py
+
+      - name: Run the local credential-free gate
+        working-directory: relux-tunnel
+        run: make credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"
+
+      - name: Upload privacy-safe validation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: credential-free-generated-project-${{ github.run_id }}
+          path: |
+            relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/summary.log
+            relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/environment.log
+            relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/logs
+          if-no-files-found: error
+          retention-days: 14
+
+  validate:
+    name: board + spec validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate workflow YAML
+        run: |
+          python3 - <<'PY'
+          import glob, sys, yaml
+          bad = False
+          for f in glob.glob(".github/workflows/*.yml"):
+              try:
+                  yaml.safe_load(open(f))
+                  print(f"ok   {f}")
+              except Exception as e:
+                  print(f"FAIL {f}: {e}"); bad = True
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: Check spec presence
+        run: |
+          missing=0
+          for f in architecture decisions platform-distribution product \
+                   routing-dns-lifecycle security-privacy ssh-transport \
+                   relay-protocol packet-plane threat-model validation delivery; do
+            if [ ! -f ".spec/$f.md" ]; then echo "MISSING .spec/$f.md"; missing=1; fi
+          done
+          [ "$missing" = 0 ] && echo "all required specs present"
+          exit $missing
+
+      - name: Check board structure
+        run: |
+          python3 -m unittest scripts/tests/test_check_board_structure.py
+          python3 scripts/check_board_structure.py
+
+  relay-toolchain:
+    name: pinned offline relay toolchain
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify checked-in pins and missing-input failure
+        run: |
+          make relay-supply-chain-audit relay-supply-chain-test relay-toolchain-check relay-toolchain-negative-test
+          python3 -W error::ResourceWarning -m unittest scripts/tests/test_relay_asset_smoke.py
+
+      - name: Fetch the approved checksum-pinned Go input
+        run: |
+          mkdir -p .temp/relay-tools
+          read -r go_archive go_sha go_url <<EOF
+          $(python3 -c 'import json; d=json.load(open("relay/toolchain-manifest-v1.json")); x=next(v for v in d["hostToolArchives"] if v["host"] == "linux/amd64"); print(x["artifact"], x["sha256"], x["source"])')
+          EOF
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output ".temp/relay-tools/$go_archive" "$go_url"
+          printf '%s  %s\n' "$go_sha" ".temp/relay-tools/$go_archive" | sha256sum --check --strict
+          make relay-provision-go RELAY_GO_ARCHIVE=".temp/relay-tools/$go_archive"
+
+      - name: Test, vet, license-extract, and clean-build all four targets offline
+        run: |
+          source_date_epoch=$(git show -s --format=%ct HEAD)
+          make relay-toolchain-ci \
+            RELAY_VERSION=0.0.0 \
+            SOURCE_COMMIT="$GITHUB_SHA" \
+            SOURCE_DATE_EPOCH="$source_date_epoch" \
+            RELAY_BUILD_CLEAN_FLAG=--require-clean
+
+  relay-portable-runtime:
+    name: portable runtime ${{ matrix.target }} on ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: darwin/amd64
+            slug: darwin-amd64
+            runner: macos-15-intel
+          - target: darwin/arm64
+            slug: darwin-arm64
+            runner: macos-15
+          - target: linux/amd64
+            slug: linux-amd64
+            runner: ubuntu-24.04
+          - target: linux/arm64
+            slug: linux-arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify checked-in pins and runtime-gate tests
+        run: make relay-toolchain-check relay-toolchain-negative-test
+
+      - name: Fetch the approved checksum-pinned host tools
+        env:
+          RELAY_HOST_TARGET: ${{ matrix.target }}
+        run: |
+          mkdir -p .temp/relay-tools
+          read -r go_archive go_sha go_url syft_archive syft_sha syft_url <<EOF
+          $(python3 -c 'import json,os; d=json.load(open("relay/toolchain-manifest-v1.json")); h=os.environ["RELAY_HOST_TARGET"]; g=next(v for v in d["hostToolArchives"] if v["host"] == h); s=next(v for v in d["buildOnlyTools"][0]["hostArchives"] if v["host"] == h); print(g["artifact"], g["sha256"], g["source"], s["artifact"], s["sha256"], s["source"])')
+          EOF
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output ".temp/relay-tools/$go_archive" "$go_url"
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output ".temp/relay-tools/$syft_archive" "$syft_url"
+          python3 - "$go_sha" ".temp/relay-tools/$go_archive" "$syft_sha" ".temp/relay-tools/$syft_archive" <<'PY'
+          import hashlib, pathlib, sys
+          for expected, name in zip(sys.argv[1::2], sys.argv[2::2], strict=True):
+              actual = hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()
+              if actual != expected:
+                  raise SystemExit("checksum-pinned host tool mismatch")
+          PY
+          make relay-provision-tools \
+            RELAY_GO_ARCHIVE=".temp/relay-tools/$go_archive" \
+            RELAY_SYFT_ARCHIVE=".temp/relay-tools/$syft_archive"
+
+      - name: Clean-build the exact four-asset manifest offline
+        run: |
+          source_date_epoch=$(git show -s --format=%ct HEAD)
+          make relay-shell-release \
+            RELAY_VERSION=0.0.0 \
+            SOURCE_COMMIT="$GITHUB_SHA" \
+            SOURCE_DATE_EPOCH="$source_date_epoch"
+
+      - name: Gate native rootless stdio and runtime boundaries
+        run: |
+          mkdir -p ".build/relay/runtime-evidence/${{ matrix.slug }}"
+          python3 scripts/relay_asset_smoke.py \
+            --target "${{ matrix.target }}" \
+            --runner-kind native \
+            --runner-name "${{ matrix.runner }}" \
+            --runner-owner TASK-260715-36gq4m \
+            --require-native \
+            --manifest .build/relay/apple-bundle-input/relux-relay-manifest-v1.json \
+            --executable ".build/relay/apple-bundle-input/relux-relay-${{ matrix.slug }}" \
+            --evidence ".build/relay/runtime-evidence/${{ matrix.slug }}/report.json"
+
+      - name: Retain exact gated asset and privacy-safe runner evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: runtime-evidence-${{ matrix.slug }}-${{ github.run_id }}
+          path: |
+            .build/relay/apple-bundle-input/relux-relay-${{ matrix.slug }}
+            .build/relay/apple-bundle-input/relux-relay-${{ matrix.slug }}.spdx.json
+            .build/relay/apple-bundle-input/relux-relay-manifest-v1.json
+            .build/relay/apple-bundle-input/relux-relay-SHA256SUMS
+            .build/relay/runtime-evidence/${{ matrix.slug }}/report.json
+          if-no-files-found: warn
+          retention-days: 14
+__pycache__
+bootstrap-relay-tools.sh
+build-native-apple-matrix.sh
+check-apple-ui-test-contract.py
+check-core-boundaries.sh
+check-generated-provider-graph.py
+check-legacy-preservation.sh
+check-workspace-schemes.sh
+check_board_structure.py
+dns-policy-evidence.py
+extract_apple_ui_test_artifacts.py
+generate-snapshot-diff-fixtures.swift
+generate-workspace.sh
+libssh2-fork-tool.py
+native-dependency-tool.py
+physical-test-host-preflight.sh
+relay-protocol-tool.py
+relay-protocol-vectors.py
+relay_asset_manifest.py
+relay_asset_smoke.py
+relay_release.py
+relay_supply_chain.py
+reluxniossh-fork-tool.py
+run-apple-ui-test-smoke.sh
+ssh_matrix_fixture.py
+ssh_matrix_provider.py
+tests
+validate-credential-free.sh
+validate-macos-targets.sh
+validate-workspace-foundation.sh
+validate_apple_ui_test_artifacts.py
+// swift-tools-version: 6.1
+
+import PackageDescription
+
+let package = Package(
+  name: "ReluxTunnel",
+  platforms: [
+    .iOS(.v18),
+    .macOS(.v15),
+  ],
+  products: [
+    .library(name: "ReluxAppleUITestShared", targets: ["ReluxAppleUITestShared"]),
+    .library(name: "ReluxTunnelCore", targets: ["ReluxTunnelCore"]),
+    .library(name: "ReluxTunnelLibSSH2Adapter", targets: ["ReluxTunnelLibSSH2Adapter"]),
+    .library(name: "ReluxTunnelNativeAdapter", targets: ["ReluxTunnelNativeAdapter"]),
+    .library(name: "ReluxTunnelIOSAdapter", targets: ["ReluxTunnelIOSAdapter"]),
+    .library(name: "ReluxTunnelMacOSAdapter", targets: ["ReluxTunnelMacOSAdapter"]),
+    .executable(name: "ReluxTunnelHarness", targets: ["ReluxTunnelHarness"]),
+    .executable(name: "relux-snapshot-diff", targets: ["ReluxSnapshotDiff"]),
+  ],
+  targets: [
+    .target(name: "ReluxAppleUITestShared"),
+    .target(name: "ReluxSnapshotDiffSupport"),
+    .executableTarget(
+      name: "ReluxSnapshotDiff",
+      dependencies: ["ReluxSnapshotDiffSupport"]
+    ),
+    .target(name: "ReluxTunnelCore"),
+    .binaryTarget(
+      name: "CReluxNativeFixture",
+      path: "NativeDependencies/Artifacts/ReluxNativeFixture.xcframework"
+    ),
+    .binaryTarget(
+      name: "HevSocks5Tunnel",
+      path: "NativeDependencies/Artifacts/HevSocks5Tunnel.xcframework"
+CONTRIBUTING.md:25:package with Swift 6 language mode. The independently preserved legacy v0.1.0
+scripts/validate-credential-free.sh:106:relay_go="$repo_root/.build/relay/toolchains/go1.26.5-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed -e 's/^x86_64$/amd64/' -e 's/^aarch64$/arm64/')/go/bin/go"
+README.md:213:| Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
+README.md:220:| Relay portable toolchain and target-shell builder | Verify `relay/toolchain-manifest-v1.json`; offline-provision and whole-tree-verify checksum-pinned Go 1.26.5 plus Syft 1.48.0; run credential-isolated clean or incremental builds with no-follow, resolved-containment checks for each Darwin/Linux amd64/arm64 target; verify the exact four-asset layout, compiler/internal-linker and CPU metadata, format, linkage, stripped debug disposition, minimum runtime, explicit total bundle budget, exact missing/tampered-input failures, reproducibility, native unprivileged Ubuntu 24.04 amd64/arm64 smoke, SBOM, and licenses | `make relay-toolchain-check`; `make relay-provision-go RELAY_GO_ARCHIVE=.temp/relay-tools/<official-go-archive>`; `make relay-build-linux-amd64 RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUILD_CLEAN_FLAG=--require-clean` (replace target suffix for the other three); `make relay-portable-assets RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUNDLE_BUDGET_BYTES=<approved-total-bytes> RELAY_BUILD_CLEAN_FLAG=--require-clean`; `make relay-toolchain-ci ...`; `make relay-toolchain-native-linux-smoke ...`; `make relay-shell-validate ...` | Manifest in `relay/toolchain-manifest-v1.json`; exact target outputs under `.build/relay/portable/`; inspection report at `.build/relay/portable-assets-v1.json`; isolated work under `.build/relay/work/`; extracted licenses under `.build/relay/toolchain-licenses/`; release bundle/test/reproducibility outputs under `.build/relay/` |
+README.md:223:| PR 6 boundary mutation proof | Exercise board/scanner narrowing mutants and compile the production SnapshotDiff loader with a token-preserving HTTP-admission mutant; all three must fail named behavioral tests | `python3 scripts/tests/test_pr6_boundary_mutants.py` (macOS, Python 3, Swift 6.1+) | Disposable fixtures under the system temporary directory; commands, exits, and test diagnostics on stdout |
+README.md:228:| Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
+dc68c15 BUG-260908-7c5iv4: BUG-260908-7c5iv4: fix-pr6-activity-validation-and-snapshot-loader-scan
+b3422b0 chore(board): accept M0 bridge gate
+7cea606 docs(bridge): record M0 gate decision
+
+exec
+/bin/zsh -lc "cat scripts/validate-credential-free.sh; cat scripts/tests/test_credential_free_validation.py; cat scripts/generate-workspace.sh; rg -n 'Xcode|Swift' .spec/delivery.md .spec/validation.md docs/workspace*; ls /Users/iv/Developer/relux-tunnel/.temp/deadline-20260908/ci-generated-artifact-01; xcodebuild -version; swift --version" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 253ms:
+Xcode 26.5
+Build version 17F42
+swift-driver version: 1.148.6 Apple Swift version 6.3.2 (swiftlang-6.3.2.1.108 clang-2100.1.1.101)
+Target: arm64-apple-macosx26.0
+
+exec
+/bin/zsh -lc "rg -n 'Xcode|Swift 6' .spec docs Configuration NativeDependencies/manifest*; cat scripts/tests/test-credential-free-validation.sh; cat /Users/iv/Developer/relux-tunnel/.temp/deadline-20260908/ci-generated-artifact-01/logs/macos-target-builds-and-contracts.log; git show -s --format='%H %P' 3279036094620772262dbd04a6d8930ec7691e75; ls /Applications | head" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md:100:  macOS release, a Swift/Xcode SDK change affecting NetworkExtension or Darwin
+.spec/decisions.md:21:| ADR-017 | Accepted | Use Tuist 4.202.5 pinned exactly by repository-local Mise; generate with an explicit Xcode pin and deterministic graph/project comparison per TASK-260715-3r0993 |
+docs/native-dependency-packaging.md:71:hash drift, and stale notices. Xcode builds run with
+docs/native-dependency-packaging.md:75:non-system dynamic dependency. The generated Xcode package scheme proves the
+docs/native-dependency-packaging.md:77:non-instrumented SwiftPM release harness because Xcode's generated package
+docs/native-dependency-packaging.md:116:directory. Cache keys include dependency, revision, source hash, Xcode build,
+docs/apple-ui-test-validation.md:74:unsigned `build-for-testing`, retains its Xcode log and `.xctestrun` product
+docs/apple-ui-test-validation.md:76:runs the smoke, writes an `.xcresult` and Xcode log, then passes the result to
+.spec/platform-distribution.md:6:targets and iOS distribution. The target project is a generated Xcode workspace
+.spec/platform-distribution.md:8:select an exact Xcode version and apply the deterministic comparison policy in
+.spec/platform-distribution.md:58:The dated evidence, named physical devices, minimum/current CI matrix, Xcode
+.spec/platform-distribution.md:107:  Xcode Archive + Developer ID Export must re-sign the framework, both bundled
+docs/TASK-260715-32umrc_generated-project-architecture-adr.md:125:it does not rebuild Go implicitly during an ordinary Xcode compile.
+docs/TASK-260715-32umrc_generated-project-architecture-adr.md:160:Only `Debug` and `Release` Xcode configurations exist. Signing lanes are inputs,
+docs/TASK-260715-32umrc_generated-project-architecture-adr.md:209:diff. Developers edit manifests and source inputs, never generated Xcode state.
+docs/generated-workspace-foundation.md:30:Use a macOS build host with Git, GNU Make, Python 3, curl, Mise, Xcode command-line
+docs/generated-workspace-foundation.md:32:Xcode. The active generated products target macOS 15.0; iOS 18.0 is a checked-in
+docs/generated-workspace-foundation.md:35:Xcode 26.5, Swift 6.3.2, and Mise 2026.2.0; CI uses the arm64 `macos-15` runner
+docs/generated-workspace-foundation.md:96:ownership remains in the explicit Make targets, not an implicit Xcode build
+docs/generated-workspace-foundation.md:235:requires. Do not hand-edit Xcode project/workspace state, relay staging output,
+docs/generated-workspace-foundation.md:272:| Generation hashes and Xcode lists | `.temp/TASK-260715-2btjwm/` |
+#!/bin/sh
+set -eu
+
+repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)
+work_root=$(mktemp -d "${TMPDIR:-/tmp}/relux-credential-free-contract.XXXXXX")
+cleanup() {
+  case "$work_root" in
+    "${TMPDIR:-/tmp}"/relux-credential-free-contract.*) rm -rf "$work_root" ;;
+    *) echo "warning: refusing to clean unexpected test path: $work_root" >&2 ;;
+  esac
+}
+trap cleanup EXIT INT TERM
+
+write_list() {
+  destination=$1
+  shift
+  {
+    echo 'Information about workspace "ReluxTunnel":'
+    echo '    Schemes:'
+    for scheme in "$@"; do
+      printf '        %s\n' "$scheme"
+    done
+  } > "$destination"
+}
+
+valid="$work_root/valid.log"
+missing="$work_root/missing.log"
+unexpected="$work_root/unexpected.log"
+adversarial="$work_root/adversarial.log"
+
+write_list "$valid" \
+  relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+write_list "$missing" \
+  relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+write_list "$unexpected" \
+  relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
+  UnexpectedScheme
+write_list "$adversarial" \
+  relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
+  UnexpectedScheme
+
+"$repo_root/scripts/check-workspace-schemes.sh" "$valid" >/dev/null
+for invalid in "$missing" "$unexpected" "$adversarial"; do
+  if "$repo_root/scripts/check-workspace-schemes.sh" "$invalid" >/dev/null 2>&1; then
+    echo "error: invalid scheme fixture unexpectedly passed: $invalid" >&2
+    exit 1
+  fi
+done
+
+workflow="$repo_root/.github/workflows/ci.yml"
+runner_label='    runs-on: macos-15'
+mise_action='      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4.2.5'
+arm64_checksum='          sha256: c7a0eb1035de974b42d36b69c4b55b836c06b455b990dd6ac530aaf05d4a8a17 # mise-v2026.3.10-macos-arm64'
+test "$(grep -Fxc "$runner_label" "$workflow")" -eq 1
+test "$(grep -Fxc "$mise_action" "$workflow")" -eq 1
+grep -Fx '          version: 2026.3.10' "$workflow" >/dev/null
+test "$(grep -Fxc "$arm64_checksum" "$workflow")" -eq 1
+grep -Fx '          install: false' "$workflow" >/dev/null
+test "$(grep -Fc 'make credential-free-validate LEGACY_ROOT=' "$workflow")" -eq 1
+
+runner_line=$(grep -nF "$runner_label" "$workflow" | cut -d: -f1)
+mise_line=$(grep -nF "$mise_action" "$workflow" | cut -d: -f1)
+checksum_line=$(grep -nF "$arm64_checksum" "$workflow" | cut -d: -f1)
+gate_line=$(grep -nF 'make credential-free-validate LEGACY_ROOT=' "$workflow" | cut -d: -f1)
+test "$runner_line" -lt "$mise_line"
+test "$mise_line" -lt "$checksum_line"
+test "$mise_line" -lt "$gate_line"
+
+"$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
+
+echo "credential-free validation contract tests passed"
+relay asset manifest generate passed
+[33mmise[0m [33mWARN[0m  tuist installed but not activated — it is not in any config file.
+To install and activate, run:
+  mise use tuist
+Loading and constructing the graph
+It might take a while if the cache is empty
+Using cache binaries for the following targets: 
+Generating workspace ReluxTunnel.xcworkspace
+Generating project ReluxTunnelApp
+Resolving package dependencies using xcodebuild
+Total time taken: 1.760s
+! Warning 
+  The following items may need attention: 
+   ▸ The target 'ReluxProxyMacTunnel' has a PRODUCT_NAME build setting containing variables that are resolved at build time, and might cause unpredictable behaviours.
+✔ Success 
+  Project generated. 
+fatal: bad object 3279036094620772262dbd04a6d8930ec7691e75
+1Password.app
+Acorn.app
+AdGuard Mini.app
+AdaptivityA.app
+Airbnb.app
+Airfoil Satellite.app
+Airfoil.app
+AltServer.app
+Amadeus Pro.app
+Ameria Mobile Banking.app
+
+exec
+/bin/zsh -lc "cat Tuist.swift; sed -n '25,48p' docs/generated-workspace-foundation.md; cat scripts/validate-workspace-foundation.sh; git remote -v; ls .temp; rg -n 'xcode|swift' Configuration/Base.xcconfig Project.swift | head -25; gh --version" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+import ProjectDescription
+
+let tuist = Tuist(
+  project: .tuist(
+    compatibleXcodeVersions: .all,
+    swiftVersion: "6.0",
+    generationOptions: .options(
+      enforceExplicitDependencies: true
+    )
+  )
+)
+harness smoke, archive inspection, or unsigned provider build does not replace
+that gate.
+
+## Prerequisites and clean-checkout validation
+
+Use a macOS build host with Git, GNU Make, Python 3, curl, Mise, Xcode command-line
+tools capable of loading the Swift tools 6.1 manifest, and the SDKs selected by
+Xcode. The active generated products target macOS 15.0; iOS 18.0 is a checked-in
+but deferred package/platform input. Repository pins are Tuist 4.202.5, Go
+1.26.5, and Syft 1.48.0. The accepted clean-clone matrix used macOS 26.5,
+Xcode 26.5, Swift 6.3.2, and Mise 2026.2.0; CI uses the arm64 `macos-15` runner
+and installs Mise 2026.3.10 with the commit and checksum pinned in
+`.github/workflows/ci.yml`.
+
+Keep the v2 and legacy repositories separate. From a directory that will hold
+both checkouts:
+
+```bash
+git clone https://github.com/relux-works/relux-tunnel.git
+git clone --branch v0.1.0 --single-branch \
+  https://github.com/relux-works/relux-proxy.git
+cd relux-tunnel
+git -C ../relux-proxy verify-tag v0.1.0
+mise trust "$PWD/mise.toml"
+#!/bin/sh
+set -eu
+
+repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+task_output="$repo_root/.temp/TASK-260715-2btjwm"
+mkdir -p "$task_output"
+cd "$repo_root"
+
+package_hash_before=$(shasum -a 256 Package.swift | awk '{print $1}')
+tracked_state_before=$(git status --porcelain=v1 --untracked-files=all -- . ':!.task-board' ':!.temp')
+
+./scripts/generate-workspace.sh --clean
+./scripts/check-generated-provider-graph.py \
+  --project Project.swift \
+  --package Package.swift \
+  --relay-root .build/relay/relay-assets-v1 \
+  --generated-project ReluxTunnelApp.xcodeproj/project.pbxproj
+find ReluxTunnel.xcworkspace ReluxTunnelApp.xcodeproj -type f \
+  ! -path '*/xcuserdata/*' -print0 \
+  | LC_ALL=C sort -z \
+  | xargs -0 shasum -a 256 > "$task_output/generation-01.sha256"
+
+./scripts/generate-workspace.sh --clean
+find ReluxTunnel.xcworkspace ReluxTunnelApp.xcodeproj -type f \
+  ! -path '*/xcuserdata/*' -print0 \
+  | LC_ALL=C sort -z \
+  | xargs -0 shasum -a 256 > "$task_output/generation-02.sha256"
+
+diff -u "$task_output/generation-01.sha256" "$task_output/generation-02.sha256"
+
+package_hash_after=$(shasum -a 256 Package.swift | awk '{print $1}')
+test "$package_hash_before" = "$package_hash_after"
+
+tracked_state_after=$(git status --porcelain=v1 --untracked-files=all -- . ':!.task-board' ':!.temp')
+test "$tracked_state_before" = "$tracked_state_after"
+
+xcodebuild -workspace ReluxTunnel.xcworkspace -list > "$task_output/xcodebuild-list.log"
+./scripts/check-workspace-schemes.sh "$task_output/xcodebuild-list.log"
+
+grep -F 'Build configuration list for PBXProject "ReluxTunnelApp"' \
+  ReluxTunnelApp.xcodeproj/project.pbxproj >/dev/null
+xcodebuild -project ReluxTunnelApp.xcodeproj -list > "$task_output/xcodebuild-project-list.log"
+target_count=$(sed -n '/^[[:space:]]*Targets:/,/Build Configurations:/p' \
+  "$task_output/xcodebuild-project-list.log" | grep -c '^        [^ ]')
+test "$target_count" -eq 8
+for target in \
+  ReluxProxyMac ReluxProxyMacTunnel ReluxProxyMacTests ReluxProxyMacTunnelTests \
+  ReluxProxyMacUITestFixtureHost ReluxProxyMacUITests \
+  ReluxProxyIOSUITestFixtureHost ReluxProxyIOSUITests; do
+  grep -Fx "        $target" "$task_output/xcodebuild-project-list.log" >/dev/null
+done
+for deferred_target in ReluxProxyIOS ReluxProxyIOSTunnel ReluxProxyIOSTests ReluxProxyIOSTunnelTests; do
+  if grep -Fx "        $deferred_target" "$task_output/xcodebuild-project-list.log" >/dev/null; then
+    echo "error: deferred iOS target must not be generated in macOS-only mode: $deferred_target" >&2
+    exit 1
+  fi
+done
+configuration_count=$(sed -n '/^[[:space:]]*Build Configurations:/,/If no build configuration/p' \
+  "$task_output/xcodebuild-project-list.log" | grep -c '^        [^ ]')
+test "$configuration_count" -eq 2
+grep -Fx '        Debug' "$task_output/xcodebuild-project-list.log" >/dev/null
+grep -Fx '        Release' "$task_output/xcodebuild-project-list.log" >/dev/null
+grep -F 'XCLocalSwiftPackageReference "."' \
+  ReluxTunnelApp.xcodeproj/project.pbxproj >/dev/null
+if grep -F 'Signing.local.xcconfig' ReluxTunnelApp.xcodeproj/project.pbxproj >/dev/null; then
+  echo "error: generated project must not reference the ignored signing overlay" >&2
+  exit 1
+fi
+
+grep -Fx 'MACOSX_DEPLOYMENT_TARGET = 15.0' Configuration/Base.xcconfig >/dev/null
+grep -Fx 'IPHONEOS_DEPLOYMENT_TARGET = 18.0' Configuration/Base.xcconfig >/dev/null
+grep -Fx 'SWIFT_VERSION = 6.0' Configuration/Base.xcconfig >/dev/null
+grep -Fx 'SWIFT_STRICT_CONCURRENCY = complete' Configuration/Base.xcconfig >/dev/null
+grep -Fx 'CODE_SIGNING_ALLOWED = NO' Configuration/Base.xcconfig >/dev/null
+grep -Fx 'CODE_SIGNING_REQUIRED = NO' Configuration/Base.xcconfig >/dev/null
+grep -Fx 'APPLICATION_EXTENSION_API_ONLY = YES' \
+  Configuration/Provider-Debug.xcconfig >/dev/null
+grep -Fx 'APPLICATION_EXTENSION_API_ONLY = YES' \
+  Configuration/Provider-Release.xcconfig >/dev/null
+grep -Ex 'MARKETING_VERSION = [0-9]+\.[0-9]+\.[0-9]+' \
+  Configuration/Versions.xcconfig >/dev/null
+grep -Ex 'CURRENT_PROJECT_VERSION = [1-9][0-9]*' \
+  Configuration/Versions.xcconfig >/dev/null
+
+git check-ignore -q ReluxTunnel.xcworkspace
+git check-ignore -q ReluxTunnelApp.xcodeproj
+git check-ignore -q Configuration/Signing.local.xcconfig
+
+echo "workspace foundation validation passed"
+origin	git@github.com:relux-works/relux-tunnel.git (fetch)
+origin	git@github.com:relux-works/relux-tunnel.git (push)
+BUG-260908-7c5iv4
+BUG-260908-7c5iv4-review
+TASK-260715-135rr8
+TASK-260715-2btjwm
+TASK-260715-sbrrp7
+TASK-260715-uyju7n
+resources
+Project.swift:278:    "Package.swift",
+gh version 2.97.0 (2026-07-31)
+https://github.com/cli/cli/releases/tag/v2.97.0
+
+codex
+Подтвердил потерю диагностики: `validate-macos-targets.sh` пишет каждый `xcodebuild` в отдельный файл вне загружаемого artifact. В hosted логе осталась только генерация. Документация требует Swift tools 6.1; Xcode 16.4 этому соответствует, поэтому менять версию без compiler error сейчас необоснованно. Готовлю минимальный диагностический кандидат с сохранением exit code и проверкой отказов через сам validation script.
+
+exec
+/bin/zsh -lc "mkdir -p .temp/BUG-260908-33iyb1
+python3 --version > .temp/BUG-260908-33iyb1/tool-readiness-01.log
+ git --version >> .temp/BUG-260908-33iyb1/tool-readiness-01.log
+ gh --version >> .temp/BUG-260908-33iyb1/tool-readiness-01.log
+ xcodebuild -version >> .temp/BUG-260908-33iyb1/tool-readiness-01.log
+ git fetch origin 3279036094620772262dbd04a6d8930ec7691e75 > .temp/BUG-260908-33iyb1/fetch-01.log 2>&1
+ git show -s --format='%H %P' 3279036094620772262dbd04a6d8930ec7691e75" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 2423ms:
+3279036094620772262dbd04a6d8930ec7691e75 b3422b05226253a17676b9b84c764071fe3dbe74 87451b53960ceabe88a01c44c287fee7f9ebf386
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('scripts/validate-macos-targets.sh')
+s=p.read_text().replace('mkdir -p \""'$task_output"'"','build_logs=\""'$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"'"\\nmkdir -p \""'$task_output" "$build_logs"'"\\n. \""'$repo_root/scripts/logged-command.sh"'"')
+s=s.replace('  xcodebuild \\\\\\n','  run_logged_command \""'$build_logs/credential-free-$log_name-build.log" xcodebuild '"\\\\\\n',1).replace('build > \""'$task_output/credential-free-$log_name-build.log" 2>&1'"','build')
+s=s.replace('\\nxcodebuild \\\\\\n','\\nrun_logged_command \""'$build_logs/target-contract-tests.log" xcodebuild '"\\\\\\n',1).replace('test > \""'$task_output/target-contract-tests.log" 2>&1'"','test')
+s=s.replace('  xcodebuild \\\\\\n','  run_logged_command \""'$build_logs/$scheme-build-settings.log" xcodebuild '"\\\\\\n').replace('-showBuildSettings > \""'$task_output/$scheme-build-settings.log"'"','-showBuildSettings').replace('\""'$task_output/ReluxProxyMac-build-settings.log"'"','\""'$build_logs/ReluxProxyMac-build-settings.log"'"').replace('\""'$task_output/ReluxProxyMacTunnel-build-settings.log"'"','\""'$build_logs/ReluxProxyMacTunnel-build-settings.log"'"')
+p.write_text(s)
+Path('scripts/logged-command.sh').write_text('''#"'!/bin/sh
+# Retain complete child output in the uploaded log tree and expose failures inline.
+run_logged_command() {
+  command_log=$1
+  shift
+  if "$@" > "$command_log" 2>&1; then
+    return 0
+  else
+    command_status=$?
+    printf '"'FAIL: %s (exit %s; log: %s)\\\\n' \""'$*" "$command_status" "$command_log" >&2
+    cat "$command_log" >&2
+    return "$command_status"
+  fi
+}
+'"''')
+PY" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+exec
+/bin/zsh -lc "cat > scripts/tests/test_macos_build_diagnostics.py <<'PY'
+\"\"\"Behavioral diagnostics tests; fixtures never launch Xcode or activate a VPN.\"\"\"
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class MacOSBuildDiagnosticsTests(unittest.TestCase):
+    def test_successful_child_retains_both_streams(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / 'child.log'
+            result = subprocess.run(
+                ['sh', '-c', '. \""'$1"; run_logged_command "$2" sh -c '"'
+                 '\\'echo compiler-output; echo compiler-warning >&2\\'',
+                 'test', str(ROOT / 'scripts/logged-command.sh'), str(log)],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(log.read_text(), 'compiler-output\\ncompiler-warning\\n')
+
+    def test_each_failing_build_and_test_retains_status_and_context(self):
+        # Four unsigned builds followed by the target-contract test invocation.
+        for failing_call in range(1, 6):
+            with self.subTest(failing_call=failing_call), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                scripts = root / 'scripts'
+                scripts.mkdir()
+                for name in ('validate-macos-targets.sh', 'logged-command.sh'):
+                    shutil.copyfile(ROOT / 'scripts' / name, scripts / name)
+                generate = scripts / 'generate-workspace.sh'
+                generate.write_text('#"'!/bin/sh'"\\nexit 0\\n')
+                generate.chmod(0o755)
+                binary = root / 'bin'
+                binary.mkdir()
+                xcodebuild = binary / 'xcodebuild'
+                xcodebuild.write_text('''#"'!/bin/sh
+count=0
+[ ! -f "$COUNTER" ] || count=$(cat "$COUNTER")
+count=$((count + 1))
+echo "$count" > "$COUNTER"
+echo "compiler invocation $count: $*"
+if [ "$count" -eq "$FAIL_CALL" ]; then
+  echo '"'ConcreteCompile.swift:42: error: diagnostic sentinel' >&2
+  exit 65
+fi
+''')
+                xcodebuild.chmod(0o755)
+                counter = root / 'counter'
+                result = subprocess.run(
+                    ['sh', str(scripts / 'validate-macos-targets.sh')],
+                    env={**os.environ, 'PATH': f'{binary}:/usr/bin:/bin',
+                         'COUNTER': str(counter), 'FAIL_CALL': str(failing_call)},
+                    capture_output=True, text=True)
+                self.assertEqual(result.returncode, 65, result.stderr)
+                self.assertEqual(counter.read_text().strip(), str(failing_call))
+                self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+                self.assertIn('exit 65', result.stderr)
+                logs = root / '.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets'
+                self.assertEqual(len(list(logs.glob('*.log'))), failing_call)
+                self.assertTrue(any('diagnostic sentinel' in log.read_text()
+                                    for log in logs.glob('*.log')))
+
+
+if __name__ == '__main__':
+    unittest.main()
+PY
+python3 -m unittest scripts/tests/test_macos_build_diagnostics.py > .temp/BUG-260908-33iyb1/diagnostics-tests-01.log 2>&1
+cat .temp/BUG-260908-33iyb1/diagnostics-tests-01.log" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 2684ms:
+..
+----------------------------------------------------------------------
+Ran 2 tests in 2.729s
+
+OK
+
+exec
+/bin/zsh -lc './scripts/validate-macos-targets.sh > .temp/BUG-260908-33iyb1/macos-build-01.log 2>&1' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+exec
+/bin/zsh -lc "cat > scripts/tests/test_macos_build_diagnostic_mutants.py <<'PY'
+\"\"\"Require behavioral tests to kill status-65-only diagnostic/status regressions.\"\"\"
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[2]
+MUTANTS = {
+    'admit-exit-65-only': ('return \""'$command_status"'"',
+                         '[ \""'$command_status" -ne 65 ] || return 0'"\\n    return \""'$command_status"'"'),
+    'hide-exit-65-diagnostic-only': ('cat \""'$command_log" >&2'"',
+                                   'if [ \""'$command_status" -ne 65 ]; then cat "$command_log" >&2; fi'"'),
+}
+
+
+def main():
+    for name, (before, after) in MUTANTS.items():
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'scripts/tests').mkdir(parents=True)
+            for relative in ('scripts/validate-macos-targets.sh', 'scripts/logged-command.sh',
+                             'scripts/tests/test_macos_build_diagnostics.py'):
+                shutil.copyfile(ROOT / relative, root / relative)
+            helper = root / 'scripts/logged-command.sh'
+            source = helper.read_text()
+            assert source.count(before) == 1
+            helper.write_text(source.replace(before, after))
+            result = subprocess.run(
+                ['python3', 'scripts/tests/test_macos_build_diagnostics.py',
+                 'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context'],
+                cwd=root, capture_output=True, text=True)
+            print(f'{name}: behavioral suite exit {result.returncode}')
+            print(result.stdout + result.stderr)
+            if result.returncode "'!= 1 or '"'AssertionError' not in result.stderr:
+                raise SystemExit(f'mutant survived or test infrastructure failed: {name}')
+    print('Both narrowing mutants killed by production-entry behavioral tests')
+
+
+if __name__ == '__main__':
+    main()
+PY
+python3 - <<'PY'
+from pathlib import Path
+p=Path('scripts/tests/test-credential-free-validation.sh')
+s=p.read_text().replace('echo \"credential-free validation contract tests passed\"','python3 \""'$repo_root/scripts/tests/test_macos_build_diagnostics.py"'"\\npython3 \""'$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"'"\\n\\necho \"credential-free validation contract tests passed\"')
+p.write_text(s)
+PY
+python3 scripts/tests/test_macos_build_diagnostic_mutants.py > .temp/BUG-260908-33iyb1/mutants-01.log 2>&1
+tail -4 .temp/BUG-260908-33iyb1/mutants-01.log" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 4994ms:
+
+FAILED (failures=5)
+
+Both narrowing mutants killed by production-entry behavioral tests
+
+exec
+/bin/zsh -lc "ls .temp/BUG-260908-7c5iv4-review; cat task-board.config.json; git diff --stat; tail -8 .temp/BUG-260908-33iyb1/macos-build-01.log; rg -n 'error:|BUILD SUCCEEDED|TEST SUCCEEDED' .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/*.log | tail -12" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+BUG-260908-7c5iv4_review-evidence-rev1.zip
+BUG-260908-7c5iv4_review-verdict-rev1.md
+ancestor
+candidate
+candidate.tar
+composition
+diff-stat.log
+evidence
+exact-review-retry.log
+exact-review.log
+final-checks.log
+integrity.log
+lint.log
+mutants-review.log
+new
+readiness.log
+tests.log
+verify.py
+{
+  "local": {
+    "board_dir": ".task-board"
+  },
+  "mode": "local",
+  "agent_context": {
+    "profile": "lite"
+  },
+  "spawn": {
+    "enabled": true,
+    "max_parallel": 3,
+    "preferred_agentic_system": {
+      "exclusive": "codex"
+    },
+    "launch_composition": {
+      "enabled": true
+    },
+    "ceilings": {
+      "codex": {
+        "model": "gpt-5.6-sol",
+        "model_criterion": "equal",
+        "reasoning_effort": "medium"
+      }
+    }
+  },
+  "session_manager": {
+    "providers": {
+      "codex": {
+        "auto_continue": {
+          "enabled": true,
+          "delay_seconds": 20,
+          "max_nudges_per_turn": 2,
+          "prompt": "Continue autonomously unless blocked by a real ambiguity, approval boundary, or missing external input. Do not ask for confirmation merely to continue. If blocked, report the exact blocker and required input."
+        }
+      }
+    }
+  },
+  "version_control": {
+    "confirm": true,
+    "desired_commit_time": "After each accepted task, commit only during 20:00-09:00 Europe/Moscow (21:00-10:00 Asia/Tbilisi). Record commit timestamps with the Asia/Tbilisi UTC+04:00 offset. Synthetic future timestamps are allowed, but timestamps must remain strictly monotonic in accepted-task order with at least a one-minute interval between consecutive commits. Push after every accepted task and verify local HEAD equals origin."
+  }
+}
+ scripts/tests/test-credential-free-validation.sh |  3 +++
+ scripts/validate-macos-targets.sh                | 20 +++++++++++---------
+ 2 files changed, 14 insertions(+), 9 deletions(-)
+Generating project ReluxTunnelApp
+Resolving package dependencies using xcodebuild
+Total time taken: 4.950s
+! Warning 
+  The following items may need attention: 
+   ▸ The target 'ReluxProxyMacTunnel' has a PRODUCT_NAME build setting containing variables that are resolved at build time, and might cause unpredictable behaviours.
+✔ Success 
+  Project generated. 
+.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-debug-build.log:196:** BUILD SUCCEEDED ** [1.816 sec]
+.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-debug-build.log:633:** BUILD SUCCEEDED ** [4.663 sec]
+.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-release-build.log:588:** BUILD SUCCEEDED ** [25.780 sec]
+
+codex
+Проверил происхождение hosted revision: `3279036` — merge commit с родителями `b3422b0` и PR6 head `87451b5`. Новые behavioral tests проходят через пять реальных точек вызова validation script; оба узких мутанта — пропуск только exit 65 и скрытие только его диагностики — тесты ловят. Локальные unsigned Debug/Release builds уже проходят; жду завершения target-contract tests.
+
+exec
+/bin/zsh -lc "git diff 87451b53960ceabe88a01c44c287fee7f9ebf386 3279036094620772262dbd04a6d8930ec7691e75 --stat; cat .temp/BUG-260908-7c5iv4-review/verify.py | head -80; cat /Users/iv/.claude/skills/project-management/references/resources-and-bugs.md | head -110; task-board q 'schema(mutation=checklist)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 1 in 38ms:
+{"error":{"message":"unknown mutation \"checklist\"; relevant operation signature: schema(operation?:string, mutation?:string)"}}
+
+exec
+/bin/zsh -lc "tail -10 .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/target-contract-tests.log; rg -n 'checklist|handoff' /Users/iv/.claude/skills/project-management/references/statuses.md | head -20; task-board handoff --help; task-board resource add --help" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+
+CopySwiftLibs /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app (in target 'ReluxProxyMac' from project 'ReluxTunnelApp')
+    cd /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/MacOS/ReluxProxyMac.debug.dylib --scan-folder /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/Frameworks --scan-folder /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/PlugIns --scan-folder /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/Library/SystemExtensions --scan-folder /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/Extensions --platform macosx --toolchain /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_26_5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Intermediates/ReluxTunnelApp.build/Debug/ReluxProxyMac.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+Ignoring --strip-bitcode because --sign was not passed
+
+ValidateEmbeddedBinary /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension (in target 'ReluxProxyMac' from project 'ReluxTunnelApp')
+    cd /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+    /Applications/Xcode_26_5.app/Contents/Developer/usr/bin/embeddedBinaryValidationUtility /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension -info-plist-path /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/Products/Debug/ReluxProxyMac.app/Contents/Info.plist
+
+40:**Note on closed:** Use `closed` for cancelled, obsolete, or won't-do items. Don't delete — close with a note explaining why. History is preserved. `handoff` refuses terminal elements; `set_status` refuses leaving `done` or `closed` with `TerminalStatusError` (`terminal_status`), naming the current terminal state. An identical `set_status` is idempotent.
+69:4a. When the reviewer was launched against a Change Request (a managed Story workspace run), acceptance is recorded by `accept_cr(ID, revision=N, evidence=...)` instead. That mutation writes `accepted` and `integrating` atomically: it sets the Change Request to `accepted`, stamps the reviewer run, binds the revision to its **producer role and archetype**, and routes the element to `integrating` — accepted but not landed, and accepted work never stays in `reviewing`. The Orchestrator routes a new tracked run carrying that exact producer role and archetype; that run — not the Orchestrator — runs `task-board worktree checkpoint <ID>` for a **non-final** leaf, which commits the accepted candidate onto the Story branch and leaves the leaf `integrating`. A Change Request with `repository_delta=empty` creates no commit and likewise stays `integrating`. `done` is produced only by the integration transaction, and `worktree checkpoint` or `worktree integrate` from a reviewer, an orchestrator, or any run whose role/archetype is not the bound producer's is refused. `accept_cr` accepts no `commit_ack` argument, its `evidence` must be a task-scoped outcome resource this reviewer run attached or updated (naming the producer's own `_results.md` is refused with `change_request_evidence_missing`), only the reviewer run that was handed the revision may call it (anything else is refused with `change_request_acceptance_unauthorized`), and the live task/reviewer checklist must be complete. All refusals precede CR, status, and activity writes.
+74:5. On changes requested, the Orchestrator preserves the verdict, spawns the appropriate producer, and sends the next `to-review` handoff through a new reviewer. Repeat producer -> reviewer -> rework -> reviewer until accepted `done`.
+78:`reviewing` is a real state, not a pass-through. A reviewer child must do actual review work between the producer handoff and `done`; the orchestrator routes and monitors that review instead of performing the verdict inline.
+82:`to-review` therefore means one thing: a producer handoff awaiting review. An accepted Change Request is `integrating`, never `to-review`; `task-board worktree status` and the Change Request state say how far that integration has come.
+86:run `task-board handoff ELEMENT --role ROLE`, which verifies checklist and
+89:`to-review` is an internal routing trigger, never a handoff of routine review to the human. Human input is reserved for a concrete external blocker or unresolved human-only platform/product/architecture/tradeoff/approval decision.
+104:- `none` lets the Orchestrator accept a producer handoff from `to-review`
+105:  directly to `done` only after checking acceptance criteria, checklist,
+107:  producer; `none` never means accepting an unevidenced handoff.
+222:be reactivated with `set_status` or `handoff`; create new work instead. Any `done` or `closed`
+347:| `handoff` | `set_estimate` |
+349:| `delete` | `check_item`, `uncheck_item`, `add_checklist_item` |
+Resolve the configured role end status, verify every checklist item and
+at least one stored task-scoped outcome resource, and apply the ordinary
+cascading status transition under one mutation lock.
+
+The command fails closed with all missing evidence and does not change status.
+Attach or update the outcome with the resource or mutation CLI before handoff.
+
+Usage:
+  task-board handoff <ELEMENT-ID> [flags]
+
+Flags:
+      --commit-ack string   Mover acknowledgement for an enforced done transition
+      --format string       Output format: compact or json (default "compact")
+  -h, --help                help for handoff
+      --role string         Role whose configured end_status must be applied
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+Attach a new file resource to a board element.
+
+SOURCE may be:
+  - a local filesystem path
+  - a file:// URL
+  - an http:// or https:// URL
+
+Examples:
+  task-board resource add TASK-260311-abc ./screenshot.png --type precondition
+  task-board resource add TASK-260311-abc file:///tmp/report.pdf --name ui-report.pdf
+  task-board resource add TASK-260311-abc ./report.md --name reports/review/report.md
+  task-board resource add TASK-260311-abc https://example.com/spec.pdf --type outcome
+
+Usage:
+  task-board resource add <ELEMENT-ID> <SOURCE> [flags]
+
+Flags:
+  -d, --description string   Optional one-line description
+  -h, --help                 help for add
+      --name string          Override stored resource filename
+      --type string          Resource type: precondition or outcome (default "outcome")
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+ succeeded in 85037ms:
+exec
+/bin/zsh -lc "ps -eo pid,etime,command | rg 'xcodebuild|validate-macos-targets' | head -8; ./scripts/tests/test-credential-free-validation.sh > .temp/BUG-260908-33iyb1/contracts-01.log 2>&1; tail -4 .temp/BUG-260908-33iyb1/contracts-01.log" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+exec
+/bin/zsh -lc 'tail -8 .temp/BUG-260908-33iyb1/macos-build-01.log; tail -10 .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/target-contract-tests.log; git diff -- scripts/validate-macos-targets.sh' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+Total time taken: 4.950s
+! Warning 
+  The following items may need attention: 
+   ▸ The target 'ReluxProxyMacTunnel' has a PRODUCT_NAME build setting containing variables that are resolved at build time, and might cause unpredictable behaviours.
+✔ Success 
+  Project generated. 
+generated provider graph and relay resource contract passed
+macOS host/provider target validation passed
+2026-09-08 03:32:03.876 xcodebuild[37673:6019168] [MT] IDETestOperationsObserverDebug: 1.615 elapsed -- Testing started completed.
+2026-09-08 03:32:03.876 xcodebuild[37673:6019168] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-08 03:32:03.876 xcodebuild[37673:6019168] [MT] IDETestOperationsObserverDebug: 1.615 sec, +1.615 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/TASK-260715-uyju7n/DerivedData-validation/Logs/Test/Test-ReluxProxyMac-2026.09.08_03-31-57-+0400.xcresult
+
+** TEST SUCCEEDED ** [6.794 sec]
+
+Testing started
+diff --git a/scripts/validate-macos-targets.sh b/scripts/validate-macos-targets.sh
+index 635a1b1..f58001d 100755
+--- a/scripts/validate-macos-targets.sh
++++ b/scripts/validate-macos-targets.sh
+@@ -7,7 +7,9 @@ products="$task_output/Products"
+ intermediates="$task_output/Intermediates"
+ derived_data="$task_output/DerivedData-validation"
+ 
+-mkdir -p "$task_output"
++build_logs="$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"
++mkdir -p "$task_output" "$build_logs"
++. "$repo_root/scripts/logged-command.sh"
+ cd "$repo_root"
+ 
+ ./scripts/generate-workspace.sh --clean
+@@ -16,7 +18,7 @@ build_unsigned() {
+   scheme=$1
+   configuration=$2
+   log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
+-  xcodebuild \
++  run_logged_command "$build_logs/credential-free-$log_name-build.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration "$configuration" \
+@@ -26,7 +28,7 @@ build_unsigned() {
+     CODE_SIGNING_REQUIRED=NO \
+     SYMROOT="$products" \
+     OBJROOT="$intermediates" \
+-    build > "$task_output/credential-free-$log_name-build.log" 2>&1
++    build
+ }
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+@@ -34,7 +36,7 @@ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+   build_unsigned "$scheme" Release
+ done
+ 
+-xcodebuild \
++run_logged_command "$build_logs/target-contract-tests.log" xcodebuild \
+   -workspace ReluxTunnel.xcworkspace \
+   -scheme ReluxProxyMac \
+   -configuration Debug \
+@@ -44,7 +46,7 @@ xcodebuild \
+   CODE_SIGNING_REQUIRED=NO \
+   SYMROOT="$products" \
+   OBJROOT="$intermediates" \
+-  test > "$task_output/target-contract-tests.log" 2>&1
++  test
+ 
+ host="$products/Debug/ReluxProxyMac.app"
+ extensions="$host/Contents/Library/SystemExtensions"
+@@ -107,16 +109,16 @@ for entitlements in "$provider_entitlements" "$developer_id_provider_entitlement
+ done
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+-  xcodebuild \
++  run_logged_command "$build_logs/$scheme-build-settings.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration Debug \
+-    -showBuildSettings > "$task_output/$scheme-build-settings.log"
++    -showBuildSettings
+ done
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+-  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMac-build-settings.log" >/dev/null
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+-  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+ 
+ provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+ test "$provider_architectures" = 'arm64 x86_64 '
+
+ succeeded in 11609ms:
+FAILED (failures=5)
+
+Both narrowing mutants killed by production-entry behavioral tests
+credential-free validation contract tests passed
+
+exec
+/bin/zsh -lc "du -sh .temp/BUG-260908-7c5iv4-review/composition; git diff --name-only b3422b0 87451b5 | head -40; git status --short; task-board q 'schema(mutation=check_item)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 282ms:
+.task-board/.activity/EPIC-260715-3810we/events.ndjson
+.task-board/.activity/STORY-260715-1y04r0/events.ndjson
+.task-board/.activity/TASK-260715-2rcvr0/events.ndjson
+.task-board/.activity/TASK-260715-3ejhyy/events.ndjson
+.task-board/.activity/TASK-260715-3qqbbm/events.ndjson
+.task-board/.activity/TASK-260715-m8bi8i/events.ndjson
+.task-board/.activity/TASK-260720-1qhxqa/events.ndjson
+.task-board/.activity/TASK-260830-1x524u/events.ndjson
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_change-request_rev1.patch
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_change-request_rev2.patch
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_results.md
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_review-verdict-rev2.md
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_review-verdict.md
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-analyst--solution-architect--codex-_RUN-260830-18f257.log
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-analyst--solution-architect--codex-_RUN-260830-682cd1.log
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-reviewer--reviewer--codex-_RUN-260830-eb3dcb.log
+.task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-reviewer--reviewer--codex-_RUN-260830-f7ad98.log
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_change-request_rev1.patch
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_change-request_rev2.patch
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_change-request_rev3.patch
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_results.md
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_review-verdict-rev3.md
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_review-verdict.md
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-implementer--developer--codex-_RUN-260830-060b68.log
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-implementer--developer--codex-_RUN-260830-0efcad.log
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-implementer--developer--codex-_RUN-260830-2e247e.log
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-reviewer--reviewer--codex-_RUN-260830-8eedbe.log
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-reviewer--reviewer--codex-_RUN-260830-a6022e.log
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-reviewer--reviewer--codex-_RUN-260830-ce1afa.log
+.task-board/.resources/TASK-260715-3ejhyy/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+.task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_change-request_rev1.patch
+.task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_migration-isolation-report.json
+.task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_results.md
+.task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_review-verdict.md
+.task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_spawn-log_-implementer--developer--codex-_RUN-260830-ecdf27.log
+.task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_spawn-log_-reviewer--reviewer--codex-_RUN-260830-4ace66.log
+.task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_change-request_rev1.patch
+.task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_change-request_rev2.patch
+.task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_results.md
+.task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_review-verdict-rev2.md
+ M scripts/tests/test-credential-free-validation.sh
+ M scripts/validate-macos-targets.sh
+?? scripts/logged-command.sh
+?? scripts/tests/test_macos_build_diagnostic_mutants.py
+?? scripts/tests/test_macos_build_diagnostics.py
+{"description":"Check a checklist item","destructive":false,"examples":["check_item(TASK-260218-abc123, item=1)"],"idempotent":true,"kind":"mutation","name":"check_item","parameters":[{"name":"id","type":"string","optional":false,"description":"Element ID","required":true},{"name":"item","type":"int","optional":false,"description":"Checklist item number (1-based)","required":true}],"signature":"check_item(id:string, item:int)","syntax":"OPERATION(element-or-identifier, key=value, key=\"quoted string\") { field preset }; statements separated by ';'; the first bare positional value is the element/identifier argument; remaining arguments use key=value (no operators or lists); string escapes: \\\" \\\\ \\n \\t"}
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('README.md')
+s=p.read_text(); marker='| Swift format |'
+row='| macOS build diagnostics | Retain each unsigned Xcode build/test log in the existing CI artifact tree and preserve failing child status and compiler context | "'`python3 scripts/tests/test_macos_build_diagnostics.py`; `python3 scripts/tests/test_macos_build_diagnostic_mutants.py`; `./scripts/validate-macos-targets.sh` | `.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/` |'"\\n'
+s=s.replace(marker,row+marker);p.write_text(s)
+p=Path('docs/generated-workspace-foundation.md')
+s=p.read_text(); s += '''\\n### Failed macOS build diagnostics\\n\\nThe macOS target validator retains the four unsigned build logs, target-contract\\ntest log, and both build-settings logs under\\n"'`.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/`.'"\\nThe existing always-upload CI artifact includes that directory. A failed Xcode\\nchild prints its command, original exit status, log path, and complete captured\\nstdout/stderr before the validator exits with the same status. The outer gate\\nprints its final 80 lines; the artifact retains the complete child log.\\n\\nBUG-260908-33iyb1 is a diagnostic repair, not proof that PR 6's hosted build\\nfailure is fixed. The failing merge revision used Xcode 16.4 / Swift 6.1.2,\\nwhich satisfies the documented Swift tools 6.1 prerequisite. The locally\\nvalidated Xcode 26.5 / Swift 6.3.2 matrix alone does not prove a toolchain\\nincompatibility. Preserve the hosted toolchain for the next diagnostic run;\\nchoose any baseline/configuration or compile repair from its actual error.\\n''';p.write_text(s)
+p=Path('LOGBOOK.md');p.write_text(p.read_text()+'''\\n\\n## 2026-09-08 — BUG-260908-33iyb1 macOS hosted diagnostics\\n\\n- Verified hosted revision "'`3279036094620772262dbd04a6d8930ec7691e75` has'"\\n  parents "'`b3422b05226253a17676b9b84c764071fe3dbe74` and PR 6 head'"\\n  "'`87451b53960ceabe88a01c44c287fee7f9ebf386`; its tree equals that PR head.'"\\n- The supplied artifact omits redirected Xcode child logs. Build exit 65 is\\n  known; the compiler cause remains unknown. No unsupported toolchain claim\\n  or runtime product change is justified by that evidence.\\n- Added complete child-log retention under the already-uploaded log directory,\\n  inline failure context, and unchanged nonzero child status. Behavioral tests\\n  drive all four build invocations and the test invocation with exit 65. Two\\n  narrowing mutants admit only exit 65 or suppress only its diagnostic; both\\n  fail the named production-entry test.\\n- The local macOS validator passed on Xcode 26.5 / Swift 6.3.2, including four\\n  unsigned builds, target-contract tests, packaging, and provider graph checks.\\n  This is local evidence, not hosted proof. Parent owns publication and the\\n  exact-head hosted rerun; keep the bug open until the failing job passes.\\n''')
+PY
+cat > .temp/BUG-260908-33iyb1/compose.py <<'PY'
+from pathlib import Path
+import subprocess, tarfile, io
+root=Path.cwd(); out=root/'.temp/BUG-260908-33iyb1'; dest=out/'composition'
+base='b3422b05226253a17676b9b84c764071fe3dbe74'; pr='87451b53960ceabe88a01c44c287fee7f9ebf386'
+dest.mkdir()
+with tarfile.open(fileobj=io.BytesIO(subprocess.check_output(['git','archive',pr]))) as tar:
+    tar.extractall(dest,filter='data')
+paths=set(subprocess.check_output(['git','diff','--name-only',base],text=True).splitlines())
+paths.update(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())
+for name in sorted(paths):
+    p=dest/name; p.parent.mkdir(parents=True,exist_ok=True)
+    if name in ('README.md','LOGBOOK.md'):
+        ancestor=subprocess.check_output(['git','show',base+':'+name])
+        ours=(root/name).read_bytes()
+        if name=='LOGBOOK.md':
+            assert ours.startswith(ancestor)
+            p.write_bytes(p.read_bytes()+ours[len(ancestor):])
+        else:
+            (out/'ancestor').write_bytes(ancestor);(out/'ours').write_bytes(ours)
+            p.write_bytes(subprocess.check_output(['git','merge-file','-p',str(p),str(out/'ancestor'),str(out/'ours')]))
+    else:
+        p.write_bytes((root/name).read_bytes());p.chmod((root/name).stat().st_mode)
+print('Composition: exact PR6 archive + checkpoint dc68c15 + uncommitted diagnostic delta')
+print('\\n'.join(sorted(paths)))
+PY
+python3 .temp/BUG-260908-33iyb1/compose.py > .temp/BUG-260908-33iyb1/composition-01.log 2>&1" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 6681ms:
+codex
+Локальный `validate-macos-targets.sh` завершился с exit 0, включая все четыре builds и target-contract tests. Проверяю композицию с точным PR6 head, сохраняя изменения sibling checkpoint. Hosted root cause пока неизвестен; этот кандидат позволяет получить его в следующем CI run, но не закрывает требование hosted green.
+
+exec
+/bin/zsh -lc "cat .temp/BUG-260908-33iyb1/composition-01.log; du -sh .build/relay/*; rg -n 'relay_root|root|generate' scripts/relay_asset_manifest.py | tail -20; ls .temp/BUG-260908-7c5iv4-review/composition/.build" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 1 in 513ms:
+9.8M	.build/relay/apple-bundle-input
+ 88M	.build/relay/downloads
+8.7M	.build/relay/protocol-tests
+9.8M	.build/relay/relay-assets-v1
+ 18M	.build/relay/repro
+426M	.build/relay/toolchains
+520M	.build/relay/work
+430:        raise AssetManifestError("relay asset manifest schema root contract changed")
+987:        f"  static let generatedSchemaVersion = {manifest['schemaVersion']}",
+988:        f"  static let generatedProtocolVersion = {manifest['relayProtocolVersion']}",
+990:        "  static let generatedBuildProvenance = RelayAssetBuildProvenance(",
+996:        "  static let generatedSupplyChain = RelayAssetSupplyChain(",
+1007:        "  static let generatedAssets: [RelayBundledAsset] = [",
+1332:def generate_bundle(
+1448:        "generated Swift relay asset lookup",
+1452:        raise AssetManifestError("generated Swift relay asset lookup is stale")
+1458:        "command", choices=("generate", "validate", "check", "render-swift")
+1473:        if arguments.command == "generate":
+1474:            manifest = generate_bundle(arguments.archive, arguments.bundle, contract)
+ls: .temp/BUG-260908-7c5iv4-review/composition/.build: No such file or directory
+
+exec
+/bin/zsh -lc "sed -n '1455,1475p' scripts/relay_asset_manifest.py; ls -l NativeDependencies/Artifacts; sh -n scripts/logged-command.sh scripts/validate-macos-targets.sh scripts/tests/test-credential-free-validation.sh; git diff --check" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "command", choices=("generate", "validate", "check", "render-swift")
+    )
+    parser.add_argument("--contract", type=Path, default=DEFAULT_CONTRACT)
+    parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
+    parser.add_argument("--archive", type=Path, default=DEFAULT_ARCHIVE)
+    parser.add_argument("--bundle", type=Path, default=DEFAULT_BUNDLE)
+    parser.add_argument("--swift-output", type=Path, default=DEFAULT_SWIFT)
+    return parser.parse_args()
+
+
+def main() -> int:
+    arguments = parse_args()
+    try:
+        verify_schema(arguments.schema)
+        contract = load_source_contract(arguments.contract)
+        if arguments.command == "generate":
+            manifest = generate_bundle(arguments.archive, arguments.bundle, contract)
+            verify_swift(arguments.swift_output, manifest)
+total 0
+drwxr-xr-x@ 8 iv  staff  256 Sep  8 02:50 HevSocks5Tunnel.xcframework
+drwxr-xr-x@ 6 iv  staff  192 Sep  8 02:50 ReluxLibSSH2.xcframework
+drwxr-xr-x@ 6 iv  staff  192 Sep  8 02:50 ReluxNativeFixture.xcframework
+
+exec
+/bin/zsh -lc "rg -n 'DEFAULT_ARCHIVE|DEFAULT_BUNDLE' scripts/relay_asset_manifest.py; python3 - <<'PY'
+from pathlib import Path
+import shutil
+root=Path('.temp/BUG-260908-33iyb1/composition')
+(root/'.build/relay').mkdir(parents=True)
+shutil.copytree('.build/relay/apple-bundle-input',root/'.build/relay/apple-bundle-input')
+PY
+cd .temp/BUG-260908-33iyb1/composition
+./scripts/validate-macos-targets.sh > ../composition-build-01.log 2>&1" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 1 in 774ms:
+exec
+/bin/zsh -lc "cat .temp/BUG-260908-33iyb1/composition-build-01.log; sed -n '23,35p' scripts/relay_asset_manifest.py; ls Configuration/Relay*" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 1 in 0ms:
+relay asset manifest generate passed
+mise ERROR error parsing config file: ~/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/BUG-260908-33iyb1/composition/mise.toml
+mise ERROR Config files in ~/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/BUG-260908-33iyb1/composition/mise.toml are not trusted.
+Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
+mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
+
+ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_CONTRACT = ROOT / "relay" / "asset-bundle-source-v1.json"
+DEFAULT_SCHEMA = ROOT / "relay" / "asset-manifest-v1.schema.json"
+DEFAULT_ARCHIVE = (
+    ROOT
+    / ".task-board"
+    / ".resources"
+    / "TASK-260715-24icoz"
+    / "TASK-260715-24icoz_portable-relay-assets.tar.gz"
+)
+DEFAULT_BUNDLE = ROOT / ".build" / "relay" / "relay-assets-v1"
+DEFAULT_SWIFT = (
+zsh:1: no matches found: Configuration/Relay*
+
+exec
+/bin/zsh -lc 'mise trust .temp/BUG-260908-33iyb1/composition/mise.toml > .temp/BUG-260908-33iyb1/composition-trust-01.log 2>&1' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+exec
+/bin/zsh -lc './scripts/validate-macos-targets.sh > ../composition-build-02.log 2>&1' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree/.temp/BUG-260908-33iyb1/composition
+exec
+/bin/zsh -lc "task-board q 'get(BUG-260908-33iyb1) { id status }'; rg -n 'validation|handoff|make ' .task-board/.roles/developer/role.md .task-board/.config* 2>/dev/null; ls .task-board/.roles 2>/dev/null; git diff --numstat" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 216ms:
+{"id":"BUG-260908-33iyb1","status":"development"}
+zsh:1: no matches found: .task-board/.config*
+19	0	LOGBOOK.md
+1	0	README.md
+17	0	docs/generated-workspace-foundation.md
+3	0	scripts/tests/test-credential-free-validation.sh
+11	9	scripts/validate-macos-targets.sh
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess
+out=Path('.temp/BUG-260908-33iyb1')
+commands=[['git','verify-commit','dc68c1584f7cc4ddcdf770acd8ace79790f0b404'], ['git','verify-commit','87451b53960ceabe88a01c44c287fee7f9ebf386'], ['git','diff','--check'], ['sh','-n','scripts/logged-command.sh','scripts/validate-macos-targets.sh','scripts/tests/test-credential-free-validation.sh'], ['python3','scripts/tests/test_macos_build_diagnostics.py'], ['python3','scripts/tests/test_macos_build_diagnostic_mutants.py']]
+with (out/'verification-01.log').open('w') as log:
+    for command in commands:
+        r=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+        log.write(f'COMMAND {command"'!r}'"\\n{r.stdout}\\nEXIT={r.returncode}\\n');log.flush()
+        if r.returncode: raise SystemExit(r.returncode)
+PY" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 8499ms:
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess
+root=Path('.temp/BUG-260908-33iyb1')
+commands=[['sh','scripts/tests/test-credential-free-validation.sh'],['python3','-m','unittest','scripts/tests/test_check_board_structure.py','scripts/tests/test_relay_supply_chain.py']]
+with (root/'composition-tests-01.log').open('w') as log:
+    for cmd in commands:
+        result=subprocess.run(cmd,cwd=root/'composition',stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+        log.write(f'COMMAND {cmd"'!r}'"\\n{result.stdout}\\nEXIT={result.returncode}\\n');log.flush()
+        if result.returncode:raise SystemExit(result.returncode)
+PY" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+codex
+Композиция собрана из PR6 `87451b5`, signed checkpoint `dc68c15` и текущего диагностического изменения. Первый запуск остановился на доверии Mise к новой временной копии; после `mise trust` запущен обычный validator. Полный Swift suite и прежние HEV/SSH flakes повторно не проверяю: runtime-код эта задача не меняет.
+
+exec
+/bin/zsh -lc "tail -5 .temp/BUG-260908-33iyb1/composition-build-02.log; tail -5 .temp/BUG-260908-33iyb1/composition-tests-01.log; rg -n 'BUILD SUCCEEDED|TEST SUCCEEDED|error:' .temp/BUG-260908-33iyb1/composition/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/*.log | tail -5; git status --short" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 85ms:
+ M LOGBOOK.md
+ M README.md
+ M docs/generated-workspace-foundation.md
+ M scripts/tests/test-credential-free-validation.sh
+ M scripts/validate-macos-targets.sh
+?? scripts/logged-command.sh
+?? scripts/tests/test_macos_build_diagnostic_mutants.py
+?? scripts/tests/test_macos_build_diagnostics.py
+
+ succeeded in 39922ms:
+ succeeded in 120429ms:
+exec
+/bin/zsh -lc "cat > .temp/BUG-260908-33iyb1/BUG-260908-33iyb1_results.md <<'EOF'
+# BUG-260908-33iyb1 — diagnostic candidate, hosted gate still open
+
+## Finding and scope
+
+Hosted run 34167625590 / job 101881722247 failed with exit 65. The supplied
+artifact 10034792775 contains only successful generation in the macOS child
+log: individual xcodebuild logs were redirected outside the uploaded tree.
+The actual compiler/build cause remains unknown. Fetch verified revision
+3279036094620772262dbd04a6d8930ec7691e75 has parents b3422b0 and 87451b5;
+its tree exactly equals PR6 head 87451b53960ceabe88a01c44c287fee7f9ebf386.
+
+The minimal candidate puts all seven Xcode logs under the existing always-upload
+credential-free log directory, prints complete failure context inline, and
+returns the original child status. No workflow/toolchain pin or runtime product
+bytes changed. docs/generated-workspace-foundation.md specifies Swift tools 6.1;
+the hosted Swift 6.1.2 satisfies that prerequisite. Local Xcode 26.5 / Swift 6.3.2
+success does not establish why Xcode 16.4 failed. An exact Xcode baseline change
+is deliberately deferred until the real diagnostic supplies evidence.
+
+## AC coverage: 2 of 5 AC rows driven
+
+| AC | Production call site and named test/evidence | Bound |
+| --- | --- | --- |
+| 1 | validate-macos-targets.sh build_unsigned and target test -> run_logged_command; test_each_failing_build_and_test_retains_status_and_context | Diagnostic-propagation alternative only; original compiler cause unknown |
+| 2 | No new baseline gate introduced | Supported manifest prerequisite checked from repository; exact Xcode baseline enforcement unresolved, no arbitrary pin |
+| 3 | Same production entry; test_successful_child_retains_both_streams; test_each_failing_build_and_test_retains_status_and_context; real local validator | Positive unsigned build and negative exit 65 evidence; local toolchain only |
+| 4 | Parent-owned exact-head publication / generated-project-credential-free job | NOT satisfied: no hosted run of candidate, no claim fixed |
+| 5 | git verify-commit for dc68c15 and 87451b5; preserved branch/HEAD and runtime diff | Operational bound, not a test-driven AC; no commits, publication, agents, or VPN activation |
+
+New tests reside in the uncommitted producer candidate as required by the
+managed worktree contract; parent must preserve them in signed delivery.
+Production-entry negative coverage is 5 of 5 build/test invocations. The two
+showBuildSettings calls use the same logging wrapper and ran positively in the
+real validator; no injected negative coverage is claimed for those later calls.
+Existing packaging/security gates are unchanged and not newly attested here.
+
+Narrowing mutants keep the wrapper/gate present: admit exit 65 only, and omit
+only exit-65 diagnostic output (preserving the cat token). Both fail the named
+production-entry behavioral test in all five subcases. Harness exits 0 only
+when both behavioral suites exit 1 with assertion failures. No new source-text
+gate was introduced.
+
+## Verification
+
+- Local ./scripts/validate-macos-targets.sh: exit 0, all four unsigned builds,
+  target tests, build settings, packaging and generated-provider graph passed.
+- verification-01.log: signed object checks, git diff --check, sh -n, behavioral
+  tests and narrowing harness all exit 0. Expected inner mutant suite exits 1.
+- contracts-01.log: validation contract script passed (outer command exit 0).
+- Composition prepared from exact PR6 archive plus checkpoint dc68c15 and the
+  current candidate. README was three-way merged; both LOGBOOK appendices kept.
+- Composition build attempt 1: exit 1 because Mise had not trusted the new
+  scratch path; recorded in composition-build-01.log. Trusted only that copy's
+  unchanged mise.toml, then retried as composition-build-02.log.
+- Composition final results are appended below after process completion.
+- Did not rerun or claim full Swift suite, previous HEV/SSH flake determinism,
+  portable runtime CI, legacy suite, or hosted builds. Earlier supplied evidence
+  is historical context only, not new exact-candidate proof.
+
+## Required next step / ownership boundary
+
+Parent must review the diagnostic patch, compose it with pending signed PR6 and
+sibling checkpoint, publish via its authorized signed delivery flow, and inspect
+the next exact-head generated-project-credential-free run. If it fails, obtain
+logs/macos-targets/*.log from the always-upload artifact, fix only the proven
+cause, and rerun until the previously failing job passes. Do not mark this bug
+fixed based on the local evidence. No external publication is authorized for
+this producer; this is the concrete remaining ownership boundary.
+
+The first checklist item includes hosted green and remains unchecked. A partial
+diagnostic patch is available for review; if handoff refuses the unchecked gate,
+that refusal must not be bypassed or converted into a false attestation.
+EOF" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess, hashlib, zipfile
+root=Path.cwd(); out=root/'.temp/BUG-260908-33iyb1'
+report=out/'BUG-260908-33iyb1_results.md'
+with report.open('a') as f:
+ f.write('\\n## Final local results\\n\\n- Composition ./scripts/validate-macos-targets.sh: exit 0 (composition-build-02.log), including all four builds and target tests.\\n- Composition validation contracts and board/supply-chain behavioral tests: exit 0 (composition-tests-01.log).\\n- Source scope remains eight files, entirely diagnostics/tests/docs; HEAD remains dc68c1584f7cc4ddcdf770acd8ace79790f0b404.\\n')
+patch=subprocess.check_output(['git','diff','--binary','HEAD'])
+for name in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines():
+ p=subprocess.run(['git','diff','--no-index','--binary','--','/dev/null',name],capture_output=True)
+ assert p.returncode==1
+ patch+=p.stdout
+(out/'BUG-260908-33iyb1_diagnostic-candidate.patch').write_bytes(patch)
+with (out/'candidate-sha256.log').open('w') as f:
+ for name in sorted(set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()+subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())):
+  f.write(f'{hashlib.sha256((root/name).read_bytes()).hexdigest()}  {name}\\n')
+with zipfile.ZipFile(out/'BUG-260908-33iyb1_evidence.zip','w',zipfile.ZIP_DEFLATED) as z:
+ for p in out.glob('*.log'):z.write(p,p.name)
+ for prefix, directory in [('story',root),('composition',out/'composition')]:
+  for p in (directory/'.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets').glob('*.log'):
+   z.write(p,f'{prefix}/macos-targets/{p.name}')
+ z.write(out/'compose.py','compose.py')
+print('Evidence and diagnostic patch written')
+PY
+task-board resource add BUG-260908-33iyb1 .temp/BUG-260908-33iyb1/BUG-260908-33iyb1_results.md --type outcome --description 'Diagnostic candidate; hosted gate remains open'
+task-board resource add BUG-260908-33iyb1 .temp/BUG-260908-33iyb1/BUG-260908-33iyb1_diagnostic-candidate.patch --type outcome --description 'Minimal uncommitted diagnostic patch against signed checkpoint'
+task-board resource add BUG-260908-33iyb1 .temp/BUG-260908-33iyb1/BUG-260908-33iyb1_evidence.zip --type outcome --description 'Real build logs, composition evidence, positive and narrowing tests'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 2414ms:
+Evidence and diagnostic patch written
+Attached BUG-260908-33iyb1_results.md on BUG-260908-33iyb1 as outcome
+Attached BUG-260908-33iyb1_diagnostic-candidate.patch on BUG-260908-33iyb1 as outcome
+Attached BUG-260908-33iyb1_evidence.zip on BUG-260908-33iyb1 as outcome
+
+codex
+Композиция PR6 тоже прошла macOS validator с exit 0; contract tests и board/supply-chain tests зелёные. Patch, логи и отчёт уже приложены к задаче. Hosted green остаётся непроверенным, поэтому первый checklist item оставляю открытым; проверю, допускает ли board handoff такого диагностического кандидата.
+
+exec
+/bin/zsh -lc "task-board m 'check_item(BUG-260908-33iyb1, item=2); check_item(BUG-260908-33iyb1, item=3); check_item(BUG-260908-33iyb1, item=4); check_item(BUG-260908-33iyb1, item=5); check_item(BUG-260908-33iyb1, item=6); check_item(BUG-260908-33iyb1, item=7); check_item(BUG-260908-33iyb1, item=8); check_item(BUG-260908-33iyb1, item=9); check_item(BUG-260908-33iyb1, item=10); check_item(BUG-260908-33iyb1, item=11)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 2086ms:
+[{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":2,"text":"Code written per task description and AC"}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":3,"text":"Relevant tests written for new or changed behavior and passing"}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":4,"text":"Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence."}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":5,"text":"Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named"}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":6,"text":"Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence."}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":7,"text":"A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker."}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":8,"text":"Lint clean"}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":9,"text":"Relevant build/validation commands run after changes and build not broken"}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":10,"text":"New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables"}},{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":11,"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant"}}]
+
+exec
+/bin/zsh -lc 'task-board handoff BUG-260908-33iyb1 --role developer > .temp/BUG-260908-33iyb1/handoff-01.log 2>&1' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 1 in 298ms:
+exec
+/bin/zsh -lc 'cat .temp/BUG-260908-33iyb1/handoff-01.log' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+cannot hand off BUG-260908-33iyb1: unchecked checklist items [1] (Diagnose exact hosted build failure, repair proven cause and diagnostic propagation with positive/negative tests, publish reviewed fix and require the previously failing hosted job to pass before completion): handoff evidence missing
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('.temp/BUG-260908-33iyb1/BUG-260908-33iyb1_results.md')
+with p.open('a') as f:
+ f.write('\\n## Handoff result\\n\\n"'`task-board handoff BUG-260908-33iyb1 --role developer` exited 1: unchecked checklist item 1 requires the original hosted job to pass. No immutable CR was created and task remains development. This is a task-board lifecycle refusal, not an automatic approval review rejection. The diagnostic patch and evidence are attached for parent review/publication routing; do not tick the hosted gate to bypass the refusal. All spawned shell processes finished before parking.'"\\n')
+PY
+task-board resource update BUG-260908-33iyb1 .temp/BUG-260908-33iyb1/BUG-260908-33iyb1_results.md --type outcome --description 'Diagnostic candidate and handoff refusal; hosted gate remains open'
+task-board resource add BUG-260908-33iyb1 .temp/BUG-260908-33iyb1/handoff-01.log --name BUG-260908-33iyb1_handoff-refusal.log --type outcome --description 'Exit 1: hosted completion checklist remains open'
+git diff --check" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 1297ms:
+Updated BUG-260908-33iyb1_results.md on BUG-260908-33iyb1 as outcome
+Attached BUG-260908-33iyb1_handoff-refusal.log on BUG-260908-33iyb1 as outcome
+
+codex
+Диагностический кандидат готов: Xcode logs попадают в artifact, ошибки сохраняют контекст и исходный exit code.
+
+- Локальный validator и композиция PR6: exit 0.
+- Negative tests ловят оба narrowing mutants.
+- Покрытие: **2 of 5 AC rows driven**; остальные bounds описаны в отчёте.
+- Patch и evidence приложены, изменения оставлены uncommitted.
+
+**Баг не закрыт:** compiler cause неизвестен, требуется hosted rerun после публикации родителем. Handoff отказал с exit 1 из-за открытого hosted-green checklist item; CR не создан.
+Диагностический кандидат готов: Xcode logs попадают в artifact, ошибки сохраняют контекст и исходный exit code.
+
+- Локальный validator и композиция PR6: exit 0.
+- Negative tests ловят оба narrowing mutants.
+- Покрытие: **2 of 5 AC rows driven**; остальные bounds описаны в отчёте.
+- Patch и evidence приложены, изменения оставлены uncommitted.
+
+**Баг не закрыт:** compiler cause неизвестен, требуется hosted rerun после публикации родителем. Handoff отказал с exit 1 из-за открытого hosted-green checklist item; CR не создан.
+tokens used
+83,037

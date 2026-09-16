@@ -1,0 +1,11 @@
+python3 scripts/relay_supply_chain.py audit
+relay supply-chain audit: pass
+python3 -m unittest scripts/tests/test_relay_supply_chain.py
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 24.354s
+
+OK
+python3 scripts/relay_release.py toolchain-check
+./scripts/tests/test-relay-toolchain-missing-input.sh
+relay toolchain missing-input gates passed

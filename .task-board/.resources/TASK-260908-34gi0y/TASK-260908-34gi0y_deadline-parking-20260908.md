@@ -1,0 +1,9 @@
+# Deadline parking handoff
+
+Workers parked before the hard 2026-09-08 05:00 Asia/Tbilisi cutoff. At approximately 04:52, the scoped run-state inventory contains zero running, queued, or paused runs. Deadline watchdog remains registered and will cancel any late project successors from 04:59. No new implementation or publication runs are authorized until explicit human resume.
+
+PR 6 remains OPEN at 018c9d9672767fd02f42fb4ab4f2dfe3800646b8. Signature verified good for oparin@me.com. Six hosted jobs succeeded; generated project credential-free validation failed on Swift 6.1 generic Sendable checking. No remote main landing occurred.
+
+BUG-260908-shki8p CR revision 2 is independently accepted and preserved in its managed worktree. Prospective reviewed PR tree is 45826b72e05e2accac7c7165691c8a1d1ecf701f. Publication run RUN-260908-a71e85 was routed to bound checkpoint and refused with change_request_final_leaf_checkpoint; it did not publish any commit. Earlier integration_base_moved evidence remains applicable. Preserve local root main 87451b53960ceabe88a01c44c287fee7f9ebf386 and remote main b3422b05226253a17676b9b84c764071fe3dbe74; never reset pending signed work.
+
+Resume: reconcile supported board delivery lifecycle through curator main tooling, publish only the reviewed source delta with current timestamp and Ivan signature, obtain real exact-head hosted review and all green CI, then land without rewriting signed objects. Hosted proof and landing remain incomplete. No VPN activation occurred. Installed skill resolves through curator; special commit-time restrictions are revoked.

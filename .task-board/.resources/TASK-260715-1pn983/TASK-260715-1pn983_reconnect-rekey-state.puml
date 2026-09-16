@@ -1,0 +1,52 @@
+@startuml
+!theme plain
+title TASK-260715-1pn983 — orthogonal reconnect and rekey reservations
+hide empty description
+
+state Reconnect {
+    Reconnect : Reconnect ownership state machine
+    state "Transport current" as Current #lightgreen
+    state "Replacement reserved" as ReplacementReserved #lightblue
+    state "Old released" as OldReleased #orange
+    state "Replacement connecting" as ReplacementConnecting #lightyellow
+    state "Replacement current" as ReplacementCurrent #lightgreen
+    state "Explicit stop" as ExplicitStop #lightgray
+    [*] --> Current
+    Current --> ReplacementReserved : overlap + global predicates pass
+    ReplacementReserved --> ReplacementConnecting : Normal/Soft/Pressure
+    ReplacementConnecting --> ReplacementCurrent : usable / ordered old release
+    ReplacementReserved --> OldReleased : Critical / cancel new and clean
+    ReplacementConnecting --> OldReleased : Critical / cancel new and clean
+    Current --> OldReleased : Critical / release old first
+    OldReleased --> ReplacementConnecting : critical bootstrap fits
+    ReplacementReserved --> ExplicitStop : refusal and no safe continuity
+    OldReleased --> ExplicitStop : cannot fit/finish by deadline
+    ReplacementCurrent --> Current : promote replacement generation
+    ExplicitStop --> [*] : generations invalidated; cleanup reconciled
+}
+
+state KEX {
+    KEX : Per-lane permanent KEX reservation state machine
+    state "KEX idle (reservation retained)" as KEXIdle #lightblue
+    state "KEX active (same reservation)" as KEXActive #lightyellow
+    state "Lane failed" as LaneFailed #pink
+    [*] --> KEXIdle : lane admission charges permanent reserve
+    KEXIdle --> KEXActive : trigger / pause new channels
+    KEXActive --> KEXIdle : success / old keys and scratch released
+    KEXActive --> LaneFailed : failure / fail lane channels once
+    KEXIdle --> LaneFailed : transport stop / lane cleanup
+    LaneFailed --> [*] : lane cleanup releases permanent reserve
+}
+
+LaneFailed --> ReplacementReserved : lane recovery requests admitted replacement
+ExplicitStop --> LaneFailed : stop invalidates lane and joins cleanup
+
+note bottom of KEX
+KEX reservation exists in idle and active states.
+Existing flows stay pinned; triggers coalesce into a bounded bitset.
+end note
+note bottom of Reconnect
+Constructor is unreachable until reservation succeeds atomically.
+Critical construction is unreachable until old cleanup is observed.
+end note
+@enduml

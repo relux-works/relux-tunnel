@@ -1,0 +1,739 @@
+diff --git a/.package.resolved b/.package.resolved
+new file mode 100644
+index 0000000..dd50007
+--- /dev/null
++++ b/.package.resolved
+@@ -0,0 +1,15 @@
++{
++  "originHash" : "20813d67caf82a949baad3e3f067d7fd2fa4e206691dab1da589bed75f566d3b",
++  "pins" : [
++    {
++      "identity" : "sparkle",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/sparkle-project/Sparkle",
++      "state" : {
++        "revision" : "b6496a74a087257ef5e6da1c5b29a447a60f5bd7",
++        "version" : "2.9.4"
++      }
++    }
++  ],
++  "version" : 3
++}
+diff --git a/App/ReluxProxyMac/Info.plist b/App/ReluxProxyMac/Info.plist
+index 8a79e17..2d067ea 100644
+--- a/App/ReluxProxyMac/Info.plist
++++ b/App/ReluxProxyMac/Info.plist
+@@ -22,7 +22,35 @@
+ 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+ 	<key>LSUIElement</key>
+ 	<true/>
++	<key>SUAllowsAutomaticUpdates</key>
++	<false/>
++	<key>SUAutomaticallyUpdate</key>
++	<false/>
++	<key>SUEnableDownloaderService</key>
++	<false/>
++	<key>SUEnableInstallerConnectionService</key>
++	<false/>
+ 	<key>SUEnableInstallerLauncherService</key>
+ 	<true/>
++	<key>SUEnableInstallerStatusService</key>
++	<false/>
++	<key>SUEnableJavaScript</key>
++	<false/>
++	<key>SUEnableSystemProfiling</key>
++	<false/>
++	<key>SUFeedURL</key>
++	<string>https://updates.relux.works/macos/appcast.xml</string>
++	<key>SUPublicEDKey</key>
++	<string>tx8SLAmqME/ldUthxRV5PFQiUt1MX65blT29cA8My1U=</string>
++	<key>SURequireSignedFeed</key>
++	<true/>
++	<key>SUScheduledCheckInterval</key>
++	<integer>86400</integer>
++	<key>SUShowReleaseNotes</key>
++	<true/>
++	<key>SUSignedFeedFailureExpirationInterval</key>
++	<integer>0</integer>
++	<key>SUVerifyUpdateBeforeExtraction</key>
++	<true/>
+ </dict>
+ </plist>
+diff --git a/App/ReluxProxyMac/Sources/ReluxProxyUpdaterLifecycle.swift b/App/ReluxProxyMac/Sources/ReluxProxyUpdaterLifecycle.swift
+new file mode 100644
+index 0000000..88beebb
+--- /dev/null
++++ b/App/ReluxProxyMac/Sources/ReluxProxyUpdaterLifecycle.swift
+@@ -0,0 +1,81 @@
++import AppKit
++import Foundation
++import Sparkle
++
++enum ReluxProxyUpdaterConfigurationError: Error, Equatable {
++  case missingFeedURL
++  case invalidFeedURL
++  case missingPublicEDKey
++  case invalidPublicEDKey
++}
++
++enum ReluxProxyUpdaterConfiguration {
++  static let feedURLKey = "SUFeedURL"
++  static let publicEDKeyKey = "SUPublicEDKey"
++
++  static func feedURL(in infoDictionary: [String: Any]) throws -> URL {
++    guard let rawValue = infoDictionary[feedURLKey] as? String, !rawValue.isEmpty else {
++      throw ReluxProxyUpdaterConfigurationError.missingFeedURL
++    }
++    guard
++      let components = URLComponents(string: rawValue),
++      components.scheme == "https",
++      components.host != nil,
++      components.user == nil,
++      components.password == nil,
++      components.query == nil,
++      components.fragment == nil,
++      let url = components.url
++    else {
++      throw ReluxProxyUpdaterConfigurationError.invalidFeedURL
++    }
++    return url
++  }
++
++  static func publicEDKey(in infoDictionary: [String: Any]) throws -> Data {
++    guard let rawValue = infoDictionary[publicEDKeyKey] as? String, !rawValue.isEmpty else {
++      throw ReluxProxyUpdaterConfigurationError.missingPublicEDKey
++    }
++    guard let publicKey = Data(base64Encoded: rawValue), publicKey.count == 32 else {
++      throw ReluxProxyUpdaterConfigurationError.invalidPublicEDKey
++    }
++    return publicKey
++  }
++}
++
++enum ReluxProxyUpdaterLaunchPolicy {
++  static func shouldStartUpdater(environment: [String: String]) -> Bool {
++    environment["XCTestConfigurationFilePath"] == nil
++  }
++}
++
++@MainActor
++final class ReluxProxyUpdaterLifecycle {
++  let feedURL: URL
++  private let controller: SPUStandardUpdaterController
++
++  init(infoDictionary: [String: Any], startingUpdater: Bool = true) throws {
++    feedURL = try ReluxProxyUpdaterConfiguration.feedURL(in: infoDictionary)
++    _ = try ReluxProxyUpdaterConfiguration.publicEDKey(in: infoDictionary)
++    controller = SPUStandardUpdaterController(
++      startingUpdater: startingUpdater,
++      updaterDelegate: nil,
++      userDriverDelegate: nil
++    )
++  }
++
++  var isControllerConstructed: Bool { true }
++}
++
++@MainActor
++final class ReluxProxyAppDelegate: NSObject, NSApplicationDelegate {
++  let updaterLifecycle: ReluxProxyUpdaterLifecycle
++
++  init(infoDictionary: [String: Any], startingUpdater: Bool = true) throws {
++    updaterLifecycle = try ReluxProxyUpdaterLifecycle(
++      infoDictionary: infoDictionary,
++      startingUpdater: startingUpdater
++    )
++    super.init()
++  }
++}
+diff --git a/App/ReluxProxyMac/Sources/main.swift b/App/ReluxProxyMac/Sources/main.swift
+index c705d03..1ed1114 100644
+--- a/App/ReluxProxyMac/Sources/main.swift
++++ b/App/ReluxProxyMac/Sources/main.swift
+@@ -6,4 +6,17 @@ _ = ReluxUITest.Identifier.FixtureHost.page
+ 
+ let application = NSApplication.shared
+ application.setActivationPolicy(.accessory)
++
++let appDelegate: ReluxProxyAppDelegate
++do {
++  appDelegate = try ReluxProxyAppDelegate(
++    infoDictionary: Bundle.main.infoDictionary ?? [:],
++    startingUpdater: ReluxProxyUpdaterLaunchPolicy.shouldStartUpdater(
++      environment: ProcessInfo.processInfo.environment
++    )
++  )
++} catch {
++  fatalError("The signed updater configuration is invalid: \(error)")
++}
++application.delegate = appDelegate
+ application.run()
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index a1a3469..85b8aca 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -5,6 +5,13 @@
+ 
+ ## 2026-08-30
+ 
++### 0243 — Sparkle host integration (TASK-260717-xempiv)
++
++- INTEGRATION: `ReluxProxyMac` now owns exact Sparkle 2.9.4 through the remote SPM product, a pinned resolved commit, signed-feed metadata, and one retained `SPUStandardUpdaterController`; no updater dependency entered the system extension, shared core, harness, or iOS targets.
++- SECURITY: The public EdDSA key was obtained from the existing Sparkle Keychain item's public comment through a Security API attributes-only query (`kSecReturnData=false`). No private bytes were requested, exported, logged, or persisted. The vendor `generate_keys -p` attempt was functionally refused by headless Keychain policy while returning process exit 0; that attempt is recorded as a failure, not public-key evidence.
++- VALIDATION BOUNDARY: Deterministic tests construct the real updater with `startingUpdater: false` and reject missing, HTTP, or request-parameterized feed URLs and missing/malformed public keys through the production resolver. Two narrowing mutants admitted HTTP and a one-byte key; the named tests failed with xcodebuild exit 65 before byte-for-byte source restoration. The first ad-hoc Release smoke exposed a stale Sparkle framework seal after Xcode stripped Headers/Modules; the corrected inside-out nested-code re-signing shape passes deep strict verification. This credential-free evidence does not install an update, enable VPN, exercise Developer ID/notarization, or claim system-extension replacement behavior.
++- PHYSICAL GATE: An actual update must first stop the tunnel and confirm system-authoritative inactivity; after host replacement/relaunch it must separately activate or replace the embedded system extension, surface approval/restart state, and avoid automatic reconnect. This remains downstream physical validation.
++
+ ### M0 packet bridge and HEV baseline accepted (TASK-260715-2jatnd)
+ 
+ - DECISION: The macOS-first M0 Bridge gate passes under ADR-024 with MTU 1500, requested/effective 32768-byte socket buffers, 64-packet/5-ms pump budgets, HEV task-stack/TCP/UDP-copy values 24576/4096/2, and an initial measured 500-session ceiling. MTU 4096 remains injectable behind end-to-end proof; MTU 8500 is a named failed default candidate because constrained-buffer rows produced 768 `EMSGSIZE` refusals.
+diff --git a/Makefile b/Makefile
+index ba15858..52d38d7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,4 @@
+-.PHONY: credential-free-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
++.PHONY: credential-free-validate sparkle-integration-validate check-legacy test-legacy-guard check-core-boundaries core-build core-test \
+ 	workspace-generate workspace-validate macos-targets-validate \
+ 	apple-ui-test-contract apple-ui-test-smoke \
+ 	check-native-dependencies test-native-dependencies native-apple-matrix validate-core validate-native \
+@@ -24,6 +24,9 @@ LEGACY_ROOT ?= ../relux-proxy
+ credential-free-validate:
+ 	./scripts/validate-credential-free.sh --legacy-root "$(LEGACY_ROOT)"
+ 
++sparkle-integration-validate:
++	./scripts/validate-sparkle-integration.sh
++
+ workspace-generate:
+ 	./scripts/generate-workspace.sh --clean
+ 
+diff --git a/Project.swift b/Project.swift
+index 2136609..30a5a1a 100644
+--- a/Project.swift
++++ b/Project.swift
+@@ -37,6 +37,7 @@ private func targetSettings(
+ ) -> Settings {
+   .settings(
+     base: [
++      "ENABLE_HARDENED_RUNTIME": "YES",
+       "SWIFT_STRICT_CONCURRENCY": "complete",
+       "SWIFT_VERSION": "6.0",
+     ].merging(additionalBaseSettings) { _, additional in additional },
+@@ -68,10 +69,12 @@ private let macOSTargets: [Target] = [
+       "App/ReluxProxyMac/Sources/**",
+       "App/Shared/**",
+     ],
++    resources: ["ThirdParty/Sparkle-2.9.4/LICENSE"],
+     dependencies: [
+       .target(name: "ReluxProxyMacTunnel"),
+       .package(product: "ReluxAppleUITestShared"),
+       .package(product: "ReluxTunnelCore"),
++      .package(product: "Sparkle"),
+     ],
+     settings: targetSettings(
+       debugXCConfig: "Configuration/MacHost-Debug.xcconfig",
+@@ -115,7 +118,10 @@ private let macOSTargets: [Target] = [
+       "Tests/ReluxProxyTargetContractSupport/**",
+       "App/Shared/**",
+     ],
+-    dependencies: [.package(product: "ReluxTunnelCore")],
++    dependencies: [
++      .target(name: "ReluxProxyMac"),
++      .package(product: "ReluxTunnelCore"),
++    ],
+     settings: testTargetSettings
+   ),
+   .target(
+@@ -250,7 +256,11 @@ let project = Project(
+   organizationName: "Relux Works, LLC",
+   options: .options(automaticSchemesOptions: .disabled),
+   packages: [
+-    .local(path: ".")
++    .local(path: "."),
++    .remote(
++      url: "https://github.com/sparkle-project/Sparkle",
++      requirement: .exact("2.9.4")
++    ),
+   ],
+   settings: .settings(
+     configurations: [
+diff --git a/README.md b/README.md
+index 188bfa1..7abade3 100644
+--- a/README.md
++++ b/README.md
+@@ -209,6 +209,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Tool | Purpose | Command | Output |
+ | --- | --- | --- | --- |
+ | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
++| Sparkle integration validator | Build the macOS host with exact Sparkle 2.9.4, prove the signed-feed plist and host-only linkage, construct the updater in a no-start test, inspect Installer XPC/provider boundaries, and ad-hoc sign/verify the credential-free Release shape without installing an update or enabling VPN | `make sparkle-integration-validate`; see [`macOS self-update integration`](docs/macos-self-update-integration.md) | `.temp/TASK-260717-xempiv/sparkle-smoke/` by default; pass a new output path directly to `scripts/validate-sparkle-integration.sh` for repeated evidence runs |
+ | Tuist 4.202.5 via Mise | Generate the credential-free Apple workspace; validate deterministic foundation state; build/test the macOS host and embedded packet-tunnel system extension in unsigned Debug and Release | `make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy`; or `make workspace-generate`, `make workspace-validate`, and `make macos-targets-validate`; see [`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md) | Ignored `ReluxTunnel.xcworkspace` and `ReluxTunnelApp.xcodeproj`; full logs under `.temp/TASK-260715-sbrrp7/credential-free-validation/`; foundation evidence under `.temp/TASK-260715-2btjwm/`; target evidence under `.temp/TASK-260715-uyju7n/` |
+ | Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
+ | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
+diff --git a/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift b/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift
+index c66e81e..395b6c4 100644
+--- a/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift
++++ b/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift
+@@ -1,10 +1,11 @@
+ import Foundation
+ import ReluxTunnelCore
+ import Testing
++@testable import ReluxProxyMac
+ 
+ @Suite("ReluxProxyMac target contract")
+ struct ReluxProxyMacTargetTests {
+-  @Test("host plist owns identity version floor and Sparkle launcher seam")
++  @Test("host plist owns identity version floor and fail-closed Sparkle settings")
+   func infoPlist() throws {
+     let plist = try TargetContractSupport.plist(at: "App/ReluxProxyMac/Info.plist")
+ 
+@@ -13,7 +14,85 @@ struct ReluxProxyMacTargetTests {
+     #expect(plist["CFBundleShortVersionString"] as? String == "$(MARKETING_VERSION)")
+     #expect(plist["CFBundleVersion"] as? String == "$(CURRENT_PROJECT_VERSION)")
+     #expect(plist["LSMinimumSystemVersion"] as? String == "$(MACOSX_DEPLOYMENT_TARGET)")
++    #expect(plist["SUFeedURL"] as? String == "https://updates.relux.works/macos/appcast.xml")
++    #expect(plist["SUPublicEDKey"] as? String == "tx8SLAmqME/ldUthxRV5PFQiUt1MX65blT29cA8My1U=")
++    #expect(plist["SUVerifyUpdateBeforeExtraction"] as? Bool == true)
++    #expect(plist["SURequireSignedFeed"] as? Bool == true)
++    #expect(plist["SUSignedFeedFailureExpirationInterval"] as? Int == 0)
++    #expect(plist["SUScheduledCheckInterval"] as? Int == 86_400)
++    #expect(plist["SUAllowsAutomaticUpdates"] as? Bool == false)
++    #expect(plist["SUAutomaticallyUpdate"] as? Bool == false)
++    #expect(plist["SUEnableSystemProfiling"] as? Bool == false)
++    #expect(plist["SUEnableJavaScript"] as? Bool == false)
++    #expect(plist["SUShowReleaseNotes"] as? Bool == true)
+     #expect(plist["SUEnableInstallerLauncherService"] as? Bool == true)
++    #expect(plist["SUEnableDownloaderService"] as? Bool == false)
++    #expect(plist["SUEnableInstallerConnectionService"] as? Bool == false)
++    #expect(plist["SUEnableInstallerStatusService"] as? Bool == false)
++  }
++
++  @Test @MainActor
++  func updaterLifecycleConstructsWithoutStartingOrInstalling() throws {
++    let plist = try TargetContractSupport.plist(at: "App/ReluxProxyMac/Info.plist")
++    let lifecycle = try ReluxProxyUpdaterLifecycle(
++      infoDictionary: plist,
++      startingUpdater: false
++    )
++
++    #expect(lifecycle.isControllerConstructed)
++    #expect(lifecycle.feedURL.absoluteString == "https://updates.relux.works/macos/appcast.xml")
++  }
++
++  @Test("production launch policy starts updater outside test hosting")
++  func updaterStartsForNormalLaunch() {
++    #expect(ReluxProxyUpdaterLaunchPolicy.shouldStartUpdater(environment: [:]))
++  }
++
++  @Test("production launch policy suppresses updater network start in deterministic smoke")
++  func updaterDoesNotStartInTestHost() {
++    #expect(
++      !ReluxProxyUpdaterLaunchPolicy.shouldStartUpdater(
++        environment: ["XCTestConfigurationFilePath": "/redacted/test.xctestconfiguration"]
++      ))
++  }
++
++  @Test("production feed resolver rejects absent metadata")
++  func missingFeedURLFailsClosed() {
++    #expect(throws: ReluxProxyUpdaterConfigurationError.missingFeedURL) {
++      try ReluxProxyUpdaterConfiguration.feedURL(in: [:])
++    }
++  }
++
++  @Test("production feed resolver rejects non-HTTPS metadata")
++  func insecureFeedURLFailsClosed() {
++    #expect(throws: ReluxProxyUpdaterConfigurationError.invalidFeedURL) {
++      try ReluxProxyUpdaterConfiguration.feedURL(
++        in: ["SUFeedURL": "http://updates.relux.works/macos/appcast.xml"]
++      )
++    }
++  }
++
++  @Test("production feed resolver rejects request-specific metadata")
++  func parameterizedFeedURLFailsClosed() {
++    #expect(throws: ReluxProxyUpdaterConfigurationError.invalidFeedURL) {
++      try ReluxProxyUpdaterConfiguration.feedURL(
++        in: ["SUFeedURL": "https://updates.relux.works/macos/appcast.xml?device=local"]
++      )
++    }
++  }
++
++  @Test("production updater configuration rejects absent signing metadata")
++  func missingPublicEDKeyFailsClosed() {
++    #expect(throws: ReluxProxyUpdaterConfigurationError.missingPublicEDKey) {
++      try ReluxProxyUpdaterConfiguration.publicEDKey(in: [:])
++    }
++  }
++
++  @Test("production updater configuration rejects malformed signing metadata")
++  func malformedPublicEDKeyFailsClosed() {
++    #expect(throws: ReluxProxyUpdaterConfigurationError.invalidPublicEDKey) {
++      try ReluxProxyUpdaterConfiguration.publicEDKey(in: ["SUPublicEDKey": "YQ=="])
++    }
+   }
+ 
+   @Test("development and Developer ID host entitlements match r12")
+@@ -73,13 +152,25 @@ struct ReluxProxyMacTargetTests {
+     #expect(
+       hostDefinition.components(separatedBy: "name: \"ReluxProxyMacTunnel\"").count - 1 == 1)
+     #expect(!hostDefinition.contains("ReluxProxyIOS"))
++    #expect(hostDefinition.contains(".package(product: \"Sparkle\")"))
+ 
+     let providerDefinition = String(project[providerDefinitionStart.lowerBound...])
+     #expect(providerDefinition.contains("product: .systemExtension"))
++    #expect(!providerDefinition.contains(".package(product: \"Sparkle\")"))
+     #expect(
+       providerDefinition.contains("\"PRODUCT_NAME\": \"$(RELUX_MACOS_PROVIDER_BUNDLE_ID)\""))
+   }
+ 
++  @Test("Sparkle dependency is exact and host-only")
++  func exactSparkleDependencyBoundary() throws {
++    let project = try TargetContractSupport.text(at: "Project.swift")
++
++    #expect(project.contains("url: \"https://github.com/sparkle-project/Sparkle\""))
++    #expect(project.contains("requirement: .exact(\"2.9.4\")"))
++    #expect(project.components(separatedBy: ".package(product: \"Sparkle\")").count - 1 == 1)
++    #expect(project.contains("resources: [\"ThirdParty/Sparkle-2.9.4/LICENSE\"]"))
++  }
++
+   @Test("target identities and development profiles match r12")
+   func identityMatrix() throws {
+     let identity = try TargetContractSupport.xcconfig(at: "Configuration/Identity.xcconfig")
+diff --git a/ThirdParty/Sparkle-2.9.4/LICENSE b/ThirdParty/Sparkle-2.9.4/LICENSE
+new file mode 100644
+index 0000000..abe6e04
+--- /dev/null
++++ b/ThirdParty/Sparkle-2.9.4/LICENSE
+@@ -0,0 +1,134 @@
++Copyright (c) 2006-2013 Andy Matuschak.
++Copyright (c) 2009-2013 Elgato Systems GmbH.
++Copyright (c) 2011-2014 Kornel Lesiński.
++Copyright (c) 2015-2017 Mayur Pawashe.
++Copyright (c) 2014 C.W. Betts.
++Copyright (c) 2014 Petroules Corporation.
++Copyright (c) 2014 Big Nerd Ranch.
++All rights reserved.
++
++Permission is hereby granted, free of charge, to any person obtaining a copy of
++this software and associated documentation files (the "Software"), to deal in
++the Software without restriction, including without limitation the rights to
++use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
++the Software, and to permit persons to whom the Software is furnished to do so,
++subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
++FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
++COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
++IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++=================
++EXTERNAL LICENSES
++=================
++
++bspatch.c and bsdiff.c, from bsdiff 4.3 <http://www.daemonology.net/bsdiff/>:
++
++Copyright 2003-2005 Colin Percival
++All rights reserved
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted providing that the following conditions 
++are met:
++1. Redistributions of source code must retain the above copyright
++   notice, this list of conditions and the following disclaimer.
++2. Redistributions in binary form must reproduce the above copyright
++   notice, this list of conditions and the following disclaimer in the
++   documentation and/or other materials provided with the distribution.
++
++THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
++IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++POSSIBILITY OF SUCH DAMAGE.
++
++--
++
++sais.c and sais.h, from sais-lite (2010/08/07) <https://sites.google.com/site/yuta256/sais>:
++
++The sais-lite copyright is as follows:
++
++Copyright (c) 2008-2010 Yuta Mori All Rights Reserved.
++
++Permission is hereby granted, free of charge, to any person
++obtaining a copy of this software and associated documentation
++files (the "Software"), to deal in the Software without
++restriction, including without limitation the rights to use,
++copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the
++Software is furnished to do so, subject to the following
++conditions:
++
++The above copyright notice and this permission notice shall be
++included in all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++OTHER DEALINGS IN THE SOFTWARE.
++
++--
++
++Portable C implementation of Ed25519, from https://github.com/orlp/ed25519
++
++Copyright (c) 2015 Orson Peters <orsonpeters@gmail.com>
++
++This software is provided 'as-is', without any express or implied warranty. In no event will the
++authors be held liable for any damages arising from the use of this software.
++
++Permission is granted to anyone to use this software for any purpose, including commercial
++applications, and to alter it and redistribute it freely, subject to the following restrictions:
++
++1. The origin of this software must not be misrepresented; you must not claim that you wrote the
++   original software. If you use this software in a product, an acknowledgment in the product
++   documentation would be appreciated but is not required.
++
++2. Altered source versions must be plainly marked as such, and must not be misrepresented as
++   being the original software.
++
++3. This notice may not be removed or altered from any source distribution.
++
++--
++
++SUSignatureVerifier.m:
++
++Copyright (c) 2011 Mark Hamlin.
++
++All rights reserved.
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted providing that the following conditions
++are met:
++1. Redistributions of source code must retain the above copyright
++   notice, this list of conditions and the following disclaimer.
++2. Redistributions in binary form must reproduce the above copyright
++   notice, this list of conditions and the following disclaimer in the
++   documentation and/or other materials provided with the distribution.
++
++THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
++IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++POSSIBILITY OF SUCH DAMAGE.
+diff --git a/docs/macos-self-update-integration.md b/docs/macos-self-update-integration.md
+new file mode 100644
+index 0000000..acb10b7
+--- /dev/null
++++ b/docs/macos-self-update-integration.md
+@@ -0,0 +1,42 @@
++# macOS self-update integration
++
++`ReluxProxyMac` embeds exact Sparkle 2.9.4 through the official remote Swift
++Package Manager product. `.package.resolved` pins tag `2.9.4` to commit
++`b6496a74a087257ef5e6da1c5b29a447a60f5bd7`. Sparkle is not a dependency of
++the packet-tunnel system extension, shared core, harness, or any iOS target.
++
++The host retains one `SPUStandardUpdaterController` for the application
++lifetime. Its production initializer validates that `SUFeedURL` is an HTTPS URL
++without credentials, query parameters, or a fragment before constructing the
++controller. Tests construct the real controller with `startingUpdater: false`;
++the smoke does not start a network check or install an update.
++
++The plist requires signed feed and pre-extraction payload verification, never
++expires signed-feed failures, disables automatic installation and profiling,
++and enables only Sparkle's Installer launcher service. The sandboxed host keeps
++the approved `-spks` and `-spki` Mach lookup exceptions and network-client
++entitlement. Downloader, Installer Connection, and Installer Status services
++remain disabled. Sparkle does not alter the packet-tunnel provider entitlements.
++Hardened Runtime remains enabled for the host and provider targets.
++
++Run the deterministic credential-free build and lifecycle smoke with:
++
++```bash
++make sparkle-integration-validate
++```
++
++The gate performs an unsigned Release build, checks the resolved dependency,
++embedded framework/helper layout, plist, license, linkage, target boundary,
++entitlements, and Release build settings, then ad-hoc signs the built host and
++provider with Hardened Runtime for structural `codesign --verify --deep
++--strict` evidence. Ad-hoc signing proves the credential-free nested-code shape;
++it is not Developer ID, notarization, stapling, or physical installation
++evidence.
++
++Before a physical update installation, the host must request an orderly tunnel
++stop and wait for the system-authoritative inactive state. After Sparkle replaces
++and relaunches the host, the app must separately request activation or
++replacement of the embedded Network Extension system extension, surface pending
++approval/failure/restart-required state, and avoid automatic VPN reconnect.
++Those behaviors were not exercised by this integration smoke and remain owned
++by the downstream physical-validation tasks.
+diff --git a/scripts/validate-sparkle-integration.sh b/scripts/validate-sparkle-integration.sh
+new file mode 100755
+index 0000000..0809346
+--- /dev/null
++++ b/scripts/validate-sparkle-integration.sh
+@@ -0,0 +1,146 @@
++#!/bin/sh
++set -eu
++
++repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
++output=${1:-"$repo_root/.temp/TASK-260717-xempiv/sparkle-smoke"}
++
++case "$output" in
++  /*) ;;
++  *) output="$repo_root/$output" ;;
++esac
++
++if [ -e "$output" ]; then
++  printf 'error: output already exists: %s\n' "$output" >&2
++  exit 2
++fi
++
++mkdir -p "$output/Products" "$output/Intermediates" "$output/DerivedData"
++cd "$repo_root"
++
++./scripts/generate-workspace.sh --clean > "$output/workspace-generate.log" 2>&1
++
++xcodebuild \
++  -workspace ReluxTunnel.xcworkspace \
++  -scheme ReluxProxyMac \
++  -configuration Release \
++  -destination 'generic/platform=macOS' \
++  -derivedDataPath "$output/DerivedData" \
++  CODE_SIGNING_ALLOWED=NO \
++  CODE_SIGNING_REQUIRED=NO \
++  SYMROOT="$output/Products" \
++  OBJROOT="$output/Intermediates" \
++  build > "$output/release-build.log" 2>&1
++
++app="$output/Products/Release/ReluxProxyMac.app"
++host_binary="$app/Contents/MacOS/ReluxProxyMac"
++provider="$app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension"
++provider_binary="$provider/Contents/MacOS/works.relux.tunnel.mac.tunnel"
++sparkle="$app/Contents/Frameworks/Sparkle.framework"
++installer="$sparkle/Versions/B/XPCServices/Installer.xpc"
++downloader="$sparkle/Versions/B/XPCServices/Downloader.xpc"
++info="$app/Contents/Info.plist"
++
++test -x "$host_binary"
++test -x "$provider_binary"
++test -d "$sparkle"
++test -d "$installer"
++test -d "$downloader"
++test -f "$app/Contents/Resources/LICENSE"
++
++test "$(plutil -extract SUFeedURL raw "$info")" = \
++  'https://updates.relux.works/macos/appcast.xml'
++public_key=$(plutil -extract SUPublicEDKey raw "$info")
++test "$public_key" = 'tx8SLAmqME/ldUthxRV5PFQiUt1MX65blT29cA8My1U='
++test "$(printf '%s' "$public_key" | base64 --decode | wc -c | tr -d ' ')" -eq 32
++test "$(plutil -extract SURequireSignedFeed raw "$info")" = true
++test "$(plutil -extract SUVerifyUpdateBeforeExtraction raw "$info")" = true
++test "$(plutil -extract SUSignedFeedFailureExpirationInterval raw "$info")" = 0
++test "$(plutil -extract SUEnableInstallerLauncherService raw "$info")" = true
++for key in \
++  SUEnableDownloaderService \
++  SUEnableInstallerConnectionService \
++  SUEnableInstallerStatusService \
++  SUAllowsAutomaticUpdates \
++  SUAutomaticallyUpdate \
++  SUEnableSystemProfiling \
++  SUEnableJavaScript; do
++  test "$(plutil -extract "$key" raw "$info")" = false
++done
++
++test "$(shasum -a 256 "$app/Contents/Resources/LICENSE" | awk '{print $1}')" = \
++  '389a4e4e9a32f059775b13a06e25a591445ba229d2838d26dd3e7c0c45127cfe'
++test "$(plutil -extract pins.0.state.version raw .package.resolved)" = '2.9.4'
++test "$(plutil -extract pins.0.state.revision raw .package.resolved)" = \
++  'b6496a74a087257ef5e6da1c5b29a447a60f5bd7'
++
++otool -L "$host_binary" > "$output/host-linkage.log"
++grep -F '@rpath/Sparkle.framework/Versions/B/Sparkle' "$output/host-linkage.log" >/dev/null
++otool -L "$provider_binary" > "$output/provider-linkage.log"
++if grep -F 'Sparkle.framework' "$output/provider-linkage.log" >/dev/null; then
++  printf 'error: Sparkle leaked into the Installer XPC-isolated provider boundary\n' >&2
++  exit 1
++fi
++if find "$provider" -iname '*sparkle*' -o -iname '*installer.xpc' -o -iname '*downloader.xpc' | grep -q .; then
++  printf 'error: updater code leaked into the packet-tunnel system extension\n' >&2
++  exit 1
++fi
++
++xcodebuild \
++  -workspace ReluxTunnel.xcworkspace \
++  -scheme ReluxProxyMac \
++  -configuration Release \
++  -destination 'generic/platform=macOS' \
++  -showBuildSettings > "$output/release-build-settings.log" 2>&1
++grep -F 'ENABLE_HARDENED_RUNTIME = YES' "$output/release-build-settings.log" >/dev/null
++grep -F \
++  'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
++  "$output/release-build-settings.log" >/dev/null
++
++expanded_host_entitlements="$output/ReluxProxyMac-expanded.entitlements"
++cp Configuration/Entitlements/ReluxProxyMac-Development.entitlements \
++  "$expanded_host_entitlements"
++/usr/libexec/PlistBuddy -c \
++  'Set :com.apple.security.temporary-exception.mach-lookup.global-name:0 works.relux.tunnel.mac-spks' \
++  "$expanded_host_entitlements"
++/usr/libexec/PlistBuddy -c \
++  'Set :com.apple.security.temporary-exception.mach-lookup.global-name:1 works.relux.tunnel.mac-spki' \
++  "$expanded_host_entitlements"
++
++updater="$sparkle/Versions/B/Updater.app"
++autoupdate="$sparkle/Versions/B/Autoupdate"
++for component in installer downloader updater; do
++  case "$component" in
++    installer) component_path=$installer ;;
++    downloader) component_path=$downloader ;;
++    updater) component_path=$updater ;;
++  esac
++  component_entitlements="$output/Sparkle-$component.entitlements"
++  codesign -d --entitlements :- "$component_path" > "$component_entitlements" 2>/dev/null
++  plutil -lint "$component_entitlements" >/dev/null
++  codesign --force --sign - --options runtime --timestamp=none \
++    --entitlements "$component_entitlements" "$component_path" \
++    > "$output/Sparkle-$component-adhoc-sign.log" 2>&1
++done
++codesign --force --sign - --options runtime --timestamp=none "$autoupdate" \
++  > "$output/Sparkle-autoupdate-adhoc-sign.log" 2>&1
++codesign --force --sign - --options runtime --timestamp=none "$sparkle" \
++  > "$output/Sparkle-framework-adhoc-sign.log" 2>&1
++
++codesign --force --sign - --options runtime --timestamp=none \
++  --entitlements Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements \
++  "$provider" > "$output/provider-adhoc-sign.log" 2>&1
++codesign --force --sign - --options runtime --timestamp=none \
++  --entitlements "$expanded_host_entitlements" \
++  "$app" > "$output/host-adhoc-sign.log" 2>&1
++codesign --verify --deep --strict --verbose=4 "$app" \
++  > "$output/codesign-verify.log" 2>&1
++codesign -dv --verbose=4 "$app" > "$output/host-signature.log" 2>&1
++codesign -dv --verbose=4 "$provider" > "$output/provider-signature.log" 2>&1
++grep -E 'flags=.*runtime' "$output/host-signature.log" >/dev/null
++grep -E 'flags=.*runtime' "$output/provider-signature.log" >/dev/null
++
++codesign -d --entitlements :- "$app" > "$output/host-entitlements.plist" 2>/dev/null
++codesign -d --entitlements :- "$provider" > "$output/provider-entitlements.plist" 2>/dev/null
++plutil -lint "$output/host-entitlements.plist" "$output/provider-entitlements.plist" >/dev/null
++
++printf 'Sparkle integration validation passed: %s\n' "$output"

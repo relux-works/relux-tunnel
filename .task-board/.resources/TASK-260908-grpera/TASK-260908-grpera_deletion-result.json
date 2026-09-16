@@ -1,0 +1,28 @@
+{
+  "deleted_paths": [
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.0T3bU8/DerivedData-ios-simulator/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.0T3bU8/DerivedData-macos/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.2hBa59/DerivedData/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.2s7Z6X/DerivedData-ios-simulator/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.2s7Z6X/DerivedData-macos/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.56NU0K/DerivedData-ios-simulator/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.56NU0K/DerivedData-macos/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.B1xSoo/DerivedData-ios-simulator/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.B1xSoo/DerivedData-macos/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.CrGg8e/DerivedData/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.JJAXOL/DerivedData/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.LlcGMj/DerivedData-ios-simulator/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.LlcGMj/DerivedData-macos/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.P4Md6k/DerivedData/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.Xcqjbb/DerivedData-ios-simulator/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.Xcqjbb/DerivedData-macos/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.mR0QvC/DerivedData-ios-simulator/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/apple-ui-test/run.mR0QvC/DerivedData-macos/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/ios-simulator-smoke.7dwiCQ/DerivedData/ModuleCache.noindex",
+    ".temp/TASK-260715-1idq8c/ios-simulator-smoke.bWUxDe/DerivedData/ModuleCache.noindex"
+  ],
+  "removed_allocated_kib": 2015328,
+  "preserved_other_task_files": 46529,
+  "preserved_metadata_equal": true,
+  "completed": "2026-09-08T01:30:59.264328"
+}

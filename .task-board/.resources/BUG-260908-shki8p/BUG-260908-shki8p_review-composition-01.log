@@ -1,0 +1,19 @@
+Base b3422b05226253a17676b9b84c764071fe3dbe74
+Candidate aa1d81492840c92a285bafcf4306f5c291c017ca
+PR6 input 018c9d9672767fd02f42fb4ab4f2dfe3800646b8
+Prospective tree 45826b72e05e2accac7c7165691c8a1d1ecf701f
+Changed paths versus PR6: Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift, Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift
+Both source/test blobs identical between base and PR6 before application. Cached apply --check and apply exit 0. Composed blobs equal candidate. Every other PR6 tree entry unchanged, including fixture and diagnostic runner. No commit created.
+Fixture candidate-to-PR6 delta:
+diff --git a/scripts/tests/test-credential-free-validation.sh b/scripts/tests/test-credential-free-validation.sh
+index 9c5543d..156fc56 100755
+--- a/scripts/tests/test-credential-free-validation.sh
++++ b/scripts/tests/test-credential-free-validation.sh
+@@ -72,4 +72,7 @@ test "$mise_line" -lt "$gate_line"
+ 
+ "$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
+ 
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
++
+ echo "credential-free validation contract tests passed"

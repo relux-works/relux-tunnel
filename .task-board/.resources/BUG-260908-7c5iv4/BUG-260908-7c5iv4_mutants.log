@@ -1,0 +1,118 @@
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt EXIT: 0
+test_unknown_hidden_directory_is_not_exempt (scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.080s
+
+OK
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt EXIT: 1
+test_unknown_hidden_directory_is_not_exempt (scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt) ... FAIL
+
+======================================================================
+FAIL: test_unknown_hidden_directory_is_not_exempt (scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/pr6-boundary-mutants-w5qezwu1/scripts/tests/test_check_board_structure.py", line 55, in test_unknown_hidden_directory_is_not_exempt
+    self.assertEqual(result.returncode, 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 1 test in 0.079s
+
+FAILED (failures=1)
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail EXIT: 0
+test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.042s
+
+OK
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail EXIT: 1
+test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) ... 
+  test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) (mutation='Data(contentsOf: referenceURL) /* URL(filePath: referenceURL.path) */') ... FAIL
+
+======================================================================
+FAIL: test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) (mutation='Data(contentsOf: referenceURL) /* URL(filePath: referenceURL.path) */')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/pr6-boundary-mutants-w5qezwu1/scripts/tests/test_relay_supply_chain.py", line 769, in test_snapshot_support_network_mutants_preserve_file_tokens_and_fail
+    with self.assertRaisesRegex(
+         ~~~~~~~~~~~~~~~~~~~~~~^
+        supply_chain.SupplyChainError, "Foundation Data URL loader"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+AssertionError: SupplyChainError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.016s
+
+FAILED (failures=1)
+
+COMMAND: swift test --package-path /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/pr6-boundary-mutants-w5qezwu1/snapshot EXIT: 0
+Building for debugging...
+[0/7] /private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/pr6-boundary-mutants-w5qezwu1/snapshot/.build/arm64-apple-macosx/debug/SnapshotBoundaryProofPackageTests.derived/runner.swift
+[1/7] Write sources
+[4/7] Write swift-version-45881B103DA9D485.txt
+[6/9] Emitting module ReluxSnapshotDiffSupport
+[7/9] Compiling ReluxSnapshotDiffSupport SnapshotDiff.swift
+[8/11] Emitting module ReluxSnapshotDiffSupportTests
+[9/11] Compiling ReluxSnapshotDiffSupportTests SnapshotDiffSupportTests.swift
+[10/13] Emitting module SnapshotBoundaryProofPackageTests
+[11/13] Compiling SnapshotBoundaryProofPackageTests runner.swift
+[11/13] Write Objects.LinkFileList
+[12/13] Linking SnapshotBoundaryProofPackageTests
+Build complete! (21.04s)
+Test Suite 'All tests' started at 2026-09-08 03:02:30.135.
+Test Suite 'All tests' passed at 2026-09-08 03:02:30.145.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.010) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Snapshot failure artifacts" started.
+􀟈  Test "non-file URLs are refused before reading either image or writing output" started.
+􀟈  Test "mismatch writes reference failed and visual diff images" started.
+􀟈  Test "identical local images match" started.
+􁁛  Test "non-file URLs are refused before reading either image or writing output" passed after 0.001 seconds.
+􁁛  Test "identical local images match" passed after 0.113 seconds.
+􁁛  Test "mismatch writes reference failed and visual diff images" passed after 0.128 seconds.
+􁁛  Suite "Snapshot failure artifacts" passed after 0.129 seconds.
+􁁛  Test run with 3 tests in 1 suite passed after 0.129 seconds.
+
+COMMAND: swift test --package-path /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/pr6-boundary-mutants-w5qezwu1/snapshot EXIT: 1
+[0/1] Planning build
+Building for debugging...
+[0/3] Write sources
+[1/3] Write swift-version-45881B103DA9D485.txt
+[3/5] Compiling ReluxSnapshotDiffSupport SnapshotDiff.swift
+[4/5] Emitting module ReluxSnapshotDiffSupport
+[4/6] Write Objects.LinkFileList
+[5/6] Linking SnapshotBoundaryProofPackageTests
+Build complete! (0.97s)
+Test Suite 'All tests' started at 2026-09-08 03:02:31.901.
+Test Suite 'All tests' passed at 2026-09-08 03:02:31.910.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.009) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Snapshot failure artifacts" started.
+􀟈  Test "identical local images match" started.
+􀟈  Test "non-file URLs are refused before reading either image or writing output" started.
+􀟈  Test "mismatch writes reference failed and visual diff images" started.
+􀢄  Test "non-file URLs are refused before reading either image or writing output" recorded an issue at SnapshotDiffSupportTests.swift:42:23: Issue recorded
+􀄵  expected nonFileURL before I/O, received .unreadableImage(http://example.invalid/image.png)
+􀢄  Test "non-file URLs are refused before reading either image or writing output" recorded an issue at SnapshotDiffSupportTests.swift:42:23: Issue recorded
+􀄵  expected nonFileURL before I/O, received .unreadableImage(file:///nonexistent-snapshot.png)
+􀢄  Test "non-file URLs are refused before reading either image or writing output" recorded an issue at SnapshotDiffSupportTests.swift:42:23: Issue recorded
+􀄵  expected nonFileURL before I/O, received .unreadableImage(file:///nonexistent-snapshot.png)
+􀢄  Test "non-file URLs are refused before reading either image or writing output" failed after 0.001 seconds with 3 issues.
+􁁛  Test "identical local images match" passed after 0.111 seconds.
+􁁛  Test "mismatch writes reference failed and visual diff images" passed after 0.115 seconds.
+􀢄  Suite "Snapshot failure artifacts" failed after 0.116 seconds with 3 issues.
+􀢄  Test run with 3 tests in 1 suite failed after 0.116 seconds with 3 issues.
+
+All three narrowing mutants killed by named behavioral regressions.

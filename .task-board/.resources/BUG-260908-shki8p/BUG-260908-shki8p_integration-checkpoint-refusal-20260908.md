@@ -1,0 +1,11 @@
+# Bound integration attempt
+
+The assigned integration run invoked task-board worktree checkpoint BUG-260908-shki8p. Exit code: 1. Exact refusal: change_request_final_leaf_checkpoint: checkpointing BUG-260908-shki8p would also close STORY-260908-23tefs, because BUG-260908-shki8p is the last open child; a checkpoint is scoped to a non-final leaf and its Story branch has not reached trunk.
+
+No manual commit, integration retry, publication, landing, source edit, status-done mutation, or generic handoff was performed. The task-scoped publication instructions explicitly prohibit retrying the previously proven integration_base_moved route or changing protected refs. The later integration assignment required the bound command and fresh evidence, which are recorded here. Parent must reconcile the final-leaf Story lifecycle with the already authorized isolated reviewed-tree publication route; this run does not bypass the refusal.
+
+Observed live states: BUG-260908-shki8p integrating; TASK-260908-34gi0y backlog. Final hosted Swift 6.1 proof and landing remain pending under TASK-260908-34gi0y. Current Story worktree has the three expected pre-existing modified paths: Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift, Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift, scripts/tests/test-credential-free-validation.sh.
+
+Validation: no source changes and no tests rerun in this integration-only attempt. Earlier 22-test reviewer and 494-test managed-gate evidence is referenced by the assignment, not newly executed or independently verified here. Coverage: 0 of 1 integration action rows successfully driven; the production entry point task-board worktree checkpoint was driven and refused. Source AC coverage is not reassessed. No new gate was shipped; narrowing mutants are outside this unchanged integration attempt.
+
+Logs: .temp/BUG-260908-shki8p-integration/readiness-01.log and checkpoint-01.log in the assigned Story worktree. Initial task-board status call succeeded (integrating to integrating). Read-only exploratory resources query failed as unknown operation, and resources field/schema view probes failed; those failures were not treated as absence. No board files were edited directly.

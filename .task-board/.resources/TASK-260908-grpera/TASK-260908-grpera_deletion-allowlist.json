@@ -1,0 +1,302 @@
+[
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.0T3bU8/DerivedData-ios-simulator/ModuleCache.noindex",
+    "kb": 76320,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787425491.743883,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.0T3bU8/DerivedData-ios-simulator/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.0T3bU8/DerivedData-macos/ModuleCache.noindex",
+    "kb": 113836,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787425476.2289464,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.0T3bU8/DerivedData-macos/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.2hBa59/DerivedData/ModuleCache.noindex",
+    "kb": 113832,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787423239.33374,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.2hBa59/DerivedData/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.2s7Z6X/DerivedData-ios-simulator/ModuleCache.noindex",
+    "kb": 76320,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787424732.427825,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.2s7Z6X/DerivedData-ios-simulator/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.2s7Z6X/DerivedData-macos/ModuleCache.noindex",
+    "kb": 113836,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787424713.8066933,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.2s7Z6X/DerivedData-macos/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.56NU0K/DerivedData-ios-simulator/ModuleCache.noindex",
+    "kb": 76320,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787426112.418636,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.56NU0K/DerivedData-ios-simulator/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.56NU0K/DerivedData-macos/ModuleCache.noindex",
+    "kb": 113836,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787426094.7814057,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.56NU0K/DerivedData-macos/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.B1xSoo/DerivedData-ios-simulator/ModuleCache.noindex",
+    "kb": 76320,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787426746.7306538,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.B1xSoo/DerivedData-ios-simulator/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.B1xSoo/DerivedData-macos/ModuleCache.noindex",
+    "kb": 113836,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787426729.3693151,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.B1xSoo/DerivedData-macos/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.CrGg8e/DerivedData/ModuleCache.noindex",
+    "kb": 113832,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787423152.6217344,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.CrGg8e/DerivedData/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.JJAXOL/DerivedData/ModuleCache.noindex",
+    "kb": 113832,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787423191.4101958,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.JJAXOL/DerivedData/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.LlcGMj/DerivedData-ios-simulator/ModuleCache.noindex",
+    "kb": 76320,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787424620.345221,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.LlcGMj/DerivedData-ios-simulator/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.LlcGMj/DerivedData-macos/ModuleCache.noindex",
+    "kb": 113836,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787424598.2210345,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.LlcGMj/DerivedData-macos/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.P4Md6k/DerivedData/ModuleCache.noindex",
+    "kb": 190132,
+    "suffixes": {
+      ".pcm": 473,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787424006.3300576,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.P4Md6k/DerivedData/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.Xcqjbb/DerivedData-ios-simulator/ModuleCache.noindex",
+    "kb": 76320,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787424890.6879544,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.Xcqjbb/DerivedData-ios-simulator/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.Xcqjbb/DerivedData-macos/ModuleCache.noindex",
+    "kb": 113836,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787424856.3555338,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.Xcqjbb/DerivedData-macos/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.mR0QvC/DerivedData-ios-simulator/ModuleCache.noindex",
+    "kb": 76320,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787426235.6313238,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.mR0QvC/DerivedData-ios-simulator/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/apple-ui-test/run.mR0QvC/DerivedData-macos/ModuleCache.noindex",
+    "kb": 113836,
+    "suffixes": {
+      ".pcm": 253,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787426217.5470862,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/apple-ui-test/run.mR0QvC/DerivedData-macos/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/ios-simulator-smoke.7dwiCQ/DerivedData/ModuleCache.noindex",
+    "kb": 76304,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787423338.1406379,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/ios-simulator-smoke.7dwiCQ/DerivedData/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  },
+  {
+    "path": ".temp/TASK-260715-1idq8c/ios-simulator-smoke.bWUxDe/DerivedData/ModuleCache.noindex",
+    "kb": 76304,
+    "suffixes": {
+      ".pcm": 220,
+      ".modulevalidation": 1,
+      ".timestamp": 1
+    },
+    "newest": 1787423475.1560645,
+    "symlinks": 0,
+    "ignore_proof": ".gitignore:14:.temp/\t/Users/iv/Developer/relux-tunnel/.temp/TASK-260715-1idq8c/ios-simulator-smoke.bWUxDe/DerivedData/ModuleCache.noindex",
+    "tracked_files": 0,
+    "live_references": 0,
+    "regeneration": "Rerun the original Xcode UI build with its same -derivedDataPath; Clang recreates imported SDK .pcm modules automatically."
+  }
+]

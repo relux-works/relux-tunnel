@@ -1,0 +1,12 @@
+source: 9/9 historical file hashes match 58676a23e2e0fb3fcc1b5005d59c6ed56d3c0096
+recipe: 3/3 historical file hashes match 4326036a26a515d5d349e669574323d4d1c7259c
+8/8 Go/Syft archive hashes match document
+4/4 target triples and names match document
+go.mod pin matches; both existing JSON schemas parse
+relay/go.sum: absent in current tree only
+relay/vendor: absent in current tree only
+.gitmodules: absent in current tree only
+README.md sha256=37a9bdbad9e865cd0b904cba5717951f2bc8b7975e13ca13d1568e603980da11
+UNRESOLVED_QUESTIONS.md sha256=cf062d76c852a83dc2fc89098a460dabb452ede6d52a29ebfc32d3f785d2e661
+docs/TASK-260715-pa6evr_relay-release-input-contract.md sha256=0c2ecaf408bad5ea486a74752fc50c98ed5c0ce1a178764508aa42027521356f
+No actual build, native runtime, scanner, signing or VPN evidence produced.

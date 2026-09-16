@@ -1,0 +1,11 @@
+# Park-after-active-work routing
+
+User explicitly requested upstream alias issue, completion of active tasks, then parking and a detailed transfer prompt. Alias bug is published at https://github.com/relux-works/skill-project-management/issues/297 and tracked there as BUG-260916-36p6qt (backlog). Do not implement it during this milestone.
+
+At 2026-09-16 20:01 UTC the product has no active worker. Source prerequisite BUG-260916-1r4nqj has validation-only continuation RUN-260916-6f3865 (Muse Spark1.3 max via registered muse-spark alias). Prior native CR validation stopped at command 5/15 due ENOSPC. Recovery RUN-260916-4d06af was explicitly cancelled after broad disk inventory; no acceptance or landing occurred. Candidate remains preserved in source Story worktree. New precondition forbids broad scans/cleanup and directs exact failed shard then native full validation, with evidence-backed stop if capacity failure recurs.
+
+Product main and last observed origin/main are db89c1a555fd4cf57a1cba7fe7bf998f6951b1f2; PR #6 merged exact signed head, prelanding run 35098918403 7/7 green and actual independent Astra review. Postlanding run 35103482648 failed bounded transport-close timing (1.17695875 seconds versus less than 1 second), tracked separately in BUG-260916-3t6wfs. Do not call current CI fully green.
+
+Root status currently has 257 porcelain records plus two named LOGBOOK stashes. They remain preserved and need coherent curation/review/delivery; no reset, clean, stage-all or hidden-stash fake cleanliness. Bootstrap TASK-260715-3t2v9w candidate remains unreviewed in .temp/STORY-260715-2wjwuf/worktree; do not recreate it. Root-config sync TASK-260916-39riah and release curation TASK-260916-3hlijb have not executed. No WIP release/tag created. Preserve earlier delivery plan and all evidence. Detailed final transfer must distinguish accepted/delivered, locally passing/unreviewed, backlog and genuine blockers.
+
+Primary goal revision 15 carries the full bounded milestone. No VPN configuration/installation/activation/routing changes on this Mac. One worker at a time; curator operational config for product, native source config for tooling. Source main has unrelated concurrent movement; fetch and isolate, never absorb foreign changes.
