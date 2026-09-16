@@ -16,8 +16,10 @@ concurrency:
 jobs:
   generated-project-credential-free:
     name: generated project credential-free validation
-    # macos-15 is the arm64 image; keep this label paired with the arm64 Mise checksum.
-    runs-on: macos-15
+    # macos-26 is the arm64 image; keep this label paired with the arm64 Mise checksum.
+    # NativeDependencies/manifest.json pins Xcode build 17F42 (Xcode 26.5):
+    # present on macos-26, absent from macos-15 (at most Xcode 26.3).
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -38,6 +40,12 @@ jobs:
           sha256: c7a0eb1035de974b42d36b69c4b55b836c06b455b990dd6ac530aaf05d4a8a17 # mise-v2026.3.10-macos-arm64
           install: false
           cache: false
+
+      - name: Select the manifest-pinned native Xcode
+        # The macos-26 default is Xcode 26.6 (17F113); native verification
+        # strictly requires the pinned 17F42, so select it explicitly.
+        working-directory: relux-tunnel
+        run: sh ./scripts/select-native-xcode.sh
 
       - name: Exercise validation boundary narrowing mutants
         working-directory: relux-tunnel

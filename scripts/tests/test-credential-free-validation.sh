@@ -52,7 +52,9 @@ for invalid in "$missing" "$unexpected" "$adversarial"; do
 done
 
 workflow="$repo_root/.github/workflows/ci.yml"
-runner_label='    runs-on: macos-15'
+# macos-26 is the first arm64 image shipping the manifest-pinned Xcode 26.5
+# (17F42); macos-15 tops out at Xcode 26.3 (17C529) and cannot host the pin.
+runner_label='    runs-on: macos-26'
 mise_action='      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4.2.5'
 arm64_checksum='          sha256: c7a0eb1035de974b42d36b69c4b55b836c06b455b990dd6ac530aaf05d4a8a17 # mise-v2026.3.10-macos-arm64'
 test "$(grep -Fxc "$runner_label" "$workflow")" -eq 1
@@ -74,5 +76,8 @@ test "$mise_line" -lt "$gate_line"
 
 python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
 python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
+
+python3 "$repo_root/scripts/tests/test_native_toolchain_alignment.py"
+python3 "$repo_root/scripts/tests/test_native_toolchain_mutants.py"
 
 echo "credential-free validation contract tests passed"
