@@ -183,6 +183,28 @@ struct MacOSSystemKeychainCredentialResolverTests {
     #expect(tls.diagnostic.retryDisposition == .terminal)
   }
 
+  // NWError.wifiAware exists only in the macOS 26 SDK (Swift 6.2+ toolchain).
+  #if compiler(>=6.2)
+    @Test("wifiAware maps to unavailable without platform values")
+    func wifiAwareBootstrapProjection() throws {
+      guard #available(macOS 26, *) else { return }
+      let context = SSHBootstrapDiagnosticContext(endpointFamily: .ipv6)
+      let error = MacOSSSHBootstrapErrorMapper.network(
+        NWError.wifiAware(987_456),
+        stage: .endpointConnect,
+        configurationGeneration: 5,
+        context: context
+      )
+
+      #expect(error.diagnostic.code == .endpointConnectFailed)
+      #expect(error.diagnostic.retryDisposition == .retryableLater)
+      #expect(error.diagnostic.context.endpointFamily == .ipv6)
+      #expect(error.diagnostic.configurationGeneration == 5)
+      let encoded = try JSONEncoder().encode(error.diagnostic)
+      #expect(!String(data: encoded, encoding: .utf8)!.contains("987456"))
+    }
+  #endif
+
   @Test("record generation digest truncation and trailing bytes fail closed")
   func strictRecordFormat() async throws {
     let reference = UUID(uuidString: "dddddddd-dddd-dddd-dddd-dddddddddddd")!

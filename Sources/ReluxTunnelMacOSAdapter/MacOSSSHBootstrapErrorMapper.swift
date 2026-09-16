@@ -34,13 +34,16 @@ public enum MacOSSSHBootstrapErrorMapper {
         configurationGeneration: configurationGeneration,
         context: context
       )
-    case .wifiAware:
-      return SSHBootstrapErrorMapper.transport(
-        .unavailable,
-        stage: stage,
-        configurationGeneration: configurationGeneration,
-        context: context
-      )
+    // NWError.wifiAware exists only in the macOS 26 SDK (Swift 6.2+ toolchain).
+    #if compiler(>=6.2)
+      case .wifiAware:
+        return SSHBootstrapErrorMapper.transport(
+          .unavailable,
+          stage: stage,
+          configurationGeneration: configurationGeneration,
+          context: context
+        )
+    #endif
     @unknown default:
       return SSHBootstrapErrorMapper.transport(
         .unexpected,
