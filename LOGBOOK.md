@@ -3,6 +3,32 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-09-16
+
+### PR6 shared-runtime delivery landed by exact-head fast-forward (TASK-260908-34gi0y)
+
+- LANDING: `db89c1a555fd4cf57a1cba7fe7bf998f6951b1f2` (tree `1c1ca7ad...`) pushed plain to `origin/main` (`b3422b0..db89c1a`, exit 0, no force). PR6 MERGED 13:40:52Z with mergeCommit equal to the reviewed head; no new commit object. All 7 commits verify for Ivan Oparin; all 7 PR check-runs completed/success retained.
+- GATES: Independent review 5223410566 ACCEPT on exact head; hosted run 35098918403 7/7 success; remote main never advanced before landing; main unprotected/rules-empty re-verified fresh. Post-landing push run 35103482648 is ordinary post-merge CI, not a landing gate.
+- SCOPE: Landed fixes are BUG-260908-33iyb1/7c5iv4 (validation boundaries), BUG-260908-shki8p (`mapped<T: Sendable>`), BUG-260916-20xt79 (wifiAware), BUG-260916-2764p8 (weak capture), BUG-260916-1rqn1c (native toolchain). Original Swift 6.1 failure absent on declared toolchain per retained run-35048178384 evidence. BUGs stay `integrating`; close-landed reconciliation is parent-owned. Local `main`/`delivery` refs, dirty board, and LOGBOOK stash preserved untouched.
+
+### 1413 — Recovery loop on TASK-260908-34gi0y was specified CLI policy meeting a scope contradiction (TASK-260916-p5tbh8)
+- FINDING: Four runs (RUN-260916-b63447 -> d674b7 -> 362667 -> 78331a) each attempted `task-board handoff` and were refused identically (unchecked item 1, exit 1). The runtime treats "no CR and no handoff branch" as `role_handoff_unsatisfied` with literal `Recoverable: true` (spawnruntime/runtime.go:2090 at skill commit 64d4763, unchanged on origin/main) and clones an identical successor up to 3 times; no changed-precondition check exists.
+- FINDING: Worker behavior was correct in all runs; DoD item 1 (hosted green on exact head) was unsatisfiable under the "no new product code" scope once CI went red on pre-existing `NWError.wifiAware`. The handoff refusal is not persisted on the run or ledger; only the worker transcript records it.
+- DECISION: Recommended route is a scoped wifiAware BUG plus `blocked_by` link and `blocked` with evidence packet on 34gi0y; no checklist falsification. P0 CLI change: persist handoff refusal marker, typed non-recoverable `handoff_refused_unchecked_gate`, no-progress fingerprint before successor. Report: `TASK-260916-p5tbh8_incident-review.md`.
+- ANOMALY: Installed binary provenance `.csk-install.json` records `ref: main` but the commit is PR #278 head; local skill source clone is 104 commits behind origin/main and lacks the incident commit. Token/cost waste for the 11m19s successor chain is unproven (no usage records in logs).
+
+### 0645 — PR6 signed Sendable head published; original Swift 6.1 error absent (TASK-260908-34gi0y)
+- MILESTONE: PR6 `delivery/STORY-260715-1y04r0-rev3` advanced `018c9d9..a46e2ba` (FF only, no reset). Commit tree equals independently reviewed prospective tree `45826b72`; local and GitHub signatures verify for Ivan Oparin; all 3 prior PR commits retained as ancestors. Delta is exactly the accepted CR-BUG-260908-shki8p rev 2 source/test pair; PR fixture with diagnostic runners untouched.
+- FIX: `Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift:681` `mapped<T>` to `mapped<T: Sendable>` plus five-case `callerCancellation(point:)` in `Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift`.
+- FINDING: Exact-head hosted run `35048178384` (Xcode 16.4, Swift 6.1, macOS SDK 15.5) contains zero mentions of `TunnelRuntimeCoordinator`; the original `:687` non-sendable-T diagnostic is absent. 6/7 jobs pass.
+- STATUS: Delivery gate still red; no resolution claim, no landing. See next entry.
+
+### 0645 — Newly unmasked pre-existing NWError.wifiAware failure blocks PR6 green (TASK-260908-34gi0y)
+- REGRESSION: `Sources/ReluxTunnelMacOSAdapter/MacOSSSHBootstrapErrorMapper.swift:37` errors on hosted Xcode 16.4: `type 'NWError' has no member 'wifiAware'`. ReluxProxyMac Debug build fails; `make credential-free-validate` exits 65; job `104642534222` step `Run the local credential-free gate` is the only failing step.
+- SCOPE: File blob `5b47bd80` identical across base `b3422b0`, old PR6 `018c9d9`, and new head `a46e2ba`; introduced by `d742a60` (PR scope, outside accepted delta). Previously masked by the earlier `ReluxTunnelCore` compile failure. Local Swift 6.3.2 accepts it (newer SDK), same newer-toolchain-blindness pattern as the original defect.
+- BLOCKED: Full-green gate and landing. Repair is new product work outside this verification task; incomplete state preserved for orchestrator routing as a fresh defect.
+- STATUS: Pending independent exact-head review and new repair route.
+
 ## 2026-08-30
 
 ### Shared-runtime Story landing gates recovered (TASK-260830-1x524u)

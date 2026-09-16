@@ -1,0 +1,21 @@
+{
+  "contract": "primary-goal-v1",
+  "id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 14,
+  "previous_revision": 13,
+  "state": "active",
+  "scope": {
+    "kind": "board"
+  },
+  "objective": "Explicitly resumed by the user on 2026-09-16: complete and land the active parked SSH bootstrap TASK-260715-3t2v9w and post-landing CI BUG-260916-3t6wfs, reconcile pending accepted delivery evidence, curate and deliver accumulated repository/board/LOGBOOK changes without loss, verify a clean main working tree synchronized with origin, and publish a signed Git tag plus GitHub prerelease explicitly marked WORK IN PROGRESS for the current delivered work. Assess proximity to completion of the macOS VPN epic using evidenced functional milestones and remaining gates, not an invented percentage. This turn is a bounded delivery/release milestone; do not start unrelated backlog implementation after it. Long-term unresolved objective: working signed and notarized macOS NEPacketTunnelProvider client over authenticated SSH with libssh2 primary, SPM core, HEV packet bridge, TCP/SOCKS, fail-closed DNS, rootless exec/stdio relay, UDP/degraded mode, provider/UI, self-update, threat model, CI/release. iOS remains deferred. No real VPN installation, configuration, activation or routing changes on this Mac; real system validation requires a dedicated host. Preserve pre-auth host verification, Keychain-only secrets, bounded memory, internal SOCKS and no SFTP or utun-FD discovery. One worker at a time, lite context, Muse Spark 1.3 max implementation and Astra low or Fable low independent review. Use curator task-board and operational .temp/resume-20260916/task-board.config.json; synchronize stale root config only as a separately reviewed scope. Signed Ivan Oparin \u003coparin@me.com\u003e commits and tags using /Users/iv/.ssh/ivanopcode, current timestamps, feature branch through actual PR review and green hosted checks to exact signed-head landing. Preserve all existing worktrees, changes, stashes and evidence while curating them; clean does not authorize destructive reset or discarding work. Reclaim only proven disposable inactive caches and report exact targets and volume. Persist external blockers with evidence and precise required input.",
+  "mutation": {
+    "kind": "objective_realigned",
+    "reason": "User explicitly resumed for active-task landing, clean checkout, WIP release and evidence-based epic progress assessment.",
+    "actor": {
+      "kind": "primary_parent",
+      "actor_id": "iv"
+    }
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-09-16T18:53:56.267871Z"
+}

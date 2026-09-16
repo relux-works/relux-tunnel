@@ -91,6 +91,8 @@ spawn agent resolution: Agent selection: codex via explicit_override (preferred_
 spawn launch composition: empty; contract=agents-infra.child-launch-composition; provider=codex; schema=1; producer=v1.6.1-128-gab60e0d; diagnostic=launch_composition_empty; no project MCP servers enabled
 spawn queued: [tester] tester (codex) (run=RUN-260907-765f2f, max_parallel=1)
 spawn run started: [tester] tester (codex) (run=RUN-260907-765f2f)
+agent completed: [tester] tester (codex) (exit=0)
+spawn run completed: codex (run=RUN-260907-765f2f, pid=62331, exit=0)
 
 ## Precondition Resources
 - [TASK-260830-1x524u_deadline-recovery.md](file://TASK-260830-1x524u/TASK-260830-1x524u_deadline-recovery.md) — Deadline, model policy and reviewer recovery scope
@@ -203,12 +205,18 @@ spawn run started: [tester] tester (codex) (run=RUN-260907-765f2f)
 - [TASK-260830-1x524u_source-delivery-readiness.md](file://TASK-260830-1x524u/TASK-260830-1x524u_source-delivery-readiness.md) — Source repair chain readiness and no unsafe duplicate
 - [TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260907-765f2f.log](file://TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260907-765f2f.log) — System spawn log captured by task-board
 - [TASK-260830-1x524u_curator-upgrade-evidence.md](file://TASK-260830-1x524u/TASK-260830-1x524u_curator-upgrade-evidence.md) — Curator main install and signature verification
+- [TASK-260830-1x524u_curator-main-integration-01.log](file://TASK-260830-1x524u/TASK-260830-1x524u_curator-main-integration-01.log) — Managed integration exit 0; signed local Story and board commits, remote delivery pending
+- [TASK-260830-1x524u_hosted-delivery-verdict.md](file://TASK-260830-1x524u/TASK-260830-1x524u_hosted-delivery-verdict.md) — Exact-head hosted review: do not land; two reproduced repository failures
+- [TASK-260830-1x524u_delivery-relay-audit-exact.log](file://TASK-260830-1x524u/TASK-260830-1x524u_delivery-relay-audit-exact.log)
+- [TASK-260830-1x524u_delivery-board-check-exact.log](file://TASK-260830-1x524u/TASK-260830-1x524u_delivery-board-check-exact.log)
+- [TASK-260830-1x524u_delivery-hosted-checks.log](file://TASK-260830-1x524u/TASK-260830-1x524u_delivery-hosted-checks.log)
+- [TASK-260830-1x524u_curator-main-delivery-results.md](file://TASK-260830-1x524u/TASK-260830-1x524u_curator-main-delivery-results.md) — Durable delivery handoff: signed PR open, hosted landing refused by reproduced CI gates
 
 ## Created
 2026-08-30T08:45:26Z
 
 ## Last Update
-2026-09-07T22:27:44Z
+2026-09-07T22:47:29Z
 
 ## Assigned To
 [tester] tester (codex)

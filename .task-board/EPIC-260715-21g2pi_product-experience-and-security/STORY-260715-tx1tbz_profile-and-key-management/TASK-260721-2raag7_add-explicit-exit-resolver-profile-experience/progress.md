@@ -8,7 +8,7 @@ backlog
 2026-07-21T04:22:01Z
 
 ## Last Update
-2026-07-28T01:23:06Z
+2026-08-29T22:10:57Z
 
 ## Blocked By
 - TASK-260721-33o8fc
@@ -30,6 +30,7 @@ backlog
 ## Precondition Resources
 - [TASK-260721-2raag7_dns-policy-precondition.md](file://TASK-260721-2raag7/TASK-260721-2raag7_dns-policy-precondition.md) — Reworked ADR candidate defining profile UX fields, validation policy, and no-inference migration
 - [TASK-260721-2raag7_dns-runtime-policy-v1.md](file://TASK-260721-2raag7/TASK-260721-2raag7_dns-runtime-policy-v1.md) — Non-authoritative DNS policy handoff; production remains gated
+- [TASK-260721-2raag7_degraded-safe-dns-contract.md](file://TASK-260721-2raag7/TASK-260721-2raag7_degraded-safe-dns-contract.md) — Profile UI resolver fields, no-prefill migration, and authorization gate
 
 ## Outcome Resources
 (none)

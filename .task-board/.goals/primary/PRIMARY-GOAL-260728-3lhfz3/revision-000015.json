@@ -1,0 +1,21 @@
+{
+  "contract": "primary-goal-v1",
+  "id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 15,
+  "previous_revision": 14,
+  "state": "active",
+  "scope": {
+    "kind": "board"
+  },
+  "objective": "Finish the already active bounded delivery work, then park the project and provide a detailed session-transfer prompt covering completed work, exact refs and runs, remaining work, exclusions, evidence and operational nuances. Report the model-alias admission defect upstream in skill-project-management GitHub Issues (now issue #297); keep alias hardening implementation backlog. Complete active prerequisite tooling config-propagation fix through independent review and signed delivery, active SSH bootstrap TASK-260715-3t2v9w, CI BUG-260916-3t6wfs, separately reviewed operational config synchronization, accumulated board/LOGBOOK curation without loss, clean synchronized main, and signed WORK IN PROGRESS tag/GitHub prerelease. Do not start unrelated backlog. Assess macOS VPN epic progress by evidenced milestones, not invented percentages. Long-term objective remains signed/notarized macOS NEPacketTunnelProvider VPN over authenticated SSH with libssh2 primary; iOS deferred. Never install, configure, activate or connect a real VPN or alter routing on this Mac. One worker at a time through curator task-board: Muse Spark1.3 max implementation, Astra low or Fable low independent review, lite context. Use product operational .temp/resume-20260916/task-board.config.json until reviewed synchronization. Ivan Oparin \u003coparin@me.com\u003e signed commits/tags with /Users/iv/.ssh/ivanopcode and current timestamps, branch to PR to real exact-head review to green hosted checks to signed exact-head landing. Preserve all worktrees, foreign changes, stashes and evidence; no destructive reset/clean or fake clean through hidden storage. Reclaim only proven disposable inactive caches with exact target/size reporting. Persist genuine blockers and precise external input rather than weaken gates.",
+  "mutation": {
+    "kind": "objective_realigned",
+    "reason": "User requests upstream issue, finish active tasks then park with detailed transfer prompt.",
+    "actor": {
+      "kind": "primary_parent",
+      "actor_id": "iv"
+    }
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-09-16T19:54:06.276645Z"
+}

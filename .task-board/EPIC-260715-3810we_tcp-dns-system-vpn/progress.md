@@ -1,5 +1,5 @@
 ## Status
-backlog
+to-dev
 
 ## Assigned To
 [analyst] solution-architect (codex)
@@ -8,7 +8,7 @@ backlog
 2026-07-15T00:46:31Z
 
 ## Last Update
-2026-09-07T22:27:44Z
+2026-09-16T14:23:49Z
 
 ## Blocked By
 - TASK-260715-nphtib

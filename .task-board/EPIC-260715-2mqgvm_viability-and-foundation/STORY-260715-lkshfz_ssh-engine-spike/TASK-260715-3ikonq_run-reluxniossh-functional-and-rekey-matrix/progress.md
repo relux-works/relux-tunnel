@@ -1,5 +1,5 @@
 ## Status
-backlog
+closed
 
 ## Assigned To
 (none)
@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:03:16Z
 
 ## Last Update
-2026-07-28T00:47:14Z
+2026-08-30T08:45:05Z
 
 ## Blocked By
 - TASK-260715-1af33i
@@ -24,6 +24,7 @@ backlog
 - [ ] Red rows are preserved and the full evidence matrix is attached
 
 ## Notes
+OWNER DECISION APPLIED 2026-08-30: close the ReluxNIOSSH functional/rekey matrix because its adapter alternative is closed. The accepted libssh2 functional/rekey matrix is the macOS-first v1 evidence path; reopen only if the engine selection is explicitly reversed.
 
 ## Precondition Resources
 (none)

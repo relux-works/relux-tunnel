@@ -1,0 +1,46 @@
+{
+  "contract_version": "board-goal-v2",
+  "goal_id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 12,
+  "expected_previous_revision": 11,
+  "previous_ref": {
+    "id": "PRIMARY-GOAL-260728-3lhfz3",
+    "revision": 11
+  },
+  "owner": {
+    "kind": "parent",
+    "id": "primary"
+  },
+  "kind": "alignment",
+  "objective": "Deliver the working signed and notarized macOS-first Relux Tunnel NEPacketTunnelProvider client over authenticated SSH, libssh2 primary. Complete gate-free SPM core, public packet bridge and HEV, SSH, TCP and fail-closed DNS, rootless exec/stdio relay, UDP and degraded mode, macOS provider and UI, self-update, threat model, CI and release through tracked producer-reviewer-rework-accepted delivery. Defer iOS, App Store A0 research and native Linux runner evidence. Preserve pre-auth host verification, Keychain-only secrets, bounded memory, internal-only SOCKS, no SFTP or utun-FD discovery and injectable physical tuning. Never install, configure, enable or connect a real VPN on this development Mac; use a dedicated test host. Human explicitly resumed on 2026-09-16, superseding the September 8 pause and deadline. Run one worker serially with lite context: code and implementation by Muse Spark max; review by Astra low or Fable low, default Astra low. Manage task-board only through curator from skill-project-management main. Preserve correctly signed Ivan Oparin \u003coparin@me.com\u003e commits with /Users/iv/.ssh/ivanopcode, normal current timestamps without special windows, feature branch to real PR review and green checks to exact signed-head landing, push and sync accepted scopes without erasing unrelated work. Resolve pending accepted delivery obligations first. Stop at genuine human-only gates with evidence; preserve safe task-scoped cache cleanup. Periodically reclaim as much safely disposable cache space as practical after parent and child runs. Inventory exact inactive targets before deletion; preserve active caches, pending worktrees, unlanded changes, signing material and required review/recovery evidence. Record reclaimed space and removed targets.",
+  "scope": {
+    "requested_ids": null,
+    "resolved_leaf_items": null
+  },
+  "mutation_authority": "agent_discretion",
+  "success_predicate": "routing_duty_clear",
+  "provider_condition": "Every terminal task-board run notice for this board has been routed (reviewer, checkpoint, integrate, rework, or a persisted blocked packet), and no unblocked, unassigned leaf of the primary goal remains undispatched, or the session is explicitly waiting on a human decision.",
+  "native_reflection": "required",
+  "state": "active",
+  "legacy_refs": [
+    {
+      "contract": "primary-goal-v1",
+      "id": "PRIMARY-GOAL-260728-3lhfz3",
+      "revision": 12
+    }
+  ],
+  "role_policy": {},
+  "mutation": {
+    "kind": "alignment_realigned",
+    "reason": "User requested recurring maximum safe parent and subagent cache cleanup",
+    "actor_context": {
+      "kind": "agent",
+      "actor_id": "iv"
+    },
+    "authority": "agent_discretion"
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-09-16T02:27:22.512667Z",
+  "created_by": "iv",
+  "reason": "User requested recurring maximum safe parent and subagent cache cleanup"
+}

@@ -1,0 +1,46 @@
+{
+  "contract_version": "board-goal-v2",
+  "goal_id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 9,
+  "expected_previous_revision": 8,
+  "previous_ref": {
+    "id": "PRIMARY-GOAL-260728-3lhfz3",
+    "revision": 8
+  },
+  "owner": {
+    "kind": "parent",
+    "id": "primary"
+  },
+  "kind": "alignment",
+  "objective": "Deliver the working, signed and notarized macOS-first Relux Tunnel full-tunnel NEPacketTunnelProvider client with authenticated SSH to a user-controlled host, libssh2 primary. Complete gate-free SPM core, public packet bridge and HEV, SSH, TCP/DNS, rootless exec/stdio relay, UDP/degraded mode, macOS provider/UI, self-update, threat-model, CI and release work through tracked producer-reviewer-rework-accepted delivery. Defer iOS, App Store A0 research and native Linux runner evidence. Preserve pre-auth host verification, Keychain-only secrets, bounded memory, fail-closed DNS, internal-only SOCKS, no SFTP or utun-FD discovery, injectable physical tuning. Never install, configure, enable or connect the real system VPN on this development Mac; use the dedicated test host. Stop at genuine human-only gates with exact evidence. Use one Codex worker serially with lite context; Astra gpt-6-astra low is authorized for all child roles. Preserve signed Ivan Oparin \u003coparin@me.com\u003e commits using /Users/iv/.ssh/ivanopcode, sequential Tbilisi timestamps within 20:00-09:00 MSK, feature branch to PR to exact-head review and checks to main landing, then push/sync accepted scopes while preserving unrelated work. HARD DEADLINE: continue only until 2026-09-08T05:00:00+04:00 (2026-09-08T01:00:00Z); at that instant park ALL project workers and orchestration, cancel any remaining active runs while preserving worktrees/evidence, launch no successors or new tasks, and remain paused until the user explicitly resumes. Begin orderly handoff before the deadline; unfinished tasks are not done. Preserve pending safe .temp cache cleanup within this scope.",
+  "scope": {
+    "requested_ids": null,
+    "resolved_leaf_items": null
+  },
+  "mutation_authority": "agent_discretion",
+  "success_predicate": "alignment_handled",
+  "provider_condition": "The bound parent session has handled this exact alignment revision.",
+  "native_reflection": "required",
+  "state": "active",
+  "legacy_refs": [
+    {
+      "contract": "primary-goal-v1",
+      "id": "PRIMARY-GOAL-260728-3lhfz3",
+      "revision": 9
+    }
+  ],
+  "role_policy": {},
+  "mutation": {
+    "kind": "alignment_realigned",
+    "reason": "User authorizes Astra low workers and mandates all project execution paused at 05:00 Tbilisi on September 8.",
+    "actor_context": {
+      "kind": "agent",
+      "actor_id": "iv"
+    },
+    "authority": "agent_discretion"
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-09-07T20:46:01.283247Z",
+  "created_by": "iv",
+  "reason": "User authorizes Astra low workers and mandates all project execution paused at 05:00 Tbilisi on September 8."
+}

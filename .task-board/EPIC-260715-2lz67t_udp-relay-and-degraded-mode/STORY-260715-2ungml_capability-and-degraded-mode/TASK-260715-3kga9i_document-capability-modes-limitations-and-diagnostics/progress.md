@@ -8,7 +8,7 @@ backlog
 2026-07-15T01:45:00Z
 
 ## Last Update
-2026-07-28T01:23:07Z
+2026-08-29T22:10:56Z
 
 ## Blocked By
 - TASK-260715-2y78ah
@@ -27,6 +27,7 @@ backlog
 ## Precondition Resources
 - [TASK-260715-3kga9i_protocol-v1-developer-contract.md](file://TASK-260715-3kga9i/TASK-260715-3kga9i_protocol-v1-developer-contract.md) — Accepted relay protocol v1 developer contract and compatibility gates from TASK-260715-2z9b4a
 - [TASK-260715-3kga9i_m2-capability-contract.md](file://TASK-260715-3kga9i/TASK-260715-3kga9i_m2-capability-contract.md) — Binding M2 capability contract, post-acceptance whitespace hygiene revision
+- [TASK-260715-3kga9i_degraded-safe-dns-contract.md](file://TASK-260715-3kga9i/TASK-260715-3kga9i_degraded-safe-dns-contract.md) — Documentation source for degraded resolver, migration, failure, and privacy behavior
 
 ## Outcome Resources
 (none)
