@@ -1,0 +1,4 @@
+STORY-260715-1y04r0  cleanup_pending
+  story commit: 6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51
+  board commit: 87451b53960ceabe88a01c44c287fee7f9ebf386
+  note: safe cleanup is now eligible; `worktree cleanup` removes the workspace and branch only after exact commit ancestry, Story done, a committed board record, a clean workspace, and no active lease or RUN

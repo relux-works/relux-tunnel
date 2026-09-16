@@ -1,0 +1,635 @@
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index a1a3469..68e8da3 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1292,6 +1292,20 @@
+ - SCOPE: Gate P0 is consumed exactly as the accepted macOS PASS. iOS targets/identifiers remain defined but blocked and unbuilt under ADR-024/027; Gate A0 remains deferred and is not an input. The legacy macOS 14 SwiftPM product remains a separate regression/release lane until an explicit migration decision.
+ - FINDING: The earlier focused DOT showed `ReluxTunnelCore -> native dependency seams`, opposite the implemented and documented package direction. The task-scoped diagram now consistently uses source-consumes-destination arrows and separates embedding from source dependency.
+ 
++### 2210 — CI trust boundary and fail-closed quality gates fixed (TASK-260715-whtdsf)
++- DECISION: Pull-request and merge-queue work is credential-free, read-only by default, and unable to reach protected environments, production secrets, privileged runners, publication permissions, or trusted release cache/artifact namespaces. All nine future blocking checks for the macOS working-client path must be runnable on GitHub-hosted macOS; optional relay-native Linux evidence remains separately owned and non-blocking for that path. The current seed's generic `validate` job on Ubuntu is an observed migration input, not a Linux architecture requirement. Every third-party action is full-SHA pinned.
++- DECISION: Nine stable checks block default-branch integration. Release preparation binds an exact protected-branch commit and fresh evidence into one immutable candidate; relay staging, Developer ID/notarization, Sparkle signing, asset publication, and feed publication use separate protected environments and credentials under one non-cancelling production concurrency group.
++- SCOPE: Gate A0 and iOS/TestFlight/App Store remain deferred and are never reported as passed. No Linux CI runner is added to the macOS working-client path; the four relay targets may cross-build on pinned macOS tooling, while native/equivalent release claims retain their downstream relay owner.
++- FINDING: The supplied `references/negative-evidence.md` could not be found in the repository or installed skill trees. Its content is recorded as unknown; the contract independently binds rejecting fixtures to each future production workflow/policy call site.
++- GOVERNANCE: Exact retention periods, protected-environment names, endpoint allowlists, and conditional SARIF permission are explicit policy-fill decisions pending consolidated human ratification at `TASK-260717-2d308k`. Downstream implementation may proceed after independent agent acceptance; publication may not.
++- REVIEW REWORK: Independent review rejected the first draft because credentialed release jobs lacked named negative fixtures, three trace rows did not name exactly one primary check, the existing seed artifact gaps were implicit, and stale board scope left iOS schedulable. The contract now binds negative fixtures for relay staging, Developer ID/notary, Sparkle, asset, and feed call sites; uses one primary check per requirement; marks seed artifacts non-promotable; narrows the story and Apple build task to active macOS targets; and blocks the four named deferred iOS owners with full ADR-024/027 resume packets.
++- REVIEW REWORK 2: A later independent review found three binding inconsistencies: raw `task-board validate` was fail-open for a reported status issue, Linux runner scope conflated generic validation with relay hardening, and the evidence said eight checks while the contract named nine. The contract now requires `TASK-260715-2hef52` to ship a JSON-parsing production wrapper plus invalid-status negative fixture, separates the current Ubuntu validation seed from relay-native Linux evidence, makes every macOS-path blocking check runnable on GitHub-hosted macOS, and consistently binds nine checks. A fresh exact-head reviewer verdict is required; human ratification remains decoupled at `TASK-260717-2d308k`.
++- REWORK 2 VERIFICATION: Contract cardinality/source-link/token validation and three synthetic validator-result rejection cases pass; PlantUML check/render, `git diff --check`, and authoritative board JSON validation exit 0. The unchanged `scripts/tests/test-credential-free-validation.sh` exits 1 because it still expects `ReluxProxyIOSUITests` while the accepted active graph contains only the six macOS-only schemes; the same script and graph are unchanged from `HEAD`, so this is retained as a pre-existing cross-owner test-contract anomaly rather than misreported as caused or fixed by this documentation delta.
++- REVIEW REWORK 3: Independent review found that conditionally granting `security-events: write` to the environment-free PR `security/supply-chain` job contradicted the global protected-environment elevation invariant. PR/fork scanning is now artifact-only with `contents: read`; optional SARIF publication is a separately inventoried protected-default-branch `security/sarif-publish` job with `security-reporting` approval, exact source/report digests, one permission, one endpoint, and rejecting fixtures. The nine PR blocking checks remain unchanged.
++- REVIEW REWORK 4: CR revision 2 rejected direct tag/selectable-ref release preparation because GitHub executes workflow code from the event-associated ref, letting a tagged workflow remove its own guard. The contract now makes tag push an unprivileged, output-free intake only and moves candidate acceptance to a protected-default-branch `workflow_run` that independently resolves run/ref/ancestry metadata, binds `github.workflow_sha` and a checked-in policy digest, ignores intake artifacts/caches/code/verdicts, and full-SHA-pins every credential-capable reusable workflow. Negative fixtures cover guard deletion in tagged code, non-default dispatch, workflow/policy mismatch, and candidate-ref/relative reusable calls before protected-environment access.
++- REVIEW REWORK 5: CR revision 3 proved the rework-4 tag intake boundary false: same-repository workflow YAML can expand default `GITHUB_TOKEN` permissions, and GitHub-hosted runners have public Internet egress. Release preparation now has no tag/push, selectable-ref, or candidate-controlled upstream-workflow trigger. A typed `repository_dispatch` loads trusted default-branch code; its short-lived GitHub App caller is truthfully inventoried with the API-required `Contents: write` scope and no protected branch/tag bypass. The workflow independently validates sender, request replay, candidate ancestry, workflow/policy digests, and an absent intended tag; protected publication creates the tag later. PR public egress is recorded as a capability with no secrets, private-production route, privileged runner, or promotable namespace, while credentialed jobs require enforceable job-specific egress before secret access.
++- REVIEW REWORK 6: Independent review proved that the dispatch App's required `Contents: write` also authorizes GitHub Release/asset and ref APIs, so an endpoint convention could not bound a stolen token. Release request now uses an `issues: opened` default-branch event and a short-lived GitHub App with only `Issues: write`; captured event bytes are digest-bound and refetched/edited issue text is never authority. Negative evidence must prove the token can mutate only issue-plane state while Contents, refs, Releases/assets, Actions/workflows, environments, and secrets remain denied. Every workflow inventory row is now self-contained about source inputs, token/environment/secrets, runner network capability and authorized endpoints, outputs/retention, and approval; unknown current seed log retention is reported as unknown/non-promotable rather than inferred.
++
+ ### 0044 — macOS-only generation excludes deferred iOS schemes (TASK-260715-2btjwm)
+ - REVIEW FINDING: Tuist's `hidden` scheme flag still emitted both deferred iOS shared schemes and left them discoverable to command-line CI, conflicting with the ADR requirement that they are disabled/not generated on the macOS-only path.
+ - REWORK: `Project.swift` now has a checked-in `.macOSOnly` workspace-mode input that emits exactly the six active schemes. The stable iOS names remain source-controlled behind the future `.macOSAndIOS` mode, which may be selected only when ADR-024/ADR-027 resume and the iOS targets/actions land.
+diff --git a/README.md b/README.md
+index 188bfa1..c3ec911 100644
+--- a/README.md
++++ b/README.md
+@@ -191,7 +191,9 @@ agent loop.
+ `ci.yml` runs board + spec structural validation with no Apple credentials on
+ every push/PR. The full quality-gate pipeline (build matrix, signing/notarization
+ verification, relay reproducibility, SBOM/secret scanning, serialized release
+-orchestration) is built out under the M5 CI story.
++orchestration) is built out under the M5 CI story. The binding workflow trust,
++required-check, artifact/provenance, failure, and deferred-iOS boundaries are in
++[`TASK-260715-whtdsf_ci-trust-and-quality-gate-contract.md`](docs/TASK-260715-whtdsf_ci-trust-and-quality-gate-contract.md).
+ 
+ ## Repository tools
+ 
+@@ -209,6 +211,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Tool | Purpose | Command | Output |
+ | --- | --- | --- | --- |
+ | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
++| PlantUML | Validate and render focused architecture/workflow diagrams as code | `plantuml -checkonly diagrams/<name>.puml`; `plantuml -tsvg -o artefacts diagrams/<name>.puml` | Sources under `diagrams/`; rendered SVGs under `diagrams/artefacts/` |
+ | Tuist 4.202.5 via Mise | Generate the credential-free Apple workspace; validate deterministic foundation state; build/test the macOS host and embedded packet-tunnel system extension in unsigned Debug and Release | `make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy`; or `make workspace-generate`, `make workspace-validate`, and `make macos-targets-validate`; see [`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md) | Ignored `ReluxTunnel.xcworkspace` and `ReluxTunnelApp.xcodeproj`; full logs under `.temp/TASK-260715-sbrrp7/credential-free-validation/`; foundation evidence under `.temp/TASK-260715-2btjwm/`; target evidence under `.temp/TASK-260715-uyju7n/` |
+ | Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
+ | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
+diff --git a/diagrams/TASK-260715-whtdsf_ci-trust-boundary.puml b/diagrams/TASK-260715-whtdsf_ci-trust-boundary.puml
+new file mode 100644
+index 0000000..fe9d9d0
+--- /dev/null
++++ b/diagrams/TASK-260715-whtdsf_ci-trust-boundary.puml
+@@ -0,0 +1,66 @@
++@startuml
++!theme plain
++title TASK-260715-whtdsf — CI trust boundary
++
++actor "Fork / untrusted PR" as Fork
++actor "Trusted maintainer" as Maintainer
++actor "Release requester\n(short-lived Issues-only GitHub App)" as Requester
++queue "issues: opened\n(untrusted typed request issue)" as Request
++
++rectangle "Credential-free CI" as PRCI {
++  component "Board/spec + workflow policy" as Policy
++  component "Core/protocol + macOS compile + relay matrix" as Tests
++  component "Secret/license/SBOM policy" as Scans
++}
++
++rectangle "Protected release preparation" as Prepare {
++  component "Default-branch release-prepare\n+ trusted workflow/policy digest" as TrustedEntry
++  component "Immutable candidate manifest" as Manifest
++  component "Fresh required-check evidence" as Revalidate
++}
++
++rectangle "Serialized promotion" as Promote
++node "macOS signing/notary environment" as MacEnv
++node "Sparkle signing environment" as SparkleEnv
++node "Relay staging environment" as RelayEnv
++artifact "Digest-bound redacted evidence" as Evidence
++
++Fork --> PRCI : read-only token\nno production environment or secrets
++Maintainer --> PRCI : identical required checks
++PRCI --> Evidence : results + manifests + digests
++Requester --> Request : Issues: write\nno Contents, refs, Releases/assets, or Actions
++Request --> TrustedEntry : issue/request ID + intended version + candidate SHA\nall fields untrusted
++TrustedEntry --> Manifest : bind event digest; resolve App sender + commit ancestry\nabsent intended tag + exact workflow/policy digests
++Manifest --> Revalidate : exact protected-branch commit
++Evidence --> Revalidate : exact-head checks
++Revalidate --> Promote : accepted candidate only
++Promote --> RelayEnv : scoped staging credential
++Promote --> MacEnv : scoped Developer ID/notary material
++MacEnv --> SparkleEnv : final notarized DMG digest only
++RelayEnv --> Evidence
++MacEnv --> Evidence
++SparkleEnv --> Evidence
++
++note bottom of PRCI
++No protected environment, signing material,
++publication token, privileged runner, or trusted
++release cache/artifact is reachable from PR code.
++Public Internet egress exists but carries no release authority.
++All macOS-path blocking checks run on GitHub-hosted
++macOS; optional relay-native Linux evidence is separate.
++end note
++
++note bottom of Promote
++One production concurrency group.
++Assets first; signed feed last.
++Cancellation or unknown evidence is non-promotable.
++end note
++
++note bottom of Request
++No tag/push, repository_dispatch, or selectable-ref workflow starts
++release preparation. Refetched/edited issue text is not authority.
++Unknown sender, replay, unprotected commit, existing/moved tag,
++relative workflow call, or workflow/policy digest mismatch fails
++before candidate acceptance or environment access.
++end note
++@enduml
+diff --git a/diagrams/artefacts/TASK-260715-whtdsf_ci-trust-boundary.svg b/diagrams/artefacts/TASK-260715-whtdsf_ci-trust-boundary.svg
+new file mode 100644
+index 0000000..c3d5243
+--- /dev/null
++++ b/diagrams/artefacts/TASK-260715-whtdsf_ci-trust-boundary.svg
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="DESCRIPTION" height="1391px" preserveAspectRatio="none" style="width:2909px;height:1391px;background:#FFFFFF;" version="1.1" viewBox="0 0 2909 1391" width="2909px" zoomAndPan="magnify"><?plantuml 1.2026.6?><defs/><g><g class="title" data-source-line="2"><text fill="#000000" font-family="Verdana" font-size="22" font-weight="700" lengthAdjust="spacing" textLength="521.4795" x="1192.9526" y="37.1182">TASK-260715-whtdsf &#8212; CI trust boundary</text></g><!--cluster PRCI--><g class="cluster" data-qualified-name="PRCI" data-source-line="9" id="ent0005"><rect fill="#FFFFFF" height="267.92" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="724" x="1724.69" y="1103.3673"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="700" lengthAdjust="spacing" textLength="141.4902" x="2015.9449" y="1119.4425">Credential-free CI</text></g><!--cluster Prepare--><g class="cluster" data-qualified-name="Prepare" data-source-line="15" id="ent0009"><rect fill="#FFFFFF" height="392.54" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="446" x="491.69" y="368.7973"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="700" lengthAdjust="spacing" textLength="235.3135" x="597.0333" y="384.8725">Protected release preparation</text></g><!--entity Policy--><g class="entity" data-qualified-name="PRCI.Policy" data-source-line="10" id="ent0006"><rect fill="#FFFFFF" height="47.0146" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="248.8447" x="1748.27" y="1147.3673"/><rect fill="#FFFFFF" height="10" style="stroke:#000000;stroke-width:1;" width="15" x="1977.1147" y="1152.3673"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="1975.1147" y="1154.3673"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="1975.1147" y="1158.3673"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="208.8447" x="1763.27" y="1181.4425">Board/spec + workflow policy</text></g><!--entity Tests--><g class="entity" data-qualified-name="PRCI.Tests" data-source-line="11" id="ent0007"><rect fill="#FFFFFF" height="47.0146" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="372.7871" x="2032.3" y="1147.3673"/><rect fill="#FFFFFF" height="10" style="stroke:#000000;stroke-width:1;" width="15" x="2385.0871" y="1152.3673"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="2383.0871" y="1154.3673"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="2383.0871" y="1158.3673"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="332.7871" x="2047.3" y="1181.4425">Core/protocol + macOS compile + relay matrix</text></g><!--entity Scans--><g class="entity" data-qualified-name="PRCI.Scans" data-source-line="12" id="ent0008"><rect fill="#FFFFFF" height="47.0146" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="232.9512" x="1756.22" y="1300.2773"/><rect fill="#FFFFFF" height="10" style="stroke:#000000;stroke-width:1;" width="15" x="1969.1712" y="1305.2773"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="1967.1712" y="1307.2773"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="1967.1712" y="1311.2773"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="192.9512" x="1771.22" y="1334.3525">Secret/license/SBOM policy</text></g><!--entity TrustedEntry--><g class="entity" data-qualified-name="Prepare.TrustedEntry" data-source-line="16" id="ent0010"><rect fill="#FFFFFF" height="64.0293" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="268.6553" x="507.37" y="404.7973"/><rect fill="#FFFFFF" height="10" style="stroke:#000000;stroke-width:1;" width="15" x="756.0253" y="409.7973"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="754.0253" y="411.7973"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="754.0253" y="415.7973"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="221.4502" x="522.37" y="438.8725">Default-branch release-prepare</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="228.6553" x="522.37" y="455.8871">+ trusted workflow/policy digest</text></g><!--entity Manifest--><g class="entity" data-qualified-name="Prepare.Manifest" data-source-line="17" id="ent0011"><rect fill="#FFFFFF" height="47.0146" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="255.5713" x="507.91" y="574.3073"/><rect fill="#FFFFFF" height="10" style="stroke:#000000;stroke-width:1;" width="15" x="743.4813" y="579.3073"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="741.4813" y="581.3073"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="741.4813" y="585.3073"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="215.5713" x="522.91" y="608.3825">Immutable candidate manifest</text></g><!--entity Revalidate--><g class="entity" data-qualified-name="Prepare.Revalidate" data-source-line="18" id="ent0012"><rect fill="#FFFFFF" height="47.0146" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="255.585" x="507.9" y="698.3273"/><rect fill="#FFFFFF" height="10" style="stroke:#000000;stroke-width:1;" width="15" x="743.485" y="703.3273"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="741.485" y="705.3273"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1;" width="4" x="741.485" y="709.3273"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="215.585" x="522.9" y="732.4025">Fresh required-check evidence</text></g><!--entity Fork--><g class="entity" data-qualified-name="Fork" data-source-line="4" id="ent0001"><ellipse cx="2296.6925" cy="947.3573" fill="#FFFFFF" rx="8" ry="8" style="stroke:#000000;stroke-width:1;"/><path d="M2296.6925,955.3573 L2296.6925,982.3573 M2283.6925,963.3573 L2309.6925,963.3573 M2296.6925,982.3573 L2283.6925,997.3573 M2296.6925,982.3573 L2309.6925,997.3573" fill="none" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="138.0449" x="2227.67" y="1013.4325">Fork / untrusted PR</text></g><!--entity Maintainer--><g class="entity" data-qualified-name="Maintainer" data-source-line="5" id="ent0002"><ellipse cx="2584.6914" cy="947.3573" fill="#FFFFFF" rx="8" ry="8" style="stroke:#000000;stroke-width:1;"/><path d="M2584.6914,955.3573 L2584.6914,982.3573 M2571.6914,963.3573 L2597.6914,963.3573 M2584.6914,982.3573 L2571.6914,997.3573 M2584.6914,982.3573 L2597.6914,997.3573" fill="none" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="133.9229" x="2517.73" y="1013.4325">Trusted maintainer</text></g><!--entity Requester--><g class="entity" data-qualified-name="Requester" data-source-line="6" id="ent0003"><ellipse cx="270.6986" cy="66.7373" fill="#FFFFFF" rx="8" ry="8" style="stroke:#000000;stroke-width:1;"/><path d="M270.6986,74.7373 L270.6986,101.7373 M257.6986,82.7373 L283.6986,82.7373 M270.6986,101.7373 L257.6986,116.7373 M270.6986,101.7373 L283.6986,116.7373" fill="none" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="126.5811" x="141.12" y="132.8125">Release requester</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="259.1572" x="141.12" y="149.8271">(short-lived Issues-only GitHub App)</text></g><!--entity Request--><g class="entity" data-qualified-name="Request" data-source-line="7" id="ent0004"><path d="M153.85,245.7673 L387.5355,245.7673 C392.5355,245.7673 392.5355,267.782 392.5355,267.782 C392.5355,267.782 392.5355,289.7966 387.5355,289.7966 L153.85,289.7966 C148.85,289.7966 148.85,267.782 148.85,267.782 C148.85,267.782 148.85,245.7673 153.85,245.7673" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M387.5355,245.7673 C382.5355,245.7673 382.5355,267.782 382.5355,267.782 C382.5355,289.7966 387.5355,289.7966 387.5355,289.7966" fill="none" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="105.6836" x="153.85" y="264.8425">issues: opened</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="223.6855" x="153.85" y="281.8571">(untrusted typed request issue)</text></g><!--entity Promote--><g class="entity" data-qualified-name="Promote" data-source-line="21" id="ent0013"><rect fill="#FFFFFF" height="37.0146" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="165.1816" x="995.1" y="824.3373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="145.1816" x="1005.1" y="848.4125">Serialized promotion</text></g><!--entity MacEnv--><g class="entity" data-qualified-name="MacEnv" data-source-line="22" id="ent0014"><polygon fill="#FFFFFF" points="1144.3,963.8573,1154.3,953.8573,1435.0832,953.8573,1435.0832,990.872,1425.0832,1000.872,1144.3,1000.872,1144.3,963.8573" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><line style="stroke:#000000;stroke-width:1;" x1="1425.0832" x2="1435.0832" y1="963.8573" y2="953.8573"/><line style="stroke:#000000;stroke-width:1;" x1="1144.3" x2="1425.0832" y1="963.8573" y2="963.8573"/><line style="stroke:#000000;stroke-width:1;" x1="1425.0832" x2="1425.0832" y1="963.8573" y2="1000.872"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="49.9092" x="1159.3" y="987.9325">macOS</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="4.9219" x="1209.2092" y="987.9325">&#160;</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="102.04" x="1214.1311" y="987.9325">signing/notary</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="4.9219" x="1316.1711" y="987.9325">&#160;</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="88.9902" x="1321.093" y="987.9325">environment</text></g><!--entity SparkleEnv--><g class="entity" data-qualified-name="SparkleEnv" data-source-line="23" id="ent0015"><polygon fill="#FFFFFF" points="1079.63,1157.3673,1089.63,1147.3673,1321.7482,1147.3673,1321.7482,1184.382,1311.7482,1194.382,1079.63,1194.382,1079.63,1157.3673" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><line style="stroke:#000000;stroke-width:1;" x1="1311.7482" x2="1321.7482" y1="1157.3673" y2="1147.3673"/><line style="stroke:#000000;stroke-width:1;" x1="1079.63" x2="1311.7482" y1="1157.3673" y2="1157.3673"/><line style="stroke:#000000;stroke-width:1;" x1="1311.7482" x2="1311.7482" y1="1157.3673" y2="1194.382"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="53.1426" x="1094.63" y="1181.4425">Sparkle</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="4.9219" x="1147.7726" y="1181.4425">&#160;</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="50.1416" x="1152.6945" y="1181.4425">signing</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="4.9219" x="1202.8361" y="1181.4425">&#160;</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="88.9902" x="1207.7579" y="1181.4425">environment</text></g><!--entity RelayEnv--><g class="entity" data-qualified-name="RelayEnv" data-source-line="24" id="ent0016"><polygon fill="#FFFFFF" points="1470.29,963.8573,1480.29,953.8573,1699.0986,953.8573,1699.0986,990.872,1689.0986,1000.872,1470.29,1000.872,1470.29,963.8573" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><line style="stroke:#000000;stroke-width:1;" x1="1689.0986" x2="1699.0986" y1="963.8573" y2="953.8573"/><line style="stroke:#000000;stroke-width:1;" x1="1470.29" x2="1689.0986" y1="963.8573" y2="963.8573"/><line style="stroke:#000000;stroke-width:1;" x1="1689.0986" x2="1689.0986" y1="963.8573" y2="1000.872"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="38.6094" x="1485.29" y="987.9325">Relay</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="4.9219" x="1523.8994" y="987.9325">&#160;</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="51.3652" x="1528.8213" y="987.9325">staging</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="4.9219" x="1580.1865" y="987.9325">&#160;</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="88.9902" x="1585.1084" y="987.9325">environment</text></g><!--entity Evidence--><g class="entity" data-qualified-name="Evidence" data-source-line="25" id="ent0017"><rect fill="#FFFFFF" height="40.0146" rx="2.5" ry="2.5" style="stroke:#000000;stroke-width:1;" width="257.7051" x="1272.84" y="1303.7773"/><polygon fill="#FFFFFF" points="1513.5451,1308.7773,1513.5451,1322.7773,1525.5451,1322.7773,1525.5451,1314.7773,1519.5451,1308.7773,1513.5451,1308.7773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><line style="stroke:#000000;stroke-width:1;" x1="1519.5451" x2="1519.5451" y1="1308.7773" y2="1314.7773"/><line style="stroke:#000000;stroke-width:1;" x1="1525.5451" x2="1519.5451" y1="1314.7773" y2="1314.7773"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="227.7051" x="1282.84" y="1330.8525">Digest-bound redacted evidence</text></g><g class="entity" data-qualified-name="GMN33" data-source-line="44" id="ent0034"><path d="M2473,1271.3773 L2473,1376.1732 L2894.3848,1376.1732 L2894.3848,1281.3773 L2884.3848,1271.3773 L2473,1271.3773" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M2884.3848,1271.3773 L2884.3848,1281.3773 L2894.3848,1281.3773 L2884.3848,1271.3773" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="290.5005" x="2479" y="1289.4471">No protected environment, signing material,</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="307.2583" x="2479" y="1305.2464">publication token, privileged runner, or trusted</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="320.3218" x="2479" y="1321.0458">release cache/artifact is reachable from PR code.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="400.3848" x="2479" y="1336.8451">Public Internet egress exists but carries no release authority.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="355.5894" x="2479" y="1352.6444">All macOS-path blocking checks run on GitHub-hosted</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="374.5244" x="2479" y="1368.4437">macOS; optional relay-native Linux evidence is separate.</text></g><g class="entity" data-qualified-name="GMN36" data-source-line="53" id="ent0037"><path d="M736.14,948.6573 L736.14,1006.0553 A0,0 0 0 0 736.14,1006.0553 L1109.2572,1006.0553 A0,0 0 0 0 1109.2572,1006.0553 L1109.2572,958.6573 L1099.2572,948.6573 L959.41,948.6573 L1056.79,861.7173 L951.41,948.6573 L736.14,948.6573 A0,0 0 0 0 736.14,948.6573" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M1099.2572,948.6573 L1099.2572,958.6573 L1109.2572,958.6573 L1099.2572,948.6573" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="231.3721" x="742.14" y="966.7271">One production concurrency group.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="190.5059" x="742.14" y="982.5264">Assets first; signed feed last.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="352.1172" x="742.14" y="998.3258">Cancellation or unknown evidence is non-promotable.</text></g><g class="entity" data-qualified-name="GMN39" data-source-line="59" id="ent0040"><path d="M11,392.3073 L11,481.3039 A0,0 0 0 0 11,481.3039 L472.3877,481.3039 A0,0 0 0 0 472.3877,481.3039 L472.3877,402.3073 L462.3877,392.3073 L253.32,392.3073 L266.96,290.2773 L245.32,392.3073 L11,392.3073 A0,0 0 0 0 11,392.3073" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M462.3877,392.3073 L462.3877,402.3073 L472.3877,402.3073 L462.3877,392.3073" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="439.0928" x="17" y="410.3771">No tag/push, repository_dispatch, or selectable-ref workflow starts</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="424.7344" x="17" y="426.1764">release preparation. Refetched/edited issue text is not authority.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="440.3877" x="17" y="441.9758">Unknown sender, replay, unprotected commit, existing/moved tag,</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="410.2871" x="17" y="457.7751">relative workflow call, or workflow/policy digest mismatch fails</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="344.0112" x="17" y="473.5744">before candidate acceptance or environment access.</text></g><!--link Fork to PRCI--><g class="link" data-entity-1="ent0001" data-entity-2="ent0005" data-link-type="dependency" data-source-line="27" id="lnk18"><path d="M2283.67,1016.5873 C2279.07,1037.7473 2278.32,1062.9973 2293.69,1079.3673 C2313.05,1099.9773 2399.03,1069.1973 2420.69,1087.3673 C2424.1913,1090.3036 2427.1378,1093.7386 2429.6127,1097.5085 C2430.2314,1098.4509 2430.8207,1099.4143 2431.3817,1100.3961 C2431.6622,1100.887 2431.9357,1101.3825 2432.2023,1101.8822 C2432.3356,1102.1321 2432.4672,1102.3831 2432.5971,1102.635 C2432.662,1102.761 2430.4667,1098.4271 2430.5308,1098.5536" fill="none" id="Fork-to-PRCI" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="2432.7906,1103.0138,2432.2911,1093.1776,2430.5308,1098.5536,2425.1548,1096.7933,2432.7906,1103.0138" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="103.7271" x="2366.0218" y="1060.4371">read-only token</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="246.3906" x="2294.69" y="1076.2364">no production environment or secrets</text></g><!--link Maintainer to PRCI--><g class="link" data-entity-1="ent0002" data-entity-2="ent0005" data-link-type="dependency" data-source-line="28" id="lnk19"><path d="M2574.84,1016.5173 C2568.54,1036.4173 2559.01,1060.4673 2545.69,1079.3673 C2528.225,1104.1523 2502.5175,1126.4648 2480.9113,1142.7348 C2470.1081,1150.8698 2460.3303,1157.4942 2453.1208,1162.1617 C2452.2196,1162.7451 2451.3585,1163.298 2450.5406,1163.8194 C2450.1316,1164.0801 2449.7335,1164.3329 2449.3465,1164.5778 C2449.153,1164.7003 2453.1919,1162.1543 2453.0041,1162.2727" fill="none" id="Maintainer-to-PRCI" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="2448.7744,1164.9391,2458.5209,1163.5234,2453.0041,1162.2727,2454.2547,1156.7559,2448.7744,1164.9391" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="162.1763" x="2563.88" y="1068.4371">identical required checks</text></g><!--link PRCI to Evidence--><g class="link" data-entity-1="ent0005" data-entity-2="ent0017" data-link-type="dependency" data-source-line="29" id="lnk20"><path d="M1724.3284,1272.5018 C1723.7686,1272.5776 1723.2084,1272.6536 1722.6477,1272.7297 C1721.5263,1272.8818 1720.4032,1273.0347 1719.2785,1273.1881 C1714.7795,1273.8017 1710.2539,1274.425 1705.7078,1275.0568 C1696.6156,1276.3204 1687.4413,1277.6179 1678.2325,1278.9398 C1659.815,1281.5836 1641.26,1284.3248 1622.95,1287.0873 C1586.33,1292.6123 1555.6265,1297.4279 1524.0265,1302.5129" fill="none" id="PRCI-to-Evidence" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1519.09,1303.3073,1528.6112,1305.8266,1524.0265,1302.5129,1527.3402,1297.9282,1519.09,1303.3073" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="192.7212" x="2257.37" y="1238.4471">results + manifests + digests</text></g><!--link Requester to Request--><g class="link" data-entity-1="ent0003" data-entity-2="ent0004" data-link-type="dependency" data-source-line="30" id="lnk21"><path d="M270.69,153.1173 C270.69,183.6573 270.69,217.0473 270.69,240.4773" fill="none" id="Requester-to-Request" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="270.69,245.4773,274.69,236.4773,270.69,240.4773,266.69,236.4773,270.69,245.4773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="84.8555" x="379.6319" y="196.8371">Issues: write</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="300.7393" x="271.69" y="212.6364">no Contents, refs, Releases/assets, or Actions</text></g><!--link Request to TrustedEntry--><g class="link" data-entity-1="ent0004" data-entity-2="ent0010" data-link-type="dependency" data-source-line="31" id="lnk22"><path d="M324.19,290.1973 C368.77,308.2973 433.79,335.2873 489.69,360.7973 C519.81,374.5373 548.3392,388.4486 575.8792,402.2386" fill="none" id="Request-to-TrustedEntry" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="580.35,404.4773,574.0934,396.871,575.8792,402.2386,570.5116,404.0244,580.35,404.4773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="352.0664" x="467.2" y="333.8671">issue/request ID + intended version + candidate SHA</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="121.4941" x="582.4861" y="349.6664">all fields untrusted</text></g><!--link TrustedEntry to Manifest--><g class="link" data-entity-1="ent0010" data-entity-2="ent0011" data-link-type="dependency" data-source-line="32" id="lnk23"><path d="M640.51,469.2273 C639.34,500.1773 637.7672,541.7108 636.7372,569.2008" fill="none" id="TrustedEntry-to-Manifest" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="636.55,574.1973,640.8842,565.3534,636.7372,569.2008,632.8898,565.0538,636.55,574.1973" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="377.5459" x="639.87" y="525.3771">bind event digest; resolve App sender + commit ancestry</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="342.9448" x="657.1705" y="541.1764">absent intended tag + exact workflow/policy digests</text></g><!--link Manifest to Revalidate--><g class="link" data-entity-1="ent0011" data-entity-2="ent0012" data-link-type="dependency" data-source-line="33" id="lnk24"><path d="M635.69,621.7673 C635.69,643.5773 635.69,671.2073 635.69,692.9873" fill="none" id="Manifest-to-Revalidate" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="635.69,697.9873,639.69,688.9873,635.69,692.9873,631.69,688.9873,635.69,697.9873" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="205.6514" x="636.69" y="665.3971">exact protected-branch commit</text></g><!--link Evidence to Revalidate--><g class="link" data-entity-1="ent0017" data-entity-2="ent0012" data-link-type="dependency" data-source-line="34" id="lnk25"><path d="M1272.49,1312.2473 C1040.59,1291.5973 577.69,1241.6373 577.69,1171.8773 C577.69,841.8473 577.69,841.8473 577.69,841.8473 C577.69,805.5273 596.8174,772.7277 613.7274,749.8577" fill="none" id="Evidence-to-Revalidate" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="616.7,745.8373,608.1329,750.6959,613.7274,749.8577,614.5655,755.4521,616.7,745.8373" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="121.4751" x="578.69" y="982.9271">exact-head checks</text></g><!--link Revalidate to Promote--><g class="link" data-entity-1="ent0012" data-entity-2="ent0013" data-link-type="dependency" data-source-line="35" id="lnk26"><path d="M720.92,745.7773 C805.58,768.5773 928.822,801.7573 1006.292,822.6173" fill="none" id="Revalidate-to-Promote" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1011.12,823.9173,1003.4696,817.7148,1006.292,822.6173,1001.3895,825.4397,1011.12,823.9173" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="157.9297" x="897.28" y="791.4071">accepted candidate only</text></g><!--link Promote to RelayEnv--><g class="link" data-entity-1="ent0013" data-entity-2="ent0016" data-link-type="dependency" data-source-line="36" id="lnk27"><path d="M1160.69,846.4873 C1233.26,850.7973 1340.66,862.0573 1429.69,891.3573 C1474.44,906.0773 1517.0715,930.9767 1547.3815,950.7367" fill="none" id="Promote-to-RelayEnv" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1551.57,953.4673,1546.2152,945.2014,1547.3815,950.7367,1541.8462,951.903,1551.57,953.4673" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="166.4165" x="1471.05" y="905.4271">scoped staging credential</text></g><!--link Promote to MacEnv--><g class="link" data-entity-1="ent0013" data-entity-2="ent0014" data-link-type="dependency" data-source-line="37" id="lnk28"><path d="M1106.29,861.7173 C1144.26,885.4573 1207.1401,924.7571 1248.8001,950.7971" fill="none" id="Promote-to-MacEnv" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1253.04,953.4473,1247.5284,945.2851,1248.8001,950.7971,1243.2881,952.0689,1253.04,953.4473" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="242.6265" x="1178.34" y="905.4271">scoped Developer ID/notary material</text></g><!--link MacEnv to SparkleEnv--><g class="link" data-entity-1="ent0014" data-entity-2="ent0015" data-link-type="dependency" data-source-line="38" id="lnk29"><path d="M1221.86,1001.2473 C1201.45,1011.6773 1181.39,1026.2973 1169.69,1046.3673 C1151.11,1078.2673 1167.4117,1116.8054 1182.7717,1142.7354" fill="none" id="MacEnv-to-SparkleEnv" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1185.32,1147.0373,1184.1746,1137.2553,1182.7717,1142.7354,1177.2916,1141.3325,1185.32,1147.0373" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="204.6929" x="1170.69" y="1068.4371">final notarized DMG digest only</text></g><!--link RelayEnv to Evidence--><g class="link" data-entity-1="ent0016" data-entity-2="ent0017" data-link-type="dependency" data-source-line="39" id="lnk30"><path d="M1572.54,1001.2273 C1538.62,1065.0773 1445.6356,1240.0716 1414.2256,1299.2016" fill="none" id="RelayEnv-to-Evidence" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1411.88,1303.6173,1419.6346,1297.5456,1414.2256,1299.2016,1412.5696,1293.7926,1411.88,1303.6173" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link MacEnv to Evidence--><g class="link" data-entity-1="ent0014" data-entity-2="ent0017" data-link-type="dependency" data-source-line="40" id="lnk31"><path d="M1334.49,1001.3673 C1351.59,1012.5473 1369.43,1027.6473 1379.69,1046.3673 C1426.79,1132.2673 1413.7113,1251.3319 1406.0413,1298.5719" fill="none" id="MacEnv-to-Evidence" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1405.24,1303.5073,1410.6307,1295.2647,1406.0413,1298.5719,1402.7341,1293.9826,1405.24,1303.5073" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link SparkleEnv to Evidence--><g class="link" data-entity-1="ent0015" data-entity-2="ent0017" data-link-type="dependency" data-source-line="41" id="lnk32"><path d="M1231.22,1194.7973 C1270.76,1224.4773 1334.9713,1272.6956 1371.9913,1300.4856" fill="none" id="SparkleEnv-to-Evidence" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1375.99,1303.4873,1371.1937,1294.8852,1371.9913,1300.4856,1366.391,1301.2832,1375.99,1303.4873" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link PRCI to GMN33--><g class="link" data-entity-1="ent0005" data-entity-2="ent0034" data-link-type="association" data-source-line="44" id="lnk35"><path d="M2448.9494,1176.9968 C2449.3958,1177.2741 2449.8587,1177.5616 2450.3377,1177.8591 C2452.2539,1179.0492 2454.4279,1180.3995 2456.8345,1181.8942 C2466.4609,1187.8729 2479.8081,1196.1623 2495.2538,1205.7548 C2526.145,1224.9398 2565.43,1249.3373 2600.13,1270.8873" fill="none" id="PRCI-GMN33" style="stroke:#000000;stroke-width:1;stroke-dasharray:7,7;"/></g><?plantuml-src VLRRRkCs47tNLx1vQX4hQWkq1NQ10jaaknkqQO8uVGjGqDJ89aoHAaavyHO5-X7zmdv93uUIB6-DFiJHPIvdpimPwekuePP4PwIsHTJHa7YwNFvKVllzrpzyyrtviebrQCG_V_qjhcv5z7s8OkLwMqk_BmgfelFYxBtpMr69tl9xgiN3uvcGGQJdeytJyAf5deW_ycnoDzsEXezaI0OIddxl2Ix-sNuPDix7qkWT0jo6WEUbisOlFkZuiL-9owxxYgCzZZu5_lSapZGRln6k8qir8Xqmnds7to6BOCEZ84NXIKLfrs3axCfJJJPgQSh64u4BDdru12b_548ertREmaASlNFIrrNeI8bpyG866kDUHEUCLllin9V7JbVEKzLv5vro1dwjLFTBDj18VmwOHkxnD7hzoa6UW30SnrYIyXGh12SRg5g-kx-RfrqgQKFnvr5P3yY8E-OXizvvwgINKJkRmV8zVLxaDJMoDx5SUMdLPlGkipSzstCnqZmoK6KeejPhGCyrP9CRjEGpEcxRjezo1OW0NUjQHaBnLZUZwzrmS-pstbFOS4ir-bMg3Qcje9r6wnGDlTr9m_4-Os997itLdu0ORMZTZ81qHuLrDSnoNu9UMstNbNKHCX1aTzexsmB304xTsDtWiGGXMsGOVFvZFBm_E3nogqEKwrFc_3OPInzr0ycW5yneoQf4yRNaXXwLVJFS50LBjIn_pAFx1lQopbgARalssLgN2AXxbHYOfnSGP-0H2yL1jVDOcYMYf9bQ8BW5eM23P3a2uSm14nHus7CpqtKUZr1CIcQtuGvUjuEWNxoEn6Yld8t86nQ8sE1ts1-XaY5GUWpSbrpD59LZpgSlWK-1gt4Tt5u3Yqw1QrIn8nyI6-UpSLn-l7osqXZHQ39rE2o_uYXmoZGEAxAij4sjINJcIjyc7fpPKLfYu1VvVChZsbP70N71nk-HQHMIqmG9um4pUaqJS5fYgKj3tapXEFc0aVswKVsZZ7FMOchIQRzoWvaPEpjxpPEGrG9JgHHrQH0FbAKnAqQB73iFCyo3ScaTZsElfdrxv92LTJ2_1fK6LnuD6zM89SbQBWRZv7SG6NmRZRu9jcQzNzzz62ZB22TKyu6THvkUpS8UFOUI0NZbOdIjS0the_Z57GYVwsenhOOH-QBe-XKwoLiuwt81Nxt3MR1EkxgtK1uFzZXpu_fM4dsffjsWGnAusl0gRK0aeA3BDLqK3vn2t6AWlAKeQ8r13EYmJa9SzH6nlDSKmDHqEiW-uYJMSNzHN6BqUHkMdOmRiJ9ERRbpF1S98zWS3kXounWbsx_5OPmAupK1fakBEZ7_FslRlqvhAq4F-IW2MCnyQjW9PeVjV6zflhQKiwht7e7sOkrTtm4lRmCqtoVH9Sh1P4FuCJB4Y-8gQSsOp3cOxUtMkXTx1CWwM-RJ8H7wFx36JmZq70DTTNtOfFNKkQ3nZRF_hTO1hAdD8YzLayuXH2onmGwV3D22XufFdCmNID0G_AckgDPfe7XzYKYlCGEDyrxzEjIIrmiZ0V4Br7YOoApzHHw0TBYrRfVtp291o3sQi6796mP_UlU8LeSs5IWQgKqeLjJW0sUs2l9sI9Id8FDJ9hq9uS3jlm00?></g></svg>
+\ No newline at end of file
+diff --git a/docs/TASK-260715-whtdsf_ci-trust-and-quality-gate-contract.md b/docs/TASK-260715-whtdsf_ci-trust-and-quality-gate-contract.md
+new file mode 100644
+index 0000000..3d19d95
+--- /dev/null
++++ b/docs/TASK-260715-whtdsf_ci-trust-and-quality-gate-contract.md
+@@ -0,0 +1,501 @@
++# TASK-260715-whtdsf — CI trust and quality-gate contract
++
++Status: binding autonomous draft; independent agent verdicts are retained as
++task outcomes, and later human ratification remains tracked at
++`TASK-260717-2d308k`.
++
++Authority: `.spec/platform-distribution.md` §CI/CD, `.spec/validation.md`,
++`.spec/security-privacy.md`, `.spec/threat-model.md`, `.spec/delivery.md`,
++ADR-013/016/017/018/019/024/027/029, and
++`docs/TASK-260715-32umrc_generated-project-architecture-adr.md`.
++
++Focused trust-boundary view:
++[`TASK-260715-whtdsf_ci-trust-boundary.puml`](../diagrams/TASK-260715-whtdsf_ci-trust-boundary.puml)
++([rendered SVG](../diagrams/artefacts/TASK-260715-whtdsf_ci-trust-boundary.svg)).
++
++## 1. Scope and non-claims
++
++This contract governs credential-free pull-request validation for the
++macOS-first prototype and the protected macOS/relay release path. It defines
++workflow boundaries and blocking check names; it does not implement GitHub
++Actions.
++
++- Gate A0 is not an input to prototype CI. It re-arms before iOS submission or
++  any public distribution claim that depends on App Review acceptance.
++- No Linux CI runner is required for the working-client path. The relay's four
++  declared Darwin/Linux, amd64/arm64 outputs may be cross-built on the pinned
++  macOS toolchain. Native/equivalent release evidence remains owned by the relay
++  release contract and cannot be inferred from cross-compilation.
++- iOS targets, TestFlight, App Store Connect, and App Review workflows are
++  deferred with iOS. Their future checks are named for traceability but are not
++  required checks on the macOS-only path and must never be reported as passed.
++- Credential-free compile and static inspection are not signing, notarization,
++  installation, Network Extension activation, VPN lifecycle, or publication
++  evidence.
++- The build host must not install or activate a system extension or VPN app,
++  persist VPN preferences, call `startVPNTunnel`, or mutate routes or DNS.
++
++## 2. Trust invariants
++
++1. Untrusted source is any fork pull request, pull-request head, arbitrary
++   branch, mutable tag, downloaded artifact without a verified digest, or
++   rerun whose candidate identity differs from its original attempt.
++2. Repository source becomes release input only as an exact commit reachable
++   from the protected default branch and bound into an immutable candidate
++   manifest. A tag is a label, never identity authority.
++3. Workflow code that accepts a release candidate or can reach production
++   credentials is loaded only from the protected default branch.
++   `release-prepare.yml` is triggered only when the dedicated release-request
++   GitHub App opens a typed issue; GitHub binds the `issues: opened` event to
++   the default-branch workflow/ref/SHA. The issue, sender claims, requested
++   commit, version, and request ID are untrusted inputs until independently
++   resolved. Tag push, `repository_dispatch`, selectable-ref
++   `workflow_dispatch`, `workflow_run` from candidate-controlled code, and
++   relative reusable-workflow calls are not release entry points.
++   `pull_request_target` is prohibited for building, executing, caching, or
++   uploading pull-request code.
++4. Workflow and job permissions default to `contents: read`; every other
++   `GITHUB_TOKEN` permission is `none`. An additional read-only metadata
++   permission may be granted without an environment only when its exact API
++   call is inventoried. A write permission is granted only to its single call
++   site after protected-environment approval. Repository Actions settings are
++   a default, not a hard ceiling on same-repository workflow YAML, so no trust
++   claim depends on them preventing a workflow from requesting write access.
++   No production secret exists at repository or organization scope; protected
++   environments restrict deployment refs to the protected default branch.
++5. Pull-request jobs have no production environment and receive no certificate,
++   private key, certificate password, App Store Connect issuer/key, provisioning
++   profile secret, notarization credential, Sparkle private key, feed-origin
++   credential, publication token, privileged runner, or route to a private
++   production network. GitHub-hosted runners do have public Internet egress;
++   that capability is treated as untrusted and never as release authority.
++6. Every third-party action is pinned to a reviewed full commit SHA. A mutable
++   tag, branch, range, or unreviewed action source fails before execution.
++7. Pull-request caches and artifacts are untrusted accelerators. They are never
++   release inputs; cache hits are revalidated against source and manifests.
++8. Release jobs consume one candidate manifest and exact digests. Reruns may
++   reuse that identity but may not resolve a new tag, branch head, dependency,
++   cache namespace, or artifact under the old release attempt.
++9. Production publication is serialized and feed-last. Cancellation or any
++   failed/missing/unknown prerequisite leaves the candidate non-promotable.
++10. Absence and read failure are distinct. A missing optional row is `deferred`
++    or `not-applicable`; an unreadable or indeterminate required input is
++    `unknown` and fails closed.
++
++## 3. Workflow and job inventory
++
++All workflow files use explicit top-level and job-level `permissions`, bounded
++timeouts, `set -euo pipefail` (or an equivalent fail-fast shell contract),
++immutable action pins, and concurrency groups. `persist-credentials: false` is
++required on every checkout unless the single publication step documents its
++write need. The Network column records both runner capability and authorized
++use: a GitHub-hosted runner has public egress even where trusted steps authorize
++no post-bootstrap network use.
++
++### 3.0 Existing `ci.yml` seed and migration boundary
++
++The repository already has one seed workflow. It remains active while the
++required workflows below are implemented, but its current display names are not
++the final branch-protection contract and its green result is not release
++authorization.
++
++Triggers: push to `main` and pull requests targeting `main`.
++
++| Current job | Actor trust and input | Token / environment / secrets | Network | Outputs / retention | Approval / successor |
++| --- | --- | --- | --- | --- | --- |
++| `generated-project-credential-free` | Untrusted PR or protected-branch source; exact event SHA plus pinned legacy repository commit and checked-in project/tool configuration | Top-level `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; current trusted steps use GitHub checkout plus checksum-pinned Mise/tool inputs | Privacy-safe build logs and generated-project evidence; 14d | None; splits into `build/workspace-legacy` and `build/apple-credential-free` |
++| `validate` | Untrusted PR or protected-branch source; exact event SHA only | `contents: read`; no environment; no secrets | Ubuntu hosted-runner public egress exists; current trusted steps use GitHub checkout only | YAML/spec/board diagnostics in the Actions job log; repository Actions-log retention is not declared in this seed and is therefore unknown/non-promotable | None; replaced by `policy/github-actions` and `policy/board-spec` |
++| `relay-toolchain` | Untrusted PR or protected-branch source; exact event SHA, checked-in relay supply-chain/toolchain manifests, Go module, and negative fixtures | `contents: read`; no environment; no secrets | Ubuntu hosted-runner public egress exists; current trusted steps use GitHub checkout and the checksum-pinned Go origin named by the toolchain manifest | Build/test/audit result in the Actions job log; repository Actions-log retention is not declared in this seed and is therefore unknown/non-promotable | None; maps to `build/relay-four-target` and `security/supply-chain` |
++| `relay-portable-runtime` | Untrusted PR or protected-branch source; exact event SHA, four declared target/runner rows, checked-in relay manifests, and checksum-pinned host-tool inputs | `contents: read`; no environment; no secrets | GitHub-hosted macOS/Ubuntu public egress exists; current trusted steps use GitHub checkout and checksum-pinned Go/Syft origins named by the toolchain manifest | Four gated executables, SBOMs, manifest/checksums, and privacy-safe runtime reports; 14d, `if-no-files-found: warn`, therefore non-promotable | None; maps to `build/relay-four-target` |
++
++The seed currently uses Linux for two distinct purposes: generic repository
++validation (`validate` on `ubuntu-latest`) and relay work (`relay-toolchain` plus
++the Linux rows of `relay-portable-runtime`). This is observed implementation,
++not an architectural requirement. Every successor check required by the macOS
++working-client path must be runnable on the declared GitHub-hosted macOS image;
++none may depend on Linux runner availability. Relay owners may retain separate
++native-Linux jobs as additional relay release evidence, but those jobs are not
++prerequisites of the working-client build. The seed is retired or narrowed only
++after its successor checks are required and green for the same exact head SHA,
++so migration cannot create an unprotected interval.
++
++Seed artifacts are non-promotable legacy evidence. In particular,
++`relay-portable-runtime` currently uploads executables for 14 days, uses
++`if-no-files-found: warn`, and does not wrap every file in the versioned
++provenance envelope required by §6. Those facts are recorded gaps, not accepted
++release semantics: no seed artifact may enter `release-prepare.yml`, staging,
++signing, or publication. `TASK-260715-36gq4m`, `TASK-260715-82zzad`, and
++`TASK-260715-2wjvlx` must replace warning-on-missing upload, bind exact digests
++and provenance, and apply the candidate retention class before a relay artifact
++becomes promotable.
++
++### 3.1 `ci-policy.yml` — repository policy
++
++Triggers: `pull_request`, `merge_group`, and push to the protected default
++branch. Manual dispatch may run diagnostics but cannot replace a required event
++result.
++
++| Job / blocking check | Actor trust and input | Token / environment / secrets | Network | Outputs / retention | Approval |
++| --- | --- | --- | --- | --- | --- |
++| `policy/github-actions` | Untrusted PR, merge-queue, or protected-branch exact event SHA from a clean checkout; checked-in workflows and CI policy | `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; trusted steps authorize only GitHub checkout/action download by immutable SHA | Sanitized policy report and action/permission/runner/environment/cache/artifact inventory; verification/90d | None |
++| `policy/board-spec` | Untrusted PR, merge-queue, or protected-branch exact event SHA from a clean checkout; board files, resource declarations, dependencies, and `.spec/` inputs | `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; no post-checkout use is authorized | Board/spec validation report and clean-tree assertion; verification/90d | None |
++| `policy/version-release-metadata` | Untrusted PR, merge-queue, or protected-branch exact event SHA; proposed versions/tags/artifact names/release notes are evaluated without a release claim | `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; no post-checkout use is authorized | Version/tag/release-note report; verification/90d | None |
++| `security/ci-threat-model` | Untrusted PR, merge-queue, or protected-branch exact event SHA; checked-in safe fixtures/dry-runs only, never real production credentials or publication | `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; trusted harness authorizes only isolated test endpoints it owns | Scenario-to-result report for fork/cache/artifact/tag/rerun/cancel/concurrency/credential threats; verification/90d | None |
++| `security/sarif-publish` (trusted post-merge only; not a PR required check) | Protected-default-branch exact source SHA and exact digest of the accepted `security/supply-chain` report; never PR/fork code or artifact | `contents: read`, `security-events: write`; protected `security-reporting`; no production signing/publication secret | Egress-controlled release runner; only the GitHub code-scanning upload endpoint is authorized | SARIF upload receipt bound to source/report digests; verification/90d | Security environment approval |
++
++`policy/github-actions` is the production policy-enforcement call site for
++permissions, action pins, runner labels, environments, caches, artifacts,
++timeouts, shell behavior, and concurrency. `policy/board-spec` must run
++`task-board validate --json`, validate resource references and dependency
++cycles, check spec links/format, and prove the checkout remains clean. Its
++production wrapper must parse the JSON and exit nonzero unless `valid` is
++exactly `true` and both `errors` and `warnings` are readable arrays allowed by
++the checked-in policy. The raw `task-board validate` process exit is not
++authoritative because revision `b3422b05226253a17676b9b84c764071fe3dbe74` was
++observed to report `[PARENT_STATUS_MISMATCH]` and one issue while exiting 0.
++Malformed/unreadable JSON, a missing field, any validation error, or any
++unallowlisted warning is `unknown`/failure. `TASK-260715-2hef52` owns this
++wrapper and an invalid-status negative fixture that invokes the same production
++entry point and asserts nonzero; a direct CLI-only fixture is insufficient.
++
++### 3.2 `ci-build-test.yml` — credential-free build and test
++
++Triggers: `pull_request`, `merge_group`, and push to the protected default
++branch. Every blocking row below runs on a declared GitHub-hosted macOS image
++with pinned Xcode, Mise/Tuist, Swift, Go, and dependency inputs, including the
++four-target relay cross-build. Relay owners may add separately named native
++Linux evidence jobs, but branch protection for the macOS working-client path
++does not require them. No self-hosted or credentialed runner is permitted.
++
++| Job / blocking check | Actor trust and input | Token / environment / secrets | Network | Outputs / retention | Approval |
++| --- | --- | --- | --- | --- | --- |
++| `build/workspace-legacy` | Untrusted PR, merge-queue, or protected-branch exact event SHA from a clean checkout; generated-workspace inputs plus pinned legacy repository commit | `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; trusted bootstrap uses only checksum-pinned Mise/Tuist and legacy-source origins | Generator diff, scheme/config inventory, and preserved SwiftPM legacy results; verification/90d | None |
++| `test/core-protocol` | Untrusted PR, merge-queue, or protected-branch exact event SHA; checked-in Swift/Go sources, schemas, vectors, and deterministic seeds | `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; no use is authorized after checksum-pinned bootstrap | Swift/Go test inventories, machine results, deterministic seeds; verification/90d | None |
++| `build/apple-credential-free` | Untrusted PR, merge-queue, or protected-branch exact event SHA; generated macOS-only workspace plus pinned project/tool inputs | `contents: read`; no environment; no secrets; `CODE_SIGNING_ALLOWED=NO` | GitHub-hosted macOS public egress exists; no use is authorized after checksum-pinned bootstrap | Debug/Release build logs, static plist/entitlement/embed/link reports; verification/90d | None |
++| `build/relay-four-target` | Untrusted PR, merge-queue, or protected-branch exact event SHA; pinned relay source/toolchain/target manifests and four declared target rows | `contents: read`; no environment; no secrets | GitHub-hosted macOS public egress exists; no use is authorized after checksum-pinned bootstrap | Four uniquely named candidates, hashes, identities, protocol smoke metadata; candidate/180d | None |
++| `security/supply-chain` | Untrusted PR, merge-queue, or protected-branch exact event SHA; source, dependency locks, built candidates, and checked-in security/license policies | `contents: read`; no environment or production secret; no SARIF publication permission | GitHub-hosted macOS public egress exists; trusted scanner authorizes only its allowlisted pinned advisory source; outage is not a pass | Redacted secret/dependency/license/SBOM/notice reports and SARIF as untrusted verification artifacts; verification/90d | None |
++
++The active Apple job builds only the approved macOS host/provider, package,
++harness, and relay schemes. Deferred iOS target definitions are not generated or
++built in macOS-only mode. A future resumed iOS credential-free simulator check
++must use the same trust boundary but is not a macOS required check.
++
++### 3.3 Authenticated release request and immutable candidate preparation
++
++`release-prepare.yml` triggers only on `issues: types: [opened]`. GitHub binds
++that event to the last protected-default-branch commit/ref and requires the
++workflow file on the default branch. There is no tag/push trigger,
++`repository_dispatch`, selectable-ref `workflow_dispatch`, or upstream
++workflow whose code or output becomes authority. The request issue uses one
++strict machine-readable template containing a unique request ID, intended
++semantic version, and candidate commit. Its title, body, issue number, sender,
++and every requested value are untrusted data.
++
++The external request client uses a short-lived, repository-scoped GitHub App
++installation token with exactly `Issues: write`; it creates the request through
++the GitHub issue endpoint. The App has no Contents, Actions, Workflows,
++Administration, Environments, Secrets, Checks, Deployments, or publication
++permission and is not a protected-branch or protected-tag ruleset bypass actor.
++The token is held outside repository Actions, is never copied into the issue or
++exposed to the workflow, calls only the issue-creation endpoint, and records the
++issue/audit receipt. Compromise can create, edit, close, reopen, label, or spam
++issues and comments allowed by that repository permission, including replayed
++or altered release requests; it cannot create/update/delete Git refs, GitHub
++Releases, or release assets, make an unprotected commit eligible, approve an
++environment, obtain production secrets, sign, or publish. Release owns
++initiation; recorded engineering/security/release approvals remain separate and
++mandatory at `release/review-gate`.
++
++The first job requires the expected repository, `issues/opened` event and issue
++template version, GitHub App installation/sender, unique issue and request IDs,
++`github.ref` equal to the protected default branch, and `github.workflow_sha`
++equal to the protected default-branch workflow revision whose file and policy
++SHA-256 digests are checked in. It parses only the event payload captured for
++that run, binds its digest, and never refetches a mutable issue body as
++authority. It then resolves the requested commit independently and requires it
++to be an exact commit reachable from the protected default branch.
++`release/revalidate` runs all nine checks fresh for that exact candidate.
++The intended `v*` tag must be absent and unreserved; it is created atomically at
++the accepted candidate commit only by the later protected publication job.
++Missing, replayed, ambiguous, moved, or inconsistent metadata is `unknown` and
++stops before candidate acceptance.
++
++Every credential-capable reusable workflow is called as
++`owner/repository/.github/workflows/<file>.yml@<full-reviewed-commit-SHA>` and
++that SHA plus file digest appears in the immutable candidate. Relative local
++workflow calls and tag/branch refs are prohibited for release authority because
++they resolve from mutable or caller-selected code.
++
++| Job / blocking check | Actor trust and input | Token / environment / secrets | Network | Outputs / retention | Approval |
++| --- | --- | --- | --- | --- | --- |
++| `release/candidate-identity` | Default-branch `issues/opened` event; independently validate App sender, issue/template/request identity, immutable event-payload digest, and untrusted candidate SHA/version; require exact default-branch-reachable commit, absent intended tag, trusted workflow SHA, and policy digest | `contents: read`; no production environment; no secrets; external `Issues: write` request credential is unavailable to Actions | GitHub-hosted macOS public egress exists; only GitHub repository/ref/issue metadata reads are authorized | Immutable candidate manifest, issue/request identity, event digest, intended tag/version, commit ancestry, and workflow-provenance evidence; release-record/7y | Release-owner initiation; not release approval |
++| `release/revalidate` | Exact immutable candidate manifest and the nine checked-in required-check definitions at the accepted policy revision | `contents: read`; no production environment; no secrets | GitHub-hosted macOS public egress exists; only immutable GitHub action/checkouts and checksum-pinned Mise, Tuist, Go, Syft, dependency, scanner, and advisory origins declared by the candidate are authorized; no production endpoint | Fresh result and digest for every active required check; release-record/7y | None |
++| `release/review-gate` | Exact candidate manifest plus complete fresh active evidence index and recorded approval identities | `contents: read`; no production environment; no secrets | GitHub-hosted macOS public egress exists; no network use is authorized after checkout/evidence retrieval | Machine verdict: promotable/non-promotable/unknown; release-record/7y | Recorded engineering/security/release approvals; human ratification remains `TASK-260717-2d308k` before publication |
++
++The candidate manifest records request identity, source commit, clean-state assertion, source and
++dependency locks, toolchain/SDK/runner images, protocol and relay manifests,
++marketing/build versions, intended absent tag, expected artifact names, the
++trusted caller workflow SHA/policy digest, every reusable-workflow SHA/file
++digest, and every evidence digest. It is immutable after
++`release/review-gate` starts.
++
++### 3.4 `release-relay.yml` — relay staging
++
++Trigger: reusable workflow call only from the exact full-SHA-pinned trusted
++release workflow recorded by an accepted `release-prepare.yml` candidate.
++Direct PR, branch, tag, relative local, mutable-ref, or arbitrary workflow calls
++are rejected before protected-environment access.
++
++| Job / blocking check | Actor trust and input | Token / environment / secrets | Network | Outputs / retention | Approval |
++| --- | --- | --- | --- | --- | --- |
++| `release/relay-rebuild` | Exact accepted candidate source, toolchain, dependency, protocol, and four-target manifests | `contents: read`; no production environment; no secret | GitHub-hosted macOS public egress exists; only checksum-pinned tool/bootstrap origins are authorized | Two isolated four-target trees and byte/identity comparison; candidate/180d | None |
++| `release/relay-compliance` | Exact rebuilt bytes and accepted security/license/SBOM/notice policies | `contents: read`; no production environment; no secret | GitHub-hosted macOS public egress exists; only the pinned allowlisted advisory source is authorized | Manifest, checksums, SBOM, notices, scan, and provenance; release-record/7y | Relay/security policy owners through accepted contracts |
++| `release/relay-stage` | Exact compliance-approved artifact and manifest digests from the immutable candidate | `contents: read`; protected `relay-staging`; narrowly scoped staging credential if a remote store is used | Egress-controlled release runner; only the named staging endpoint is reachable | Immutable digest-addressed staging receipt; release-record/7y | Environment approval by release owner |
++
++Staging is not public promotion. A Linux runner is not required by this
++workflow; any native Linux equivalence claim must cite separately accepted
++evidence owned by `TASK-260715-pa6evr` and `TASK-260715-36gq4m`.
++
++### 3.5 `release-macos.yml` — protected macOS release
++
++Trigger: reusable workflow call only from the exact full-SHA-pinned trusted
++release orchestrator recorded for one immutable candidate. Relative local and
++mutable-ref calls are rejected before protected-environment access. Production concurrency group is
++`relux-production-release` with `cancel-in-progress: false`.
++
++| Job / blocking check | Actor trust and input | Token / environment / secrets | Network | Outputs / retention | Approval |
++| --- | --- | --- | --- | --- | --- |
++| `release/macos-build-inspect` | Exact immutable candidate and relay staging receipt; fresh build from accepted source, never PR artifacts/caches | `contents: read`; no production environment; no secrets | GitHub-hosted macOS public egress exists; only checksum-pinned dependency/bootstrap origins are authorized | Unsigned archive inputs and inspection report; candidate/180d | None |
++| `release/macos-sign-notarize` | Exact inspected app/archive bytes and public signing-policy identifiers | `contents: read`; protected `macos-signing`; Developer ID identity/profile/password and named notary credential only | Egress-controlled macOS release runner; only required Apple timestamp/notarization endpoints are reachable | Signed app/DMG, public identity/team/profile metadata, notarization/stapling/Gatekeeper evidence; release-record/7y | macOS signing environment approver |
++| `release/macos-sparkle-sign` | Final immutable notarized/stapled DMG and exact expected digest/version/channel metadata | `contents: read`; protected `sparkle-signing`; Sparkle EdDSA private key only | Egress-controlled macOS release runner with enforced no-egress boundary | Payload signature and proposed signed appcast; release-record/7y | Two-custodian ceremony policy plus environment approval |
++| `release/macos-publish-assets` | Exact verified DMG, checksum/signature receipts, intended absent tag, and candidate metadata | `contents: write`; protected `github-release`; publication token only | Egress-controlled release runner; only exact GitHub release/asset/tag endpoints are reachable | Protected tag created atomically at the candidate commit, versioned immutable asset, checksum, stable manual-download alias receipt; release-record/7y | Release environment approval |
++| `release/macos-publish-feed` | Exact published-asset receipt plus remote digest/header/privacy probe policy | `contents: read`; protected `update-feed`; minimum external feed-origin write credential only | Egress-controlled release runner; only the exact update origin is reachable | Atomic feed-last receipt, signed feed, and remote verification; release-record/7y | Release environment approval after asset verification |
++| `release/finalize-evidence` | Exact candidate, approval, staging, signing, notarization, asset, feed, and remote-verification receipts/digests | `contents: read`; no production environment; no secrets; no secret-bearing output | Egress-controlled release runner; only required distribution endpoints are reachable read-only for final verification | Final evidence index and disposition; release-record/7y | Release owner |
++
++Credential scopes are not shared across jobs. A compromised low-privilege
++publication credential cannot sign, notarize, alter candidate identity, or erase
++the retained evidence root. Temporary credentials are preferred; every secret
++is masked and revoked/rotated after suspected exposure.
++
++### 3.6 Deferred workflow registry
++
++`release-ios.yml` (archive, entitlement/provisioning inspection, TestFlight,
++App Store Connect evidence) and App Review submission are defined only as
++future ownership under `TASK-260715-3661ps`, `TASK-260715-8g5fpa`,
++`TASK-260715-dsvvnu`, and `TASK-260715-sfkrzq`. They have no active trigger,
++environment, secret, or required-check status until ADR-024/027 and Gate A0/P0
++are explicitly resumed. `deferred` is the only truthful current result.
++
++## 4. Required-check and branch-protection policy
++
++The protected default branch and merge queue require the following exact check
++names. A skipped, cancelled, timed-out, neutral, stale, missing, or unknown
++result is non-success and blocks merge. Administrators and bots do not bypass
++the rule; emergency changes use the separately audited exception process and
++must restore all checks before release eligibility.
++
++1. `policy/github-actions`
++2. `policy/board-spec`
++3. `policy/version-release-metadata`
++4. `build/workspace-legacy`
++5. `test/core-protocol`
++6. `build/apple-credential-free`
++7. `build/relay-four-target`
++8. `security/supply-chain`
++9. `security/ci-threat-model`
++
++Checks are accepted only for the exact current pull-request head SHA. A base
++update, force-push, merge-queue synthetic commit, workflow-policy change, or
++dependency-lock change invalidates stale results. Branch protection must reject
++ambiguous duplicate check names from different workflows/apps. Release
++promotion additionally requires the three `release-prepare` checks and the
++applicable protected release receipts; PR checks alone never authorize release.
++
++## 5. Epic requirement traceability
++
++Each requirement has one primary blocking check. Supporting checks may provide
++evidence but cannot substitute for the named owner.
++
++| Epic/story CI requirement | Primary blocking check | Downstream owner | Platform/review owner |
++| --- | --- | --- | --- |
++| Explicit least permissions, immutable actions, runner/environment/cache/artifact policy | `policy/github-actions` | `TASK-260715-2wjvlx` | Security/review |
++| Board structure, resources, dependencies, and spec integrity | `policy/board-spec` | `TASK-260715-2hef52` | Review |
++| Generated-workspace drift plus preserved SwiftPM/legacy lane | `build/workspace-legacy` | `TASK-260715-3mk4hs` | macOS |
++| Shared Core and protocol conformance | `test/core-protocol` | `TASK-260715-1m3edc` | macOS/relay |
++| Credential-free host/provider compile and static entitlement/embed inspection | `build/apple-credential-free` | `TASK-260715-1uxx3i` | macOS; iOS row deferred |
++| Four declared relay outputs, identity, checksums, protocol smoke | `build/relay-four-target` | `TASK-260715-36gq4m` | Relay |
++| Secret, dependency, vulnerability, license, SBOM, and notice policy | `security/supply-chain` | `TASK-260715-38atsq` | Security/relay |
++| Semantic version, tag, artifact names, and release notes | `policy/version-release-metadata` | `TASK-260715-2759wy` | Release |
++| Immutable candidate and fresh revalidation | `release/candidate-identity` | `TASK-260715-2ybl7y` | Release/review |
++| Trusted default-branch release entry point and immutable reusable-workflow provenance | `release/candidate-identity` | `TASK-260715-2ybl7y`, with policy enforcement by `TASK-260715-2wjvlx` | Security/release/review |
++| Protected, serialized, idempotent promotion | `release/review-gate` | `TASK-260715-2ybl7y` | Release/security |
++| Artifact metadata, digests, provenance, access, retention, deletion | `release/finalize-evidence` | `TASK-260715-82zzad` | Release/review |
++| Adversarial fork/cache/artifact/tag/rerun/cancel/concurrency verification | `security/ci-threat-model` | `TASK-260715-vg2of8`; supporting policy and release dry-run evidence is mandatory input | Security/review |
++| Relay release input and reproducibility authority | `release/relay-compliance` | `TASK-260715-pa6evr` | Relay/security |
++| macOS signing/notarization/update identity and publication | `release/finalize-evidence` | `TASK-260715-1tzaed`, `TASK-260715-3gkwn0`; signing, Sparkle, asset, and feed receipts are mandatory inputs | macOS/release |
++| Cross-platform go/no-go and separation of duties | `release/review-gate` | `TASK-260715-29r0k8` | Release/security/review |
++| iOS archive/TestFlight/App Store pipeline | `release/ios-distribution` (inactive and deferred; not a macOS required check) | `TASK-260715-3661ps` and downstream iOS tasks | iOS/App Review |
++| Human ratification of governance contracts | `release/review-gate` cannot pass publication without its evidence | `TASK-260717-2d308k` | Security/release/platform |
++
++The active story decomposition is complete and atomic: contract, workflow
++hardening, board/spec, workspace/legacy, Core/protocol, Apple credential-free,
++relay, security/compliance, versioning, release orchestration, evidence, and
++adversarial verification each have one clear owner. No new board element or
++research task is justified by this contract. `TASK-260717-1s2eiz`, an
++under-specified bootstrap duplicate, was closed as obsolete after confirming
++that `.github/workflows/ci.yml` already supplies the seed and that all remaining
++requirements map to the atomic owners above; its board note records the gap and
++out-of-scope audit.
++
++## 6. Artifact, provenance, retention, and network policy
++
++### 6.1 Required provenance envelope
++
++Every uploaded result contains a versioned manifest with: workflow/run/attempt,
++event and actor trust class, exact source and protected-base commits, dirty-state
++assertion, dependency lock digests, action SHAs, runner image, Xcode/SDK/Swift,
++Mise/Tuist, Go and scanner versions, relay/protocol manifests and versions,
++marketing/build versions, command inventory and exit status, artifact size and
++SHA-256, signing public identity/team/profile identifier and expiry where
++applicable, approval/environment receipts, and a redaction declaration. Private
++material, secret values, raw profiles, user-home paths, traffic, destinations,
++DNS names, cookies, and tokens are forbidden.
++
++Artifacts are uploaded under attempt-unique, candidate-digest-addressed names.
++Every downstream download verifies the expected manifest digest and each file
++digest before use. GitHub artifact IDs or filenames alone are insufficient.
++Release jobs rebuild from the immutable candidate or consume only protected
++staging receipts; they never promote artifacts produced by untrusted PR code.
++
++### 6.2 Retention classes
++
++| Class | Content | Retention | Access/deletion |
++| --- | --- | --- | --- |
++| `diagnostic` | Redacted failed-step logs with no reusable binary | 14 days | Repository readers; automatic deletion |
++| `verification` | PR/test/SARIF/policy reports | 90 days | Repository readers/security as scoped; automatic deletion |
++| `candidate` | Unsigned/rebuilt candidate bytes and intermediate manifests | 180 days or candidate rejection + 30 days, whichever is later | Release/security; digest-indexed deletion audit |
++| `release-record` | Published hashes, provenance, approvals, public signing/notary/feed receipts, SBOM/notices | 7 years | Append-only release/security evidence store; deletion requires recorded policy authority |
++| `incident-hold` | Minimum redacted subset named by an incident | Until explicit legal/security release | Restricted; hold and deletion events audited |
++
++Retention clocks and legal-hold applicability are policy-fill decisions for
++later owner ratification; they do not authorize storing secrets or personal
++traffic data.
++
++### 6.3 Network and cache rules
++
++- Standard GitHub-hosted runners have public Internet egress. For untrusted PR
++  jobs this is an explicit capability, not an enforceable deny boundary; those
++  jobs therefore receive no secret, write token, protected environment,
++  privileged runner, private-production route, or promotable output namespace.
++- Trusted steps authorize only exact GitHub endpoints, checksum-pinned
++  package/tool origins, and advisory databases. Credential-bearing release jobs
++  use an enforceable job-specific egress boundary or fail before secret access;
++  only the owning job can reach Apple notarization, GitHub publication, relay
++  staging, or the Relux update origin.
++- Redirects, new hosts, mutable bootstrap responses, proxy injection, TLS
++  failure, or inability to prove the protected job's egress boundary fail
++  closed. Network inventories are retained in sanitized metadata.
++- Fork PRs may restore only read-only caches keyed by trust class, OS image,
++  exact tool/dependency/source hashes, and cache schema. They never save to a
++  namespace restored by trusted/release jobs.
++- Cache contents are never authoritative. Checksums, manifests, generated drift,
++  linkage, and artifact inspection run on every hit. Poisoned or unreadable
++  caches are discarded and the job rebuilds; inability to rebuild is failure.
++
++## 7. Threat and failure-path contract
++
++| Scenario | Required prevention/detection | Fail-closed result and recovery owner |
++| --- | --- | --- |
++| Forked code | No environment, secret, write token, self-hosted runner, privileged reusable workflow, or trusted cache/artifact namespace | PR remains failing; `TASK-260715-2wjvlx` fixes policy, `TASK-260715-vg2of8` proves it |
++| Mutable action | Full-SHA policy rejects tag/branch/range before action execution | `policy/github-actions` fails; security reviews replacement SHA |
++| Cache poisoning | Trust-separated keys; content verification after restore; release ignores PR caches | Discard/rebuild; verification failure blocks the owning build check |
++| Artifact substitution | Candidate manifest and per-file digests verified at each transfer; untrusted artifacts never promote | Consumer fails before processing; evidence owner records attempted digest mismatch |
++| Tag/workflow spoofing or race | Release preparation has no tag/push, `repository_dispatch`, or selectable-ref trigger; default-branch `issues/opened` code independently resolves App sender, issue/template/request identity, event digest, candidate ancestry, workflow/policy digests, and an absent intended tag; protected publication creates the tag atomically at the accepted commit | Unknown sender, replay, mutable/refetched issue authority, existing/moved/reserved tag, non-default workflow provenance, candidate-controlled workflow code, or digest mismatch makes `release/candidate-identity` unknown/failing before environment access |
++| Rerun | Original candidate manifest/digests and policy revision remain fixed; attempt number is new | Changed identity creates a new candidate, not a rerun; old attempt stays non-promotable |
++| Cancellation/timeout/runner loss | Bounded jobs, `always()` evidence finalizer that cannot override failure, no feed publication before all receipts | Cancelled/unknown, never success; revoke temporary material and resume from last immutable receipt |
++| Concurrent releases | One production concurrency group, no cancel-in-progress, monotonic version reservation | Later candidate waits; conflicting version is rejected, never overwritten |
++| Compromised low-privilege credential | Job-specific endpoint/scope; the request App has only `Issues: write`, so it can create/edit/close/reopen/label/spam request issues and comments but cannot mutate Contents, refs, Releases/assets, Actions/workflows, environments, secrets, or evidence; candidate validation ignores refetched mutable issue text and staging/publication credentials cannot cross job boundaries | Stop affected request/job, revoke/rotate, reject duplicate/altered requests, mark every affected candidate non-promotable, and let security own incident disposition |
++| Missing/expired credential | Preflight proves availability without printing material | Required credentialed job fails; it is never `skipped-as-pass` |
++| Partial publication | Versioned assets first, remote digest/header checks, signed feed atomically last | Feed withheld; exact receipts determine safe resume or withdrawal |
++| Scanner/advisory outage | Distinguish no findings from unavailable database/service | `unknown` blocks `security/supply-chain`; security owner decides only through audited exception |
++| Evidence/log upload failure | Gate result and evidence persistence are both required | Owning check fails even when build/tests passed |
++
++No workflow may convert failure into success with `continue-on-error`, blanket
++retry, fallback credentials, alternate unsigned feed/download, stale evidence,
++or a summary-only aggregator. Matrix aggregation reports every child result and
++fails unless all required children succeeded.
++
++## 8. Negative evidence obligations
++
++This task ships documentation, not enforcement code. The referenced
++`references/negative-evidence.md` was not present in the repository or installed
++skill trees during authoring, so its contents are `unknown`, not inferred.
++Downstream implementations still must add tests that narrow and prove each
++production call site:
++
++| Production call site | Minimum rejecting fixtures |
++| --- | --- |
++| `policy/github-actions` / `TASK-260715-2wjvlx` | write permission, protected environment on PR, mutable action, privileged runner, unsafe cache namespace, missing timeout, duplicate check name, any `push.tags` workflow trigger |
++| `policy/board-spec` / `TASK-260715-2hef52` | production-wrapper fixture with invalid hierarchy/status that proves reported issues cannot exit 0; missing/malformed/unreadable validator JSON; missing resource; broken ID/link; dependency cycle; spec-format failure; tracked mutation |
++| `build/workspace-legacy` / `TASK-260715-3mk4hs` | target/scheme removal, generator/identifier drift, dirty generation, legacy regression |
++| `test/core-protocol` / `TASK-260715-1m3edc` | omitted suite/vector, malformed/oversized input regression, timeout, leak, retry-dependent flaky pass |
++| `build/apple-credential-free` / `TASK-260715-1uxx3i` | identity lookup, iOS scheme in macOS-only mode, identifier/embed/entitlement/link/version drift, signing claim from unsigned output |
++| `build/relay-four-target` / `TASK-260715-36gq4m` | missing/duplicate target, mutable fetch, target/identity/protocol/checksum mismatch, partial matrix |
++| `security/supply-chain` / `TASK-260715-38atsq` | private key/token/password, prohibited license, vulnerable lock, missing SBOM component/notice, over-broad or expired suppression |
++| `security/sarif-publish` / `TASK-260715-38atsq`, `TASK-260715-2wjvlx` | PR/fork invocation, unprotected source, missing environment approval, report/source digest mismatch, permission broader than `security-events: write`, non-GitHub upload endpoint |
++| `policy/version-release-metadata` / `TASK-260715-2759wy` | malformed/nonmonotonic/duplicate tag or build, dirty source, missing release-note section, incompatible protocol |
++| `release/candidate-identity` and `release/review-gate` / `TASK-260715-2ybl7y` | tag push or `repository_dispatch` whose candidate YAML requests `write-all`, an unauthorized runner, arbitrary network, cache, or artifact upload must produce no release-preparation run; wrong event/repository/sender/App installation; malformed issue template; refetched/edited issue substituted for the captured event; replayed issue/request ID; non-default/selectable-ref dispatch attempt; unprotected candidate SHA; existing/moved/reserved tag; missing/mismatched `github.workflow_sha` or policy digest; relative or candidate-ref reusable workflow; stale check SHA; missing approval/evidence; duplicate version; cancellation; mixed receipts. Each fixture must prove rejection before candidate acceptance or protected-environment access |
++| Release-request App credential / `TASK-260715-2ybl7y` | With the real installation token permission manifest or an API-permission emulator, attempt Contents/ref create-update-delete, GitHub Release create-update-delete, release-asset upload-update-delete, Actions/workflow dispatch, environment/secret access, and issue create-edit-close-reopen/label operations. The first group must be denied while the issue-only group demonstrates the bounded compromise capability; token-permission drift fails `policy/github-actions` before release initiation |
++| Artifact/evidence consumers / `TASK-260715-82zzad` | digest substitution, missing file, tamper, redaction failure, expired evidence, artifact-ID/name collision |
++| `release/relay-stage` / `TASK-260715-2ybl7y`, `TASK-260715-pa6evr` | direct/unapproved invocation, wrong candidate or digest, substituted bytes, missing environment approval, compromised staging credential attempting sign/publish/delete, concurrent version collision |
++| `release/macos-sign-notarize` / `TASK-260715-3gkwn0`, `TASK-260715-3sk5cd`, `TASK-260715-387eof` | missing/expired/wrong-scope credential, approval bypass, identity/profile/entitlement mismatch, notarization reject/timeout/unknown, post-notary byte mutation, concurrent candidate |
++| `release/macos-sparkle-sign` / `TASK-260717-ziprhs` and macOS update pipeline owner | wrong candidate/DMG digest, missing two-custodian approval, key unavailable/compromised, signature verification failure, Developer ID and EdDSA rotation in one update |
++| `release/macos-publish-assets` / `TASK-260715-1njthi` | approval bypass, wrong digest/version, duplicate or mutable asset, partial upload, compromised token attempting signing/feed/evidence deletion, concurrent publication |
++| `release/macos-publish-feed` / macOS update pipeline and release owners | feed-before-assets, missing/failed remote digest/header/privacy probe, redirect or origin drift, partial/nonatomic feed write, wrong signature/channel/version, concurrent publication |
++
++Tests must assert the real nonzero/blocked result and the exact production
++validator or workflow job. Deleting a fixture or testing only an allow case is
++not evidence that the rejecting bound exists.
++
++## 9. Approval, disputes, and change control
++
++The autonomous draft is reviewed by an independent reviewer agent before the
++solution-architect handoff. Human security, release, and platform ratification
++is intentionally consolidated in `TASK-260717-2d308k`; its pending status does
++not block downstream implementation of this accepted draft, but publication
++cannot pass `release/review-gate` without its recorded verdict.
++
++No current trust decision is disputed. The exact retention durations,
++environment names, endpoint allowlists, and whether the separately protected
++trusted-branch SARIF publisher is enabled are policy-fill decisions because the
++source specs require those controls but do not fix their exact values. They were
++selected to produce a testable least-privilege contract after checking the
++task's explicit non-scope: they do not reinterpret A0, require Linux CI for the prototype,
++activate iOS, issue credentials, implement workflows, or make legal/App Review
++decisions. Human ratification may narrow them; any broadening requires a written
++threat-model delta, accountable security/release owner, negative fixture, and a
++fresh review.
++
++Any later dispute records: the exact row, current evidence, two or more viable
++options, security and release trade-offs, recommendation, accountable owner,
++and the decision deadline. Until resolved, the affected required check or
++release gate remains failing/unknown; unrelated credential-free work continues.
++
++Changes to workflow triggers, permissions, action pins, runner classes, cache or
++artifact trust, release environments, credential scope, publication order,
++retention, provenance schema, or required-check names require review of this
++contract and `.spec/threat-model.md` in the same change.
++
++## 10. External platform basis
++
++The trusted-entry design follows GitHub's documented execution model: the
++`issues` event uses the last default-branch commit/ref and requires its workflow
++file on the default branch; creating an issue through the API needs only
++fine-grained `Issues: write`; workflow/job YAML can adjust the repository's
++default token permissions; GitHub-hosted runners have public Internet access;
++and full commit SHAs are the safest reusable-workflow reference. See
++[events that trigger workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#issues),
++[create issue API](https://docs.github.com/en/rest/issues/issues#create-an-issue),
++[workflow permission calculation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#how-permissions-are-calculated-for-a-workflow-job),
++[GitHub-hosted runner networking](https://docs.github.com/en/enterprise-cloud@latest/actions/concepts/runners/private-networking#about-github-hosted-runners-networking),
++and [reuse workflows](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows).

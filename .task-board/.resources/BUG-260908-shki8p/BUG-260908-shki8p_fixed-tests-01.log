@@ -1,0 +1,126 @@
+[0/1] Planning build
+Building for debugging...
+[0/9] Write sources
+[2/9] Write swift-version-45881B103DA9D485.txt
+[4/9] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[5/9] Emitting module ReluxTunnelCore
+[5/10] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[6/12] Linking ReluxTunnelHarness
+[7/12] Applying ReluxTunnelHarness
+[9/12] Compiling ReluxTunnelCoreTests TunnelRuntimeCoordinatorTests.swift
+[10/12] Emitting module ReluxTunnelCoreTests
+[10/12] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[11/12] Linking ReluxTunnelPackageTests
+Build complete! (6.55s)
+Test Suite 'Selected tests' started at 2026-09-08 04:24:49.681.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-09-08 04:24:49.690.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-09-08 04:24:49.690.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-08 04:24:49.690.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.009) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Tunnel runtime coordinator" started.
+􀟈  Test "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test "one hundred generations return all owned resources to baseline" started.
+􀟈  Test "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test "repeated stop and health races clean exactly one generation" started.
+􀟈  Test "invalid SSH profiles stop at coordinator before Keychain and network fakes" started.
+􀟈  Test "repeated concurrent stop joins one reverse-order cleanup" started.
+􀟈  Test "startup gates settings and publishes M1 usability only after reads" started.
+􀟈  Test "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test "caller cancellation during startup completion owns cleanup" started.
+􀟈  Test "mandatory health loss during startup completion owns cleanup" started.
+􀟈  Test "latest snapshot store rejects older generations and sequences" started.
+􀟈  Test "stop wins a concurrent pre-start ordering and cannot be revived" started.
+􀟈  Test "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test "clear failure preserves truthful route state and no capability" started.
+􀟈  Test "stop before start consumes the generation and releases configuration" started.
+􀟈  Test "stale health events cannot mutate the active generation" started.
+􀟈  Test "concurrent starts create exactly one usable runtime" started.
+􀟈  Test case passing 1 argument boundary → .beforeConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .duringConfiguration to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test "concurrent starts are rejected and stop cancels an in-flight generation" started.
+􀟈  Test case passing 1 argument boundary → .afterSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .beforeSSH to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .beforeSSH to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument boundary → .beforeTCP to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .duringConfiguration to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument boundary → .beforeSSH to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterConfiguration to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument boundary → .afterTCP to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test "settings apply error dispositions preserve failure and clear exactly when required" started.
+􀟈  Test case passing 1 argument point → .beforeTCP to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .beforeTCP to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument boundary → .beforeDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .beforePacketPreparation to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .beforePacketPreparation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument point → .beforeDNS to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument boundary → .afterDNS to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .duringSettingsApply to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .duringPacketActivation to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument boundary → .beforeSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .beforePacketReads to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketPlane to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument point → .beforeDNS to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument boundary → .afterPacketReads to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument control → .healthyAndStaleWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .startWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .callbackWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .startAfterStopped to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .stopWhileDisconnected to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument control → .callbackWhileStopping to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument boundary → .afterSettingsCommit to "failure before and after every ownership boundary rolls back once" started.
+􀟈  Test case passing 1 argument stopCase → .startupFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test case passing 1 argument point → .duringFinalHealth to "cancellation after each startup acquisition rolls back in reverse order" started.
+􀟈  Test case passing 1 argument control → .startAfterFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument component → .packetPlane to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument component → .ssh to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument point → .dns to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument control → .callbackWhileFailed to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument point → .configuration to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument component → .tcp to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument point → .ssh to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .tcp to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument stopCase → .providerFailure to "failure stop reasons map exactly and revoke capability before one cleanup" started.
+􀟈  Test case passing 1 argument point → .packetActivation to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .packetPrepare to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument control → .startWhileStarting to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument component → .dns to "mandatory dependency health loss revokes capability before cleanup" started.
+􀟈  Test case passing 1 argument control → .startWhileUsable to "legal and illegal coordinator controls follow the transition table" started.
+􀟈  Test case passing 1 argument point → .finalHealth to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsApplyUncertain to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsApplyCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsApplyNotCommitted to "every partial startup acquisition rolls back only acquired resources" started.
+􀟈  Test case passing 1 argument point → .settingsPlan to "every partial startup acquisition rolls back only acquired resources" started.
+􁁛  Test "latest snapshot store rejects older generations and sequences" passed after 0.001 seconds.
+􁁛  Test "stop before start consumes the generation and releases configuration" passed after 0.004 seconds.
+􁁛  Test "clear failure preserves truthful route state and no capability" passed after 0.006 seconds.
+􁁛  Test "failure stop reasons map exactly and revoke capability before one cleanup" with 2 test cases passed after 0.006 seconds.
+􁁛  Test "stale health events cannot mutate the active generation" passed after 0.006 seconds.
+􁁛  Test "repeated concurrent stop joins one reverse-order cleanup" passed after 0.006 seconds.
+􁁛  Test "mandatory dependency health loss revokes capability before cleanup" with 4 test cases passed after 0.006 seconds.
+􁁛  Test "stop wins a concurrent pre-start ordering and cannot be revived" passed after 0.006 seconds.
+􁁛  Test "startup gates settings and publishes M1 usability only after reads" passed after 0.006 seconds.
+􁁛  Test "failure before and after every ownership boundary rolls back once" with 14 test cases passed after 0.007 seconds.
+􁁛  Test "mandatory health loss during startup completion owns cleanup" passed after 0.006 seconds.
+􁁛  Test "caller cancellation during startup completion owns cleanup" passed after 0.006 seconds.
+􁁛  Test "legal and illegal coordinator controls follow the transition table" with 10 test cases passed after 0.007 seconds.
+􁁛  Test "concurrent starts are rejected and stop cancels an in-flight generation" passed after 0.006 seconds.
+􁁛  Test "every partial startup acquisition rolls back only acquired resources" with 11 test cases passed after 0.006 seconds.
+􁁛  Test "cancellation after each startup acquisition rolls back in reverse order" with 8 test cases passed after 0.007 seconds.
+􁁛  Test "caller cancellation crosses every mapped acquisition and cleanup remains shielded" with 5 test cases passed after 0.007 seconds.
+􁁛  Test "concurrent starts create exactly one usable runtime" passed after 0.007 seconds.
+􁁛  Test "settings apply error dispositions preserve failure and clear exactly when required" passed after 0.007 seconds.
+􁁛  Test "repeated stop and health races clean exactly one generation" passed after 0.012 seconds.
+􁁛  Test "invalid SSH profiles stop at coordinator before Keychain and network fakes" passed after 0.015 seconds.
+􁁛  Test "one hundred generations return all owned resources to baseline" passed after 0.066 seconds.
+􁁛  Suite "Tunnel runtime coordinator" passed after 0.066 seconds.
+􁁛  Test run with 22 tests in 1 suite passed after 0.066 seconds.

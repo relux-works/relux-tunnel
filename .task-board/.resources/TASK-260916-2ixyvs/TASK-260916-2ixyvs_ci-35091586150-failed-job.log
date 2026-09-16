@@ -1,0 +1,620 @@
+generated project credential-free validation	Set up job	﻿2026-09-16T11:41:31.9713080Z Current runner version: '2.337.0'
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9729430Z ##[group]Runner Image Provisioner
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9730080Z Hosted Compute Agent
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9730570Z Version: 20260828.587
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9731060Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9731590Z Build Date: 2026-08-28T16:44:25Z
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9732040Z Worker ID: {764a7b57-70af-4f14-beab-26df1c536488}
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9732550Z Azure Region: westus
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9732950Z ##[endgroup]
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9734060Z ##[group]Operating System
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9734480Z macOS
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9734880Z 15.7.9
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9735300Z 24G830
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9735670Z ##[endgroup]
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9736040Z ##[group]Runner Image
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9736450Z Image: macos-15-arm64
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9736840Z Version: 20260907.0337.1
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9737660Z Included Software: https://github.com/actions/runner-images/blob/macos-15-arm64/20260907.0337/images/macos/macos-15-arm64-Readme.md
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9738930Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15-arm64%2F20260907.0337
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9739730Z ##[endgroup]
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9740490Z ##[group]GITHUB_TOKEN Permissions
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9741720Z Contents: read
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9742210Z Metadata: read
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9742620Z ##[endgroup]
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9744100Z Secret source: Actions
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9744780Z Cache mode: write
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9745380Z Prepare workflow directory
+generated project credential-free validation	Set up job	2026-09-16T11:41:31.9971360Z Prepare all required actions
+generated project credential-free validation	Set up job	2026-09-16T11:41:32.0007780Z Getting action download info
+generated project credential-free validation	Set up job	2026-09-16T11:41:32.4334600Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+generated project credential-free validation	Set up job	2026-09-16T11:41:32.8233000Z Download action repository 'jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518' (SHA:3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518)
+generated project credential-free validation	Set up job	2026-09-16T11:41:33.3241010Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+generated project credential-free validation	Set up job	2026-09-16T11:41:33.5218000Z Complete job name: generated project credential-free validation
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-09-16T11:41:33.5671960Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5672740Z with:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5673100Z   persist-credentials: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5673510Z   path: relux-tunnel
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5673900Z   repository: relux-works/relux-tunnel
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5677150Z   token: ***
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5677580Z   ssh-strict: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5677930Z   ssh-user: git
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5678290Z   clean: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5678650Z   sparse-checkout-cone-mode: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5679110Z   fetch-depth: 1
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5679510Z   fetch-tags: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5680010Z   show-progress: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5680400Z   lfs: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5680740Z   submodules: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5681120Z   set-safe-directory: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5681620Z   allow-unsafe-pr-checkout: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.5682400Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.8631910Z Syncing repository: relux-works/relux-tunnel
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.8634820Z ##[group]Getting Git version info
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.8636350Z Working directory is '/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel'
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.8637930Z [command]/opt/homebrew/bin/git version
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9198630Z git version 2.55.0
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9214840Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9225100Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/b1263915-e121-4b66-8851-f9155010180a/.gitconfig'
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9237310Z Temporarily overriding HOME='/Users/runner/work/_temp/b1263915-e121-4b66-8851-f9155010180a' before making global git config changes
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9240610Z Adding repository directory to the temporary git global config as a safe directory
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9243040Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9408050Z ##[group]Determining repository object format
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9443460Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9447000Z ##[group]Initializing the repository
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9450650Z [command]/opt/homebrew/bin/git init /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9656560Z hint: Using 'master' as the name for the initial branch. This default branch name
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9658750Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9660580Z hint: to use in all of your new repositories, which will suppress this warning,
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9662130Z hint: call:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9662930Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9663980Z hint: 	git config --global init.defaultBranch <name>
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9665150Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9666400Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9668310Z hint: 'development'. The just-created branch can be renamed via this command:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9669730Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9670530Z hint: 	git branch -m <name>
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9671580Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9672810Z hint: Disable this message with "git config set advice.defaultBranchName false"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9675020Z Initialized empty Git repository in /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git/
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9678520Z [command]/opt/homebrew/bin/git remote add origin https://github.com/relux-works/relux-tunnel
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9735320Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9736820Z ##[group]Disabling automatic garbage collection
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9738270Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9798100Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9799600Z ##[group]Setting up auth
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9800590Z Removing SSH command configuration
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9802440Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:33.9868180Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.0854070Z Removing HTTP extra header
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.0858070Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.0908850Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.1563310Z Removing includeIf entries pointing to credentials config files
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.1566180Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.1621640Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2787760Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2793650Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git.path /Users/runner/work/_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2799640Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2805120Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/relux-tunnel/.git.path /github/runner_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2857680Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/relux-tunnel/.git/worktrees/*.path /github/runner_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2907210Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2908340Z ##[group]Fetching the repository
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:34.2912560Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +352226edcd1f96415574811f8506eeb5a4aaa6f2:refs/remotes/pull/6/merge
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.1796880Z From https://github.com/relux-works/relux-tunnel
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.1798210Z  * [new ref]         352226edcd1f96415574811f8506eeb5a4aaa6f2 -> pull/6/merge
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.1809830Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.1810420Z ##[group]Determining the checkout info
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.1810960Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.1823650Z [command]/opt/homebrew/bin/git sparse-checkout disable
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.2081620Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.2167240Z ##[group]Checking out the ref
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:47.2169730Z [command]/opt/homebrew/bin/git checkout --progress --force refs/remotes/pull/6/merge
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.2717370Z Updating files:  28% (968/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.3187510Z Updating files:  29% (993/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.3463990Z Updating files:  30% (1027/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.3977500Z Updating files:  31% (1061/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.4396220Z Updating files:  32% (1096/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.5094390Z Updating files:  33% (1130/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.5867330Z Updating files:  34% (1164/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.6016790Z Updating files:  35% (1198/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.6560480Z Updating files:  36% (1232/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.6822200Z Updating files:  37% (1267/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.7217910Z Updating files:  38% (1301/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.7325390Z Updating files:  39% (1335/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.7989880Z Updating files:  40% (1369/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.8653180Z Updating files:  41% (1404/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.9289350Z Updating files:  42% (1438/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:48.9896540Z Updating files:  43% (1472/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.0897790Z Updating files:  44% (1506/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.1157860Z Updating files:  45% (1540/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.1504010Z Updating files:  46% (1575/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.1779600Z Updating files:  47% (1609/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.1837480Z Updating files:  48% (1643/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.1908470Z Updating files:  49% (1677/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.2004840Z Updating files:  50% (1711/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.2070370Z Updating files:  51% (1746/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.2470740Z Updating files:  52% (1780/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.2735800Z Updating files:  52% (1795/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.3326630Z Updating files:  53% (1814/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.3418500Z Updating files:  54% (1848/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.3562460Z Updating files:  55% (1883/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.4007580Z Updating files:  56% (1917/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.4124590Z Updating files:  57% (1951/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.4231250Z Updating files:  58% (1985/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.4490360Z Updating files:  59% (2019/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.4966710Z Updating files:  60% (2054/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5032840Z Updating files:  61% (2088/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5115520Z Updating files:  62% (2122/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5189080Z Updating files:  63% (2156/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5288010Z Updating files:  64% (2191/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5365230Z Updating files:  65% (2225/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5842220Z Updating files:  66% (2259/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5879770Z Updating files:  67% (2293/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.5940430Z Updating files:  68% (2327/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6009370Z Updating files:  69% (2362/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6066270Z Updating files:  70% (2396/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6104200Z Updating files:  71% (2430/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6503450Z Updating files:  72% (2464/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6647270Z Updating files:  73% (2499/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6716110Z Updating files:  74% (2533/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6796620Z Updating files:  75% (2567/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6853380Z Updating files:  76% (2601/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.6896670Z Updating files:  77% (2635/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.7614920Z Updating files:  78% (2670/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.7750370Z Updating files:  79% (2704/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8042680Z Updating files:  80% (2738/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8349450Z Updating files:  81% (2772/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8451030Z Updating files:  82% (2807/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8451940Z Updating files:  83% (2841/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8835890Z Updating files:  84% (2875/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8890770Z Updating files:  85% (2909/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8945830Z Updating files:  86% (2943/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.8993270Z Updating files:  87% (2978/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.9058780Z Updating files:  88% (3012/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:49.9231680Z Updating files:  89% (3046/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.0862180Z Updating files:  90% (3080/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.0978750Z Updating files:  91% (3115/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.1134930Z Updating files:  92% (3149/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.1352870Z Updating files:  93% (3183/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.1502230Z Updating files:  94% (3217/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.1883370Z Updating files:  95% (3251/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.1989740Z Updating files:  96% (3286/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2260580Z Updating files:  97% (3320/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2443480Z Updating files:  98% (3354/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2512180Z Updating files:  98% (3373/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2601740Z Updating files:  99% (3388/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2602340Z Updating files: 100% (3422/3422)
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2602880Z Updating files: 100% (3422/3422), done.
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2713560Z HEAD is now at 352226e Merge d45c85d67b78b6578b5cb0821bd2e78217124d30 into b3422b05226253a17676b9b84c764071fe3dbe74
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.2842750Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.3013620Z [command]/opt/homebrew/bin/git log -1 --format=%H
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.3114820Z 352226edcd1f96415574811f8506eeb5a4aaa6f2
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.3129440Z ##[group]Removing auth
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.3130390Z Removing SSH command configuration
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.3131690Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.3206280Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.4809560Z Removing HTTP extra header
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.4812410Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.4877910Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.6640650Z Removing includeIf entries pointing to credentials config files
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.6742440Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.6948320Z includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7012710Z includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7014650Z includeif.gitdir:/github/workspace/relux-tunnel/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7017930Z includeif.gitdir:/github/workspace/relux-tunnel/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7020710Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7021700Z /Users/runner/work/_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7023900Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-bd2f6520\-4511\-40d4\-be8d\-e368b7542695\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7026580Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7027470Z /Users/runner/work/_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7029160Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-bd2f6520\-4511\-40d4\-be8d\-e368b7542695\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7121080Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/relux-tunnel/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7190530Z /github/runner_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7197560Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/relux-tunnel/.git.path \/github\/runner_temp\/git\-credentials\-bd2f6520\-4511\-40d4\-be8d\-e368b7542695\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7271440Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/relux-tunnel/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7330000Z /github/runner_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7338280Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/relux-tunnel/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-bd2f6520\-4511\-40d4\-be8d\-e368b7542695\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.7436370Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.8414620Z Removing credentials config '/Users/runner/work/_temp/git-credentials-bd2f6520-4511-40d4-be8d-e368b7542695.config'
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.8431700Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-09-16T11:41:50.9099040Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9099390Z with:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9099560Z   repository: relux-works/relux-proxy
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9099800Z   ref: 2557aba1c030d0643d76e0bc3b185f6d5fd172e1
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9100020Z   fetch-depth: 0
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9100190Z   persist-credentials: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9100380Z   path: relux-proxy
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9102620Z   token: ***
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9102810Z   ssh-strict: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9103000Z   ssh-user: git
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9103150Z   clean: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9103310Z   sparse-checkout-cone-mode: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9103510Z   fetch-tags: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9103670Z   show-progress: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9103820Z   lfs: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9103960Z   submodules: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9104130Z   set-safe-directory: true
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9104320Z   allow-unsafe-pr-checkout: false
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:50.9104520Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.0893190Z Syncing repository: relux-works/relux-proxy
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.0904610Z ##[group]Getting Git version info
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.0905420Z Working directory is '/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy'
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.0938600Z [command]/opt/homebrew/bin/git version
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1256620Z git version 2.55.0
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1721150Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1723330Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/637fe536-9eb3-4fb7-b28c-544b86455b73/.gitconfig'
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1724750Z Temporarily overriding HOME='/Users/runner/work/_temp/637fe536-9eb3-4fb7-b28c-544b86455b73' before making global git config changes
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1725510Z Adding repository directory to the temporary git global config as a safe directory
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1726520Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1728400Z ##[group]Determining repository object format
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1730120Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1730640Z ##[group]Initializing the repository
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1732080Z [command]/opt/homebrew/bin/git init /Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1902420Z hint: Using 'master' as the name for the initial branch. This default branch name
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1904160Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1905500Z hint: to use in all of your new repositories, which will suppress this warning,
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1905950Z hint: call:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1906140Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1906380Z hint: 	git config --global init.defaultBranch <name>
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1906670Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1906930Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1907370Z hint: 'development'. The just-created branch can be renamed via this command:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1907810Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1907970Z hint: 	git branch -m <name>
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1908200Z hint:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1908550Z hint: Disable this message with "git config set advice.defaultBranchName false"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1909100Z Initialized empty Git repository in /Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git/
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1911560Z [command]/opt/homebrew/bin/git remote add origin https://github.com/relux-works/relux-proxy
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1990900Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1991850Z ##[group]Disabling automatic garbage collection
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.1994700Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.2075470Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.2076360Z ##[group]Setting up auth
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.2076970Z Removing SSH command configuration
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.2083120Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.2164930Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.3853710Z Removing HTTP extra header
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.3956580Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.4260220Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.5976550Z Removing includeIf entries pointing to credentials config files
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.6078160Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.6383020Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.7788320Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.7847140Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git.path /Users/runner/work/_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.7933540Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.7985700Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/relux-proxy/.git.path /github/runner_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.8018920Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/relux-proxy/.git/worktrees/*.path /github/runner_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.8027510Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.8028010Z ##[group]Fetching the repository
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:51.8030410Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4497580Z From https://github.com/relux-works/relux-proxy
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4498580Z  * [new branch]      main       -> origin/main
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4528020Z  * [new tag]         v0.1.0     -> v0.1.0
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4529030Z  * [new tag]         v0.2.0     -> v0.2.0
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4531060Z [command]/opt/homebrew/bin/git rev-parse --verify --quiet 2557aba1c030d0643d76e0bc3b185f6d5fd172e1^{object}
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4563450Z 2557aba1c030d0643d76e0bc3b185f6d5fd172e1
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4566390Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4566730Z ##[group]Determining the checkout info
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4567090Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4570390Z [command]/opt/homebrew/bin/git sparse-checkout disable
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4660390Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4720640Z ##[group]Checking out the ref
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4723620Z [command]/opt/homebrew/bin/git checkout --progress --force 2557aba1c030d0643d76e0bc3b185f6d5fd172e1
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4836300Z HEAD is now at 2557aba Update GitHub Actions runtimes
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4843440Z ##[endgroup]
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4924160Z [command]/opt/homebrew/bin/git log -1 --format=%H
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4987640Z 2557aba1c030d0643d76e0bc3b185f6d5fd172e1
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4994430Z ##[group]Removing auth
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4994670Z Removing SSH command configuration
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.4997280Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.5064290Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.5983650Z Removing HTTP extra header
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.5985170Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.6091760Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.7963820Z Removing includeIf entries pointing to credentials config files
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8060030Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8062930Z includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8067820Z includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8068630Z includeif.gitdir:/github/workspace/relux-proxy/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8069140Z includeif.gitdir:/github/workspace/relux-proxy/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8070420Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8071180Z /Users/runner/work/_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8072640Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-b45a0fdb\-f26d\-4066\-b9e2\-d6cd8356ea14\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8074510Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8076320Z /Users/runner/work/_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8078490Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-b45a0fdb\-f26d\-4066\-b9e2\-d6cd8356ea14\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8120540Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/relux-proxy/.git.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8173160Z /github/runner_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8178270Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/relux-proxy/.git.path \/github\/runner_temp\/git\-credentials\-b45a0fdb\-f26d\-4066\-b9e2\-d6cd8356ea14\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8274840Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/relux-proxy/.git/worktrees/*.path
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8343700Z /github/runner_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8349540Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/relux-proxy/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-b45a0fdb\-f26d\-4066\-b9e2\-d6cd8356ea14\.config
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.8406690Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.9143300Z Removing credentials config '/Users/runner/work/_temp/git-credentials-b45a0fdb-f26d-4066-b9e2-d6cd8356ea14.config'
+generated project credential-free validation	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:41:53.9148240Z ##[endgroup]
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	﻿2026-09-16T11:41:53.9266340Z ##[group]Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9266660Z with:
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9266800Z   version: 2026.3.10
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9267120Z   sha256: c7a0eb1035de974b42d36b69c4b55b836c06b455b990dd6ac530aaf05d4a8a17
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9267520Z   install: false
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9267700Z   cache: false
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9267890Z   bootstrap: false
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9268050Z   cache_save: true
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9268200Z   cache_key_prefix: mise-v1
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9268420Z   experimental: false
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9268620Z   log_level: info
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9268790Z   reshim: false
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9268940Z   add_shims_to_path: true
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9270910Z   github_token: ***
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9271070Z   fetch_from_github: true
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9271240Z   env: true
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9271370Z   export_path: true
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9271520Z   wings_enabled: false
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:53.9271670Z ##[endgroup]
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.0636690Z ##[group]Download mise@2026.3.10
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.0676790Z [command]/opt/homebrew/bin/zstd --version
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.1001480Z *** Zstandard CLI (64-bit) v1.5.7, by Yann Collet ***
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.1041490Z [command]/usr/bin/tar --zstd --version
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.1106600Z bsdtar 3.5.3 - libarchive 3.7.4 zlib/1.2.12 liblzma/5.4.3 bz2lib/1.0.8 
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.1126880Z Using curl to download mise
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.1135540Z [command]/usr/bin/curl -fsSL https://github.com/jdx/mise/releases/download/v2026.3.10/mise-v2026.3.10-macos-arm64.tar.zst --output /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/mise-action-bGxoYc/mise-v2026.3.10-macos-arm64.tar.zst
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.7249780Z [command]/usr/bin/tar --zstd -xf /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/mise-action-bGxoYc/mise-v2026.3.10-macos-arm64.tar.zst -C /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/mise-action-bGxoYc
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.8372860Z [command]/bin/mv /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/mise-action-bGxoYc/mise/bin/mise /Users/runner/.local/share/mise/bin/mise
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9011730Z ##[group]Setting env vars
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9011990Z Setting MISE_LOG_LEVEL=info
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9015060Z Setting MISE_GITHUB_TOKEN=***
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9015440Z Setting MISE_TRUSTED_CONFIG_PATHS=/Users/runner/work/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9016080Z Setting MISE_YES=1
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9016360Z Adding /Users/runner/.local/share/mise/shims to PATH
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9017450Z ##[group]Running mise --version
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9033770Z [command]/Users/runner/.local/share/mise/bin/mise --version
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9393680Z 2026.3.10 macos-arm64 (2026-03-21)
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9452310Z ##[endgroup]
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9452680Z ##[group]Running mise ls
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9465640Z [command]/Users/runner/.local/share/mise/bin/mise ls
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9622570Z ##[endgroup]
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9623530Z ##[group]Exporting mise environment variables
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:54.9831160Z [command]/Users/runner/.local/share/mise/bin/mise env --json
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:55.0048400Z {
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:55.0050480Z   "PATH": "/Users/runner/.local/share/mise/shims:/Users/runner/.local/share/mise/bin:/opt/homebrew/lib/ruby/gems/3.3.0/bin:/opt/homebrew/opt/ruby@3.3/bin:/Users/runner/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/runner/.cargo/bin:/usr/local/opt/curl/bin:/usr/local/bin:/usr/local/sbin:/Users/runner/bin:/Users/runner/.yarn/bin:/Users/runner/Library/Android/sdk/tools:/Users/runner/Library/Android/sdk/platform-tools:/Library/Frameworks/Python.framework/Versions/Current/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/usr/bin:/bin:/usr/sbin:/sbin:/Users/runner/.dotnet/tools"
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:55.0053060Z }
+generated project credential-free validation	Run jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518	2026-09-16T11:41:55.0058760Z ##[endgroup]
+generated project credential-free validation	Exercise validation boundary narrowing mutants	﻿2026-09-16T11:41:55.0161550Z ##[group]Run python3 scripts/tests/test_pr6_boundary_mutants.py
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0162110Z ^[[36;1mpython3 scripts/tests/test_pr6_boundary_mutants.py^[[0m
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0219010Z shell: /bin/bash -e {0}
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0219290Z env:
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0219520Z   MISE_LOG_LEVEL: info
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0221720Z   MISE_GITHUB_TOKEN: ***
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0222040Z   MISE_TRUSTED_CONFIG_PATHS: /Users/runner/work/relux-tunnel/relux-tunnel
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0222470Z   MISE_YES: 1
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:41:55.0222730Z ##[endgroup]
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6977700Z COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt EXIT: 0
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6979890Z test_unknown_hidden_directory_is_not_exempt (scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt) ... ok
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6980710Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6980870Z ----------------------------------------------------------------------
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6982040Z Ran 1 test in 0.044s
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6982170Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6982340Z OK
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6982480Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6983060Z COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt EXIT: 1
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6984100Z test_unknown_hidden_directory_is_not_exempt (scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt) ... FAIL
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6984710Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6984890Z ======================================================================
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6985660Z FAIL: test_unknown_hidden_directory_is_not_exempt (scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6986320Z ----------------------------------------------------------------------
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6986730Z Traceback (most recent call last):
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6987450Z   File "/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/pr6-boundary-mutants-msvnv7zn/scripts/tests/test_check_board_structure.py", line 55, in test_unknown_hidden_directory_is_not_exempt
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6988240Z     self.assertEqual(result.returncode, 1)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6988510Z     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6988820Z AssertionError: 0 != 1
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6988990Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6989180Z ----------------------------------------------------------------------
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6990120Z Ran 1 test in 0.044s
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6990280Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6990460Z FAILED (failures=1)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6990560Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6991180Z COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail EXIT: 0
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6992460Z test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) ... ok
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6993130Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6993270Z ----------------------------------------------------------------------
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6993720Z Ran 1 test in 0.006s
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6994000Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6994140Z OK
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6994210Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6994810Z COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -m unittest -v scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail EXIT: 1
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6996140Z test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) ... 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6997640Z   test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) (mutation='Data(contentsOf: referenceURL) /* URL(filePath: referenceURL.path) */') ... FAIL
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6999000Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.6999190Z ======================================================================
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7000320Z FAIL: test_snapshot_support_network_mutants_preserve_file_tokens_and_fail (scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail) (mutation='Data(contentsOf: referenceURL) /* URL(filePath: referenceURL.path) */')
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7001440Z ----------------------------------------------------------------------
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7001880Z Traceback (most recent call last):
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7002630Z   File "/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/pr6-boundary-mutants-msvnv7zn/scripts/tests/test_relay_supply_chain.py", line 769, in test_snapshot_support_network_mutants_preserve_file_tokens_and_fail
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7003520Z     with self.assertRaisesRegex(
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7003910Z          ~~~~~~~~~~~~~~~~~~~~~~^
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7004220Z         supply_chain.SupplyChainError, "Foundation Data URL loader"
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7004670Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7004940Z     ):
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7005230Z     ^
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7005450Z AssertionError: SupplyChainError not raised
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7005670Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7005850Z ----------------------------------------------------------------------
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7006210Z Ran 1 test in 0.007s
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7006310Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7006420Z FAILED (failures=1)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7006570Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7006970Z COMMAND: swift test --package-path /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/pr6-boundary-mutants-msvnv7zn/snapshot EXIT: 0
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7007560Z Building for debugging...
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7007860Z [0/7] Write sources
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7008630Z [2/7] /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/pr6-boundary-mutants-msvnv7zn/snapshot/.build/arm64-apple-macosx/debug/SnapshotBoundaryProofPackageTests.derived/runner.swift
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7009330Z [3/7] Write sources
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7009660Z [4/7] Write swift-version--79AA4F9932D1E87A.txt
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7010040Z [6/9] Compiling ReluxSnapshotDiffSupport SnapshotDiff.swift
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7010470Z [7/9] Emitting module ReluxSnapshotDiffSupport
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7011080Z [8/11] Emitting module ReluxSnapshotDiffSupportTests
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7011540Z [9/11] Compiling ReluxSnapshotDiffSupportTests SnapshotDiffSupportTests.swift
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7012060Z [10/13] Emitting module SnapshotBoundaryProofPackageTests
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7012500Z [11/13] Compiling SnapshotBoundaryProofPackageTests runner.swift
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7012930Z [11/13] Write Objects.LinkFileList
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7013230Z [12/13] Linking SnapshotBoundaryProofPackageTests
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7013600Z Build complete! (13.72s)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7013950Z Test Suite 'All tests' started at 2026-09-16 11:42:15.481.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7014360Z Test Suite 'All tests' passed at 2026-09-16 11:42:15.483.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7014880Z 	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7016040Z ◇ Test run started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7016710Z ↳ Testing Library Version: 124.4
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7017040Z ↳ Target Platform: arm64e-apple-macos14.0
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7017510Z ◇ Suite "Snapshot failure artifacts" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7017980Z ◇ Test "non-file URLs are refused before reading either image or writing output" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7018620Z ◇ Test "identical local images match" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7019270Z ◇ Test "mismatch writes reference failed and visual diff images" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7020180Z ✔ Test "non-file URLs are refused before reading either image or writing output" passed after 0.001 seconds.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7021210Z ✔ Test "identical local images match" passed after 0.064 seconds.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7021840Z ✔ Test "mismatch writes reference failed and visual diff images" passed after 0.065 seconds.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7022520Z ✔ Suite "Snapshot failure artifacts" passed after 0.065 seconds.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7022990Z ✔ Test run with 3 tests passed after 0.065 seconds.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7023230Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7023600Z COMMAND: swift test --package-path /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/pr6-boundary-mutants-msvnv7zn/snapshot EXIT: 1
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7024270Z [0/1] Planning build
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7024560Z Building for debugging...
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7024880Z [0/3] Write sources
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7025150Z [1/3] Write swift-version--79AA4F9932D1E87A.txt
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7025640Z [3/5] Emitting module ReluxSnapshotDiffSupport
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7026030Z [4/5] Compiling ReluxSnapshotDiffSupport SnapshotDiff.swift
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7026540Z [4/6] Write Objects.LinkFileList
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7026910Z [5/6] Linking SnapshotBoundaryProofPackageTests
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7027550Z Build complete! (1.07s)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7027950Z Test Suite 'All tests' started at 2026-09-16 11:42:17.492.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7028340Z Test Suite 'All tests' passed at 2026-09-16 11:42:17.493.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7028900Z 	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7029320Z ◇ Test run started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7029720Z ↳ Testing Library Version: 124.4
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7030210Z ↳ Target Platform: arm64e-apple-macos14.0
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7030540Z ◇ Suite "Snapshot failure artifacts" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7031100Z ◇ Test "non-file URLs are refused before reading either image or writing output" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7031590Z ◇ Test "mismatch writes reference failed and visual diff images" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7032020Z ◇ Test "identical local images match" started.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7032640Z ✘ Test "non-file URLs are refused before reading either image or writing output" recorded an issue at SnapshotDiffSupportTests.swift:42:23: Issue recorded
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7033760Z ↳ expected nonFileURL before I/O, received unreadableImage(http://example.invalid/image.png)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7034600Z ✘ Test "non-file URLs are refused before reading either image or writing output" recorded an issue at SnapshotDiffSupportTests.swift:42:23: Issue recorded
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7107830Z ↳ expected nonFileURL before I/O, received unreadableImage(file:///nonexistent-snapshot.png)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7109730Z ✘ Test "non-file URLs are refused before reading either image or writing output" recorded an issue at SnapshotDiffSupportTests.swift:42:23: Issue recorded
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7110620Z ↳ expected nonFileURL before I/O, received unreadableImage(file:///nonexistent-snapshot.png)
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7111290Z ✘ Test "non-file URLs are refused before reading either image or writing output" failed after 0.001 seconds with 3 issues.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7111880Z ✔ Test "identical local images match" passed after 0.022 seconds.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7112380Z ✔ Test "mismatch writes reference failed and visual diff images" passed after 0.022 seconds.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7112930Z ✘ Suite "Snapshot failure artifacts" failed after 0.022 seconds with 3 issues.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7113480Z ✘ Test run with 3 tests failed after 0.023 seconds with 3 issues.
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7113760Z 
+generated project credential-free validation	Exercise validation boundary narrowing mutants	2026-09-16T11:42:17.7114040Z All three narrowing mutants killed by named behavioral regressions.
+generated project credential-free validation	Run the local credential-free gate	﻿2026-09-16T11:42:17.7171290Z ##[group]Run make credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7171910Z ^[[36;1mmake credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"^[[0m
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7348240Z shell: /bin/bash -e {0}
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7348580Z env:
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7348820Z   MISE_LOG_LEVEL: info
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7351040Z   MISE_GITHUB_TOKEN: ***
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7351390Z   MISE_TRUSTED_CONFIG_PATHS: /Users/runner/work/relux-tunnel/relux-tunnel
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7351720Z   MISE_YES: 1
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:17.7351890Z ##[endgroup]
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:18.4725860Z ./scripts/validate-credential-free.sh --legacy-root "/Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy"
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:18.8566520Z RUN: relay-tool-bootstrap
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:34.0683930Z PASS: relay-tool-bootstrap (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-tool-bootstrap.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:34.7448150Z ^[[2mmise^[[0m ^[[34mtuist^[[0m@4.202.5   [1/3] install
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:35.6150760Z ^[[2mmise^[[0m ^[[34mtuist^[[0m@4.202.5   [1/3] download tuist.zip
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:36.8966990Z ^[[2mmise^[[0m ^[[34mtuist^[[0m@4.202.5   [2/3] checksum tuist.zip
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:37.0996660Z ^[[2mmise^[[0m ^[[34mtuist^[[0m@4.202.5   [3/3] extract tuist.zip
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:37.9332180Z ^[[2mmise^[[0m ^[[34mtuist^[[0m@4.202.5 ^[[38;5;10m✓^[[0m installed
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:42:39.6309650Z RUN: relay-packaging
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:44:22.5263890Z PASS: relay-packaging (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-packaging.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:44:22.5286270Z RUN: validation-contract-tests
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:44:40.8003830Z PASS: validation-contract-tests (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/validation-contract-tests.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:44:40.8031020Z RUN: deterministic-generation
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:44:57.5912910Z PASS: deterministic-generation (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/deterministic-generation.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:44:57.5958280Z RUN: macos-target-builds-and-contracts
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:48:53.7775420Z PASS: macos-target-builds-and-contracts (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-target-builds-and-contracts.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:48:53.7832760Z RUN: core-boundaries
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:48:55.2794620Z PASS: core-boundaries (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/core-boundaries.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:48:55.2896020Z RUN: swift-testing
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:51:32.0388420Z PASS: swift-testing (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-testing.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:51:32.0418500Z RUN: swift-release-build
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:33.1059900Z PASS: swift-release-build (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/swift-release-build.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:33.1130990Z RUN: native-packaging
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3410220Z FAIL: native-packaging (exit 2; log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/native-packaging.log)
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3460650Z ./scripts/native-dependency-tool.py verify --dependency relux-native-fixture
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3474230Z relux-native-fixture source and packaging inputs are verified
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3478380Z python3 scripts/libssh2-fork-tool.py verify
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3480050Z + xcodebuild -version
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3481150Z libssh2-fork-tool: Xcode build mismatch: expected Build version 17F42, got Xcode 16.4
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3481880Z Build version 16F6
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3482230Z make[1]: *** [check-native-dependencies] Error 1
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3609040Z make: *** [credential-free-validate] Error 2
+generated project credential-free validation	Run the local credential-free gate	2026-09-16T11:52:34.3721580Z ##[error]Process completed with exit code 2.
+generated project credential-free validation	Upload privacy-safe validation evidence	﻿2026-09-16T11:52:34.4333020Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4334520Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4335140Z with:
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4335460Z   name: credential-free-generated-project-35091586150
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4336680Z   path: relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/summary.log
+generated project credential-free validation	Upload privacy-safe validation evidence	relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/environment.log
+generated project credential-free validation	Upload privacy-safe validation evidence	relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation/logs
+generated project credential-free validation	Upload privacy-safe validation evidence	
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4337630Z   if-no-files-found: error
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4337910Z   retention-days: 14
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4338270Z   compression-level: 6
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4338520Z   overwrite: false
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4339050Z   include-hidden-files: false
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4339480Z env:
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4339750Z   MISE_LOG_LEVEL: info
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4342440Z   MISE_GITHUB_TOKEN: ***
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4342800Z   MISE_TRUSTED_CONFIG_PATHS: /Users/runner/work/relux-tunnel/relux-tunnel
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4343350Z   MISE_YES: 1
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.4343640Z ##[endgroup]
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.9499680Z (node:31243) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.9500750Z (Use `node --trace-deprecation ...` to show where the warning was created)
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.9599030Z Multiple search paths detected. Calculating the least common ancestor of all paths
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.9602390Z The least common ancestor is /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel/.temp/TASK-260715-sbrrp7/credential-free-validation. This will be the root directory of the artifact
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.9604650Z With the provided path, there will be 18 files uploaded
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.9605970Z Artifact name is valid!
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:34.9606860Z Root directory input is valid!
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:35.4094920Z Beginning upload of artifact content to blob storage
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:35.6078890Z (node:31243) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:36.1128480Z Uploaded bytes 113220
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:36.1949430Z Finished uploading artifact content to blob storage!
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:36.1953470Z SHA256 digest of uploaded artifact zip is e19e89dbc90bc55dde316b1d49d5d3450dd647d0869b185666965ced54e78811
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:36.1956430Z Finalizing artifact upload
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:36.5614670Z Artifact credential-free-generated-project-35091586150.zip successfully finalized. Artifact ID 10444742927
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:36.5740550Z Artifact credential-free-generated-project-35091586150 has been successfully uploaded! Final size is 113220 bytes. Artifact ID is 10444742927
+generated project credential-free validation	Upload privacy-safe validation evidence	2026-09-16T11:52:36.5844150Z Artifact download URL: https://github.com/relux-works/relux-tunnel/actions/runs/35091586150/artifacts/10444742927
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-09-16T11:52:36.6628300Z Post job cleanup.
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:36.9651640Z [command]/opt/homebrew/bin/git version
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:36.9858640Z git version 2.55.0
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:36.9919670Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/cb7ecb22-4409-4539-986c-f96d1e755a15/.gitconfig'
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:36.9944010Z Temporarily overriding HOME='/Users/runner/work/_temp/cb7ecb22-4409-4539-986c-f96d1e755a15' before making global git config changes
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:36.9945130Z Adding repository directory to the temporary git global config as a safe directory
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:36.9955170Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/relux-tunnel/relux-tunnel/relux-proxy
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.0349580Z Removing SSH command configuration
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.0461640Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.0805740Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.3128380Z Removing HTTP extra header
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.3132700Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.3212180Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.4494350Z Removing includeIf entries pointing to credentials config files
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.4499640Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.4576520Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-09-16T11:52:37.6589920Z Post job cleanup.
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8309280Z [command]/opt/homebrew/bin/git version
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8417410Z git version 2.55.0
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8450380Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/9741d19d-2694-4c79-bfbb-84dbabdb295d/.gitconfig'
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8458380Z Temporarily overriding HOME='/Users/runner/work/_temp/9741d19d-2694-4c79-bfbb-84dbabdb295d' before making global git config changes
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8459810Z Adding repository directory to the temporary git global config as a safe directory
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8468770Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/relux-tunnel/relux-tunnel/relux-tunnel
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8538090Z Removing SSH command configuration
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8541060Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.8610460Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.9719040Z Removing HTTP extra header
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.9722880Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:37.9801000Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:38.1108210Z Removing includeIf entries pointing to credentials config files
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:38.1119740Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generated project credential-free validation	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-09-16T11:52:38.1216520Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generated project credential-free validation	Complete job	﻿2026-09-16T11:52:38.2951270Z Cleaning up orphan processes
+generated project credential-free validation	Complete job	2026-09-16T11:52:39.6063110Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

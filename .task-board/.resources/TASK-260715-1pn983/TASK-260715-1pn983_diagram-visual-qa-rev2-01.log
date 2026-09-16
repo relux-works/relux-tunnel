@@ -1,0 +1,17 @@
+TASK-260715-1pn983 diagram visual QA revision 2
+Exit: 0
+
+Sources rendered with PlantUML 1.2026.6 to task-local PNGs and inspected at
+original resolution.
+
+- memory-pressure-state: legible; Normal, Soft, Pressure, Critical, and
+  Stopping transitions, hysteresis labels, fresh-advisory note, unknown-read
+  behavior, and explicit-stop path are visible.
+- reconnect-rekey-state: legible; reconnect ownership and per-lane permanent
+  KEX reservation are visibly separate state machines. KEX success returns to
+  the reservation-retained idle state. Lane failure requests an admitted
+  replacement, while explicit stop joins lane cleanup. The Critical old-first
+  construction rule is visible.
+
+No payload, destination, DNS name, credential, address, host identity, path,
+or stable device identifier is present in either rendered artifact.

@@ -1,0 +1,736 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index c286967..740e64f 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -39,6 +39,10 @@ jobs:
+           install: false
+           cache: false
+ 
++      - name: Exercise validation boundary narrowing mutants
++        working-directory: relux-tunnel
++        run: python3 scripts/tests/test_pr6_boundary_mutants.py
++
+       - name: Run the local credential-free gate
+         working-directory: relux-tunnel
+         run: make credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"
+@@ -90,26 +94,8 @@ jobs:
+ 
+       - name: Check board structure
+         run: |
+-          python3 - <<'PY'
+-          import os, sys
+-          root = ".task-board"
+-          bad = False
+-          if not os.path.isdir(root):
+-              print("no .task-board directory"); sys.exit(1)
+-          n = 0
+-          for dirpath, dirnames, filenames in os.walk(root):
+-              # .resources/ holds resource payloads keyed by element id, not board elements
+-              if ".resources" in dirnames:
+-                  dirnames.remove(".resources")
+-              base = os.path.basename(dirpath)
+-              if base.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
+-                  n += 1
+-                  for req in ("README.md", "progress.md"):
+-                      if req not in filenames:
+-                          print(f"FAIL {dirpath}: missing {req}"); bad = True
+-          print(f"checked {n} board elements")
+-          sys.exit(1 if bad or n == 0 else 0)
+-          PY
++          python3 -m unittest scripts/tests/test_check_board_structure.py
++          python3 scripts/check_board_structure.py
+ 
+   relay-toolchain:
+     name: pinned offline relay toolchain
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index 05a25c7..67cb07a 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1464,3 +1464,47 @@
+ - SCOPE: This task makes documentation and diagram changes only. It does not wire a provider, change lifecycle behavior, claim full UDP from TCP plus safe DNS, or define migration and future-mode policy.
+ - VERIFICATION: Eight focused Swift suites pass 105 tests across messages, coordinator, provider adapter, host retirement/projection, composition gates, exact macOS graph ownership, aggregate diagnostics, and SSH redaction. The manifest-driven harness passes six tests and all seven scenario rows; both SwiftPM platform adapter targets and unsigned generated macOS host/provider Debug+Release validation pass. PlantUML source checking, four-page SVG rendering and visual inspection, 52 local-link checks, source-contract checks, and `git diff --check` pass.
+ - REVIEW REWORK: CR revision 1 correctly identified that the partial-failure diagram placed packet activation after failed settings applies with `committed` or `uncertain` disposition. The corrected page separates `notCommitted` failure (no clear), `committed`/`uncertain` failure (clear, no activation), and successful committed apply followed by activation failure (clear). The production coordinator and its 22-test negative lifecycle suite verify this boundary.
++## 2026-09-08 — BUG-260908-7c5iv4: PR 6 validation boundaries
++
++Reproduced board exit 1 and relay audit make exit 2 on exact PR head
++`87451b53960ceabe88a01c44c287fee7f9ebf386`; old main has no activity failure,
++but has the same SnapshotDiff loader failure. These are repository failures.
++The CI board entry point now excludes only root activity/resource stores.
++SnapshotDiff rejects non-file input/output URLs before I/O and explicitly
++constructs file URLs for image reads; the scanner recognizes Foundation's
++`URL(filePath:)` alongside `URL(fileURLWithPath:)`, without excluding test support.
++This small loader change is necessary because the previous public URL API could
++load network URLs; a scanner-only exemption would hide that behavior.
++Named negative tests and three narrowing mutants cover hidden elements, arbitrary
++URL loading, and token-preserving HTTP admission through the actual Swift API.
++The existing validation fixture correction is reused verbatim from accepted
++`6e8a1988`; generated schemes are unchanged. Exact-base and PR-composition evidence
++are attached to the bug separately. Delivery remains the parent's review/landing
++step; no signed objects are rewritten by this producer.
++
++The first simultaneous full-suite PR-composition run failed two unchanged
++HEV/SSH integration tests. The sequential full-suite retry passed with the same
++behavioral source (516 Swift tests, 25 pre-existing known issues); Story-base
++validation also passed (496 tests, 25 known issues). The initial failing attempt
++remains attached, and scheduling interference is not claimed as a proven cause.
++
++
++## 2026-09-08 — BUG-260908-33iyb1 macOS hosted diagnostics
++
++- Verified hosted revision `3279036094620772262dbd04a6d8930ec7691e75` has
++  parents `b3422b05226253a17676b9b84c764071fe3dbe74` and PR 6 head
++  `87451b53960ceabe88a01c44c287fee7f9ebf386`; its tree equals that PR head.
++- The supplied artifact omits redirected Xcode child logs. Build exit 65 is
++  known; the compiler cause remains unknown. No unsupported toolchain claim
++  or runtime product change is justified by that evidence.
++- Added complete child-log retention under the already-uploaded log directory,
++  inline failure context, and unchanged nonzero child status. Behavioral tests
++  drive all four build invocations and the test invocation with exit 65. Two
++  narrowing mutants admit only exit 65 or suppress only its diagnostic; both
++  fail the named production-entry test.
++- The local macOS validator passed on Xcode 26.5 / Swift 6.3.2, including four
++  unsigned builds, target-contract tests, packaging, and provider graph checks.
++  This is local evidence, not hosted proof. Parent owns publication and the
++  exact-head hosted rerun. Diagnostic propagation is scoped to this leaf; the
++  original hosted repair and green-check requirement remain open in
++  BUG-260908-shki8p. Independent immutable review is still required.
+diff --git a/README.md b/README.md
+index 0e7ec0e..c4f3fe2 100644
+--- a/README.md
++++ b/README.md
+@@ -261,10 +261,13 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Relay protocol schema/codegen, canonical vectors, conformance, and hostile-input diagnostics | Validate the canonical relay protocol v1 schema, deterministic Swift/Go bindings, production-code-independent vectors, shared hostile corpus, bounded decoder work/allocation/cleanup, and runtime diagnostics; the gates reject schema/vector/generated/semantic drift | `make relay-protocol-generate`; `make relay-protocol-vectors-generate`; `make relay-protocol-conformance-check`; `make relay-protocol-hostile-diagnostics`; `make relay-protocol-check`; `./scripts/tests/test-relay-protocol-go.sh -fuzz FuzzHostileInputDecoder -fuzztime 30s` | `Protocol/Relay/relay-v1.schema.json` (authority); `Protocol/Relay/Vectors/v1/corpus.json`; `Protocol/Relay/Fuzz/v1/regression-seeds.json`; generated bindings plus handwritten codecs/session tests; scratch under `.temp/relay-protocol-check/` and `.temp/TASK-*/` |
+ | Relay portable toolchain and target-shell builder | Verify `relay/toolchain-manifest-v1.json`; offline-provision and whole-tree-verify checksum-pinned Go 1.26.5 plus Syft 1.48.0; run credential-isolated clean or incremental builds with no-follow, resolved-containment checks for each Darwin/Linux amd64/arm64 target; verify the exact four-asset layout, compiler/internal-linker and CPU metadata, format, linkage, stripped debug disposition, minimum runtime, explicit total bundle budget, exact missing/tampered-input failures, reproducibility, native unprivileged Ubuntu 24.04 amd64/arm64 smoke, SBOM, and licenses | `make relay-toolchain-check`; `make relay-provision-go RELAY_GO_ARCHIVE=.temp/relay-tools/<official-go-archive>`; `make relay-build-linux-amd64 RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUILD_CLEAN_FLAG=--require-clean` (replace target suffix for the other three); `make relay-portable-assets RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUNDLE_BUDGET_BYTES=<approved-total-bytes> RELAY_BUILD_CLEAN_FLAG=--require-clean`; `make relay-toolchain-ci ...`; `make relay-toolchain-native-linux-smoke ...`; `make relay-shell-validate ...` | Manifest in `relay/toolchain-manifest-v1.json`; exact target outputs under `.build/relay/portable/`; inspection report at `.build/relay/portable-assets-v1.json`; isolated work under `.build/relay/work/`; extracted licenses under `.build/relay/toolchain-licenses/`; release bundle/test/reproducibility outputs under `.build/relay/` |
+ | Trusted relay asset manifest | Verify the accepted board archive digest, exact four executable members, platform headers, embedded build identity, canonical manifest schema/order, bundle byte sizes and SHA-256 values, immutable generated Swift lookup, and generated-workspace resource inclusion | `make relay-asset-bundle-generate`; `make relay-asset-bundle-check`; `make relay-asset-manifest-test` | Source/schema under `relay/`; typed lookup under `Sources/ReluxTunnelCore/RelayAssets/`; ignored application resource folder under `.build/relay/relay-assets-v1/` |
++| CI board structure checker | Require README/progress for elements, excluding only root `.activity` and `.resources` stores; unknown hidden directories remain checked | `python3 scripts/check_board_structure.py`; `python3 -m unittest scripts/tests/test_check_board_structure.py` | Diagnostics on stdout; task evidence under `.temp/` |
++| PR 6 boundary mutation proof | Exercise board/scanner narrowing mutants and compile the production SnapshotDiff loader with a token-preserving HTTP-admission mutant; all three must fail named behavioral tests | `python3 scripts/tests/test_pr6_boundary_mutants.py` (macOS, Python 3, Swift 6.1+) | Disposable fixtures under the system temporary directory; commands, exits, and test diagnostics on stdout |
+ | Relay supply-chain audit | Generate and fail-closed audit exact source/build provenance, commit/version-specific source URLs, approved license/notice mappings, scoped dependency inventory, asset-manifest linkage, M2/M5 ownership, and an immutable application/runtime scan for executable-download surfaces | `make relay-supply-chain-generate`; `make relay-supply-chain-test`; `make relay-supply-chain-audit` | Authoritative metadata and generated inventory/provenance/notices under `relay/`; temporary relay bundle under `.build/relay/relay-assets-v1/` |
+ | Native dependency validator | Rebuild and inspect pinned static XCFramework slices, checksums, notices, required HEV symbols, and extension-safe linkage | `make validate-native`; `./scripts/native-dependency-tool.py verify --dependency hev-lwip --source-dir /path/to/pinned/hev-socks5-tunnel` | `NativeDependencies/Artifacts/`; bundled notices; `.build/native-apple-matrix/` |
+ | ReluxLibSSH2 fork builder | Verify the six-file rekey/global-request observation patch, exact libssh2/OpenSSL source pins, static XCFramework lock, public headers, notices, and real client/server rekey plus reply/timeout behavior | `make validate-libssh2`; `make test-libssh2-source-gates`; `make build-libssh2 LIBSSH2_SOURCE_ARCHIVE=/path/to/libssh2.tar.gz OPENSSL_SOURCE_ARCHIVE=/path/to/openssl-3.5.7.tar.gz` | `Dependencies/ReluxLibSSH2/`; `NativeDependencies/Artifacts/ReluxLibSSH2.xcframework`; `NativeDependencies/Generated/LIBSSH2_OPENSSL_THIRD_PARTY_NOTICES.txt`; task logs under `.temp/` |
+ | ReluxNIOSSH fork verifier | Verify the audited SwiftNIO SSH pin, license, exact patch allowlist, full fork tests, and build; generate an upstream diff or rebase conflict report | `make validate-reluxniossh`; `python3 scripts/reluxniossh-fork-tool.py diff --output .temp/TASK-260715-nzdzv3/ReluxNIOSSH-upstream.patch`; `python3 scripts/reluxniossh-fork-tool.py conflict-test --upstream-ref <ref>` | `Dependencies/ReluxNIOSSH/`; requested diffs under `.temp/` |
++| macOS build diagnostics | Retain each unsigned Xcode build/test log in the existing CI artifact tree and preserve failing child status and compiler context | `python3 scripts/tests/test_macos_build_diagnostics.py`; `python3 scripts/tests/test_macos_build_diagnostic_mutants.py`; `./scripts/validate-macos-targets.sh` | `.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/` |
+ | Swift format | Check source formatting with the selected Xcode Swift toolchain | `swift format lint --recursive Sources Tests Package.swift` | Terminal diagnostics |
+ | Packet-frame fuzz suite | Deterministic hostile-frame fuzz plus allocation/runtime bounds for the packet bridge; seed, iteration, and ceiling knobs documented in [`docs/packet-frame-fuzzing.md`](docs/packet-frame-fuzzing.md) | `swift test --filter PacketFrameFuzzTests` (bounded run is part of `swift test`) | `PACKET_FRAME_FUZZ_REPORT` evidence lines; task logs under `.temp/` |
+ | Legacy preservation guard | Verify the independent v0.1.0 source, identity, and release contract | `make check-legacy LEGACY_ROOT=/path/to/relux-proxy` | Terminal pass/fail report |
+diff --git a/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift b/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+index 7e8a7fc..963888b 100644
+--- a/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
++++ b/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+@@ -2,6 +2,7 @@ import AppKit
+ import Foundation
+ 
+ public enum SnapshotDiffError: Error {
++  case nonFileURL(URL)
+   case unreadableImage(URL)
+   case incompatibleDimensions
+   case cannotCreateBitmap
+@@ -15,14 +16,18 @@ public enum SnapshotDiff {
+     failed failedURL: URL,
+     outputDirectory: URL
+   ) throws -> Bool {
++    // Snapshot artifacts are local test files; reject other schemes before any I/O.
++    for url in [referenceURL, failedURL, outputDirectory] {
++      guard url.isFileURL else { throw SnapshotDiffError.nonFileURL(url) }
++    }
+     guard
+-      let referenceData = try? Data(contentsOf: referenceURL),
++      let referenceData = try? Data(contentsOf: URL(filePath: referenceURL.path)),
+       let reference = NSBitmapImageRep(data: referenceData)
+     else {
+       throw SnapshotDiffError.unreadableImage(referenceURL)
+     }
+     guard
+-      let failedData = try? Data(contentsOf: failedURL),
++      let failedData = try? Data(contentsOf: URL(filePath: failedURL.path)),
+       let failed = NSBitmapImageRep(data: failedData)
+     else {
+       throw SnapshotDiffError.unreadableImage(failedURL)
+diff --git a/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift b/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+index 69e4119..3291cb4 100644
+--- a/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
++++ b/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+@@ -24,6 +24,41 @@ struct SnapshotDiffSupportTests {
+     }
+   }
+ 
++  @Test("non-file URLs are refused before reading either image or writing output")
++  func nonFileURLs() throws {
++    let local = URL(filePath: "/nonexistent-snapshot.png")
++    for scheme in ["http", "https", "ftp", "data"] {
++      let remote = try #require(URL(string: "\(scheme)://example.invalid/image.png"))
++      for position in 0..<3 {
++        var urls = [local, local, local]
++        urls[position] = remote
++        do {
++          _ = try SnapshotDiff.compare(
++            reference: urls[0], failed: urls[1], outputDirectory: urls[2])
++          Issue.record("non-file URL was accepted")
++        } catch SnapshotDiffError.nonFileURL(let rejected) {
++          #expect(rejected == remote)
++        } catch {
++          Issue.record("expected nonFileURL before I/O, received \(error)")
++        }
++      }
++    }
++  }
++
++  @Test("identical local images match")
++  func matchingLocalImages() throws {
++    let root = FileManager.default.temporaryDirectory
++      .appendingPathComponent("relux-snapshot-match-\(UUID().uuidString)")
++    defer { try? FileManager.default.removeItem(at: root) }
++    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
++    let reference = root.appendingPathComponent("expected.png")
++    try png(color: .blue).write(to: reference)
++    #expect(
++      try SnapshotDiff.compare(
++        reference: reference, failed: reference,
++        outputDirectory: root.appendingPathComponent("artifacts")))
++  }
++
+   private func png(color: NSColor) throws -> Data {
+     let image = NSImage(size: NSSize(width: 2, height: 2))
+     image.lockFocus()
+diff --git a/docs/generated-workspace-foundation.md b/docs/generated-workspace-foundation.md
+index b931a6a..a4948d2 100644
+--- a/docs/generated-workspace-foundation.md
++++ b/docs/generated-workspace-foundation.md
+@@ -324,3 +324,20 @@ legacy `ReluxProxy` sources, defaults, `/usr/bin/ssh` behavior, bundle identity,
+ packaging, or release history. No defaults/profile conversion, artifact-name
+ takeover, rollback, uninstall, EOL, or user migration is authorized without a
+ separate approved migration decision.
++
++### Failed macOS build diagnostics
++
++The macOS target validator retains the four unsigned build logs, target-contract
++test log, and both build-settings logs under
++`.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/`.
++The existing always-upload CI artifact includes that directory. A failed Xcode
++child prints its command, original exit status, log path, and complete captured
++stdout/stderr before the validator exits with the same status. The outer gate
++prints its final 80 lines; the artifact retains the complete child log.
++
++BUG-260908-33iyb1 is a diagnostic repair, not proof that PR 6's hosted build
++failure is fixed. The failing merge revision used Xcode 16.4 / Swift 6.1.2,
++which satisfies the documented Swift tools 6.1 prerequisite. The locally
++validated Xcode 26.5 / Swift 6.3.2 matrix alone does not prove a toolchain
++incompatibility. Preserve the hosted toolchain for the next diagnostic run;
++choose any baseline/configuration or compile repair from its actual error.
+diff --git a/scripts/check_board_structure.py b/scripts/check_board_structure.py
+new file mode 100644
+index 0000000..ff742bb
+--- /dev/null
++++ b/scripts/check_board_structure.py
+@@ -0,0 +1,36 @@
++#!/usr/bin/env python3
++"""Validate element files, excluding only board-root resource/activity stores."""
++
++import argparse
++import os
++from pathlib import Path
++
++
++def check(root: Path) -> int:
++    if not root.is_dir():
++        print(f"no {root} directory")
++        return 1
++    bad = False
++    count = 0
++    for dirpath, dirnames, filenames in os.walk(root):
++        # These exact root stores contain ID-keyed payloads, not elements.
++        if Path(dirpath) == root:
++            dirnames[:] = [name for name in dirnames if name not in (".resources", ".activity")]
++        if Path(dirpath).name.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
++            count += 1
++            for required in ("README.md", "progress.md"):
++                if required not in filenames:
++                    print(f"FAIL {dirpath}: missing {required}")
++                    bad = True
++    print(f"checked {count} board elements")
++    return 1 if bad or count == 0 else 0
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("root", nargs="?", type=Path, default=Path(".task-board"))
++    return check(parser.parse_args().root)
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/logged-command.sh b/scripts/logged-command.sh
+new file mode 100644
+index 0000000..5024443
+--- /dev/null
++++ b/scripts/logged-command.sh
+@@ -0,0 +1,14 @@
++#!/bin/sh
++# Retain complete child output in the uploaded log tree and expose failures inline.
++run_logged_command() {
++  command_log=$1
++  shift
++  if "$@" > "$command_log" 2>&1; then
++    return 0
++  else
++    command_status=$?
++    printf 'FAIL: %s (exit %s; log: %s)\n' "$*" "$command_status" "$command_log" >&2
++    cat "$command_log" >&2
++    return "$command_status"
++  fi
++}
+diff --git a/scripts/relay_supply_chain.py b/scripts/relay_supply_chain.py
+index 41496dc..020aeb3 100644
+--- a/scripts/relay_supply_chain.py
++++ b/scripts/relay_supply_chain.py
+@@ -1217,12 +1217,17 @@ def swift_contents_of_surface(tokens: list[tuple[str, str]]) -> str | None:
+         if initializer_type not in loader_types | {"ambiguous"}:
+             continue
+ 
++        # Accept only an inline Foundation file-URL constructor. Do not infer
++        # localness from variable names, nearby guards, comments, or file paths.
+         explicit_local_url = False
+         if (
+             token_is(tokens, index + 1, ":")
+             and token_is(tokens, index + 2, "URL")
+             and token_is(tokens, index + 3, "(")
+-            and token_is(tokens, index + 4, "fileURLWithPath")
++            and (
++                token_is(tokens, index + 4, "fileURLWithPath")
++                or token_is(tokens, index + 4, "filePath")
++            )
+             and token_is(tokens, index + 5, ":")
+         ):
+             depth = 1
+diff --git a/scripts/tests/test-credential-free-validation.sh b/scripts/tests/test-credential-free-validation.sh
+index 9c5543d..156fc56 100755
+--- a/scripts/tests/test-credential-free-validation.sh
++++ b/scripts/tests/test-credential-free-validation.sh
+@@ -72,4 +72,7 @@ test "$mise_line" -lt "$gate_line"
+ 
+ "$repo_root/scripts/tests/test-generated-provider-graph.sh" >/dev/null
+ 
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
++python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
++
+ echo "credential-free validation contract tests passed"
+diff --git a/scripts/tests/test_check_board_structure.py b/scripts/tests/test_check_board_structure.py
+new file mode 100644
+index 0000000..885c0d4
+--- /dev/null
++++ b/scripts/tests/test_check_board_structure.py
+@@ -0,0 +1,75 @@
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import unittest
++
++
++CHECKER = Path(__file__).resolve().parents[1] / "check_board_structure.py"
++
++
++class BoardStructureTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name) / ".task-board"
++        self.element("STORY-example/TASK-valid")
++
++    def element(self, relative, complete=True):
++        path = self.root / relative
++        path.mkdir(parents=True, exist_ok=True)
++        (path / "README.md").touch()
++        if complete:
++            (path / "progress.md").touch()
++        # The container is itself an element too.
++        for parent in path.parents:
++            if parent == self.root:
++                break
++            if parent.name.startswith("STORY-"):
++                (parent / "README.md").touch()
++                (parent / "progress.md").touch()
++        return path
++
++    def run_checker(self):
++        return subprocess.run([sys.executable, str(CHECKER), str(self.root)],
++                              capture_output=True, text=True)
++
++    def test_activity_and_resource_payloads_are_not_elements(self):
++        for store in (".activity", ".resources"):
++            path = self.root / store / "TASK-payload"
++            path.mkdir(parents=True)
++            (path / "events.ndjson").write_text('{}\n')
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 0, result.stdout)
++        self.assertIn("checked 2 board elements", result.stdout)
++
++    def test_incomplete_element_fails(self):
++        self.element("BUG-incomplete", complete=False)
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 1)
++        self.assertIn("BUG-incomplete: missing progress.md", result.stdout)
++
++    def test_unknown_hidden_directory_is_not_exempt(self):
++        self.element(".hidden/BUG-incomplete", complete=False)
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 1)
++        self.assertIn(".hidden/BUG-incomplete: missing progress.md", result.stdout)
++
++    def test_nested_activity_name_is_not_exempt(self):
++        self.element("STORY-example/.activity/BUG-incomplete", complete=False)
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 1)
++        self.assertIn(".activity/BUG-incomplete: missing progress.md", result.stdout)
++
++    def test_empty_or_missing_board_fails(self):
++        for suffix in ("empty", "missing"):
++            root = Path(self.temp.name) / suffix
++            if suffix == "empty":
++                root.mkdir()
++            result = subprocess.run([sys.executable, str(CHECKER), str(root)],
++                                    capture_output=True, text=True)
++            self.assertEqual(result.returncode, 1)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/tests/test_macos_build_diagnostic_mutants.py b/scripts/tests/test_macos_build_diagnostic_mutants.py
+new file mode 100644
+index 0000000..08b30dd
+--- /dev/null
++++ b/scripts/tests/test_macos_build_diagnostic_mutants.py
+@@ -0,0 +1,44 @@
++"""Require behavioral tests to kill narrowed diagnostic/status regressions."""
++from pathlib import Path
++import shutil
++import subprocess
++import tempfile
++
++ROOT = Path(__file__).resolve().parents[2]
++MUTANTS = {
++    'admit-exit-1-only': ('return "$command_status"',
++                        '[ "$command_status" -ne 1 ] || return 0\n    return "$command_status"'),
++    'admit-exit-65-only': ('return "$command_status"',
++                         '[ "$command_status" -ne 65 ] || return 0\n    return "$command_status"'),
++    'hide-exit-65-diagnostic-only': ('cat "$command_log" >&2',
++                                   'if [ "$command_status" -ne 65 ]; then cat "$command_log" >&2; fi'),
++}
++
++
++def main():
++    for name, (before, after) in MUTANTS.items():
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            (root / 'scripts/tests').mkdir(parents=True)
++            for relative in ('scripts/validate-macos-targets.sh', 'scripts/logged-command.sh',
++                             'scripts/tests/test_macos_build_diagnostics.py'):
++                shutil.copyfile(ROOT / relative, root / relative)
++            helper = root / 'scripts/logged-command.sh'
++            source = helper.read_text()
++            assert source.count(before) == 1
++            helper.write_text(source.replace(before, after))
++            result = subprocess.run(
++                ['python3', 'scripts/tests/test_macos_build_diagnostics.py',
++                 ('MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status'
++                  if name == 'admit-exit-1-only' else
++                  'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context')],
++                cwd=root, capture_output=True, text=True)
++            print(f'{name}: behavioral suite exit {result.returncode}')
++            print(result.stdout + result.stderr)
++            if result.returncode != 1 or 'AssertionError' not in result.stderr:
++                raise SystemExit(f'mutant survived or test infrastructure failed: {name}')
++    print(f'All {len(MUTANTS)} narrowing mutants killed by production-entry behavioral tests')
++
++
++if __name__ == '__main__':
++    main()
+diff --git a/scripts/tests/test_macos_build_diagnostics.py b/scripts/tests/test_macos_build_diagnostics.py
+new file mode 100644
+index 0000000..ac45929
+--- /dev/null
++++ b/scripts/tests/test_macos_build_diagnostics.py
+@@ -0,0 +1,75 @@
++"""Behavioral diagnostics tests; fixtures never launch Xcode or activate a VPN."""
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import tempfile
++import unittest
++
++ROOT = Path(__file__).resolve().parents[2]
++
++
++class MacOSBuildDiagnosticsTests(unittest.TestCase):
++    def test_successful_child_retains_both_streams(self):
++        with tempfile.TemporaryDirectory() as directory:
++            log = Path(directory) / 'child.log'
++            result = subprocess.run(
++                ['sh', '-c', '. "$1"; run_logged_command "$2" sh -c '
++                 '\'echo compiler-output; echo compiler-warning >&2\'',
++                 'test', str(ROOT / 'scripts/logged-command.sh'), str(log)],
++                capture_output=True, text=True)
++            self.assertEqual(result.returncode, 0, result.stderr)
++            self.assertEqual(log.read_text(), 'compiler-output\ncompiler-warning\n')
++
++    def test_each_failing_build_and_test_retains_status_and_context(self):
++        self.assert_failing_build_and_test_status(65)
++
++    def test_exit_one_stops_each_build_and_test_with_exact_status(self):
++        self.assert_failing_build_and_test_status(1)
++
++    def assert_failing_build_and_test_status(self, status):
++        # Four unsigned builds followed by the target-contract test invocation.
++        for failing_call in range(1, 6):
++            with self.subTest(failing_call=failing_call), tempfile.TemporaryDirectory() as directory:
++                root = Path(directory)
++                scripts = root / 'scripts'
++                scripts.mkdir()
++                for name in ('validate-macos-targets.sh', 'logged-command.sh'):
++                    shutil.copyfile(ROOT / 'scripts' / name, scripts / name)
++                generate = scripts / 'generate-workspace.sh'
++                generate.write_text('#!/bin/sh\nexit 0\n')
++                generate.chmod(0o755)
++                binary = root / 'bin'
++                binary.mkdir()
++                xcodebuild = binary / 'xcodebuild'
++                xcodebuild.write_text('''#!/bin/sh
++count=0
++[ ! -f "$COUNTER" ] || count=$(cat "$COUNTER")
++count=$((count + 1))
++echo "$count" > "$COUNTER"
++echo "compiler invocation $count: $*"
++if [ "$count" -eq "$FAIL_CALL" ]; then
++  echo 'ConcreteCompile.swift:42: error: diagnostic sentinel' >&2
++  exit "$FAIL_STATUS"
++fi
++''')
++                xcodebuild.chmod(0o755)
++                counter = root / 'counter'
++                result = subprocess.run(
++                    ['sh', str(scripts / 'validate-macos-targets.sh')],
++                    env={**os.environ, 'PATH': f'{binary}:/usr/bin:/bin',
++                         'COUNTER': str(counter), 'FAIL_CALL': str(failing_call),
++                         'FAIL_STATUS': str(status)},
++                    capture_output=True, text=True)
++                self.assertEqual(result.returncode, status, result.stderr)
++                self.assertEqual(counter.read_text().strip(), str(failing_call))
++                self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
++                self.assertIn(f'exit {status}', result.stderr)
++                logs = root / '.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets'
++                self.assertEqual(len(list(logs.glob('*.log'))), failing_call)
++                self.assertTrue(any('diagnostic sentinel' in log.read_text()
++                                    for log in logs.glob('*.log')))
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/scripts/tests/test_pr6_boundary_mutants.py b/scripts/tests/test_pr6_boundary_mutants.py
+new file mode 100644
+index 0000000..8557d72
+--- /dev/null
++++ b/scripts/tests/test_pr6_boundary_mutants.py
+@@ -0,0 +1,80 @@
++"""Behavioral narrowing mutants for BUG-260908-7c5iv4; no network or VPN use.
++
++Run: python3 scripts/tests/test_pr6_boundary_mutants.py
++Each mutant runs in a disposable fixture, never edits the active checkout, and
++must fail its named regression test. Swift tests exercise the production source.
++"""
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import tempfile
++
++ROOT = Path(__file__).resolve().parents[2]
++
++
++def run(command, root, expected, diagnostic):
++    result = subprocess.run(command, cwd=root, text=True, stdout=subprocess.PIPE,
++                            stderr=subprocess.STDOUT, timeout=240)
++    print("COMMAND:", " ".join(command), "EXIT:", result.returncode)
++    print(result.stdout)
++    if (result.returncode == 0) != (expected == 0) or diagnostic not in result.stdout:
++        raise SystemExit("mutant proof failed: unexpected exit or missing named diagnostic")
++
++
++def main():
++    with tempfile.TemporaryDirectory(prefix="pr6-boundary-mutants-") as temporary:
++        root = Path(temporary)
++        for relative in (
++            "scripts/check_board_structure.py", "scripts/relay_supply_chain.py",
++            "scripts/tests/test_check_board_structure.py",
++            "scripts/tests/test_relay_supply_chain.py", "relay/supply-chain-source-v1.json",
++            "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift",
++        ):
++            target = root / relative
++            target.parent.mkdir(parents=True, exist_ok=True)
++            shutil.copy2(ROOT / relative, target)
++        board = root / "scripts/check_board_structure.py"
++        original = board.read_text()
++        command = [sys.executable, "-m", "unittest", "-v",
++                   "scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt"]
++        run(command, root, 0, "OK")
++        board.write_text(original.replace('(".resources", ".activity")',
++                                          '(".resources", ".activity", ".hidden")'))
++        run(command, root, 1, "FAIL: test_unknown_hidden_directory_is_not_exempt")
++        board.write_text(original)
++        scanner = root / "scripts/relay_supply_chain.py"
++        original = scanner.read_text()
++        command = [sys.executable, "-m", "unittest", "-v",
++                   "scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail"]
++        run(command, root, 0, "OK")
++        scanner.write_text(original.replace("if explicit_local_url:",
++                                            'if explicit_local_url or token_is(tokens, index + 2, "referenceURL"):'))
++        run(command, root, 1, "FAIL: test_snapshot_support_network_mutants_preserve_file_tokens_and_fail")
++        scanner.write_text(original)
++
++        package = root / "snapshot"
++        source = package / "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"
++        test = package / "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift"
++        for target, relative in ((source, "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"),
++                                 (test, "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift")):
++            target.parent.mkdir(parents=True, exist_ok=True)
++            shutil.copy2(ROOT / relative, target)
++        (package / "Package.swift").write_text('''// swift-tools-version: 6.1
++import PackageDescription
++let package = Package(name: "SnapshotBoundaryProof", platforms: [.macOS(.v15)], targets: [
++  .target(name: "ReluxSnapshotDiffSupport"),
++  .testTarget(name: "ReluxSnapshotDiffSupportTests", dependencies: ["ReluxSnapshotDiffSupport"]),
++])
++''')
++        command = ["swift", "test", "--package-path", str(package)]
++        run(command, root, 0, "Test run with 3 tests")
++        # Keep isFileURL and the refusal; admit only HTTP from the forbidden schemes.
++        source.write_text(source.read_text().replace("guard url.isFileURL else",
++                                                     'guard url.isFileURL || url.scheme == "http" else'))
++        run(command, root, 1, "expected nonFileURL before I/O")
++    print("All three narrowing mutants killed by named behavioral regressions.")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/scripts/tests/test_relay_supply_chain.py b/scripts/tests/test_relay_supply_chain.py
+index 2062edb..a4de3ef 100644
+--- a/scripts/tests/test_relay_supply_chain.py
++++ b/scripts/tests/test_relay_supply_chain.py
+@@ -741,6 +741,46 @@ class RelaySupplyChainTests(unittest.TestCase):
+             )
+             supply_chain.scan_runtime(self.config, root)
+ 
++    def test_snapshot_support_local_loads_pass_actual_runtime_scan(self) -> None:
++        supply_chain.scan_runtime(self.config)
++
++    def test_snapshot_support_network_mutants_preserve_file_tokens_and_fail(self) -> None:
++        relative = "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"
++        original = (supply_chain.ROOT / relative).read_text()
++        local = "Data(contentsOf: URL(filePath: referenceURL.path))"
++        self.assertIn(local, original)
++        mutations = (
++            "Data(contentsOf: referenceURL) /* URL(filePath: referenceURL.path) */",
++            "Data(contentsOf: URL(string: referenceURL.absoluteString)!) /* filePath */",
++            "Data(contentsOf: URL(filePath: referenceURL.path).appendingPathComponent(\"x\"))",
++        )
++        for mutation in mutations:
++            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
++                root = Path(temporary)
++                self.make_runtime_root(root)
++                path = root / relative
++                path.parent.mkdir(parents=True)
++                # Retain both searched-for tokens while making HTTPS reachable.
++                changed = original.replace(local, mutation).replace(
++                    "guard url.isFileURL else",
++                    'guard url.isFileURL || url.scheme == "https" else',
++                )
++                path.write_text(changed)
++                with self.assertRaisesRegex(
++                    supply_chain.SupplyChainError, "Foundation Data URL loader"
++                ):
++                    supply_chain.scan_runtime(self.config, root)
++
++    def test_runtime_scan_rejects_string_constructor_even_with_file_path_token(self) -> None:
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            self.make_runtime_root(root)
++            (root / "Sources" / "Download.swift").write_text(
++                "let bytes = try Data(contentsOf: URL(string: address)!) // filePath\n"
++            )
++            with self.assertRaisesRegex(supply_chain.SupplyChainError, "Foundation Data URL loader"):
++                supply_chain.scan_runtime(self.config, root)
++
+     def test_asset_linkage_drift_fails_clean_audit(self) -> None:
+         contract = supply_chain.load_json(supply_chain.ASSET_SOURCE_PATH)
+         contract["supplyChain"]["manifestLinkageSHA256"] = "0" * 64
+diff --git a/scripts/validate-macos-targets.sh b/scripts/validate-macos-targets.sh
+index 635a1b1..f58001d 100755
+--- a/scripts/validate-macos-targets.sh
++++ b/scripts/validate-macos-targets.sh
+@@ -7,7 +7,9 @@ products="$task_output/Products"
+ intermediates="$task_output/Intermediates"
+ derived_data="$task_output/DerivedData-validation"
+ 
+-mkdir -p "$task_output"
++build_logs="$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"
++mkdir -p "$task_output" "$build_logs"
++. "$repo_root/scripts/logged-command.sh"
+ cd "$repo_root"
+ 
+ ./scripts/generate-workspace.sh --clean
+@@ -16,7 +18,7 @@ build_unsigned() {
+   scheme=$1
+   configuration=$2
+   log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
+-  xcodebuild \
++  run_logged_command "$build_logs/credential-free-$log_name-build.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration "$configuration" \
+@@ -26,7 +28,7 @@ build_unsigned() {
+     CODE_SIGNING_REQUIRED=NO \
+     SYMROOT="$products" \
+     OBJROOT="$intermediates" \
+-    build > "$task_output/credential-free-$log_name-build.log" 2>&1
++    build
+ }
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+@@ -34,7 +36,7 @@ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+   build_unsigned "$scheme" Release
+ done
+ 
+-xcodebuild \
++run_logged_command "$build_logs/target-contract-tests.log" xcodebuild \
+   -workspace ReluxTunnel.xcworkspace \
+   -scheme ReluxProxyMac \
+   -configuration Debug \
+@@ -44,7 +46,7 @@ xcodebuild \
+   CODE_SIGNING_REQUIRED=NO \
+   SYMROOT="$products" \
+   OBJROOT="$intermediates" \
+-  test > "$task_output/target-contract-tests.log" 2>&1
++  test
+ 
+ host="$products/Debug/ReluxProxyMac.app"
+ extensions="$host/Contents/Library/SystemExtensions"
+@@ -107,16 +109,16 @@ for entitlements in "$provider_entitlements" "$developer_id_provider_entitlement
+ done
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+-  xcodebuild \
++  run_logged_command "$build_logs/$scheme-build-settings.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration Debug \
+-    -showBuildSettings > "$task_output/$scheme-build-settings.log"
++    -showBuildSettings
+ done
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+-  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMac-build-settings.log" >/dev/null
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+-  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+ 
+ provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+ test "$provider_architectures" = 'arm64 x86_64 '

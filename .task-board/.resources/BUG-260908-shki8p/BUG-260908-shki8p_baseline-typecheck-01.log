@@ -1,0 +1,55 @@
+Sources/ReluxTunnelCore/RelayProtocol/ClientUDPAssociationRegistry.swift:95:5: error: cannot find 'RelayProtocolV1' in scope
+ 93 | public struct ClientUDPAssociationRegistryConfiguration: Equatable, Sendable {
+ 94 |   public static let allocatorSearchHardCeiling: UInt32 =
+ 95 |     RelayProtocolV1.maxAssociationsClientHardCeiling
+    |     `- error: cannot find 'RelayProtocolV1' in scope
+ 96 | 
+ 97 |   public let maximumAssociations: UInt32
+
+Sources/ReluxTunnelCore/RelayProtocol/ClientUDPAssociationRegistry.swift:102:35: error: cannot find 'RelayProtocolV1' in scope
+100 | 
+101 |   public init(
+102 |     maximumAssociations: UInt32 = RelayProtocolV1.maxAssociationsClientDefault,
+    |                                   `- error: cannot find 'RelayProtocolV1' in scope
+103 |     allocatorSearchLimit: UInt32? = nil,
+104 |     idleTimeoutMilliseconds: UInt32 = RelayProtocolV1.idleTimeoutClientDefault
+
+Sources/ReluxTunnelCore/RelayProtocol/ClientUDPAssociationRegistry.swift:104:39: error: cannot find 'RelayProtocolV1' in scope
+102 |     maximumAssociations: UInt32 = RelayProtocolV1.maxAssociationsClientDefault,
+103 |     allocatorSearchLimit: UInt32? = nil,
+104 |     idleTimeoutMilliseconds: UInt32 = RelayProtocolV1.idleTimeoutClientDefault
+    |                                       `- error: cannot find 'RelayProtocolV1' in scope
+105 |   ) throws {
+106 |     guard
+
+Sources/ReluxTunnelCore/RelayProtocol/ClientUDPAssociationRegistry.swift:107:8: error: cannot find 'RelayProtocolV1' in scope
+105 |   ) throws {
+106 |     guard
+107 |       (RelayProtocolV1
+    |        `- error: cannot find 'RelayProtocolV1' in scope
+108 |         .maxAssociationsFloor...RelayProtocolV1
+109 |         .maxAssociationsClientHardCeiling).contains(maximumAssociations)
+
+Sources/ReluxTunnelCore/RelayProtocol/ClientUDPAssociationRegistry.swift:108:33: error: cannot find 'RelayProtocolV1' in scope
+106 |     guard
+107 |       (RelayProtocolV1
+108 |         .maxAssociationsFloor...RelayProtocolV1
+    |                                 `- error: cannot find 'RelayProtocolV1' in scope
+109 |         .maxAssociationsClientHardCeiling).contains(maximumAssociations)
+110 |     else {
+
+Sources/ReluxTunnelCore/RelayProtocol/ClientUDPAssociationRegistry.swift:118:8: error: cannot find 'RelayProtocolV1' in scope
+116 |     }
+117 |     guard
+118 |       (RelayProtocolV1
+    |        `- error: cannot find 'RelayProtocolV1' in scope
+119 |         .idleTimeoutFloor...RelayProtocolV1
+120 |         .idleTimeoutClientHardCeiling).contains(idleTimeoutMilliseconds)
+
+Sources/ReluxTunnelCore/RelayProtocol/ClientUDPAssociationRegistry.swift:119:29: error: cannot find 'RelayProtocolV1' in scope
+117 |     guard
+118 |       (RelayProtocolV1
+119 |         .idleTimeoutFloor...RelayProtocolV1
+    |                             `- error: cannot find 'RelayProtocolV1' in scope
+120 |         .idleTimeoutClientHardCeiling).contains(idleTimeoutMilliseconds)
+121 |     else {

@@ -1,0 +1,17 @@
+COMMAND: git ls-remote --symref origin HEAD
+ref: refs/heads/main	HEAD
+b3422b05226253a17676b9b84c764071fe3dbe74	HEAD
+EXIT=0
+COMMAND: git ls-remote origin refs/pull/6/head
+87451b53960ceabe88a01c44c287fee7f9ebf386	refs/pull/6/head
+EXIT=0
+COMMAND: git rev-parse HEAD FETCH_HEAD
+b3422b05226253a17676b9b84c764071fe3dbe74
+b3422b05226253a17676b9b84c764071fe3dbe74
+EXIT=0
+COMMAND: git verify-commit 87451b53960ceabe88a01c44c287fee7f9ebf386
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+EXIT=0
+COMMAND: git verify-commit 6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+EXIT=0

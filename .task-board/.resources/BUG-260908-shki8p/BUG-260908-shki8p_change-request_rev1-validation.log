@@ -1,0 +1,34 @@
+$ LEGACY_ROOT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/../relux-proxy" make credential-free-validate
+./scripts/validate-credential-free.sh --legacy-root "/Users/iv/Developer/relux-tunnel/../relux-proxy"
+RUN: relay-tool-bootstrap
+PASS: relay-tool-bootstrap (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-tool-bootstrap.log)
+mise WARN  mise version 2026.9.1 available
+mise WARN  To update, run mise self-update
+mise ERROR error parsing config file: ~/Developer/relux-tunnel/.temp/STORY-260908-23tefs/worktree/mise.toml
+mise ERROR Config files in ~/Developer/relux-tunnel/.temp/STORY-260908-23tefs/worktree/mise.toml are not trusted.
+Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
+mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
+RUN: relay-packaging
+PASS: relay-packaging (log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/relay-packaging.log)
+RUN: validation-contract-tests
+FAIL: validation-contract-tests (exit 1; log: .temp/TASK-260715-sbrrp7/credential-free-validation/logs/validation-contract-tests.log)
+error: generated workspace scheme set does not match the active macOS graph
+expected schemes:
+ReluxProxyIOSUITests
+ReluxProxyMac
+ReluxProxyMacTunnel
+ReluxProxyMacUITests
+ReluxTunnelCore
+ReluxTunnelHarness
+relux-relay
+relux-relay-protocol-test
+actual schemes:
+ReluxProxyMac
+ReluxProxyMacTunnel
+ReluxTunnelCore
+ReluxTunnelHarness
+relux-relay
+relux-relay-protocol-test
+make: *** [credential-free-validate] Error 1
+[exit 2]
+suite stopped at command 1 of 1

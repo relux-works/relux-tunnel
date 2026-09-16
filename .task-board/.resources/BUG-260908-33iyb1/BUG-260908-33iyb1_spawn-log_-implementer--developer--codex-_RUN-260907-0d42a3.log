@@ -1,0 +1,1558 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07e49-8ecd-7ed0-8163-4f26c56ad8bc
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(BUG-260908-33iyb1, status=development)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `developer` (`implementer`) — Writes code, fixes bugs, writes tests
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `swiftui`: `/Users/iv/.claude/skills/swiftui/SKILL.md`
+- `core-data`: `/Users/iv/.claude/skills/core-data/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Diagnostic propagation passes named behavioral/narrowing tests and real macOS validation; immutable review required; original hosted repair remains open BUG-260908-shki8p
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.
+- [ ] Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named
+- [ ] Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.
+- [ ] A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [ ] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** BUG-260908-33iyb1
+- **Title:** expose-hosted-macos-build-diagnostics
+- **Parent:** STORY-260908-h39ajh
+
+### Description
+
+Diagnostic prerequisite split from the original hosted build failure. Deliver diagnostic propagation preserving failure status and bounded output. Full root-cause repair and hosted green requirement remains open as BUG-260908-shki8p in STORY-260908-23tefs; never claim original failure fixed.
+
+### Scope
+
+Existing diagnostic patch, macOS validator log propagation, positive/negative/narrowing tests and docs. Preserve signed sibling and Shared Runtime; no guessed toolchain/product change.
+
+### Acceptance Criteria
+
+Actual validation entry points preserve exit65 and other failures, expose bounded diagnostic tail, retain full logs in artifact root; named positive/negative/narrowing tests; real macOS validation on candidate and exact PR6 composition; independent immutable review; original hosted repair remains open BUG-260908-shki8p without any hosted green or root-cause claim.
+
+## Instructions
+
+### BUG-260908-33iyb1_hosted-evidence.md
+> Exact CI evidence and serial sequencing
+
+PR6 head87451b53960ceabe88a01c44c287fee7f9ebf386. Run34167625590 job101881722247 failed macos-target-builds-and-contracts exit65. Exact log .temp/deadline-20260908/ci-credential-failure-01.log; downloaded artifact .temp/deadline-20260908/ci-generated-artifact-01 under control root. Xcode16.4 Swift6.1.2 macOS15.7.9 arm64. Hosted source revision3279036094620772262dbd04a6d8930ec7691e75: verify merge-tree relationship, not silently label it PRhead. Individual xcodebuild logs redirected in validate-macos-targets.sh are missing from artifact; root cause unproven. Four portable runtime jobs passed. Run ONLY AFTER BUG-260908-7c5iv4 accepted/checkpointed, avoiding overlapping workflow changes. Parent attempted formal sibling dependency but CLI rejected the complete batch because of existing unrelated container cycles; no link persisted and parent will enforce this conservative serial prerequisite. Do not rewrite global dependency graph as part of this fix. No main rewind, shared-tool source patches, or VPN operations. Hard stop04:59 Tbilisi2026-09-08; no successors.
+
+
+### BUG-260908-33iyb1_execution-routing.md
+> Proceed from signed sibling checkpoint; preserve pending PR
+
+Prerequisite completed: BUG-260908-7c5iv4 accepted rev1 and signed checkpoint dc68c1584f7cc4ddcdf770acd8ace79790f0b404 on this Story. Preserve its bytes. Diagnose/fix the remaining generated macOS CI failure, using attached exact hosted evidence. Root local main 87451b53960ceabe88a01c44c287fee7f9ebf386 contains pending signed PR6 delivery; origin/main remains b3422b05226253a17676b9b84c764071fe3dbe74. Never rewind/reset/overwrite either pending work or signed commits. Parent owns final remote delivery. Candidate is based on managed Story checkpoint; separately validate composition with exact PR6 head, preserve README/LOGBOOK additions from both, and keep all runtime product bytes unchanged unless evidence proves a scoped compile fix necessary. Prior candidate full old-main suite and PR composition passed, but initial composition run failed unchanged HEV/SSH tests; one retry is not determinism evidence. Do not expand into unrelated flakes without evidence. User authorizes current normal commit timestamps; human signed objects mandatory. All tools via current curator-installed skill-project-management main; no source patches/installs or command bypasses. If hosted failure can only be revealed by publishing diagnostic propagation, provide exact minimal diagnostic candidate and required next hosted step honestly, rather than guessing a cause or calling the overall bug fixed. Do not manually commit on Story branch, integrate, land PR, spawn successors/subagents, or enable VPN. Stop with preserved evidence before 04:59 Asia/Tbilisi September 8 2026. Execute producer handoff for immutable CR when justified; hosted green status remains a delivery gate, not a local claim.
+
+
+### BUG-260908-33iyb1_decomposition.md
+> Recover existing diagnostic candidate; full requirement retained
+
+Parent split circular prepublication gate. Full original hosted diagnosis/repair/green-check requirement is preserved in open BUG-260908-shki8p, separate STORY-260908-23tefs. This leaf now owns ONLY diagnostic propagation per updated AC/checklist; nothing falsely checked. Reuse existing 8-file patch and evidence RUN-260907-f967aa, no reimplementation or redundant broad repeats. Recovery RUN-cae8d9 cancelled. Verify current diff, update outcome to explain split and follow-up, satisfy new diagnostic checklist using actual evidence, then developer handoff for immutable CR. No claim original failure fixed. Parent owns review/delivery; no manual Story commit, VPN, successors, tool edits. Stop04:59 Tbilisi Sep8. This replaces earlier scope clauses, preserving signatures/security/delivery rules.
+
+
+### BUG-260908-33iyb1_review-only.md
+> Independent diagnostic-scope review
+
+Review current immutable CR under latest diagnostic-only AC. Original hosted root-cause repair/required green is preserved open BUG-260908-shki8p; do not infer it from this acceptance. Independently verify logged command exit propagation including65, useful bounded stderr/stdout tail, full logs beneath artifact root, positive/negative/narrowing tests through actual entry points, and no secret/credential exposure widening. Verify prior candidate and PR6 composition real build evidence/limitations; no broad suite repeat without a specific reason. Do not edit accepted bytes, integrate, commit, publish hosted changes, spawn successors, enable VPN, or alter shared tools. Real reviewer checklist and accept_cr if justified. Parent owns producer-bound integration and exact signed PR head review/checks. Stop before04:59 Tbilisi Sep8. Astra low serial via curator-installed main.
+
+
+### BUG-260908-33iyb1_rework-f1.md
+> Test-only rework of reviewer F1
+
+Reviewer RUN-260907-2be57c requested changes solely F1 in review-verdict-rev1.md. Add named regression driving actual validate-macos-targets.sh -> run_logged_command for exit1 alongside65, asserting exact status and no later invocation. Add exit1-only narrowing mutant ([ command_status !=1 ] || return0 before original return) that retains other status handling and tokens, and require named production-entry test to fail. Scope is test-only unless evidence proves production change needed. Preserve all prior accepted sibling and diagnostic behavior. Reuse existing build evidence; reviewer explicitly says no broad repeat for this test-only delta, though managed CR publication gate remains mandatory. Update concise evidence and producer checklist; handoff new immutable CR. Do not tick reviewer-owned rejection item yourself, claim hosted repair fixed, commit managed branch manually, integrate, spawn successors, enable VPN, or alter shared tooling. Full hosted repair remains open BUG-260908-shki8p. Stop04:59 Tbilisi Sep8. Current timestamps and signed Ivan Oparin identity remain required; curator main only.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `BUG-260908-33iyb1_*` before handoff:
+  `task-board m 'add_resource(BUG-260908-33iyb1, name=BUG-260908-33iyb1_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `to-review` is a role handoff, not accepted completion. Report **ready for review** or **handed off to review**.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff BUG-260908-33iyb1 --role developer
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260908-h39ajh.
+
+- Workspace path: `.temp/STORY-260908-h39ajh/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260908-h39ajh`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+codex
+Проверю текущий patch и замечание F1, добавлю тест exit 1 и узкий mutant. Использую skill project-management для evidence и передачи на review.
+
+exec
+/bin/zsh -lc "task-board m 'set_status(BUG-260908-33iyb1, status=development)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 859ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"BUG-260908-33iyb1","field":"status","new_value":"development","old_value":"to-dev"},"side_effects":[{"action":"escalated","element_id":"STORY-260908-h39ajh","field":"status","new_value":"development","old_value":"integrating"}]}}
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/SKILL.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+
+exec
+/bin/zsh -lc "git status --short
+rg --files -g '*diagnostic*' -g '*logged*' -g 'AGENTS.md' -g '*macos*' -g 'SKILL.md' .scripts agents .codex .claude
+cat /Users/iv/.claude/skills/project-management/references/change-request-lifecycle.md
+cat /Users/iv/.claude/skills/project-management/references/negative-evidence.md" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+ M LOGBOOK.md
+ M README.md
+ M docs/generated-workspace-foundation.md
+ M scripts/tests/test-credential-free-validation.sh
+ M scripts/validate-macos-targets.sh
+?? scripts/logged-command.sh
+?? scripts/tests/test_macos_build_diagnostic_mutants.py
+?? scripts/tests/test_macos_build_diagnostics.py
+rg: .scripts: No such file or directory (os error 2)
+rg: agents: No such file or directory (os error 2)
+rg: .codex: No such file or directory (os error 2)
+rg: .claude: No such file or directory (os error 2)
+# Change Request Lifecycle Runbook
+
+Orchestrator-owned. An accepted Change Request is accepted work, not delivered
+work. This page states the order, the recovery paths, and the republish
+semantics that used to live only in an operator's head.
+
+The full typed contract — how a candidate is snapshotted, what
+`repository_delta` means, what a `stale` revision is, and every refusal you can
+hit — stays in
+[tracked background spawn](tracked-background-spawn.md), section
+`Change Requests, review, rework, and checkpoint`. This page is the order of
+operations on top of it.
+
+---
+
+## The Change Request lifecycle, in order
+
+1. **Accept.** The reviewer runs
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N>, evidence=<ELEMENT-ID>_review-verdict.md)'`.
+   The element moves to `integrating`. It is accepted, not delivered. Only the
+   reviewer run that was handed the revision may accept it.
+2. **Checkpoint immediately.** For every non-final leaf, run
+   `task-board worktree checkpoint <ELEMENT-ID>` as the next action after
+   acceptance. The accepted tree lands on the Story branch only, and the leaf
+   stays `integrating` until Story integration lands it on trunk. Delay here is
+   what makes the next producer's Change Request go `stale`.
+3. **Checkpoint refreshes the real index automatically.** Candidate capture
+   records (but never mutates) the real-index tree. Under the bound run's Story
+   lease and the candidate-captured index CAS, checkpoint replaces only that
+   captured state and independently verifies branch/HEAD/index/worktree
+   identity. A typed
+   `change_request_checkpoint_index_unsynced` refusal is retried after its named
+   lock, I/O, or ownership condition is resolved; do not use a broad manual
+   reset that can erase unreviewed staged state.
+4. **Final leaf: integrate, do not checkpoint.** `checkpoint` refuses the
+   Story's last open leaf with `change_request_final_leaf_checkpoint`, because
+   closing it would promote a Story whose branch has never reached trunk. Land
+   the Story with
+   `task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N>`.
+5. **When `integrate` refuses, report the refusal.** `validation_not_configured`
+   (`BUG-260807-1o5092`, the as-shipped behavior) and
+   `integration_indeterminate` for a board that lives outside the control root
+   are blockers, not detours. Report the refusal as the blocker it is and land
+   only by the documented manual signed substitute — an isolated clone, signed
+   cherry-pick of the exact reviewed head, a platform review record, and a
+   fail-closed plain push. Never route around a typed refusal by moving board
+   files or the branch by hand.
+6. **A lost run is recovered by republish, never by re-running the producer.** A
+   run that died after producing content but before the board recorded it still
+   has its content on disk. Republish it with provenance. Re-running the
+   producer discards work that already exists and costs the run again.
+7. **A republish of an unchanged accepted tree is an annotation, not a new
+   revision.** A candidate whose `repository_delta` is byte-identical to the
+   accepted one, and whose acceptance still stands, is not a new candidate.
+   Recording it as a revision turns the revision count — the only rework
+   measure the board has — into process noise.
+8. **Never commit manually on the Story branch.** The managed worktree's tree is
+   published by the producer's handoff and landed by `checkpoint` or
+   `integrate`. A hand commit on that branch makes the accepted snapshot and the
+   branch head disagree, and the disagreement surfaces later as an unexplained
+   `stale` or an integration that lands the wrong tree. A `task_delta` handoff
+   now fails closed on it: the tip is compared to the workspace record's
+   `checkpoint_oid` before the validation suite runs and before anything is
+   written, and a disagreement is refused with
+   `change_request_candidate_committed_past_checkpoint`. The producer repairs it
+   inside its own run with `git reset --soft <checkpoint_oid>` — the work stays
+   in the worktree — and completes the handoff again.
+
+## A revision that will never be integrated
+
+Two shapes end a Change Request revision without a reviewer verdict, and they
+are different facts.
+
+### An empty delta does not block the Story
+
+A revision whose `repository_delta` is `empty` — an analyst or research run that
+changed no repository file — is created `ready` like any other, because
+emptiness is an attribute of the candidate and never a state. What changed with
+`BUG-260906-37s3ps` is what that revision does to everybody else: while it sits
+`ready` or `reviewing`, it no longer refuses a sibling producer with
+`change_request_sibling_producer_blocked`.
+
+The gate's argument is contamination — the new producer writes into the same
+Story worktree the pending candidate was snapshotted from — and an empty
+candidate has no repository work product for those writes to reach. Its
+checkpoint writes no commit, and its integration is a no-op. Before the fix a
+research-only run deadlocked its whole Story: nothing was routed at a candidate
+with nothing to review, and every later producer was refused with a blocker
+nobody could clear.
+
+The exemption is scoped, and the scope is deliberate:
+
+| Blocking state | `repository_delta=present` | `repository_delta=empty` |
+| --- | --- | --- |
+| `ready`, `reviewing` | refuses siblings | **admits siblings** |
+| `draft`, `changes_requested`, `stale`, `conflicted` | refuses siblings | refuses siblings |
+
+The bottom row expects a REPUBLISH, and the next snapshot of the shared worktree
+would pick up the sibling's writes. Emptiness today says nothing about the
+revision that replaces it. A revision with no readable `repository_delta` —
+legacy, or from a newer build — refuses: a value this build cannot read is not
+evidence that the candidate is empty.
+
+The revision is still fully auditable. It is not deleted, not hidden, and not
+given a special state; it simply stops being a blocker.
+
+### Retiring a revision: `withdraw_cr`
+
+An empty delta is not the only revision that never reaches integration. A
+candidate can be superseded, abandoned, or published by a run whose deliverable
+turned out to belong somewhere else. Before `BUG-260906-37s3ps` there was no
+route for that at all: `accept_cr` needs a reviewer verdict and a merged
+checklist, `worktree abort` discards the entire workspace, and republishing only
+produces another revision in the same unresolved state.
+
+```bash
+task-board m 'withdraw_cr(<ELEMENT-ID>, revision=<N>, reason="why this revision will never be integrated")'
+```
+
+It moves the revision to `aborted`, which is terminal on both predicates that
+read the state: it stops refusing sibling producers, and it stops withholding
+the Story workspace's base convergence. The revision file and its ledger row
+stay readable.
+
+Four things it refuses, and why:
+
+- **A revision that is `accepted`, `checkpointing`, `checkpointed`,
+  `integrating` or `integrated`** — `change_request_state_conflict`. Those
+  carry a reviewer's attestation, or commits that are already on the Story
+  branch or in trunk. Recording one as never integrated would make the board
+  disagree with git history.
+- **A missing or whitespace-only `reason`** —
+  `change_request_withdraw_reason_missing`. The ledger row is the only surviving
+  explanation of why the revision exists and was never integrated.
+- **A call from inside a tracked spawn run** —
+  `change_request_withdraw_unauthorized`. Withdrawal is an ORCHESTRATOR route.
+  A producer refused by `change_request_sibling_producer_blocked` must not clear
+  its own blocker, and a producer handed `changes_requested` must not retire the
+  rework signal instead of answering it.
+- **A revision number that is not the current one** —
+  `change_request_revision_conflict`, the same CAS every other transition takes.
+
+`withdraw_cr` deliberately does NOT move the board element. Where the element
+goes next — back to development, `blocked`, or closed as a duplicate — is a
+routing decision the orchestrator makes with information the mutation does not
+have; make it explicitly, in a separate call.
+
+## Two same-class findings mean a missing gate
+
+When two consecutive reviews of one leaf raise the same finding class, stop
+routing another rework revision. Spawn one task to add a gate for the class — a
+conformance vector set, a checker, a mutant harness — and let the next revision
+be reviewed against the gate rather than against a reviewer's memory. The
+reviewer's `repeat-of:` verdict field is the signal to route on.
+
+## Recovery surfaces
+
+- Stopped or refused integration: `task-board worktree transaction show <STORY-ID>`,
+  then the disposition surface it names.
+- A leaf whose handoff guard refused for artifact naming: attach the correctly
+  named `<ELEMENT-ID>_<slug>.<ext>` outcome resource and re-run the handoff. Do
+  not respawn the producer to satisfy a naming rule.
+# Negative Evidence Contract
+
+A passing suite means nothing unless something in it would have failed. This
+file is the single source of truth for the rules that make a green check mean
+something, and for the incident record behind each one. The operative wording
+that reaches every spawned child lives in the spawn template section
+`Evidence That Counts`; the reviewer's licence lives in `.roles/reviewer/role.md`;
+the repeated-variant heuristic lives in `.roles/orchestrator/role.md`. Read this
+file when you need the shapes, the failure vocabulary, or the incidents that
+produced a rule — do not restate these rules in other documents.
+
+| Rule | Operative statement | Evidence record |
+| --- | --- | --- |
+| Negative tests for gates | spawn template, `Evidence That Counts` | this file |
+| Narrowing, not deleting | spawn template, `Evidence That Counts` | this file |
+| Production call site | spawn template, `Evidence That Counts` | this file |
+| Absence vs failure to read | spawn template, `Evidence That Counts` | this file |
+| Prove, or report nothing | spawn template, `Evidence That Counts` | this file |
+| Reviewer licence to defeat a gate | `.roles/reviewer/role.md` | this file |
+| Many variants, one unowned decision | `.roles/orchestrator/role.md` | this file |
+
+## Negative Tests For Gates
+
+Any feature that GATES, REFUSES, VALIDATES, AUTHORIZES, or ATTESTS must ship
+with negative tests that fail when the gate admits what it is supposed to
+reject. A positive test proving the happy path passes is not evidence that the
+gate works; it is evidence that the gate is reachable.
+
+This is the dominant defect class in this repository's 2026-07-28..08-03 waves.
+Every instance below was found because a reviewer deliberately attacked the
+gate, not because anyone read the code:
+
+- the fact-assay attested a COLD child that never inherited the context, because
+  it checked inventory, session id, digests, and output shape, but never
+  inheritance;
+- the assay fork had repository tool access, so it could answer from disk while
+  the base was false;
+- the builder attestation accepted a correctly-shaped forged digest that the
+  caller minted itself;
+- clearance enforcement existed but no production path called it, and counting
+  tests around a fake proved nothing;
+- an unknown assay event preserved a false zero-tool observation;
+- a provider capability was declared absent to disable a flaky check, and the
+  claim did not reproduce (9/11 success).
+
+## Standard Negative Shapes
+
+Use these names in checklists, verdicts, and test names. They are the shapes a
+negative test must cover and the shapes a reviewer looks for first.
+
+| Shape | What it looks like when nobody tests for it | What the negative test must do |
+| --- | --- | --- |
+| Forged or self-minted evidence | The caller supplies the proof that the gate checks, and a correctly-shaped value passes. | Mint the evidence in the test the way a caller could, and require refusal. |
+| Absent evidence treated as satisfied | Missing input takes the permissive branch; the suite only ever supplies the input. | Remove the evidence entirely and require refusal, not a default-pass. |
+| Check present but uncalled from production | The guard is implemented and unit-tested by direct call; no production path invokes it. | Drive the real entry point — launch, materialize, resolve, publish — and name the production call site. |
+| Bypass path around the check | One entry point enforces; a second, older, or retry/renewal path does not. | Exercise every entry point that reaches the protected state, including retry, renewal, resume, and recovery, and every delivery surface that carries the rule — a contract clause reaching one context profile and not the other is this shape. |
+| Capability claim that does not reproduce | A capability is declared absent or present to make a flaky check go away. | Re-run the claim enough times to state a real rate, or report unknown. |
+
+## Derive Completeness From An Independent Source
+
+Completeness is derived from the pinned source or generated artifact, never
+enumerated by hand. When a registry, schema set, or declared scope defines the
+members, derive the expected set from that source and fail when any member lacks
+enforcement. This rule comes from five consecutive review rounds that each
+closed exactly the hand-picked members named by the previous reviewer; the next
+unlisted member defeated every list.
+
+A completeness test that reads the implementation's own table is circular and
+can never detect a missing entry: removing the entry also removes it from the
+test's expected set. Derive the expectation from the normative source of truth,
+not from the code under test. This distinction was what let the next Story's
+round-1 review demand a source-derived completeness test instead of accepting
+the producer's two selected cases.
+
+## Prove Exact Bounds At The Production Entry
+
+Prove every bound in both directions at the production entry: accept at the
+limit and refuse past the limit. Character bounds count characters rather than
+bytes. The motivating failure was a value containing 3,999 characters but
+5,999 bytes that production rejected with a byte comparison even though the
+normative `string[1..4096]` bound permitted it; helper-only or ASCII-only tests
+could not expose that narrowing.
+
+## Disable Every Refusal Clause
+
+Disable each refusal clause individually. If the suite stays green, that clause
+is a hole unless the test or evidence documents it as provably subsumed and
+names the check that subsumes it. This is measured rather than hypothetical: in
+one file, disabling 110 clause sites produced 45 surviving mutants, and 12 of
+those survivors were genuine widenings.
+
+Numeric-bound mutation and clause-disablement are different classes, and one
+harness rarely generates both. Numeric mutation finds off-by-one defects but
+cannot express disabling a tagged-union arm, cross-field equality, or grammar
+predicate; clause disablement finds those omissions but cannot move a numeric
+boundary. The 110-site clause run exposed widenings that the numeric harness
+could not generate, so run both classes.
+
+## Check Refusals Against The Normative Source
+
+A green test can defend a bug when it asserts a refusal that the normative
+source does not require. One observed test required production to reject values
+that the pinned specification permitted, so the suite protected the narrowing
+instead of detecting it. Whenever a test encodes a refusal, check that refusal
+against the pinned source rather than copying current behaviour into the
+assertion.
+
+## Eliminate Ambient Test Inputs
+
+No test may depend on ambient environment. Fixtures set explicit identity and
+all other values that could otherwise come from global configuration, the OS,
+or developer-machine state. A developer machine let Git derive an author name
+from the OS and passed the suite, while a CI runner with an empty GECOS field
+failed with `empty ident name`; only CI can catch this class, so the fixture
+must make its identity deterministic before CI exercises it.
+
+## Prove A Bound By Narrowing, Not By Deleting
+
+A test that removes a gate entirely proves only that the gate exists. It says
+nothing about whether the gate covers the right class. Restrict the gate to a
+narrower condition instead and require a named test to fail.
+
+Two repository incidents where a narrowed gate survived a green suite:
+
+- **BUG-260801-3kiloe F1** — the recovery successor cap was proven only by total
+  removal. Narrowing it to provider-limit signals left every other recoverable
+  failure unbounded, with the whole suite still green.
+- **TASK-260802-17wetr F16** — thirteen cycles later, the same shape: the
+  probe-lease cap survived deletion tests while the renewal path escaped it.
+- **TASK-260730-2c1e8l cycle 1** — this contract itself. The reviewer clauses
+  landed in the role body and the shipped test checked the role file and the
+  lite template separately, so both halves were green while the composed lite
+  prompt carried neither. Assert on the composed production artifact, not on the
+  pieces it is built from.
+- **TASK-260730-2c1e8l cycle 2** — the same contract, one level up, and the
+  clearest statement of the difference between the two shapes. The cycle-1 fix
+  did assert on the composed prompt, but it called the composition helper
+  directly and handed it the role, task-class filter, and profile itself.
+  Production builds those inputs inside the spawn entry point, so a mutant
+  narrowing only the real lite-reviewer routing just before composition left the
+  test green while an actual lite reviewer lost its gate-defeat licence. A test
+  that supplies the inputs is testing the helper, not the path. Obtain the
+  artifact the way the consumer does — here, read the prompt file recorded on
+  the run manifest after driving the entry point — so role resolution, the
+  task-class filter, and profile resolution are all under test rather than
+  assumed.
+
+Three traps when running the mutants themselves, all hit while proving this file:
+
+- **The mutant must be re-run with `-count=1`.** `go test` caches on package
+  sources; a test that reads `.roles/*.md` or any file outside its package at
+  runtime returns a stale cached PASS after that file is mutated. A cached green
+  is not a surviving mutant, it is an unexecuted test.
+- **A passing assertion may be satisfied by the wrong source.** Two mutants of
+  the producer DoD entries survived because the phrase asserted also appears,
+  differently worded, in the shared spawn template. Choose assertion wording
+  that only the intended source can supply, then narrow that source and require
+  the named test to fail.
+- **Restore the mutant from a copy, not from git.** `git checkout <file>`
+  restores from the index, which silently discards uncommitted work in that file
+  — during this task it reverted the whole cycle-2 change, not just the mutant.
+  Copy the file aside before mutating, restore from the copy, and verify the
+  restoration by diffing against it before rerunning the gates.
+
+## A Gate Publishes Its Coverage As A Ratio
+
+Prose about what a gate checks cannot distinguish 7 of 7 from 3 of 7. Every
+statement such a description makes is usually true — it is true of what the gate
+can see, and silent about what it cannot. The longer and more careful the
+description, the more thorough the gate looks.
+
+Report the fraction of intended targets the gate actually reaches, and assert
+that fraction so it reddens when a target drops out of reach. A target no mutant
+can redden is not covered, however elaborate the structure around it.
+
+Three defects of this exact shape, each found only once a ratio existed:
+
+- an AST call graph that recorded an edge only for a direct identifier call
+  covered 3 of 7 guarded functions while every pin passed; the package's real
+  dispatch was a function-value table, and the blind spot was invisible from
+  inside;
+- a classifier keyed on prose that a sibling gate was actively rewriting silently
+  dropped 8 rows, taking a suite from 107 executed subtests to 66, while its
+  completeness check `count == 0` reported nothing, because four is not zero;
+- an ownership gate that proved a symbol exists and a case is linked reported 48
+  sections as owned; measured against the specification, those bindings
+  discharged 2 of 394 normative clauses.
+
+A non-empty check on a derived set is the recurring form. `len(x) > 0` answers a
+different question from `len(x) == expected`, and only the second notices a
+narrowing.
+
+## A Blind Spot Is Not An Empty Set
+
+"Nothing is there" and "nothing this checker can see" are different facts, and
+only the second is a statement about the checker. Reporting the first when you
+mean the second converts a limitation into a clean bill of health, and the reader
+has no way to tell.
+
+An ownership gate scanned for uppercase RFC 2119 keywords. Sections stating their
+obligations in declarative present tense scored zero, were bucketed as carrying
+no obligations, and were admitted with no evidence required. Its documentation
+said "there is no obligation to enumerate". The true sentence was "the section
+carries no keyword line, so the scanner cannot see its obligations" — and 19 of
+151 headings were free-admission surface the moment they were bound, including a
+19-row exit-code registry and a closed manifest specification.
+
+Two rules follow:
+
+- State the bound of what the checker can see, next to what it reports. A
+  residual class that is named can be attacked later; one that is implied cannot.
+- Do not let the bucket for "nothing to check" also be the bucket that skips the
+  check. Where absence of measurable obligation is a legitimate state, require an
+  explicit reviewed justification for it, so the weakest entries are the ones
+  that must say the most rather than the least.
+
+## An Absence And A Failure To Read Are Different Facts
+
+Absence is a legitimate state with a defined fallback. A failed, partial, or
+malformed read is evidence of a problem. Treating the second as the first lets
+the fallback launder a fault into a normal-looking value, and a fallback defined
+for absence must never fire on a read failure.
+
+Each of these was a separate defect in this repository:
+
+- a non-empty value read as verified;
+- an unknown scanner version read as clean;
+- a partial provenance record read as absent;
+- a zero pid start time read as alive;
+- a malformed `api_error_status` read as missing;
+- an unparsed envelope read as no envelope — this one produced a false provider
+  suppression that would have hidden a healthy provider for hours.
+
+## Prove, Or Report Nothing
+
+Where a property cannot be established, report unparsed or unknown rather than
+inferring it from a proxy signal. A plausible guess is worse than an explicit
+unknown, because callers act on it.
+
+Incident: headless top-level inference in the Claude classifier was unsound in
+principle and produced six variants before it was deleted rather than
+strengthened.
+
+## Many Variants, One Unowned Decision
+
+A long run of same-shaped variants usually means a decision has more than one
+owner, not that there are many bugs. Eleven framing variants stopped reproducing
+only when structure got a single scanner and a single state type; every per-site
+patch before that produced the next variant. The operative wording is in
+`.roles/orchestrator/role.md`: unify the decision, do not patch each site.
+
+## Reviewer Licence
+
+Reviewers are explicitly licensed to attempt to defeat a gate and to reject a
+change whose only evidence is positive-path. Grep for callers before believing a
+guard is in force. The operative wording is in `.roles/reviewer/role.md`.
+
+exec
+/bin/zsh -lc 'cat scripts/tests/test_macos_build_diagnostics.py
+cat scripts/tests/test_macos_build_diagnostic_mutants.py
+cat scripts/logged-command.sh
+cat /Users/iv/.claude/skills/project-management/references/resources-and-bugs.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+"""Behavioral diagnostics tests; fixtures never launch Xcode or activate a VPN."""
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class MacOSBuildDiagnosticsTests(unittest.TestCase):
+    def test_successful_child_retains_both_streams(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / 'child.log'
+            result = subprocess.run(
+                ['sh', '-c', '. "$1"; run_logged_command "$2" sh -c '
+                 '\'echo compiler-output; echo compiler-warning >&2\'',
+                 'test', str(ROOT / 'scripts/logged-command.sh'), str(log)],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(log.read_text(), 'compiler-output\ncompiler-warning\n')
+
+    def test_each_failing_build_and_test_retains_status_and_context(self):
+        # Four unsigned builds followed by the target-contract test invocation.
+        for failing_call in range(1, 6):
+            with self.subTest(failing_call=failing_call), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                scripts = root / 'scripts'
+                scripts.mkdir()
+                for name in ('validate-macos-targets.sh', 'logged-command.sh'):
+                    shutil.copyfile(ROOT / 'scripts' / name, scripts / name)
+                generate = scripts / 'generate-workspace.sh'
+                generate.write_text('#!/bin/sh\nexit 0\n')
+                generate.chmod(0o755)
+                binary = root / 'bin'
+                binary.mkdir()
+                xcodebuild = binary / 'xcodebuild'
+                xcodebuild.write_text('''#!/bin/sh
+count=0
+[ ! -f "$COUNTER" ] || count=$(cat "$COUNTER")
+count=$((count + 1))
+echo "$count" > "$COUNTER"
+echo "compiler invocation $count: $*"
+if [ "$count" -eq "$FAIL_CALL" ]; then
+  echo 'ConcreteCompile.swift:42: error: diagnostic sentinel' >&2
+  exit 65
+fi
+''')
+                xcodebuild.chmod(0o755)
+                counter = root / 'counter'
+                result = subprocess.run(
+                    ['sh', str(scripts / 'validate-macos-targets.sh')],
+                    env={**os.environ, 'PATH': f'{binary}:/usr/bin:/bin',
+                         'COUNTER': str(counter), 'FAIL_CALL': str(failing_call)},
+                    capture_output=True, text=True)
+                self.assertEqual(result.returncode, 65, result.stderr)
+                self.assertEqual(counter.read_text().strip(), str(failing_call))
+                self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+                self.assertIn('exit 65', result.stderr)
+                logs = root / '.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets'
+                self.assertEqual(len(list(logs.glob('*.log'))), failing_call)
+                self.assertTrue(any('diagnostic sentinel' in log.read_text()
+                                    for log in logs.glob('*.log')))
+
+
+if __name__ == '__main__':
+    unittest.main()
+"""Require behavioral tests to kill status-65-only diagnostic/status regressions."""
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[2]
+MUTANTS = {
+    'admit-exit-65-only': ('return "$command_status"',
+                         '[ "$command_status" -ne 65 ] || return 0\n    return "$command_status"'),
+    'hide-exit-65-diagnostic-only': ('cat "$command_log" >&2',
+                                   'if [ "$command_status" -ne 65 ]; then cat "$command_log" >&2; fi'),
+}
+
+
+def main():
+    for name, (before, after) in MUTANTS.items():
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'scripts/tests').mkdir(parents=True)
+            for relative in ('scripts/validate-macos-targets.sh', 'scripts/logged-command.sh',
+                             'scripts/tests/test_macos_build_diagnostics.py'):
+                shutil.copyfile(ROOT / relative, root / relative)
+            helper = root / 'scripts/logged-command.sh'
+            source = helper.read_text()
+            assert source.count(before) == 1
+            helper.write_text(source.replace(before, after))
+            result = subprocess.run(
+                ['python3', 'scripts/tests/test_macos_build_diagnostics.py',
+                 'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context'],
+                cwd=root, capture_output=True, text=True)
+            print(f'{name}: behavioral suite exit {result.returncode}')
+            print(result.stdout + result.stderr)
+            if result.returncode != 1 or 'AssertionError' not in result.stderr:
+                raise SystemExit(f'mutant survived or test infrastructure failed: {name}')
+    print('Both narrowing mutants killed by production-entry behavioral tests')
+
+
+if __name__ == '__main__':
+    main()
+#!/bin/sh
+# Retain complete child output in the uploaded log tree and expose failures inline.
+run_logged_command() {
+  command_log=$1
+  shift
+  if "$@" > "$command_log" 2>&1; then
+    return 0
+  else
+    command_status=$?
+    printf 'FAIL: %s (exit %s; log: %s)\n' "$*" "$command_status" "$command_log" >&2
+    cat "$command_log" >&2
+    return "$command_status"
+  fi
+}
+# Resources
+
+Resources are owned by the board element they are attached to. Use explicit
+CRUD operations against that element ID. Local payloads are grouped under
+`.task-board/.resources/<elementID>/`; remote board-server uses the equivalent
+element-scoped filesystem or MinIO object-key prefix.
+
+## Resource Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **precondition** | Inputs needed before work starts | Design docs, specs, instructions, API schemas |
+| **outcome** | Results produced by work | Research findings, implementation notes, analysis |
+
+## Commands
+
+```bash
+# Create a resource
+task-board m 'add_resource(TASK-260218-abc, name=TASK-260218-abc_design.md, type=precondition, content="...", description="Architecture design")'
+task-board m 'add_resource(TASK-260218-abc, name=reports/TASK-260218-abc_results.md, type=outcome, content="...", description="Research findings")'
+
+# Replace an existing resource
+task-board m 'update_resource(TASK-260218-abc, name=reports/TASK-260218-abc_results.md, type=outcome, content="revised findings", description="Research findings v2")'
+task-board resource update TASK-260218-abc ./TASK-260218-abc_results.md --name reports/TASK-260218-abc_results.md --type outcome
+
+# Adopt an existing orphaned local payload without rewriting it
+task-board resource adopt TASK-260218-abc revisions/2/TASK-260218-abc_results.md --type outcome --description "Recovered result"
+
+# Delete a resource (destructive — requires --confirm)
+task-board m --confirm 'delete_resource(TASK-260218-abc, name=artifacts/obsolete/TASK-260218-abc_design.md)'
+task-board resource delete TASK-260218-abc artifacts/obsolete/TASK-260218-abc_design.md --confirm
+
+# View resources on an element
+task-board q --format compact 'get(TASK-260218-abc) { preconditionResources outcomeResources }'
+```
+
+## Element-Owned Storage
+
+Resources from different tasks are not stored in one shared file pile. Each
+element gets its own directory, and every resource attached to that element is
+stored below it:
+
+```
+.task-board/.resources/
+├── TASK-260203-g7h8i9/
+│   ├── findings/
+│   │   └── investigation.md
+│   ├── artifacts/
+│   │   └── run-1/
+│   │       └── output.json
+│   ├── reports/
+│   │   └── TASK-260203-g7h8i9_results.md
+│   └── revisions/
+│       └── 2/
+│           └── review.md
+└── STORY-260203-d4e5f6/
+    └── research.md         # outcome
+```
+
+The resource `name` is a safe forward-slash-relative path. Agents may choose
+the hierarchy that fits the artifact and nest it further as needed. Every
+segment must be non-empty printable UTF-8 and must not be `.`, `..`, an
+absolute/drive-qualified path, or contain a backslash. Raw forward slashes are
+the only hierarchy delimiter; malformed URL escapes and encoded or repeatedly
+encoded separators/traversal are rejected. Attach related files to the same
+owning element; do not invent a generic board-wide resource task or write
+payloads into `.task-board/.resources/` manually.
+
+Directories are structural nodes, not payloads. Resource CRUD, validation, and
+handoff evidence recognize regular files only; a directory named like a report
+cannot be adopted or used to satisfy outcome evidence.
+
+Local and board-server filesystem element deletion is journaled and
+crash-recoverable. Direct resource CRUD first resolves any pending staged
+element delete under the board mutation lock. MinIO element/subtree deletion
+currently fails before mutation with the typed
+`ErrAtomicResourceDeleteUnsupported` capability error; ordinary resource CRUD
+remains available.
+
+References are tracked in `progress.md` as markdown links:
+```markdown
+## Precondition Resources
+- [specs/auth/design.md](board-resource://TASK-260203-g7h8i9/precondition/specs/auth/design.md) — Architecture design
+
+## Outcome Resources
+- [reports/TASK-260203-g7h8i9_results.md](board-resource://TASK-260203-g7h8i9/outcome/reports/TASK-260203-g7h8i9_results.md) — Research findings
+```
+
+## Spawn Integration
+
+Precondition resources are automatically injected into agent prompts by `task-board spawn`. Full prompts preserve normal text inlining. Lite prompts use the resolved `agent_context.prompt.preconditions` policy: by default, text below `inline_bytes` is rendered inline, while larger text and binary resources are written read-only under `.temp/resources/` and represented by their name, description, byte count, SHA-256 digest, and local path. This means:
+
+1. Attach instructions/specs as precondition resources to a task
+2. Run `task-board spawn TASK-XX --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort max` — agent gets everything automatically
+3. Agent saves results via `task-board m 'add_resource(..., type=outcome)'` on first write, then `update_resource(...)` for revisions
+
+## Best Practices
+
+- **Use preconditions for agent instructions** — attach design docs, specs, or step-by-step instructions before spawning
+- **Use outcomes for work products** — research findings, analysis, implementation notes
+- **Attach to the owning element** — pass the Task, Bug, Story, or Epic ID that owns the artifact; the storage layer groups its payloads under that element directory automatically
+- **Use explicit create/update/delete** — `add_resource` / `resource add` must not silently overwrite; use `update_resource` / `resource update` when replacing an existing payload
+- **Use adopt only for local repair** — `resource adopt` registers bytes already stored at `.resources/<elementID>/<relative-resource-path>` without rewriting them; a missing payload returns resource-not-found and an existing declaration returns resource-exists
+- **Choose a useful hierarchy inside the owning element** — `findings/`, `artifacts/`, `reports/`, and `revisions/` are conventions, not a fixed schema; nest further when it makes the handoff easier to navigate
+- **Use safe relative resource paths** — `/` separates validated path segments; empty, dot/traversal, absolute/drive-qualified, backslash, control-character, malformed escape, and encoded/repeatedly encoded separator or traversal forms are rejected in local and remote storage
+- **Attach files, not folders** — directories only organize resource files and never satisfy resource existence or handoff evidence
+- **Always use board commands** — never create/edit resource files or progress.md resource sections manually
+- **Name handoff evidence with task scope** — keep the task ID in the resource path, for example `reports/TASK-260218-abc_architecture-design.md`, so `task-board handoff` can recognize it
+- **Add descriptions** — the `description=` param adds a one-line description shown in spawn prompts
+
+---
+
+# Bugs
+
+Bugs are elements of the board, living inside stories alongside tasks.
+
+```bash
+# Create bug
+task-board m 'create(type=bug, parent=STORY-260218-abc, name=crash-on-start, description="App crashes when starting recording")'
+
+# Track like any element
+task-board m 'set_status(BUG-260218-abc, status=development)'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Reproduce the issue")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Find root cause")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Write fix")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Add regression test")'
+```
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(BUG-260908-33iyb1) { checklist outcomeResources }'
+task-board resource --help
+cat scripts/validate-macos-targets.sh
+rg -n 'diagnostic|tail|macos' scripts/tests/test-credential-free-validation.sh
+ git diff --stat" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 150ms:
+checklist:[{"text":"Code written per task description and AC","done":true},{"text":"Relevant tests written for new or changed behavior and passing","done":true},{"text":"Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.","done":true},{"text":"Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named","done":true},{"text":"Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.","done":true},{"text":"A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.","done":true},{"text":"Lint clean","done":true},{"text":"Relevant build/validation commands run after changes and build not broken","done":true},{"text":"New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Diagnostic propagation passes named behavioral/narrowing tests and real macOS validation; immutable review required; original hosted repair remains open BUG-260908-shki8p","done":true},{"text":"Implementation matches AC","done":false},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":true},{"text":"Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted","done":true},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}]
+outcomeResources:[{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-f967aa.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-f967aa.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_results.md","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_results.md"},{"name":"BUG-260908-33iyb1_diagnostic-candidate.patch","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_diagnostic-candidate.patch","description":"Minimal uncommitted diagnostic patch against signed checkpoint"},{"name":"BUG-260908-33iyb1_evidence.zip","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_evidence.zip","description":"Real build logs, composition evidence, positive and narrowing tests"},{"name":"BUG-260908-33iyb1_handoff-refusal.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_handoff-refusal.log","description":"Exit 1: hosted completion checklist remains open"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-cae8d9.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-cae8d9.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-40c797.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-40c797.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_recovery-evidence.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_recovery-evidence.log"},{"name":"BUG-260908-33iyb1_change-request_rev1.patch","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_change-request_rev1.patch","description":"Change Request CR-BUG-260908-33iyb1-1 revision 1 candidate patch (repository_delta=present, 16 changed paths)"},{"name":"BUG-260908-33iyb1_change-request_rev1-validation.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_change-request_rev1-validation.log","description":"Change Request CR-BUG-260908-33iyb1-1 revision 1 bounded validation log"},{"name":"BUG-260908-33iyb1_spawn-log_-reviewer--reviewer--codex-_RUN-260907-2be57c.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-reviewer--reviewer--codex-_RUN-260907-2be57c.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_review-verdict-rev1.md","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_review-verdict-rev1.md"},{"name":"BUG-260908-33iyb1_review-adversarial-rev1.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_review-adversarial-rev1.log"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-0d42a3.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-0d42a3.log","description":"System spawn log captured by task-board"}]
+Manage attached resources such as screenshots, docs, logs, and other files.
+
+Use "task-board resource add" to create a new attached resource, "task-board
+resource adopt" to register an orphaned local payload, "task-board resource
+update" to replace an existing one, "task-board resource delete" to remove it,
+and "task-board resource get" to materialize a resource back to the local
+filesystem for inspection.
+
+Usage:
+  task-board resource [command]
+
+Available Commands:
+  add         Attach a new file resource to an element
+  adopt       Register an existing unreferenced local resource payload
+  delete      Delete a resource from an element (requires --confirm)
+  get         Download a resource to the local filesystem
+  update      Replace an existing file resource on an element
+
+Flags:
+  -h, --help   help for resource
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board resource [command] --help" for more information about a command.
+#!/bin/sh
+set -eu
+
+repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+task_output="$repo_root/.temp/TASK-260715-uyju7n"
+products="$task_output/Products"
+intermediates="$task_output/Intermediates"
+derived_data="$task_output/DerivedData-validation"
+
+build_logs="$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"
+mkdir -p "$task_output" "$build_logs"
+. "$repo_root/scripts/logged-command.sh"
+cd "$repo_root"
+
+./scripts/generate-workspace.sh --clean
+
+build_unsigned() {
+  scheme=$1
+  configuration=$2
+  log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
+  run_logged_command "$build_logs/credential-free-$log_name-build.log" xcodebuild \
+    -workspace ReluxTunnel.xcworkspace \
+    -scheme "$scheme" \
+    -configuration "$configuration" \
+    -destination 'generic/platform=macOS' \
+    -derivedDataPath "$derived_data" \
+    CODE_SIGNING_ALLOWED=NO \
+    CODE_SIGNING_REQUIRED=NO \
+    SYMROOT="$products" \
+    OBJROOT="$intermediates" \
+    build
+}
+
+for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+  build_unsigned "$scheme" Debug
+  build_unsigned "$scheme" Release
+done
+
+run_logged_command "$build_logs/target-contract-tests.log" xcodebuild \
+  -workspace ReluxTunnel.xcworkspace \
+  -scheme ReluxProxyMac \
+  -configuration Debug \
+  -destination 'platform=macOS' \
+  -derivedDataPath "$derived_data" \
+  CODE_SIGNING_ALLOWED=NO \
+  CODE_SIGNING_REQUIRED=NO \
+  SYMROOT="$products" \
+  OBJROOT="$intermediates" \
+  test
+
+host="$products/Debug/ReluxProxyMac.app"
+extensions="$host/Contents/Library/SystemExtensions"
+provider="$extensions/works.relux.tunnel.mac.tunnel.systemextension"
+provider_binary="$provider/Contents/MacOS/works.relux.tunnel.mac.tunnel"
+release_provider="$products/Release/ReluxProxyMac.app/Contents/Library/SystemExtensions/works.relux.tunnel.mac.tunnel.systemextension"
+release_provider_binary="$release_provider/Contents/MacOS/works.relux.tunnel.mac.tunnel"
+
+test -d "$host"
+test "$(find "$extensions" -mindepth 1 -maxdepth 1 -type d -name '*.systemextension' | wc -l | tr -d ' ')" -eq 1
+test -d "$provider"
+test -x "$provider_binary"
+test -x "$release_provider_binary"
+test "$(plutil -extract CFBundleIdentifier raw "$host/Contents/Info.plist")" = \
+  'works.relux.tunnel.mac'
+test "$(plutil -extract CFBundleIdentifier raw "$provider/Contents/Info.plist")" = \
+  'works.relux.tunnel.mac.tunnel'
+test "$(plutil -extract LSMinimumSystemVersion raw "$host/Contents/Info.plist")" = '15.0'
+test "$(plutil -extract LSMinimumSystemVersion raw "$provider/Contents/Info.plist")" = '15.0'
+test "$(plutil -extract CFBundleShortVersionString raw "$host/Contents/Info.plist")" = \
+  "$(plutil -extract CFBundleShortVersionString raw "$provider/Contents/Info.plist")"
+test "$(plutil -extract CFBundleVersion raw "$host/Contents/Info.plist")" = \
+  "$(plutil -extract CFBundleVersion raw "$provider/Contents/Info.plist")"
+provider_identifier=$(plutil -extract CFBundleIdentifier raw "$provider/Contents/Info.plist")
+provider_module=$(printf '%s' "$provider_identifier" | tr '.-' '__')
+test "$(/usr/libexec/PlistBuddy -c 'Print :NetworkExtension:NEProviderClasses:com.apple.networkextension.packet-tunnel' "$provider/Contents/Info.plist")" = \
+  "$provider_module.PacketTunnelProvider"
+
+if find "$extensions" -mindepth 1 -maxdepth 1 -type d ! -name '*.systemextension' | grep -q .; then
+  echo "error: unexpected embedded item in SystemExtensions" >&2
+  exit 1
+fi
+
+host_entitlements=Configuration/Entitlements/ReluxProxyMac-Development.entitlements
+provider_entitlements=Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements
+developer_id_host_entitlements=Configuration/Entitlements/ReluxProxyMac-DeveloperID.entitlements
+developer_id_provider_entitlements=Configuration/Entitlements/ReluxProxyMacTunnel-DeveloperID.entitlements
+
+for entitlements in \
+  "$host_entitlements" "$provider_entitlements" \
+  "$developer_id_host_entitlements" "$developer_id_provider_entitlements"; do
+  plutil -lint "$entitlements" >/dev/null
+done
+
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$host_entitlements")" = \
+  'packet-tunnel-provider'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$provider_entitlements")" = \
+  'packet-tunnel-provider'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$developer_id_host_entitlements")" = \
+  'packet-tunnel-provider-systemextension'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.networking.networkextension:0' "$developer_id_provider_entitlements")" = \
+  'packet-tunnel-provider-systemextension'
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$host_entitlements")" = true
+test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$developer_id_host_entitlements")" = true
+for entitlements in "$provider_entitlements" "$developer_id_provider_entitlements"; do
+  if /usr/libexec/PlistBuddy -c 'Print :com.apple.developer.system-extension.install' "$entitlements" >/dev/null 2>&1; then
+    echo "error: provider entitlement file must not install system extensions: $entitlements" >&2
+    exit 1
+  fi
+done
+
+for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+  run_logged_command "$build_logs/$scheme-build-settings.log" xcodebuild \
+    -workspace ReluxTunnel.xcworkspace \
+    -scheme "$scheme" \
+    -configuration Debug \
+    -showBuildSettings
+done
+grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+  "$build_logs/ReluxProxyMac-build-settings.log" >/dev/null
+grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+  "$build_logs/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+
+provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+test "$provider_architectures" = 'arm64 x86_64 '
+otool -L "$release_provider_binary" > "$task_output/provider-release-linkage.log"
+awk '/^[[:space:]]+\// { print $1 }' "$task_output/provider-release-linkage.log" |
+  while IFS= read -r dependency; do
+    case "$dependency" in
+      /usr/lib/*|/System/Library/Frameworks/*) ;;
+      *)
+        echo "error: disallowed provider dynamic dependency: $dependency" >&2
+        exit 1
+        ;;
+    esac
+  done
+nm -u "$release_provider_binary" > "$task_output/provider-release-undefined-symbols.log"
+nm "$release_provider_binary" > "$task_output/provider-release-symbols.log"
+./scripts/check-generated-provider-graph.py \
+  --project Project.swift \
+  --package Package.swift \
+  --relay-root .build/relay/relay-assets-v1 \
+  --generated-project ReluxTunnelApp.xcodeproj/project.pbxproj \
+  --provider-bundle "$release_provider" \
+  --linked-libraries "$task_output/provider-release-linkage.log" \
+  --undefined-symbols "$task_output/provider-release-undefined-symbols.log" \
+  --all-symbols "$task_output/provider-release-symbols.log"
+
+echo "macOS host/provider target validation passed"
+55:runner_label='    runs-on: macos-15'
+57:arm64_checksum='          sha256: c7a0eb1035de974b42d36b69c4b55b836c06b455b990dd6ac530aaf05d4a8a17 # mise-v2026.3.10-macos-arm64'
+75:python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
+76:python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
+ LOGBOOK.md                                       | 21 +++++++++++++++++++++
+ README.md                                        |  1 +
+ docs/generated-workspace-foundation.md           | 17 +++++++++++++++++
+ scripts/tests/test-credential-free-validation.sh |  3 +++
+ scripts/validate-macos-targets.sh                | 20 +++++++++++---------
+ 5 files changed, 53 insertions(+), 9 deletions(-)
+
+exec
+/bin/zsh -lc 'mkdir -p .temp/BUG-260908-33iyb1-f1
+ task-board resource get --help
+python3 --version > .temp/BUG-260908-33iyb1-f1/readiness-01.log
+git --version >> .temp/BUG-260908-33iyb1-f1/readiness-01.log
+task-board --version >> .temp/BUG-260908-33iyb1-f1/readiness-01.log' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+Download a board resource and save it locally.
+
+If --output is omitted, the file is materialized under:
+  .temp/resources/<ELEMENT-ID>/<NAME>
+
+Nested resource names preserve their directory hierarchy below the element.
+
+Use --output - to write the resource bytes to stdout.
+
+Usage:
+  task-board resource get <ELEMENT-ID> <NAME> [flags]
+
+Flags:
+  -h, --help            help for get
+  -o, --output string   Write resource to this path (default: .temp/resources/<ELEMENT-ID>/<NAME>, use - for stdout)
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+exec
+/bin/zsh -lc 'task-board resource get BUG-260908-33iyb1 BUG-260908-33iyb1_review-verdict-rev1.md --output -
+task-board resource get BUG-260908-33iyb1 BUG-260908-33iyb1_results.md --output -' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 19ms:
+# BUG-260908-33iyb1 — diagnostic candidate, hosted gate still open
+
+## Finding and scope
+
+Hosted run 34167625590 / job 101881722247 failed with exit 65. The supplied
+artifact 10034792775 contains only successful generation in the macOS child
+log: individual xcodebuild logs were redirected outside the uploaded tree.
+The actual compiler/build cause remains unknown. Fetch verified revision
+3279036094620772262dbd04a6d8930ec7691e75 has parents b3422b0 and 87451b5;
+its tree exactly equals PR6 head 87451b53960ceabe88a01c44c287fee7f9ebf386.
+
+The minimal candidate puts all seven Xcode logs under the existing always-upload
+credential-free log directory, prints complete failure context inline, and
+returns the original child status. No workflow/toolchain pin or runtime product
+bytes changed. docs/generated-workspace-foundation.md specifies Swift tools 6.1;
+the hosted Swift 6.1.2 satisfies that prerequisite. Local Xcode 26.5 / Swift 6.3.2
+success does not establish why Xcode 16.4 failed. An exact Xcode baseline change
+is deliberately deferred until the real diagnostic supplies evidence.
+
+## Updated diagnostic AC coverage: 2 of 6 AC rows driven
+
+This recovery supersedes the old five-row coverage and handoff refusal after the
+parent split the original hosted repair into BUG-260908-shki8p (verified backlog).
+
+| AC row | Production call site / evidence | Stated bound |
+| --- | --- | --- |
+| Failure status | validate-macos-targets.sh build_unsigned and target test -> run_logged_command; test_each_failing_build_and_test_retains_status_and_context | Driven for exit 65 at all five build/test calls. Other failure codes use the same unchanged return path but have no named injected test; no claim of exhaustive status coverage. |
+| Bounded diagnostic tail | validate-credential-free.sh run_step -> tail -n 80 | Existing outer entry point is unchanged and inspected; no named behavioral boundary test. Direct macOS validator emits the complete child log, so its output is not bounded; bound applies to the outer CI entry point only. |
+| Full logs retained | run_logged_command; test_successful_child_retains_both_streams and test_each_failing_build_and_test_retains_status_and_context | Both streams retained in uploaded artifact root. Five negative build/test call sites driven; two build-settings call sites have real positive evidence only. |
+| Named narrowing tests | test_macos_build_diagnostic_mutants.py invokes the production-entry behavioral suite | admit-exit-65-only and hide-exit-65-diagnostic-only both killed with assertion failures (inner exit 1, harness exit 0). Diagnostic mutant preserves cat token. No new source-text gate. |
+| Real macOS candidate and exact PR6 composition | RUN-260907-f967aa attached macos-build-01.log and composition-build-02.log | Both passed on local Xcode 26.5 / Swift 6.3.2; accepted prior evidence, not rerun here. Hosted Xcode 16.4 is not locally reproduced. |
+| Immutable review / original repair open | Parent-owned reviewer and BUG-260908-shki8p | Review pending; this producer does not approve itself or claim hosted green/root cause. |
+
+The ratio counts the two AC behavior rows directly driven by named production
+entry tests; the remaining four rows have explicitly stated operational/test
+bounds above. Negative invocation coverage is 5 of 7 Xcode call sites (five
+build/test calls, two later build-settings calls not negatively injected).
+Tests are in the uncommitted candidate as required by managed worktree policy;
+immutable handoff and later signed delivery must preserve them.
+
+## Recovery verification and provenance
+
+- All eight candidate files matched RUN-260907-f967aa candidate-sha256.log
+  before the sole recovery documentation correction in LOGBOOK.md.
+- HEAD remains signed sibling dc68c1584f7cc4ddcdf770acd8ace79790f0b404.
+  No product/workflow/toolchain bytes changed; no manual commit or publication.
+- Re-ran two diagnostic behavioral tests successfully and the narrowing harness
+  successfully; expected inner mutant failures remain failures, not successes.
+- Accepted prior attached real macOS validation, exact PR6 composition validation,
+  contracts and signature checks. Prior initial composition trust failure remains
+  recorded. No redundant broad suite rerun, HEV/SSH determinism claim, VPN action,
+  or hosted validation performed.
+- Recovery logs are attached as BUG-260908-33iyb1_recovery-evidence.log.
+
+## Review and next hosted step
+
+The diagnostic-only leaf is ready for independent immutable review with the
+explicit coverage bounds above. The parent owns final signed composition and
+publication. Then run generated-project-credential-free on that exact head,
+inspect logs/macos-targets/*.log from its always-upload artifact if it fails,
+and pursue only the evidenced repair under BUG-260908-shki8p. This outcome
+supersedes the earlier lifecycle refusal caused by the unsplit hosted-green
+checklist; it does not turn that old failed handoff into success.
+
+codex
+F1 подтверждён: тесты проверяли только exit 65, поэтому mutant, пропускающий exit 1, выживал. Добавлю отдельный тест exit 1 для всех пяти build/test-вызовов; production-код менять не требуется.
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('scripts/tests/test_macos_build_diagnostics.py')
+s=p.read_text().replace('        # Four unsigned builds followed by the target-contract test invocation.','        self.assert_failing_build_and_test_status(65)\\n\\n    def test_exit_one_stops_each_build_and_test_with_exact_status(self):\\n        self.assert_failing_build_and_test_status(1)\\n\\n    def assert_failing_build_and_test_status(self, status):\\n        # Four unsigned builds followed by the target-contract test invocation.')
+s=s.replace('  exit 65','  exit \""'$FAIL_STATUS"'"').replace(\"'FAIL_CALL': str(failing_call)},\",\"'FAIL_CALL': str(failing_call),\\n                         'FAIL_STATUS': str(status)},\").replace('self.assertEqual(result.returncode, 65, result.stderr)','self.assertEqual(result.returncode, status, result.stderr)').replace(\"self.assertIn('exit 65', result.stderr)\",\"self.assertIn(f'exit {status}', result.stderr)\")
+p.write_text(s)
+p=Path('scripts/tests/test_macos_build_diagnostic_mutants.py')
+s=p.read_text().replace('status-65-only diagnostic/status regressions.', 'narrowed diagnostic/status regressions.')
+s=s.replace(\"MUTANTS = {\",'''MUTANTS = {
+    'admit-exit-1-only': ('return \""'$command_status"'"',
+                        '[ \""'$command_status" -ne 1 ] || return 0'"\\\\n    return \""'$command_status"'"'),''')
+s=s.replace(\"'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context'],\",\"('MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status'\\n                  if name == 'admit-exit-1-only' else\\n                  'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context')],\")
+s=s.replace(\"print('Both narrowing mutants killed by production-entry behavioral tests')\",\"print(f'All {len(MUTANTS)} narrowing mutants killed by production-entry behavioral tests')\")
+p.write_text(s)
+PY
+python3 scripts/tests/test_macos_build_diagnostics.py > .temp/BUG-260908-33iyb1-f1/behavior-01.log 2>&1
+result="'$?
+cat .temp/BUG-260908-33iyb1-f1/behavior-01.log
+exit "$result"' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 5629ms:
+...
+----------------------------------------------------------------------
+Ran 3 tests in 5.670s
+
+OK
+
+exec
+/bin/zsh -lc 'python3 scripts/tests/test_macos_build_diagnostic_mutants.py > .temp/BUG-260908-33iyb1-f1/mutants-01.log 2>&1
+result=$?
+tail -n 8 .temp/BUG-260908-33iyb1-f1/mutants-01.log
+exit "$result"' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 7401ms:
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-uyju7n/Intermediates test (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/target-contract-tests.log)\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 2.352s
+
+FAILED (failures=5)
+
+All 3 narrowing mutants killed by production-entry behavioral tests
+
+exec
+/bin/zsh -lc "task-board resource get BUG-260908-33iyb1 BUG-260908-33iyb1_results.md --output .temp/BUG-260908-33iyb1-f1/prior-results.md
+task-board q --format compact 'get(BUG-260908-shki8p) { status }'
+git diff --check
+sed -n '1,65p' scripts/tests/test_macos_build_diagnostic_mutants.py
+rg -n 'admit-exit|behavioral suite exit|FAILED' .temp/BUG-260908-33iyb1-f1/mutants-01.log
+task-board resource add --help" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 196ms:
+status:backlog
+"""Require behavioral tests to kill narrowed diagnostic/status regressions."""
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[2]
+MUTANTS = {
+    'admit-exit-1-only': ('return "$command_status"',
+                        '[ "$command_status" -ne 1 ] || return 0\n    return "$command_status"'),
+    'admit-exit-65-only': ('return "$command_status"',
+                         '[ "$command_status" -ne 65 ] || return 0\n    return "$command_status"'),
+    'hide-exit-65-diagnostic-only': ('cat "$command_log" >&2',
+                                   'if [ "$command_status" -ne 65 ]; then cat "$command_log" >&2; fi'),
+}
+
+
+def main():
+    for name, (before, after) in MUTANTS.items():
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'scripts/tests').mkdir(parents=True)
+            for relative in ('scripts/validate-macos-targets.sh', 'scripts/logged-command.sh',
+                             'scripts/tests/test_macos_build_diagnostics.py'):
+                shutil.copyfile(ROOT / relative, root / relative)
+            helper = root / 'scripts/logged-command.sh'
+            source = helper.read_text()
+            assert source.count(before) == 1
+            helper.write_text(source.replace(before, after))
+            result = subprocess.run(
+                ['python3', 'scripts/tests/test_macos_build_diagnostics.py',
+                 ('MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status'
+                  if name == 'admit-exit-1-only' else
+                  'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context')],
+                cwd=root, capture_output=True, text=True)
+            print(f'{name}: behavioral suite exit {result.returncode}')
+            print(result.stdout + result.stderr)
+            if result.returncode != 1 or 'AssertionError' not in result.stderr:
+                raise SystemExit(f'mutant survived or test infrastructure failed: {name}')
+    print(f'All {len(MUTANTS)} narrowing mutants killed by production-entry behavioral tests')
+
+
+if __name__ == '__main__':
+    main()
+1:admit-exit-1-only: behavioral suite exit 1
+54:FAILED (failures=4)
+56:admit-exit-65-only: behavioral suite exit 1
+121:FAILED (failures=5)
+123:hide-exit-65-diagnostic-only: behavioral suite exit 1
+173:FAILED (failures=5)
+Attach a new file resource to a board element.
+
+SOURCE may be:
+  - a local filesystem path
+  - a file:// URL
+  - an http:// or https:// URL
+
+Examples:
+  task-board resource add TASK-260311-abc ./screenshot.png --type precondition
+  task-board resource add TASK-260311-abc file:///tmp/report.pdf --name ui-report.pdf
+  task-board resource add TASK-260311-abc ./report.md --name reports/review/report.md
+  task-board resource add TASK-260311-abc https://example.com/spec.pdf --type outcome
+
+Usage:
+  task-board resource add <ELEMENT-ID> <SOURCE> [flags]
+
+Flags:
+  -d, --description string   Optional one-line description
+  -h, --help                 help for add
+      --name string          Override stored resource filename
+      --type string          Resource type: precondition or outcome (default "outcome")
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+root=Path('.temp/BUG-260908-33iyb1-f1')
+s=(root/'prior-results.md').read_text()
+s=s.replace('Driven for exit 65 at all five build/test calls. Other failure codes use the same unchanged return path but have no named injected test; no claim of exhaustive status coverage.', 'Driven for exit 65 and exit 1 at all five build/test calls. Named test_exit_one_stops_each_build_and_test_with_exact_status adds exact-status and no-later-invocation assertions for exit 1. Other status values remain a stated bound; no exhaustive status claim.')
+s=s.replace('admit-exit-65-only and hide-exit-65-diagnostic-only both killed', 'admit-exit-1-only, admit-exit-65-only and hide-exit-65-diagnostic-only all killed')
+s += \"\"\"
+## F1 rework evidence
+
+Reviewer rev1 withheld acceptance solely because exit-1-only admission survived.
+This revision changes only the two Python diagnostic test files relative to rev1;
+production, README, LOGBOOK, sibling and runtime bytes are preserved.
+
+Production entry: scripts/validate-macos-targets.sh build_unsigned and target
+test -> scripts/logged-command.sh run_logged_command. The new named
+test_exit_one_stops_each_build_and_test_with_exact_status injects exit 1 at each
+of five build/test calls, asserts exact status, counter (no later invocation),
+diagnostic stderr, and retained artifact logs. Existing exit 65 coverage remains.
+
+Coverage remains **2 of 6 AC rows driven**, with status now driven for 1 and 65;
+negative invocation coverage is **5 of 7 Xcode call sites** for each status.
+The unchanged bounds in the table still apply. The new admit-exit-1-only mutant
+inserts '[ \""'$command_status" -ne 1 ] || return 0'"' before the original return;
+all other status handling and original tokens remain. Its named production-entry
+test exits 1 with assertion failures; harness exits 0. Both prior mutants also
+exit 1 with assertion failures. No static-only checker substitutes for behavior.
+
+Rerun here: Python behavioral suite (3 named tests, exit 0); all three narrowing
+mutants (harness exit 0, each child exit 1); git diff --check (exit 0).
+Logs attached as BUG-260908-33iyb1_f1-tests.log. Real macOS candidate and exact
+PR6 composition evidence above is reused, not rerun for this test-only delta;
+reviewer explicitly accepted that bound. Managed publication validation remains
+mandatory and its result is recorded by handoff separately.
+
+BUG-260908-shki8p was re-read as backlog. Original hosted failure/root cause is
+not fixed or claimed green. Reviewer-owned checklist and acceptance remain with
+the reviewer. Parent owns signed delivery; no manual Story commit or integration.
+\"\"\"
+(root/'BUG-260908-33iyb1_results.md').write_text(s)
+(root/'BUG-260908-33iyb1_f1-tests.log').write_text(
+'behavioral command: python3 scripts/tests/test_macos_build_diagnostics.py; exit 0\\n'+(root/'behavior-01.log').read_text()+
+'mutants command: python3 scripts/tests/test_macos_build_diagnostic_mutants.py; exit 0\\n'+(root/'mutants-01.log').read_text()+
+'git diff --check; exit 0\\n')
+PY
+task-board resource update BUG-260908-33iyb1 .temp/BUG-260908-33iyb1-f1/BUG-260908-33iyb1_results.md --name BUG-260908-33iyb1_results.md --type outcome
+task-board resource add BUG-260908-33iyb1 .temp/BUG-260908-33iyb1-f1/BUG-260908-33iyb1_f1-tests.log --type outcome --description 'F1 regression and three narrowing mutants with real exit codes'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 1231ms:
+Updated BUG-260908-33iyb1_results.md on BUG-260908-33iyb1 as outcome
+Attached BUG-260908-33iyb1_f1-tests.log on BUG-260908-33iyb1 as outcome
+
+codex
+Три теста проходят; все три narrowing mutant вызывают ожидаемые assertion failures, включая новый exit-1-only. Evidence прикреплено. Передаю candidate на immutable review через обязательный validation gate; прежние реальные macOS build-проверки переиспользованы для этого test-only изменения.
+
+exec
+/bin/zsh -lc 'task-board handoff BUG-260908-33iyb1 --role developer' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 1 in 260ms:
+cannot hand off BUG-260908-33iyb1: unchecked checklist items [12] (Implementation matches AC): handoff evidence missing
+
+exec
+/bin/zsh -lc "task-board m 'add_resource(BUG-260908-33iyb1, name=BUG-260908-33iyb1_f1-handoff-refusal.md, type=outcome, content=\"F1 test-only rework and evidence are attached. task-board handoff BUG-260908-33iyb1 --role developer exited 1 before managed validation/publication: unchecked checklist items [12] (Implementation matches AC): handoff evidence missing. Item 12 was left unchecked by reviewer rev1; assignment explicitly prohibits producer ticking the reviewer-owned rejection item. No checklist bypass, manual commit, integration, or publication attempted. Parent must resolve role/checklist routing through supported curator-installed tooling, then retry producer handoff for immutable rev2 review. Existing rev1 remains changes-requested; no new CR or successful managed validation is claimed. Original hosted repair BUG-260908-shki8p remains backlog.\", description=\"Exact managed handoff refusal and required parent routing\")'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 671ms:
+{"ok":true,"result":{"id":"BUG-260908-33iyb1","name":"BUG-260908-33iyb1_f1-handoff-refusal.md","type":"outcome","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_f1-handoff-refusal.md"}}
+
+codex
+F1 исправлен: добавлен production-entry тест exit 1 и exit-1-only mutant. Три теста проходят, все три mutant убиты. Evidence прикреплено; изменения не закоммичены.
+
+Handoff отказал: пункт 12 `Implementation matches AC` не отмечен reviewer. По заданию я не вправе отмечать его самостоятельно; нужен routing родителя. Новый CR не опубликован.
+
+BUG-260908-shki8p остаётся открытым; hosted repair не заявлен.
+tokens used
+50,595
+F1 исправлен: добавлен production-entry тест exit 1 и exit-1-only mutant. Три теста проходят, все три mutant убиты. Evidence прикреплено; изменения не закоммичены.
+
+Handoff отказал: пункт 12 `Implementation matches AC` не отмечен reviewer. По заданию я не вправе отмечать его самостоятельно; нужен routing родителя. Новый CR не опубликован.
+
+BUG-260908-shki8p остаётся открытым; hosted repair не заявлен.

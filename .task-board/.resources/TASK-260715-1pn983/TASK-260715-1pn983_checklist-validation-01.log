@@ -1,0 +1,12 @@
+TASK-260715-1pn983 checklist lifecycle evidence
+
+Attempt 1:
+- One DSL batch requested all 12 check_item changes on the same task.
+- Exit code: 1.
+- Error: one activity event cannot represent multiple checklist changes.
+- Side effects: none.
+
+Attempt 2:
+- Twelve sequential atomic check_item mutations.
+- Exit code: 0.
+- Result: all 12 checklist items checked.

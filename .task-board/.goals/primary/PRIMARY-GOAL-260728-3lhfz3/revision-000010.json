@@ -1,0 +1,21 @@
+{
+  "contract": "primary-goal-v1",
+  "id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 10,
+  "previous_revision": 9,
+  "state": "active",
+  "scope": {
+    "kind": "board"
+  },
+  "objective": "Deliver the working, signed and notarized macOS-first Relux Tunnel full-tunnel NEPacketTunnelProvider client with authenticated SSH to a user-controlled host, libssh2 primary. Complete gate-free SPM core, public packet bridge and HEV, SSH, TCP/DNS, rootless exec/stdio relay, UDP/degraded mode, macOS provider/UI, self-update, threat-model, CI and release work through tracked producer-reviewer-rework-accepted delivery. Defer iOS, App Store A0 research and native Linux runner evidence. Preserve pre-auth host verification, Keychain-only secrets, bounded memory, fail-closed DNS, internal-only SOCKS, no SFTP or utun-FD discovery, injectable physical tuning. Never install, configure, enable or connect the real system VPN on this development Mac; use the dedicated test host. Stop at genuine human-only gates with exact evidence. Use one Codex worker serially with lite context; Astra gpt-6-astra low is authorized for all child roles. Preserve signed Ivan Oparin \u003coparin@me.com\u003e commits using /Users/iv/.ssh/ivanopcode, feature branch to PR to exact-head review and checks to main landing, then push/sync accepted scopes while preserving unrelated work. The user revoked all special commit-time windows, synthetic timestamps and minimum-spacing rules on 2026-09-08; use normal current timestamps. Manage project-management installation and tooling only through curator from main of relux-works/skill-project-management; verify signing works correctly. HARD DEADLINE: continue only until 2026-09-08T05:00:00+04:00; park ALL project workers and orchestration by that instant, preserve worktrees/evidence, launch no successors or new tasks, and remain paused until explicit user resume. Begin orderly handoff before the deadline; unfinished tasks are not done. Preserve safe task-scoped temp cleanup within scope.",
+  "mutation": {
+    "kind": "objective_realigned",
+    "reason": "User resumes blocked delivery: curator main only, commit-time restriction revoked, cryptographic signatures required; retain hard stop and product constraints.",
+    "actor": {
+      "kind": "primary_parent",
+      "actor_id": "iv"
+    }
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-09-07T22:21:17.728833Z"
+}

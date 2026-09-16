@@ -1,0 +1,7 @@
+board + spec validation	fail	21s	https://github.com/relux-works/relux-tunnel/actions/runs/34167625590/job/101881722264	
+pinned offline relay toolchain	fail	16s	https://github.com/relux-works/relux-tunnel/actions/runs/34167625590/job/101881722057	
+portable runtime darwin/amd64 on macos-15-intel	pending	0	https://github.com/relux-works/relux-tunnel/actions/runs/34167625590/job/101881722288	
+portable runtime darwin/arm64 on macos-15	pass	1m21s	https://github.com/relux-works/relux-tunnel/actions/runs/34167625590/job/101881722234	
+portable runtime linux/amd64 on ubuntu-24.04	pass	1m21s	https://github.com/relux-works/relux-tunnel/actions/runs/34167625590/job/101881722236	
+portable runtime linux/arm64 on ubuntu-24.04-arm	pass	1m9s	https://github.com/relux-works/relux-tunnel/actions/runs/34167625590/job/101881722269	
+generated project credential-free validation	pending	0	https://github.com/relux-works/relux-tunnel/actions/runs/34167625590/job/101881722247	

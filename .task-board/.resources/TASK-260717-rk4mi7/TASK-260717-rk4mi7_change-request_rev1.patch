@@ -1,0 +1,1059 @@
+diff --git a/App/ReluxProxyMac/Info.plist b/App/ReluxProxyMac/Info.plist
+index 2d067ea..2dc2509 100644
+--- a/App/ReluxProxyMac/Info.plist
++++ b/App/ReluxProxyMac/Info.plist
+@@ -22,6 +22,8 @@
+ 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+ 	<key>LSUIElement</key>
+ 	<true/>
++	<key>ReluxPreReleaseUpdateChannel</key>
++	<string>prerelease</string>
+ 	<key>SUAllowsAutomaticUpdates</key>
+ 	<false/>
+ 	<key>SUAutomaticallyUpdate</key>
+@@ -34,6 +36,8 @@
+ 	<true/>
+ 	<key>SUEnableInstallerStatusService</key>
+ 	<false/>
++	<key>SUEnableAutomaticChecks</key>
++	<true/>
+ 	<key>SUEnableJavaScript</key>
+ 	<false/>
+ 	<key>SUEnableSystemProfiling</key>
+diff --git a/App/ReluxProxyMac/Resources/Localizable.xcstrings b/App/ReluxProxyMac/Resources/Localizable.xcstrings
+new file mode 100644
+index 0000000..98067f1
+--- /dev/null
++++ b/App/ReluxProxyMac/Resources/Localizable.xcstrings
+@@ -0,0 +1,19 @@
++{
++  "sourceLanguage" : "en",
++  "strings" : {
++    "An update is available." : {},
++    "Automatically Check for Updates" : {},
++    "Check for Updates…" : {},
++    "Checking for updates…" : {},
++    "Downloading the update…" : {},
++    "Pre-release" : {},
++    "Quit Relux" : {},
++    "Relux is up to date." : {},
++    "Stable" : {},
++    "The update check failed. Try again later." : {},
++    "The update is ready. Relaunch to finish." : {},
++    "Update Channel" : {},
++    "Updates are ready to check." : {}
++  },
++  "version" : "1.0"
++}
+diff --git a/App/ReluxProxyMac/Sources/ReluxProxyUpdaterLifecycle.swift b/App/ReluxProxyMac/Sources/ReluxProxyUpdaterLifecycle.swift
+index 88beebb..5b95f19 100644
+--- a/App/ReluxProxyMac/Sources/ReluxProxyUpdaterLifecycle.swift
++++ b/App/ReluxProxyMac/Sources/ReluxProxyUpdaterLifecycle.swift
+@@ -1,4 +1,3 @@
+-import AppKit
+ import Foundation
+ import Sparkle
+ 
+@@ -7,11 +6,13 @@ enum ReluxProxyUpdaterConfigurationError: Error, Equatable {
+   case invalidFeedURL
+   case missingPublicEDKey
+   case invalidPublicEDKey
++  case invalidPreReleaseChannel
+ }
+ 
+ enum ReluxProxyUpdaterConfiguration {
+   static let feedURLKey = "SUFeedURL"
+   static let publicEDKeyKey = "SUPublicEDKey"
++  static let preReleaseChannelKey = "ReluxPreReleaseUpdateChannel"
+ 
+   static func feedURL(in infoDictionary: [String: Any]) throws -> URL {
+     guard let rawValue = infoDictionary[feedURLKey] as? String, !rawValue.isEmpty else {
+@@ -41,6 +42,21 @@ enum ReluxProxyUpdaterConfiguration {
+     }
+     return publicKey
+   }
++
++  static func feedPolicy(in infoDictionary: [String: Any]) throws -> ReluxUpdateFeedPolicy {
++    let stableFeedURL = try feedURL(in: infoDictionary)
++    guard let channelValue = infoDictionary[preReleaseChannelKey] else {
++      return ReluxUpdateFeedPolicy(stableFeedURL: stableFeedURL, preReleaseChannel: nil)
++    }
++    guard
++      let channel = channelValue as? String,
++      !channel.isEmpty,
++      channel.range(of: #"^[A-Za-z0-9._-]+$"#, options: .regularExpression) != nil
++    else {
++      throw ReluxProxyUpdaterConfigurationError.invalidPreReleaseChannel
++    }
++    return ReluxUpdateFeedPolicy(stableFeedURL: stableFeedURL, preReleaseChannel: channel)
++  }
+ }
+ 
+ enum ReluxProxyUpdaterLaunchPolicy {
+@@ -52,30 +68,37 @@ enum ReluxProxyUpdaterLaunchPolicy {
+ @MainActor
+ final class ReluxProxyUpdaterLifecycle {
+   let feedURL: URL
+-  private let controller: SPUStandardUpdaterController
++  let settingsModel: ReluxUpdateSettingsModel
++  private let adapter: ReluxSparkleUpdaterAdapter
+ 
+-  init(infoDictionary: [String: Any], startingUpdater: Bool = true) throws {
+-    feedURL = try ReluxProxyUpdaterConfiguration.feedURL(in: infoDictionary)
++  init(
++    infoDictionary: [String: Any],
++    startingUpdater: Bool = true,
++    preferences: (any ReluxUpdatePreferencesStoring)? = nil,
++    scheduler: (any ReluxUpdateScheduling)? = nil
++  ) throws {
++    let feedPolicy = try ReluxProxyUpdaterConfiguration.feedPolicy(in: infoDictionary)
++    feedURL = feedPolicy.stableFeedURL
+     _ = try ReluxProxyUpdaterConfiguration.publicEDKey(in: infoDictionary)
+-    controller = SPUStandardUpdaterController(
++    let presentationModel = ReluxUpdatePresentationModel()
++    let adapter = ReluxSparkleUpdaterAdapter(
++      presentationModel: presentationModel,
++      preReleaseChannel: feedPolicy.preReleaseChannel,
+       startingUpdater: startingUpdater,
+-      updaterDelegate: nil,
+-      userDriverDelegate: nil
++    )
++    self.adapter = adapter
++    settingsModel = ReluxUpdateSettingsModel(
++      feedPolicy: feedPolicy,
++      preferences: preferences ?? ReluxUserDefaultsUpdatePreferences(),
++      updater: adapter,
++      scheduler: scheduler ?? ReluxSparkleUpdateScheduler(),
++      presentationModel: presentationModel
+     )
+   }
+ 
+-  var isControllerConstructed: Bool { true }
+-}
+-
+-@MainActor
+-final class ReluxProxyAppDelegate: NSObject, NSApplicationDelegate {
+-  let updaterLifecycle: ReluxProxyUpdaterLifecycle
+-
+-  init(infoDictionary: [String: Any], startingUpdater: Bool = true) throws {
+-    updaterLifecycle = try ReluxProxyUpdaterLifecycle(
+-      infoDictionary: infoDictionary,
+-      startingUpdater: startingUpdater
+-    )
+-    super.init()
++  var isControllerConstructed: Bool { adapter.isControllerConstructed }
++  var effectiveAutomaticallyChecksForUpdates: Bool {
++    adapter.automaticallyChecksForUpdates
+   }
++  var effectiveChannel: ReluxUpdateChannel { adapter.selectedChannel }
+ }
+diff --git a/App/ReluxProxyMac/Sources/ReluxUpdateSettings.swift b/App/ReluxProxyMac/Sources/ReluxUpdateSettings.swift
+new file mode 100644
+index 0000000..5684437
+--- /dev/null
++++ b/App/ReluxProxyMac/Sources/ReluxUpdateSettings.swift
+@@ -0,0 +1,416 @@
++import AppKit
++import Foundation
++import Observation
++import Sparkle
++import SwiftUI
++
++enum ReluxUpdateChannel: String, CaseIterable, Equatable {
++  case stable
++  case preRelease
++
++  var title: LocalizedStringResource {
++    switch self {
++    case .stable: "Stable"
++    case .preRelease: "Pre-release"
++    }
++  }
++}
++
++struct ReluxUpdateFeedPolicy: Equatable {
++  let stableFeedURL: URL
++  let preReleaseChannel: String?
++
++  var supportsPreRelease: Bool { preReleaseChannel != nil }
++
++  func effectiveChannel(for requestedChannel: ReluxUpdateChannel) -> ReluxUpdateChannel {
++    requestedChannel == .preRelease && supportsPreRelease ? .preRelease : .stable
++  }
++}
++
++protocol ReluxUpdatePreferencesStoring: AnyObject {
++  var automaticallyChecksForUpdates: Bool { get set }
++  var selectedChannel: ReluxUpdateChannel { get set }
++}
++
++final class ReluxUserDefaultsUpdatePreferences: ReluxUpdatePreferencesStoring {
++  static let automaticChecksKey = "updates.automaticallyChecks"
++  static let selectedChannelKey = "updates.channel"
++
++  private let defaults: UserDefaults
++
++  init(defaults: UserDefaults = .standard) {
++    self.defaults = defaults
++  }
++
++  var automaticallyChecksForUpdates: Bool {
++    get {
++      guard defaults.object(forKey: Self.automaticChecksKey) != nil else { return true }
++      return defaults.bool(forKey: Self.automaticChecksKey)
++    }
++    set { defaults.set(newValue, forKey: Self.automaticChecksKey) }
++  }
++
++  var selectedChannel: ReluxUpdateChannel {
++    get {
++      guard
++        let rawValue = defaults.string(forKey: Self.selectedChannelKey),
++        let channel = ReluxUpdateChannel(rawValue: rawValue)
++      else { return .stable }
++      return channel
++    }
++    set { defaults.set(newValue.rawValue, forKey: Self.selectedChannelKey) }
++  }
++}
++
++enum ReluxUpdatePresentationEvent {
++  case checkStarted
++  case upToDate
++  case updateAvailable
++  case downloadStarted
++  case readyToRelaunch
++  case failed
++  case reset
++}
++
++enum ReluxUpdatePresentationState: Equatable {
++  case idle
++  case checking
++  case upToDate
++  case available
++  case downloading
++  case readyToRelaunch
++  case failed
++
++  var message: LocalizedStringResource {
++    switch self {
++    case .idle: "Updates are ready to check."
++    case .checking: "Checking for updates…"
++    case .upToDate: "Relux is up to date."
++    case .available: "An update is available."
++    case .downloading: "Downloading the update…"
++    case .readyToRelaunch: "The update is ready. Relaunch to finish."
++    case .failed: "The update check failed. Try again later."
++    }
++  }
++}
++
++@MainActor
++@Observable
++final class ReluxUpdatePresentationModel {
++  private(set) var state: ReluxUpdatePresentationState = .idle
++
++  func receive(_ event: ReluxUpdatePresentationEvent) {
++    switch event {
++    case .checkStarted: state = .checking
++    case .upToDate: state = .upToDate
++    case .updateAvailable: state = .available
++    case .downloadStarted: state = .downloading
++    case .readyToRelaunch: state = .readyToRelaunch
++    case .failed: state = .failed
++    case .reset: state = .idle
++    }
++  }
++
++  func receiveFailure(_ error: any Error) {
++    _ = error
++    receive(.failed)
++  }
++}
++
++@MainActor
++protocol ReluxUpdaterControlling: AnyObject {
++  var automaticallyChecksForUpdates: Bool { get set }
++  var updateCheckInterval: TimeInterval { get set }
++  var selectedChannel: ReluxUpdateChannel { get set }
++  var canCheckForUpdates: Bool { get }
++  func checkForUpdates()
++  func resetUpdateCycle()
++}
++
++@MainActor
++protocol ReluxUpdateScheduling: AnyObject {
++  func scheduleAutomaticChecks(
++    every interval: TimeInterval,
++    using updater: any ReluxUpdaterControlling
++  )
++  func cancelAutomaticChecks(using updater: any ReluxUpdaterControlling)
++}
++
++@MainActor
++final class ReluxSparkleUpdateScheduler: ReluxUpdateScheduling {
++  private var scheduledInterval: TimeInterval?
++
++  func scheduleAutomaticChecks(
++    every interval: TimeInterval,
++    using updater: any ReluxUpdaterControlling
++  ) {
++    guard scheduledInterval != interval || !updater.automaticallyChecksForUpdates else { return }
++    scheduledInterval = interval
++    updater.updateCheckInterval = interval
++    updater.automaticallyChecksForUpdates = true
++    updater.resetUpdateCycle()
++  }
++
++  func cancelAutomaticChecks(using updater: any ReluxUpdaterControlling) {
++    guard scheduledInterval != nil || updater.automaticallyChecksForUpdates else { return }
++    scheduledInterval = nil
++    updater.automaticallyChecksForUpdates = false
++    updater.resetUpdateCycle()
++  }
++}
++
++@MainActor
++@Observable
++final class ReluxUpdateSettingsModel {
++  static let automaticCheckInterval: TimeInterval = 86_400
++
++  let feedPolicy: ReluxUpdateFeedPolicy
++  let presentationModel: ReluxUpdatePresentationModel
++  private let preferences: any ReluxUpdatePreferencesStoring
++  private let updater: any ReluxUpdaterControlling
++  private let scheduler: any ReluxUpdateScheduling
++
++  var automaticallyChecksForUpdates: Bool {
++    didSet {
++      guard automaticallyChecksForUpdates != oldValue else { return }
++      preferences.automaticallyChecksForUpdates = automaticallyChecksForUpdates
++      reconcileSchedule()
++    }
++  }
++
++  var selectedChannel: ReluxUpdateChannel {
++    didSet {
++      let effectiveChannel = feedPolicy.effectiveChannel(for: selectedChannel)
++      guard effectiveChannel == selectedChannel else {
++        selectedChannel = effectiveChannel
++        return
++      }
++      guard selectedChannel != oldValue else { return }
++      preferences.selectedChannel = selectedChannel
++      updater.selectedChannel = selectedChannel
++      updater.resetUpdateCycle()
++    }
++  }
++
++  init(
++    feedPolicy: ReluxUpdateFeedPolicy,
++    preferences: any ReluxUpdatePreferencesStoring,
++    updater: any ReluxUpdaterControlling,
++    scheduler: any ReluxUpdateScheduling,
++    presentationModel: ReluxUpdatePresentationModel = ReluxUpdatePresentationModel()
++  ) {
++    self.feedPolicy = feedPolicy
++    self.preferences = preferences
++    self.updater = updater
++    self.scheduler = scheduler
++    self.presentationModel = presentationModel
++    automaticallyChecksForUpdates = preferences.automaticallyChecksForUpdates
++    selectedChannel = feedPolicy.effectiveChannel(for: preferences.selectedChannel)
++    preferences.selectedChannel = selectedChannel
++    updater.selectedChannel = selectedChannel
++    reconcileSchedule()
++  }
++
++  var canCheckForUpdates: Bool {
++    switch presentationModel.state {
++    case .checking, .downloading: false
++    default: updater.canCheckForUpdates
++    }
++  }
++
++  func checkForUpdates() {
++    presentationModel.receive(.checkStarted)
++    updater.checkForUpdates()
++  }
++
++  private func reconcileSchedule() {
++    if automaticallyChecksForUpdates {
++      scheduler.scheduleAutomaticChecks(every: Self.automaticCheckInterval, using: updater)
++    } else {
++      scheduler.cancelAutomaticChecks(using: updater)
++    }
++  }
++}
++
++enum ReluxScheduledUpdatePresentationPolicy {
++  static func letsSparklePresent(userInitiated: Bool) -> Bool {
++    userInitiated
++  }
++}
++
++@MainActor
++final class ReluxSparkleUpdaterAdapter: NSObject, ReluxUpdaterControlling {
++  private let updaterDelegate: ReluxSparkleUpdaterDelegate
++  private let userDriverDelegate: ReluxSparkleUserDriverDelegate
++  private let controller: SPUStandardUpdaterController
++  private var updaterStarted = false
++
++  init(
++    presentationModel: ReluxUpdatePresentationModel,
++    preReleaseChannel: String?,
++    startingUpdater: Bool
++  ) {
++    updaterDelegate = ReluxSparkleUpdaterDelegate(
++      presentationModel: presentationModel,
++      preReleaseChannel: preReleaseChannel
++    )
++    userDriverDelegate = ReluxSparkleUserDriverDelegate(presentationModel: presentationModel)
++    controller = SPUStandardUpdaterController(
++      startingUpdater: false,
++      updaterDelegate: updaterDelegate,
++      userDriverDelegate: userDriverDelegate
++    )
++    super.init()
++    if startingUpdater {
++      controller.startUpdater()
++      updaterStarted = true
++    }
++  }
++
++  var isControllerConstructed: Bool { true }
++
++  var automaticallyChecksForUpdates: Bool {
++    get { controller.updater.automaticallyChecksForUpdates }
++    set { controller.updater.automaticallyChecksForUpdates = newValue }
++  }
++
++  var updateCheckInterval: TimeInterval {
++    get { controller.updater.updateCheckInterval }
++    set { controller.updater.updateCheckInterval = newValue }
++  }
++
++  var selectedChannel: ReluxUpdateChannel {
++    get { updaterDelegate.selectedChannel }
++    set { updaterDelegate.selectedChannel = newValue }
++  }
++
++  var canCheckForUpdates: Bool { controller.updater.canCheckForUpdates }
++
++  func checkForUpdates() {
++    controller.checkForUpdates(nil)
++  }
++
++  func resetUpdateCycle() {
++    guard updaterStarted else { return }
++    controller.updater.resetUpdateCycle()
++  }
++}
++
++@MainActor
++final class ReluxSparkleUpdaterDelegate: NSObject, SPUUpdaterDelegate {
++  private let presentationModel: ReluxUpdatePresentationModel
++  private let preReleaseChannel: String?
++  var selectedChannel: ReluxUpdateChannel = .stable
++
++  init(
++    presentationModel: ReluxUpdatePresentationModel,
++    preReleaseChannel: String?
++  ) {
++    self.presentationModel = presentationModel
++    self.preReleaseChannel = preReleaseChannel
++  }
++
++  func allowedChannels(for updater: SPUUpdater) -> Set<String> {
++    guard selectedChannel == .preRelease, let preReleaseChannel else { return [] }
++    return [preReleaseChannel]
++  }
++
++  func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
++    presentationModel.receive(.updateAvailable)
++  }
++
++  func updater(_ updater: SPUUpdater, didFinishLoading appcast: SUAppcast) {
++    presentationModel.receive(.checkStarted)
++  }
++
++  func updaterDidNotFindUpdate(_ updater: SPUUpdater, error: any Error) {
++    presentationModel.receive(.upToDate)
++  }
++
++  func updater(
++    _ updater: SPUUpdater,
++    willDownloadUpdate item: SUAppcastItem,
++    with request: NSMutableURLRequest
++  ) {
++    presentationModel.receive(.downloadStarted)
++  }
++
++  func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
++    presentationModel.receive(.readyToRelaunch)
++  }
++
++  func updater(
++    _ updater: SPUUpdater,
++    didFinishUpdateCycleFor updateCheck: SPUUpdateCheck,
++    error: (any Error)?
++  ) {
++    guard let error else { return }
++    let cocoaError = error as NSError
++    if cocoaError.domain == SUSparkleErrorDomain && cocoaError.code == 1001 {
++      presentationModel.receive(.upToDate)
++    } else if cocoaError.domain == SUSparkleErrorDomain && cocoaError.code == 4007 {
++      presentationModel.receive(.reset)
++    } else {
++      presentationModel.receiveFailure(error)
++    }
++  }
++
++}
++
++final class ReluxSparkleUserDriverDelegate: NSObject, SPUStandardUserDriverDelegate,
++  @unchecked Sendable
++{
++  private let presentationModel: ReluxUpdatePresentationModel
++
++  init(presentationModel: ReluxUpdatePresentationModel) {
++    self.presentationModel = presentationModel
++  }
++
++  var supportsGentleScheduledUpdateReminders: Bool { true }
++
++  func standardUserDriverShouldHandleShowingScheduledUpdate(
++    _ update: SUAppcastItem,
++    andInImmediateFocus immediateFocus: Bool
++  ) -> Bool {
++    ReluxScheduledUpdatePresentationPolicy.letsSparklePresent(userInitiated: false)
++  }
++
++  func standardUserDriverWillHandleShowingUpdate(
++    _ handleShowingUpdate: Bool,
++    forUpdate update: SUAppcastItem,
++    state: SPUUserUpdateState
++  ) {
++    if !ReluxScheduledUpdatePresentationPolicy.letsSparklePresent(
++      userInitiated: state.userInitiated
++    ) {
++      Task { @MainActor in
++        presentationModel.receive(.updateAvailable)
++      }
++    }
++  }
++}
++
++struct ReluxUpdateMenu: View {
++  @Bindable var model: ReluxUpdateSettingsModel
++
++  var body: some View {
++    Text(model.presentationModel.state.message)
++    Divider()
++    Toggle("Automatically Check for Updates", isOn: $model.automaticallyChecksForUpdates)
++    if model.feedPolicy.supportsPreRelease {
++      Picker("Update Channel", selection: $model.selectedChannel) {
++        ForEach(ReluxUpdateChannel.allCases, id: \.self) { channel in
++          Text(channel.title).tag(channel)
++        }
++      }
++    }
++    Button("Check for Updates…") {
++      model.checkForUpdates()
++    }
++    .disabled(!model.canCheckForUpdates)
++    Divider()
++    Button("Quit Relux") {
++      NSApplication.shared.terminate(nil)
++    }
++  }
++}
+diff --git a/App/ReluxProxyMac/Sources/main.swift b/App/ReluxProxyMac/Sources/main.swift
+index 1ed1114..55ed627 100644
+--- a/App/ReluxProxyMac/Sources/main.swift
++++ b/App/ReluxProxyMac/Sources/main.swift
+@@ -1,22 +1,32 @@
+ import AppKit
+ import ReluxAppleUITestShared
++import SwiftUI
+ 
+ _ = ReluxProxyBuildIdentity.providerProtocolVersion
+ _ = ReluxUITest.Identifier.FixtureHost.page
+ 
+-let application = NSApplication.shared
+-application.setActivationPolicy(.accessory)
++struct ReluxProxyMacApp: App {
++  @State private var settingsModel: ReluxUpdateSettingsModel
+ 
+-let appDelegate: ReluxProxyAppDelegate
+-do {
+-  appDelegate = try ReluxProxyAppDelegate(
+-    infoDictionary: Bundle.main.infoDictionary ?? [:],
+-    startingUpdater: ReluxProxyUpdaterLaunchPolicy.shouldStartUpdater(
+-      environment: ProcessInfo.processInfo.environment
+-    )
+-  )
+-} catch {
+-  fatalError("The signed updater configuration is invalid: \(error)")
++  init() {
++    do {
++      let lifecycle = try ReluxProxyUpdaterLifecycle(
++        infoDictionary: Bundle.main.infoDictionary ?? [:],
++        startingUpdater: ReluxProxyUpdaterLaunchPolicy.shouldStartUpdater(
++          environment: ProcessInfo.processInfo.environment
++        )
++      )
++      _settingsModel = State(initialValue: lifecycle.settingsModel)
++    } catch {
++      fatalError("The signed updater configuration is invalid: \(error)")
++    }
++  }
++
++  var body: some Scene {
++    MenuBarExtra("Relux", systemImage: "network") {
++      ReluxUpdateMenu(model: settingsModel)
++    }
++  }
+ }
+-application.delegate = appDelegate
+-application.run()
++
++ReluxProxyMacApp.main()
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index 85b8aca..be10b20 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -5,6 +5,14 @@
+ 
+ ## 2026-08-30
+ 
++### 0310 — Menu-bar update settings and deterministic scheduling (TASK-260717-rk4mi7)
++
++- HOST UX: `ReluxProxyMac` now runs as an `LSUIElement` SwiftUI `MenuBarExtra` with localized automatic-check, Check for Updates, and metadata-gated stable/pre-release controls. The host has no window-opening or application-activation path; scheduled findings stay in menu presentation, while only a user-initiated check may ask Sparkle to present in focus.
++- PERSISTENCE / SCHEDULING: UserDefaults stores only the automatic-check Boolean and channel enum. A host-only adapter applies effective values to the retained Sparkle controller, and an injected idempotent scheduler reconciles Sparkle's own cycle rather than adding a competing timer. Disabled checks remain cancelled across reconstruction.
++- PRESENTATION / SECURITY: Updater events map to idle, checking, up-to-date, available, downloading, ready-to-relaunch, and failed states backed by English String Catalog copy. Failure handling discards the source error, and tests prove that URL, path, signature, key, and token material cannot reach the fixed failure message.
++- NEGATIVE EVIDENCE: A temporary production mutation weakened `ReluxProxyUpdaterConfiguration.feedPolicy(in:)` so traversal-shaped channel metadata was admitted. The named malformed-metadata test then failed with xcodebuild exit 65; restoring the bounded `^[A-Za-z0-9._-]+$` allowlist returned the full focused suite to green. Evidence is in `channel-gate-mutant-02.log`.
++- VALIDATION BOUNDARY: Focused Swift Testing uses injected updater/scheduler seams and a real no-start Sparkle controller; the hosted test process does not start an update check, install an update, activate the provider/system extension, or enable VPN. Unsigned host build and formatting gates are recorded under `.temp/TASK-260717-rk4mi7/`.
++
+ ### 0243 — Sparkle host integration (TASK-260717-xempiv)
+ 
+ - INTEGRATION: `ReluxProxyMac` now owns exact Sparkle 2.9.4 through the remote SPM product, a pinned resolved commit, signed-feed metadata, and one retained `SPUStandardUpdaterController`; no updater dependency entered the system extension, shared core, harness, or iOS targets.
+diff --git a/Project.swift b/Project.swift
+index 30a5a1a..b3fa355 100644
+--- a/Project.swift
++++ b/Project.swift
+@@ -69,7 +69,10 @@ private let macOSTargets: [Target] = [
+       "App/ReluxProxyMac/Sources/**",
+       "App/Shared/**",
+     ],
+-    resources: ["ThirdParty/Sparkle-2.9.4/LICENSE"],
++    resources: [
++      "App/ReluxProxyMac/Resources/**",
++      "ThirdParty/Sparkle-2.9.4/LICENSE",
++    ],
+     dependencies: [
+       .target(name: "ReluxProxyMacTunnel"),
+       .package(product: "ReluxAppleUITestShared"),
+diff --git a/README.md b/README.md
+index 7abade3..bbc443c 100644
+--- a/README.md
++++ b/README.md
+@@ -209,7 +209,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Tool | Purpose | Command | Output |
+ | --- | --- | --- | --- |
+ | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
+-| Sparkle integration validator | Build the macOS host with exact Sparkle 2.9.4, prove the signed-feed plist and host-only linkage, construct the updater in a no-start test, inspect Installer XPC/provider boundaries, and ad-hoc sign/verify the credential-free Release shape without installing an update or enabling VPN | `make sparkle-integration-validate`; see [`macOS self-update integration`](docs/macos-self-update-integration.md) | `.temp/TASK-260717-xempiv/sparkle-smoke/` by default; pass a new output path directly to `scripts/validate-sparkle-integration.sh` for repeated evidence runs |
++| Sparkle integration and update-settings validation | Build the macOS host with exact Sparkle 2.9.4; prove signed-feed metadata, host-only linkage, persisted update preferences, channel gating, deterministic scheduling/presentation, and background no-focus policy; construct the updater in a no-start test; inspect Installer XPC/provider boundaries; and ad-hoc sign/verify the credential-free Release shape without installing an update or enabling VPN | `make sparkle-integration-validate`; focused suite: `xcodebuild test -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -destination 'platform=macOS' -only-testing:ReluxProxyMacTests CODE_SIGNING_ALLOWED=NO`; see [`macOS self-update integration`](docs/macos-self-update-integration.md) | Sparkle smoke under `.temp/TASK-260717-xempiv/`; task-scoped test/build logs and DerivedData under `.temp/TASK-*/` |
+ | Tuist 4.202.5 via Mise | Generate the credential-free Apple workspace; validate deterministic foundation state; build/test the macOS host and embedded packet-tunnel system extension in unsigned Debug and Release | `make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy`; or `make workspace-generate`, `make workspace-validate`, and `make macos-targets-validate`; see [`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md) | Ignored `ReluxTunnel.xcworkspace` and `ReluxTunnelApp.xcodeproj`; full logs under `.temp/TASK-260715-sbrrp7/credential-free-validation/`; foundation evidence under `.temp/TASK-260715-2btjwm/`; target evidence under `.temp/TASK-260715-uyju7n/` |
+ | Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
+ | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
+diff --git a/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift b/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift
+index 395b6c4..0ebb07f 100644
+--- a/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift
++++ b/Tests/ReluxProxyMacTests/ReluxProxyMacTargetTests.swift
+@@ -14,6 +14,8 @@ struct ReluxProxyMacTargetTests {
+     #expect(plist["CFBundleShortVersionString"] as? String == "$(MARKETING_VERSION)")
+     #expect(plist["CFBundleVersion"] as? String == "$(CURRENT_PROJECT_VERSION)")
+     #expect(plist["LSMinimumSystemVersion"] as? String == "$(MACOSX_DEPLOYMENT_TARGET)")
++    #expect(plist["LSUIElement"] as? Bool == true)
++    #expect(plist["ReluxPreReleaseUpdateChannel"] as? String == "prerelease")
+     #expect(plist["SUFeedURL"] as? String == "https://updates.relux.works/macos/appcast.xml")
+     #expect(plist["SUPublicEDKey"] as? String == "tx8SLAmqME/ldUthxRV5PFQiUt1MX65blT29cA8My1U=")
+     #expect(plist["SUVerifyUpdateBeforeExtraction"] as? Bool == true)
+@@ -29,6 +31,7 @@ struct ReluxProxyMacTargetTests {
+     #expect(plist["SUEnableDownloaderService"] as? Bool == false)
+     #expect(plist["SUEnableInstallerConnectionService"] as? Bool == false)
+     #expect(plist["SUEnableInstallerStatusService"] as? Bool == false)
++    #expect(plist["SUEnableAutomaticChecks"] as? Bool == true)
+   }
+ 
+   @Test @MainActor
+@@ -36,11 +39,18 @@ struct ReluxProxyMacTargetTests {
+     let plist = try TargetContractSupport.plist(at: "App/ReluxProxyMac/Info.plist")
+     let lifecycle = try ReluxProxyUpdaterLifecycle(
+       infoDictionary: plist,
+-      startingUpdater: false
++      startingUpdater: false,
++      preferences: TestUpdatePreferences(
++        automaticallyChecksForUpdates: false,
++        selectedChannel: .preRelease
++      ),
++      scheduler: TestUpdateScheduler()
+     )
+ 
+     #expect(lifecycle.isControllerConstructed)
+     #expect(lifecycle.feedURL.absoluteString == "https://updates.relux.works/macos/appcast.xml")
++    #expect(!lifecycle.effectiveAutomaticallyChecksForUpdates)
++    #expect(lifecycle.effectiveChannel == .preRelease)
+   }
+ 
+   @Test("production launch policy starts updater outside test hosting")
+@@ -168,7 +178,7 @@ struct ReluxProxyMacTargetTests {
+     #expect(project.contains("url: \"https://github.com/sparkle-project/Sparkle\""))
+     #expect(project.contains("requirement: .exact(\"2.9.4\")"))
+     #expect(project.components(separatedBy: ".package(product: \"Sparkle\")").count - 1 == 1)
+-    #expect(project.contains("resources: [\"ThirdParty/Sparkle-2.9.4/LICENSE\"]"))
++    #expect(project.contains("\"ThirdParty/Sparkle-2.9.4/LICENSE\","))
+   }
+ 
+   @Test("target identities and development profiles match r12")
+diff --git a/Tests/ReluxProxyMacTests/ReluxUpdateSettingsTests.swift b/Tests/ReluxProxyMacTests/ReluxUpdateSettingsTests.swift
+new file mode 100644
+index 0000000..80b6e22
+--- /dev/null
++++ b/Tests/ReluxProxyMacTests/ReluxUpdateSettingsTests.swift
+@@ -0,0 +1,282 @@
++import Foundation
++import Testing
++@testable import ReluxProxyMac
++
++@Suite("ReluxProxyMac update settings")
++@MainActor
++struct ReluxUpdateSettingsTests {
++  private let stableFeedURL = URL(string: "https://updates.relux.works/macos/appcast.xml")!
++
++  @Test("preferences persist only the automatic-check and channel values")
++  func preferencesPersistAcrossReconstruction() throws {
++    let suiteName = "ReluxUpdateSettingsTests.\(UUID().uuidString)"
++    let defaults = try #require(UserDefaults(suiteName: suiteName))
++    defer { defaults.removePersistentDomain(forName: suiteName) }
++
++    let firstStore = ReluxUserDefaultsUpdatePreferences(defaults: defaults)
++    #expect(firstStore.automaticallyChecksForUpdates)
++    #expect(firstStore.selectedChannel == .stable)
++    firstStore.automaticallyChecksForUpdates = false
++    firstStore.selectedChannel = .preRelease
++
++    let reconstructedStore = ReluxUserDefaultsUpdatePreferences(defaults: defaults)
++    #expect(!reconstructedStore.automaticallyChecksForUpdates)
++    #expect(reconstructedStore.selectedChannel == .preRelease)
++    #expect(
++      Set(defaults.persistentDomain(forName: suiteName)?.keys.map { $0 } ?? []) == [
++        ReluxUserDefaultsUpdatePreferences.automaticChecksKey,
++        ReluxUserDefaultsUpdatePreferences.selectedChannelKey,
++      ])
++  }
++
++  @Test("configured pre-release metadata gates the channel selector")
++  func channelPolicyGatesPreReleaseSelection() {
++    let preferences = TestUpdatePreferences(
++      automaticallyChecksForUpdates: false,
++      selectedChannel: .preRelease
++    )
++    let updater = TestUpdater()
++    let scheduler = TestUpdateScheduler()
++    let model = makeModel(
++      preReleaseChannel: nil,
++      preferences: preferences,
++      updater: updater,
++      scheduler: scheduler
++    )
++
++    #expect(!model.feedPolicy.supportsPreRelease)
++    #expect(model.selectedChannel == .stable)
++    #expect(preferences.selectedChannel == .stable)
++    #expect(updater.selectedChannel == .stable)
++    model.selectedChannel = .preRelease
++    #expect(model.selectedChannel == .stable)
++  }
++
++  @Test("malformed pre-release metadata fails closed")
++  func malformedChannelMetadataFailsClosed() {
++    #expect(throws: ReluxProxyUpdaterConfigurationError.invalidPreReleaseChannel) {
++      try ReluxProxyUpdaterConfiguration.feedPolicy(
++        in: [
++          "SUFeedURL": stableFeedURL.absoluteString,
++          "ReluxPreReleaseUpdateChannel": "beta/../../private",
++        ])
++    }
++  }
++
++  @Test("Check for Updates invokes the updater exactly once")
++  func checkForUpdatesExactlyOnce() {
++    let updater = TestUpdater()
++    let model = makeModel(updater: updater)
++
++    model.checkForUpdates()
++
++    #expect(updater.checkCount == 1)
++    #expect(model.presentationModel.state == .checking)
++    #expect(!model.canCheckForUpdates)
++  }
++
++  @Test("automatic scheduling is idempotent and cancellation is cancel-safe")
++  func schedulingAndCancellation() {
++    let preferences = TestUpdatePreferences()
++    let updater = TestUpdater()
++    let scheduler = TestUpdateScheduler()
++    let model = makeModel(
++      preferences: preferences,
++      updater: updater,
++      scheduler: scheduler
++    )
++
++    #expect(scheduler.scheduledIntervals == [86_400])
++    #expect(scheduler.cancelCount == 0)
++    model.automaticallyChecksForUpdates = true
++    #expect(scheduler.scheduledIntervals == [86_400])
++
++    model.automaticallyChecksForUpdates = false
++    model.automaticallyChecksForUpdates = false
++    #expect(scheduler.cancelCount == 1)
++    #expect(!preferences.automaticallyChecksForUpdates)
++  }
++
++  @Test("disabled automatic checks remain suppressed after reconstruction")
++  func disabledChecksRemainSuppressedAfterRelaunch() {
++    let preferences = TestUpdatePreferences(automaticallyChecksForUpdates: false)
++    let firstScheduler = TestUpdateScheduler()
++    _ = makeModel(preferences: preferences, scheduler: firstScheduler)
++    let relaunchedScheduler = TestUpdateScheduler()
++    _ = makeModel(preferences: preferences, scheduler: relaunchedScheduler)
++
++    #expect(firstScheduler.scheduledIntervals.isEmpty)
++    #expect(firstScheduler.cancelCount == 1)
++    #expect(relaunchedScheduler.scheduledIntervals.isEmpty)
++    #expect(relaunchedScheduler.cancelCount == 1)
++  }
++
++  @Test("channel changes persist and reset the accepted updater cycle once")
++  func channelChangeReconfiguresUpdater() {
++    let preferences = TestUpdatePreferences()
++    let updater = TestUpdater()
++    let model = makeModel(preferences: preferences, updater: updater)
++    let resetBaseline = updater.resetCount
++
++    model.selectedChannel = .preRelease
++    model.selectedChannel = .preRelease
++
++    #expect(preferences.selectedChannel == .preRelease)
++    #expect(updater.selectedChannel == .preRelease)
++    #expect(updater.resetCount == resetBaseline + 1)
++  }
++
++  @Test("every updater lifecycle event has a deterministic presentation state")
++  func presentationStates() {
++    let presentation = ReluxUpdatePresentationModel()
++    let cases: [(ReluxUpdatePresentationEvent, ReluxUpdatePresentationState)] = [
++      (.reset, .idle),
++      (.checkStarted, .checking),
++      (.upToDate, .upToDate),
++      (.updateAvailable, .available),
++      (.downloadStarted, .downloading),
++      (.readyToRelaunch, .readyToRelaunch),
++      (.failed, .failed),
++    ]
++
++    for (event, expectedState) in cases {
++      presentation.receive(event)
++      #expect(presentation.state == expectedState)
++    }
++  }
++
++  @Test("failure presentation discards URL path signature key and token details")
++  func failurePresentationIsRedacted() {
++    let presentation = ReluxUpdatePresentationModel()
++    let sensitiveValues = [
++      "https://updates.example/private/appcast.xml?token=secret",
++      "/Users/private/update.zip",
++      "signature=private-signature",
++      "key=private-key",
++    ]
++    let error = NSError(
++      domain: sensitiveValues.joined(separator: " "),
++      code: 42,
++      userInfo: [NSLocalizedDescriptionKey: sensitiveValues.joined(separator: " ")]
++    )
++
++    presentation.receiveFailure(error)
++    let message = String(localized: presentation.state.message)
++
++    #expect(presentation.state == .failed)
++    for sensitiveValue in sensitiveValues {
++      #expect(!message.contains(sensitiveValue))
++    }
++  }
++
++  @Test("background checks cannot steal focus through Sparkle standard UI")
++  func backgroundPresentationDoesNotStealFocus() {
++    #expect(!ReluxScheduledUpdatePresentationPolicy.letsSparklePresent(userInitiated: false))
++    #expect(ReluxScheduledUpdatePresentationPolicy.letsSparklePresent(userInitiated: true))
++  }
++
++  @Test("production host uses MenuBarExtra without activating a window")
++  func menuBarHostContract() throws {
++    let source = try TargetContractSupport.text(at: "App/ReluxProxyMac/Sources/main.swift")
++    let menu = try TargetContractSupport.text(
++      at: "App/ReluxProxyMac/Sources/ReluxUpdateSettings.swift"
++    )
++
++    #expect(source.contains("MenuBarExtra("))
++    #expect(!source.contains("NSApplication.shared.activate"))
++    #expect(!source.contains("openWindow"))
++    #expect(menu.contains("Automatically Check for Updates"))
++    #expect(menu.contains("Check for Updates…"))
++    #expect(menu.contains("if model.feedPolicy.supportsPreRelease"))
++  }
++
++  @Test("English update copy is present in the host string catalog")
++  func localizedEnglishCopy() throws {
++    let catalogData = try TargetContractSupport.data(
++      at: "App/ReluxProxyMac/Resources/Localizable.xcstrings"
++    )
++    let catalog = try #require(
++      JSONSerialization.jsonObject(with: catalogData) as? [String: Any]
++    )
++    let strings = try #require(catalog["strings"] as? [String: Any])
++
++    for expected in [
++      "Automatically Check for Updates",
++      "Check for Updates…",
++      "Update Channel",
++      "The update check failed. Try again later.",
++    ] {
++      #expect(strings[expected] != nil)
++    }
++  }
++
++  private func makeModel(
++    preReleaseChannel: String? = "prerelease",
++    preferences: TestUpdatePreferences = TestUpdatePreferences(),
++    updater: TestUpdater = TestUpdater(),
++    scheduler: TestUpdateScheduler = TestUpdateScheduler()
++  ) -> ReluxUpdateSettingsModel {
++    ReluxUpdateSettingsModel(
++      feedPolicy: ReluxUpdateFeedPolicy(
++        stableFeedURL: stableFeedURL,
++        preReleaseChannel: preReleaseChannel
++      ),
++      preferences: preferences,
++      updater: updater,
++      scheduler: scheduler
++    )
++  }
++}
++
++final class TestUpdatePreferences: ReluxUpdatePreferencesStoring {
++  var automaticallyChecksForUpdates: Bool
++  var selectedChannel: ReluxUpdateChannel
++
++  init(
++    automaticallyChecksForUpdates: Bool = true,
++    selectedChannel: ReluxUpdateChannel = .stable
++  ) {
++    self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
++    self.selectedChannel = selectedChannel
++  }
++}
++
++@MainActor
++private final class TestUpdater: ReluxUpdaterControlling {
++  var automaticallyChecksForUpdates = false
++  var updateCheckInterval: TimeInterval = 0
++  var selectedChannel: ReluxUpdateChannel = .stable
++  var canCheckForUpdates = true
++  private(set) var checkCount = 0
++  private(set) var resetCount = 0
++
++  func checkForUpdates() {
++    checkCount += 1
++  }
++
++  func resetUpdateCycle() {
++    resetCount += 1
++  }
++}
++
++@MainActor
++final class TestUpdateScheduler: ReluxUpdateScheduling {
++  private(set) var scheduledIntervals: [TimeInterval] = []
++  private(set) var cancelCount = 0
++
++  func scheduleAutomaticChecks(
++    every interval: TimeInterval,
++    using updater: any ReluxUpdaterControlling
++  ) {
++    scheduledIntervals.append(interval)
++    updater.updateCheckInterval = interval
++    updater.automaticallyChecksForUpdates = true
++    updater.resetUpdateCycle()
++  }
++
++  func cancelAutomaticChecks(using updater: any ReluxUpdaterControlling) {
++    cancelCount += 1
++    updater.automaticallyChecksForUpdates = false
++    updater.resetUpdateCycle()
++  }
++}
+diff --git a/docs/macos-self-update-integration.md b/docs/macos-self-update-integration.md
+index acb10b7..060b939 100644
+--- a/docs/macos-self-update-integration.md
++++ b/docs/macos-self-update-integration.md
+@@ -11,6 +11,27 @@ without credentials, query parameters, or a fragment before constructing the
+ controller. Tests construct the real controller with `startingUpdater: false`;
+ the smoke does not start a network check or install an update.
+ 
++The accessory host is a SwiftUI `MenuBarExtra` with no window activation path.
++Its menu exposes a persisted automatic-check toggle and user-initiated **Check
++for Updates** command. A stable/pre-release picker appears only when the host
++plist contains a valid `ReluxPreReleaseUpdateChannel`; absent metadata is a
++supported stable-only configuration, while malformed metadata fails startup
++instead of silently widening the accepted channel set. Preferences store only
++the Boolean automatic-check choice and the stable/pre-release enum value.
++
++Sparkle remains the sole production background scheduler. The injected
++scheduler seam idempotently reconciles `automaticallyChecksForUpdates`, the
++86,400-second interval, cancellation, and relaunch reconstruction on the
++retained updater; it does not create a second timer. Background update findings
++are represented in the menu and cannot ask Sparkle's standard driver for
++immediate focus. Only the explicit user command may present Sparkle UI.
++
++The presentation model maps updater callbacks to idle, checking, up-to-date,
++available, downloading, ready-to-relaunch, and failed states. Its English copy
++lives in `App/ReluxProxyMac/Resources/Localizable.xcstrings`. Errors are reduced
++to the fixed failed state, so URLs, paths, signatures, keys, tokens, and raw
++error descriptions never enter presentation state.
++
+ The plist requires signed feed and pre-extraction payload verification, never
+ expires signed-feed failures, disables automatic installation and profiling,
+ and enables only Sparkle's Installer launcher service. The sandboxed host keeps
+@@ -25,6 +46,18 @@ Run the deterministic credential-free build and lifecycle smoke with:
+ make sparkle-integration-validate
+ ```
+ 
++Run the focused settings and lifecycle suite without starting the updater,
++installing an update, or activating the provider/VPN:
++
++```bash
++xcodebuild test \
++  -workspace ReluxTunnel.xcworkspace \
++  -scheme ReluxProxyMac \
++  -destination 'platform=macOS' \
++  -only-testing:ReluxProxyMacTests \
++  CODE_SIGNING_ALLOWED=NO
++```
++
+ The gate performs an unsigned Release build, checks the resolved dependency,
+ embedded framework/helper layout, plist, license, linkage, target boundary,
+ entitlements, and Release build settings, then ad-hoc signs the built host and

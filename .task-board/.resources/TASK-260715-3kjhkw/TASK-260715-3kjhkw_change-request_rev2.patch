@@ -1,0 +1,2501 @@
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index e3daca1..06faeac 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -5,6 +5,23 @@
+ 
+ ## 2026-08-30
+ 
++### 0331 — Advisory samples are fresh evidence inside one serialized watermark controller (TASK-260715-3kjhkw)
++
++- IMPLEMENTATION: `MemoryWatermarkController` combines a new platform sample with timestamped ledger current/reserved/committed/peak bytes on one actor. iOS calls `os_proc_available_memory()` for every accepted observation; macOS reports the public API as unsupported instead of substituting host memory. Physical footprint and peak use `TASK_VM_INFO` on both platforms.
++- STATE: Inclusive Soft/Pressure/Critical entry takes the maximum of ledger headroom, configured-baseline physical headroom, advisory bytes, and memory warning. Recovery is strict-above the configured exit floor, requires fresh available evidence plus action acknowledgement and dwell, and moves at most one state per evaluation. Per-trigger event limiting prevents ordinary events from suppressing a simultaneous warning.
++- REVIEW REWORK: A reviewer negative test proved that a fresh warning could previously lower Pressure to Soft when the byte signals permitted recovery. `nextState` now clamps one-step recovery to the strongest entry signal in the same observation; a warning permits Critical to recover only to Pressure and cannot recover below Pressure. The committed regression test covers both boundaries.
++- BOUNDS/PRIVACY: Cadence, per-trigger event interval, evidence age, sampling-duration classification, history capacity (maximum 1,024), sequence, and fixed enum cardinality are explicit. Malformed, stale, unavailable, overflowed, or late evidence cannot recover state. Metrics and observations accept no destination, host, payload, credential, or free-form label.
++- REWORK: Self-review rejected a zero event interval, thresholds outside their finite ledger/physical ranges, and a ledger peak below committed bytes. The first tightened focused run then failed because cadence was measured finish-to-start and coalesced callers after one full-budget sample; production now measures start-to-start, so sampling work itself consumes the interval without allowing an unbounded zero interval.
++- VERIFICATION: Twelve deterministic Swift Testing cases cover real platform sampling, threshold equality/one-over, jumps, hysteresis, stale/unavailable evidence, warning bursts, action acknowledgement, configuration replacement, 64 concurrent observations, checked overflow, history, cardinality, and recovery. The final 256-sample macOS probe measured 0.000319625 seconds total and 0.000012042 seconds maximum. Generic iOS Simulator `ReluxTunnelCore` build succeeded; recursive Swift format passed; `make validate-core` passed 518 tests in 43 suites plus the post-test build, with the existing 25 known unavailable-ReluxNIOSSH issues.
++- BOARD ANOMALY: Both board validations exited 0 but reported `PARENT_STATUS_MISMATCH` for this Story and unrelated `STORY-260715-1y04r0`. The developer handoff correctly moved this task to `to-review` but the parent remained `to-dev` instead of its computed `to-review`; the specialist did not overwrite parent lifecycle state.
++
++### 0315 — Receive-window credit is bounded by one value-semantic ledger (TASK-260715-3kimon)
++
++- IMPLEMENTATION: Core selects control, ordinary, capped-BDP bulk, and relay control-plus-UDP-burst initial windows with checked configuration and saturating arithmetic. Initial and earned adjustment credit reserve per-channel, per-lane, global-window, and global-ledger capacity before admission; releases are exact and idempotent.
++- GATES: Soft caps only new initial windows. Pressure withholds every adjustment and nonessential opens; Critical, rekeying, failed, closing, closed, stale-generation, low-water, and insufficient-reservation paths refuse without changing or queueing credit. Previously advertised credit is never represented as revoked.
++- ADAPTER: Both libssh2 `libssh2_channel_open_ex` call sites use one tested initial-window conversion. The adapter still truthfully reports consumer-driven adjustment as unsupported; no protocol message is sent outside that adapter.
++- VERIFICATION: Eleven policy tests cover tables, 32/64 KiB, capped and overflowing BDP, relay bursts, all budget ceilings, pressure/lane/generation gates, exact lifecycle reconciliation, and 2,000 deterministic randomized transitions. One selected-adapter test covers all four classes. The full 506-test Swift suite passed with the existing 25 known unavailable-ReluxNIOSSH issues; recursive Swift format, core boundaries, diff check, and `swift build` exited 0.
++
+ ### Cross-layer memory authority separates reservation from physical evidence (TASK-260715-1pn983)
+ 
+ - DECISION: One checked-byte ledger owns packet, HEV, SSH, DNS, client relay, rekey, metrics, and reconnect admissions. SSH credit is separate from resident bytes but reserves permitted local storage; failed reads are unknown, never zero or absence.
+diff --git a/README.md b/README.md
+index fbbde39..194537a 100644
+--- a/README.md
++++ b/README.md
+@@ -46,6 +46,18 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
+ - **Cross-layer memory contract**: packet, HEV, SSH, DNS, client relay, rekey,
+   pressure, and reconnect reservations are bound by the
+   [`TASK-260715-1pn983 contract`](docs/TASK-260715-1pn983_memory-window-rekey-contract.md).
++- **SSH receive-window policy**: Core now selects bounded 32 KiB, 64 KiB,
++  capped-BDP, and relay-burst initial credit, then reconciles per-channel,
++  per-lane, global-window, and global-ledger reservations across adjustments
++  and lifecycle release. The selected libssh2 adapter consumes the bounded
++  initial value while continuing to report consumer-driven adjustment as
++  unsupported until its M3 engine work lands.
++- **Memory watermark controller**: Core samples current process footprint and
++  one uncached advisory value behind a platform seam, combines them with fresh
++  shared-ledger evidence, and serializes Soft, Pressure, Critical, and
++  one-step hysteretic recovery transitions. Cadence, event bursts, sample age,
++  execution classification, retained history, and metric cardinality are all
++  configured and bounded; unavailable evidence is never replaced with zero.
+ 
+ ## macOS experiment harness
+ 
+diff --git a/Sources/ReluxTunnelCore/MemoryWatermarkController.swift b/Sources/ReluxTunnelCore/MemoryWatermarkController.swift
+new file mode 100644
+index 0000000..0aeb7a9
+--- /dev/null
++++ b/Sources/ReluxTunnelCore/MemoryWatermarkController.swift
+@@ -0,0 +1,654 @@
++import Darwin
++import Foundation
++
++/// Every quantity in the memory observation API is an unsigned byte count.
++public enum MemoryObservationUnit: String, Sendable {
++  case bytes
++}
++
++/// Fixed provenance values prevent metric labels from carrying user or traffic data.
++public enum MemoryObservationProvenance: String, CaseIterable, Sendable {
++  case osProcessAvailableMemory
++  case taskVMPhysicalFootprint
++  case sharedMemoryLedger
++}
++
++public enum MemorySampleUnavailableReason: String, CaseIterable, Sendable {
++  case unsupportedPlatform
++  case systemCallFailed
++  case executionTimeExceeded
++  case malformed
++  case stale
++  case notReported
++}
++
++public enum MemoryByteSample: Equatable, Sendable {
++  case available(bytes: UInt64, provenance: MemoryObservationProvenance)
++  case unavailable(reason: MemorySampleUnavailableReason, provenance: MemoryObservationProvenance)
++
++  public var bytes: UInt64? {
++    guard case .available(let bytes, _) = self else { return nil }
++    return bytes
++  }
++}
++
++public struct MemoryPlatformSample: Equatable, Sendable {
++  public let physicalFootprint: MemoryByteSample
++  public let physicalFootprintPeak: MemoryByteSample
++  public let advisoryAvailableMemory: MemoryByteSample
++
++  public init(
++    physicalFootprint: MemoryByteSample,
++    physicalFootprintPeak: MemoryByteSample,
++    advisoryAvailableMemory: MemoryByteSample
++  ) {
++    self.physicalFootprint = physicalFootprint
++    self.physicalFootprintPeak = physicalFootprintPeak
++    self.advisoryAvailableMemory = advisoryAvailableMemory
++  }
++}
++
++/// The production implementation performs new system calls for every accepted observation.
++/// It intentionally has no stored sample value that could be reused as future availability.
++public protocol MemoryPlatformSamplingService: Sendable {
++  func sampleCurrentProcessMemory() -> MemoryPlatformSample
++}
++
++public struct SystemMemoryPlatformSamplingService: MemoryPlatformSamplingService {
++  public init() {}
++
++  public func sampleCurrentProcessMemory() -> MemoryPlatformSample {
++    let footprint = Self.physicalFootprint()
++    #if os(iOS)
++      let advisory: MemoryByteSample = .available(
++        bytes: UInt64(os_proc_available_memory()),
++        provenance: .osProcessAvailableMemory)
++    #else
++      let advisory: MemoryByteSample = .unavailable(
++        reason: .unsupportedPlatform,
++        provenance: .osProcessAvailableMemory)
++    #endif
++    return MemoryPlatformSample(
++      physicalFootprint: footprint.current,
++      physicalFootprintPeak: footprint.peak,
++      advisoryAvailableMemory: advisory)
++  }
++
++  private static func physicalFootprint() -> (
++    current: MemoryByteSample, peak: MemoryByteSample
++  ) {
++    var info = task_vm_info_data_t()
++    var count = mach_msg_type_number_t(
++      MemoryLayout<task_vm_info_data_t>.size / MemoryLayout<natural_t>.size)
++    let status = withUnsafeMutablePointer(to: &info) { pointer in
++      pointer.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
++        task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
++      }
++    }
++    guard status == KERN_SUCCESS else {
++      let unavailable: MemoryByteSample = .unavailable(
++        reason: .systemCallFailed, provenance: .taskVMPhysicalFootprint)
++      return (unavailable, unavailable)
++    }
++    return (
++      .available(bytes: info.phys_footprint, provenance: .taskVMPhysicalFootprint),
++      .available(
++        bytes: UInt64(max(0, info.ledger_phys_footprint_peak)),
++        provenance: .taskVMPhysicalFootprint)
++    )
++  }
++}
++
++public enum MemoryLedgerAvailability: Equatable, Sendable {
++  case available(MemoryLedgerSnapshot)
++  case unavailable(MemorySampleUnavailableReason)
++
++  public var provenance: MemoryObservationProvenance { .sharedMemoryLedger }
++}
++
++public struct MemoryLedgerSnapshot: Equatable, Sendable {
++  public let capturedAt: ContinuousClock.Instant
++  public let currentBytes: UInt64
++  public let reservedBytes: UInt64
++  public let committedBytes: UInt64
++  public let peakBytes: UInt64
++
++  public init(
++    capturedAt: ContinuousClock.Instant,
++    currentBytes: UInt64,
++    reservedBytes: UInt64,
++    committedBytes: UInt64,
++    peakBytes: UInt64
++  ) {
++    self.capturedAt = capturedAt
++    self.currentBytes = currentBytes
++    self.reservedBytes = reservedBytes
++    self.committedBytes = committedBytes
++    self.peakBytes = peakBytes
++  }
++}
++
++public struct MemorySignalThresholds: Equatable, Sendable {
++  public let criticalEnterBytes: UInt64
++  public let pressureEnterBytes: UInt64
++  public let softEnterBytes: UInt64
++  public let criticalExitBytes: UInt64
++  public let pressureExitBytes: UInt64
++  public let softExitBytes: UInt64
++
++  public init(
++    criticalEnterBytes: UInt64,
++    pressureEnterBytes: UInt64,
++    softEnterBytes: UInt64,
++    criticalExitBytes: UInt64,
++    pressureExitBytes: UInt64,
++    softExitBytes: UInt64
++  ) throws {
++    guard criticalEnterBytes < pressureEnterBytes,
++      pressureEnterBytes < softEnterBytes,
++      criticalExitBytes > criticalEnterBytes,
++      pressureExitBytes > pressureEnterBytes,
++      softExitBytes > softEnterBytes,
++      criticalExitBytes < pressureExitBytes,
++      pressureExitBytes < softExitBytes
++    else { throw MemoryWatermarkConfigurationError.invalidThresholdOrder }
++    self.criticalEnterBytes = criticalEnterBytes
++    self.pressureEnterBytes = pressureEnterBytes
++    self.softEnterBytes = softEnterBytes
++    self.criticalExitBytes = criticalExitBytes
++    self.pressureExitBytes = pressureExitBytes
++    self.softExitBytes = softExitBytes
++  }
++}
++
++public enum MemoryWatermarkConfigurationError: Error, Equatable, Sendable {
++  case invalidThresholdOrder
++  case zeroGeneration
++  case zeroBaseline
++  case zeroLedgerCeiling
++  case invalidDuration
++  case invalidHistoryLimit
++  case thresholdExceedsSignalRange
++  case generationMustIncrease(current: UInt64, proposed: UInt64)
++}
++
++public struct MemoryWatermarkConfiguration: Equatable, Sendable {
++  public let generation: UInt64
++  public let deviceBaselineBytes: UInt64
++  public let globalLedgerCeilingBytes: UInt64
++  public let ledgerHeadroom: MemorySignalThresholds
++  public let physicalHeadroom: MemorySignalThresholds
++  public let advisoryAvailable: MemorySignalThresholds
++  public let cadence: Duration
++  public let minimumEventInterval: Duration
++  public let maximumEvidenceAge: Duration
++  public let maximumSamplingDuration: Duration
++  public let recoveryDwell: Duration
++  public let historyLimit: Int
++
++  public init(
++    generation: UInt64,
++    deviceBaselineBytes: UInt64,
++    globalLedgerCeilingBytes: UInt64,
++    ledgerHeadroom: MemorySignalThresholds,
++    physicalHeadroom: MemorySignalThresholds,
++    advisoryAvailable: MemorySignalThresholds,
++    cadence: Duration,
++    minimumEventInterval: Duration,
++    maximumEvidenceAge: Duration,
++    maximumSamplingDuration: Duration,
++    recoveryDwell: Duration,
++    historyLimit: Int
++  ) throws {
++    guard generation > 0 else { throw MemoryWatermarkConfigurationError.zeroGeneration }
++    guard deviceBaselineBytes > 0 else { throw MemoryWatermarkConfigurationError.zeroBaseline }
++    guard globalLedgerCeilingBytes > 0 else {
++      throw MemoryWatermarkConfigurationError.zeroLedgerCeiling
++    }
++    guard cadence > .zero, minimumEventInterval > .zero, maximumEvidenceAge > .zero,
++      maximumSamplingDuration > .zero, maximumSamplingDuration <= cadence,
++      maximumSamplingDuration <= minimumEventInterval, recoveryDwell >= .zero
++    else { throw MemoryWatermarkConfigurationError.invalidDuration }
++    guard (1...1_024).contains(historyLimit) else {
++      throw MemoryWatermarkConfigurationError.invalidHistoryLimit
++    }
++    guard ledgerHeadroom.softExitBytes < globalLedgerCeilingBytes,
++      physicalHeadroom.softExitBytes < deviceBaselineBytes
++    else { throw MemoryWatermarkConfigurationError.thresholdExceedsSignalRange }
++    self.generation = generation
++    self.deviceBaselineBytes = deviceBaselineBytes
++    self.globalLedgerCeilingBytes = globalLedgerCeilingBytes
++    self.ledgerHeadroom = ledgerHeadroom
++    self.physicalHeadroom = physicalHeadroom
++    self.advisoryAvailable = advisoryAvailable
++    self.cadence = cadence
++    self.minimumEventInterval = minimumEventInterval
++    self.maximumEvidenceAge = maximumEvidenceAge
++    self.maximumSamplingDuration = maximumSamplingDuration
++    self.recoveryDwell = recoveryDwell
++    self.historyLimit = historyLimit
++  }
++}
++
++public enum MemoryWatermarkState: Int, CaseIterable, Comparable, Sendable {
++  case normal
++  case soft
++  case pressure
++  case critical
++
++  public static func < (lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
++}
++
++public enum MemoryObservationTrigger: String, CaseIterable, Sendable {
++  case cadence
++  case admission
++  case release
++  case lifecycle
++  case memoryWarning
++  case configurationReplacement
++}
++
++public enum MemoryTransitionReason: String, CaseIterable, Sendable {
++  case ledgerHeadroom
++  case physicalHeadroom
++  case advisoryAvailable
++  case memoryWarning
++  case recovery
++}
++
++public struct MemoryWatermarkTransition: Equatable, Sendable {
++  public let from: MemoryWatermarkState
++  public let to: MemoryWatermarkState
++  public let reason: MemoryTransitionReason
++}
++
++public struct MemoryObservation: Equatable, Sendable {
++  public let sequence: UInt64
++  public let stateGeneration: UInt64
++  public let configurationGeneration: UInt64
++  public let timestamp: ContinuousClock.Instant
++  public let unit: MemoryObservationUnit
++  public let trigger: MemoryObservationTrigger
++  public let physicalFootprint: MemoryByteSample
++  public let physicalFootprintPeak: MemoryByteSample
++  public let advisoryAvailableMemory: MemoryByteSample
++  public let ledger: MemoryLedgerAvailability
++  public let warningReceived: Bool
++  public let actionsAcknowledged: Bool
++  public let state: MemoryWatermarkState
++  public let transition: MemoryWatermarkTransition?
++  public let samplingDuration: Duration
++}
++
++public enum MemoryObservationDisposition: Equatable, Sendable {
++  case observed(MemoryObservation)
++  case rateLimited(currentState: MemoryWatermarkState)
++}
++
++public struct MemoryWatermarkMetrics: Equatable, Sendable {
++  public let observations: UInt64
++  public let rateLimited: UInt64
++  public let samplingOverruns: UInt64
++  public let unavailableSamples: UInt64
++  public let staleLedgerSamples: UInt64
++  public let transitionCounts: [MemoryWatermarkState: UInt64]
++  public let retainedHistoryCount: Int
++  public let retainedHistoryCapacity: Int
++}
++
++/// The actor is the only state writer. It performs at most two constant-time public system
++/// calls per accepted event and never runs on packet, SSH, or lifecycle actors.
++public actor MemoryWatermarkController {
++  private var configuration: MemoryWatermarkConfiguration
++  private let platform: any MemoryPlatformSamplingService
++  private let clock: any TunnelClock
++  private var state: MemoryWatermarkState = .normal
++  private var stateGeneration: UInt64 = 0
++  private var sequence: UInt64 = 0
++  private var lastCadenceObservation: ContinuousClock.Instant?
++  private var lastEventObservations: [MemoryObservationTrigger: ContinuousClock.Instant] = [:]
++  private var recoveryEligibleSince: ContinuousClock.Instant?
++  private var history: RingHistory
++  private var observationCount: UInt64 = 0
++  private var rateLimitedCount: UInt64 = 0
++  private var samplingOverrunCount: UInt64 = 0
++  private var unavailableSampleCount: UInt64 = 0
++  private var staleLedgerSampleCount: UInt64 = 0
++  private var transitions = Dictionary(
++    uniqueKeysWithValues: MemoryWatermarkState.allCases.map { ($0, UInt64(0)) })
++
++  public init(
++    configuration: MemoryWatermarkConfiguration,
++    platform: any MemoryPlatformSamplingService,
++    clock: any TunnelClock = ContinuousTunnelClock()
++  ) {
++    self.configuration = configuration
++    self.platform = platform
++    self.clock = clock
++    self.history = RingHistory(limit: configuration.historyLimit)
++  }
++
++  public func currentState() -> MemoryWatermarkState { state }
++
++  public func replaceConfiguration(_ replacement: MemoryWatermarkConfiguration) throws {
++    guard replacement.generation > configuration.generation else {
++      throw MemoryWatermarkConfigurationError.generationMustIncrease(
++        current: configuration.generation, proposed: replacement.generation)
++    }
++    configuration = replacement
++    history.resize(to: replacement.historyLimit)
++    recoveryEligibleSince = nil
++    lastCadenceObservation = nil
++    lastEventObservations.removeAll(keepingCapacity: true)
++  }
++
++  public func observe(
++    trigger: MemoryObservationTrigger,
++    ledger: MemoryLedgerAvailability,
++    actionsAcknowledged: Bool = true
++  ) throws -> MemoryObservationDisposition {
++    let startedAt = clock.now()
++    if isRateLimited(trigger: trigger, at: startedAt) {
++      rateLimitedCount = incrementSaturating(rateLimitedCount)
++      return .rateLimited(currentState: state)
++    }
++    guard sequence < UInt64.max else { throw MemoryWatermarkControllerError.sequenceExhausted }
++
++    let sampled = platform.sampleCurrentProcessMemory()
++    let finishedAt = clock.now()
++    let samplingDuration = startedAt.duration(to: finishedAt)
++    let overran = samplingDuration > configuration.maximumSamplingDuration
++    if overran { samplingOverrunCount = incrementSaturating(samplingOverrunCount) }
++    let platformSample = sanitize(sampled, overran: overran)
++    let ledgerSample = sanitize(ledger, at: finishedAt)
++
++    sequence += 1
++    observationCount = incrementSaturating(observationCount)
++    markAccepted(trigger: trigger, at: startedAt)
++    unavailableSampleCount = incrementSaturating(
++      unavailableSampleCount,
++      by: unavailableCount(platformSample) + unavailableCount(ledgerSample))
++
++    let warning = trigger == .memoryWarning
++    let previous = state
++    let (next, reason) = nextState(
++      platform: platformSample,
++      ledger: ledgerSample,
++      warning: warning,
++      actionsAcknowledged: actionsAcknowledged,
++      now: finishedAt)
++    var transition: MemoryWatermarkTransition?
++    if next != previous {
++      state = next
++      stateGeneration = incrementSaturating(stateGeneration)
++      transitions[next] = incrementSaturating(transitions[next, default: 0])
++      transition = MemoryWatermarkTransition(from: previous, to: next, reason: reason!)
++    }
++    let observation = MemoryObservation(
++      sequence: sequence,
++      stateGeneration: stateGeneration,
++      configurationGeneration: configuration.generation,
++      timestamp: finishedAt,
++      unit: .bytes,
++      trigger: trigger,
++      physicalFootprint: platformSample.physicalFootprint,
++      physicalFootprintPeak: platformSample.physicalFootprintPeak,
++      advisoryAvailableMemory: platformSample.advisoryAvailableMemory,
++      ledger: ledgerSample,
++      warningReceived: warning,
++      actionsAcknowledged: actionsAcknowledged,
++      state: state,
++      transition: transition,
++      samplingDuration: samplingDuration)
++    history.append(observation)
++    return .observed(observation)
++  }
++
++  public func retainedHistory() -> [MemoryObservation] { history.values }
++
++  public func metrics() -> MemoryWatermarkMetrics {
++    MemoryWatermarkMetrics(
++      observations: observationCount,
++      rateLimited: rateLimitedCount,
++      samplingOverruns: samplingOverrunCount,
++      unavailableSamples: unavailableSampleCount,
++      staleLedgerSamples: staleLedgerSampleCount,
++      transitionCounts: transitions,
++      retainedHistoryCount: history.values.count,
++      retainedHistoryCapacity: history.limit)
++  }
++
++  private func isRateLimited(
++    trigger: MemoryObservationTrigger, at now: ContinuousClock.Instant
++  ) -> Bool {
++    if trigger == .memoryWarning && state < .pressure { return false }
++    let prior = trigger == .cadence ? lastCadenceObservation : lastEventObservations[trigger]
++    let interval = trigger == .cadence ? configuration.cadence : configuration.minimumEventInterval
++    guard let prior else { return false }
++    return prior.duration(to: now) < interval
++  }
++
++  private func markAccepted(trigger: MemoryObservationTrigger, at now: ContinuousClock.Instant) {
++    if trigger == .cadence {
++      lastCadenceObservation = now
++    } else {
++      lastEventObservations[trigger] = now
++    }
++  }
++
++  private func sanitize(
++    _ sample: MemoryPlatformSample, overran: Bool
++  ) -> MemoryPlatformSample {
++    guard !overran else {
++      return MemoryPlatformSample(
++        physicalFootprint: .unavailable(
++          reason: .executionTimeExceeded, provenance: .taskVMPhysicalFootprint),
++        physicalFootprintPeak: .unavailable(
++          reason: .executionTimeExceeded, provenance: .taskVMPhysicalFootprint),
++        advisoryAvailableMemory: .unavailable(
++          reason: .executionTimeExceeded, provenance: .osProcessAvailableMemory))
++    }
++    let currentSample = sanitizeProvenance(
++      sample.physicalFootprint, expected: .taskVMPhysicalFootprint)
++    let peakSample = sanitizeProvenance(
++      sample.physicalFootprintPeak, expected: .taskVMPhysicalFootprint)
++    let advisorySample = sanitizeProvenance(
++      sample.advisoryAvailableMemory, expected: .osProcessAvailableMemory)
++    if let current = currentSample.bytes, let peak = peakSample.bytes, peak < current {
++      return MemoryPlatformSample(
++        physicalFootprint: .unavailable(
++          reason: .malformed, provenance: .taskVMPhysicalFootprint),
++        physicalFootprintPeak: .unavailable(
++          reason: .malformed, provenance: .taskVMPhysicalFootprint),
++        advisoryAvailableMemory: advisorySample)
++    }
++    return MemoryPlatformSample(
++      physicalFootprint: currentSample,
++      physicalFootprintPeak: peakSample,
++      advisoryAvailableMemory: advisorySample)
++  }
++
++  private func sanitizeProvenance(
++    _ sample: MemoryByteSample, expected: MemoryObservationProvenance
++  ) -> MemoryByteSample {
++    switch sample {
++    case .available(let bytes, let provenance) where provenance == expected:
++      return .available(bytes: bytes, provenance: provenance)
++    case .unavailable(let reason, let provenance) where provenance == expected:
++      return .unavailable(reason: reason, provenance: provenance)
++    case .available, .unavailable:
++      return .unavailable(reason: .malformed, provenance: expected)
++    }
++  }
++
++  private func sanitize(
++    _ ledger: MemoryLedgerAvailability, at now: ContinuousClock.Instant
++  ) -> MemoryLedgerAvailability {
++    guard case .available(let snapshot) = ledger else { return ledger }
++    guard snapshot.capturedAt <= now else { return .unavailable(.malformed) }
++    if snapshot.capturedAt.duration(to: now) > configuration.maximumEvidenceAge {
++      staleLedgerSampleCount = incrementSaturating(staleLedgerSampleCount)
++      return .unavailable(.stale)
++    }
++    let (total, overflow) = snapshot.currentBytes.addingReportingOverflow(snapshot.reservedBytes)
++    guard !overflow, snapshot.peakBytes >= snapshot.committedBytes,
++      snapshot.committedBytes >= snapshot.currentBytes,
++      snapshot.committedBytes >= snapshot.reservedBytes,
++      snapshot.committedBytes <= total
++    else { return .unavailable(.malformed) }
++    return ledger
++  }
++
++  private func nextState(
++    platform: MemoryPlatformSample,
++    ledger: MemoryLedgerAvailability,
++    warning: Bool,
++    actionsAcknowledged: Bool,
++    now: ContinuousClock.Instant
++  ) -> (MemoryWatermarkState, MemoryTransitionReason?) {
++    let entry = entrySeverity(platform: platform, ledger: ledger, warning: warning)
++    if entry.state > state {
++      recoveryEligibleSince = nil
++      return (entry.state, entry.reason)
++    }
++    guard state != .normal,
++      actionsAcknowledged,
++      allSignalsPermitRecovery(platform: platform, ledger: ledger, from: state)
++    else {
++      recoveryEligibleSince = nil
++      return (state, nil)
++    }
++    if recoveryEligibleSince == nil { recoveryEligibleSince = now }
++    guard recoveryEligibleSince!.duration(to: now) >= configuration.recoveryDwell else {
++      return (state, nil)
++    }
++    recoveryEligibleSince = now
++    let recovered = MemoryWatermarkState(rawValue: state.rawValue - 1)!
++    let next = max(recovered, entry.state)
++    return (next, next == state ? nil : .recovery)
++  }
++
++  private func entrySeverity(
++    platform: MemoryPlatformSample,
++    ledger: MemoryLedgerAvailability,
++    warning: Bool
++  ) -> (state: MemoryWatermarkState, reason: MemoryTransitionReason?) {
++    var result: (MemoryWatermarkState, MemoryTransitionReason?) =
++      warning ? (.pressure, .memoryWarning) : (.normal, nil)
++    func include(
++      _ bytes: UInt64?, _ thresholds: MemorySignalThresholds, _ reason: MemoryTransitionReason
++    ) {
++      guard let bytes else { return }
++      let candidate: MemoryWatermarkState
++      if bytes <= thresholds.criticalEnterBytes {
++        candidate = .critical
++      } else if bytes <= thresholds.pressureEnterBytes {
++        candidate = .pressure
++      } else if bytes <= thresholds.softEnterBytes {
++        candidate = .soft
++      } else {
++        candidate = .normal
++      }
++      if candidate > result.0 { result = (candidate, reason) }
++    }
++    if case .available(let snapshot) = ledger {
++      include(
++        headroom(limit: configuration.globalLedgerCeilingBytes, used: snapshot.committedBytes),
++        configuration.ledgerHeadroom, .ledgerHeadroom)
++    }
++    include(
++      platform.physicalFootprint.bytes.map {
++        headroom(limit: configuration.deviceBaselineBytes, used: $0)
++      }, configuration.physicalHeadroom, .physicalHeadroom)
++    include(
++      platform.advisoryAvailableMemory.bytes,
++      configuration.advisoryAvailable, .advisoryAvailable)
++    return result
++  }
++
++  private func allSignalsPermitRecovery(
++    platform: MemoryPlatformSample,
++    ledger: MemoryLedgerAvailability,
++    from state: MemoryWatermarkState
++  ) -> Bool {
++    guard case .available(let ledgerSnapshot) = ledger,
++      let footprint = platform.physicalFootprint.bytes,
++      platform.physicalFootprintPeak.bytes != nil,
++      let advisory = platform.advisoryAvailableMemory.bytes
++    else { return false }
++    return aboveExit(
++      headroom(limit: configuration.globalLedgerCeilingBytes, used: ledgerSnapshot.committedBytes),
++      configuration.ledgerHeadroom, state: state)
++      && aboveExit(
++        headroom(limit: configuration.deviceBaselineBytes, used: footprint),
++        configuration.physicalHeadroom, state: state)
++      && aboveExit(advisory, configuration.advisoryAvailable, state: state)
++  }
++
++  private func aboveExit(
++    _ value: UInt64, _ thresholds: MemorySignalThresholds, state: MemoryWatermarkState
++  ) -> Bool {
++    switch state {
++    case .critical: value > thresholds.criticalExitBytes
++    case .pressure: value > thresholds.pressureExitBytes
++    case .soft: value > thresholds.softExitBytes
++    case .normal: true
++    }
++  }
++
++  private func unavailableCount(_ sample: MemoryPlatformSample) -> UInt64 {
++    [sample.physicalFootprint, sample.physicalFootprintPeak, sample.advisoryAvailableMemory]
++      .reduce(0) { count, value in
++        if case .unavailable = value { return count + 1 }
++        return count
++      }
++  }
++
++  private func unavailableCount(_ ledger: MemoryLedgerAvailability) -> UInt64 {
++    if case .unavailable = ledger { return 1 }
++    return 0
++  }
++}
++
++public enum MemoryWatermarkControllerError: Error, Equatable, Sendable {
++  case sequenceExhausted
++}
++
++private func headroom(limit: UInt64, used: UInt64) -> UInt64 {
++  used >= limit ? 0 : limit - used
++}
++
++private func incrementSaturating(_ value: UInt64, by amount: UInt64 = 1) -> UInt64 {
++  let (result, overflow) = value.addingReportingOverflow(amount)
++  return overflow ? UInt64.max : result
++}
++
++private struct RingHistory: Sendable {
++  private var storage: [MemoryObservation?]
++  private var next = 0
++  private var count = 0
++  private(set) var limit: Int
++
++  init(limit: Int) {
++    self.limit = limit
++    self.storage = Array(repeating: nil, count: limit)
++  }
++
++  mutating func append(_ value: MemoryObservation) {
++    storage[next] = value
++    next = (next + 1) % limit
++    count = min(count + 1, limit)
++  }
++
++  mutating func resize(to newLimit: Int) {
++    let retained = Array(values.suffix(newLimit))
++    self = RingHistory(limit: newLimit)
++    for value in retained { append(value) }
++  }
++
++  var values: [MemoryObservation] {
++    guard count > 0 else { return [] }
++    let start = count == limit ? next : 0
++    return (0..<count).compactMap { storage[(start + $0) % limit] }
++  }
++}
+diff --git a/Sources/ReluxTunnelCore/SSHReceiveWindowBudgetPolicy.swift b/Sources/ReluxTunnelCore/SSHReceiveWindowBudgetPolicy.swift
+new file mode 100644
+index 0000000..52c2bd3
+--- /dev/null
++++ b/Sources/ReluxTunnelCore/SSHReceiveWindowBudgetPolicy.swift
+@@ -0,0 +1,717 @@
++import Foundation
++
++/// Logical receive-window classes. These are policy classes, not SSH engine channel kinds.
++public enum SSHReceiveWindowClass: String, CaseIterable, Hashable, Sendable {
++  case control
++  case ordinary
++  case bulk
++  case relay
++}
++
++public enum SSHReceiveWindowPressure: String, CaseIterable, Sendable {
++  case normal
++  case soft
++  case pressure
++  case critical
++}
++
++public enum SSHReceiveWindowLaneState: String, CaseIterable, Sendable {
++  case ready
++  case rekeying
++  case failed
++  case closing
++  case closed
++}
++
++public struct SSHBulkPathMeasurement: Equatable, Sendable {
++  /// Integer bits per second.
++  public let bandwidthBitsPerSecond: UInt64
++  /// Integer nanoseconds.
++  public let roundTripTimeNanoseconds: UInt64
++
++  public init(bandwidthBitsPerSecond: UInt64, roundTripTimeNanoseconds: UInt64) {
++    self.bandwidthBitsPerSecond = bandwidthBitsPerSecond
++    self.roundTripTimeNanoseconds = roundTripTimeNanoseconds
++  }
++}
++
++public struct SSHReceiveWindowClassLimits: Equatable, Sendable {
++  public let maximumAdvertisedWindowBytes: Int
++  public let lowWaterBytes: Int
++  public let readBufferCapacityBytes: Int
++  public let writeCapacityBytes: Int
++  public let metadataCapacityBytes: Int
++
++  public init(
++    maximumAdvertisedWindowBytes: Int,
++    lowWaterBytes: Int,
++    readBufferCapacityBytes: Int,
++    writeCapacityBytes: Int,
++    metadataCapacityBytes: Int
++  ) {
++    self.maximumAdvertisedWindowBytes = maximumAdvertisedWindowBytes
++    self.lowWaterBytes = lowWaterBytes
++    self.readBufferCapacityBytes = readBufferCapacityBytes
++    self.writeCapacityBytes = writeCapacityBytes
++    self.metadataCapacityBytes = metadataCapacityBytes
++  }
++}
++
++public enum SSHReceiveWindowConfigurationError: Error, Equatable, Sendable {
++  case missingClass(SSHReceiveWindowClass)
++  case invalidValue(String)
++  case invalidCandidate(String)
++  case inconsistentBounds(String)
++  case arithmeticOverflow(String)
++}
++
++/// All byte values use binary bytes (`KiB = 1024 B`). Bandwidth is bits/s and RTT is ns.
++/// The two measurement caps are applied before any multiplication.
++public struct SSHReceiveWindowBudgetConfiguration: Equatable, Sendable {
++  public static let window32KiB = 32 * 1_024
++  public static let window64KiB = 64 * 1_024
++
++  public let controlInitialWindowBytes: Int
++  public let ordinaryInitialWindowBytes: Int
++  public let bulkMinimumWindowBytes: Int
++  public let bulkMaximumWindowBytes: Int
++  public let maximumMeasuredBandwidthBitsPerSecond: UInt64
++  public let maximumMeasuredRTTNanoseconds: UInt64
++  public let relayControlWindowBytes: Int
++  public let relayBurstDatagramCount: Int
++  public let relayMaximumFrameBodyBytes: Int
++  public let relayMaximumWindowBytes: Int
++  public let softInitialWindowCapBytes: Int
++  public let perChannelWindowCeilingBytes: Int
++  public let perLaneWindowCeilingBytes: Int
++  public let globalWindowCeilingBytes: Int
++  public let globalLedgerCeilingBytes: Int
++  public let classLimits: [SSHReceiveWindowClass: SSHReceiveWindowClassLimits]
++
++  public init(
++    controlInitialWindowBytes: Int,
++    ordinaryInitialWindowBytes: Int,
++    bulkMinimumWindowBytes: Int,
++    bulkMaximumWindowBytes: Int,
++    maximumMeasuredBandwidthBitsPerSecond: UInt64,
++    maximumMeasuredRTTNanoseconds: UInt64,
++    relayControlWindowBytes: Int,
++    relayBurstDatagramCount: Int,
++    relayMaximumFrameBodyBytes: Int,
++    relayMaximumWindowBytes: Int,
++    softInitialWindowCapBytes: Int,
++    perChannelWindowCeilingBytes: Int,
++    perLaneWindowCeilingBytes: Int,
++    globalWindowCeilingBytes: Int,
++    globalLedgerCeilingBytes: Int,
++    classLimits: [SSHReceiveWindowClass: SSHReceiveWindowClassLimits]
++  ) throws {
++    let candidates = [Self.window32KiB, Self.window64KiB]
++    guard candidates.contains(controlInitialWindowBytes) else {
++      throw SSHReceiveWindowConfigurationError.invalidCandidate("controlInitialWindowBytes")
++    }
++    guard candidates.contains(ordinaryInitialWindowBytes) else {
++      throw SSHReceiveWindowConfigurationError.invalidCandidate("ordinaryInitialWindowBytes")
++    }
++    guard candidates.contains(softInitialWindowCapBytes) else {
++      throw SSHReceiveWindowConfigurationError.invalidCandidate("softInitialWindowCapBytes")
++    }
++    let positiveValues: [(Int, String)] = [
++      (bulkMinimumWindowBytes, "bulkMinimumWindowBytes"),
++      (bulkMaximumWindowBytes, "bulkMaximumWindowBytes"),
++      (relayControlWindowBytes, "relayControlWindowBytes"),
++      (relayBurstDatagramCount, "relayBurstDatagramCount"),
++      (relayMaximumFrameBodyBytes, "relayMaximumFrameBodyBytes"),
++      (relayMaximumWindowBytes, "relayMaximumWindowBytes"),
++      (perChannelWindowCeilingBytes, "perChannelWindowCeilingBytes"),
++      (perLaneWindowCeilingBytes, "perLaneWindowCeilingBytes"),
++      (globalWindowCeilingBytes, "globalWindowCeilingBytes"),
++      (globalLedgerCeilingBytes, "globalLedgerCeilingBytes"),
++    ]
++    for (value, field) in positiveValues where value <= 0 {
++      throw SSHReceiveWindowConfigurationError.invalidValue(field)
++    }
++    guard maximumMeasuredBandwidthBitsPerSecond > 0 else {
++      throw SSHReceiveWindowConfigurationError.invalidValue(
++        "maximumMeasuredBandwidthBitsPerSecond")
++    }
++    guard maximumMeasuredRTTNanoseconds > 0 else {
++      throw SSHReceiveWindowConfigurationError.invalidValue("maximumMeasuredRTTNanoseconds")
++    }
++    guard bulkMinimumWindowBytes <= bulkMaximumWindowBytes else {
++      throw SSHReceiveWindowConfigurationError.inconsistentBounds("bulkWindowBounds")
++    }
++    guard perChannelWindowCeilingBytes <= perLaneWindowCeilingBytes,
++      perLaneWindowCeilingBytes <= globalWindowCeilingBytes,
++      globalWindowCeilingBytes <= globalLedgerCeilingBytes
++    else {
++      throw SSHReceiveWindowConfigurationError.inconsistentBounds("ledgerCeilings")
++    }
++    guard perChannelWindowCeilingBytes <= Int(UInt32.max) else {
++      throw SSHReceiveWindowConfigurationError.inconsistentBounds("protocolWindowCeiling")
++    }
++    for channelClass in SSHReceiveWindowClass.allCases {
++      guard let limits = classLimits[channelClass] else {
++        throw SSHReceiveWindowConfigurationError.missingClass(channelClass)
++      }
++      guard limits.maximumAdvertisedWindowBytes > 0,
++        limits.lowWaterBytes > 0,
++        limits.lowWaterBytes <= limits.maximumAdvertisedWindowBytes,
++        limits.readBufferCapacityBytes > 0,
++        limits.writeCapacityBytes > 0,
++        limits.metadataCapacityBytes >= 0
++      else {
++        throw SSHReceiveWindowConfigurationError.inconsistentBounds(
++          "classLimits.\(channelClass.rawValue)")
++      }
++      guard limits.maximumAdvertisedWindowBytes <= perChannelWindowCeilingBytes else {
++        throw SSHReceiveWindowConfigurationError.inconsistentBounds(
++          "classMaximum.\(channelClass.rawValue)")
++      }
++      _ = try Self.checkedSum(
++        [
++          limits.maximumAdvertisedWindowBytes,
++          limits.readBufferCapacityBytes,
++          limits.writeCapacityBytes,
++          limits.metadataCapacityBytes,
++        ], field: "classCapacity.\(channelClass.rawValue)")
++    }
++    guard controlInitialWindowBytes <= classLimits[.control]!.maximumAdvertisedWindowBytes,
++      ordinaryInitialWindowBytes <= classLimits[.ordinary]!.maximumAdvertisedWindowBytes,
++      bulkMaximumWindowBytes <= classLimits[.bulk]!.maximumAdvertisedWindowBytes,
++      relayMaximumWindowBytes <= classLimits[.relay]!.maximumAdvertisedWindowBytes
++    else {
++      throw SSHReceiveWindowConfigurationError.inconsistentBounds("initialAndClassMaximum")
++    }
++
++    self.controlInitialWindowBytes = controlInitialWindowBytes
++    self.ordinaryInitialWindowBytes = ordinaryInitialWindowBytes
++    self.bulkMinimumWindowBytes = bulkMinimumWindowBytes
++    self.bulkMaximumWindowBytes = bulkMaximumWindowBytes
++    self.maximumMeasuredBandwidthBitsPerSecond = maximumMeasuredBandwidthBitsPerSecond
++    self.maximumMeasuredRTTNanoseconds = maximumMeasuredRTTNanoseconds
++    self.relayControlWindowBytes = relayControlWindowBytes
++    self.relayBurstDatagramCount = relayBurstDatagramCount
++    self.relayMaximumFrameBodyBytes = relayMaximumFrameBodyBytes
++    self.relayMaximumWindowBytes = relayMaximumWindowBytes
++    self.softInitialWindowCapBytes = softInitialWindowCapBytes
++    self.perChannelWindowCeilingBytes = perChannelWindowCeilingBytes
++    self.perLaneWindowCeilingBytes = perLaneWindowCeilingBytes
++    self.globalWindowCeilingBytes = globalWindowCeilingBytes
++    self.globalLedgerCeilingBytes = globalLedgerCeilingBytes
++    self.classLimits = classLimits
++  }
++
++  fileprivate static func checkedSum(_ values: [Int], field: String) throws -> Int {
++    try values.reduce(0) { partial, value in
++      let (sum, overflow) = partial.addingReportingOverflow(value)
++      guard !overflow else {
++        throw SSHReceiveWindowConfigurationError.arithmeticOverflow(field)
++      }
++      return sum
++    }
++  }
++}
++
++public struct SSHReceiveWindowLane: Equatable, Sendable {
++  public let identity: SSHLaneIdentity
++  public var generation: UInt64
++  public var state: SSHReceiveWindowLaneState
++  public var externallyReservedWindowBytes: Int
++
++  public init(
++    identity: SSHLaneIdentity,
++    generation: UInt64,
++    state: SSHReceiveWindowLaneState,
++    externallyReservedWindowBytes: Int = 0
++  ) {
++    self.identity = identity
++    self.generation = generation
++    self.state = state
++    self.externallyReservedWindowBytes = externallyReservedWindowBytes
++  }
++}
++
++public enum SSHReceiveWindowRefusal: Error, Equatable, Hashable, Sendable {
++  case duplicateChannel
++  case unknownChannel
++  case unknownLane
++  case staleGeneration
++  case laneUnavailable
++  case memoryPressure
++  case invalidMeasurement
++  case invalidOutstandingCredit
++  case aboveLowWater
++  case perChannelCeiling
++  case perLaneCeiling
++  case globalWindowCeiling
++  case globalLedgerCeiling
++  case immutableChannelCap
++  case insufficientReservation
++  case noCreditNeeded
++}
++
++public struct SSHReceiveWindowInitialDecision: Equatable, Sendable {
++  public let channel: SSHChannelIdentity
++  public let lane: SSHLaneIdentity
++  public let channelClass: SSHReceiveWindowClass
++  public let generation: UInt64
++  public let initialWindowBytes: Int
++  public let maximumAdvertisedWindowBytes: Int
++  public let lowWaterBytes: Int
++  public let readBufferCapacityBytes: Int
++  public let writeCapacityBytes: Int
++  public let maximumWriteCallBytes: Int
++  public let ledgerChargeBytes: Int
++
++  public func channelPolicy(
++    consumerCreditAvailability: SSHDeferredSemanticAvailability = .reported
++  ) throws -> SSHChannelPolicy {
++    let limits = try SSHConsumerReceiveWindowPolicy(
++      initialReceiveWindowBytes: initialWindowBytes,
++      maximumAdvertisedReceiveWindowBytes: maximumAdvertisedWindowBytes,
++      windowAdjustThresholdBytes: max(1, lowWaterBytes)
++    )
++    let report: SSHDeferredSemanticReport<SSHConsumerReceiveWindowPolicy>
++    switch consumerCreditAvailability {
++    case .reported:
++      report = .reported(limits)
++    case .notReported:
++      report = .notReported
++    case .unsupported:
++      report = .unsupported
++    }
++    return try SSHChannelPolicy(
++      initialReceiveWindowBytes: initialWindowBytes,
++      consumerReceiveWindowCredit: report,
++      maximumBufferedReadBytes: readBufferCapacityBytes,
++      maximumQueuedWriteBytes: writeCapacityBytes,
++      maximumWriteCallBytes: maximumWriteCallBytes
++    )
++  }
++}
++
++public struct SSHReceiveWindowAdjustmentDecision: Equatable, Sendable {
++  public let channel: SSHChannelIdentity
++  public let beforeOutstandingCreditBytes: Int
++  public let adjustmentBytes: Int
++  public let afterOutstandingCreditBytes: Int
++  public let newlyReservedBytes: Int
++}
++
++public enum SSHReceiveWindowReleaseCause: String, CaseIterable, Sendable {
++  case openFailure
++  case normalClose
++  case reset
++  case cancellation
++  case laneFailure
++  case lateCallback
++}
++
++public struct SSHReceiveWindowRelease: Equatable, Sendable {
++  public let channel: SSHChannelIdentity
++  public let cause: SSHReceiveWindowReleaseCause
++  public let releasedWindowBytes: Int
++  public let releasedLedgerBytes: Int
++  public let wasAlreadyReleased: Bool
++}
++
++public struct SSHReceiveWindowMetrics: Equatable, Sendable {
++  public fileprivate(set) var initialReservations = 0
++  public fileprivate(set) var adjustmentReservations = 0
++  public fileprivate(set) var adjustmentBytes: UInt64 = 0
++  public fileprivate(set) var releases = 0
++  public fileprivate(set) var duplicateReleases = 0
++  public fileprivate(set) var releasedLedgerBytes: UInt64 = 0
++  public fileprivate(set) var refusals: [SSHReceiveWindowRefusal: UInt64] = [:]
++}
++
++public struct SSHReceiveWindowBudgetSnapshot: Equatable, Sendable {
++  public let generation: UInt64
++  public let reservedChannelCount: Int
++  public let managedWindowReservedBytes: Int
++  public let globalWindowReservedBytes: Int
++  public let ledgerCommittedBytes: Int
++  public let laneWindowReservedBytes: [SSHLaneIdentity: Int]
++  public let metrics: SSHReceiveWindowMetrics
++}
++
++private struct SSHReceiveWindowReservation: Equatable, Sendable {
++  let channel: SSHChannelIdentity
++  let lane: SSHLaneIdentity
++  let channelClass: SSHReceiveWindowClass
++  let generation: UInt64
++  let capBytes: Int
++  let lowWaterBytes: Int
++  let fixedCapacityBytes: Int
++  var reservedWindowBytes: Int
++
++  var ledgerChargeBytes: Int { fixedCapacityBytes + reservedWindowBytes }
++}
++
++/// Value-semantic ledger. Copying the value copies a complete policy state, which keeps
++/// evaluation deterministic and lets a serialized owner install each returned transition atomically.
++public struct SSHReceiveWindowBudgetLedger: Sendable {
++  public let configuration: SSHReceiveWindowBudgetConfiguration
++  public private(set) var generation: UInt64
++  public private(set) var pressure: SSHReceiveWindowPressure
++  public private(set) var lanes: [SSHLaneIdentity: SSHReceiveWindowLane]
++
++  private let otherLedgerCommittedBytes: Int
++  private let otherGlobalWindowReservedBytes: Int
++  private var reservations: [SSHChannelIdentity: SSHReceiveWindowReservation] = [:]
++  private var releasedChannels: Set<SSHChannelIdentity> = []
++  private var metrics = SSHReceiveWindowMetrics()
++
++  public init(
++    configuration: SSHReceiveWindowBudgetConfiguration,
++    generation: UInt64,
++    pressure: SSHReceiveWindowPressure = .normal,
++    lanes: [SSHReceiveWindowLane],
++    otherLedgerCommittedBytes: Int = 0,
++    otherGlobalWindowReservedBytes: Int = 0
++  ) throws {
++    guard generation > 0 else {
++      throw SSHReceiveWindowConfigurationError.invalidValue("generation")
++    }
++    guard otherLedgerCommittedBytes >= 0,
++      otherLedgerCommittedBytes <= configuration.globalLedgerCeilingBytes
++    else {
++      throw SSHReceiveWindowConfigurationError.inconsistentBounds("otherLedgerCommittedBytes")
++    }
++    guard otherGlobalWindowReservedBytes >= 0,
++      otherGlobalWindowReservedBytes <= configuration.globalWindowCeilingBytes
++    else {
++      throw SSHReceiveWindowConfigurationError.inconsistentBounds(
++        "otherGlobalWindowReservedBytes")
++    }
++    var laneMap: [SSHLaneIdentity: SSHReceiveWindowLane] = [:]
++    for lane in lanes {
++      guard lane.generation > 0, lane.externallyReservedWindowBytes >= 0,
++        lane.externallyReservedWindowBytes <= configuration.perLaneWindowCeilingBytes,
++        laneMap.updateValue(lane, forKey: lane.identity) == nil
++      else {
++        throw SSHReceiveWindowConfigurationError.inconsistentBounds("lanes")
++      }
++    }
++    self.configuration = configuration
++    self.generation = generation
++    self.pressure = pressure
++    self.lanes = laneMap
++    self.otherLedgerCommittedBytes = otherLedgerCommittedBytes
++    self.otherGlobalWindowReservedBytes = otherGlobalWindowReservedBytes
++  }
++
++  public mutating func setPressure(_ pressure: SSHReceiveWindowPressure) {
++    self.pressure = pressure
++  }
++
++  public mutating func setLaneState(
++    _ state: SSHReceiveWindowLaneState,
++    lane: SSHLaneIdentity,
++    generation: UInt64
++  ) throws {
++    guard generation == self.generation else { throw SSHReceiveWindowRefusal.staleGeneration }
++    guard var current = lanes[lane] else { throw SSHReceiveWindowRefusal.unknownLane }
++    guard current.generation == generation else { throw SSHReceiveWindowRefusal.staleGeneration }
++    current.state = state
++    lanes[lane] = current
++  }
++
++  public mutating func reserveInitial(
++    channel: SSHChannelIdentity,
++    lane: SSHLaneIdentity,
++    channelClass: SSHReceiveWindowClass,
++    generation: UInt64,
++    bulkMeasurement: SSHBulkPathMeasurement? = nil
++  ) throws -> SSHReceiveWindowInitialDecision {
++    do {
++      guard reservations[channel] == nil, !releasedChannels.contains(channel) else {
++        throw SSHReceiveWindowRefusal.duplicateChannel
++      }
++      let currentLane = try availableLane(lane, generation: generation)
++      try permitInitial(channelClass)
++      let limits = configuration.classLimits[channelClass]!
++      var initial = try Self.initialCandidate(
++        for: channelClass, measurement: bulkMeasurement, configuration: configuration)
++      if pressure == .soft {
++        initial = min(initial, configuration.softInitialWindowCapBytes)
++      }
++      guard initial <= limits.maximumAdvertisedWindowBytes,
++        initial <= configuration.perChannelWindowCeilingBytes
++      else { throw SSHReceiveWindowRefusal.perChannelCeiling }
++      let fixed = try SSHReceiveWindowBudgetConfiguration.checkedSum(
++        [
++          limits.readBufferCapacityBytes,
++          limits.writeCapacityBytes,
++          limits.metadataCapacityBytes,
++        ], field: "channelFixedCapacity")
++      let charge = try SSHReceiveWindowBudgetConfiguration.checkedSum(
++        [initial, fixed], field: "channelInitialCapacity")
++      guard
++        fits(
++          used: laneReservedBytes(currentLane.identity), adding: initial,
++          ceiling: configuration.perLaneWindowCeilingBytes)
++      else { throw SSHReceiveWindowRefusal.perLaneCeiling }
++      guard
++        fits(
++          used: globalWindowReservedBytes, adding: initial,
++          ceiling: configuration.globalWindowCeilingBytes)
++      else { throw SSHReceiveWindowRefusal.globalWindowCeiling }
++      guard
++        fits(
++          used: ledgerCommittedBytes, adding: charge,
++          ceiling: configuration.globalLedgerCeilingBytes)
++      else { throw SSHReceiveWindowRefusal.globalLedgerCeiling }
++
++      reservations[channel] = SSHReceiveWindowReservation(
++        channel: channel,
++        lane: lane,
++        channelClass: channelClass,
++        generation: generation,
++        capBytes: limits.maximumAdvertisedWindowBytes,
++        lowWaterBytes: limits.lowWaterBytes,
++        fixedCapacityBytes: fixed,
++        reservedWindowBytes: initial)
++      metrics.initialReservations += 1
++      return SSHReceiveWindowInitialDecision(
++        channel: channel,
++        lane: lane,
++        channelClass: channelClass,
++        generation: generation,
++        initialWindowBytes: initial,
++        maximumAdvertisedWindowBytes: limits.maximumAdvertisedWindowBytes,
++        lowWaterBytes: limits.lowWaterBytes,
++        readBufferCapacityBytes: limits.readBufferCapacityBytes,
++        writeCapacityBytes: limits.writeCapacityBytes,
++        maximumWriteCallBytes: min(initial, limits.writeCapacityBytes),
++        ledgerChargeBytes: charge)
++    } catch let refusal as SSHReceiveWindowRefusal {
++      recordRefusal(refusal)
++      throw refusal
++    }
++  }
++
++  public mutating func reserveAdjustment(
++    channel: SSHChannelIdentity,
++    generation: UInt64,
++    outstandingAdvertisedCreditBytes: Int
++  ) throws -> SSHReceiveWindowAdjustmentDecision {
++    do {
++      guard generation == self.generation else { throw SSHReceiveWindowRefusal.staleGeneration }
++      guard var reservation = reservations[channel] else {
++        throw releasedChannels.contains(channel)
++          ? SSHReceiveWindowRefusal.staleGeneration : SSHReceiveWindowRefusal.unknownChannel
++      }
++      _ = try availableLane(reservation.lane, generation: generation)
++      guard pressure == .normal || pressure == .soft else {
++        throw SSHReceiveWindowRefusal.memoryPressure
++      }
++      guard outstandingAdvertisedCreditBytes >= 0,
++        outstandingAdvertisedCreditBytes <= reservation.capBytes
++      else { throw SSHReceiveWindowRefusal.invalidOutstandingCredit }
++      guard outstandingAdvertisedCreditBytes <= reservation.lowWaterBytes else {
++        throw SSHReceiveWindowRefusal.aboveLowWater
++      }
++
++      let advertisedHeadroom = reservation.capBytes - outstandingAdvertisedCreditBytes
++      let reservationHeadroom = reservation.capBytes - reservation.reservedWindowBytes
++      let laneHeadroom =
++        configuration.perLaneWindowCeilingBytes - laneReservedBytes(reservation.lane)
++      let globalHeadroom = configuration.globalWindowCeilingBytes - globalWindowReservedBytes
++      let ledgerHeadroom = configuration.globalLedgerCeilingBytes - ledgerCommittedBytes
++      let delta = min(
++        advertisedHeadroom, reservationHeadroom, laneHeadroom, globalHeadroom, ledgerHeadroom)
++      guard delta > 0 else {
++        throw reservationHeadroom == 0
++          ? SSHReceiveWindowRefusal.noCreditNeeded : SSHReceiveWindowRefusal.insufficientReservation
++      }
++      let (after, overflow) = outstandingAdvertisedCreditBytes.addingReportingOverflow(delta)
++      guard !overflow, after <= reservation.capBytes else {
++        throw SSHReceiveWindowRefusal.immutableChannelCap
++      }
++      reservation.reservedWindowBytes += delta
++      reservations[channel] = reservation
++      metrics.adjustmentReservations += 1
++      metrics.adjustmentBytes = metrics.adjustmentBytes.saturatingAdd(UInt64(delta))
++      return SSHReceiveWindowAdjustmentDecision(
++        channel: channel,
++        beforeOutstandingCreditBytes: outstandingAdvertisedCreditBytes,
++        adjustmentBytes: delta,
++        afterOutstandingCreditBytes: after,
++        newlyReservedBytes: delta)
++    } catch let refusal as SSHReceiveWindowRefusal {
++      recordRefusal(refusal)
++      throw refusal
++    }
++  }
++
++  @discardableResult
++  public mutating func release(
++    channel: SSHChannelIdentity,
++    cause: SSHReceiveWindowReleaseCause
++  ) -> SSHReceiveWindowRelease {
++    guard let reservation = reservations.removeValue(forKey: channel) else {
++      releasedChannels.insert(channel)
++      metrics.duplicateReleases += 1
++      return SSHReceiveWindowRelease(
++        channel: channel,
++        cause: cause,
++        releasedWindowBytes: 0,
++        releasedLedgerBytes: 0,
++        wasAlreadyReleased: true)
++    }
++    releasedChannels.insert(channel)
++    metrics.releases += 1
++    metrics.releasedLedgerBytes = metrics.releasedLedgerBytes.saturatingAdd(
++      UInt64(reservation.ledgerChargeBytes))
++    return SSHReceiveWindowRelease(
++      channel: channel,
++      cause: cause,
++      releasedWindowBytes: reservation.reservedWindowBytes,
++      releasedLedgerBytes: reservation.ledgerChargeBytes,
++      wasAlreadyReleased: false)
++  }
++
++  @discardableResult
++  public mutating func releaseLane(
++    _ lane: SSHLaneIdentity,
++    cause: SSHReceiveWindowReleaseCause = .laneFailure
++  ) -> [SSHReceiveWindowRelease] {
++    reservations.values
++      .filter { $0.lane == lane }
++      .map(\.channel)
++      .sorted { $0.rawValue.uuidString < $1.rawValue.uuidString }
++      .map { release(channel: $0, cause: cause) }
++  }
++
++  public func snapshot() -> SSHReceiveWindowBudgetSnapshot {
++    SSHReceiveWindowBudgetSnapshot(
++      generation: generation,
++      reservedChannelCount: reservations.count,
++      managedWindowReservedBytes: managedWindowReservedBytes,
++      globalWindowReservedBytes: globalWindowReservedBytes,
++      ledgerCommittedBytes: ledgerCommittedBytes,
++      laneWindowReservedBytes: Dictionary(
++        uniqueKeysWithValues: lanes.keys.map { ($0, laneReservedBytes($0)) }),
++      metrics: metrics)
++  }
++
++  public static func initialCandidate(
++    for channelClass: SSHReceiveWindowClass,
++    measurement: SSHBulkPathMeasurement?,
++    configuration: SSHReceiveWindowBudgetConfiguration
++  ) throws -> Int {
++    switch channelClass {
++    case .control:
++      return configuration.controlInitialWindowBytes
++    case .ordinary:
++      return configuration.ordinaryInitialWindowBytes
++    case .bulk:
++      guard let measurement,
++        measurement.bandwidthBitsPerSecond > 0,
++        measurement.roundTripTimeNanoseconds > 0
++      else { throw SSHReceiveWindowRefusal.invalidMeasurement }
++      let bandwidth = min(
++        measurement.bandwidthBitsPerSecond,
++        configuration.maximumMeasuredBandwidthBitsPerSecond)
++      let rtt = min(
++        measurement.roundTripTimeNanoseconds,
++        configuration.maximumMeasuredRTTNanoseconds)
++      let bytes = ceilMultiplyDivide(bandwidth, rtt, by: 8_000_000_000)
++      let bounded = min(
++        UInt64(configuration.bulkMaximumWindowBytes),
++        max(UInt64(configuration.bulkMinimumWindowBytes), bytes))
++      return Int(bounded)
++    case .relay:
++      let framed = max(saturatingAdd(4, configuration.relayMaximumFrameBodyBytes), 64)
++      let burst = saturatingMultiply(configuration.relayBurstDatagramCount, framed)
++      return min(
++        configuration.relayMaximumWindowBytes,
++        saturatingAdd(configuration.relayControlWindowBytes, burst))
++    }
++  }
++
++  private var managedWindowReservedBytes: Int {
++    reservations.values.reduce(0) { $0 + $1.reservedWindowBytes }
++  }
++
++  private var globalWindowReservedBytes: Int {
++    otherGlobalWindowReservedBytes + managedWindowReservedBytes
++  }
++
++  private var ledgerCommittedBytes: Int {
++    otherLedgerCommittedBytes + reservations.values.reduce(0) { $0 + $1.ledgerChargeBytes }
++  }
++
++  private func laneReservedBytes(_ lane: SSHLaneIdentity) -> Int {
++    let external = lanes[lane]?.externallyReservedWindowBytes ?? 0
++    return external
++      + reservations.values.lazy.filter { $0.lane == lane }
++      .reduce(0) { $0 + $1.reservedWindowBytes }
++  }
++
++  private func availableLane(
++    _ lane: SSHLaneIdentity,
++    generation: UInt64
++  ) throws -> SSHReceiveWindowLane {
++    guard generation == self.generation else { throw SSHReceiveWindowRefusal.staleGeneration }
++    guard let lane = lanes[lane] else { throw SSHReceiveWindowRefusal.unknownLane }
++    guard lane.generation == generation else { throw SSHReceiveWindowRefusal.staleGeneration }
++    guard lane.state == .ready else { throw SSHReceiveWindowRefusal.laneUnavailable }
++    return lane
++  }
++
++  private func permitInitial(_ channelClass: SSHReceiveWindowClass) throws {
++    switch pressure {
++    case .normal, .soft:
++      return
++    case .pressure:
++      guard channelClass == .control || channelClass == .relay else {
++        throw SSHReceiveWindowRefusal.memoryPressure
++      }
++    case .critical:
++      throw SSHReceiveWindowRefusal.memoryPressure
++    }
++  }
++
++  private func fits(used: Int, adding: Int, ceiling: Int) -> Bool {
++    let (candidate, overflow) = used.addingReportingOverflow(adding)
++    return !overflow && candidate <= ceiling
++  }
++
++  private mutating func recordRefusal(_ refusal: SSHReceiveWindowRefusal) {
++    metrics.refusals[refusal, default: 0] = metrics.refusals[refusal, default: 0]
++      .saturatingAdd(1)
++  }
++}
++
++private func saturatingAdd(_ lhs: Int, _ rhs: Int) -> Int {
++  let (result, overflow) = lhs.addingReportingOverflow(rhs)
++  return overflow ? Int.max : result
++}
++
++private func saturatingMultiply(_ lhs: Int, _ rhs: Int) -> Int {
++  let (result, overflow) = lhs.multipliedReportingOverflow(by: rhs)
++  return overflow ? Int.max : result
++}
++
++private func ceilMultiplyDivide(_ lhs: UInt64, _ rhs: UInt64, by divisor: UInt64) -> UInt64 {
++  let quotient = lhs / divisor
++  let remainder = lhs % divisor
++  let (base, baseOverflow) = quotient.multipliedReportingOverflow(by: rhs)
++  if baseOverflow { return .max }
++  let product = remainder.multipliedFullWidth(by: rhs)
++  let division = divisor.dividingFullWidth(product)
++  let roundedFraction =
++    division.remainder == 0
++    ? division.quotient : division.quotient.saturatingAdd(1)
++  return base.saturatingAdd(roundedFraction)
++}
++
++extension UInt64 {
++  fileprivate func saturatingAdd(_ other: UInt64) -> UInt64 {
++    let (result, overflow) = addingReportingOverflow(other)
++    return overflow ? .max : result
++  }
++}
+diff --git a/Sources/ReluxTunnelLibSSH2Adapter/LibSSH2Transport.swift b/Sources/ReluxTunnelLibSSH2Adapter/LibSSH2Transport.swift
+index b942672..7b28221 100644
+--- a/Sources/ReluxTunnelLibSSH2Adapter/LibSSH2Transport.swift
++++ b/Sources/ReluxTunnelLibSSH2Adapter/LibSSH2Transport.swift
+@@ -10,6 +10,14 @@ public enum LibSSH2PackagingAnchor {
+   }
+ }
+ 
++/// The selected adapter's single conversion point for the immutable initial credit.
++/// Consumer-earned WINDOW_ADJUST remains explicitly unsupported by this adapter.
++enum LibSSH2ChannelWindowAdapter {
++  static func initialReceiveWindow(_ policy: SSHChannelPolicy) -> UInt32 {
++    UInt32(clamping: policy.initialReceiveWindowBytes)
++  }
++}
++
+ struct LibSSH2ChannelAPI: Sendable {
+   var processStartup: @Sendable (OpaquePointer, String) -> Int32
+   var write: @Sendable (OpaquePointer, Data, Int) -> Int
+@@ -397,7 +405,7 @@ public actor LibSSH2Transport: SSHTransport {
+           engineSession,
+           "direct-tcpip",
+           UInt32("direct-tcpip".utf8.count),
+-          UInt32(clamping: policy.initialReceiveWindowBytes),
++          LibSSH2ChannelWindowAdapter.initialReceiveWindow(policy),
+           UInt32(clamping: min(policy.maximumWriteCallBytes, Int(LIBSSH2_CHANNEL_PACKET_DEFAULT))),
+           bytes.bindMemory(to: CChar.self).baseAddress,
+           UInt32(bytes.count)
+@@ -487,7 +495,7 @@ public actor LibSSH2Transport: SSHTransport {
+         engineSession,
+         "session",
+         UInt32("session".utf8.count),
+-        UInt32(clamping: policy.initialReceiveWindowBytes),
++        LibSSH2ChannelWindowAdapter.initialReceiveWindow(policy),
+         UInt32(clamping: min(policy.maximumWriteCallBytes, Int(LIBSSH2_CHANNEL_PACKET_DEFAULT))),
+         nil,
+         0
+diff --git a/Tests/ReluxTunnelCoreTests/MemoryWatermarkControllerTests.swift b/Tests/ReluxTunnelCoreTests/MemoryWatermarkControllerTests.swift
+new file mode 100644
+index 0000000..da9d478
+--- /dev/null
++++ b/Tests/ReluxTunnelCoreTests/MemoryWatermarkControllerTests.swift
+@@ -0,0 +1,482 @@
++import Foundation
++import Synchronization
++import Testing
++
++@testable import ReluxTunnelCore
++
++@Suite("Advisory memory sampling and watermark control")
++struct MemoryWatermarkControllerTests {
++  @Test("system service reports public-platform availability without a proxy")
++  func systemServiceAvailability() {
++    let result = SystemMemoryPlatformSamplingService().sampleCurrentProcessMemory()
++    #expect(result.physicalFootprint.bytes != nil)
++    #expect(result.physicalFootprintPeak.bytes != nil)
++    #expect(result.physicalFootprintPeak.bytes! >= result.physicalFootprint.bytes!)
++    #if os(iOS)
++      #expect(result.advisoryAvailableMemory.bytes != nil)
++    #else
++      #expect(
++        result.advisoryAvailableMemory
++          == .unavailable(
++            reason: .unsupportedPlatform, provenance: .osProcessAvailableMemory))
++    #endif
++  }
++
++  @Test("system sampling has bounded low-frequency overhead")
++  func systemSamplingOverhead() {
++    let service = SystemMemoryPlatformSamplingService()
++    let clock = ContinuousClock()
++    let startedAt = clock.now
++    var maximum = Duration.zero
++    for _ in 0..<256 {
++      let sampleStartedAt = clock.now
++      _ = service.sampleCurrentProcessMemory()
++      maximum = max(maximum, sampleStartedAt.duration(to: clock.now))
++    }
++    let total = startedAt.duration(to: clock.now)
++    print("MEMORY_SAMPLER_OVERHEAD samples=256 total=\(total) maximum=\(maximum)")
++    #expect(total < .seconds(2))
++    #expect(maximum < .seconds(1))
++  }
++
++  @Test("configuration rejects inverted hysteresis and unbounded history")
++  func configurationValidation() throws {
++    #expect(throws: MemoryWatermarkConfigurationError.invalidThresholdOrder) {
++      _ = try MemorySignalThresholds(
++        criticalEnterBytes: 10,
++        pressureEnterBytes: 9,
++        softEnterBytes: 30,
++        criticalExitBytes: 15,
++        pressureExitBytes: 25,
++        softExitBytes: 35)
++    }
++    #expect(throws: MemoryWatermarkConfigurationError.invalidHistoryLimit) {
++      _ = try configuration(historyLimit: 1_025)
++    }
++    #expect(throws: MemoryWatermarkConfigurationError.invalidDuration) {
++      _ = try configuration(minimumEventInterval: .zero)
++    }
++  }
++
++  @Test("each observation is fresh, complete, byte-unit evidence")
++  func freshObservationContract() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService([
++      sample(advisory: 900),
++      sample(advisory: nil),
++    ])
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(), platform: service, clock: clock)
++
++    let first = try observed(
++      await controller.observe(trigger: .admission, ledger: ledger(clock: clock)))
++    let second = try observed(
++      await controller.observe(trigger: .release, ledger: ledger(clock: clock)))
++
++    #expect(service.callCount == 2)
++    #expect(first.sequence == 1)
++    #expect(second.sequence == 2)
++    #expect(first.configurationGeneration == 1)
++    #expect(first.unit == .bytes)
++    #expect(first.physicalFootprint.bytes == 100)
++    #expect(first.physicalFootprintPeak.bytes == 120)
++    #expect(first.advisoryAvailableMemory.bytes == 900)
++    #expect(first.ledger == ledger(clock: clock))
++    #expect(first.ledger.provenance == .sharedMemoryLedger)
++    #expect(
++      second.advisoryAvailableMemory
++        == .unavailable(reason: .systemCallFailed, provenance: .osProcessAvailableMemory))
++  }
++
++  @Test("entry boundaries are inclusive and can jump directly to maximum severity")
++  func thresholdBoundaries() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(
++      Array(repeating: sample(), count: 6),
++      onSample: { clock.advance(by: .milliseconds(5)) })
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(), platform: service, clock: clock)
++
++    let soft = try observed(
++      await controller.observe(
++        trigger: .admission, ledger: ledger(clock: clock, committed: 970)))
++    #expect(soft.state == .soft)
++    #expect(soft.transition?.reason == .ledgerHeadroom)
++
++    let pressure = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 980)))
++    #expect(pressure.state == .pressure)
++
++    let critical = try observed(
++      await controller.observe(
++        trigger: .lifecycle, ledger: ledger(clock: clock, committed: 990)))
++    #expect(critical.state == .critical)
++
++    let noRecoveryAtEquality = try observed(
++      await controller.observe(
++        trigger: .admission, ledger: ledger(clock: clock, committed: 985)))
++    #expect(noRecoveryAtEquality.state == .critical)
++    let oneAbove = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 984)))
++    #expect(oneAbove.state == .pressure)
++  }
++
++  @Test("hysteresis blocks oscillation and recovery moves one state per dwell")
++  func hysteresisAndRecovery() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(
++      Array(repeating: sample(), count: 10),
++      onSample: { clock.advance(by: .milliseconds(5)) })
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(recoveryDwell: .seconds(10)),
++      platform: service,
++      clock: clock)
++    _ = try observed(
++      await controller.observe(
++        trigger: .admission, ledger: ledger(clock: clock, committed: 990)))
++
++    var observation = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 900)))
++    #expect(observation.state == .critical)
++    clock.advance(by: .seconds(9))
++    observation = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 900)))
++    #expect(observation.state == .critical)
++    clock.advance(by: .seconds(1))
++    observation = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 900)))
++    #expect(observation.transition == .init(from: .critical, to: .pressure, reason: .recovery))
++
++    clock.advance(by: .seconds(10))
++    observation = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 900)))
++    #expect(observation.state == .soft)
++    clock.advance(by: .seconds(10))
++    observation = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 900)))
++    #expect(observation.state == .normal)
++  }
++
++  @Test("stale, unavailable, and unacknowledged evidence cannot recover pressure")
++  func staleUnavailableAndAcknowledgementGates() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(
++      [
++        sample(), sample(advisory: nil), sample(), sample(),
++      ], onSample: { clock.advance(by: .milliseconds(5)) })
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(
++        maximumEvidenceAge: .seconds(5), recoveryDwell: .zero),
++      platform: service,
++      clock: clock)
++    _ = try observed(
++      await controller.observe(
++        trigger: .admission, ledger: ledger(clock: clock, committed: 980)))
++
++    var observation = try observed(
++      await controller.observe(
++        trigger: .release, ledger: ledger(clock: clock, committed: 900)))
++    #expect(observation.state == .pressure)
++    let stale = ledger(clock: clock, committed: 900)
++    clock.advance(by: .seconds(6))
++    observation = try observed(
++      await controller.observe(trigger: .release, ledger: stale))
++    #expect(observation.state == .pressure)
++    #expect(observation.ledger == .unavailable(.stale))
++
++    observation = try observed(
++      await controller.observe(
++        trigger: .release,
++        ledger: ledger(clock: clock, committed: 900),
++        actionsAcknowledged: false))
++    #expect(observation.state == .pressure)
++    let metrics = await controller.metrics()
++    #expect(metrics.staleLedgerSamples == 1)
++    #expect(metrics.unavailableSamples >= 2)
++  }
++
++  @Test("warning and cadence lanes coalesce bursts without losing warning severity")
++  func warningBurstAndCadenceBounds() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(Array(repeating: sample(), count: 5))
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(
++        cadence: .seconds(10), minimumEventInterval: .seconds(5)),
++      platform: service,
++      clock: clock)
++
++    _ = try observed(
++      await controller.observe(trigger: .cadence, ledger: ledger(clock: clock)))
++    _ = try observed(
++      await controller.observe(trigger: .admission, ledger: ledger(clock: clock)))
++    let warning = try observed(
++      await controller.observe(trigger: .memoryWarning, ledger: ledger(clock: clock)))
++    #expect(warning.state == .pressure)
++    #expect(warning.warningReceived)
++    #expect(warning.transition?.reason == .memoryWarning)
++    #expect(
++      try await controller.observe(trigger: .memoryWarning, ledger: ledger(clock: clock))
++        == .rateLimited(currentState: .pressure))
++    #expect(
++      try await controller.observe(trigger: .cadence, ledger: ledger(clock: clock))
++        == .rateLimited(currentState: .pressure))
++    #expect(service.callCount == 3)
++  }
++
++  @Test("a fresh warning is a pressure floor during otherwise eligible recovery")
++  func warningCannotRecoverBelowPressure() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(Array(repeating: sample(), count: 3))
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(recoveryDwell: .zero),
++      platform: service,
++      clock: clock)
++
++    _ = try observed(
++      await controller.observe(
++        trigger: .admission, ledger: ledger(clock: clock, committed: 990)))
++    clock.advance(by: .milliseconds(5))
++
++    let recoveryToFloor = try observed(
++      await controller.observe(
++        trigger: .memoryWarning, ledger: ledger(clock: clock, committed: 900)))
++    #expect(
++      recoveryToFloor.transition
++        == .init(from: .critical, to: .pressure, reason: .recovery))
++    clock.advance(by: .milliseconds(5))
++
++    let warningAtFloor = try observed(
++      await controller.observe(
++        trigger: .memoryWarning, ledger: ledger(clock: clock, committed: 900)))
++
++    #expect(warningAtFloor.state == .pressure)
++    #expect(warningAtFloor.transition == nil)
++    #expect(warningAtFloor.warningReceived)
++  }
++
++  @Test("configuration replacement is monotonic and changes bounded history capacity")
++  func configurationReplacement() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(Array(repeating: sample(), count: 5))
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(historyLimit: 4), platform: service, clock: clock)
++    _ = try observed(
++      await controller.observe(trigger: .admission, ledger: ledger(clock: clock)))
++
++    await #expect(
++      throws: MemoryWatermarkConfigurationError.generationMustIncrease(
++        current: 1, proposed: 1
++      )
++    ) {
++      try await controller.replaceConfiguration(try configuration(generation: 1))
++    }
++    try await controller.replaceConfiguration(try configuration(generation: 2, historyLimit: 2))
++    for trigger in [MemoryObservationTrigger.configurationReplacement, .release, .admission] {
++      _ = try observed(
++        await controller.observe(trigger: trigger, ledger: ledger(clock: clock)))
++    }
++    let history = await controller.retainedHistory()
++    #expect(history.count == 2)
++    #expect(history.allSatisfy { $0.configurationGeneration == 2 })
++    #expect((await controller.metrics()).retainedHistoryCapacity == 2)
++  }
++
++  @Test("concurrent observations serialize into one gap-free generation")
++  func concurrentObservations() async throws {
++    let count = 64
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(
++      Array(repeating: sample(), count: count),
++      onSample: { clock.advance(by: .milliseconds(5)) })
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(historyLimit: count), platform: service, clock: clock)
++
++    try await withThrowingTaskGroup(of: Void.self) { group in
++      for _ in 0..<count {
++        group.addTask {
++          _ = try await controller.observe(
++            trigger: .admission, ledger: ledger(clock: clock))
++        }
++      }
++      try await group.waitForAll()
++    }
++    let history = await controller.retainedHistory()
++    #expect(history.map(\.sequence) == Array(1...UInt64(count)))
++    #expect(history.allSatisfy { $0.stateGeneration == 0 && $0.state == .normal })
++    #expect(service.callCount == count)
++  }
++
++  @Test("overflow and late sampling become explicit unavailable evidence")
++  func overflowAndSamplingOverrun() async throws {
++    let clock = ManualMemoryClock()
++    let service = ScriptedMemoryService(
++      [
++        sample(), sample(),
++      ], onSample: { clock.advance(by: .milliseconds(2)) })
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(maximumSamplingDuration: .milliseconds(1)),
++      platform: service,
++      clock: clock)
++
++    let overflow = MemoryLedgerSnapshot(
++      capturedAt: clock.now(), currentBytes: .max, reservedBytes: 1,
++      committedBytes: .max, peakBytes: .max)
++    let observation = try observed(
++      await controller.observe(trigger: .admission, ledger: .available(overflow)))
++    #expect(observation.ledger == .unavailable(.malformed))
++    #expect(
++      observation.advisoryAvailableMemory
++        == .unavailable(
++          reason: .executionTimeExceeded, provenance: .osProcessAvailableMemory))
++    let metrics = await controller.metrics()
++    #expect(metrics.samplingOverruns == 1)
++    #expect(metrics.unavailableSamples == 4)
++  }
++
++  @Test("metrics expose fixed aggregate cardinality and retain no traffic labels")
++  func redactedMetrics() async throws {
++    let clock = ManualMemoryClock()
++    let controller = MemoryWatermarkController(
++      configuration: try configuration(),
++      platform: ScriptedMemoryService([sample()]),
++      clock: clock)
++    _ = try observed(
++      await controller.observe(trigger: .admission, ledger: ledger(clock: clock)))
++    let metrics = await controller.metrics()
++
++    #expect(Set(metrics.transitionCounts.keys) == Set(MemoryWatermarkState.allCases))
++    #expect(metrics.transitionCounts.count == 4)
++    #expect(metrics.retainedHistoryCount == 1)
++    #expect(!String(reflecting: metrics).contains("example.com"))
++    #expect(MemoryObservationProvenance.allCases.count == 3)
++    #expect(MemorySampleUnavailableReason.allCases.count == 6)
++  }
++}
++
++private func observed(_ disposition: MemoryObservationDisposition) throws -> MemoryObservation {
++  guard case .observed(let observation) = disposition else {
++    Issue.record("Expected an accepted observation")
++    throw MemoryWatermarkTestError.rateLimited
++  }
++  return observation
++}
++
++private enum MemoryWatermarkTestError: Error { case rateLimited }
++
++private func thresholds() throws -> MemorySignalThresholds {
++  try MemorySignalThresholds(
++    criticalEnterBytes: 10,
++    pressureEnterBytes: 20,
++    softEnterBytes: 30,
++    criticalExitBytes: 15,
++    pressureExitBytes: 25,
++    softExitBytes: 35)
++}
++
++private func configuration(
++  generation: UInt64 = 1,
++  cadence: Duration = .seconds(1),
++  minimumEventInterval: Duration = .milliseconds(5),
++  maximumEvidenceAge: Duration = .seconds(30),
++  maximumSamplingDuration: Duration = .milliseconds(5),
++  recoveryDwell: Duration = .zero,
++  historyLimit: Int = 16
++) throws -> MemoryWatermarkConfiguration {
++  try MemoryWatermarkConfiguration(
++    generation: generation,
++    deviceBaselineBytes: 1_000,
++    globalLedgerCeilingBytes: 1_000,
++    ledgerHeadroom: thresholds(),
++    physicalHeadroom: thresholds(),
++    advisoryAvailable: thresholds(),
++    cadence: cadence,
++    minimumEventInterval: minimumEventInterval,
++    maximumEvidenceAge: maximumEvidenceAge,
++    maximumSamplingDuration: maximumSamplingDuration,
++    recoveryDwell: recoveryDwell,
++    historyLimit: historyLimit)
++}
++
++private func ledger(
++  clock: ManualMemoryClock,
++  current: UInt64 = 50,
++  reserved: UInt64? = nil,
++  committed: UInt64 = 50,
++  peak: UInt64 = 60
++) -> MemoryLedgerAvailability {
++  .available(
++    MemoryLedgerSnapshot(
++      capturedAt: clock.now(),
++      currentBytes: current,
++      reservedBytes: reserved ?? committed,
++      committedBytes: committed,
++      peakBytes: max(peak, max(current, committed))))
++}
++
++private func sample(
++  footprint: UInt64 = 100,
++  peak: UInt64 = 120,
++  advisory: UInt64? = 900
++) -> MemoryPlatformSample {
++  MemoryPlatformSample(
++    physicalFootprint: .available(
++      bytes: footprint, provenance: .taskVMPhysicalFootprint),
++    physicalFootprintPeak: .available(
++      bytes: peak, provenance: .taskVMPhysicalFootprint),
++    advisoryAvailableMemory: advisory.map {
++      .available(bytes: $0, provenance: .osProcessAvailableMemory)
++    }
++      ?? .unavailable(
++        reason: .systemCallFailed, provenance: .osProcessAvailableMemory))
++}
++
++private final class ScriptedMemoryService: MemoryPlatformSamplingService, @unchecked Sendable {
++  private struct State {
++    var samples: [MemoryPlatformSample]
++    var index = 0
++  }
++
++  private let state: Mutex<State>
++  private let onSample: @Sendable () -> Void
++
++  init(
++    _ samples: [MemoryPlatformSample],
++    onSample: @escaping @Sendable () -> Void = {}
++  ) {
++    precondition(!samples.isEmpty)
++    self.state = Mutex(State(samples: samples))
++    self.onSample = onSample
++  }
++
++  var callCount: Int { state.withLock(\.index) }
++
++  func sampleCurrentProcessMemory() -> MemoryPlatformSample {
++    onSample()
++    return state.withLock { state in
++      let sample = state.samples[min(state.index, state.samples.count - 1)]
++      state.index += 1
++      return sample
++    }
++  }
++}
++
++private final class ManualMemoryClock: TunnelClock, @unchecked Sendable {
++  private let instant = Mutex(ContinuousClock().now)
++
++  func now() -> ContinuousClock.Instant { instant.withLock { $0 } }
++
++  func sleep(for duration: Duration) async throws {
++    instant.withLock { $0 = $0.advanced(by: duration) }
++  }
++
++  func advance(by duration: Duration) {
++    instant.withLock { $0 = $0.advanced(by: duration) }
++  }
++}
+diff --git a/Tests/ReluxTunnelCoreTests/SSHReceiveWindowBudgetPolicyTests.swift b/Tests/ReluxTunnelCoreTests/SSHReceiveWindowBudgetPolicyTests.swift
+new file mode 100644
+index 0000000..e4afc4d
+--- /dev/null
++++ b/Tests/ReluxTunnelCoreTests/SSHReceiveWindowBudgetPolicyTests.swift
+@@ -0,0 +1,453 @@
++import Foundation
++import Testing
++
++@testable import ReluxTunnelCore
++
++@Suite("Per-channel receive-window and budget policy")
++struct SSHReceiveWindowBudgetPolicyTests {
++  @Test("table vectors select every class including 32 KiB, 64 KiB, BDP, and relay burst")
++  func classVectors() throws {
++    let configuration = try fixtureConfiguration()
++    let cases: [(SSHReceiveWindowClass, SSHBulkPathMeasurement?, Int)] = [
++      (.control, nil, 32 * 1_024),
++      (.ordinary, nil, 64 * 1_024),
++      (
++        .bulk,
++        SSHBulkPathMeasurement(
++          bandwidthBitsPerSecond: 8_000_000,
++          roundTripTimeNanoseconds: 64_000_000),
++        64_000
++      ),
++      (.relay, nil, 32 * 1_024 + 4 * (4 + 1_472)),
++    ]
++
++    for (channelClass, measurement, expected) in cases {
++      #expect(
++        try SSHReceiveWindowBudgetLedger.initialCandidate(
++          for: channelClass,
++          measurement: measurement,
++          configuration: configuration) == expected)
++    }
++  }
++
++  @Test("BDP caps inputs before saturating arithmetic and applies inclusive bounds")
++  func bdpBoundaryAndOverflow() throws {
++    let configuration = try fixtureConfiguration(
++      maximumMeasuredBandwidthBitsPerSecond: .max,
++      maximumMeasuredRTTNanoseconds: .max)
++    #expect(
++      try SSHReceiveWindowBudgetLedger.initialCandidate(
++        for: .bulk,
++        measurement: SSHBulkPathMeasurement(
++          bandwidthBitsPerSecond: 1,
++          roundTripTimeNanoseconds: 1),
++        configuration: configuration) == 32 * 1_024)
++    #expect(
++      try SSHReceiveWindowBudgetLedger.initialCandidate(
++        for: .bulk,
++        measurement: SSHBulkPathMeasurement(
++          bandwidthBitsPerSecond: .max,
++          roundTripTimeNanoseconds: .max),
++        configuration: configuration) == 256 * 1_024)
++
++    let capped = try fixtureConfiguration(
++      maximumMeasuredBandwidthBitsPerSecond: 8_000_000,
++      maximumMeasuredRTTNanoseconds: 64_000_000)
++    let uncappedMaximum = try SSHReceiveWindowBudgetLedger.initialCandidate(
++      for: .bulk,
++      measurement: SSHBulkPathMeasurement(
++        bandwidthBitsPerSecond: .max,
++        roundTripTimeNanoseconds: .max),
++      configuration: capped)
++    let explicitCaps = try SSHReceiveWindowBudgetLedger.initialCandidate(
++      for: .bulk,
++      measurement: SSHBulkPathMeasurement(
++        bandwidthBitsPerSecond: 8_000_000,
++        roundTripTimeNanoseconds: 64_000_000),
++      configuration: capped)
++    #expect(uncappedMaximum == explicitCaps)
++  }
++
++  @Test("initial reservations fit channel, lane, global-window, and global-ledger ceilings")
++  func reservationCeilings() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++    let decision = try ledger.reserveInitial(
++      channel: fixtureChannel(1), lane: lane.identity, channelClass: .ordinary,
++      generation: 7)
++    let snapshot = ledger.snapshot()
++    #expect(decision.initialWindowBytes == 64 * 1_024)
++    #expect(snapshot.managedWindowReservedBytes == decision.initialWindowBytes)
++    #expect(snapshot.globalWindowReservedBytes <= ledger.configuration.globalWindowCeilingBytes)
++    #expect(snapshot.ledgerCommittedBytes <= ledger.configuration.globalLedgerCeilingBytes)
++    #expect(
++      snapshot.laneWindowReservedBytes[lane.identity, default: .max]
++        <= ledger.configuration.perLaneWindowCeilingBytes)
++
++    var laneLimited = try fixtureLedger(
++      lane: SSHReceiveWindowLane(
++        identity: lane.identity,
++        generation: 7,
++        state: .ready,
++        externallyReservedWindowBytes: 256 * 1_024 - 32 * 1_024))
++    #expect(throws: SSHReceiveWindowRefusal.perLaneCeiling) {
++      _ = try laneLimited.reserveInitial(
++        channel: fixtureChannel(2), lane: lane.identity, channelClass: .ordinary,
++        generation: 7)
++    }
++    #expect(laneLimited.snapshot().reservedChannelCount == 0)
++
++    var globalLimited = try fixtureLedger(
++      lane: lane,
++      otherGlobalWindowReservedBytes: 1_024 * 1_024 - 32 * 1_024)
++    #expect(throws: SSHReceiveWindowRefusal.globalWindowCeiling) {
++      _ = try globalLimited.reserveInitial(
++        channel: fixtureChannel(3), lane: lane.identity, channelClass: .ordinary,
++        generation: 7)
++    }
++
++    var ledgerLimited = try fixtureLedger(
++      lane: lane,
++      otherLedgerCommittedBytes: 2 * 1_024 * 1_024 - 64 * 1_024)
++    #expect(throws: SSHReceiveWindowRefusal.globalLedgerCeiling) {
++      _ = try ledgerLimited.reserveInitial(
++        channel: fixtureChannel(4), lane: lane.identity, channelClass: .ordinary,
++        generation: 7)
++    }
++  }
++
++  @Test("adjustment requires low water and atomically reserves all available bounded credit")
++  func adjustmentPolicy() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++    let channel = fixtureChannel(10)
++    let initial = try ledger.reserveInitial(
++      channel: channel, lane: lane.identity, channelClass: .control, generation: 7)
++    #expect(throws: SSHReceiveWindowRefusal.aboveLowWater) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 16 * 1_024 + 1)
++    }
++
++    let adjustment = try ledger.reserveAdjustment(
++      channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 16 * 1_024)
++    #expect(adjustment.adjustmentBytes == 32 * 1_024)
++    #expect(adjustment.afterOutstandingCreditBytes == 48 * 1_024)
++    #expect(ledger.snapshot().managedWindowReservedBytes == 64 * 1_024)
++    #expect(initial.maximumAdvertisedWindowBytes == 64 * 1_024)
++    #expect(throws: SSHReceiveWindowRefusal.noCreditNeeded) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++    }
++    #expect(ledger.snapshot().managedWindowReservedBytes == 64 * 1_024)
++  }
++
++  @Test("insufficient window reservation withholds adjustment without a side queue")
++  func insufficientAdjustmentReservation() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(
++      lane: lane,
++      otherGlobalWindowReservedBytes: 1_024 * 1_024 - 32 * 1_024)
++    let channel = fixtureChannel(15)
++    _ = try ledger.reserveInitial(
++      channel: channel, lane: lane.identity, channelClass: .control, generation: 7)
++    let before = ledger.snapshot()
++    #expect(throws: SSHReceiveWindowRefusal.insufficientReservation) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++    }
++    let after = ledger.snapshot()
++    #expect(after.managedWindowReservedBytes == before.managedWindowReservedBytes)
++    #expect(after.metrics.adjustmentReservations == 0)
++    #expect(after.metrics.refusals[.insufficientReservation] == 1)
++  }
++
++  @Test("pressure, rekey, failure, closing, stale generation, and late callbacks reject credit")
++  func negativeGates() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++    let channel = fixtureChannel(20)
++    _ = try ledger.reserveInitial(
++      channel: channel, lane: lane.identity, channelClass: .control, generation: 7)
++
++    ledger.setPressure(.pressure)
++    #expect(throws: SSHReceiveWindowRefusal.memoryPressure) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++    }
++    #expect(throws: SSHReceiveWindowRefusal.memoryPressure) {
++      _ = try ledger.reserveInitial(
++        channel: fixtureChannel(21), lane: lane.identity, channelClass: .ordinary,
++        generation: 7)
++    }
++    _ = try ledger.reserveInitial(
++      channel: fixtureChannel(22), lane: lane.identity, channelClass: .relay,
++      generation: 7)
++
++    ledger.setPressure(.normal)
++    try ledger.setLaneState(.rekeying, lane: lane.identity, generation: 7)
++    #expect(throws: SSHReceiveWindowRefusal.laneUnavailable) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++    }
++    for (index, state) in [
++      SSHReceiveWindowLaneState.failed, .closing, .closed,
++    ].enumerated() {
++      try ledger.setLaneState(state, lane: lane.identity, generation: 7)
++      #expect(throws: SSHReceiveWindowRefusal.laneUnavailable) {
++        _ = try ledger.reserveInitial(
++          channel: fixtureChannel(30 + index), lane: lane.identity,
++          channelClass: .control, generation: 7)
++      }
++    }
++    #expect(throws: SSHReceiveWindowRefusal.staleGeneration) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 6, outstandingAdvertisedCreditBytes: 0)
++    }
++    _ = ledger.release(channel: channel, cause: .normalClose)
++    #expect(throws: SSHReceiveWindowRefusal.staleGeneration) {
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++    }
++  }
++
++  @Test("soft pressure caps only new windows and never revokes existing credit")
++  func softPressureDoesNotRevoke() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++    let existing = fixtureChannel(40)
++    _ = try ledger.reserveInitial(
++      channel: existing,
++      lane: lane.identity,
++      channelClass: .ordinary,
++      generation: 7)
++    let before = ledger.snapshot().managedWindowReservedBytes
++    ledger.setPressure(.soft)
++    let new = try ledger.reserveInitial(
++      channel: fixtureChannel(41), lane: lane.identity, channelClass: .ordinary,
++      generation: 7)
++    #expect(new.initialWindowBytes == 32 * 1_024)
++    #expect(ledger.snapshot().managedWindowReservedBytes == before + 32 * 1_024)
++  }
++
++  @Test("release is exact and idempotent for every lifecycle cause")
++  func lifecycleReconciliation() throws {
++    for (index, cause) in SSHReceiveWindowReleaseCause.allCases.enumerated() {
++      let lane = fixtureLane()
++      var ledger = try fixtureLedger(lane: lane)
++      let channel = fixtureChannel(100 + index)
++      let initial = try ledger.reserveInitial(
++        channel: channel, lane: lane.identity, channelClass: .control,
++        generation: 7)
++      _ = try ledger.reserveAdjustment(
++        channel: channel, generation: 7, outstandingAdvertisedCreditBytes: 0)
++      let charged = ledger.snapshot().ledgerCommittedBytes
++      let release = ledger.release(channel: channel, cause: cause)
++      let duplicate = ledger.release(channel: channel, cause: .lateCallback)
++      #expect(release.releasedLedgerBytes == initial.ledgerChargeBytes + 32 * 1_024)
++      #expect(release.releasedLedgerBytes == charged)
++      #expect(!release.wasAlreadyReleased)
++      #expect(duplicate.wasAlreadyReleased)
++      #expect(duplicate.releasedLedgerBytes == 0)
++      #expect(ledger.snapshot().ledgerCommittedBytes == 0)
++      #expect(ledger.snapshot().managedWindowReservedBytes == 0)
++    }
++  }
++
++  @Test("rekey preserves reservations and lane failure releases them exactly once")
++  func rekeyAndLaneFailureReconciliation() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++    for index in 0..<3 {
++      _ = try ledger.reserveInitial(
++        channel: fixtureChannel(500 + index),
++        lane: lane.identity,
++        channelClass: .control,
++        generation: 7)
++    }
++    let beforeRekey = ledger.snapshot()
++    try ledger.setLaneState(.rekeying, lane: lane.identity, generation: 7)
++    #expect(ledger.snapshot().ledgerCommittedBytes == beforeRekey.ledgerCommittedBytes)
++    #expect(ledger.snapshot().managedWindowReservedBytes == beforeRekey.managedWindowReservedBytes)
++    try ledger.setLaneState(.failed, lane: lane.identity, generation: 7)
++    let releases = ledger.releaseLane(lane.identity)
++    #expect(releases.count == 3)
++    #expect(releases.reduce(0) { $0 + $1.releasedLedgerBytes } == beforeRekey.ledgerCommittedBytes)
++    #expect(ledger.releaseLane(lane.identity).isEmpty)
++    #expect(ledger.snapshot().ledgerCommittedBytes == 0)
++  }
++
++  @Test("randomized opens, adjustments, and releases preserve every ledger invariant")
++  func randomizedLedgerInvariant() throws {
++    let lane = fixtureLane()
++    var ledger = try fixtureLedger(lane: lane)
++    var random = LCG(state: 0x3A71_2607_15)
++    var live: [SSHChannelIdentity] = []
++    for iteration in 0..<2_000 {
++      if live.isEmpty || (random.next() % 3 == 0 && live.count < 12) {
++        let channel = fixtureChannel(1_000 + iteration)
++        if (try? ledger.reserveInitial(
++          channel: channel,
++          lane: lane.identity,
++          channelClass: SSHReceiveWindowClass.allCases[Int(random.next() % 4)],
++          generation: 7,
++          bulkMeasurement: SSHBulkPathMeasurement(
++            bandwidthBitsPerSecond: random.next(),
++            roundTripTimeNanoseconds: random.next()))) != nil
++        {
++          live.append(channel)
++        }
++      } else if random.next() % 2 == 0 {
++        let index = Int(random.next() % UInt64(live.count))
++        _ = try? ledger.reserveAdjustment(
++          channel: live[index], generation: 7,
++          outstandingAdvertisedCreditBytes: Int(random.next() % UInt64(16 * 1_024 + 1)))
++      } else {
++        let index = Int(random.next() % UInt64(live.count))
++        _ = ledger.release(channel: live.remove(at: index), cause: .normalClose)
++      }
++      let snapshot = ledger.snapshot()
++      #expect(snapshot.globalWindowReservedBytes <= ledger.configuration.globalWindowCeilingBytes)
++      #expect(snapshot.ledgerCommittedBytes <= ledger.configuration.globalLedgerCeilingBytes)
++      #expect(
++        snapshot.laneWindowReservedBytes[lane.identity, default: .max]
++          <= ledger.configuration.perLaneWindowCeilingBytes)
++    }
++  }
++
++  @Test("configuration rejects invalid candidates, missing classes, and overflow")
++  func configurationNegativeEvidence() throws {
++    #expect(
++      throws: SSHReceiveWindowConfigurationError.invalidCandidate("controlInitialWindowBytes")
++    ) {
++      _ = try fixtureConfiguration(controlInitialWindowBytes: 48 * 1_024)
++    }
++    var limits = fixtureClassLimits()
++    limits.removeValue(forKey: .relay)
++    #expect(throws: SSHReceiveWindowConfigurationError.missingClass(.relay)) {
++      _ = try fixtureConfiguration(classLimits: limits)
++    }
++    limits = fixtureClassLimits()
++    limits[.bulk] = SSHReceiveWindowClassLimits(
++      maximumAdvertisedWindowBytes: 256 * 1_024,
++      lowWaterBytes: 16 * 1_024,
++      readBufferCapacityBytes: Int.max,
++      writeCapacityBytes: 1,
++      metadataCapacityBytes: 1)
++    #expect(
++      throws: SSHReceiveWindowConfigurationError.arithmeticOverflow("classCapacity.bulk")
++    ) {
++      _ = try fixtureConfiguration(classLimits: limits)
++    }
++    let oversized = Int(UInt32.max) + 1
++    #expect(
++      throws: SSHReceiveWindowConfigurationError.inconsistentBounds("protocolWindowCeiling")
++    ) {
++      _ = try SSHReceiveWindowBudgetConfiguration(
++        controlInitialWindowBytes: 32 * 1_024,
++        ordinaryInitialWindowBytes: 64 * 1_024,
++        bulkMinimumWindowBytes: 32 * 1_024,
++        bulkMaximumWindowBytes: 256 * 1_024,
++        maximumMeasuredBandwidthBitsPerSecond: 1,
++        maximumMeasuredRTTNanoseconds: 1,
++        relayControlWindowBytes: 32 * 1_024,
++        relayBurstDatagramCount: 1,
++        relayMaximumFrameBodyBytes: 1,
++        relayMaximumWindowBytes: 64 * 1_024,
++        softInitialWindowCapBytes: 32 * 1_024,
++        perChannelWindowCeilingBytes: oversized,
++        perLaneWindowCeilingBytes: oversized,
++        globalWindowCeilingBytes: oversized,
++        globalLedgerCeilingBytes: oversized,
++        classLimits: fixtureClassLimits())
++    }
++  }
++}
++
++private struct LCG {
++  var state: UInt64
++
++  mutating func next() -> UInt64 {
++    state = state &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
++    return state
++  }
++}
++
++private func fixtureLane() -> SSHReceiveWindowLane {
++  SSHReceiveWindowLane(
++    identity: SSHLaneIdentity(
++      rawValue: UUID(uuidString: "00000000-0000-0000-0000-000000000007")!),
++    generation: 7,
++    state: .ready)
++}
++
++private func fixtureChannel(_ value: Int) -> SSHChannelIdentity {
++  SSHChannelIdentity(
++    rawValue: UUID(uuidString: String(format: "00000000-0000-0000-0000-%012x", value))!)
++}
++
++private func fixtureClassLimits() -> [SSHReceiveWindowClass: SSHReceiveWindowClassLimits] {
++  [
++    .control: SSHReceiveWindowClassLimits(
++      maximumAdvertisedWindowBytes: 64 * 1_024,
++      lowWaterBytes: 16 * 1_024,
++      readBufferCapacityBytes: 16 * 1_024,
++      writeCapacityBytes: 16 * 1_024,
++      metadataCapacityBytes: 1 * 1_024),
++    .ordinary: SSHReceiveWindowClassLimits(
++      maximumAdvertisedWindowBytes: 64 * 1_024,
++      lowWaterBytes: 16 * 1_024,
++      readBufferCapacityBytes: 16 * 1_024,
++      writeCapacityBytes: 16 * 1_024,
++      metadataCapacityBytes: 1 * 1_024),
++    .bulk: SSHReceiveWindowClassLimits(
++      maximumAdvertisedWindowBytes: 256 * 1_024,
++      lowWaterBytes: 16 * 1_024,
++      readBufferCapacityBytes: 32 * 1_024,
++      writeCapacityBytes: 32 * 1_024,
++      metadataCapacityBytes: 1 * 1_024),
++    .relay: SSHReceiveWindowClassLimits(
++      maximumAdvertisedWindowBytes: 128 * 1_024,
++      lowWaterBytes: 16 * 1_024,
++      readBufferCapacityBytes: 32 * 1_024,
++      writeCapacityBytes: 32 * 1_024,
++      metadataCapacityBytes: 1 * 1_024),
++  ]
++}
++
++private func fixtureConfiguration(
++  controlInitialWindowBytes: Int = 32 * 1_024,
++  maximumMeasuredBandwidthBitsPerSecond: UInt64 = 1_000_000_000,
++  maximumMeasuredRTTNanoseconds: UInt64 = 1_000_000_000,
++  classLimits: [SSHReceiveWindowClass: SSHReceiveWindowClassLimits] = fixtureClassLimits()
++) throws -> SSHReceiveWindowBudgetConfiguration {
++  try SSHReceiveWindowBudgetConfiguration(
++    controlInitialWindowBytes: controlInitialWindowBytes,
++    ordinaryInitialWindowBytes: 64 * 1_024,
++    bulkMinimumWindowBytes: 32 * 1_024,
++    bulkMaximumWindowBytes: 256 * 1_024,
++    maximumMeasuredBandwidthBitsPerSecond: maximumMeasuredBandwidthBitsPerSecond,
++    maximumMeasuredRTTNanoseconds: maximumMeasuredRTTNanoseconds,
++    relayControlWindowBytes: 32 * 1_024,
++    relayBurstDatagramCount: 4,
++    relayMaximumFrameBodyBytes: 1_472,
++    relayMaximumWindowBytes: 128 * 1_024,
++    softInitialWindowCapBytes: 32 * 1_024,
++    perChannelWindowCeilingBytes: 256 * 1_024,
++    perLaneWindowCeilingBytes: 256 * 1_024,
++    globalWindowCeilingBytes: 1_024 * 1_024,
++    globalLedgerCeilingBytes: 2 * 1_024 * 1_024,
++    classLimits: classLimits)
++}
++
++private func fixtureLedger(
++  lane: SSHReceiveWindowLane,
++  otherLedgerCommittedBytes: Int = 0,
++  otherGlobalWindowReservedBytes: Int = 0
++) throws -> SSHReceiveWindowBudgetLedger {
++  try SSHReceiveWindowBudgetLedger(
++    configuration: fixtureConfiguration(),
++    generation: 7,
++    lanes: [lane],
++    otherLedgerCommittedBytes: otherLedgerCommittedBytes,
++    otherGlobalWindowReservedBytes: otherGlobalWindowReservedBytes)
++}
+diff --git a/Tests/ReluxTunnelLibSSH2AdapterTests/LibSSH2WindowPolicyAdapterTests.swift b/Tests/ReluxTunnelLibSSH2AdapterTests/LibSSH2WindowPolicyAdapterTests.swift
+new file mode 100644
+index 0000000..c51eeac
+--- /dev/null
++++ b/Tests/ReluxTunnelLibSSH2AdapterTests/LibSSH2WindowPolicyAdapterTests.swift
+@@ -0,0 +1,77 @@
++import Foundation
++import ReluxTunnelCore
++import Testing
++
++@testable import ReluxTunnelLibSSH2Adapter
++
++@Suite("Selected libssh2 receive-window adapter")
++struct LibSSH2WindowPolicyAdapterTests {
++  @Test("channel-open conversion preserves every bounded class initial window")
++  func selectedAdapterInitialWindows() throws {
++    let configuration = try adapterWindowConfiguration()
++    let lane = SSHReceiveWindowLane(
++      identity: SSHLaneIdentity(
++        rawValue: UUID(uuidString: "00000000-0000-0000-0000-000000000099")!),
++      generation: 9,
++      state: .ready)
++    var ledger = try SSHReceiveWindowBudgetLedger(
++      configuration: configuration, generation: 9, lanes: [lane])
++    let vectors: [(SSHReceiveWindowClass, SSHBulkPathMeasurement?)] = [
++      (.control, nil),
++      (.ordinary, nil),
++      (
++        .bulk,
++        SSHBulkPathMeasurement(
++          bandwidthBitsPerSecond: 8_000_000,
++          roundTripTimeNanoseconds: 64_000_000)
++      ),
++      (.relay, nil),
++    ]
++
++    for (index, vector) in vectors.enumerated() {
++      let decision = try ledger.reserveInitial(
++        channel: SSHChannelIdentity(
++          rawValue: UUID(
++            uuidString: String(format: "00000000-0000-0000-0001-%012x", index))!),
++        lane: lane.identity,
++        channelClass: vector.0,
++        generation: 9,
++        bulkMeasurement: vector.1)
++      let policy = try decision.channelPolicy(consumerCreditAvailability: .unsupported)
++      #expect(
++        LibSSH2ChannelWindowAdapter.initialReceiveWindow(policy)
++          == UInt32(decision.initialWindowBytes))
++      #expect(policy.consumerReceiveWindowCredit == .unsupported)
++    }
++    #expect(
++      LibSSH2TransportFactory().capabilities.deferredSemantics.consumerDrivenReceiveWindowCredit
++        == .unsupported)
++  }
++}
++
++private func adapterWindowConfiguration() throws -> SSHReceiveWindowBudgetConfiguration {
++  let common = SSHReceiveWindowClassLimits(
++    maximumAdvertisedWindowBytes: 256 * 1_024,
++    lowWaterBytes: 16 * 1_024,
++    readBufferCapacityBytes: 16 * 1_024,
++    writeCapacityBytes: 16 * 1_024,
++    metadataCapacityBytes: 1 * 1_024)
++  return try SSHReceiveWindowBudgetConfiguration(
++    controlInitialWindowBytes: 32 * 1_024,
++    ordinaryInitialWindowBytes: 64 * 1_024,
++    bulkMinimumWindowBytes: 32 * 1_024,
++    bulkMaximumWindowBytes: 256 * 1_024,
++    maximumMeasuredBandwidthBitsPerSecond: 1_000_000_000,
++    maximumMeasuredRTTNanoseconds: 1_000_000_000,
++    relayControlWindowBytes: 32 * 1_024,
++    relayBurstDatagramCount: 4,
++    relayMaximumFrameBodyBytes: 1_472,
++    relayMaximumWindowBytes: 128 * 1_024,
++    softInitialWindowCapBytes: 32 * 1_024,
++    perChannelWindowCeilingBytes: 256 * 1_024,
++    perLaneWindowCeilingBytes: 1_024 * 1_024,
++    globalWindowCeilingBytes: 2 * 1_024 * 1_024,
++    globalLedgerCeilingBytes: 4 * 1_024 * 1_024,
++    classLimits: Dictionary(
++      uniqueKeysWithValues: SSHReceiveWindowClass.allCases.map { ($0, common) }))
++}

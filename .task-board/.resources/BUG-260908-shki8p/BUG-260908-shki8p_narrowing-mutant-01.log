@@ -1,0 +1,35 @@
+Building for debugging...
+[0/7] Write sources
+[1/7] Write swift-version-45881B103DA9D485.txt
+[3/7] Compiling ReluxTunnelCore TunnelRuntimeCoordinator.swift
+[4/7] Emitting module ReluxTunnelCore
+[4/9] Write Objects.LinkFileList
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[6/9] Linking ReluxTunnelHarness
+[7/9] Applying ReluxTunnelHarness
+ld: warning: reducing alignment of section __DATA,__common from 0x8000 to 0x4000 because it exceeds segment maximum alignment
+[8/9] Linking ReluxTunnelPackageTests
+Build complete! (2.39s)
+Test Suite 'Selected tests' started at 2026-09-08 04:25:23.978.
+Test Suite 'ReluxTunnelPackageTests.xctest' started at 2026-09-08 04:25:23.987.
+Test Suite 'ReluxTunnelPackageTests.xctest' passed at 2026-09-08 04:25:23.987.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-08 04:25:23.987.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.009) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "Tunnel runtime coordinator" started.
+􀟈  Test "caller cancellation during startup completion owns cleanup" started.
+􀟈  Test "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .beforeSSH to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .beforeDNS to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .beforeTCP to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .beforePacketPreparation to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􀟈  Test case passing 1 argument point → .duringConfiguration to "caller cancellation crosses every mapped acquisition and cleanup remains shielded" started.
+􁁛  Test "caller cancellation during startup completion owns cleanup" passed after 0.001 seconds.
+􀢄  Test "caller cancellation crosses every mapped acquisition and cleanup remains shielded" recorded an issue with 1 argument point → .duringConfiguration at TunnelRuntimeCoordinatorTests.swift:329:11: Expectation failed: expected error of type CancellationError, but ".startupFailed(ReluxTunnelCore.RedactedRuntimeError(domain: ReluxTunnelCore.RuntimeErrorDomain.configuration, code: ReluxTunnelCore.RedactedRuntimeErrorCode(rawValue: "configuration_invalid")))" of type TunnelRuntimeCoordinatorError was thrown instead
+􀢄  Test "caller cancellation crosses every mapped acquisition and cleanup remains shielded" recorded an issue with 1 argument point → .duringConfiguration at TunnelRuntimeCoordinatorTests.swift:332:5: Expectation failed: await fixture.coordinator.coordinatorState() == .disconnected
+􀢄  Test "caller cancellation crosses every mapped acquisition and cleanup remains shielded" with 5 test cases failed after 0.002 seconds with 2 issues.
+􀢄  Suite "Tunnel runtime coordinator" failed after 0.002 seconds with 2 issues.
+􀢄  Test run with 2 tests in 1 suite failed after 0.002 seconds with 2 issues.

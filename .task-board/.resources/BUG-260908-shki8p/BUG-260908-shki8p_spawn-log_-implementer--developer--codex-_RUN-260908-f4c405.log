@@ -1,0 +1,823 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-23tefs/worktree
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07e6a-6613-7562-b696-3e1296067de7
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(BUG-260908-shki8p, status=development)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `developer` (`implementer`) — Writes code, fixes bugs, writes tests
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `swiftui`: `/Users/iv/.claude/skills/swiftui/SKILL.md`
+- `core-data`: `/Users/iv/.claude/skills/core-data/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Diagnose exact hosted failure, repair proven cause, and require real hosted green checks before completion; original unchecked requirement transferred from BUG-260908-33iyb1, not waived
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.
+- [ ] Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named
+- [ ] Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.
+- [ ] A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [ ] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** BUG-260908-shki8p
+- **Title:** BUG-260908-shki8p: prove-and-fix-hosted-macos-build-after-diagnostics
+- **Parent:** STORY-260908-23tefs
+
+### Description
+
+Unresolved original BUG-260908-33iyb1 requirement, preserved during diagnostic/repair decomposition: diagnose PR6 run34167625590 job101881722247 exit65 from actual compiler evidence after diagnostic propagation; repair proven cause; verify exact new signed PR head on hosted CI. Local passing builds or one successful retry cannot substitute root-cause evidence or required hosted checks.
+
+### Scope
+
+Observe real hosted macOS xcodebuild diagnostics; repair exact product/build/environment cause with narrow tests; retain independent review and signed PR delivery. No fake CI statuses, toolchain guessing, VPN activation, or weakened gates.
+
+### Acceptance Criteria
+
+Diagnose exact hosted build failure and record real source/target/toolchain/error; repair proven cause with positive and negative tests; publish reviewed signed fix; require previously failing hosted job and all required PR checks legitimately green before completion; preserve initial failed runs and any remaining uncertainty.
+
+## Instructions
+
+### BUG-260908-shki8p_compiler-evidence.md
+> Real hosted Swift6.1 compiler error and clean-base repair route
+
+Root cause now observed in actual hosted artifact run34172537905 job101895476744 at PR6 head018c9d9672767fd02f42fb4ab4f2dfe3800646b8. Downloaded control-root .temp/deadline-20260908/ci-generated-artifact-02/logs/macos-targets/credential-free-reluxproxymac-debug-build.log lines701 onward: TunnelRuntimeCoordinator.swift:687:24 error non-sendable result type T cannot be sent from nonisolated context in call to parameter operation; return try await operation(). Logs contain repeated architecture/compiler invocations, not distinct bugs. Xcode16.4 Swift6.1.2. Parent git cat-file/diff proved this source exists and is UNCHANGED between origin/main b3422b05 and current PR018c9d9, so clean managed Story-base repair is possible without copying Shared Runtime. Inspect full function/callers and fix actual Sendable/isolation semantics narrowly, no @unchecked Sendable or disabled checks, no speculative toolchain bump. Add a relevant regression/compile check compatible with declared minimum toolchain; local Xcode26.5 is not old-toolchain proof. Preserve existing behavior and cancellation guarantees. Use current curator managed Story/CR producer workflow. Source candidate review comes before publication; original hosted green remains a required DELIVERY gate before bug done, not something to falsely claim during source handoff. Existing initial failure evidence must remain. Record AC rows honestly: source fix proof vs actual future hosted gate. Parent owns new signed PRhead composition/push/review/green/landing; no manual Story commits or remote landing. Target code unchanged from currentPR, so later patch composition should be narrow. No source tool edits, VPN, successors/subagents. Stop04:59 Tbilisi Sep8; approximately40min remain. Read only this scoped evidence and earlier BUG-33iyb1 diagnostic outcomes if necessary. Do not redo completed diagnostic work.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `BUG-260908-shki8p_*` before handoff:
+  `task-board m 'add_resource(BUG-260908-shki8p, name=BUG-260908-shki8p_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `to-review` is a role handoff, not accepted completion. Report **ready for review** or **handed off to review**.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff BUG-260908-shki8p --role developer
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260908-23tefs.
+
+- Workspace path: `.temp/STORY-260908-23tefs/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260908-23tefs`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+codex
+Проверю функцию и её вызовы, внесу узкий фикс Sendable и приложу проверки к задаче. Использую skill project-management для handoff; hosted green остаётся отдельным обязательным gate у родителя.
+
+exec
+/bin/zsh -lc "task-board m 'set_status(BUG-260908-shki8p, status=development)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-23tefs/worktree
+ succeeded in 683ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"BUG-260908-shki8p","field":"status","new_value":"development","old_value":"development"}}}
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/SKILL.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-23tefs/worktree
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+
+exec
+/bin/zsh -lc "pwd; git status --short; rg --files -g '*TunnelRuntimeCoordinator*' -g '*Tests*' -g 'AGENTS.md' -g 'Package.swift' -g '*test*' -g 'README.md' -g 'SKILL.md' | head -70" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-23tefs/worktree
+ succeeded in 25ms:
+ M Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift
+ M Tests/ReluxTunnelCoreTests/TunnelRuntimeCoordinatorTests.swift
+relay/README.md
+relay/internal/buildinfo/identity_test.go
+relay/internal/stdio/session_test.go
+relay/internal/protocoltest/suite_test.go
+relay/internal/protocol/datagram_test.go
+relay/internal/protocol/session_test.go
+relay/internal/protocol/vectors_test.go
+relay/internal/protocol/codec_test.go
+relay/internal/protocol/hostile_test.go
+relay/internal/protocol/parity_test.go
+relay/internal/protocol/handshake_test.go
+relay/internal/udp/io_test.go
+relay/internal/udp/registry_test.go
+relay/internal/smoke/report_test.go
+relay/cmd/relux-relay/main_test.go
+relay/cmd/relux-relay-protocol-test/main_test.go
+Sources/ReluxTunnelCore/TunnelRuntimeCoordinator.swift
+scripts/check-apple-ui-test-contract.py
+scripts/validate_apple_ui_test_artifacts.py
+scripts/physical-test-host-preflight.sh
+scripts/tests/test-relay-shell-artifacts.sh
+scripts/tests/test_relay_asset_smoke.py
+scripts/tests/test_ssh_matrix_fixture.py
+scripts/tests/test-relay-protocol-go.sh
+scripts/tests/test-legacy-preservation-guard.sh
+scripts/tests/test_ssh_matrix_provider.py
+scripts/tests/test-native-build-configuration.py
+scripts/tests/test_relay_release.py
+scripts/tests/test_relay_asset_manifest.py
+scripts/tests/test_validate_apple_ui_test_artifacts.py
+scripts/tests/test-apple-ui-test-smoke-extractor-failure.sh
+scripts/tests/test-relay-portable-native.sh
+scripts/tests/TASK-260715-2kchi0_test-m3-jcs-hashes.sh
+scripts/tests/test_relay_supply_chain.py
+scripts/tests/test-generated-provider-graph.sh
+scripts/tests/test-native-dependencies.sh
+scripts/tests/test-credential-free-validation.sh
+scripts/tests/test-relay-toolchain-missing-input.sh
+scripts/tests/test_extract_apple_ui_test_artifacts.py
+scripts/run-apple-ui-test-smoke.sh
+scripts/extract_apple_ui_test_artifacts.py
+README.md
+docs/apple-ui-test-validation.md
+Package.swift
+Protocol/Relay/Vectors/v1/README.md
+Probes/macOSPacketTunnelProbe/Scripts/test-log-redaction.sh
+Probes/macOSPacketTunnelProbe/Scripts/test-inspector-drift.sh
+Probes/macOSPacketTunnelProbe/Scripts/test-physical-gate-p0.sh
+Probes/macOSPacketTunnelProbe/README.md
+Dependencies/ReluxLibSSH2/README.md
+Dependencies/ReluxNIOSSH/dev/alloc-limits-from-test-output
+Dependencies/ReluxNIOSSH/Package.swift
+Probes/macOSPacketTunnelProbe/Tests/ProbeContractTests.swift
+Dependencies/ReluxNIOSSH/Benchmarks/Package.swift
+Dependencies/ReluxLibSSH2/Tests/rekey_test.c
+Dependencies/ReluxNIOSSH/README.md
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/SSHHandlerTests.swift
+Tests/ReluxProxyMacTunnelTests/ReluxProxyMacTunnelTargetTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/SSHPackerSerializerTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/SSHPacketParserTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/FuzzResultTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/SSHMessagesTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/ByteBuffer+SSHTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/HostKeyTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/EndToEndTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/SSHConnectionStateMachineTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/AESGCMTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/SSHKeyExchangeStateMachineTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/ChildChannelMultiplexerTests.swift
+Dependencies/ReluxNIOSSH/Tests/NIOSSHTests/UserAuthenticationStateMachineTests.swift
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/references/change-request-lifecycle.md; cat /Users/iv/.claude/skills/project-management/references/negative-evidence.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-23tefs/worktree
+ succeeded in 0ms:
+# Change Request Lifecycle Runbook
+
+Orchestrator-owned. An accepted Change Request is accepted work, not delivered
+work. This page states the order, the recovery paths, and the republish
+semantics that used to live only in an operator's head.
+
+The full typed contract — how a candidate is snapshotted, what
+`repository_delta` means, what a `stale` revision is, and every refusal you can
+hit — stays in
+[tracked background spawn](tracked-background-spawn.md), section
+`Change Requests, review, rework, and checkpoint`. This page is the order of
+operations on top of it.
+
+---
+
+## The Change Request lifecycle, in order
+
+1. **Accept.** The reviewer runs
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N>, evidence=<ELEMENT-ID>_review-verdict.md)'`.
+   The element moves to `integrating`. It is accepted, not delivered. Only the
+   reviewer run that was handed the revision may accept it.
+2. **Checkpoint immediately.** For every non-final leaf, run
+   `task-board worktree checkpoint <ELEMENT-ID>` as the next action after
+   acceptance. The accepted tree lands on the Story branch only, and the leaf
+   stays `integrating` until Story integration lands it on trunk. Delay here is
+   what makes the next producer's Change Request go `stale`.
+3. **Checkpoint refreshes the real index automatically.** Candidate capture
+   records (but never mutates) the real-index tree. Under the bound run's Story
+   lease and the candidate-captured index CAS, checkpoint replaces only that
+   captured state and independently verifies branch/HEAD/index/worktree
+   identity. A typed
+   `change_request_checkpoint_index_unsynced` refusal is retried after its named
+   lock, I/O, or ownership condition is resolved; do not use a broad manual
+   reset that can erase unreviewed staged state.
+4. **Final leaf: integrate, do not checkpoint.** `checkpoint` refuses the
+   Story's last open leaf with `change_request_final_leaf_checkpoint`, because
+   closing it would promote a Story whose branch has never reached trunk. Land
+   the Story with
+   `task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N>`.
+5. **When `integrate` refuses, report the refusal.** `validation_not_configured`
+   (`BUG-260807-1o5092`, the as-shipped behavior) and
+   `integration_indeterminate` for a board that lives outside the control root
+   are blockers, not detours. Report the refusal as the blocker it is and land
+   only by the documented manual signed substitute — an isolated clone, signed
+   cherry-pick of the exact reviewed head, a platform review record, and a
+   fail-closed plain push. Never route around a typed refusal by moving board
+   files or the branch by hand.
+6. **A lost run is recovered by republish, never by re-running the producer.** A
+   run that died after producing content but before the board recorded it still
+   has its content on disk. Republish it with provenance. Re-running the
+   producer discards work that already exists and costs the run again.
+7. **A republish of an unchanged accepted tree is an annotation, not a new
+   revision.** A candidate whose `repository_delta` is byte-identical to the
+   accepted one, and whose acceptance still stands, is not a new candidate.
+   Recording it as a revision turns the revision count — the only rework
+   measure the board has — into process noise.
+8. **Never commit manually on the Story branch.** The managed worktree's tree is
+   published by the producer's handoff and landed by `checkpoint` or
+   `integrate`. A hand commit on that branch makes the accepted snapshot and the
+   branch head disagree, and the disagreement surfaces later as an unexplained
+   `stale` or an integration that lands the wrong tree. A `task_delta` handoff
+   now fails closed on it: the tip is compared to the workspace record's
+   `checkpoint_oid` before the validation suite runs and before anything is
+   written, and a disagreement is refused with
+   `change_request_candidate_committed_past_checkpoint`. The producer repairs it
+   inside its own run with `git reset --soft <checkpoint_oid>` — the work stays
+   in the worktree — and completes the handoff again.
+
+## A revision that will never be integrated
+
+Two shapes end a Change Request revision without a reviewer verdict, and they
+are different facts.
+
+### An empty delta does not block the Story
+
+A revision whose `repository_delta` is `empty` — an analyst or research run that
+changed no repository file — is created `ready` like any other, because
+emptiness is an attribute of the candidate and never a state. What changed with
+`BUG-260906-37s3ps` is what that revision does to everybody else: while it sits
+`ready` or `reviewing`, it no longer refuses a sibling producer with
+`change_request_sibling_producer_blocked`.
+
+The gate's argument is contamination — the new producer writes into the same
+Story worktree the pending candidate was snapshotted from — and an empty
+candidate has no repository work product for those writes to reach. Its
+checkpoint writes no commit, and its integration is a no-op. Before the fix a
+research-only run deadlocked its whole Story: nothing was routed at a candidate
+with nothing to review, and every later producer was refused with a blocker
+nobody could clear.
+
+The exemption is scoped, and the scope is deliberate:
+
+| Blocking state | `repository_delta=present` | `repository_delta=empty` |
+| --- | --- | --- |
+| `ready`, `reviewing` | refuses siblings | **admits siblings** |
+| `draft`, `changes_requested`, `stale`, `conflicted` | refuses siblings | refuses siblings |
+
+The bottom row expects a REPUBLISH, and the next snapshot of the shared worktree
+would pick up the sibling's writes. Emptiness today says nothing about the
+revision that replaces it. A revision with no readable `repository_delta` —
+legacy, or from a newer build — refuses: a value this build cannot read is not
+evidence that the candidate is empty.
+
+The revision is still fully auditable. It is not deleted, not hidden, and not
+given a special state; it simply stops being a blocker.
+
+### Retiring a revision: `withdraw_cr`
+
+An empty delta is not the only revision that never reaches integration. A
+candidate can be superseded, abandoned, or published by a run whose deliverable
+turned out to belong somewhere else. Before `BUG-260906-37s3ps` there was no
+route for that at all: `accept_cr` needs a reviewer verdict and a merged
+checklist, `worktree abort` discards the entire workspace, and republishing only
+produces another revision in the same unresolved state.
+
+```bash
+task-board m 'withdraw_cr(<ELEMENT-ID>, revision=<N>, reason="why this revision will never be integrated")'
+```
+
+It moves the revision to `aborted`, which is terminal on both predicates that
+read the state: it stops refusing sibling producers, and it stops withholding
+the Story workspace's base convergence. The revision file and its ledger row
+stay readable.
+
+Four things it refuses, and why:
+
+- **A revision that is `accepted`, `checkpointing`, `checkpointed`,
+  `integrating` or `integrated`** — `change_request_state_conflict`. Those
+  carry a reviewer's attestation, or commits that are already on the Story
+  branch or in trunk. Recording one as never integrated would make the board
+  disagree with git history.
+- **A missing or whitespace-only `reason`** —
+  `change_request_withdraw_reason_missing`. The ledger row is the only surviving
+  explanation of why the revision exists and was never integrated.
+- **A call from inside a tracked spawn run** —
+  `change_request_withdraw_unauthorized`. Withdrawal is an ORCHESTRATOR route.
+  A producer refused by `change_request_sibling_producer_blocked` must not clear
+  its own blocker, and a producer handed `changes_requested` must not retire the
+  rework signal instead of answering it.
+- **A revision number that is not the current one** —
+  `change_request_revision_conflict`, the same CAS every other transition takes.
+
+`withdraw_cr` deliberately does NOT move the board element. Where the element
+goes next — back to development, `blocked`, or closed as a duplicate — is a
+routing decision the orchestrator makes with information the mutation does not
+have; make it explicitly, in a separate call.
+
+## Two same-class findings mean a missing gate
+
+When two consecutive reviews of one leaf raise the same finding class, stop
+routing another rework revision. Spawn one task to add a gate for the class — a
+conformance vector set, a checker, a mutant harness — and let the next revision
+be reviewed against the gate rather than against a reviewer's memory. The
+reviewer's `repeat-of:` verdict field is the signal to route on.
+
+## Recovery surfaces
+
+- Stopped or refused integration: `task-board worktree transaction show <STORY-ID>`,
+  then the disposition surface it names.
+- A leaf whose handoff guard refused for artifact naming: attach the correctly
+  named `<ELEMENT-ID>_<slug>.<ext>` outcome resource and re-run the handoff. Do
+  not respawn the producer to satisfy a naming rule.
+# Negative Evidence Contract
+
+A passing suite means nothing unless something in it would have failed. This
+file is the single source of truth for the rules that make a green check mean
+something, and for the incident record behind each one. The operative wording
+that reaches every spawned child lives in the spawn template section
+`Evidence That Counts`; the reviewer's licence lives in `.roles/reviewer/role.md`;
+the repeated-variant heuristic lives in `.roles/orchestrator/role.md`. Read this
+file when you need the shapes, the failure vocabulary, or the incidents that
+produced a rule — do not restate these rules in other documents.
+
+| Rule | Operative statement | Evidence record |
+| --- | --- | --- |
+| Negative tests for gates | spawn template, `Evidence That Counts` | this file |
+| Narrowing, not deleting | spawn template, `Evidence That Counts` | this file |
+| Production call site | spawn template, `Evidence That Counts` | this file |
+| Absence vs failure to read | spawn template, `Evidence That Counts` | this file |
+| Prove, or report nothing | spawn template, `Evidence That Counts` | this file |
+| Reviewer licence to defeat a gate | `.roles/reviewer/role.md` | this file |
+| Many variants, one unowned decision | `.roles/orchestrator/role.md` | this file |
+
+## Negative Tests For Gates
+
+Any feature that GATES, REFUSES, VALIDATES, AUTHORIZES, or ATTESTS must ship
+with negative tests that fail when the gate admits what it is supposed to
+reject. A positive test proving the happy path passes is not evidence that the
+gate works; it is evidence that the gate is reachable.
+
+This is the dominant defect class in this repository's 2026-07-28..08-03 waves.
+Every instance below was found because a reviewer deliberately attacked the
+gate, not because anyone read the code:
+
+- the fact-assay attested a COLD child that never inherited the context, because
+  it checked inventory, session id, digests, and output shape, but never
+  inheritance;
+- the assay fork had repository tool access, so it could answer from disk while
+  the base was false;
+- the builder attestation accepted a correctly-shaped forged digest that the
+  caller minted itself;
+- clearance enforcement existed but no production path called it, and counting
+  tests around a fake proved nothing;
+- an unknown assay event preserved a false zero-tool observation;
+- a provider capability was declared absent to disable a flaky check, and the
+  claim did not reproduce (9/11 success).
+
+## Standard Negative Shapes
+
+Use these names in checklists, verdicts, and test names. They are the shapes a
+negative test must cover and the shapes a reviewer looks for first.
+
+| Shape | What it looks like when nobody tests for it | What the negative test must do |
+| --- | --- | --- |
+| Forged or self-minted evidence | The caller supplies the proof that the gate checks, and a correctly-shaped value passes. | Mint the evidence in the test the way a caller could, and require refusal. |
+| Absent evidence treated as satisfied | Missing input takes the permissive branch; the suite only ever supplies the input. | Remove the evidence entirely and require refusal, not a default-pass. |
+| Check present but uncalled from production | The guard is implemented and unit-tested by direct call; no production path invokes it. | Drive the real entry point — launch, materialize, resolve, publish — and name the production call site. |
+| Bypass path around the check | One entry point enforces; a second, older, or retry/renewal path does not. | Exercise every entry point that reaches the protected state, including retry, renewal, resume, and recovery, and every delivery surface that carries the rule — a contract clause reaching one context profile and not the other is this shape. |
+| Capability claim that does not reproduce | A capability is declared absent or present to make a flaky check go away. | Re-run the claim enough times to state a real rate, or report unknown. |
+
+## Derive Completeness From An Independent Source
+
+Completeness is derived from the pinned source or generated artifact, never
+enumerated by hand. When a registry, schema set, or declared scope defines the
+members, derive the expected set from that source and fail when any member lacks
+enforcement. This rule comes from five consecutive review rounds that each
+closed exactly the hand-picked members named by the previous reviewer; the next
+unlisted member defeated every list.
+
+A completeness test that reads the implementation's own table is circular and
+can never detect a missing entry: removing the entry also removes it from the
+test's expected set. Derive the expectation from the normative source of truth,
+not from the code under test. This distinction was what let the next Story's
+round-1 review demand a source-derived completeness test instead of accepting
+the producer's two selected cases.
+
+## Prove Exact Bounds At The Production Entry
+
+Prove every bound in both directions at the production entry: accept at the
+limit and refuse past the limit. Character bounds count characters rather than
+bytes. The motivating failure was a value containing 3,999 characters but
+5,999 bytes that production rejected with a byte comparison even though the
+normative `string[1..4096]` bound permitted it; helper-only or ASCII-only tests
+could not expose that narrowing.
+
+## Disable Every Refusal Clause
+
+Disable each refusal clause individually. If the suite stays green, that clause
+is a hole unless the test or evidence documents it as provably subsumed and
+names the check that subsumes it. This is measured rather than hypothetical: in
+one file, disabling 110 clause sites produced 45 surviving mutants, and 12 of
+those survivors were genuine widenings.
+
+Numeric-bound mutation and clause-disablement are different classes, and one
+harness rarely generates both. Numeric mutation finds off-by-one defects but
+cannot express disabling a tagged-union arm, cross-field equality, or grammar
+predicate; clause disablement finds those omissions but cannot move a numeric
+boundary. The 110-site clause run exposed widenings that the numeric harness
+could not generate, so run both classes.
+
+## Check Refusals Against The Normative Source
+
+A green test can defend a bug when it asserts a refusal that the normative
+source does not require. One observed test required production to reject values
+that the pinned specification permitted, so the suite protected the narrowing
+instead of detecting it. Whenever a test encodes a refusal, check that refusal
+against the pinned source rather than copying current behaviour into the
+assertion.
+
+## Eliminate Ambient Test Inputs
+
+No test may depend on ambient environment. Fixtures set explicit identity and
+all other values that could otherwise come from global configuration, the OS,
+or developer-machine state. A developer machine let Git derive an author name
+from the OS and passed the suite, while a CI runner with an empty GECOS field
+failed with `empty ident name`; only CI can catch this class, so the fixture
+must make its identity deterministic before CI exercises it.
+
+## Prove A Bound By Narrowing, Not By Deleting
+
+A test that removes a gate entirely proves only that the gate exists. It says
+nothing about whether the gate covers the right class. Restrict the gate to a
+narrower condition instead and require a named test to fail.
+
+Two repository incidents where a narrowed gate survived a green suite:
+
+- **BUG-260801-3kiloe F1** — the recovery successor cap was proven only by total
+  removal. Narrowing it to provider-limit signals left every other recoverable
+  failure unbounded, with the whole suite still green.
+- **TASK-260802-17wetr F16** — thirteen cycles later, the same shape: the
+  probe-lease cap survived deletion tests while the renewal path escaped it.
+- **TASK-260730-2c1e8l cycle 1** — this contract itself. The reviewer clauses
+  landed in the role body and the shipped test checked the role file and the
+  lite template separately, so both halves were green while the composed lite
+  prompt carried neither. Assert on the composed production artifact, not on the
+  pieces it is built from.
+- **TASK-260730-2c1e8l cycle 2** — the same contract, one level up, and the
+  clearest statement of the difference between the two shapes. The cycle-1 fix
+  did assert on the composed prompt, but it called the composition helper
+  directly and handed it the role, task-class filter, and profile itself.
+  Production builds those inputs inside the spawn entry point, so a mutant
+  narrowing only the real lite-reviewer routing just before composition left the
+  test green while an actual lite reviewer lost its gate-defeat licence. A test
+  that supplies the inputs is testing the helper, not the path. Obtain the
+  artifact the way the consumer does — here, read the prompt file recorded on
+  the run manifest after driving the entry point — so role resolution, the
+  task-class filter, and profile resolution are all under test rather than
+  assumed.
+
+Three traps when running the mutants themselves, all hit while proving this file:
+
+- **The mutant must be re-run with `-count=1`.** `go test` caches on package
+  sources; a test that reads `.roles/*.md` or any file outside its package at
+  runtime returns a stale cached PASS after that file is mutated. A cached green
+  is not a surviving mutant, it is an unexecuted test.
+- **A passing assertion may be satisfied by the wrong source.** Two mutants of
+  the producer DoD entries survived because the phrase asserted also appears,
+  differently worded, in the shared spawn template. Choose assertion wording
+  that only the intended source can supply, then narrow that source and require
+  the named test to fail.
+- **Restore the mutant from a copy, not from git.** `git checkout <file>`
+  restores from the index, which silently discards uncommitted work in that file
+  — during this task it reverted the whole cycle-2 change, not just the mutant.
+  Copy the file aside before mutating, restore from the copy, and verify the
+  restoration by diffing against it before rerunning the gates.
+
+## A Gate Publishes Its Coverage As A Ratio
+
+Prose about what a gate checks cannot distinguish 7 of 7 from 3 of 7. Every
+statement such a description makes is usually true — it is true of what the gate
+can see, and silent about what it cannot. The longer and more careful the
+description, the more thorough the gate looks.
+
+Report the fraction of intended targets the gate actually reaches, and assert
+that fraction so it reddens when a target drops out of reach. A target no mutant
+can redden is not covered, however elaborate the structure around it.
+
+Three defects of this exact shape, each found only once a ratio existed:
+
+- an AST call graph that recorded an edge only for a direct identifier call
+  covered 3 of 7 guarded functions while every pin passed; the package's real
+  dispatch was a function-value table, and the blind spot was invisible from
+  inside;
+- a classifier keyed on prose that a sibling gate was actively rewriting silently
+  dropped 8 rows, taking a suite from 107 executed subtests to 66, while its
+  completeness check `count == 0` reported nothing, because four is not zero;
+- an ownership gate that proved a symbol exists and a case is linked reported 48
+  sections as owned; measured against the specification, those bindings
+  discharged 2 of 394 normative clauses.
+
+A non-empty check on a derived set is the recurring form. `len(x) > 0` answers a
+different question from `len(x) == expected`, and only the second notices a
+narrowing.
+
+## A Blind Spot Is Not An Empty Set
+
+"Nothing is there" and "nothing this checker can see" are different facts, and
+only the second is a statement about the checker. Reporting the first when you
+mean the second converts a limitation into a clean bill of health, and the reader
+has no way to tell.
+
+An ownership gate scanned for uppercase RFC 2119 keywords. Sections stating their
+obligations in declarative present tense scored zero, were bucketed as carrying
+no obligations, and were admitted with no evidence required. Its documentation
+said "there is no obligation to enumerate". The true sentence was "the section
+carries no keyword line, so the scanner cannot see its obligations" — and 19 of
+151 headings were free-admission surface the moment they were bound, including a
+19-row exit-code registry and a closed manifest specification.
+
+Two rules follow:
+
+- State the bound of what the checker can see, next to what it reports. A
+  residual class that is named can be attacked later; one that is implied cannot.
+- Do not let the bucket for "nothing to check" also be the bucket that skips the
+  check. Where absence of measurable obligation is a legitimate state, require an
+  explicit reviewed justification for it, so the weakest entries are the ones
+  that must say the most rather than the least.
+
+## An Absence And A Failure To Read Are Different Facts
+
+Absence is a legitimate state with a defined fallback. A failed, partial, or
+malformed read is evidence of a problem. Treating the second as the first lets
+the fallback launder a fault into a normal-looking value, and a fallback defined
+for absence must never fire on a read failure.
+
+Each of these was a separate defect in this repository:
+
+- a non-empty value read as verified;
+- an unknown scanner version read as clean;
+- a partial provenance record read as absent;
+- a zero pid start time read as alive;
+- a malformed `api_error_status` read as missing;
+- an unparsed envelope read as no envelope — this one produced a false provider
+  suppression that would have hidden a healthy provider for hours.
+
+## Prove, Or Report Nothing
+
+Where a property cannot be established, report unparsed or unknown rather than
+inferring it from a proxy signal. A plausible guess is worse than an explicit
+unknown, because callers act on it.
+
+Incident: headless top-level inference in the Claude classifier was unsound in
+principle and produced six variants before it was deleted rather than
+strengthened.
+
+## Many Variants, One Unowned Decision
+
+A long run of same-shaped variants usually means a decision has more than one
+owner, not that there are many bugs. Eleven framing variants stopped reproducing
+only when structure got a single scanner and a single state type; every per-site
+patch before that produced the next variant. The operative wording is in
+`.roles/orchestrator/role.md`: unify the decision, do not patch each site.
+
+## Reviewer Licence
+
+Reviewers are explicitly licensed to attempt to defeat a gate and to reject a
+change whose only evidence is positive-path. Grep for callers before believing a
+guard is in force. The operative wording is in `.roles/reviewer/role.md`.
+

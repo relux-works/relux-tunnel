@@ -1,0 +1,1909 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07e4d-44d6-7b13-8926-fffd1e0210cb
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(BUG-260908-33iyb1, status=development)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `developer` (`implementer`) — Writes code, fixes bugs, writes tests
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `swiftui`: `/Users/iv/.claude/skills/swiftui/SKILL.md`
+- `core-data`: `/Users/iv/.claude/skills/core-data/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Diagnostic propagation passes named behavioral/narrowing tests and real macOS validation; immutable review required; original hosted repair remains open BUG-260908-shki8p
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.
+- [ ] Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named
+- [ ] Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.
+- [ ] A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [ ] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** BUG-260908-33iyb1
+- **Title:** expose-hosted-macos-build-diagnostics
+- **Parent:** STORY-260908-h39ajh
+
+### Description
+
+Diagnostic prerequisite split from the original hosted build failure. Deliver diagnostic propagation preserving failure status and bounded output. Full root-cause repair and hosted green requirement remains open as BUG-260908-shki8p in STORY-260908-23tefs; never claim original failure fixed.
+
+### Scope
+
+Existing diagnostic patch, macOS validator log propagation, positive/negative/narrowing tests and docs. Preserve signed sibling and Shared Runtime; no guessed toolchain/product change.
+
+### Acceptance Criteria
+
+Actual validation entry points preserve exit65 and other failures, expose bounded diagnostic tail, retain full logs in artifact root; named positive/negative/narrowing tests; real macOS validation on candidate and exact PR6 composition; independent immutable review; original hosted repair remains open BUG-260908-shki8p without any hosted green or root-cause claim.
+
+## Instructions
+
+### BUG-260908-33iyb1_hosted-evidence.md
+> Exact CI evidence and serial sequencing
+
+PR6 head87451b53960ceabe88a01c44c287fee7f9ebf386. Run34167625590 job101881722247 failed macos-target-builds-and-contracts exit65. Exact log .temp/deadline-20260908/ci-credential-failure-01.log; downloaded artifact .temp/deadline-20260908/ci-generated-artifact-01 under control root. Xcode16.4 Swift6.1.2 macOS15.7.9 arm64. Hosted source revision3279036094620772262dbd04a6d8930ec7691e75: verify merge-tree relationship, not silently label it PRhead. Individual xcodebuild logs redirected in validate-macos-targets.sh are missing from artifact; root cause unproven. Four portable runtime jobs passed. Run ONLY AFTER BUG-260908-7c5iv4 accepted/checkpointed, avoiding overlapping workflow changes. Parent attempted formal sibling dependency but CLI rejected the complete batch because of existing unrelated container cycles; no link persisted and parent will enforce this conservative serial prerequisite. Do not rewrite global dependency graph as part of this fix. No main rewind, shared-tool source patches, or VPN operations. Hard stop04:59 Tbilisi2026-09-08; no successors.
+
+
+### BUG-260908-33iyb1_execution-routing.md
+> Proceed from signed sibling checkpoint; preserve pending PR
+
+Prerequisite completed: BUG-260908-7c5iv4 accepted rev1 and signed checkpoint dc68c1584f7cc4ddcdf770acd8ace79790f0b404 on this Story. Preserve its bytes. Diagnose/fix the remaining generated macOS CI failure, using attached exact hosted evidence. Root local main 87451b53960ceabe88a01c44c287fee7f9ebf386 contains pending signed PR6 delivery; origin/main remains b3422b05226253a17676b9b84c764071fe3dbe74. Never rewind/reset/overwrite either pending work or signed commits. Parent owns final remote delivery. Candidate is based on managed Story checkpoint; separately validate composition with exact PR6 head, preserve README/LOGBOOK additions from both, and keep all runtime product bytes unchanged unless evidence proves a scoped compile fix necessary. Prior candidate full old-main suite and PR composition passed, but initial composition run failed unchanged HEV/SSH tests; one retry is not determinism evidence. Do not expand into unrelated flakes without evidence. User authorizes current normal commit timestamps; human signed objects mandatory. All tools via current curator-installed skill-project-management main; no source patches/installs or command bypasses. If hosted failure can only be revealed by publishing diagnostic propagation, provide exact minimal diagnostic candidate and required next hosted step honestly, rather than guessing a cause or calling the overall bug fixed. Do not manually commit on Story branch, integrate, land PR, spawn successors/subagents, or enable VPN. Stop with preserved evidence before 04:59 Asia/Tbilisi September 8 2026. Execute producer handoff for immutable CR when justified; hosted green status remains a delivery gate, not a local claim.
+
+
+### BUG-260908-33iyb1_decomposition.md
+> Recover existing diagnostic candidate; full requirement retained
+
+Parent split circular prepublication gate. Full original hosted diagnosis/repair/green-check requirement is preserved in open BUG-260908-shki8p, separate STORY-260908-23tefs. This leaf now owns ONLY diagnostic propagation per updated AC/checklist; nothing falsely checked. Reuse existing 8-file patch and evidence RUN-260907-f967aa, no reimplementation or redundant broad repeats. Recovery RUN-cae8d9 cancelled. Verify current diff, update outcome to explain split and follow-up, satisfy new diagnostic checklist using actual evidence, then developer handoff for immutable CR. No claim original failure fixed. Parent owns review/delivery; no manual Story commit, VPN, successors, tool edits. Stop04:59 Tbilisi Sep8. This replaces earlier scope clauses, preserving signatures/security/delivery rules.
+
+
+### BUG-260908-33iyb1_review-only.md
+> Independent diagnostic-scope review
+
+Review current immutable CR under latest diagnostic-only AC. Original hosted root-cause repair/required green is preserved open BUG-260908-shki8p; do not infer it from this acceptance. Independently verify logged command exit propagation including65, useful bounded stderr/stdout tail, full logs beneath artifact root, positive/negative/narrowing tests through actual entry points, and no secret/credential exposure widening. Verify prior candidate and PR6 composition real build evidence/limitations; no broad suite repeat without a specific reason. Do not edit accepted bytes, integrate, commit, publish hosted changes, spawn successors, enable VPN, or alter shared tools. Real reviewer checklist and accept_cr if justified. Parent owns producer-bound integration and exact signed PR head review/checks. Stop before04:59 Tbilisi Sep8. Astra low serial via curator-installed main.
+
+
+### BUG-260908-33iyb1_rework-f1.md
+> Test-only rework of reviewer F1
+
+Reviewer RUN-260907-2be57c requested changes solely F1 in review-verdict-rev1.md. Add named regression driving actual validate-macos-targets.sh -> run_logged_command for exit1 alongside65, asserting exact status and no later invocation. Add exit1-only narrowing mutant ([ command_status !=1 ] || return0 before original return) that retains other status handling and tokens, and require named production-entry test to fail. Scope is test-only unless evidence proves production change needed. Preserve all prior accepted sibling and diagnostic behavior. Reuse existing build evidence; reviewer explicitly says no broad repeat for this test-only delta, though managed CR publication gate remains mandatory. Update concise evidence and producer checklist; handoff new immutable CR. Do not tick reviewer-owned rejection item yourself, claim hosted repair fixed, commit managed branch manually, integrate, spawn successors, enable VPN, or alter shared tooling. Full hosted repair remains open BUG-260908-shki8p. Stop04:59 Tbilisi Sep8. Current timestamps and signed Ivan Oparin identity remain required; curator main only.
+
+
+### BUG-260908-33iyb1_handoff-correction.md
+> Correct parent overconstraint; publish existing rework
+
+Parent corrects its prior overly strict instruction. Live merged checklist item12 Implementation matches AC is an implementation assertion, not an immutable independent review verdict or accept_cr. After verifying actual F1 fix and named existing test evidence, you may check that item as your explicitly labeled producer self-assessment to satisfy handoff. This does not change reviewer rev1 changes-requested verdict, does not accept rev1/rev2, and does not authorize done/integration. Independent reviewer will inspect and accept/reject published rev2. Reuse existing test-only F1 patch RUN-260907-0d42a3 and attached f1-tests.log; no reimplementation/broad repeats unless delta changed. Check current files and relevant narrow tests if needed, record this interpretation honestly, check implementation assertion if justified, then developer handoff to immutable publication. No hosted success or original bug-fix claim; BUG-shki8p remains open. No manual commits, shared-tool edits, VPN, or successors. Stop04:59 Tbilisi Sep8. This supersedes the prohibition on producer touching this specific live checklist item; all independent review/signature/curator requirements remain.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `BUG-260908-33iyb1_*` before handoff:
+  `task-board m 'add_resource(BUG-260908-33iyb1, name=BUG-260908-33iyb1_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `to-review` is a role handoff, not accepted completion. Report **ready for review** or **handed off to review**.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff BUG-260908-33iyb1 --role developer
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260908-h39ajh.
+
+- Workspace path: `.temp/STORY-260908-h39ajh/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260908-h39ajh`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+codex
+Проверю существующий F1 rework и evidence, затем выполню producer handoff. Использую skill `project-management`; независимый review остаётся отдельным этапом.
+
+exec
+/bin/zsh -lc "task-board m 'set_status(BUG-260908-33iyb1, status=development)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 820ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"BUG-260908-33iyb1","field":"status","new_value":"development","old_value":"to-dev"},"side_effects":[{"action":"escalated","element_id":"STORY-260908-h39ajh","field":"status","new_value":"development","old_value":"integrating"}]}}
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/SKILL.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/references/change-request-lifecycle.md /Users/iv/.claude/skills/project-management/references/querying.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+# Change Request Lifecycle Runbook
+
+Orchestrator-owned. An accepted Change Request is accepted work, not delivered
+work. This page states the order, the recovery paths, and the republish
+semantics that used to live only in an operator's head.
+
+The full typed contract — how a candidate is snapshotted, what
+`repository_delta` means, what a `stale` revision is, and every refusal you can
+hit — stays in
+[tracked background spawn](tracked-background-spawn.md), section
+`Change Requests, review, rework, and checkpoint`. This page is the order of
+operations on top of it.
+
+---
+
+## The Change Request lifecycle, in order
+
+1. **Accept.** The reviewer runs
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N>, evidence=<ELEMENT-ID>_review-verdict.md)'`.
+   The element moves to `integrating`. It is accepted, not delivered. Only the
+   reviewer run that was handed the revision may accept it.
+2. **Checkpoint immediately.** For every non-final leaf, run
+   `task-board worktree checkpoint <ELEMENT-ID>` as the next action after
+   acceptance. The accepted tree lands on the Story branch only, and the leaf
+   stays `integrating` until Story integration lands it on trunk. Delay here is
+   what makes the next producer's Change Request go `stale`.
+3. **Checkpoint refreshes the real index automatically.** Candidate capture
+   records (but never mutates) the real-index tree. Under the bound run's Story
+   lease and the candidate-captured index CAS, checkpoint replaces only that
+   captured state and independently verifies branch/HEAD/index/worktree
+   identity. A typed
+   `change_request_checkpoint_index_unsynced` refusal is retried after its named
+   lock, I/O, or ownership condition is resolved; do not use a broad manual
+   reset that can erase unreviewed staged state.
+4. **Final leaf: integrate, do not checkpoint.** `checkpoint` refuses the
+   Story's last open leaf with `change_request_final_leaf_checkpoint`, because
+   closing it would promote a Story whose branch has never reached trunk. Land
+   the Story with
+   `task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N>`.
+5. **When `integrate` refuses, report the refusal.** `validation_not_configured`
+   (`BUG-260807-1o5092`, the as-shipped behavior) and
+   `integration_indeterminate` for a board that lives outside the control root
+   are blockers, not detours. Report the refusal as the blocker it is and land
+   only by the documented manual signed substitute — an isolated clone, signed
+   cherry-pick of the exact reviewed head, a platform review record, and a
+   fail-closed plain push. Never route around a typed refusal by moving board
+   files or the branch by hand.
+6. **A lost run is recovered by republish, never by re-running the producer.** A
+   run that died after producing content but before the board recorded it still
+   has its content on disk. Republish it with provenance. Re-running the
+   producer discards work that already exists and costs the run again.
+7. **A republish of an unchanged accepted tree is an annotation, not a new
+   revision.** A candidate whose `repository_delta` is byte-identical to the
+   accepted one, and whose acceptance still stands, is not a new candidate.
+   Recording it as a revision turns the revision count — the only rework
+   measure the board has — into process noise.
+8. **Never commit manually on the Story branch.** The managed worktree's tree is
+   published by the producer's handoff and landed by `checkpoint` or
+   `integrate`. A hand commit on that branch makes the accepted snapshot and the
+   branch head disagree, and the disagreement surfaces later as an unexplained
+   `stale` or an integration that lands the wrong tree. A `task_delta` handoff
+   now fails closed on it: the tip is compared to the workspace record's
+   `checkpoint_oid` before the validation suite runs and before anything is
+   written, and a disagreement is refused with
+   `change_request_candidate_committed_past_checkpoint`. The producer repairs it
+   inside its own run with `git reset --soft <checkpoint_oid>` — the work stays
+   in the worktree — and completes the handoff again.
+
+## A revision that will never be integrated
+
+Two shapes end a Change Request revision without a reviewer verdict, and they
+are different facts.
+
+### An empty delta does not block the Story
+
+A revision whose `repository_delta` is `empty` — an analyst or research run that
+changed no repository file — is created `ready` like any other, because
+emptiness is an attribute of the candidate and never a state. What changed with
+`BUG-260906-37s3ps` is what that revision does to everybody else: while it sits
+`ready` or `reviewing`, it no longer refuses a sibling producer with
+`change_request_sibling_producer_blocked`.
+
+The gate's argument is contamination — the new producer writes into the same
+Story worktree the pending candidate was snapshotted from — and an empty
+candidate has no repository work product for those writes to reach. Its
+checkpoint writes no commit, and its integration is a no-op. Before the fix a
+research-only run deadlocked its whole Story: nothing was routed at a candidate
+with nothing to review, and every later producer was refused with a blocker
+nobody could clear.
+
+The exemption is scoped, and the scope is deliberate:
+
+| Blocking state | `repository_delta=present` | `repository_delta=empty` |
+| --- | --- | --- |
+| `ready`, `reviewing` | refuses siblings | **admits siblings** |
+| `draft`, `changes_requested`, `stale`, `conflicted` | refuses siblings | refuses siblings |
+
+The bottom row expects a REPUBLISH, and the next snapshot of the shared worktree
+would pick up the sibling's writes. Emptiness today says nothing about the
+revision that replaces it. A revision with no readable `repository_delta` —
+legacy, or from a newer build — refuses: a value this build cannot read is not
+evidence that the candidate is empty.
+
+The revision is still fully auditable. It is not deleted, not hidden, and not
+given a special state; it simply stops being a blocker.
+
+### Retiring a revision: `withdraw_cr`
+
+An empty delta is not the only revision that never reaches integration. A
+candidate can be superseded, abandoned, or published by a run whose deliverable
+turned out to belong somewhere else. Before `BUG-260906-37s3ps` there was no
+route for that at all: `accept_cr` needs a reviewer verdict and a merged
+checklist, `worktree abort` discards the entire workspace, and republishing only
+produces another revision in the same unresolved state.
+
+```bash
+task-board m 'withdraw_cr(<ELEMENT-ID>, revision=<N>, reason="why this revision will never be integrated")'
+```
+
+It moves the revision to `aborted`, which is terminal on both predicates that
+read the state: it stops refusing sibling producers, and it stops withholding
+the Story workspace's base convergence. The revision file and its ledger row
+stay readable.
+
+Four things it refuses, and why:
+
+- **A revision that is `accepted`, `checkpointing`, `checkpointed`,
+  `integrating` or `integrated`** — `change_request_state_conflict`. Those
+  carry a reviewer's attestation, or commits that are already on the Story
+  branch or in trunk. Recording one as never integrated would make the board
+  disagree with git history.
+- **A missing or whitespace-only `reason`** —
+  `change_request_withdraw_reason_missing`. The ledger row is the only surviving
+  explanation of why the revision exists and was never integrated.
+- **A call from inside a tracked spawn run** —
+  `change_request_withdraw_unauthorized`. Withdrawal is an ORCHESTRATOR route.
+  A producer refused by `change_request_sibling_producer_blocked` must not clear
+  its own blocker, and a producer handed `changes_requested` must not retire the
+  rework signal instead of answering it.
+- **A revision number that is not the current one** —
+  `change_request_revision_conflict`, the same CAS every other transition takes.
+
+`withdraw_cr` deliberately does NOT move the board element. Where the element
+goes next — back to development, `blocked`, or closed as a duplicate — is a
+routing decision the orchestrator makes with information the mutation does not
+have; make it explicitly, in a separate call.
+
+## Two same-class findings mean a missing gate
+
+When two consecutive reviews of one leaf raise the same finding class, stop
+routing another rework revision. Spawn one task to add a gate for the class — a
+conformance vector set, a checker, a mutant harness — and let the next revision
+be reviewed against the gate rather than against a reviewer's memory. The
+reviewer's `repeat-of:` verdict field is the signal to route on.
+
+## Recovery surfaces
+
+- Stopped or refused integration: `task-board worktree transaction show <STORY-ID>`,
+  then the disposition surface it names.
+- A leaf whose handoff guard refused for artifact naming: attach the correctly
+  named `<ELEMENT-ID>_<slug>.<ext>` outcome resource and re-run the handoff. Do
+  not respawn the producer to satisfy a naming rule.
+# Querying & Mutating the Board
+
+Three primary access modes following the [agent-facing-api](https://github.com/relux-works/skill-agent-facing-api) pattern, plus CLI for humans:
+
+## Concrete Assignment Default
+
+When a prompt already supplies a Task/Bug ID and task inputs, query only fields
+needed for the next decision:
+
+```bash
+task-board q --format compact 'get(TASK-260211-abc) { status checklist outcomeResources }'
+task-board q --format compact 'get(TASK-260211-abc) { status blockedBy derivedBlockedBy }'
+```
+
+Do not add routine `summary()`, `plan()`, `schema()`, or `{ full }` orientation.
+Use `schema(operation=NAME)` or `schema(mutation=NAME)` only after an unknown
+call. Board-wide observability and plans belong to an orchestrator routing
+decision; full reads remain explicit audit/debug surfaces.
+
+## DSL Queries — primary read approach for agents
+
+Compact queries that return structured output. Zero session overhead (no MCP handshake), batch multiple queries in a single call. **This is what agents should use for all structured reads.**
+
+**Output format:** Use `--format compact` for token-efficient output (~40% fewer tokens). Default is `--format json`.
+
+```bash
+# Board overview
+task-board q --format compact 'summary()'
+
+# Whole-project readiness with the existing summary folded in
+task-board q --format compact 'summary() { observability-project }'
+
+# Scoped readiness at each board level
+task-board q --format compact 'list(type=epic) { observability-epic }'
+task-board q --format compact 'get(STORY-260211-def) { observability-story }'
+task-board q --format compact 'list(type=task, status=development) { observability-task }'
+
+# Single element lookup
+task-board q --format compact 'get(TASK-260211-abc) { status assignee }'
+
+# Bounded activity history (continue with cursor=<next_cursor>)
+task-board q --format compact \
+  'activity(TASK-260211-abc, limit=25, order=descending, kinds="progress,content", view=effective)'
+
+# Filtered listing with field preset
+task-board q --format compact 'list(type=task, status=development) { overview }'
+
+# Agent monitoring
+task-board q --format compact 'agents(stale=60)'
+
+# Batch: multiple queries in one call (semicolon-separated)
+task-board q --format compact 'get(T1) { status }; get(T2) { status }; get(T3) { status }'
+
+# Zero-argument and parameterized operations can share a batch
+task-board q --format compact 'project_config(); models(agent=codex)'
+
+# Execution plan
+task-board q --format compact 'plan(EPIC-01, mode=children)'
+
+# Schema introspection — discover available fields, presets, operations, and mutations
+task-board q 'schema()'
+task-board q 'schema(operation=project_config)'
+task-board q 'schema(mutation=set_status)'
+
+# Target-only spawn policy (explicit opt-in in every profile)
+task-board q --format compact 'project_config(view=spawn-preflight, role=developer, agent=codex)'
+```
+
+**Operations:** `get(ID)`, `activity(ID, cursor?, limit?, order?, kinds?, view?)`, `list(filters...)`, `count(filters...)`, `summary()`, `plan(scope?, mode=?, active=?)`, `agents(stale=N?)`, `models(agent?)`, `project_config(view?, role?, agent?)`, `whoami()`, `schema(operation?|mutation?)`
+**Field projection:** `{ id status assignee }`; base presets: `minimal`, `default`, `overview`, `full`, `progress`, `planning`; observability presets: `observability-project`, `observability-epic`, `observability-story`, `observability-task`
+**Batching:** semicolons between queries. Statements and results preserve source order. JSON batches return an ordered top-level array; compact batches format each result normally and separate adjacent results with one blank line. A single query remains unwrapped. Syntax and unknown-operation errors reject the whole batch before execution instead of returning partial output; handler errors remain ordered in-band error results and later statements continue. Element mutations in one batch run inside one activity transaction: when any statement is refused, the refused statements keep their own errors, every statement that would otherwise have succeeded is reported as `ok:false` with code `batch_rolled_back`, and nothing is persisted. A clean batch commits every statement and records one activity event per affected element, so a batch may change an element's checklist only once; issue further checklist changes as separate commands. Local and remote mutation commands both print that complete envelope before returning a nonzero exit, so the envelope always describes exactly what was persisted.
+**Format:** `--format compact` (agent default) or `--format json` (TUI/programmatic)
+
+**First-time setup:** Under the full profile, `schema()` returns the complete API contract. Under lite, skip the proactive full read and request only the failed/unknown call with `schema(operation=NAME)` or `schema(mutation=NAME)`. Parser errors for a known call include that same typed signature directly.
+
+`activity()` is deliberately separate from element projections: ordinary
+`get`/`list` reads never embed history. Its `limit` defaults to 50 and is bounded
+to 1..100. `order` accepts `ascending` or `descending`, `view` accepts `raw` or
+`effective`, and `kinds` accepts a comma-separated operation filter. Reuse only
+the opaque `next_cursor` returned by the previous page and keep the same order;
+the cursor is direction-bound and sequence-anchored for stable traversal across
+concurrent appends. The local CLI and remote `/q` endpoint share this contract.
+Activity is automatic infrastructure output; callers must not append routine
+history themselves. An explicit `legacy_pre_feature` boundary means older
+events are unavailable, not that they should be inferred. Deletion retains the
+terminal typed history. Operators correct a bad record only with confirmed,
+append-only `correct_activity`; the original remains in `view=raw`, while
+`view=effective` applies the correction, and remote correction requires Admin.
+Never replace bounded pages with `get(...){full}` or an unbounded filesystem
+read.
+
+`kinds` also selects the three DERIVED control-plane planes. `run` returns the
+spawn run lifecycle mirrored onto the run's task, `change_request` returns the
+Change Request transitions mirrored onto the element the CR is attached to, and
+`workspace` returns the Story workspace operations mirrored onto the Story:
+
+```bash
+task-board q --format compact 'activity(TASK-260211-abc, kinds="run,change_request", limit=25)'
+task-board q --format compact 'activity(STORY-260211-abc, kinds=workspace, limit=25)'
+```
+
+These events carry one typed `ledger_event` change — domain, ledger id,
+enumerated event token, sequence, revision, from/to state tokens, a UTC
+instant, and typed `oid`/`ref`/`id`/`token` facts. They never carry a summary,
+message or reason: each ledger keeps its own human-readable text and the mirror
+cannot transport it. The default unfiltered view includes them alongside board
+mutations, and filtering by a board kind such as `kinds=progress` returns
+exactly what it returned before the planes existed.
+
+The runtime emits them automatically at the moment each ledger row is written.
+`record_ledger_event` exists so the local and remote transports share one
+statement and one validator, and it refuses any free-text payload.
+
+**It is not an agent-facing mutation.** `task-board m 'record_ledger_event(...)'`
+is refused, on a local and a remote board alike, with a
+`ledger_mirror_unauthorized` error: a mirror is DERIVED from a ledger row, so
+one appended by hand asserts a control-plane fact that never happened. On a
+local board the refusal is enforced twice over — once on the CLI mutation
+surface and once in the shared activity layer, which admits only the runtime's
+derived-mirror sink as the source entrypoint.
+
+**Stated bound — board-server boards.** The prevention above is a property of
+the CLI, not of the server. A mirror bound for a remote board is relayed over
+the same `m` transport, authenticating as the same principal, through the same
+handler entrypoint, as any other mutation that principal could send, so the
+server cannot tell a relayed mirror from one a write-capable principal composed
+by hand — and it admits both. What the remote plane holds instead is
+attribution: every mirror records the authenticated principal that sent it, so
+a hand-minted one is traceable to its author even though it is not prevented.
+Preventing it would need per-record attestation the transport has no field for;
+admin-gating the operation would break the ordinary agent's mirror, which is
+the behaviour the remote plane exists to provide.
+
+**Server capability is proven, never assumed.** Before sending a mirror to a
+board-server the CLI reads `/v1/version` and requires the `ledger_mirror`
+contract. A server that advertises none, or a different version, is refused
+with a message naming what it advertised — a server that cannot persist a
+mirror would refuse `record_ledger_event` as an unknown operation, which looks
+exactly like a mirror that was never attempted. A `/version` read that FAILS is
+refused too, and separately: a failed read is not an absence, and treating it
+as one would silently drop mirrors a capable server would have accepted.
+
+Run heartbeats are deliberately not mirrored — see
+`docs/activity-mutation-coverage.md` for that bound and for what
+`task-board validate` reports when a ledger row has no mirror.
+
+### Scoped signatures
+
+`schema(operation=NAME)` and `schema(mutation=NAME)` return one flat signature object: `kind`, `name`, a typed `signature`, description, parameters, and examples; mutations also report `destructive` and `idempotent`. They do not include unrelated fields, presets, operations, or mutation contracts. Provide exactly one scope. `schema()` without a scope retains the full legacy response.
+
+Known-operation parser failures preserve the underlying typed parse error and append the relevant signature. This lets an agent repair a call without reading the full schema.
+
+### Recovery examples from the Story binary
+
+Captured at Story commit `13afc672f01a38d5748cca533f33524aec8080d9`.
+From the repository root, build without installing:
+
+```bash
+(cd tools/board-cli && go build -o ../../.temp/TASK-260907-bg79el/task-board .)
+```
+
+The commands below use that binary and the authoritative board selected by
+`TASK_BOARD_DIR`. IDs refer to this Story's board; substitute existing IDs on
+another board. Output blocks quote the exact emitted text (errors are stderr).
+Exit 1 is an expected refusal, not a passing command.
+
+#### Unknown operation
+
+An unknown operation lists the known query operations and points to `schema()` for discovery and `schema(operation=NAME)` for one signature.
+
+```bash
+.temp/TASK-260907-bg79el/task-board q 'fetch()'
+```
+
+Output (exit 1):
+
+```text
+query error: parse error at 1:1: unknown operation "fetch" (got "fetch"); known operations: activity, agents, context, context_boundary, context_candidates, context_retention, contexts, count, get, list, models, plan, project_config, provider_limits, schema, summary, whoami; see schema() for the contract and schema(operation=NAME) for one signature
+```
+
+#### Statement grammar and bare positional arguments
+
+The scoped signature includes `syntax`: the first bare positional value is the element/identifier argument, and subsequent arguments use `key=value`. Thus `get(TASK-260907-bg79el)` matches `get(id:string)`.
+
+```bash
+.temp/TASK-260907-bg79el/task-board q 'schema(operation=get)'
+```
+
+Output (exit 0):
+
+```text
+{"description":"Get a single element by ID","examples":["get(TASK-XX) { overview }"],"kind":"operation","name":"get","parameters":[{"name":"id","type":"string","optional":false,"description":"Element ID"}],"signature":"get(id:string)","syntax":"OPERATION(element-or-identifier, key=value, key=\"quoted string\") { field preset }; statements separated by ';'; the first bare positional value is the element/identifier argument; remaining arguments use key=value (no operators or lists); string escapes: \\\" \\\\ \\n \\t"}
+```
+
+#### Unknown projection field
+
+A misspelled projection field suggests `updated` and points to `schema()` for valid fields and presets.
+
+```bash
+.temp/TASK-260907-bg79el/task-board q 'get(TASK-260907-bg79el) { updated_at }'
+```
+
+Output (exit 1):
+
+```text
+query error: parse error at 1:29: unknown field "updated_at" (got "updated_at"); did you mean `updated`?; see schema() for valid fields and preset names
+```
+
+#### Bare element ID
+
+An element ID alone is refused; wrap it in `get(ID) { fields }`.
+
+```bash
+.temp/TASK-260907-bg79el/task-board q 'TASK-260907-bg79el'
+```
+
+Output (exit 1):
+
+```text
+query error: an element ID is not an operation; use get(ID) { fields }
+```
+
+#### Keyword IDs on mutations
+
+Every id-first mutation accepts `id=...` (bare or quoted) as well as the first positional argument. This includes `link`, `add_checklist_item`, and `set_status`; supplying both forms is rejected. These successful dry runs preview without persisting changes.
+
+```bash
+.temp/TASK-260907-bg79el/task-board m --dry-run 'link(id=TASK-260907-bg79el, blocked_by=TASK-260211-1saw6h)'
+```
+
+Output (exit 0):
+
+```text
+{"ok":true,"result":{"blocked_by":"TASK-260211-1saw6h","dry_run":true,"id":"TASK-260907-bg79el"}}
+```
+
+```bash
+.temp/TASK-260907-bg79el/task-board m --dry-run 'add_checklist_item(id=TASK-260907-bg79el, text="Verify recovery guidance")'
+```
+
+Output (exit 0):
+
+```text
+{"ok":true,"result":{"dry_run":true,"id":"TASK-260907-bg79el","text":"Verify recovery guidance"}}
+```
+
+```bash
+.temp/TASK-260907-bg79el/task-board m --dry-run 'set_status(id=TASK-260907-bg79el, status=development)'
+```
+
+Output (exit 0):
+
+```text
+{"ok":true,"result":{"dry_run":true,"id":"TASK-260907-bg79el","status":"development"}}
+```
+
+### `project_config()` runtime shape
+
+`project_config()` is always resolved by the local CLI, including when normal
+board reads and writes target a remote server. Its current top-level keys are
+`configured_mode`, `effective_mode`, `board_source`,
+`explicit_remote_override`, `project_root`, `config_path`, `config_exists`,
+`local`, `remote`, `whoami`, `goals`, `spawn`, `codex`, and `version_control`.
+
+The no-argument shape remains the role-optional general config surface in every
+profile, including the full default. For a spawn decision, opt in explicitly:
+
+```bash
+task-board q --format compact 'project_config(view=spawn-preflight, role=developer, agent=codex)'
+```
+
+`role` is required. `agent` is optional and otherwise follows the same
+preferred-provider/schedule/runtime-affinity resolver as `task-board spawn`.
+The narrow result contains `enabled`, `max_parallel`, a small effective
+agent-context profile/source header, the effective allowed and target providers,
+the active schedule window, canonical role, merged role ceiling for the target
+provider, provider selection mode, and launch-composition enabled/status. It
+excludes local/remote auth, `whoami`, Codex session, nested agent-context policy,
+project paths, all unrelated provider ceilings, and version-control fields.
+Active schedule allow-sets and provider refusals use the same fail-closed
+resolver as spawn.
+
+For Codex, `resolved_role_ceiling` includes the resolved boolean `fast_mode`,
+`fast_mode_source` (`default` or `configured`), and `provenance.fast_mode` with
+the exact root or remote key. Durable spawn status and JSON run state carry
+`service_tier`, `fast_mode`, `fast_mode_source`, and `fast_mode_config_key`;
+provider-limit retries update them to describe the provider currently being
+launched, while each `provider_attempts[]` entry preserves the tier evidence
+carried by that historical launch.
+
+The lite profile's resolved `queries.project_config=spawn-preflight` setting
+guides agents toward the target-specific call; it does not rewrite a bare
+`project_config()` invocation. Supplying a view or target argument opts into
+the narrow projection, whose role remains mandatory.
+
+The policy members relevant to spawning and status mutation are:
+
+| Path | Shape |
+|---|---|
+| `spawn.preferred_agent` | Legacy configured provider string, or `null`. It is retained only as compatibility evidence. |
+| `spawn.preferred_agentic_system` | Currently effective `{mode, allowed_providers, source, config_key}`, or `null`. During an active schedule window, `source` is `schedule`. |
+| `spawn.schedule` | `{configured, timezone, config_key, windows, active_window, base_preferred_agentic_system}`. `timezone` is always `UTC`; every projected window also carries its normalized bounds, key, and provider-system projection. |
+| `spawn.launch_composition` | `{enabled, config_key, contract, schema_version, degradation}` without invoking `agents-infra`. |
+| `spawn.ceilings` | Always reports effective `contract_version`, `authority`, `configured`, and `config_path`. V3 providers expose normalized `allowed_models` or `entries`, nullable `resolution_model`, confirmation mode, effort direction, merged role-effective policy, and exact provenance. Every contract version and input form reports `admitted_pairs`, the canonical admitted `(model, effort)` set with its digest — the field to read when deciding what a policy admits, since `allowed_models` is `null` under the entries form. An entries policy also reports `entries_expanded`, `entries_expansion_pinned`, and any unreachable/redundant entry `warnings`. V2 exposes `snapshot_version`, `snapshot_allowed_models`, `migration_required`, stable actionable warnings, and exact read-only v3 `migration` objects. |
+| `spawn.selection` | Required flags plus provider effort vocabularies and supported model criteria. |
+| `spawn.execution` / `spawn.tracking` | Executable background mode and durable run-observation contract. |
+| `goals` | Static compact `board-goal-v2` capability with required Session Manager native reflection and the one-release `primary-goal-v1` / `board-goal-v1` adapters. The legacy `goals.primary` descriptor remains nested alongside the v2 fields for the compatibility release. It never embeds the current objective and is omitted from `view=spawn-preflight`. |
+| `version_control` | `{configured, confirm, desired_commit_time, enforced_types, owner_message, acknowledgement_parameter, acknowledgement_value, config_key}`. |
+
+Local mode uses `spawn.*` keys. Remote mode uses `remote.spawn.*` when that
+object is present and non-null; otherwise it falls back to the whole root
+`spawn` object. The reported `spawn.config_key_prefix` and nested `config_key`
+values always identify the effective source. `preferred_agentic_system` is the
+canonical config spelling; `preferred_agent_system` is not an alias.
+
+`spawn-policy-v3` admission is exact membership in the effective
+`allowed_models` set. `PolicyRank`, lifecycle, recommendation, registry order,
+and price are not policy inputs. A v2 projection is compatibility evidence,
+not an automatic migration: setup, query, spawn, and install never rewrite the
+repository. For an explicit migration, copy the full projection's provider and
+role `migration` objects under `contract_version: spawn-policy-v3`, review the
+diff, then repeat full and target-role preflight queries. An effort-only v2
+warning uses reason `spawn_policy_v2_effort_only_migration_required` and
+explicitly says to omit `resolution_model` unless a fallback is intended.
+
+### Project observability preset family
+
+`summary() { observability-project }` returns the whole-project view. The
+element presets work with the existing `get` and `list` operations; the task
+preset also applies to Bugs because Tasks and Bugs share the leaf estimate
+contract.
+
+Every preset exposes the same nested `observability` field:
+
+- `scope` identifies the project or selected Epic/Story/Task/Bug.
+- `summary` carries the existing `byType`, `active`, and `blocked` summary,
+  scoped to that element and its descendants.
+- `readiness.estimateKind` carries the leaf or calculated
+  Story/Epic/project projection state without dumping every missing leaf.
+- `readiness.coverage` always reports `estimated`, `unestimated`, `total`,
+  `ratio`, and `complete`, including fully estimated scopes.
+- `readiness.rolledEstimate` is the known Fibonacci sum even when coverage is
+  partial. Query the separate `estimate` field on the incomplete Story/Epic to
+  retrieve its exact `unestimatedTaskIds` drill-down list.
+- `isBlocked` / `blockedElementIds` aggregate hard dependency state across the
+  scope, while `isAdvisoryBlocked` / `advisoryBlockedElementIds` aggregate
+  derived cross-container waiting. The nested summary retains blocker details.
+- Only the project preset adds `primary_goal`. Its active form is
+  `{active:true,id,revision,objective,updated_at}`; after a clear or before
+  any creation it is `{active:false,latest_ref}` (where `latest_ref` can be
+  `null`). Epic, Story, Task, and Bug observability deliberately do not repeat
+  this board-wide parent intent or treat it as element acceptance.
+
+Plain `summary()` keeps its legacy response shape for compatibility.
+
+## DSL Mutations — structured writes for agents
+
+Write operations through the same DSL engine. All mutations support `--dry-run` preview. Destructive mutations require `--confirm`.
+
+Element-ID mutations accept the first positional argument or `id=ID` (bare or quoted), matching their schema signatures: `link(ID, blocked_by=OTHER)` and `link(id="ID", blocked_by=OTHER)` are equivalent. Supplying both forms is rejected. `create(type=..., parent=...)` retains its keyword syntax.
+
+```bash
+# Status changes
+task-board m 'set_status(TASK-12, status=development)'
+
+# Evidence-backed role handoff (preferred producer end transition)
+task-board handoff TASK-12 --role developer
+
+# Task/Bug estimate enum
+task-board m 'set_estimate(TASK-12, estimate=notEstimated)'
+task-board m 'set_estimate(TASK-12, estimate=estimated, scale=fibonacci, number=5)'
+
+# Create elements
+task-board m 'create(type=task, parent=STORY-05, name=new-task)'
+task-board m 'create(type=task, parent=STORY-05, name=new-task, description="Implement feature", scope="Backend only", ac="Tests pass")'
+
+# Update README fields
+task-board m 'set_details(TASK-12, title="New title", description="Updated desc")'
+
+# Rename overview name/slug while preserving ID, README, progress, children, and resources
+task-board m 'rename(TASK-12, name=better-task-name)'
+
+# Assignment
+task-board m 'assign(TASK-12, agent=claude-opus)'
+task-board m 'unassign(TASK-12)'
+
+# Dependencies
+task-board m 'link(TASK-13, blocked_by=TASK-12)'
+task-board m 'unlink(TASK-13, blocked_by=TASK-12)'
+
+# Checklist
+task-board m 'check_item(TASK-12, item=1)'
+task-board m 'uncheck_item(TASK-12, item=1)'
+task-board m 'add_checklist_item(TASK-12, text="Write tests")'
+
+# Notes
+task-board m 'set_notes(TASK-12, text="Progress update")'        # append
+task-board m 'set_notes(TASK-12, text="Replace all", set=true)'  # replace
+
+# Move to new parent
+task-board m 'set_parent(TASK-12, parent=STORY-03)'
+
+# Resources
+task-board m 'add_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="...", description="Design doc")'
+task-board m 'update_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="revised", description="Design doc v2")'
+task-board m --confirm 'delete_resource(TASK-12, name="TASK-12_design.md")'
+
+# Destructive — preview first, then confirm
+task-board m --dry-run 'remove_checklist_item(TASK-12, item=2)'
+task-board m --confirm 'remove_checklist_item(TASK-12, item=2)'
+task-board m --dry-run 'delete(TASK-12)'
+task-board m --confirm 'delete(TASK-12)'
+
+# Batch mutations (semicolon-separated)
+task-board m 'set_status(TASK-12, status=done); set_status(TASK-13, status=development)'
+```
+
+**Safety flags:**
+- `--dry-run` — preview mutation without applying. Returns what would change
+- `--confirm` — required for destructive mutations (`delete`, `delete_resource`)
+- Mutation arguments are schema-checked. Unknown named arguments and extra positional fragments are rejected with typed errors before any write runs.
+- Without `--confirm`, destructive mutations are rejected with an error
+
+**Format:** `--format json` (default) or `--format compact`
+
+**Introspection:** Run `task-board q 'schema(mutation=NAME)'` for one mutation signature, or full `schema()` for the entire contract.
+
+`task-board handoff` resolves the role's configured end status, verifies all
+checklist items plus an actual stored task-scoped outcome, and serializes that
+decision with the ordinary status transition. The underlying shared `handoff`
+mutation carries the already-resolved role/status for remote execution; use the
+CLI facade so callers do not have to reproduce role-policy resolution.
+
+The `estimate` q field is a nested enum. Task/Bug values are either
+`{"kind":"notEstimated"}` or
+`{"kind":"estimated","scale":{"kind":"fibonacci","number":5}}`.
+Story/Epic values are calculated, never persisted or hand-set. Full coverage
+returns the same `estimated` shape with the descendant sum. Partial coverage
+returns
+`{"kind":"partiallyEstimated","rolledEstimate":{"kind":"estimated","scale":{"kind":"fibonacci","number":5}},"notEstimatedCount":"1/3","unestimatedTaskIds":["TASK-..."]}`.
+Story counts direct Task/Bug children; Epic rolls up descendant Task/Bug values.
+New Task/Bug records must be estimated before entering `development`; legacy
+records with no persisted Estimate section remain compatible and count as
+unestimated in container projections.
+
+## Grep — unstructured text search
+
+When DSL can't help — searching for arbitrary text across board files.
+
+```bash
+# Find mentions of a term
+task-board grep "AudioRecorder"
+
+# Search in specific file type
+task-board grep "blocked.*deployment" --file progress.md
+
+# Case-insensitive search in descriptions
+task-board grep "TODO" -i --file README.md
+
+# With context lines
+task-board grep "error" -C 2
+```
+
+## CLI — human-facing output and complex operations
+
+CLI text output with ANSI colors is designed for humans. Use for operations not covered by DSL, or when human-readable output is needed.
+
+When reporting board state to a person, reference each epic, story, task, or bug with both its concrete ID and its human-readable title/name. In practice, that usually means carrying both `id` and `name` in your query output, or using a preset such as `default` or `overview` that already includes them. ID-only references are not enough for chat summaries because readers should not have to resolve identifiers manually.
+
+```bash
+# Good human-facing summary inputs
+task-board q --format compact 'list(type=task, status=development) { id name status }'
+task-board q --format compact 'list(type=story, parent=EPIC-260218-abc123) { overview }'
+```
+
+### Parent alignment in the unified goal ledger
+
+Use the top-level `goal` group to maintain one provider-neutral, board-scoped
+statement of the current `parent/primary` owner's complete objective. It
+survives a parent-session replacement, records immutable `board-goal-v2`
+revisions, and never changes a board element's status or acceptance evidence.
+The command group is the one-release `primary-goal-v1` compatibility adapter.
+
+```bash
+# Create only when no primary goal is active.
+task-board goal set-primary \
+  --objective "Keep the parent goal aligned with the current user requirements." \
+  --reason "First actionable requirement"
+
+# CAS-replace the whole objective. Repeating the same objective is idempotent.
+task-board goal update --if-revision 1 \
+  --objective "Keep the parent goal aligned with the current user requirements and active delivery work." \
+  --reason "Requirement expanded"
+
+# Read current state, immutable audit history, or one immutable revision.
+task-board goal get
+task-board goal get --history
+task-board goal get --goal-id PRIMARY-GOAL-260723-a1b2c3 --revision 1
+
+# Clear only with the observed revision and an explicit disposition reason.
+task-board goal clear --if-revision 2 --reason "Parent intent superseded"
+```
+
+`goal get` is read-only and remains available inside a spawned run. When
+`TASK_BOARD_RUN_ID` is set, `set-primary`, `update`, and `clear` return the
+typed `primary_goal_parent_context_required` failure with no side effects;
+spawned owners must use `task-board spawn goal` or `task-board spawn goal
+upsert` for their `run/RUN-*` owner. Both commands use `board-goal-v2`; owner
+isolation prevents either compatibility adapter from silently updating or
+clearing the other.
+
+Every successful JSON response has `ok`, `board_scope`, `primary_goal`, and
+`latest_ref`; mutations additionally carry `mutation`. Exact revision reads
+add `primary_goal_revision`, and history reads add newest-first `history`
+summaries. Typed failures use
+`{ok:false,error:{code,message,current_ref,side_effects:false,remediation?}}`.
+Remote primary-adapter mutations accept authoritative `goal=board-v2` or the
+one-release `primary_goal=board-v1` compatibility capability. Direct v2
+mutations require `goal=board-v2`, and reads never create a local shadow
+ledger.
+
+## Decision table
+
+| Need | Tool | Example |
+|------|------|---------|
+| Discover full API contract | DSL | `task-board q 'schema()'` |
+| Repair one operation/mutation call | DSL | `task-board q 'schema(operation=NAME)'` / `schema(mutation=NAME)` |
+| Preflight one spawn target | DSL | `task-board q 'project_config(view=spawn-preflight, role=ROLE, agent=PROVIDER)'` |
+| Structured query (status, filter, lookup) | DSL query | `task-board q --format compact 'list(type=task, status=development) { overview }'` |
+| Structured write (status, assign, link, create) | DSL mutation | `task-board m 'set_status(TASK-XX, status=development)'` |
+| Evidence-backed producer handoff | CLI facade over shared mutation | `task-board handoff TASK-XX --role developer` |
+| Board parent intent | CLI primary-goal group | `task-board goal get` / `task-board goal update --if-revision N ...` |
+| Preview write without applying | DSL mutation | `task-board m --dry-run 'delete(TASK-XX)'` |
+| Text search across elements | Grep | `task-board grep "AudioRecorder"` |
+| **Phase planning (canonical API)** | **DSL query** | **`task-board q 'plan(EPIC-XX, mode=children)'`** |
+| **Pretty-print / render / save a plan** | **CLI facade** | **`task-board plan EPIC-XX --render --format png`** |
+| Resource management | DSL mutation / CLI | `task-board m 'add_resource(TASK-XX, name=TASK-XX_results.md, content="...", type=outcome)'` |
+
+**IMPORTANT:** Canonical planning lives in `task-board q 'plan(...)'`. Use `task-board plan` only as a local pretty-print / render / save facade over that same planning model. Never manually create phase breakdowns or write `.planning/` files from scratch.
+
+exec
+/bin/zsh -lc "git status --short; git diff --stat; rg --files -g AGENTS.md -g '*f1*' -g '*diagnostic*' -g '*logged*' -g '*macos*' .scripts .temp agents .codex .claude 2>/dev/null" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ exited 2 in 2ms:
+.temp/TASK-260715-uyju7n/DerivedData-validation/Index.noindex/DataStore/v5/records/F8/x86_64-apple-macos.swiftinterface-3CU6SZ805QXF8
+.temp/TASK-260715-uyju7n/DerivedData-validation/Index.noindex/DataStore/v5/records/F8/arm64e-apple-macos.swiftinterface-3CU6SZ805QXF8
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(BUG-260908-33iyb1) { status checklist outcomeResources }; get(BUG-260908-shki8p) { status }'; cat scripts/tests/test_macos_build_diagnostic_mutants.py; cat .temp/BUG-260908-33iyb1-f1/BUG-260908-33iyb1_f1-tests.log; rg -n 'exit1|exit_1|def test|command_status' scripts/tests/test_macos_build_diagnostics.py scripts/logged-command.sh; rg -n 'check_item|resource\\(' /Users/iv/.claude/skills/project-management/references/querying.md" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 143ms:
+status:development
+checklist:[{"text":"Code written per task description and AC","done":true},{"text":"Relevant tests written for new or changed behavior and passing","done":true},{"text":"Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.","done":true},{"text":"Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named","done":true},{"text":"Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.","done":true},{"text":"A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.","done":true},{"text":"Lint clean","done":true},{"text":"Relevant build/validation commands run after changes and build not broken","done":true},{"text":"New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Diagnostic propagation passes named behavioral/narrowing tests and real macOS validation; immutable review required; original hosted repair remains open BUG-260908-shki8p","done":true},{"text":"Implementation matches AC","done":false},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":true},{"text":"Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted","done":true},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}]
+outcomeResources:[{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-f967aa.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-f967aa.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_results.md","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_results.md"},{"name":"BUG-260908-33iyb1_diagnostic-candidate.patch","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_diagnostic-candidate.patch","description":"Minimal uncommitted diagnostic patch against signed checkpoint"},{"name":"BUG-260908-33iyb1_evidence.zip","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_evidence.zip","description":"Real build logs, composition evidence, positive and narrowing tests"},{"name":"BUG-260908-33iyb1_handoff-refusal.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_handoff-refusal.log","description":"Exit 1: hosted completion checklist remains open"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-cae8d9.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-cae8d9.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-40c797.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-40c797.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_recovery-evidence.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_recovery-evidence.log"},{"name":"BUG-260908-33iyb1_change-request_rev1.patch","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_change-request_rev1.patch","description":"Change Request CR-BUG-260908-33iyb1-1 revision 1 candidate patch (repository_delta=present, 16 changed paths)"},{"name":"BUG-260908-33iyb1_change-request_rev1-validation.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_change-request_rev1-validation.log","description":"Change Request CR-BUG-260908-33iyb1-1 revision 1 bounded validation log"},{"name":"BUG-260908-33iyb1_spawn-log_-reviewer--reviewer--codex-_RUN-260907-2be57c.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-reviewer--reviewer--codex-_RUN-260907-2be57c.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_review-verdict-rev1.md","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_review-verdict-rev1.md"},{"name":"BUG-260908-33iyb1_review-adversarial-rev1.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_review-adversarial-rev1.log"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-0d42a3.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-0d42a3.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_f1-tests.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_f1-tests.log","description":"F1 regression and three narrowing mutants with real exit codes"},{"name":"BUG-260908-33iyb1_f1-handoff-refusal.md","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_f1-handoff-refusal.md","description":"Exact managed handoff refusal and required parent routing"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-c8ef65.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-c8ef65.log","description":"System spawn log captured by task-board"},{"name":"BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-01119a.log","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_spawn-log_-implementer--developer--codex-_RUN-260907-01119a.log","description":"System spawn log captured by task-board"}]
+
+status:backlog
+"""Require behavioral tests to kill narrowed diagnostic/status regressions."""
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[2]
+MUTANTS = {
+    'admit-exit-1-only': ('return "$command_status"',
+                        '[ "$command_status" -ne 1 ] || return 0\n    return "$command_status"'),
+    'admit-exit-65-only': ('return "$command_status"',
+                         '[ "$command_status" -ne 65 ] || return 0\n    return "$command_status"'),
+    'hide-exit-65-diagnostic-only': ('cat "$command_log" >&2',
+                                   'if [ "$command_status" -ne 65 ]; then cat "$command_log" >&2; fi'),
+}
+
+
+def main():
+    for name, (before, after) in MUTANTS.items():
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'scripts/tests').mkdir(parents=True)
+            for relative in ('scripts/validate-macos-targets.sh', 'scripts/logged-command.sh',
+                             'scripts/tests/test_macos_build_diagnostics.py'):
+                shutil.copyfile(ROOT / relative, root / relative)
+            helper = root / 'scripts/logged-command.sh'
+            source = helper.read_text()
+            assert source.count(before) == 1
+            helper.write_text(source.replace(before, after))
+            result = subprocess.run(
+                ['python3', 'scripts/tests/test_macos_build_diagnostics.py',
+                 ('MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status'
+                  if name == 'admit-exit-1-only' else
+                  'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context')],
+                cwd=root, capture_output=True, text=True)
+            print(f'{name}: behavioral suite exit {result.returncode}')
+            print(result.stdout + result.stderr)
+            if result.returncode != 1 or 'AssertionError' not in result.stderr:
+                raise SystemExit(f'mutant survived or test infrastructure failed: {name}')
+    print(f'All {len(MUTANTS)} narrowing mutants killed by production-entry behavioral tests')
+
+
+if __name__ == '__main__':
+    main()
+behavioral command: python3 scripts/tests/test_macos_build_diagnostics.py; exit 0
+...
+----------------------------------------------------------------------
+Ran 3 tests in 5.670s
+
+OK
+mutants command: python3 scripts/tests/test_macos_build_diagnostic_mutants.py; exit 0
+admit-exit-1-only: behavioral suite exit 1
+FFFF
+======================================================================
+FAIL: test_exit_one_stops_each_build_and_test_with_exact_status (__main__.MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status) (failing_call=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpch9pxm9_/scripts/tests/test_macos_build_diagnostics.py", line 65, in assert_failing_build_and_test_status
+    self.assertEqual(counter.read_text().strip(), str(failing_call))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '5' != '1'
+- 5
++ 1
+
+
+======================================================================
+FAIL: test_exit_one_stops_each_build_and_test_with_exact_status (__main__.MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status) (failing_call=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpch9pxm9_/scripts/tests/test_macos_build_diagnostics.py", line 65, in assert_failing_build_and_test_status
+    self.assertEqual(counter.read_text().strip(), str(failing_call))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '5' != '2'
+- 5
++ 2
+
+
+======================================================================
+FAIL: test_exit_one_stops_each_build_and_test_with_exact_status (__main__.MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status) (failing_call=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpch9pxm9_/scripts/tests/test_macos_build_diagnostics.py", line 65, in assert_failing_build_and_test_status
+    self.assertEqual(counter.read_text().strip(), str(failing_call))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '5' != '3'
+- 5
++ 3
+
+
+======================================================================
+FAIL: test_exit_one_stops_each_build_and_test_with_exact_status (__main__.MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status) (failing_call=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpch9pxm9_/scripts/tests/test_macos_build_diagnostics.py", line 65, in assert_failing_build_and_test_status
+    self.assertEqual(counter.read_text().strip(), str(failing_call))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '5' != '4'
+- 5
++ 4
+
+
+----------------------------------------------------------------------
+Ran 1 test in 2.495s
+
+FAILED (failures=4)
+
+admit-exit-65-only: behavioral suite exit 1
+FFFFF
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpq0byhx5i/scripts/tests/test_macos_build_diagnostics.py", line 64, in assert_failing_build_and_test_status
+    self.assertEqual(result.returncode, status, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp41fe3mks/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp41fe3mks/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp41fe3mks/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp41fe3mks/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-debug-build.log)
+compiler invocation 1: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp41fe3mks/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp41fe3mks/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp41fe3mks/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpq0byhx5i/scripts/tests/test_macos_build_diagnostics.py", line 64, in assert_failing_build_and_test_status
+    self.assertEqual(result.returncode, status, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9yba39ic/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9yba39ic/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9yba39ic/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9yba39ic/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-release-build.log)
+compiler invocation 2: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9yba39ic/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9yba39ic/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp9yba39ic/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpq0byhx5i/scripts/tests/test_macos_build_diagnostics.py", line 64, in assert_failing_build_and_test_status
+    self.assertEqual(result.returncode, status, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpemtzcm9t/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpemtzcm9t/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpemtzcm9t/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpemtzcm9t/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-debug-build.log)
+compiler invocation 3: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpemtzcm9t/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpemtzcm9t/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpemtzcm9t/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpq0byhx5i/scripts/tests/test_macos_build_diagnostics.py", line 64, in assert_failing_build_and_test_status
+    self.assertEqual(result.returncode, status, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmple353hzk/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmple353hzk/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmple353hzk/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmple353hzk/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-release-build.log)
+compiler invocation 4: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmple353hzk/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmple353hzk/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmple353hzk/.temp/TASK-260715-uyju7n/Intermediates build
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpq0byhx5i/scripts/tests/test_macos_build_diagnostics.py", line 64, in assert_failing_build_and_test_status
+    self.assertEqual(result.returncode, status, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 65 : FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpa66j2j48/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpa66j2j48/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpa66j2j48/.temp/TASK-260715-uyju7n/Intermediates test (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpa66j2j48/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/target-contract-tests.log)
+compiler invocation 5: -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpa66j2j48/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpa66j2j48/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpa66j2j48/.temp/TASK-260715-uyju7n/Intermediates test
+ConcreteCompile.swift:42: error: diagnostic sentinel
+
+
+----------------------------------------------------------------------
+Ran 1 test in 2.462s
+
+FAILED (failures=5)
+
+hide-exit-65-diagnostic-only: behavioral suite exit 1
+FFFFF
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmplxtu4dio/scripts/tests/test_macos_build_diagnostics.py", line 66, in assert_failing_build_and_test_status
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpp554zlxd/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpp554zlxd/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpp554zlxd/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpp554zlxd/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-debug-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmplxtu4dio/scripts/tests/test_macos_build_diagnostics.py", line 66, in assert_failing_build_and_test_status
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpk92k261s/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpk92k261s/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpk92k261s/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmpk92k261s/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymac-release-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmplxtu4dio/scripts/tests/test_macos_build_diagnostics.py", line 66, in assert_failing_build_and_test_status
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Debug -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp5iotzitx/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp5iotzitx/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp5iotzitx/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp5iotzitx/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-debug-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmplxtu4dio/scripts/tests/test_macos_build_diagnostics.py", line 66, in assert_failing_build_and_test_status
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMacTunnel -configuration Release -destination generic/platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp7k7zc0l4/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp7k7zc0l4/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp7k7zc0l4/.temp/TASK-260715-uyju7n/Intermediates build (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp7k7zc0l4/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/credential-free-reluxproxymactunnel-release-build.log)\n'
+
+======================================================================
+FAIL: test_each_failing_build_and_test_retains_status_and_context (__main__.MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context) (failing_call=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmplxtu4dio/scripts/tests/test_macos_build_diagnostics.py", line 66, in assert_failing_build_and_test_status
+    self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ConcreteCompile.swift:42: error: diagnostic sentinel' not found in 'FAIL: xcodebuild -workspace ReluxTunnel.xcworkspace -scheme ReluxProxyMac -configuration Debug -destination platform=macOS -derivedDataPath /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-uyju7n/DerivedData-validation CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO SYMROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-uyju7n/Products OBJROOT=/var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-uyju7n/Intermediates test (exit 65; log: /var/folders/cz/jqbthtks55zbkpcdkfyk4bl80000gp/T/tmp2itwbgwj/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets/target-contract-tests.log)\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 2.352s
+
+FAILED (failures=5)
+
+All 3 narrowing mutants killed by production-entry behavioral tests
+git diff --check; exit 0
+scripts/logged-command.sh:9:    command_status=$?
+scripts/logged-command.sh:10:    printf 'FAIL: %s (exit %s; log: %s)\n' "$*" "$command_status" "$command_log" >&2
+scripts/logged-command.sh:12:    return "$command_status"
+scripts/tests/test_macos_build_diagnostics.py:13:    def test_successful_child_retains_both_streams(self):
+scripts/tests/test_macos_build_diagnostics.py:24:    def test_each_failing_build_and_test_retains_status_and_context(self):
+scripts/tests/test_macos_build_diagnostics.py:27:    def test_exit_one_stops_each_build_and_test_with_exact_status(self):
+392:task-board m 'check_item(TASK-12, item=1)'
+393:task-board m 'uncheck_item(TASK-12, item=1)'
+404:task-board m 'add_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="...", description="Design doc")'
+405:task-board m 'update_resource(TASK-12, name="TASK-12_design.md", type=precondition, content="revised", description="Design doc v2")'
+406:task-board m --confirm 'delete_resource(TASK-12, name="TASK-12_design.md")'
+537:| Resource management | DSL mutation / CLI | `task-board m 'add_resource(TASK-XX, name=TASK-XX_results.md, content="...", type=outcome)'` |
+
+exec
+/bin/zsh -lc 'cat scripts/tests/test_macos_build_diagnostics.py; git diff -- scripts/validate-macos-targets.sh LOGBOOK.md; cat /Users/iv/.claude/skills/project-management/references/negative-evidence.md; task-board resource --help' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+"""Behavioral diagnostics tests; fixtures never launch Xcode or activate a VPN."""
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class MacOSBuildDiagnosticsTests(unittest.TestCase):
+    def test_successful_child_retains_both_streams(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / 'child.log'
+            result = subprocess.run(
+                ['sh', '-c', '. "$1"; run_logged_command "$2" sh -c '
+                 '\'echo compiler-output; echo compiler-warning >&2\'',
+                 'test', str(ROOT / 'scripts/logged-command.sh'), str(log)],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(log.read_text(), 'compiler-output\ncompiler-warning\n')
+
+    def test_each_failing_build_and_test_retains_status_and_context(self):
+        self.assert_failing_build_and_test_status(65)
+
+    def test_exit_one_stops_each_build_and_test_with_exact_status(self):
+        self.assert_failing_build_and_test_status(1)
+
+    def assert_failing_build_and_test_status(self, status):
+        # Four unsigned builds followed by the target-contract test invocation.
+        for failing_call in range(1, 6):
+            with self.subTest(failing_call=failing_call), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                scripts = root / 'scripts'
+                scripts.mkdir()
+                for name in ('validate-macos-targets.sh', 'logged-command.sh'):
+                    shutil.copyfile(ROOT / 'scripts' / name, scripts / name)
+                generate = scripts / 'generate-workspace.sh'
+                generate.write_text('#!/bin/sh\nexit 0\n')
+                generate.chmod(0o755)
+                binary = root / 'bin'
+                binary.mkdir()
+                xcodebuild = binary / 'xcodebuild'
+                xcodebuild.write_text('''#!/bin/sh
+count=0
+[ ! -f "$COUNTER" ] || count=$(cat "$COUNTER")
+count=$((count + 1))
+echo "$count" > "$COUNTER"
+echo "compiler invocation $count: $*"
+if [ "$count" -eq "$FAIL_CALL" ]; then
+  echo 'ConcreteCompile.swift:42: error: diagnostic sentinel' >&2
+  exit "$FAIL_STATUS"
+fi
+''')
+                xcodebuild.chmod(0o755)
+                counter = root / 'counter'
+                result = subprocess.run(
+                    ['sh', str(scripts / 'validate-macos-targets.sh')],
+                    env={**os.environ, 'PATH': f'{binary}:/usr/bin:/bin',
+                         'COUNTER': str(counter), 'FAIL_CALL': str(failing_call),
+                         'FAIL_STATUS': str(status)},
+                    capture_output=True, text=True)
+                self.assertEqual(result.returncode, status, result.stderr)
+                self.assertEqual(counter.read_text().strip(), str(failing_call))
+                self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+                self.assertIn(f'exit {status}', result.stderr)
+                logs = root / '.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets'
+                self.assertEqual(len(list(logs.glob('*.log'))), failing_call)
+                self.assertTrue(any('diagnostic sentinel' in log.read_text()
+                                    for log in logs.glob('*.log')))
+
+
+if __name__ == '__main__':
+    unittest.main()
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index f86a812..a999a11 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1420,3 +1420,24 @@ HEV/SSH integration tests. The sequential full-suite retry passed with the same
+ behavioral source (516 Swift tests, 25 pre-existing known issues); Story-base
+ validation also passed (496 tests, 25 known issues). The initial failing attempt
+ remains attached, and scheduling interference is not claimed as a proven cause.
++
++
++## 2026-09-08 — BUG-260908-33iyb1 macOS hosted diagnostics
++
++- Verified hosted revision `3279036094620772262dbd04a6d8930ec7691e75` has
++  parents `b3422b05226253a17676b9b84c764071fe3dbe74` and PR 6 head
++  `87451b53960ceabe88a01c44c287fee7f9ebf386`; its tree equals that PR head.
++- The supplied artifact omits redirected Xcode child logs. Build exit 65 is
++  known; the compiler cause remains unknown. No unsupported toolchain claim
++  or runtime product change is justified by that evidence.
++- Added complete child-log retention under the already-uploaded log directory,
++  inline failure context, and unchanged nonzero child status. Behavioral tests
++  drive all four build invocations and the test invocation with exit 65. Two
++  narrowing mutants admit only exit 65 or suppress only its diagnostic; both
++  fail the named production-entry test.
++- The local macOS validator passed on Xcode 26.5 / Swift 6.3.2, including four
++  unsigned builds, target-contract tests, packaging, and provider graph checks.
++  This is local evidence, not hosted proof. Parent owns publication and the
++  exact-head hosted rerun. Diagnostic propagation is scoped to this leaf; the
++  original hosted repair and green-check requirement remain open in
++  BUG-260908-shki8p. Independent immutable review is still required.
+diff --git a/scripts/validate-macos-targets.sh b/scripts/validate-macos-targets.sh
+index 635a1b1..f58001d 100755
+--- a/scripts/validate-macos-targets.sh
++++ b/scripts/validate-macos-targets.sh
+@@ -7,7 +7,9 @@ products="$task_output/Products"
+ intermediates="$task_output/Intermediates"
+ derived_data="$task_output/DerivedData-validation"
+ 
+-mkdir -p "$task_output"
++build_logs="$repo_root/.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets"
++mkdir -p "$task_output" "$build_logs"
++. "$repo_root/scripts/logged-command.sh"
+ cd "$repo_root"
+ 
+ ./scripts/generate-workspace.sh --clean
+@@ -16,7 +18,7 @@ build_unsigned() {
+   scheme=$1
+   configuration=$2
+   log_name=$(printf '%s-%s' "$scheme" "$configuration" | tr '[:upper:]' '[:lower:]')
+-  xcodebuild \
++  run_logged_command "$build_logs/credential-free-$log_name-build.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration "$configuration" \
+@@ -26,7 +28,7 @@ build_unsigned() {
+     CODE_SIGNING_REQUIRED=NO \
+     SYMROOT="$products" \
+     OBJROOT="$intermediates" \
+-    build > "$task_output/credential-free-$log_name-build.log" 2>&1
++    build
+ }
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+@@ -34,7 +36,7 @@ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+   build_unsigned "$scheme" Release
+ done
+ 
+-xcodebuild \
++run_logged_command "$build_logs/target-contract-tests.log" xcodebuild \
+   -workspace ReluxTunnel.xcworkspace \
+   -scheme ReluxProxyMac \
+   -configuration Debug \
+@@ -44,7 +46,7 @@ xcodebuild \
+   CODE_SIGNING_REQUIRED=NO \
+   SYMROOT="$products" \
+   OBJROOT="$intermediates" \
+-  test > "$task_output/target-contract-tests.log" 2>&1
++  test
+ 
+ host="$products/Debug/ReluxProxyMac.app"
+ extensions="$host/Contents/Library/SystemExtensions"
+@@ -107,16 +109,16 @@ for entitlements in "$provider_entitlements" "$developer_id_provider_entitlement
+ done
+ 
+ for scheme in ReluxProxyMac ReluxProxyMacTunnel; do
+-  xcodebuild \
++  run_logged_command "$build_logs/$scheme-build-settings.log" xcodebuild \
+     -workspace ReluxTunnel.xcworkspace \
+     -scheme "$scheme" \
+     -configuration Debug \
+-    -showBuildSettings > "$task_output/$scheme-build-settings.log"
++    -showBuildSettings
+ done
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMac-Development.entitlements' \
+-  "$task_output/ReluxProxyMac-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMac-build-settings.log" >/dev/null
+ grep -F 'CODE_SIGN_ENTITLEMENTS = Configuration/Entitlements/ReluxProxyMacTunnel-Development.entitlements' \
+-  "$task_output/ReluxProxyMacTunnel-build-settings.log" >/dev/null
++  "$build_logs/ReluxProxyMacTunnel-build-settings.log" >/dev/null
+ 
+ provider_architectures=$(lipo -archs "$release_provider_binary" | tr ' ' '\n' | LC_ALL=C sort | tr '\n' ' ')
+ test "$provider_architectures" = 'arm64 x86_64 '
+# Negative Evidence Contract
+
+A passing suite means nothing unless something in it would have failed. This
+file is the single source of truth for the rules that make a green check mean
+something, and for the incident record behind each one. The operative wording
+that reaches every spawned child lives in the spawn template section
+`Evidence That Counts`; the reviewer's licence lives in `.roles/reviewer/role.md`;
+the repeated-variant heuristic lives in `.roles/orchestrator/role.md`. Read this
+file when you need the shapes, the failure vocabulary, or the incidents that
+produced a rule — do not restate these rules in other documents.
+
+| Rule | Operative statement | Evidence record |
+| --- | --- | --- |
+| Negative tests for gates | spawn template, `Evidence That Counts` | this file |
+| Narrowing, not deleting | spawn template, `Evidence That Counts` | this file |
+| Production call site | spawn template, `Evidence That Counts` | this file |
+| Absence vs failure to read | spawn template, `Evidence That Counts` | this file |
+| Prove, or report nothing | spawn template, `Evidence That Counts` | this file |
+| Reviewer licence to defeat a gate | `.roles/reviewer/role.md` | this file |
+| Many variants, one unowned decision | `.roles/orchestrator/role.md` | this file |
+
+## Negative Tests For Gates
+
+Any feature that GATES, REFUSES, VALIDATES, AUTHORIZES, or ATTESTS must ship
+with negative tests that fail when the gate admits what it is supposed to
+reject. A positive test proving the happy path passes is not evidence that the
+gate works; it is evidence that the gate is reachable.
+
+This is the dominant defect class in this repository's 2026-07-28..08-03 waves.
+Every instance below was found because a reviewer deliberately attacked the
+gate, not because anyone read the code:
+
+- the fact-assay attested a COLD child that never inherited the context, because
+  it checked inventory, session id, digests, and output shape, but never
+  inheritance;
+- the assay fork had repository tool access, so it could answer from disk while
+  the base was false;
+- the builder attestation accepted a correctly-shaped forged digest that the
+  caller minted itself;
+- clearance enforcement existed but no production path called it, and counting
+  tests around a fake proved nothing;
+- an unknown assay event preserved a false zero-tool observation;
+- a provider capability was declared absent to disable a flaky check, and the
+  claim did not reproduce (9/11 success).
+
+## Standard Negative Shapes
+
+Use these names in checklists, verdicts, and test names. They are the shapes a
+negative test must cover and the shapes a reviewer looks for first.
+
+| Shape | What it looks like when nobody tests for it | What the negative test must do |
+| --- | --- | --- |
+| Forged or self-minted evidence | The caller supplies the proof that the gate checks, and a correctly-shaped value passes. | Mint the evidence in the test the way a caller could, and require refusal. |
+| Absent evidence treated as satisfied | Missing input takes the permissive branch; the suite only ever supplies the input. | Remove the evidence entirely and require refusal, not a default-pass. |
+| Check present but uncalled from production | The guard is implemented and unit-tested by direct call; no production path invokes it. | Drive the real entry point — launch, materialize, resolve, publish — and name the production call site. |
+| Bypass path around the check | One entry point enforces; a second, older, or retry/renewal path does not. | Exercise every entry point that reaches the protected state, including retry, renewal, resume, and recovery, and every delivery surface that carries the rule — a contract clause reaching one context profile and not the other is this shape. |
+| Capability claim that does not reproduce | A capability is declared absent or present to make a flaky check go away. | Re-run the claim enough times to state a real rate, or report unknown. |
+
+## Derive Completeness From An Independent Source
+
+Completeness is derived from the pinned source or generated artifact, never
+enumerated by hand. When a registry, schema set, or declared scope defines the
+members, derive the expected set from that source and fail when any member lacks
+enforcement. This rule comes from five consecutive review rounds that each
+closed exactly the hand-picked members named by the previous reviewer; the next
+unlisted member defeated every list.
+
+A completeness test that reads the implementation's own table is circular and
+can never detect a missing entry: removing the entry also removes it from the
+test's expected set. Derive the expectation from the normative source of truth,
+not from the code under test. This distinction was what let the next Story's
+round-1 review demand a source-derived completeness test instead of accepting
+the producer's two selected cases.
+
+## Prove Exact Bounds At The Production Entry
+
+Prove every bound in both directions at the production entry: accept at the
+limit and refuse past the limit. Character bounds count characters rather than
+bytes. The motivating failure was a value containing 3,999 characters but
+5,999 bytes that production rejected with a byte comparison even though the
+normative `string[1..4096]` bound permitted it; helper-only or ASCII-only tests
+could not expose that narrowing.
+
+## Disable Every Refusal Clause
+
+Disable each refusal clause individually. If the suite stays green, that clause
+is a hole unless the test or evidence documents it as provably subsumed and
+names the check that subsumes it. This is measured rather than hypothetical: in
+one file, disabling 110 clause sites produced 45 surviving mutants, and 12 of
+those survivors were genuine widenings.
+
+Numeric-bound mutation and clause-disablement are different classes, and one
+harness rarely generates both. Numeric mutation finds off-by-one defects but
+cannot express disabling a tagged-union arm, cross-field equality, or grammar
+predicate; clause disablement finds those omissions but cannot move a numeric
+boundary. The 110-site clause run exposed widenings that the numeric harness
+could not generate, so run both classes.
+
+## Check Refusals Against The Normative Source
+
+A green test can defend a bug when it asserts a refusal that the normative
+source does not require. One observed test required production to reject values
+that the pinned specification permitted, so the suite protected the narrowing
+instead of detecting it. Whenever a test encodes a refusal, check that refusal
+against the pinned source rather than copying current behaviour into the
+assertion.
+
+## Eliminate Ambient Test Inputs
+
+No test may depend on ambient environment. Fixtures set explicit identity and
+all other values that could otherwise come from global configuration, the OS,
+or developer-machine state. A developer machine let Git derive an author name
+from the OS and passed the suite, while a CI runner with an empty GECOS field
+failed with `empty ident name`; only CI can catch this class, so the fixture
+must make its identity deterministic before CI exercises it.
+
+## Prove A Bound By Narrowing, Not By Deleting
+
+A test that removes a gate entirely proves only that the gate exists. It says
+nothing about whether the gate covers the right class. Restrict the gate to a
+narrower condition instead and require a named test to fail.
+
+Two repository incidents where a narrowed gate survived a green suite:
+
+- **BUG-260801-3kiloe F1** — the recovery successor cap was proven only by total
+  removal. Narrowing it to provider-limit signals left every other recoverable
+  failure unbounded, with the whole suite still green.
+- **TASK-260802-17wetr F16** — thirteen cycles later, the same shape: the
+  probe-lease cap survived deletion tests while the renewal path escaped it.
+- **TASK-260730-2c1e8l cycle 1** — this contract itself. The reviewer clauses
+  landed in the role body and the shipped test checked the role file and the
+  lite template separately, so both halves were green while the composed lite
+  prompt carried neither. Assert on the composed production artifact, not on the
+  pieces it is built from.
+- **TASK-260730-2c1e8l cycle 2** — the same contract, one level up, and the
+  clearest statement of the difference between the two shapes. The cycle-1 fix
+  did assert on the composed prompt, but it called the composition helper
+  directly and handed it the role, task-class filter, and profile itself.
+  Production builds those inputs inside the spawn entry point, so a mutant
+  narrowing only the real lite-reviewer routing just before composition left the
+  test green while an actual lite reviewer lost its gate-defeat licence. A test
+  that supplies the inputs is testing the helper, not the path. Obtain the
+  artifact the way the consumer does — here, read the prompt file recorded on
+  the run manifest after driving the entry point — so role resolution, the
+  task-class filter, and profile resolution are all under test rather than
+  assumed.
+
+Three traps when running the mutants themselves, all hit while proving this file:
+
+- **The mutant must be re-run with `-count=1`.** `go test` caches on package
+  sources; a test that reads `.roles/*.md` or any file outside its package at
+  runtime returns a stale cached PASS after that file is mutated. A cached green
+  is not a surviving mutant, it is an unexecuted test.
+- **A passing assertion may be satisfied by the wrong source.** Two mutants of
+  the producer DoD entries survived because the phrase asserted also appears,
+  differently worded, in the shared spawn template. Choose assertion wording
+  that only the intended source can supply, then narrow that source and require
+  the named test to fail.
+- **Restore the mutant from a copy, not from git.** `git checkout <file>`
+  restores from the index, which silently discards uncommitted work in that file
+  — during this task it reverted the whole cycle-2 change, not just the mutant.
+  Copy the file aside before mutating, restore from the copy, and verify the
+  restoration by diffing against it before rerunning the gates.
+
+## A Gate Publishes Its Coverage As A Ratio
+
+Prose about what a gate checks cannot distinguish 7 of 7 from 3 of 7. Every
+statement such a description makes is usually true — it is true of what the gate
+can see, and silent about what it cannot. The longer and more careful the
+description, the more thorough the gate looks.
+
+Report the fraction of intended targets the gate actually reaches, and assert
+that fraction so it reddens when a target drops out of reach. A target no mutant
+can redden is not covered, however elaborate the structure around it.
+
+Three defects of this exact shape, each found only once a ratio existed:
+
+- an AST call graph that recorded an edge only for a direct identifier call
+  covered 3 of 7 guarded functions while every pin passed; the package's real
+  dispatch was a function-value table, and the blind spot was invisible from
+  inside;
+- a classifier keyed on prose that a sibling gate was actively rewriting silently
+  dropped 8 rows, taking a suite from 107 executed subtests to 66, while its
+  completeness check `count == 0` reported nothing, because four is not zero;
+- an ownership gate that proved a symbol exists and a case is linked reported 48
+  sections as owned; measured against the specification, those bindings
+  discharged 2 of 394 normative clauses.
+
+A non-empty check on a derived set is the recurring form. `len(x) > 0` answers a
+different question from `len(x) == expected`, and only the second notices a
+narrowing.
+
+## A Blind Spot Is Not An Empty Set
+
+"Nothing is there" and "nothing this checker can see" are different facts, and
+only the second is a statement about the checker. Reporting the first when you
+mean the second converts a limitation into a clean bill of health, and the reader
+has no way to tell.
+
+An ownership gate scanned for uppercase RFC 2119 keywords. Sections stating their
+obligations in declarative present tense scored zero, were bucketed as carrying
+no obligations, and were admitted with no evidence required. Its documentation
+said "there is no obligation to enumerate". The true sentence was "the section
+carries no keyword line, so the scanner cannot see its obligations" — and 19 of
+151 headings were free-admission surface the moment they were bound, including a
+19-row exit-code registry and a closed manifest specification.
+
+Two rules follow:
+
+- State the bound of what the checker can see, next to what it reports. A
+  residual class that is named can be attacked later; one that is implied cannot.
+- Do not let the bucket for "nothing to check" also be the bucket that skips the
+  check. Where absence of measurable obligation is a legitimate state, require an
+  explicit reviewed justification for it, so the weakest entries are the ones
+  that must say the most rather than the least.
+
+## An Absence And A Failure To Read Are Different Facts
+
+Absence is a legitimate state with a defined fallback. A failed, partial, or
+malformed read is evidence of a problem. Treating the second as the first lets
+the fallback launder a fault into a normal-looking value, and a fallback defined
+for absence must never fire on a read failure.
+
+Each of these was a separate defect in this repository:
+
+- a non-empty value read as verified;
+- an unknown scanner version read as clean;
+- a partial provenance record read as absent;
+- a zero pid start time read as alive;
+- a malformed `api_error_status` read as missing;
+- an unparsed envelope read as no envelope — this one produced a false provider
+  suppression that would have hidden a healthy provider for hours.
+
+## Prove, Or Report Nothing
+
+Where a property cannot be established, report unparsed or unknown rather than
+inferring it from a proxy signal. A plausible guess is worse than an explicit
+unknown, because callers act on it.
+
+Incident: headless top-level inference in the Claude classifier was unsound in
+principle and produced six variants before it was deleted rather than
+strengthened.
+
+## Many Variants, One Unowned Decision
+
+A long run of same-shaped variants usually means a decision has more than one
+owner, not that there are many bugs. Eleven framing variants stopped reproducing
+only when structure got a single scanner and a single state type; every per-site
+patch before that produced the next variant. The operative wording is in
+`.roles/orchestrator/role.md`: unify the decision, do not patch each site.
+
+## Reviewer Licence
+
+Reviewers are explicitly licensed to attempt to defeat a gate and to reject a
+change whose only evidence is positive-path. Grep for callers before believing a
+guard is in force. The operative wording is in `.roles/reviewer/role.md`.
+Manage attached resources such as screenshots, docs, logs, and other files.
+
+Use "task-board resource add" to create a new attached resource, "task-board
+resource adopt" to register an orphaned local payload, "task-board resource
+update" to replace an existing one, "task-board resource delete" to remove it,
+and "task-board resource get" to materialize a resource back to the local
+filesystem for inspection.
+
+Usage:
+  task-board resource [command]
+
+Available Commands:
+  add         Attach a new file resource to an element
+  adopt       Register an existing unreferenced local resource payload
+  delete      Delete a resource from an element (requires --confirm)
+  get         Download a resource to the local filesystem
+  update      Replace an existing file resource on an element
+
+Flags:
+  -h, --help   help for resource
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board resource [command] --help" for more information about a command.
+
+exec
+/bin/zsh -lc "task-board resource get --help; git rev-parse HEAD; git diff --check; cat scripts/logged-command.sh; rg -n 'bounded|tail|diagnostic' scripts/tests/test-credential-free-validation.sh; python3 --version" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+Download a board resource and save it locally.
+
+If --output is omitted, the file is materialized under:
+  .temp/resources/<ELEMENT-ID>/<NAME>
+
+Nested resource names preserve their directory hierarchy below the element.
+
+Use --output - to write the resource bytes to stdout.
+
+Usage:
+  task-board resource get <ELEMENT-ID> <NAME> [flags]
+
+Flags:
+  -h, --help            help for get
+  -o, --output string   Write resource to this path (default: .temp/resources/<ELEMENT-ID>/<NAME>, use - for stdout)
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+dc68c1584f7cc4ddcdf770acd8ace79790f0b404
+#!/bin/sh
+# Retain complete child output in the uploaded log tree and expose failures inline.
+run_logged_command() {
+  command_log=$1
+  shift
+  if "$@" > "$command_log" 2>&1; then
+    return 0
+  else
+    command_status=$?
+    printf 'FAIL: %s (exit %s; log: %s)\n' "$*" "$command_status" "$command_log" >&2
+    cat "$command_log" >&2
+    return "$command_status"
+  fi
+}
+75:python3 "$repo_root/scripts/tests/test_macos_build_diagnostics.py"
+76:python3 "$repo_root/scripts/tests/test_macos_build_diagnostic_mutants.py"
+Python 3.14.7
+
+exec
+/bin/zsh -lc 'task-board resource get BUG-260908-33iyb1 BUG-260908-33iyb1_results.md --output -; task-board resource get BUG-260908-33iyb1 BUG-260908-33iyb1_review-verdict-rev1.md --output -' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 17ms:
+# Independent review: changes requested
+
+CR-BUG-260908-33iyb1-1 revision 1; immutable tree 2c7c37ffdf1f3a5ea8d4392c74e6f9739bb1ce5c. All 16 changed blobs match the working files. Diagnostic delta from signed sibling dc68c1584f7cc4ddcdf770acd8ace79790f0b404 contains only the expected eight files; runtime product and sibling bytes preserved. No candidate edits, commits, publication, integration, VPN actions, or shared-tool changes performed.
+
+## F1 — non-65 failure propagation lacks an effective regression gate
+
+Production site: scripts/logged-command.sh:12, reached by scripts/validate-macos-targets.sh build_unsigned and target-contract test invocation. The AC explicitly includes exit65 AND other failures. In an isolated scratch copy I narrowed the return gate by inserting `[ "$command_status" -ne 1 ] || return 0` immediately before `return "$command_status"`. This admits exactly status 1 while retaining the gate for all other statuses and retaining the diagnostic token. Both shipped behavioral and mutation suites still exited 0. This is a measured surviving narrowing mutant, not a hypothetical concern or a claim that current production already swallows status 1.
+
+Required rework: add a named production-entry regression test injecting at least exit 1 alongside 65, assert unchanged status and no later invocation, and ship the exit-1-only narrowing mutant requiring that named test to fail. Keep candidate scope diagnostic-only. The producer honestly declared this coverage bound; that disclosure does not establish the AC's explicit other-failure regression behavior. No broad build repeat is needed for this test-only correction unless implementation changes.
+
+## Coverage and evidence
+
+2 of 6 AC rows driven by named production-entry tests, consistent with producer outcome:
+1. Failure status: test_each_failing_build_and_test_retains_status_and_context -> validate-macos-targets.sh build_unsigned / target test -> run_logged_command. Driven for 65 only; F1 addresses the other-status gap.
+2. Full logs: same production-entry test plus test_successful_child_retains_both_streams -> run_logged_command. Negative call coverage 5 of 7 Xcode sites; two build-settings sites have positive real evidence only.
+3. Bounded tail: validate-credential-free.sh run_step -> tail -n 80, inspected only. Direct macOS validator deliberately emits complete child output; outer CI tail is the stated bound. No behavioral tail-bound test shipped.
+4. Narrowing tests: both shipped mutants killed (inner exit 1, harness exit 0); additional exit-1-only mutant survives (F1).
+5. Real macOS evidence: accepted existing evidence.zip macos-build-01.log and composition-build-02.log, plus all four BUILD SUCCEEDED logs and TEST SUCCEEDED target logs for each tree. Composition described as exact PR6 87451b53960ceabe88a01c44c287fee7f9ebf386 plus sibling and diagnostic patch. Initial composition mise-trust failure remains evidence, not success. Local Xcode 26.5 evidence is not hosted Xcode16.4 proof or flake determinism evidence.
+6. Immutable review/original repair: this verdict reviews the named tree; BUG-260908-shki8p read as backlog and remains open. No hosted green/root-cause claim.
+
+Reviewer reruns: diagnostic behavioral suite exit 0; shipped narrowing harness exit 0 with expected assertion failures for its mutants; git diff --check exit 0. Reviewer attack: both suites exit 0 with exit-1-only admission. Attached CR validation log ends [exit 0] for the complete credential-free validation; accepted prior evidence, not rerun by reviewer. No new secret source, environment dump, or credential access introduced by the diagnostic delta; child Xcode logs are intentionally added to the existing artifact root. This is a code-path review, not exhaustive secret scanning.
+
+Verdict: changes requested -> to-dev. Acceptance withheld solely for F1. repeat-of: none. Parent retains delivery ownership; original hosted repair remains BUG-260908-shki8p.
+
+exec
+/bin/zsh -lc 'mkdir -p .temp/BUG-260908-33iyb1-handoff
+python3 scripts/tests/test_macos_build_diagnostics.py > .temp/BUG-260908-33iyb1-handoff/behavioral.log 2>&1
+result=$?
+echo "behavioral exit $result"
+python3 scripts/tests/test_macos_build_diagnostic_mutants.py > .temp/BUG-260908-33iyb1-handoff/mutants.log 2>&1
+result=$?
+echo "mutants exit $result"' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 13348ms:
+behavioral exit 0
+mutants exit 0
+
+codex
+F1 уже исправлен: тест проверяет exit 1 и остановку последующих вызовов во всех пяти build/test точках; exit-1-only mutant атакует этот же production entry point. Повторный behavioral suite прошёл. Пункт «Implementation matches AC» отмечу как producer self-assessment по корректировке parent; verdict rev1 остаётся changes requested.
+
+exec
+/bin/zsh -lc "task-board m 'add_resource(BUG-260908-33iyb1, name=BUG-260908-33iyb1_handoff-correction-results.md, content=\"Producer recovery: inspected current eight-file diagnostic candidate at signed sibling checkpoint dc68c1584f7cc4ddcdf770acd8ace79790f0b404. Existing F1 test-only rework retained without edits. Re-ran Python behavioral suite: 3 tests, exit 0; narrowing harness: exit 0, all three mutants killed with child exit 1. git diff --check exit 0. Prior attached BUG-260908-33iyb1_f1-tests.log remains detailed evidence. Coverage: 2 of 6 AC rows driven; 5 of 7 Xcode sites negatively driven for each status 1 and 65. Production call sites: validate-macos-targets.sh build_unsigned and target-contract test -> logged-command.sh run_logged_command. Named F1 test: test_exit_one_stops_each_build_and_test_with_exact_status; mutant: admit-exit-1-only. Remaining explicit bounds and real candidate/exact PR6 macOS evidence are retained in results.md and reviewer rev1, reused rather than broadly rerun. Per parent correction, checklist item12 is checked solely as producer implementation self-assessment; it does not accept rev1 or any new revision. Reviewer rev1 changes-requested verdict remains authoritative until independent review of new immutable CR. BUG-260908-shki8p verified backlog; no hosted green or root-cause repair claim. No manual commits, product edits, integration, shared-tool changes, successors, or VPN actions. Managed publication validation result belongs to handoff evidence.\", type=outcome, description=\"Producer self-assessment correction and F1 verification before immutable handoff\")'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 523ms:
+{"ok":true,"result":{"id":"BUG-260908-33iyb1","name":"BUG-260908-33iyb1_handoff-correction-results.md","type":"outcome","uri":"file://BUG-260908-33iyb1/BUG-260908-33iyb1_handoff-correction-results.md"}}
+
+exec
+/bin/zsh -lc "task-board m 'check_item(BUG-260908-33iyb1, item=12)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 470ms:
+{"ok":true,"result":{"checked":true,"id":"BUG-260908-33iyb1","item":12,"text":"Implementation matches AC"}}
+
+exec
+/bin/zsh -lc 'task-board handoff BUG-260908-33iyb1 --role developer' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 870ms:
+id:BUG-260908-33iyb1 role:developer status:to-review checklist:16/16 outcomes:[BUG-260908-33iyb1_results.md,BUG-260908-33iyb1_diagnostic-candidate.patch,BUG-260908-33iyb1_evidence.zip,BUG-260908-33iyb1_handoff-refusal.log,BUG-260908-33iyb1_recovery-evidence.log,BUG-260908-33iyb1_change-request_rev1.patch,BUG-260908-33iyb1_change-request_rev1-validation.log,BUG-260908-33iyb1_review-verdict-rev1.md,BUG-260908-33iyb1_review-adversarial-rev1.log,BUG-260908-33iyb1_f1-tests.log,BUG-260908-33iyb1_f1-handoff-refusal.md,BUG-260908-33iyb1_handoff-correction-results.md]
+
+exec
+/bin/zsh -lc "task-board q --format compact 'activity(BUG-260908-33iyb1, kinds=change_request, limit=3); get(BUG-260908-33iyb1) { status }'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 142ms:
+{"subject":{"element_id":"BUG-260908-33iyb1","element_type":"bug"},"boundary":{"version":"activity-history-boundary.v1","kind":"legacy_pre_feature","established_at":"2026-09-07T22:55:50.688682Z","implicit":true},"events":[{"version":"activity-event.v1","id":"AEV-260907-882ff8af14a573e2dc8dcca6","sequence":76,"timestamp":"2026-09-07T23:48:01.443038Z","actor":{"principal":{"availability":"unknown"},"agent":{"availability":"known","value":"codex"},"run":{"availability":"unknown"},"session":{"availability":"known","value":"019f7fb5-2434-7f63-aeed-f889cda2682c"},"operator":{"availability":"unknown"}},"subject":{"element_id":"BUG-260908-33iyb1","element_type":"bug"},"source":{"kind":"local_cli","entrypoint":"cmd.ledgerMirror","request":{"availability":"unknown"}},"correlation_id":"COR-260907-e87d66f4d63c54b2223cdf4c","causal_order":1,"operation":"change_request","changes":[{"field":"ledger_event","after":{"kind":"ledger","ledger":{"domain":"change_request","ledger_id":"CR-BUG-260908-33iyb1-1","event":"created","sequence":1,"revision":1,"to_state":"ready","recorded_at":"2026-09-07T23:48:01.429659Z","facts":[{"name":"run","kind":"id","value":"RUN-260907-40c797"}]}}}]}],"view":"raw"}
+
+status:to-review
+
+codex
+BUG-260908-33iyb1 передан в `to-review`: checklist 16/16, outcome прикреплён.
+
+F1 проверен: 3 теста прошли, все 3 narrowing mutants убиты. Покрытие — 2 из 6 AC rows, ограничения зафиксированы.
+
+Handoff завершился с exit 0; публикация rev2 этим выводом не подтверждена. Независимое принятие ещё требуется. BUG-260908-shki8p остаётся открытым; hosted green не заявляется.
+tokens used
+59,437
+BUG-260908-33iyb1 передан в `to-review`: checklist 16/16, outcome прикреплён.
+
+F1 проверен: 3 теста прошли, все 3 narrowing mutants убиты. Покрытие — 2 из 6 AC rows, ограничения зафиксированы.
+
+Handoff завершился с exit 0; публикация rev2 этим выводом не подтверждена. Независимое принятие ещё требуется. BUG-260908-shki8p остаётся открытым; hosted green не заявляется.

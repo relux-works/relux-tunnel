@@ -1,0 +1,9 @@
+{
+  "input_pr_head": "310a560916d8b8012fa238f65b51649041caee4d",
+  "candidate": "766824884cac85078199779dbe9c67c9bcbf1be9",
+  "prerequisite_paths_exact": 58,
+  "changed_path_prerequisite_exact_except_one_line": true,
+  "prospective_tree": "c8d2b249b9bf8875b2309320c70b64e0e3e12ac5",
+  "all_other_pr_entries_preserved": true,
+  "head": "b3422b05226253a17676b9b84c764071fe3dbe74"
+}

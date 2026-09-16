@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1zzt0c/worktree/.temp/TASK-260715-1pn983/validate-contract-rev2.py", line 75, in <module>
+    require("Mac evidence is never substituted" in packet, "device variance rule missing")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-1zzt0c/worktree/.temp/TASK-260715-1pn983/validate-contract-rev2.py", line 11, in require
+    raise AssertionError(message)
+AssertionError: device variance rule missing
+Some diagram description contains errors
+Error line 6 in file: diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml
+Some diagram description contains errors

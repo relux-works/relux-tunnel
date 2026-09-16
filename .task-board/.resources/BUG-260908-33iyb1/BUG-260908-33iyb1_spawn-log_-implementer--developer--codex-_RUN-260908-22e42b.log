@@ -1,0 +1,1809 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07e59-8cf7-7641-b2c9-a53af440cd65
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(BUG-260908-33iyb1, status=integrating)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `developer` (`implementer`) — Writes code, fixes bugs, writes tests
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `swiftui`: `/Users/iv/.claude/skills/swiftui/SKILL.md`
+- `core-data`: `/Users/iv/.claude/skills/core-data/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Diagnostic propagation passes named behavioral/narrowing tests and real macOS validation; immutable review required; original hosted repair remains open BUG-260908-shki8p
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.
+- [ ] Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named
+- [ ] Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.
+- [ ] A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [ ] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** BUG-260908-33iyb1
+- **Title:** expose-hosted-macos-build-diagnostics
+- **Parent:** STORY-260908-h39ajh
+
+### Description
+
+Diagnostic prerequisite split from the original hosted build failure. Deliver diagnostic propagation preserving failure status and bounded output. Full root-cause repair and hosted green requirement remains open as BUG-260908-shki8p in STORY-260908-23tefs; never claim original failure fixed.
+
+### Scope
+
+Existing diagnostic patch, macOS validator log propagation, positive/negative/narrowing tests and docs. Preserve signed sibling and Shared Runtime; no guessed toolchain/product change.
+
+### Acceptance Criteria
+
+Actual validation entry points preserve exit65 and other failures, expose bounded diagnostic tail, retain full logs in artifact root; named positive/negative/narrowing tests; real macOS validation on candidate and exact PR6 composition; independent immutable review; original hosted repair remains open BUG-260908-shki8p without any hosted green or root-cause claim.
+
+## Instructions
+
+### BUG-260908-33iyb1_hosted-evidence.md
+> Exact CI evidence and serial sequencing
+
+PR6 head87451b53960ceabe88a01c44c287fee7f9ebf386. Run34167625590 job101881722247 failed macos-target-builds-and-contracts exit65. Exact log .temp/deadline-20260908/ci-credential-failure-01.log; downloaded artifact .temp/deadline-20260908/ci-generated-artifact-01 under control root. Xcode16.4 Swift6.1.2 macOS15.7.9 arm64. Hosted source revision3279036094620772262dbd04a6d8930ec7691e75: verify merge-tree relationship, not silently label it PRhead. Individual xcodebuild logs redirected in validate-macos-targets.sh are missing from artifact; root cause unproven. Four portable runtime jobs passed. Run ONLY AFTER BUG-260908-7c5iv4 accepted/checkpointed, avoiding overlapping workflow changes. Parent attempted formal sibling dependency but CLI rejected the complete batch because of existing unrelated container cycles; no link persisted and parent will enforce this conservative serial prerequisite. Do not rewrite global dependency graph as part of this fix. No main rewind, shared-tool source patches, or VPN operations. Hard stop04:59 Tbilisi2026-09-08; no successors.
+
+
+### BUG-260908-33iyb1_execution-routing.md
+> Proceed from signed sibling checkpoint; preserve pending PR
+
+Prerequisite completed: BUG-260908-7c5iv4 accepted rev1 and signed checkpoint dc68c1584f7cc4ddcdf770acd8ace79790f0b404 on this Story. Preserve its bytes. Diagnose/fix the remaining generated macOS CI failure, using attached exact hosted evidence. Root local main 87451b53960ceabe88a01c44c287fee7f9ebf386 contains pending signed PR6 delivery; origin/main remains b3422b05226253a17676b9b84c764071fe3dbe74. Never rewind/reset/overwrite either pending work or signed commits. Parent owns final remote delivery. Candidate is based on managed Story checkpoint; separately validate composition with exact PR6 head, preserve README/LOGBOOK additions from both, and keep all runtime product bytes unchanged unless evidence proves a scoped compile fix necessary. Prior candidate full old-main suite and PR composition passed, but initial composition run failed unchanged HEV/SSH tests; one retry is not determinism evidence. Do not expand into unrelated flakes without evidence. User authorizes current normal commit timestamps; human signed objects mandatory. All tools via current curator-installed skill-project-management main; no source patches/installs or command bypasses. If hosted failure can only be revealed by publishing diagnostic propagation, provide exact minimal diagnostic candidate and required next hosted step honestly, rather than guessing a cause or calling the overall bug fixed. Do not manually commit on Story branch, integrate, land PR, spawn successors/subagents, or enable VPN. Stop with preserved evidence before 04:59 Asia/Tbilisi September 8 2026. Execute producer handoff for immutable CR when justified; hosted green status remains a delivery gate, not a local claim.
+
+
+### BUG-260908-33iyb1_decomposition.md
+> Recover existing diagnostic candidate; full requirement retained
+
+Parent split circular prepublication gate. Full original hosted diagnosis/repair/green-check requirement is preserved in open BUG-260908-shki8p, separate STORY-260908-23tefs. This leaf now owns ONLY diagnostic propagation per updated AC/checklist; nothing falsely checked. Reuse existing 8-file patch and evidence RUN-260907-f967aa, no reimplementation or redundant broad repeats. Recovery RUN-cae8d9 cancelled. Verify current diff, update outcome to explain split and follow-up, satisfy new diagnostic checklist using actual evidence, then developer handoff for immutable CR. No claim original failure fixed. Parent owns review/delivery; no manual Story commit, VPN, successors, tool edits. Stop04:59 Tbilisi Sep8. This replaces earlier scope clauses, preserving signatures/security/delivery rules.
+
+
+### BUG-260908-33iyb1_review-only.md
+> Independent diagnostic-scope review
+
+Review current immutable CR under latest diagnostic-only AC. Original hosted root-cause repair/required green is preserved open BUG-260908-shki8p; do not infer it from this acceptance. Independently verify logged command exit propagation including65, useful bounded stderr/stdout tail, full logs beneath artifact root, positive/negative/narrowing tests through actual entry points, and no secret/credential exposure widening. Verify prior candidate and PR6 composition real build evidence/limitations; no broad suite repeat without a specific reason. Do not edit accepted bytes, integrate, commit, publish hosted changes, spawn successors, enable VPN, or alter shared tools. Real reviewer checklist and accept_cr if justified. Parent owns producer-bound integration and exact signed PR head review/checks. Stop before04:59 Tbilisi Sep8. Astra low serial via curator-installed main.
+
+
+### BUG-260908-33iyb1_rework-f1.md
+> Test-only rework of reviewer F1
+
+Reviewer RUN-260907-2be57c requested changes solely F1 in review-verdict-rev1.md. Add named regression driving actual validate-macos-targets.sh -> run_logged_command for exit1 alongside65, asserting exact status and no later invocation. Add exit1-only narrowing mutant ([ command_status !=1 ] || return0 before original return) that retains other status handling and tokens, and require named production-entry test to fail. Scope is test-only unless evidence proves production change needed. Preserve all prior accepted sibling and diagnostic behavior. Reuse existing build evidence; reviewer explicitly says no broad repeat for this test-only delta, though managed CR publication gate remains mandatory. Update concise evidence and producer checklist; handoff new immutable CR. Do not tick reviewer-owned rejection item yourself, claim hosted repair fixed, commit managed branch manually, integrate, spawn successors, enable VPN, or alter shared tooling. Full hosted repair remains open BUG-260908-shki8p. Stop04:59 Tbilisi Sep8. Current timestamps and signed Ivan Oparin identity remain required; curator main only.
+
+
+### BUG-260908-33iyb1_handoff-correction.md
+> Correct parent overconstraint; publish existing rework
+
+Parent corrects its prior overly strict instruction. Live merged checklist item12 Implementation matches AC is an implementation assertion, not an immutable independent review verdict or accept_cr. After verifying actual F1 fix and named existing test evidence, you may check that item as your explicitly labeled producer self-assessment to satisfy handoff. This does not change reviewer rev1 changes-requested verdict, does not accept rev1/rev2, and does not authorize done/integration. Independent reviewer will inspect and accept/reject published rev2. Reuse existing test-only F1 patch RUN-260907-0d42a3 and attached f1-tests.log; no reimplementation/broad repeats unless delta changed. Check current files and relevant narrow tests if needed, record this interpretation honestly, check implementation assertion if justified, then developer handoff to immutable publication. No hosted success or original bug-fix claim; BUG-shki8p remains open. No manual commits, shared-tool edits, VPN, or successors. Stop04:59 Tbilisi Sep8. This supersedes the prohibition on producer touching this specific live checklist item; all independent review/signature/curator requirements remain.
+
+
+### BUG-260908-33iyb1_review-rev2.md
+> Focused independent F1 re-review
+
+Review immutable CR rev2. Rev1 verdict withheld acceptance solely F1; other diagnostic code was already reviewed. Compare rev2 vs rev1 and independently run named exit1 regression and narrowing harness. Prove exit1-only mutant now fails named production-entry test while baseline passes and later invocations stop; preserve exit65 behavior. Inspect prior verdict/evidence and reuse valid unchanged-scope build evidence rather than broad reruns. Producer checklist item12 is explicitly producer self-assessment only; your independent review must still accept_cr revision2 with current evidence/checklist if justified, or real changes-requested verdict. No product edits, commits, integration, hosted changes, successors, VPN, or shared-tool edits. Original hosted root-cause/green remains BUG-260908-shki8p backlog; do not claim it solved. Final leaf integrates only by bound producer after your acceptance. Stop04:59 Tbilisi Sep8; curator main Astra low serial.
+
+
+### BUG-260908-33iyb1_delivery.md
+> Bound final-leaf integration and exact signed PR publication
+
+CR revision2 accepted by reviewer RUN-260908-353271; candidate d6c873383db09c59cf5d6d437e0767615e5ae704. You are bound developer/implementer integration owner. Other sibling BUG-7c5iv4 checkpoint dc68c158 accepted. This is final leaf: use current curator-installed task-board worktree integrate STORY-260908-h39ajh --cr BUG-260908-33iyb1 --revision 2 with current time if required; never checkpoint final leaf or manually commit managed Story branch. Crucial root local main87451b53960ceabe88a01c44c287fee7f9ebf386 contains pending signed PR6 (delivery/STORY-260715-1y04r0-rev3); remote main remains b3422b05226253a17676b9b84c764071fe3dbe74. Preserve both pending PR commits6e8a1988/87451b53 and all old signed checkpoints. Do not reset/rewind root, force remote main, overwrite accepted bytes, or conceal integration conflicts. On typed refusal collect exact transaction/refs evidence and stop for parent routing; do not patch tools or invent transaction changes. A local integration commit is a new signed review candidate, never permission to advance REMOTE main before review/checks. If integration composes cleanly preserving Shared Runtime, verify every introduced commit signature and Ivan Oparin oparin@me.com identity, publish exact feature head (prefer existing PR6 branch if safe fast-forward), inspect full hosted diff, submit truthful COMMENTED review via GitHub if same author, and observe actual checks. No fake statuses/self-approval. Do NOT LAND REMOTE main in this run: parent retains final gate/landing; original macOS repair BUG-shki8p remains open until real hosted evidence. Attach exact SHA/PR/run/checks and useful inner macOS error logs if failed. Normal current timestamps; signing key ivanopcode SSH; curator main only. No production edits, successors/subagents, tool installs, VPN, or whole-checkout destructive cleanup. Finish or park before04:59 Tbilisi Sep8 even if CI unfinished. No developer handoff after integration owns done; publish delivery outcome and exit.
+
+
+### BUG-260908-33iyb1_pr-candidate-route.md
+> Signed isolated PR candidate composition; not trunk integration bypass
+
+Attached file: `/Users/iv/Developer/relux-tunnel/.temp/resources/BUG-260908-33iyb1/BUG-260908-33iyb1_pr-candidate-route.md`
+
+- Byte count: `2344`
+- Content digest: `sha256:14294e702993afcd1761bbf5891267f6aea90f55c908f796c9ff81ef50f9a067`
+- Access: read-only
+
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `BUG-260908-33iyb1_*` before handoff:
+  `task-board m 'add_resource(BUG-260908-33iyb1, name=BUG-260908-33iyb1_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `integrating` is the role handoff status; use it only after the evidence contract is satisfied.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff BUG-260908-33iyb1 --role developer
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260908-h39ajh.
+
+- Workspace path: `.temp/STORY-260908-h39ajh/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260908-h39ajh`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+## Integration Assignment
+
+This is the integration run for accepted Change Request `CR-BUG-260908-33iyb1-2` revision 2. The immutable producer binding is role `developer` (archetype `implementer`). Keep the board at `integrating`; only the integration transaction may write `done`. This assignment supersedes generic producer FIRST/LAST status and handoff instructions: run the bound checkpoint or integration command, attach fresh task-scoped outcome evidence, then end without calling the generic `handoff` command or setting status yourself.
+
+codex
+Прочитаю актуальный маршрут PR-кандидата и правила integration, проверю refs и сохраню точное evidence. Remote main в этом запуске не трогаю.
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/SKILL.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+
+exec
+/bin/zsh -lc 'cat /Users/iv/Developer/relux-tunnel/.temp/resources/BUG-260908-33iyb1/BUG-260908-33iyb1_pr-candidate-route.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+Bound integration refused integration_base_moved because root local main87451b53 holds pending signed PR6 while protected remote main b3422b05 remains older. No transaction exists. Parent authorizes normal feature-branch candidate composition OUTSIDE managed Story branch; this is NOT a bypass to trunk integration and must not mutate transaction/status to done. Use task-scoped isolated delivery worktree under root .temp/BUG-260908-33iyb1/. First fetch/verify current remote main, root new delivery branch at current remote main, then fast-forward it to exact existing PR6 head87451b53960ceabe88a01c44c287fee7f9ebf386 (verify signed ancestry). Preserve root checkout and managed Story branch/accepted trees. Apply exact reviewed Story delta b3422b05226253a17676b9b84c764071fe3dbe74 -> d6c873383db09c59cf5d6d437e0767615e5ae704 (16 paths; sibling repair plus diagnostic). The validation fixture correction already exists in PR; preserve it without duplication. README/LOGBOOK additive conflicts may be explicitly composed retaining both histories; no other product/runtime changes or discarded bytes. Save exact composed diff and explain every resolution. Create signed human feature commit with current timestamp; verify signature and prior signed commits retained as ancestors. Publish fast-forward to existing delivery/STORY-260715-1y04r0-rev3 PR6 branch only if remote head still87451b53; no force. Inspect exact hosted diff/checks and submit truthful COMMENTED review documenting source accepted CRs and PENDING independent combined-head review; do not assert approval yet. Capture new PR head and Actions run. Do NOT land remote main, rebase/squash old signed objects, alter managed branch, call integrate again, handoff/republish managed CR, change task status, or pretend original BUG-shki8p fixed. Parent will route independent exact-head review and inspect hosted CI. Current curator-installed tooling only; Git branch/PR operations per user authorized delivery workflow. No shared tool patches, VPN, successors/subagents. Stop04:59 Tbilisi Sep8; finish this publication-focused run promptly so reviewer/CI can proceed. If composition beyond additive docs is ambiguous, record exact evidence and return rather than inventing product changes. Attach candidate outcome SHA/tree/paths/signatures/PR/run/logs and exit; no generic handoff.
+exec
+/bin/zsh -lc "mkdir -p .temp/BUG-260908-33iyb1
+ task-board --version > .temp/BUG-260908-33iyb1/tool-readiness.log
+ git --version >> .temp/BUG-260908-33iyb1/tool-readiness.log
+ gh --version >> .temp/BUG-260908-33iyb1/tool-readiness.log
+ git status --short
+ git remote -v
+ git log -1 --format='%H %s'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 64ms:
+ M LOGBOOK.md
+ M README.md
+ M docs/generated-workspace-foundation.md
+ M scripts/tests/test-credential-free-validation.sh
+ M scripts/validate-macos-targets.sh
+?? scripts/logged-command.sh
+?? scripts/tests/test_macos_build_diagnostic_mutants.py
+?? scripts/tests/test_macos_build_diagnostics.py
+origin	git@github.com:relux-works/relux-tunnel.git (fetch)
+origin	git@github.com:relux-works/relux-tunnel.git (push)
+dc68c1584f7cc4ddcdf770acd8ace79790f0b404 BUG-260908-7c5iv4: BUG-260908-7c5iv4: fix-pr6-activity-validation-and-snapshot-loader-scan
+
+exec
+/bin/zsh -lc 'cat /Users/iv/.claude/skills/project-management/references/resources-and-bugs.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+# Resources
+
+Resources are owned by the board element they are attached to. Use explicit
+CRUD operations against that element ID. Local payloads are grouped under
+`.task-board/.resources/<elementID>/`; remote board-server uses the equivalent
+element-scoped filesystem or MinIO object-key prefix.
+
+## Resource Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **precondition** | Inputs needed before work starts | Design docs, specs, instructions, API schemas |
+| **outcome** | Results produced by work | Research findings, implementation notes, analysis |
+
+## Commands
+
+```bash
+# Create a resource
+task-board m 'add_resource(TASK-260218-abc, name=TASK-260218-abc_design.md, type=precondition, content="...", description="Architecture design")'
+task-board m 'add_resource(TASK-260218-abc, name=reports/TASK-260218-abc_results.md, type=outcome, content="...", description="Research findings")'
+
+# Replace an existing resource
+task-board m 'update_resource(TASK-260218-abc, name=reports/TASK-260218-abc_results.md, type=outcome, content="revised findings", description="Research findings v2")'
+task-board resource update TASK-260218-abc ./TASK-260218-abc_results.md --name reports/TASK-260218-abc_results.md --type outcome
+
+# Adopt an existing orphaned local payload without rewriting it
+task-board resource adopt TASK-260218-abc revisions/2/TASK-260218-abc_results.md --type outcome --description "Recovered result"
+
+# Delete a resource (destructive — requires --confirm)
+task-board m --confirm 'delete_resource(TASK-260218-abc, name=artifacts/obsolete/TASK-260218-abc_design.md)'
+task-board resource delete TASK-260218-abc artifacts/obsolete/TASK-260218-abc_design.md --confirm
+
+# View resources on an element
+task-board q --format compact 'get(TASK-260218-abc) { preconditionResources outcomeResources }'
+```
+
+## Element-Owned Storage
+
+Resources from different tasks are not stored in one shared file pile. Each
+element gets its own directory, and every resource attached to that element is
+stored below it:
+
+```
+.task-board/.resources/
+├── TASK-260203-g7h8i9/
+│   ├── findings/
+│   │   └── investigation.md
+│   ├── artifacts/
+│   │   └── run-1/
+│   │       └── output.json
+│   ├── reports/
+│   │   └── TASK-260203-g7h8i9_results.md
+│   └── revisions/
+│       └── 2/
+│           └── review.md
+└── STORY-260203-d4e5f6/
+    └── research.md         # outcome
+```
+
+The resource `name` is a safe forward-slash-relative path. Agents may choose
+the hierarchy that fits the artifact and nest it further as needed. Every
+segment must be non-empty printable UTF-8 and must not be `.`, `..`, an
+absolute/drive-qualified path, or contain a backslash. Raw forward slashes are
+the only hierarchy delimiter; malformed URL escapes and encoded or repeatedly
+encoded separators/traversal are rejected. Attach related files to the same
+owning element; do not invent a generic board-wide resource task or write
+payloads into `.task-board/.resources/` manually.
+
+Directories are structural nodes, not payloads. Resource CRUD, validation, and
+handoff evidence recognize regular files only; a directory named like a report
+cannot be adopted or used to satisfy outcome evidence.
+
+Local and board-server filesystem element deletion is journaled and
+crash-recoverable. Direct resource CRUD first resolves any pending staged
+element delete under the board mutation lock. MinIO element/subtree deletion
+currently fails before mutation with the typed
+`ErrAtomicResourceDeleteUnsupported` capability error; ordinary resource CRUD
+remains available.
+
+References are tracked in `progress.md` as markdown links:
+```markdown
+## Precondition Resources
+- [specs/auth/design.md](board-resource://TASK-260203-g7h8i9/precondition/specs/auth/design.md) — Architecture design
+
+## Outcome Resources
+- [reports/TASK-260203-g7h8i9_results.md](board-resource://TASK-260203-g7h8i9/outcome/reports/TASK-260203-g7h8i9_results.md) — Research findings
+```
+
+## Spawn Integration
+
+Precondition resources are automatically injected into agent prompts by `task-board spawn`. Full prompts preserve normal text inlining. Lite prompts use the resolved `agent_context.prompt.preconditions` policy: by default, text below `inline_bytes` is rendered inline, while larger text and binary resources are written read-only under `.temp/resources/` and represented by their name, description, byte count, SHA-256 digest, and local path. This means:
+
+1. Attach instructions/specs as precondition resources to a task
+2. Run `task-board spawn TASK-XX --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort max` — agent gets everything automatically
+3. Agent saves results via `task-board m 'add_resource(..., type=outcome)'` on first write, then `update_resource(...)` for revisions
+
+## Best Practices
+
+- **Use preconditions for agent instructions** — attach design docs, specs, or step-by-step instructions before spawning
+- **Use outcomes for work products** — research findings, analysis, implementation notes
+- **Attach to the owning element** — pass the Task, Bug, Story, or Epic ID that owns the artifact; the storage layer groups its payloads under that element directory automatically
+- **Use explicit create/update/delete** — `add_resource` / `resource add` must not silently overwrite; use `update_resource` / `resource update` when replacing an existing payload
+- **Use adopt only for local repair** — `resource adopt` registers bytes already stored at `.resources/<elementID>/<relative-resource-path>` without rewriting them; a missing payload returns resource-not-found and an existing declaration returns resource-exists
+- **Choose a useful hierarchy inside the owning element** — `findings/`, `artifacts/`, `reports/`, and `revisions/` are conventions, not a fixed schema; nest further when it makes the handoff easier to navigate
+- **Use safe relative resource paths** — `/` separates validated path segments; empty, dot/traversal, absolute/drive-qualified, backslash, control-character, malformed escape, and encoded/repeatedly encoded separator or traversal forms are rejected in local and remote storage
+- **Attach files, not folders** — directories only organize resource files and never satisfy resource existence or handoff evidence
+- **Always use board commands** — never create/edit resource files or progress.md resource sections manually
+- **Name handoff evidence with task scope** — keep the task ID in the resource path, for example `reports/TASK-260218-abc_architecture-design.md`, so `task-board handoff` can recognize it
+- **Add descriptions** — the `description=` param adds a one-line description shown in spawn prompts
+
+---
+
+# Bugs
+
+Bugs are elements of the board, living inside stories alongside tasks.
+
+```bash
+# Create bug
+task-board m 'create(type=bug, parent=STORY-260218-abc, name=crash-on-start, description="App crashes when starting recording")'
+
+# Track like any element
+task-board m 'set_status(BUG-260218-abc, status=development)'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Reproduce the issue")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Find root cause")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Write fix")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Add regression test")'
+```
+
+exec
+/bin/zsh -lc "git ls-remote origin refs/heads/main refs/heads/delivery/STORY-260715-1y04r0-rev3
+ git fetch origin main delivery/STORY-260715-1y04r0-rev3
+ git diff --stat b3422b05226253a17676b9b84c764071fe3dbe74 d6c873383db09c59cf5d6d437e0767615e5ae704
+ git log --format='%H %G? %an <%ae>' b3422b05..87451b53
+ git config user.signingkey" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 4259ms:
+87451b53960ceabe88a01c44c287fee7f9ebf386	refs/heads/delivery/STORY-260715-1y04r0-rev3
+b3422b05226253a17676b9b84c764071fe3dbe74	refs/heads/main
+From github.com:relux-works/relux-tunnel
+ * branch            main       -> FETCH_HEAD
+ * branch            delivery/STORY-260715-1y04r0-rev3 -> FETCH_HEAD
+ .github/workflows/ci.yml                           | 26 ++-----
+ LOGBOOK.md                                         | 45 ++++++++++++
+ README.md                                          |  3 +
+ .../ReluxSnapshotDiffSupport/SnapshotDiff.swift    |  9 ++-
+ .../SnapshotDiffSupportTests.swift                 | 35 ++++++++++
+ docs/generated-workspace-foundation.md             | 17 +++++
+ scripts/check_board_structure.py                   | 36 ++++++++++
+ scripts/logged-command.sh                          | 14 ++++
+ scripts/relay_supply_chain.py                      |  7 +-
+ scripts/tests/test-credential-free-validation.sh   | 13 ++--
+ scripts/tests/test_check_board_structure.py        | 75 ++++++++++++++++++++
+ .../tests/test_macos_build_diagnostic_mutants.py   | 44 ++++++++++++
+ scripts/tests/test_macos_build_diagnostics.py      | 75 ++++++++++++++++++++
+ scripts/tests/test_pr6_boundary_mutants.py         | 80 ++++++++++++++++++++++
+ scripts/tests/test_relay_supply_chain.py           | 40 +++++++++++
+ scripts/validate-macos-targets.sh                  | 20 +++---
+ 16 files changed, 503 insertions(+), 36 deletions(-)
+87451b53960ceabe88a01c44c287fee7f9ebf386 G Ivan Oparin <oparin@me.com>
+6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51 G Ivan Oparin <oparin@me.com>
+/Users/iv/.ssh/ivanopcode
+
+exec
+/bin/zsh -lc 'mkdir -p /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1
+ git diff --binary b3422b05 d6c87338 > /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/reviewed-story.patch
+ git worktree add -b delivery/BUG-260908-33iyb1-composed /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery origin/main' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 2189ms:
+Updating files:  28% (871/3041)Updating files:  29% (882/3041)Updating files:  30% (913/3041)Updating files:  31% (943/3041)Updating files:  32% (974/3041)Updating files:  33% (1004/3041)Updating files:  34% (1034/3041)Updating files:  35% (1065/3041)Updating files:  36% (1095/3041)Updating files:  37% (1126/3041)Updating files:  38% (1156/3041)Updating files:  39% (1186/3041)Updating files:  40% (1217/3041)Updating files:  41% (1247/3041)Updating files:  42% (1278/3041)Updating files:  43% (1308/3041)Updating files:  44% (1339/3041)Updating files:  45% (1369/3041)Updating files:  46% (1399/3041)Updating files:  47% (1430/3041)Updating files:  48% (1460/3041)Updating files:  49% (1491/3041)Updating files:  50% (1521/3041)Updating files:  51% (1551/3041)Updating files:  52% (1582/3041)Updating files:  53% (1612/3041)Updating files:  54% (1643/3041)Updating files:  55% (1673/3041)Updating files:  56% (1703/3041)Updating files:  57% (1734/3041)Updating files:  58% (1764/3041)Updating files:  59% (1795/3041)Updating files:  60% (1825/3041)Updating files:  61% (1856/3041)Updating files:  62% (1886/3041)Updating files:  63% (1916/3041)Updating files:  64% (1947/3041)Updating files:  65% (1977/3041)Updating files:  66% (2008/3041)Updating files:  67% (2038/3041)Updating files:  68% (2068/3041)Updating files:  69% (2099/3041)Updating files:  70% (2129/3041)Updating files:  71% (2160/3041)Updating files:  72% (2190/3041)Updating files:  73% (2220/3041)Updating files:  74% (2251/3041)Updating files:  75% (2281/3041)Updating files:  76% (2312/3041)Updating files:  77% (2342/3041)Updating files:  78% (2372/3041)Updating files:  79% (2403/3041)Updating files:  80% (2433/3041)Updating files:  81% (2464/3041)Updating files:  82% (2494/3041)Updating files:  83% (2525/3041)Updating files:  84% (2555/3041)Updating files:  85% (2585/3041)Updating files:  86% (2616/3041)Updating files:  87% (2646/3041)Updating files:  88% (2677/3041)Updating files:  89% (2707/3041)Updating files:  89% (2731/3041)Updating files:  90% (2737/3041)Updating files:  91% (2768/3041)Updating files:  92% (2798/3041)Updating files:  93% (2829/3041)Updating files:  94% (2859/3041)Updating files:  95% (2889/3041)Updating files:  96% (2920/3041)Updating files:  97% (2950/3041)Updating files:  98% (2981/3041)Updating files:  99% (3011/3041)Updating files: 100% (3041/3041)Updating files: 100% (3041/3041), done.
+HEAD is now at b3422b0 chore(board): accept M0 bridge gate
+
+exec
+/bin/zsh -lc 'git merge --ff-only 87451b53960ceabe88a01c44c287fee7f9ebf386
+ git apply --3way /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/reviewed-story.patch' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ exited 1 in 589ms:
+Updating b3422b0..87451b5
+Fast-forward
+ .../.activity/EPIC-260715-3810we/events.ndjson     |     23 +
+ .../.activity/STORY-260715-1y04r0/events.ndjson    |     37 +
+ .../.activity/TASK-260715-2rcvr0/events.ndjson     |     32 +
+ .../.activity/TASK-260715-3ejhyy/events.ndjson     |     42 +
+ .../.activity/TASK-260715-3qqbbm/events.ndjson     |     25 +
+ .../.activity/TASK-260715-m8bi8i/events.ndjson     |     29 +
+ .../.activity/TASK-260720-1qhxqa/events.ndjson     |    261 +
+ .../.activity/TASK-260830-1x524u/events.ndjson     |    238 +
+ .../TASK-260715-2rcvr0_change-request_rev1.patch   |    525 +
+ .../TASK-260715-2rcvr0_change-request_rev2.patch   |    529 +
+ .../TASK-260715-2rcvr0_results.md                  |     79 +
+ .../TASK-260715-2rcvr0_review-verdict-rev2.md      |     48 +
+ .../TASK-260715-2rcvr0_review-verdict.md           |     25 +
+ ...olution-architect--codex-_RUN-260830-18f257.log |  60019 +++++++
+ ...olution-architect--codex-_RUN-260830-682cd1.log |   7915 +
+ ...eviewer--reviewer--codex-_RUN-260830-eb3dcb.log |  11792 ++
+ ...eviewer--reviewer--codex-_RUN-260830-f7ad98.log |   9262 +
+ .../TASK-260715-3ejhyy_change-request_rev1.patch   |   1719 +
+ .../TASK-260715-3ejhyy_change-request_rev2.patch   |   3229 +
+ .../TASK-260715-3ejhyy_change-request_rev3.patch   |   3254 +
+ .../TASK-260715-3ejhyy_results.md                  |     94 +-
+ .../TASK-260715-3ejhyy_review-verdict-rev3.md      |     96 +
+ .../TASK-260715-3ejhyy_review-verdict.md           |     87 +
+ ...menter--developer--codex-_RUN-260830-060b68.log | 163929 ++++++++++++++++++
+ ...menter--developer--codex-_RUN-260830-0efcad.log |  11491 ++
+ ...menter--developer--codex-_RUN-260830-2e247e.log | 127564 ++++++++++++++
+ ...eviewer--reviewer--codex-_RUN-260830-8eedbe.log |  13087 ++
+ ...eviewer--reviewer--codex-_RUN-260830-a6022e.log |  14767 ++
+ ...eviewer--reviewer--codex-_RUN-260830-ce1afa.log |   8645 +
+ ...SK-260720-1qhxqa_m0-production-bindings-v1.json |    325 +
+ .../TASK-260715-3qqbbm_change-request_rev1.patch   |    913 +
+ ...K-260715-3qqbbm_migration-isolation-report.json |    130 +
+ .../TASK-260715-3qqbbm_results.md                  |    128 +
+ .../TASK-260715-3qqbbm_review-verdict.md           |     75 +
+ ...menter--developer--codex-_RUN-260830-ecdf27.log |  85037 +++++++++
+ ...eviewer--reviewer--codex-_RUN-260830-4ace66.log |   9435 +
+ .../TASK-260715-m8bi8i_change-request_rev1.patch   |   1806 +
+ .../TASK-260715-m8bi8i_change-request_rev2.patch   |   1876 +
+ .../TASK-260715-m8bi8i_results.md                  |     63 +
+ .../TASK-260715-m8bi8i_review-verdict-rev2.md      |     45 +
+ .../TASK-260715-m8bi8i_review-verdict.md           |     45 +
+ ...menter--developer--codex-_RUN-260830-0aec52.log |  16562 ++
+ ...menter--developer--codex-_RUN-260830-7464e5.log |  83843 +++++++++
+ ...eviewer--reviewer--codex-_RUN-260830-939aa6.log |   6085 +
+ ...eviewer--reviewer--codex-_RUN-260830-bd7760.log |  10679 ++
+ .../TASK-260720-1qhxqa_accept-cr-rev10.log         |      1 +
+ ...260720-1qhxqa_attachment-byte-identity-rev8.log |      5 +
+ ...0-1qhxqa_attachment-byte-identity-rework-01.log |      3 +
+ ...0-1qhxqa_attachment-byte-identity-rework-02.log |      3 +
+ ...0-1qhxqa_attachment-byte-identity-rework-03.log |      3 +
+ ...-260720-1qhxqa_attachment-digest-validation.log |      4 +
+ .../TASK-260720-1qhxqa_board-validation-rev10.log  |      4 +
+ .../TASK-260720-1qhxqa_board-validation-rev4.log   |      6 +
+ .../TASK-260720-1qhxqa_board-validation-rev5.log   |      5 +
+ .../TASK-260720-1qhxqa_board-validation-rev6.log   |      4 +
+ .../TASK-260720-1qhxqa_board-validation-rev7.log   |      4 +
+ .../TASK-260720-1qhxqa_board-validation-rev8.log   |      4 +
+ ...TASK-260720-1qhxqa_board-validation-rev9-01.log |      5 +
+ ...SK-260720-1qhxqa_board-validation-rework-01.log |      5 +
+ ...SK-260720-1qhxqa_board-validation-rework-03.log |      7 +
+ .../TASK-260720-1qhxqa_board-validation.log        |      4 +
+ .../TASK-260720-1qhxqa_change-request_rev1.patch   |   1194 +
+ .../TASK-260720-1qhxqa_change-request_rev10.patch  |   2334 +
+ .../TASK-260720-1qhxqa_change-request_rev2.patch   |   1297 +
+ .../TASK-260720-1qhxqa_change-request_rev3.patch   |   1506 +
+ .../TASK-260720-1qhxqa_change-request_rev4.patch   |   1680 +
+ .../TASK-260720-1qhxqa_change-request_rev5.patch   |   1712 +
+ .../TASK-260720-1qhxqa_change-request_rev6.patch   |   1867 +
+ .../TASK-260720-1qhxqa_change-request_rev7.patch   |   1903 +
+ .../TASK-260720-1qhxqa_change-request_rev8.patch   |   2063 +
+ .../TASK-260720-1qhxqa_change-request_rev9.patch   |   2252 +
+ .../TASK-260720-1qhxqa_digest-validation.json      |      6 +
+ .../TASK-260720-1qhxqa_lint-diff-final-01.log      |      4 +
+ .../TASK-260720-1qhxqa_lint-rev10.log              |      2 +
+ .../TASK-260720-1qhxqa_lint-rev4.log               |      3 +
+ .../TASK-260720-1qhxqa_lint-rev5.log               |     11 +
+ .../TASK-260720-1qhxqa_lint-rev6.log               |     11 +
+ .../TASK-260720-1qhxqa_lint-rev7.log               |      7 +
+ .../TASK-260720-1qhxqa_lint-rev8.log               |      8 +
+ .../TASK-260720-1qhxqa_lint-rev9-01.log            |      1 +
+ ...K-260720-1qhxqa_m0-bindings-byte-tests-rev7.log |      7 +
+ .../TASK-260720-1qhxqa_m0-bindings-check-rev10.log |     12 +
+ .../TASK-260720-1qhxqa_m0-bindings-check-rev4.log  |     13 +
+ .../TASK-260720-1qhxqa_m0-bindings-check-rev5.log  |     12 +
+ .../TASK-260720-1qhxqa_m0-bindings-check-rev6.log  |     12 +
+ .../TASK-260720-1qhxqa_m0-bindings-check-rev7.log  |     12 +
+ .../TASK-260720-1qhxqa_m0-bindings-check-rev8.log  |     12 +
+ ...ASK-260720-1qhxqa_m0-bindings-check-rev9-01.log |     13 +
+ ...K-260720-1qhxqa_m0-bindings-check-rework-01.log |     12 +
+ ...K-260720-1qhxqa_m0-bindings-check-rework-02.log |     12 +
+ ...ASK-260720-1qhxqa_m0-bindings-test-final-01.log |     20 +
+ ...0720-1qhxqa_m0-bindings-test-harness-red-01.log |     67 +
+ ...0720-1qhxqa_m0-bindings-test-harness-red-02.log |     52 +
+ .../TASK-260720-1qhxqa_m0-bindings-test-rev10.log  |     38 +
+ .../TASK-260720-1qhxqa_m0-bindings-test-rev4.log   |     23 +
+ .../TASK-260720-1qhxqa_m0-bindings-test-rev5.log   |     22 +
+ .../TASK-260720-1qhxqa_m0-bindings-test-rev6.log   |     26 +
+ .../TASK-260720-1qhxqa_m0-bindings-test-rev7.log   |     28 +
+ .../TASK-260720-1qhxqa_m0-bindings-test-rev8.log   |     33 +
+ ...TASK-260720-1qhxqa_m0-bindings-test-rev9-02.log |     37 +
+ ...SK-260720-1qhxqa_m0-bindings-test-rework-02.log |     18 +
+ ...SK-260720-1qhxqa_m0-production-bindings-v1.json |    325 +
+ .../TASK-260720-1qhxqa_m0-production-bindings.md   |    144 +
+ ...K-260720-1qhxqa_manifest-byte-identity-rev5.log |      3 +
+ ...260720-1qhxqa_native-dependency-check-rev10.log |     10 +
+ ...-260720-1qhxqa_native-dependency-check-rev6.log |     10 +
+ ...-260720-1qhxqa_native-dependency-check-rev7.log |     10 +
+ ...-260720-1qhxqa_native-dependency-check-rev8.log |     10 +
+ ...0720-1qhxqa_native-dependency-check-rev9-01.log |     11 +
+ ...0-1qhxqa_resource-and-binding-digests-rev10.log |     11 +
+ ...20-1qhxqa_resource-and-binding-digests-rev6.log |     11 +
+ ...20-1qhxqa_resource-and-binding-digests-rev7.log |     16 +
+ ...20-1qhxqa_resource-and-binding-digests-rev8.log |     16 +
+ ...1qhxqa_resource-and-binding-digests-rev9-01.log |     57 +
+ ...720-1qhxqa_resource-digest-and-binding-rev4.log |     13 +
+ .../TASK-260720-1qhxqa_results-review-rev10.md     |     19 +
+ .../TASK-260720-1qhxqa_results.md                  |     68 +
+ ...260720-1qhxqa_retained-fork-narrowing-rev10.log |     12 +
+ ...SK-260720-1qhxqa_review-baseline-check-rev4.log |     12 +
+ ...SK-260720-1qhxqa_review-baseline-gate-rev10.log |     13 +
+ ...ASK-260720-1qhxqa_review-baseline-gate-rev5.log |     12 +
+ ...ASK-260720-1qhxqa_review-baseline-gate-rev6.log |     13 +
+ ...ASK-260720-1qhxqa_review-baseline-gate-rev7.log |     12 +
+ ...ASK-260720-1qhxqa_review-baseline-gate-rev8.log |     12 +
+ .../TASK-260720-1qhxqa_review-baseline-rev9.log    |     13 +
+ ...0720-1qhxqa_review-baseline-validation-rev2.log |     13 +
+ ...0720-1qhxqa_review-baseline-validation-rev3.log |     13 +
+ ...-260720-1qhxqa_review-binding-identity-rev9.log |      6 +
+ ...qa_review-board-validation-independent-rev4.log |      5 +
+ ...260720-1qhxqa_review-board-validation-rev10.log |      4 +
+ ...-260720-1qhxqa_review-board-validation-rev2.log |      5 +
+ ...-260720-1qhxqa_review-board-validation-rev3.log |      4 +
+ ...-260720-1qhxqa_review-board-validation-rev5.log |      4 +
+ ...-260720-1qhxqa_review-board-validation-rev6.log |      5 +
+ ...-260720-1qhxqa_review-board-validation-rev7.log |      5 +
+ ...-260720-1qhxqa_review-board-validation-rev8.log |      5 +
+ ...-260720-1qhxqa_review-board-validation-rev9.log |      5 +
+ ...60720-1qhxqa_review-candidate-identity-rev2.log |     11 +
+ ...60720-1qhxqa_review-candidate-identity-rev3.log |      4 +
+ ...20-1qhxqa_review-candidate-identity-rev4-02.log |      9 +
+ ...60720-1qhxqa_review-candidate-identity-rev5.log |     56 +
+ ...60720-1qhxqa_review-candidate-identity-rev6.log |      1 +
+ ...60720-1qhxqa_review-candidate-identity-rev8.log |     10 +
+ ...20-1qhxqa_review-candidate-identity-rev9-02.log |      9 +
+ ...720-1qhxqa_review-candidate-tree-byte-match.log |      8 +
+ ...0720-1qhxqa_review-comment-bypass-Project.swift |    293 +
+ ...260720-1qhxqa_review-comment-bypass-report.json |      6 +
+ .../TASK-260720-1qhxqa_review-comment-bypass.log   |      7 +
+ .../TASK-260720-1qhxqa_review-diff-check.log       |      4 +
+ ...720-1qhxqa_review-digest-rebind-mutant-rev4.log |      6 +
+ ...review-duplicate-schema-mutant-report-rev7.json |      6 +
+ ...1qhxqa_review-duplicate-schema-mutant-rev7.json |    300 +
+ ...-1qhxqa_review-duplicate-schema-mutant-rev7.log |      7 +
+ ...-1qhxqa_review-graph-mutant-production-call.log |     13 +
+ ...0720-1qhxqa_review-header-bytes-mutant-rev6.log |     19 +
+ ...-1qhxqa_review-hev-byte-mutant-report-rev8.json |      6 +
+ ...K-260720-1qhxqa_review-hev-byte-mutant-rev8.log |     10 +
+ ...K-260720-1qhxqa_review-lifecycle-audit-rev3.log |      3 +
+ ...-260720-1qhxqa_review-lint-independent-rev4.log |      2 +
+ .../TASK-260720-1qhxqa_review-lint-native-rev9.log |     13 +
+ .../TASK-260720-1qhxqa_review-lint-rev10.log       |      4 +
+ .../TASK-260720-1qhxqa_review-lint-rev7.log        |      2 +
+ .../TASK-260720-1qhxqa_review-lint-rev8.log        |      2 +
+ .../TASK-260720-1qhxqa_review-mutant-bindings.json |    299 +
+ ...ASK-260720-1qhxqa_review-mutant-validation.json |      6 +
+ ...TASK-260720-1qhxqa_review-mutant-validation.log |      6 +
+ ...720-1qhxqa_review-native-dependencies-rev10.log |     14 +
+ ...0720-1qhxqa_review-native-dependencies-rev6.log |     11 +
+ ...0720-1qhxqa_review-native-dependencies-rev7.log |     10 +
+ ...0720-1qhxqa_review-native-dependencies-rev8.log |     10 +
+ ...qhxqa_review-native-pin-mutant-report-rev5.json |      6 +
+ ...260720-1qhxqa_review-native-pin-mutant-rev5.log |      6 +
+ ...60720-1qhxqa_review-patch-bytes-mutant-rev6.log |     19 +
+ ...review-resource-and-candidate-digests-rev10.log |     22 +
+ ...20-1qhxqa_review-resource-digest-audit-rev5.log |      9 +
+ ...qa_review-resource-digests-independent-rev4.log |     12 +
+ ...-260720-1qhxqa_review-resource-digests-rev7.log |     17 +
+ ...-260720-1qhxqa_review-resource-digests-rev8.log |     10 +
+ ...K-260720-1qhxqa_review-resource-sha256-rev3.log |      9 +
+ ...K-260720-1qhxqa_review-resource-sha256-rev6.log |     13 +
+ .../TASK-260720-1qhxqa_review-resource-sha256.log  |     13 +
+ .../TASK-260720-1qhxqa_review-results-rev2.md      |      7 +
+ .../TASK-260720-1qhxqa_review-results-rev8.md      |     20 +
+ ...-1qhxqa_review-retained-fork-narrowing-rev9.log |     10 +
+ ...260720-1qhxqa_review-tests-independent-rev4.log |     21 +
+ .../TASK-260720-1qhxqa_review-tests-rev10.log      |     38 +
+ .../TASK-260720-1qhxqa_review-tests-rev2.log       |     19 +
+ .../TASK-260720-1qhxqa_review-tests-rev3.log       |     20 +
+ .../TASK-260720-1qhxqa_review-tests-rev5.log       |     23 +
+ .../TASK-260720-1qhxqa_review-tests-rev6.log       |     27 +
+ .../TASK-260720-1qhxqa_review-tests-rev7.log       |     28 +
+ .../TASK-260720-1qhxqa_review-tests-rev8.log       |     33 +
+ .../TASK-260720-1qhxqa_review-tests-rev9.log       |     38 +
+ ...-260720-1qhxqa_review-upstream-digests-rev9.log |      8 +
+ ...K-260720-1qhxqa_review-upstream-sha256-rev2.log |      8 +
+ .../TASK-260720-1qhxqa_review-verdict-rev10.md     |     58 +
+ .../TASK-260720-1qhxqa_review-verdict-rev2.md      |     89 +
+ .../TASK-260720-1qhxqa_review-verdict-rev3.md      |     83 +
+ .../TASK-260720-1qhxqa_review-verdict-rev4.md      |     54 +
+ .../TASK-260720-1qhxqa_review-verdict-rev5.md      |     76 +
+ .../TASK-260720-1qhxqa_review-verdict-rev6.md      |     84 +
+ .../TASK-260720-1qhxqa_review-verdict-rev7.md      |     81 +
+ .../TASK-260720-1qhxqa_review-verdict-rev8.md      |     58 +
+ .../TASK-260720-1qhxqa_review-verdict-rev9.md      |     48 +
+ .../TASK-260720-1qhxqa_review-verdict.md           |     64 +
+ ...-260720-1qhxqa_reviewer-comment-mutant-rev4.log |     13 +
+ ...qa_reviewer-comment-mutant-validation-rev4.json |     11 +
+ ...eviewer-duplicate-schema-revalidation-rev8.json |     11 +
+ ...reviewer-duplicate-schema-revalidation-rev8.log |     11 +
+ ...260720-1qhxqa_reviewer-mutant-revalidation.json |     11 +
+ ...-260720-1qhxqa_reviewer-mutant-revalidation.log |     11 +
+ .../TASK-260720-1qhxqa_rework-validation-rev3.md   |     14 +
+ .../TASK-260720-1qhxqa_rework-validation.md        |     11 +
+ ...menter--developer--codex-_RUN-260829-00371f.log |  64286 +++++++
+ ...menter--developer--codex-_RUN-260829-33dd62.log |   4336 +
+ ...menter--developer--codex-_RUN-260829-4cc3db.log |  11350 ++
+ ...menter--developer--codex-_RUN-260829-5a4aea.log |  10905 ++
+ ...menter--developer--codex-_RUN-260829-72aafb.log |  16016 ++
+ ...menter--developer--codex-_RUN-260829-af1b5a.log |  10744 ++
+ ...menter--developer--codex-_RUN-260829-b48b4d.log |  10335 ++
+ ...menter--developer--codex-_RUN-260830-057a62.log |  15701 ++
+ ...menter--developer--codex-_RUN-260830-47449f.log |  10226 ++
+ ...menter--developer--codex-_RUN-260830-bcc3d8.log |  12645 ++
+ ...eviewer--reviewer--codex-_RUN-260829-307601.log |   5535 +
+ ...eviewer--reviewer--codex-_RUN-260829-605063.log |   7133 +
+ ...eviewer--reviewer--codex-_RUN-260829-7d8f45.log |   6331 +
+ ...eviewer--reviewer--codex-_RUN-260829-a223cd.log |   6923 +
+ ...eviewer--reviewer--codex-_RUN-260829-bed25f.log |   5132 +
+ ...eviewer--reviewer--codex-_RUN-260829-c542bc.log |   6765 +
+ ...eviewer--reviewer--codex-_RUN-260830-0909c7.log |   5019 +
+ ...eviewer--reviewer--codex-_RUN-260830-0baaef.log |   6114 +
+ ...eviewer--reviewer--codex-_RUN-260830-9d4551.log |   5306 +
+ ...eviewer--reviewer--codex-_RUN-260830-a85112.log |   5554 +
+ ...260720-1qhxqa_upstream-resource-sha256-rev5.log |      8 +
+ ...0-1qhxqa_upstream-resource-sha256-rework-01.log |      8 +
+ ...0-1qhxqa_upstream-resource-sha256-rework-02.log |      9 +
+ .../TASK-260830-1x524u_accepted-delivery.md        |      1 +
+ .../TASK-260830-1x524u_adapter-builds-01.log       |     10 +
+ .../TASK-260830-1x524u_adapter-builds-02.log       |      9 +
+ .../TASK-260830-1x524u_adapter-builds-03.log       |     12 +
+ .../TASK-260830-1x524u_board-validation-01.log     |      3 +
+ .../TASK-260830-1x524u_board-validation-03.log     |      1 +
+ .../TASK-260830-1x524u_board-validation-04.log     |    401 +
+ ...60830-1x524u_change-request_rev1-validation.log |      7 +
+ .../TASK-260830-1x524u_change-request_rev1.patch   |   8880 +
+ ...60830-1x524u_change-request_rev2-validation.log |     44 +
+ .../TASK-260830-1x524u_change-request_rev2.patch   |   8880 +
+ ...60830-1x524u_change-request_rev3-validation.log |     44 +
+ .../TASK-260830-1x524u_change-request_rev3.patch   |   8880 +
+ ...K-260830-1x524u_completion-validate-core-01.log |   1642 +
+ .../TASK-260830-1x524u_coverage-report-02.log      |     17 +
+ .../TASK-260830-1x524u_coverage-report-03.log      |     15 +
+ ...K-260830-1x524u_credential-contract-test-04.log |      1 +
+ ...K-260830-1x524u_credential-free-validate-04.log |     42 +
+ ...K-260830-1x524u_credential-free-validate-05.log |     42 +
+ .../TASK-260830-1x524u_curator-main-delivery.md    |      1 +
+ .../TASK-260830-1x524u_curator-resolution.md       |      1 +
+ .../TASK-260830-1x524u_curator-upgrade-evidence.md |      1 +
+ .../TASK-260830-1x524u_deadline-recovery.md        |      1 +
+ .../TASK-260830-1x524u_delivery-constraint.md      |     35 +
+ .../TASK-260830-1x524u_diagram-integrity-01.log    |      7 +
+ .../TASK-260830-1x524u_diagram-integrity-02.log    |      7 +
+ ...SK-260830-1x524u_documentation-integrity-01.log |      3 +
+ ...SK-260830-1x524u_documentation-integrity-02.log |      3 +
+ ...-260830-1x524u_final-candidate-integrity-01.log |     25 +
+ ...-260830-1x524u_final-candidate-integrity-02.log |     30 +
+ ...-260830-1x524u_final-candidate-integrity-03.log |     27 +
+ .../TASK-260830-1x524u_focused-runtime-01.log      |    442 +
+ .../TASK-260830-1x524u_focused-runtime-02.log      |    430 +
+ .../TASK-260830-1x524u_focused-runtime-03.log      |    425 +
+ .../TASK-260830-1x524u_lint-01.log                 |      4 +
+ .../TASK-260830-1x524u_lint-02.log                 |      4 +
+ .../TASK-260830-1x524u_m0-bindings-02.log          |     50 +
+ .../TASK-260830-1x524u_m0-bindings-03.log          |     52 +
+ .../TASK-260830-1x524u_m0-bindings-adapter-01.log  |     50 +
+ .../TASK-260830-1x524u_m1-runtime-harness-01.log   |     48 +
+ .../TASK-260830-1x524u_m1-runtime-harness-02.log   |     48 +
+ .../TASK-260830-1x524u_m1-runtime-harness-03.log   |     47 +
+ .../TASK-260830-1x524u_macos-targets-01.log        |     24 +
+ .../TASK-260830-1x524u_macos-targets-02.log        |     23 +
+ .../TASK-260830-1x524u_macos-targets-03.log        |     23 +
+ ...K-260830-1x524u_privacy-boundary-harness-02.log |     40 +
+ .../TASK-260830-1x524u_provenance-republish.md     |      1 +
+ ...SK-260830-1x524u_provider-shell-boundary-02.log |      7 +
+ ...K-260830-1x524u_recovery-accepted-candidate.log |     27 +
+ ...SK-260830-1x524u_recovery-accepted-coverage.log |     15 +
+ ...0830-1x524u_recovery-accepted-state-compare.log |      1 +
+ .../TASK-260830-1x524u_recovery-board.json         |      1 +
+ .../TASK-260830-1x524u_recovery-candidate-diff.log |      0
+ .../TASK-260830-1x524u_recovery-completion-01.log  |     43 +
+ ...ompletion-macos-target-builds-and-contracts.log |     23 +
+ ...mpletion-migration-isolation-negative-tests.log |      9 +
+ ...30-1x524u_recovery-completion-swift-testing.log |   1546 +
+ ...covery-completion-validation-contract-tests.log |      1 +
+ .../TASK-260830-1x524u_recovery-cr-validation.log  |     44 +
+ .../TASK-260830-1x524u_recovery-diagram-check.log  |      2 +
+ ...TASK-260830-1x524u_recovery-diagram-render.json |      9 +
+ .../TASK-260830-1x524u_recovery-documentation.json |      5 +
+ ...TASK-260830-1x524u_recovery-focused-runtime.log |    330 +
+ .../TASK-260830-1x524u_recovery-harness.log        |     52 +
+ .../TASK-260830-1x524u_recovery-integrity.log      |     33 +
+ .../TASK-260830-1x524u_recovery-ios-adapter.log    |      7 +
+ .../TASK-260830-1x524u_recovery-lint.log           |     42 +
+ .../TASK-260830-1x524u_recovery-m0-bindings.log    |     51 +
+ .../TASK-260830-1x524u_recovery-macos-adapter.log  |      7 +
+ ...-260830-1x524u_recovery-operational-config.json |     14 +
+ ...K-260830-1x524u_recovery-plantuml-readiness.log |     19 +
+ ...ASK-260830-1x524u_recovery-privacy-harness.json |     78 +
+ ...TASK-260830-1x524u_recovery-privacy-harness.log |      3 +
+ ...ASK-260830-1x524u_recovery-privacy-monitor.json |     17 +
+ .../TASK-260830-1x524u_recovery-readiness.log      |      5 +
+ ...ASK-260830-1x524u_recovery-scheme-narrowing.log |      3 +
+ ...TASK-260830-1x524u_recovery-system-compare.json |      5 +
+ .../TASK-260830-1x524u_recovery-system-post.json   |     14 +
+ .../TASK-260830-1x524u_recovery-system-pre.json    |     14 +
+ .../TASK-260830-1x524u_recovery-workspace.json     |    265 +
+ .../TASK-260830-1x524u_results.md                  |     48 +
+ ...ASK-260830-1x524u_rev3-independent-evidence.log |    714 +
+ .../TASK-260830-1x524u_rev3-review-scope.md        |      1 +
+ .../TASK-260830-1x524u_review-verdict-rev2.md      |     60 +
+ .../TASK-260830-1x524u_review-verdict-rev3.md      |     30 +
+ ...0830-1x524u_route-monitor-classification-01.log |      5 +
+ ...TASK-260830-1x524u_route-monitor-summary-01.log |      5 +
+ ...60830-1x524u_scheme-gate-narrowed-mutant-01.log |     19 +
+ ...60830-1x524u_scheme-gate-narrowed-mutant-03.log |     18 +
+ ...TASK-260830-1x524u_source-delivery-readiness.md |      1 +
+ ...eviewer--reviewer--codex-_RUN-260830-4bfcbd.log |   4958 +
+ ...eviewer--reviewer--codex-_RUN-260907-178550.log |   3044 +
+ ...eviewer--reviewer--codex-_RUN-260907-587288.log |   5885 +
+ ...g_-tester--tester--codex-_RUN-260830-1928cd.log |  15766 ++
+ ...g_-tester--tester--codex-_RUN-260830-4cb0bf.log |  10075 ++
+ ...g_-tester--tester--codex-_RUN-260830-b09219.log |  12569 ++
+ ...g_-tester--tester--codex-_RUN-260907-399435.log |   1698 +
+ ...g_-tester--tester--codex-_RUN-260907-765f2f.log |      0
+ ...g_-tester--tester--codex-_RUN-260907-a8cf65.log |   1756 +
+ .../TASK-260830-1x524u_swift-coverage-run-03.log   |   1764 +
+ .../TASK-260830-1x524u_system-state-compare-03.log |      1 +
+ .../TASK-260830-1x524u_system-state-post-02.log    |      4 +
+ .../TASK-260830-1x524u_system-state-post-03.log    |      5 +
+ .../TASK-260830-1x524u_system-state-pre-02.log     |      4 +
+ .../TASK-260830-1x524u_system-state-pre-03.log     |      5 +
+ ...260830-1x524u_tester-handoff-result-20260908.md |      1 +
+ ...0-1x524u_tester-provenance-recovery-20260908.md |      1 +
+ .../TASK-260830-1x524u_tool-readiness-01.log       |     19 +
+ .../progress.md                                    |     60 +-
+ .../progress.md                                    |     82 +-
+ .../progress.md                                    |     43 +-
+ .../progress.md                                    |     58 +-
+ .../progress.md                                    |    336 +-
+ .../README.md                                      |     10 +
+ .../progress.md                                    |    214 +
+ .../progress.md                                    |      7 +-
+ .../progress.md                                    |      5 +-
+ ...SK-260720-1qhxqa_m0-production-bindings-v1.json |    325 +
+ ...SK-260715-m8bi8i_authentication-failure-v1.json |      8 +
+ .../TASK-260715-m8bi8i_dns-failure-v1.json         |      8 +
+ .../TASK-260715-m8bi8i_fixture-manifest-v1.json    |     53 +
+ ...K-260715-m8bi8i_mid-session-dns-failure-v1.json |      8 +
+ ...K-260715-m8bi8i_mid-session-ssh-failure-v1.json |      8 +
+ .../TASK-260715-m8bi8i_packet-failure-v1.json      |      8 +
+ .../TASK-260715-m8bi8i_route-apply-failure-v1.json |      8 +
+ .../M1Runtime/TASK-260715-m8bi8i_success-v1.json   |     18 +
+ LOGBOOK.md                                         |     68 +
+ Makefile                                           |     33 +-
+ README.md                                          |     46 +-
+ Sources/ReluxTunnelCore/M1RuntimeComposition.swift |    230 +
+ .../HarnessContracts.swift                         |     47 +
+ .../ReluxTunnelHarnessSupport/HarnessRuntime.swift |     29 +-
+ .../M1RuntimeCommand.swift                         |   1099 +
+ .../ReluxTunnelHarnessSupport/SmokeCommand.swift   |      6 +-
+ .../MacOSProductionDependencyFactory.swift         |    678 +
+ .../MacOSProductionSSHBootstrap.swift              |    290 +
+ .../HEVSOCKSBoundary.swift                         |     31 +
+ .../M1RuntimeCompositionTests.swift                |    682 +
+ .../MacOSProductionRuntimeOwnershipTests.swift     |    697 +
+ .../DeterministicSessionFactoryTests.swift         |    441 +
+ .../M1RuntimeHarnessTests.swift                    |    221 +
+ .../TASK-260715-2rcvr0_m1-runtime-lifecycle.puml   |    129 +
+ .../TASK-260715-2rcvr0_m1-runtime-lifecycle.svg    |      1 +
+ ...TASK-260715-2rcvr0_m1-runtime-lifecycle_001.svg |      1 +
+ ...TASK-260715-2rcvr0_m1-runtime-lifecycle_002.svg |      1 +
+ ...TASK-260715-2rcvr0_m1-runtime-lifecycle_003.svg |      1 +
+ docs/TASK-260720-1qhxqa_m0-production-bindings.md  |    144 +
+ docs/core-adapter-boundaries.md                    |      9 +-
+ docs/m1-runtime-ownership-and-operations.md        |    296 +
+ docs/migration-isolation.md                        |     67 +
+ scripts/check-core-boundaries.sh                   |     41 +
+ scripts/check-migration-isolation.py               |    588 +
+ scripts/tests/test-credential-free-validation.sh   |     10 +-
+ scripts/tests/test-migration-isolation-guard.sh    |    166 +
+ scripts/tests/test_m0_production_bindings.py       |    728 +
+ scripts/validate-credential-free.sh                |      8 +
+ scripts/validate-m0-production-bindings.py         |   1034 +
+ scripts/validate-m1-runtime-harness.py             |    171 +
+ task-board.config.json                             |     12 +-
+ 395 files changed, 1005079 insertions(+), 94 deletions(-)
+ create mode 100644 .task-board/.activity/EPIC-260715-3810we/events.ndjson
+ create mode 100644 .task-board/.activity/STORY-260715-1y04r0/events.ndjson
+ create mode 100644 .task-board/.activity/TASK-260715-2rcvr0/events.ndjson
+ create mode 100644 .task-board/.activity/TASK-260715-3ejhyy/events.ndjson
+ create mode 100644 .task-board/.activity/TASK-260715-3qqbbm/events.ndjson
+ create mode 100644 .task-board/.activity/TASK-260715-m8bi8i/events.ndjson
+ create mode 100644 .task-board/.activity/TASK-260720-1qhxqa/events.ndjson
+ create mode 100644 .task-board/.activity/TASK-260830-1x524u/events.ndjson
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_change-request_rev1.patch
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_change-request_rev2.patch
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_results.md
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_review-verdict-rev2.md
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_review-verdict.md
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-analyst--solution-architect--codex-_RUN-260830-18f257.log
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-analyst--solution-architect--codex-_RUN-260830-682cd1.log
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-reviewer--reviewer--codex-_RUN-260830-eb3dcb.log
+ create mode 100644 .task-board/.resources/TASK-260715-2rcvr0/TASK-260715-2rcvr0_spawn-log_-reviewer--reviewer--codex-_RUN-260830-f7ad98.log
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_change-request_rev1.patch
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_change-request_rev2.patch
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_change-request_rev3.patch
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_review-verdict-rev3.md
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_review-verdict.md
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-implementer--developer--codex-_RUN-260830-060b68.log
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-implementer--developer--codex-_RUN-260830-0efcad.log
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-implementer--developer--codex-_RUN-260830-2e247e.log
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-reviewer--reviewer--codex-_RUN-260830-8eedbe.log
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-reviewer--reviewer--codex-_RUN-260830-a6022e.log
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260715-3ejhyy_spawn-log_-reviewer--reviewer--codex-_RUN-260830-ce1afa.log
+ create mode 100644 .task-board/.resources/TASK-260715-3ejhyy/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+ create mode 100644 .task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_change-request_rev1.patch
+ create mode 100644 .task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_migration-isolation-report.json
+ create mode 100644 .task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_results.md
+ create mode 100644 .task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_review-verdict.md
+ create mode 100644 .task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_spawn-log_-implementer--developer--codex-_RUN-260830-ecdf27.log
+ create mode 100644 .task-board/.resources/TASK-260715-3qqbbm/TASK-260715-3qqbbm_spawn-log_-reviewer--reviewer--codex-_RUN-260830-4ace66.log
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_change-request_rev1.patch
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_change-request_rev2.patch
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_results.md
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_review-verdict-rev2.md
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_review-verdict.md
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_spawn-log_-implementer--developer--codex-_RUN-260830-0aec52.log
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_spawn-log_-implementer--developer--codex-_RUN-260830-7464e5.log
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_spawn-log_-reviewer--reviewer--codex-_RUN-260830-939aa6.log
+ create mode 100644 .task-board/.resources/TASK-260715-m8bi8i/TASK-260715-m8bi8i_spawn-log_-reviewer--reviewer--codex-_RUN-260830-bd7760.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_accept-cr-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_attachment-byte-identity-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_attachment-byte-identity-rework-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_attachment-byte-identity-rework-02.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_attachment-byte-identity-rework-03.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_attachment-digest-validation.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rev9-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rework-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation-rework-03.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_board-validation.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev1.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev10.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev2.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev3.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev4.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev5.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev6.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev7.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev8.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_change-request_rev9.patch
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_digest-validation.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-diff-final-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_lint-rev9-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-byte-tests-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rev9-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rework-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-check-rework-02.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-final-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-harness-red-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-harness-red-02.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rev9-02.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-bindings-test-rework-02.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_m0-production-bindings.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_manifest-byte-identity-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_native-dependency-check-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_native-dependency-check-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_native-dependency-check-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_native-dependency-check-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_native-dependency-check-rev9-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_resource-and-binding-digests-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_resource-and-binding-digests-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_resource-and-binding-digests-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_resource-and-binding-digests-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_resource-and-binding-digests-rev9-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_resource-digest-and-binding-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_results-review-rev10.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_results.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_retained-fork-narrowing-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-check-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-gate-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-gate-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-gate-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-gate-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-gate-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-rev9.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-validation-rev2.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-baseline-validation-rev3.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-binding-identity-rev9.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-independent-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev2.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev3.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-board-validation-rev9.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-identity-rev2.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-identity-rev3.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-identity-rev4-02.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-identity-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-identity-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-identity-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-identity-rev9-02.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-candidate-tree-byte-match.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-comment-bypass-Project.swift
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-comment-bypass-report.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-comment-bypass.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-diff-check.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-digest-rebind-mutant-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-duplicate-schema-mutant-report-rev7.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-duplicate-schema-mutant-rev7.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-duplicate-schema-mutant-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-graph-mutant-production-call.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-header-bytes-mutant-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-hev-byte-mutant-report-rev8.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-hev-byte-mutant-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-lifecycle-audit-rev3.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-lint-independent-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-lint-native-rev9.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-lint-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-lint-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-lint-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-mutant-bindings.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-mutant-validation.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-mutant-validation.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-native-dependencies-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-native-dependencies-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-native-dependencies-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-native-dependencies-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-native-pin-mutant-report-rev5.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-native-pin-mutant-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-patch-bytes-mutant-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-and-candidate-digests-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-digest-audit-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-digests-independent-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-digests-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-digests-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-sha256-rev3.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-sha256-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-resource-sha256.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-results-rev2.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-results-rev8.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-retained-fork-narrowing-rev9.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-independent-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev10.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev2.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev3.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev6.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-tests-rev9.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-upstream-digests-rev9.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-upstream-sha256-rev2.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev10.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev2.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev3.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev4.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev5.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev6.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev7.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev8.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev9.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_reviewer-comment-mutant-rev4.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_reviewer-comment-mutant-validation-rev4.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_reviewer-duplicate-schema-revalidation-rev8.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_reviewer-duplicate-schema-revalidation-rev8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_reviewer-mutant-revalidation.json
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_reviewer-mutant-revalidation.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_rework-validation-rev3.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_rework-validation.md
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260829-00371f.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260829-33dd62.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260829-4cc3db.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260829-5a4aea.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260829-72aafb.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260829-af1b5a.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260829-b48b4d.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260830-057a62.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260830-47449f.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-implementer--developer--codex-_RUN-260830-bcc3d8.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260829-307601.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260829-605063.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260829-7d8f45.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260829-a223cd.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260829-bed25f.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260829-c542bc.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260830-0909c7.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260830-0baaef.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260830-9d4551.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_spawn-log_-reviewer--reviewer--codex-_RUN-260830-a85112.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_upstream-resource-sha256-rev5.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_upstream-resource-sha256-rework-01.log
+ create mode 100644 .task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_upstream-resource-sha256-rework-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_accepted-delivery.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_adapter-builds-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_adapter-builds-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_adapter-builds-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_board-validation-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_board-validation-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_board-validation-04.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_change-request_rev1-validation.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_change-request_rev1.patch
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_change-request_rev2-validation.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_change-request_rev2.patch
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_change-request_rev3-validation.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_change-request_rev3.patch
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_completion-validate-core-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_coverage-report-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_coverage-report-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_credential-contract-test-04.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_credential-free-validate-04.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_credential-free-validate-05.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_curator-main-delivery.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_curator-resolution.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_curator-upgrade-evidence.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_deadline-recovery.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_delivery-constraint.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_diagram-integrity-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_diagram-integrity-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_documentation-integrity-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_documentation-integrity-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_final-candidate-integrity-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_final-candidate-integrity-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_final-candidate-integrity-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_focused-runtime-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_focused-runtime-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_focused-runtime-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_lint-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_lint-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_m0-bindings-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_m0-bindings-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_m0-bindings-adapter-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_m1-runtime-harness-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_m1-runtime-harness-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_m1-runtime-harness-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_macos-targets-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_macos-targets-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_macos-targets-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_privacy-boundary-harness-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_provenance-republish.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_provider-shell-boundary-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-accepted-candidate.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-accepted-coverage.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-accepted-state-compare.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-board.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-candidate-diff.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-completion-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-completion-macos-target-builds-and-contracts.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-completion-migration-isolation-negative-tests.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-completion-swift-testing.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-completion-validation-contract-tests.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-cr-validation.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-diagram-check.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-diagram-render.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-documentation.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-focused-runtime.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-harness.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-integrity.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-ios-adapter.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-lint.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-m0-bindings.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-macos-adapter.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-operational-config.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-plantuml-readiness.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-privacy-harness.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-privacy-harness.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-privacy-monitor.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-readiness.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-scheme-narrowing.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-system-compare.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-system-post.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-system-pre.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_recovery-workspace.json
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_results.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_rev3-independent-evidence.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_rev3-review-scope.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev2.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_review-verdict-rev3.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_route-monitor-classification-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_route-monitor-summary-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_scheme-gate-narrowed-mutant-01.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_scheme-gate-narrowed-mutant-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_source-delivery-readiness.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-reviewer--reviewer--codex-_RUN-260830-4bfcbd.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-reviewer--reviewer--codex-_RUN-260907-178550.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-reviewer--reviewer--codex-_RUN-260907-587288.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260830-1928cd.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260830-4cb0bf.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260830-b09219.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260907-399435.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260907-765f2f.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_spawn-log_-tester--tester--codex-_RUN-260907-a8cf65.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_swift-coverage-run-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_system-state-compare-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_system-state-post-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_system-state-post-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_system-state-pre-02.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_system-state-pre-03.log
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_tester-handoff-result-20260908.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_tester-provenance-recovery-20260908.md
+ create mode 100644 .task-board/.resources/TASK-260830-1x524u/TASK-260830-1x524u_tool-readiness-01.log
+ create mode 100644 .task-board/EPIC-260715-3810we_tcp-dns-system-vpn/STORY-260715-1y04r0_shared-tunnel-runtime/TASK-260830-1x524u_revalidate-shared-runtime-story-for-integration/README.md
+ create mode 100644 .task-board/EPIC-260715-3810we_tcp-dns-system-vpn/STORY-260715-1y04r0_shared-tunnel-runtime/TASK-260830-1x524u_revalidate-shared-runtime-story-for-integration/progress.md
+ create mode 100644 Configuration/TASK-260720-1qhxqa_m0-production-bindings-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_authentication-failure-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_dns-failure-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_fixture-manifest-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-dns-failure-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_mid-session-ssh-failure-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_packet-failure-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_route-apply-failure-v1.json
+ create mode 100644 Fixtures/M1Runtime/TASK-260715-m8bi8i_success-v1.json
+ create mode 100644 Sources/ReluxTunnelCore/M1RuntimeComposition.swift
+ create mode 100644 Sources/ReluxTunnelHarnessSupport/M1RuntimeCommand.swift
+ create mode 100644 Sources/ReluxTunnelMacOSAdapter/MacOSProductionDependencyFactory.swift
+ create mode 100644 Sources/ReluxTunnelMacOSAdapter/MacOSProductionSSHBootstrap.swift
+ create mode 100644 Tests/ReluxTunnelCoreTests/M1RuntimeCompositionTests.swift
+ create mode 100644 Tests/ReluxTunnelCoreTests/MacOSProductionRuntimeOwnershipTests.swift
+ create mode 100644 Tests/ReluxTunnelHarnessTests/DeterministicSessionFactoryTests.swift
+ create mode 100644 Tests/ReluxTunnelHarnessTests/M1RuntimeHarnessTests.swift
+ create mode 100644 diagrams/TASK-260715-2rcvr0_m1-runtime-lifecycle.puml
+ create mode 100644 diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle.svg
+ create mode 100644 diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_001.svg
+ create mode 100644 diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_002.svg
+ create mode 100644 diagrams/artefacts/TASK-260715-2rcvr0_m1-runtime-lifecycle_003.svg
+ create mode 100644 docs/TASK-260720-1qhxqa_m0-production-bindings.md
+ create mode 100644 docs/m1-runtime-ownership-and-operations.md
+ create mode 100644 docs/migration-isolation.md
+ create mode 100755 scripts/check-migration-isolation.py
+ create mode 100755 scripts/tests/test-migration-isolation-guard.sh
+ create mode 100644 scripts/tests/test_m0_production_bindings.py
+ create mode 100644 scripts/validate-m0-production-bindings.py
+ create mode 100644 scripts/validate-m1-runtime-harness.py
+Applied patch to '.github/workflows/ci.yml' cleanly.
+Applied patch to 'LOGBOOK.md' with conflicts.
+Applied patch to 'README.md' cleanly.
+Applied patch to 'Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift' cleanly.
+Applied patch to 'Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift' cleanly.
+Applied patch to 'docs/generated-workspace-foundation.md' cleanly.
+Falling back to direct application...
+Falling back to direct application...
+Applied patch to 'scripts/relay_supply_chain.py' cleanly.
+Applied patch to 'scripts/tests/test-credential-free-validation.sh' cleanly.
+Falling back to direct application...
+Falling back to direct application...
+Falling back to direct application...
+Falling back to direct application...
+Applied patch to 'scripts/tests/test_relay_supply_chain.py' cleanly.
+Applied patch to 'scripts/validate-macos-targets.sh' cleanly.
+U LOGBOOK.md
+
+exec
+/bin/zsh -lc 'git diff --cc LOGBOOK.md
+ git diff --cached --stat
+ cat scripts/tests/test_macos_build_diagnostic_mutants.py
+ cat scripts/tests/test_macos_build_diagnostics.py' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ succeeded in 0ms:
+diff --cc LOGBOOK.md
+index 05a25c7,a999a11..0000000
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@@ -1424,43 -1397,47 +1424,90 @@@
+  - FIX: `MacOSSystemKeychainHandle` now has an inert internal fixture identity accepted only by injected fake Security clients; the live client rejects fixture handles before its injectable matcher, and a spy proves zero `SecItemCopyMatching` reachability. The suite no longer calls any live Security API and asserts one exact scoped reference query, no enumeration/fallback, malformed-reference zero calls, cancellation cleanup, passphrase states, and 16 bounded secret-lifecycle repetitions.
+  - VERIFICATION: Six focused fake-only Swift suites passed 53 tests. The real coordinator boundary rejects every invalid profile class before injected Keychain/network fakes; all nine `SSHHostKeyDecision` cases traverse the candidate-neutral transport seam with `hostPolicy -> credentialLookup -> authentication` only on accepted paths. One independently owned lifecycle registry retains concrete task, connection, observer, and callback tokens across all 16 bounded iterations; gated cancellation observes all four non-zero, and balanced teardown restores the same registry baseline after success, every rejecting host decision, an injected thrown policy, and cancellation without assigning counters to zero. Three additional cleanup/redaction matrix repetitions passed; captured-log prohibited-data, test-source live-Security, public-fixture, live-network, and self-reset-counter scans returned no matches. Coverage reported 87.75% affected lines and 87.04% affected functions; strict Swift format, core boundaries, and diff checks exited 0. The first focused compile exited 1 on a missing explicit `return`; the corrected rerun and every subsequent gate exited 0. No real Keychain, SSH connection, NetworkExtension runtime, VPN configuration, route, DNS, interface, or packet-filter operation ran.
+  
+++<<<<<<< ours
+ +### 0035 — M0 binding gate locks the exact retained ReluxNIOSSH tree (TASK-260720-1qhxqa rework 10)
+ +- REVIEW FINDING: Revision 9 validated the accepted retained ReluxNIOSSH commit, archive, patch, and license metadata but not the checked-in retained source bytes. Narrowing `ReluxPolicies.maximumPayloadBytes` to `1` therefore retained `productionCompositionPermitted=true`.
+ +- FIX: The immutable binding now pins the deterministic sorted path/file-SHA-256 identity and exact 148-file count of the retained tree, excluding only build caches. The production call site recomputes both and fails with stable `REPOSITORY-SSH-PIN` evidence on any missing, extra, narrowed, or changed retained file.
+ +- NEGATIVE EVIDENCE: The durable reviewer-equivalent narrowing test requires validator exit `1`, `productionCompositionPermitted=false`, and exact `retained ReluxNIOSSH tree bytes drift` detail. No M0 implementation or selection changed.
+ +
+ +### 0825 — M0-bound macOS and deterministic harness runtime factories (TASK-260715-3ejhyy)
+ +- IMPLEMENTATION: The macOS production call site validates the exact accepted manifest SHA-256 and semantic evidence before any component closure runs, derives the accepted packet/HEV/SSH values from that manifest, and creates one fresh coordinator graph per generation. The graph selects `LibSSH2TransportFactory`, the system-domain Keychain resolver, mandatory approved-host-policy and privacy-safe mapper inputs, injected TCP/DNS and network-settings seams, and a bridge-backed M1 packet plane. The deterministic SPM harness implements the same candidate-neutral `TunnelRuntimeFactory` without a production-manifest bypass.
+ +- OWNERSHIP: Packet-plane `prepare` constructs only Swift owners. The first descriptor, readiness source, private listener, HEV lease/thread, and PacketFlow read remain inside `PacketFlowBridge.start`, reached only by the separate post-settings `activateReads` call. Stop is idempotent; existing coordinator and bridge owners retain reverse cleanup ordering.
+ +- NEGATIVE EVIDENCE: Runtime tests distinguish absent and unreadable manifests and reject both before every component factory, along with digest narrowing, disabled permission, supersession, selected libssh2 pin drift, and a missing mandatory PacketBridge capability. Dispatch tests admit ordinary TCP CONNECT, route virtual-DNS TCP/UDP to DNS, and reject all other UDP as deferred.
+ +- VERIFICATION: The focused composition and harness suites pass 10/10; the final full SwiftPM run passes 504 tests in 42 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Strict Swift format, Core boundary guard, 32 M0 binding negatives, accepted manifest/repository validation, native/libssh2 pin inspection, three SPM target builds, and unsigned macOS Debug/Release host/provider generation, target tests, linkage, and graph validation all exit 0. The first focused compile and first lint run exited 1 on test-double types and mechanical formatting, then passed after correction. The first provider gate exited 2 before generation because the task worktree's two-line Tuist pin was untrusted; after explicitly trusting that exact `mise.toml`, pinned Tuist 4.202.5 validation passed.
+ +- VALIDATION ANOMALY: The first final full SwiftPM run exited 1 when the pre-existing libssh2 pressure fixture observed `.cancelled` instead of `.resourceLimitExceeded` under full-suite concurrency. The exact isolated pressure test then passed 1/1, and an immediate full rerun passed all 504 tests; both the failing and passing logs are retained under `.temp/TASK-260715-3ejhyy/` rather than hiding the transient.
+ +- REVIEW REWORK: Revision 1 exposed a real production-boundary bypass: the public component factory could return an `SSHBootstrap` that ignored the selected libssh2 transport, approved-host policy, system-domain Keychain resolver, and diagnostic mapper. The production root now constructs one concrete candidate-neutral bootstrap/session itself. Public injections contain only profile/configuration and transport-service seams; the selected security dependencies are root-owned, and the Core boundary exposes only `M1SSHChannelSession` rather than the concrete transport.
+ +- EXACT-GRAPH EVIDENCE: The macOS smoke now drives the runtime returned by `MacOSProductionDependencyFactory` through immutable profile load, host-policy evaluation, credential lookup, authentication, TCP/DNS prepare, packet preflight, settings application, and packet activation. It proves zero descriptor/listener/HEV/read acquisition through preflight, one acquisition per generation after settings, and reverse idempotent teardown after repeated stop. The deterministic harness drives its own returned runtime through the same lifecycle and cleanup contract.
+ +- NEGATIVE EVIDENCE: Semantic manifest validation now rejects JSON booleans, fractional numbers, and overflow wherever an integer is required. The Core boundary gate rejects any reintroduced public SSH-bootstrap/security injection and requires the production `makeRuntime` call site to retain all four mandatory selected dependencies. The accepted manifest remains byte-identical at SHA-256 `40333862b46b7af04cdd966ade91e8c9cc917e573c6601e26e7fa956d11ae161`.
+ +- REWORK VERIFICATION: Focused composition, exact macOS ownership, and exact harness ownership suites pass 13/13. The full SwiftPM suite passes 507 tests in 43 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Core, macOS adapter, and harness-support target builds; strict recursive Swift format; Core/security-boundary checks; accepted M0 validation; all 32 M0 negative tests; native/libssh2 pin checks; `git diff --check`; and unsigned generated macOS host/provider Debug+Release validation all exit 0. Three intermediate compile attempts and the first task-scoped lint correctly exited 1 during the API/test-double rework and remain in `.temp/TASK-260715-3ejhyy/`.
+ +- BOARD ANOMALY: Final `task-board validate` returned process exit 0 while reporting the owning Story stored as `to-dev` versus child aggregate `development`. The Task checklist and outcome are complete; the parent status is orchestrator-owned and the validation output is retained without calling it clean.
+ +- REVIEW REWORK 2: Revision 2 exposed Foundation boolean type confusion: `NSNumber(1) as? Bool` let numeric JSON `1` satisfy `productionCompositionPermitted`. The semantic validator now requires the value's Core Foundation type to be `CFBoolean`; numeric `0` and `1` both fail with `compositionNotPermitted`. Restoring the permissive cast made the named negative test exit 1, and restoring the guard made it pass. Focused composition and exact macOS/harness ownership tests, the 508-test/43-suite SwiftPM run (25 known unavailable-ReluxNIOSSH issues), both production build targets, strict format, Core/native/M0 gates, 32 manifest negatives, and the unsigned macOS provider matrix all exit 0.
+ +### 1010 — Composed M1 runtime harness owns deterministic lifecycle evidence (TASK-260715-m8bi8i)
+ +- IMPLEMENTATION: The `m1-runtime` command drives `HarnessApplication.run -> HarnessCoreComposition -> DeterministicHarnessSessionFactory -> TunnelRuntimeCoordinator` and the real `BridgeBackedM1PacketPlaneFactory`/`PacketFlowBridge` path against controlled packet, SSH, TCP, safe-DNS, and route substitutes. It observes ordered readiness snapshots, drops a simulated host owner, exchanges one TCP stream and one DNS datagram, requests fixed-schema aggregate diagnostics, and performs reverse cleanup.
+ +- FAILURE CONTRACT: Versioned scenarios inject authentication, packet activation, safe-DNS preparation, route apply, mid-session SSH loss, and mid-session DNS loss. Stable exits are 70, 71, 72, 73, and 74; diagnostics contain fixed tokens only. The production configuration gate requires a sensitive opaque profile, public control parameters, exact dependency-revision names, one fault generation, and success repetitions in 1...8.
+ +- NEGATIVE EVIDENCE: `M1RuntimeHarnessTests.productionConfigurationGate` names the production `HarnessApplication.run` call site, proves the exact repetition bound by admitting 8 and refusing 9, and refuses hidden controls, an exposed profile, general UDP, repeated fault injection, and missing revision evidence. Failure tests traverse the real command entry point and require exact nonzero codes rather than calling component guards directly.
+ +- MUTATION ANOMALY/FIX: The first `8 -> 7` cap narrowing remained green because the test derived both accepted and rejected values from the production constant, making its evidence self-minted. The test now owns independent contract literals 8 and 9. With production still narrowed to 7 the complete M1 harness suite exited 1; after restoring 8 it passed. Two earlier probes that returned 0 are retained and explicitly do not count as negative evidence.
+ +- RESOURCE/PRIVACY EVIDENCE: Each generation uses real process-owned socket-pair descriptors and a controlled native borrow, joins the packet read and bridge tasks, closes the TCP channel, and requires zero descriptor, task, channel, socket, and native-runtime residue. The fixture manifest and validator reject dependency drift, raw profile output, nonzero growth gauges, unexpected stdout/stderr, and exit drift without retaining packet, DNS, endpoint, credential, or profile data.
+ +- REVIEW REWORK: Revision 1 exposed two self-minted claims. Mid-session loss called `stop(.providerFailure)` before checking `.failed`, so a dropped SSH/DNS health event still passed; the host-owner sentinel was an unrelated empty object. `M1RuntimeHarnessCommand.run` now waits for the coordinator-produced failure before the idempotent cleanup stop. The simulated host owner now owns the real `HarnessCoreComposition` bootstrap boundary, is released after runtime readiness, and must deallocate before runtime-owned TCP/DNS forwarding begins.
+ +- REWORK NEGATIVE EVIDENCE: Narrowing SSH and DNS `healthSink.receive` delivery to impossible generation zero made their named `HarnessApplication.run` production-entry tests exit `1` after the bounded one-second observation deadline. Narrowing host-owner release to impossible generation zero made the named forwarding/ownership test exit `1`. The source was restored from a byte-identical task-scoped copy after every mutant and returned to SHA-256 `f247f10825bcb255ad08adbc9735d29067751ec6c5d7b482128c40c53097c5c5`.
+ +- REWORK VERIFICATION: `make m1-runtime-harness-test` passes six focused tests and all seven manifest rows. Two additional unchanged-binary manifest runs also pass 7/7 with every row privacy-safe and exact exits `0/70/71/72/73/74/74`. The complete harness filter passes 38 tests in three suites; the full SwiftPM run passes 514 tests in 44 suites with the existing 25 known unavailable-ReluxNIOSSH issues. Strict task-scoped Swift format, Core boundaries, fixture build, and diff checks exit `0`. One invalid Go-style `swift test ... -count=1` invocation exited `64` before tests and was immediately replaced by the valid Swift invocation; it is retained as command-error evidence rather than reported as a test failure.
+ +
+ +### 1111 — M1 integration remains isolated from the legacy SwiftPM release lane (TASK-260715-3qqbbm)
+ +- BOUNDARY: The accepted `ReluxProxy` v0.1.0 SwiftPM package, `works.relux.proxy` defaults domain, product paths, and `ReluxProxy.dmg` release entries remain owned by the separate legacy repository. Generated M1 products use `ReluxProxyMac.app`, `works.relux.tunnel.mac`, `works.relux.tunnel.mac.tunnel`, and Keychain service `works.relux.tunnel.credential.v1`; they do not define or link an exact legacy product identity.
+ +- GATE: `scripts/check-migration-isolation.py`, called by the credential-free validation path, now inventories both lanes and fails closed on unreadable required inputs, cross-repository target links, identifier/defaults/Keychain collisions, generated legacy artifact names, or release-script substitution. The command can also validate the generated PBX project and both Debug/Release product trees.
+ +- NEGATIVE EVIDENCE: The CLI-level mutation suite attacks the production gate with generated and legacy cross-links, bundle/defaults/Keychain/build-product collisions, and an active workflow substitution of `ReluxProxy.dmg`; every case must fail for its named reason. Narrowing only the `ReluxProxy.dmg` release marker made that named test fail while the other six rows remained green; restoring the marker returned the suite to green.
+ +- OWNERSHIP: User/coexistence/import or retirement behavior remains M4 `TASK-260715-35nc5m`; release identity, entitlement, and data migration remain M5 `TASK-260715-1tzaed`. No migration is implemented by M1.
+ +- BOARD ANOMALY: Pre-handoff `task-board validate` returned process exit `0` while reporting the owning Story stored as `backlog` versus child aggregate `development`. The task checklist and outcomes are complete; parent normalization remains orchestrator-owned and the validation output is retained without calling it clean.
+ +
+ +### 1215 — M1 runtime ownership and live-entry boundary documented (TASK-260715-2rcvr0)
+ +- DOCUMENTATION: The developer/operator guide now maps provider, coordinator, factory, packet-plane, consumer, settings, snapshot, and host-projection ownership; exact startup/reverse-cleanup sequences; v1 command and compatibility bounds; M1 state/capability semantics; three distinct error surfaces; privacy-safe diagnostics; troubleshooting; reproduction commands; migration isolation; and concrete M2–M5 handoffs.
+ +- ANOMALY: The implemented shared runtime and M0-bound macOS production factory are exercised by Core tests and the deterministic harness, but the checked-in generated macOS `PacketTunnelProvider` remains a no-op/version-reply shell and does not instantiate `MacOSProviderCompositionRoot`. The iOS production target is also deferred. Generated provider build success is therefore not reported as live runtime-composition evidence.
+ +- SCOPE: This task makes documentation and diagram changes only. It does not wire a provider, change lifecycle behavior, claim full UDP from TCP plus safe DNS, or define migration and future-mode policy.
+ +- VERIFICATION: Eight focused Swift suites pass 105 tests across messages, coordinator, provider adapter, host retirement/projection, composition gates, exact macOS graph ownership, aggregate diagnostics, and SSH redaction. The manifest-driven harness passes six tests and all seven scenario rows; both SwiftPM platform adapter targets and unsigned generated macOS host/provider Debug+Release validation pass. PlantUML source checking, four-page SVG rendering and visual inspection, 52 local-link checks, source-contract checks, and `git diff --check` pass.
+ +- REVIEW REWORK: CR revision 1 correctly identified that the partial-failure diagram placed packet activation after failed settings applies with `committed` or `uncertain` disposition. The corrected page separates `notCommitted` failure (no clear), `committed`/`uncertain` failure (clear, no activation), and successful committed apply followed by activation failure (clear). The production coordinator and its 22-test negative lifecycle suite verify this boundary.
+++=======
++ ## 2026-09-08 — BUG-260908-7c5iv4: PR 6 validation boundaries
++ 
++ Reproduced board exit 1 and relay audit make exit 2 on exact PR head
++ `87451b53960ceabe88a01c44c287fee7f9ebf386`; old main has no activity failure,
++ but has the same SnapshotDiff loader failure. These are repository failures.
++ The CI board entry point now excludes only root activity/resource stores.
++ SnapshotDiff rejects non-file input/output URLs before I/O and explicitly
++ constructs file URLs for image reads; the scanner recognizes Foundation's
++ `URL(filePath:)` alongside `URL(fileURLWithPath:)`, without excluding test support.
++ This small loader change is necessary because the previous public URL API could
++ load network URLs; a scanner-only exemption would hide that behavior.
++ Named negative tests and three narrowing mutants cover hidden elements, arbitrary
++ URL loading, and token-preserving HTTP admission through the actual Swift API.
++ The existing validation fixture correction is reused verbatim from accepted
++ `6e8a1988`; generated schemes are unchanged. Exact-base and PR-composition evidence
++ are attached to the bug separately. Delivery remains the parent's review/landing
++ step; no signed objects are rewritten by this producer.
++ 
++ The first simultaneous full-suite PR-composition run failed two unchanged
++ HEV/SSH integration tests. The sequential full-suite retry passed with the same
++ behavioral source (516 Swift tests, 25 pre-existing known issues); Story-base
++ validation also passed (496 tests, 25 known issues). The initial failing attempt
++ remains attached, and scheduling interference is not claimed as a proven cause.
++ 
++ 
++ ## 2026-09-08 — BUG-260908-33iyb1 macOS hosted diagnostics
++ 
++ - Verified hosted revision `3279036094620772262dbd04a6d8930ec7691e75` has
++   parents `b3422b05226253a17676b9b84c764071fe3dbe74` and PR 6 head
++   `87451b53960ceabe88a01c44c287fee7f9ebf386`; its tree equals that PR head.
++ - The supplied artifact omits redirected Xcode child logs. Build exit 65 is
++   known; the compiler cause remains unknown. No unsupported toolchain claim
++   or runtime product change is justified by that evidence.
++ - Added complete child-log retention under the already-uploaded log directory,
++   inline failure context, and unchanged nonzero child status. Behavioral tests
++   drive all four build invocations and the test invocation with exit 65. Two
++   narrowing mutants admit only exit 65 or suppress only its diagnostic; both
++   fail the named production-entry test.
++ - The local macOS validator passed on Xcode 26.5 / Swift 6.3.2, including four
++   unsigned builds, target-contract tests, packaging, and provider graph checks.
++   This is local evidence, not hosted proof. Parent owns publication and the
++   exact-head hosted rerun. Diagnostic propagation is scoped to this leaf; the
++   original hosted repair and green-check requirement remain open in
++   BUG-260908-shki8p. Independent immutable review is still required.
+++>>>>>>> theirs
+ .github/workflows/ci.yml                           | 26 ++-----
+ LOGBOOK.md                                         | Unmerged
+ README.md                                          |  3 +
+ .../ReluxSnapshotDiffSupport/SnapshotDiff.swift    |  9 ++-
+ .../SnapshotDiffSupportTests.swift                 | 35 ++++++++++
+ docs/generated-workspace-foundation.md             | 17 +++++
+ scripts/check_board_structure.py                   | 36 ++++++++++
+ scripts/logged-command.sh                          | 14 ++++
+ scripts/relay_supply_chain.py                      |  7 +-
+ scripts/tests/test-credential-free-validation.sh   |  3 +
+ scripts/tests/test_check_board_structure.py        | 75 ++++++++++++++++++++
+ .../tests/test_macos_build_diagnostic_mutants.py   | 44 ++++++++++++
+ scripts/tests/test_macos_build_diagnostics.py      | 75 ++++++++++++++++++++
+ scripts/tests/test_pr6_boundary_mutants.py         | 80 ++++++++++++++++++++++
+ scripts/tests/test_relay_supply_chain.py           | 40 +++++++++++
+ scripts/validate-macos-targets.sh                  | 20 +++---
+ 15 files changed, 452 insertions(+), 32 deletions(-)
+"""Require behavioral tests to kill narrowed diagnostic/status regressions."""
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[2]
+MUTANTS = {
+    'admit-exit-1-only': ('return "$command_status"',
+                        '[ "$command_status" -ne 1 ] || return 0\n    return "$command_status"'),
+    'admit-exit-65-only': ('return "$command_status"',
+                         '[ "$command_status" -ne 65 ] || return 0\n    return "$command_status"'),
+    'hide-exit-65-diagnostic-only': ('cat "$command_log" >&2',
+                                   'if [ "$command_status" -ne 65 ]; then cat "$command_log" >&2; fi'),
+}
+
+
+def main():
+    for name, (before, after) in MUTANTS.items():
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'scripts/tests').mkdir(parents=True)
+            for relative in ('scripts/validate-macos-targets.sh', 'scripts/logged-command.sh',
+                             'scripts/tests/test_macos_build_diagnostics.py'):
+                shutil.copyfile(ROOT / relative, root / relative)
+            helper = root / 'scripts/logged-command.sh'
+            source = helper.read_text()
+            assert source.count(before) == 1
+            helper.write_text(source.replace(before, after))
+            result = subprocess.run(
+                ['python3', 'scripts/tests/test_macos_build_diagnostics.py',
+                 ('MacOSBuildDiagnosticsTests.test_exit_one_stops_each_build_and_test_with_exact_status'
+                  if name == 'admit-exit-1-only' else
+                  'MacOSBuildDiagnosticsTests.test_each_failing_build_and_test_retains_status_and_context')],
+                cwd=root, capture_output=True, text=True)
+            print(f'{name}: behavioral suite exit {result.returncode}')
+            print(result.stdout + result.stderr)
+            if result.returncode != 1 or 'AssertionError' not in result.stderr:
+                raise SystemExit(f'mutant survived or test infrastructure failed: {name}')
+    print(f'All {len(MUTANTS)} narrowing mutants killed by production-entry behavioral tests')
+
+
+if __name__ == '__main__':
+    main()
+"""Behavioral diagnostics tests; fixtures never launch Xcode or activate a VPN."""
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class MacOSBuildDiagnosticsTests(unittest.TestCase):
+    def test_successful_child_retains_both_streams(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / 'child.log'
+            result = subprocess.run(
+                ['sh', '-c', '. "$1"; run_logged_command "$2" sh -c '
+                 '\'echo compiler-output; echo compiler-warning >&2\'',
+                 'test', str(ROOT / 'scripts/logged-command.sh'), str(log)],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(log.read_text(), 'compiler-output\ncompiler-warning\n')
+
+    def test_each_failing_build_and_test_retains_status_and_context(self):
+        self.assert_failing_build_and_test_status(65)
+
+    def test_exit_one_stops_each_build_and_test_with_exact_status(self):
+        self.assert_failing_build_and_test_status(1)
+
+    def assert_failing_build_and_test_status(self, status):
+        # Four unsigned builds followed by the target-contract test invocation.
+        for failing_call in range(1, 6):
+            with self.subTest(failing_call=failing_call), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                scripts = root / 'scripts'
+                scripts.mkdir()
+                for name in ('validate-macos-targets.sh', 'logged-command.sh'):
+                    shutil.copyfile(ROOT / 'scripts' / name, scripts / name)
+                generate = scripts / 'generate-workspace.sh'
+                generate.write_text('#!/bin/sh\nexit 0\n')
+                generate.chmod(0o755)
+                binary = root / 'bin'
+                binary.mkdir()
+                xcodebuild = binary / 'xcodebuild'
+                xcodebuild.write_text('''#!/bin/sh
+count=0
+[ ! -f "$COUNTER" ] || count=$(cat "$COUNTER")
+count=$((count + 1))
+echo "$count" > "$COUNTER"
+echo "compiler invocation $count: $*"
+if [ "$count" -eq "$FAIL_CALL" ]; then
+  echo 'ConcreteCompile.swift:42: error: diagnostic sentinel' >&2
+  exit "$FAIL_STATUS"
+fi
+''')
+                xcodebuild.chmod(0o755)
+                counter = root / 'counter'
+                result = subprocess.run(
+                    ['sh', str(scripts / 'validate-macos-targets.sh')],
+                    env={**os.environ, 'PATH': f'{binary}:/usr/bin:/bin',
+                         'COUNTER': str(counter), 'FAIL_CALL': str(failing_call),
+                         'FAIL_STATUS': str(status)},
+                    capture_output=True, text=True)
+                self.assertEqual(result.returncode, status, result.stderr)
+                self.assertEqual(counter.read_text().strip(), str(failing_call))
+                self.assertIn('ConcreteCompile.swift:42: error: diagnostic sentinel', result.stderr)
+                self.assertIn(f'exit {status}', result.stderr)
+                logs = root / '.temp/TASK-260715-sbrrp7/credential-free-validation/logs/macos-targets'
+                self.assertEqual(len(list(logs.glob('*.log'))), failing_call)
+                self.assertTrue(any('diagnostic sentinel' in log.read_text()
+                                    for log in logs.glob('*.log')))
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+codex
+PR6 и remote main совпадают с заданными SHA. Патч применился; единственный конфликт — добавленные записи LOGBOOK. Сохраню обе истории целиком, затем проверю диагностические тесты и подпишу отдельный PR-кандидат.
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('LOGBOOK.md')
+s=p.read_text()
+for marker in ('<<<<<<< ours\\n','=======\\n','>>>>>>> theirs\\n'):
+ assert s.count(marker)==1
+ s=s.replace(marker,'')
+p.write_text(s)
+PY
+ git add LOGBOOK.md
+ git diff --cached --check
+ python3 scripts/tests/test_macos_build_diagnostics.py > ../diagnostics-tests.log 2>&1
+ result="'$?
+ cat ../diagnostics-tests.log
+ echo "diagnostics_exit=$result"
+ python3 scripts/tests/test_macos_build_diagnostic_mutants.py > ../diagnostics-mutants.log 2>&1
+ result=$?
+ tail -3 ../diagnostics-mutants.log
+ echo "mutants_exit=$result"
+ git diff --cached --binary > ../composed.patch
+ git diff --cached --name-only' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ succeeded in 12619ms:
+...
+----------------------------------------------------------------------
+Ran 3 tests in 4.979s
+
+OK
+diagnostics_exit=0
+FAILED (failures=5)
+
+All 3 narrowing mutants killed by production-entry behavioral tests
+mutants_exit=0
+.github/workflows/ci.yml
+LOGBOOK.md
+README.md
+Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+docs/generated-workspace-foundation.md
+scripts/check_board_structure.py
+scripts/logged-command.sh
+scripts/relay_supply_chain.py
+scripts/tests/test-credential-free-validation.sh
+scripts/tests/test_check_board_structure.py
+scripts/tests/test_macos_build_diagnostic_mutants.py
+scripts/tests/test_macos_build_diagnostics.py
+scripts/tests/test_pr6_boundary_mutants.py
+scripts/tests/test_relay_supply_chain.py
+scripts/validate-macos-targets.sh
+
+exec
+/bin/zsh -lc 'git diff --cached -- scripts/tests/test-credential-free-validation.sh
+ git diff --cached -- README.md
+ gh pr view 6 --json headRefOid,headRefName,url,state' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ succeeded in 573ms:
+{"headRefName":"delivery/STORY-260715-1y04r0-rev3","headRefOid":"87451b53960ceabe88a01c44c287fee7f9ebf386","state":"OPEN","url":"https://github.com/relux-works/relux-tunnel/pull/6"}
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+import subprocess
+paths=subprocess.check_output(['git','diff','--name-only','b3422b05','d6c87338'],text=True).splitlines()
+for p in paths:
+ if p in ('README.md','LOGBOOK.md','scripts/tests/test-credential-free-validation.sh'): continue
+ assert subprocess.check_output(['git','show',':'+p]) == subprocess.check_output(['git','show','d6c87338:'+p]),p
+print('13 non-composed paths exactly equal accepted candidate; additive docs and existing fixture handled separately')
+PY
+ git diff --cached --check
+ git commit -S -m 'fix(ci): compose accepted validation boundaries and macOS diagnostics'
+ git log -3 --format='%H %G? %an <%ae>'
+ git verify-commit HEAD
+ git merge-base --is-ancestor 87451b53960ceabe88a01c44c287fee7f9ebf386 HEAD
+ git rev-parse HEAD HEAD"'^{tree}
+ git ls-remote origin refs/heads/delivery/STORY-260715-1y04r0-rev3' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ succeeded in 3078ms:
+13 non-composed paths exactly equal accepted candidate; additive docs and existing fixture handled separately
+[delivery/BUG-260908-33iyb1-composed 018c9d9] fix(ci): compose accepted validation boundaries and macOS diagnostics
+ 16 files changed, 496 insertions(+), 32 deletions(-)
+ create mode 100644 scripts/check_board_structure.py
+ create mode 100644 scripts/logged-command.sh
+ create mode 100644 scripts/tests/test_check_board_structure.py
+ create mode 100644 scripts/tests/test_macos_build_diagnostic_mutants.py
+ create mode 100644 scripts/tests/test_macos_build_diagnostics.py
+ create mode 100644 scripts/tests/test_pr6_boundary_mutants.py
+018c9d9672767fd02f42fb4ab4f2dfe3800646b8 G Ivan Oparin <oparin@me.com>
+87451b53960ceabe88a01c44c287fee7f9ebf386 G Ivan Oparin <oparin@me.com>
+6e8a19885f99ec9837054e0b3e07e7d0c1ffcd51 G Ivan Oparin <oparin@me.com>
+Good "git" signature for oparin@me.com with ECDSA key SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM
+018c9d9672767fd02f42fb4ab4f2dfe3800646b8
+52eec29030b5a33f79b2b1b5ca10cf84c74dec5f
+87451b53960ceabe88a01c44c287fee7f9ebf386	refs/heads/delivery/STORY-260715-1y04r0-rev3
+
+exec
+/bin/zsh -lc 'git push origin HEAD:refs/heads/delivery/STORY-260715-1y04r0-rev3
+ gh pr diff 6 > ../hosted-pr6.diff
+ gh pr view 6 --json headRefOid,url,statusCheckRollup > ../hosted-pr6.json
+ gh run list --branch delivery/STORY-260715-1y04r0-rev3 --limit 3 --json databaseId,headSha,status,conclusion,url > ../hosted-runs.json
+ cat ../hosted-pr6.json
+ cat ../hosted-runs.json' in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ succeeded in 6230ms:
+To github.com:relux-works/relux-tunnel.git
+   87451b5..018c9d9  HEAD -> delivery/STORY-260715-1y04r0-rev3
+could not find pull request diff: HTTP 406: Sorry, the diff exceeded the maximum number of files (300). Consider using 'List pull requests files' API or locally cloning the repository instead. (https://api.github.com/repos/relux-works/relux-tunnel/pulls/6)
+PullRequest.diff too_large
+{"headRefOid":"018c9d9672767fd02f42fb4ab4f2dfe3800646b8","statusCheckRollup":[],"url":"https://github.com/relux-works/relux-tunnel/pull/6"}
+[{"conclusion":"failure","databaseId":34167625590,"headSha":"87451b53960ceabe88a01c44c287fee7f9ebf386","status":"completed","url":"https://github.com/relux-works/relux-tunnel/actions/runs/34167625590"}]
+
+codex
+Кандидат `018c9d9` подписан и опубликован в PR6 без переписывания прежних commits. Три диагностических теста прошли, все три narrowing mutants пойманы. GitHub отказал в выдаче общего diff из-за лимита 300 файлов; проверю состав через API и локальный diff точных refs. Combined-head review и CI пока pending.
+
+exec
+/bin/zsh -lc "gh api --paginate repos/relux-works/relux-tunnel/pulls/6/files --jq '.[].filename' > ../hosted-files.txt
+ git diff --binary origin/main HEAD > ../full-pr6.patch
+ git diff --name-only origin/main HEAD > ../local-files.txt
+ python3 - <<'PY'
+from pathlib import Path
+assert set(Path('../hosted-files.txt').read_text().splitlines())==set(Path('../local-files.txt').read_text().splitlines())
+print('Hosted and local full PR path sets match')
+Path('../review.md').write_text('Producer composition review for exact head 018c9d9672767fd02f42fb4ab4f2dfe3800646b8. Source: accepted sibling BUG-260908-7c5iv4 checkpoint dc68c158 and diagnostic CR-BUG-260908-33iyb1-2 candidate d6c87338, accepted by independent reviewer RUN-260908-353271. All 13 non-composed paths match the accepted candidate exactly; README additions merged cleanly, LOGBOOK retains both histories, existing PR validation fixture correction retained. All three introduced commits verify with Ivan Oparin identity; prior PR commits remain ancestors. Diagnostic baseline passes 3 tests; all 3 narrowing mutants are killed, including exit1-only admission. GitHub diff endpoint returned HTTP 406 (>300 files); paginated hosted path list was checked against exact local base-to-head diff. Independent combined-head review is PENDING; this comment is not approval. Hosted CI is pending; original hosted root-cause/green requirement BUG-260908-shki8p remains open. Remote main was not advanced. Prior real macOS evidence is reused for unchanged accepted scope, not represented as a build of this new commit.\\n')
+PY
+ gh pr review 6 --comment --body-file ../review.md
+ gh run list --branch delivery/STORY-260715-1y04r0-rev3 --limit 3 --json databaseId,headSha,status,conclusion,url > ../hosted-runs.json
+ cat ../hosted-runs.json
+ git status --short" in /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/delivery
+ succeeded in 8448ms:
+Hosted and local full PR path sets match
+[{"conclusion":"","databaseId":34172537905,"headSha":"018c9d9672767fd02f42fb4ab4f2dfe3800646b8","status":"in_progress","url":"https://github.com/relux-works/relux-tunnel/actions/runs/34172537905"},{"conclusion":"failure","databaseId":34167625590,"headSha":"87451b53960ceabe88a01c44c287fee7f9ebf386","status":"completed","url":"https://github.com/relux-works/relux-tunnel/actions/runs/34167625590"}]
+
+exec
+/bin/zsh -lc 'task-board resource add --help' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+Attach a new file resource to a board element.
+
+SOURCE may be:
+  - a local filesystem path
+  - a file:// URL
+  - an http:// or https:// URL
+
+Examples:
+  task-board resource add TASK-260311-abc ./screenshot.png --type precondition
+  task-board resource add TASK-260311-abc file:///tmp/report.pdf --name ui-report.pdf
+  task-board resource add TASK-260311-abc ./report.md --name reports/review/report.md
+  task-board resource add TASK-260311-abc https://example.com/spec.pdf --type outcome
+
+Usage:
+  task-board resource add <ELEMENT-ID> <SOURCE> [flags]
+
+Flags:
+  -d, --description string   Optional one-line description
+  -h, --help                 help for add
+      --name string          Override stored resource filename
+      --type string          Resource type: precondition or outcome (default "outcome")
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+exec
+/bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('/Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1')
+s=p.joinpath('review.md').read_text()
+s+='\\nDelivery evidence\\n\\n- Candidate SHA: 018c9d9672767fd02f42fb4ab4f2dfe3800646b8; tree: 52eec29030b5a33f79b2b1b5ca10cf84c74dec5f. PR: https://github.com/relux-works/relux-tunnel/pull/6. CI: https://github.com/relux-works/relux-tunnel/actions/runs/34172537905 (in_progress; no green claim).\\n- Current route supersedes integration retry: no integrate/handoff/status mutation performed. Managed Story worktree and root main preserved. Only isolated delivery branch committed.\\n- Exact reviewed Story patch applied to exact PR6 head. git apply --3way exited 1 solely for additive LOGBOOK conflict; removed the three conflict marker lines and retained both sides verbatim. README merged automatically. Fixture delta is only the three diagnostic test runner lines; pre-existing correction retained.\\n- Personally reran diagnostic baseline (3 tests, exit 0), narrowing harness (3 mutants, each inner behavioral suite exit 1; harness exit 0), diff check (0), commit signature verification (0), signed ancestry inspection, hosted/local path set equality (0). Coverage: 10 of 10 failure invocation/status rows driven (5 Xcode invocation positions each for exit1 and exit65) through validate-macos-targets.sh -> run_logged_command, plus successful child stdout/stderr retention. This is the narrow rerun matrix, not a replacement claim for all AC. Prior real macOS candidate/composition build evidence remains reused with its recorded Xcode/version and initial HEV/SSH failure limitations; no broad or real macOS rebuild in this publication run.\\n- Narrowing names: admit-exit-1-only, admit-exit-65-only, hide-exit-65-diagnostic-only. Named tests: test_exit_one_stops_each_build_and_test_with_exact_status; test_each_failing_build_and_test_retains_status_and_context. Later invocations stop.\\n- gh pr diff failed HTTP406 (>300 files), not treated as empty diff; fallback paginated files and exact local full diff saved. COMMENTED review submitted successfully with independent combined-head review explicitly pending.\\n- Local evidence directory: /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1; composed.patch, full-pr6.patch, hosted-files.txt, hosted-pr6.json, hosted-runs.json, diagnostics-tests.log, diagnostics-mutants.log.\\n- Parent next action: independent exact-head review and actual CI observation; no remote landing authorized in this run. Original BUG-260908-shki8p remains open.\\n'
+p.joinpath('BUG-260908-33iyb1_publication-018c9d9.md').write_text(s)
+PY
+ task-board resource add BUG-260908-33iyb1 /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/BUG-260908-33iyb1_publication-018c9d9.md --type outcome --description 'Signed PR6 candidate publication and pending review/CI'
+ task-board resource add BUG-260908-33iyb1 /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/composed.patch --name BUG-260908-33iyb1_composed-018c9d9.patch --type outcome
+ task-board resource add BUG-260908-33iyb1 /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/diagnostics-tests.log --name BUG-260908-33iyb1_publication-tests.log --type outcome
+ task-board resource add BUG-260908-33iyb1 /Users/iv/Developer/relux-tunnel/.temp/BUG-260908-33iyb1/diagnostics-mutants.log --name BUG-260908-33iyb1_publication-mutants.log --type outcome" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 3148ms:
+Attached BUG-260908-33iyb1_publication-018c9d9.md on BUG-260908-33iyb1 as outcome
+Attached BUG-260908-33iyb1_composed-018c9d9.patch on BUG-260908-33iyb1 as outcome
+Attached BUG-260908-33iyb1_publication-tests.log on BUG-260908-33iyb1 as outcome
+Attached BUG-260908-33iyb1_publication-mutants.log on BUG-260908-33iyb1 as outcome
+
+codex
+В [PR6](https://github.com/relux-works/relux-tunnel/pull/6) опубликован подписанный кандидат `018c9d9`; прежние commits сохранены.
+
+- 3 теста прошли, 3 narrowing mutants пойманы.
+- Evidence и patch прикреплены к BUG.
+- [CI](https://github.com/relux-works/relux-tunnel/actions/runs/34172537905) выполняется; независимый review нового head ожидается.
+- Remote main не изменён. Исходный hosted repair `BUG-260908-shki8p` остаётся открытым.
+tokens used
+51,934
+В [PR6](https://github.com/relux-works/relux-tunnel/pull/6) опубликован подписанный кандидат `018c9d9`; прежние commits сохранены.
+
+- 3 теста прошли, 3 narrowing mutants пойманы.
+- Evidence и patch прикреплены к BUG.
+- [CI](https://github.com/relux-works/relux-tunnel/actions/runs/34172537905) выполняется; независимый review нового head ожидается.
+- Remote main не изменён. Исходный hosted repair `BUG-260908-shki8p` остаётся открытым.

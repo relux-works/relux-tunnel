@@ -1,0 +1,10 @@
+COMMAND:
+python3 -m unittest scripts/tests/test_check_board_structure.py
+python3 scripts/check_board_structure.py
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.503s
+
+OK
+checked 411 board elements
+EXIT=0

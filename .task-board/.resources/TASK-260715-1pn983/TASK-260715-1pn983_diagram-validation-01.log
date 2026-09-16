@@ -1,0 +1,14 @@
+TASK-260715-1pn983 PlantUML validation and rendering
+
+Command:
+plantuml -checkonly diagrams/TASK-260715-1pn983_memory-pressure-state.puml diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml
+plantuml -tsvg -o artefacts diagrams/TASK-260715-1pn983_memory-pressure-state.puml diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml
+
+Result: both source diagrams passed syntax validation; both SVGs rendered.
+- diagrams/artefacts/TASK-260715-1pn983_memory-pressure-state.svg: 14,829 bytes
+- diagrams/artefacts/TASK-260715-1pn983_reconnect-rekey-state.svg: 19,292 bytes
+exit code: 0
+
+Visual QA: both temporary PNG renders were inspected. State names, guards,
+critical old-release ordering, explicit stop, KEX reservation, and notes are
+legible; no clipped labels or blank render was observed.

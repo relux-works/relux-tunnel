@@ -1,0 +1,19 @@
+FAIL .task-board/.activity/TASK-260720-1qhxqa: missing README.md
+FAIL .task-board/.activity/TASK-260720-1qhxqa: missing progress.md
+FAIL .task-board/.activity/TASK-260715-m8bi8i: missing README.md
+FAIL .task-board/.activity/TASK-260715-m8bi8i: missing progress.md
+FAIL .task-board/.activity/TASK-260715-2rcvr0: missing README.md
+FAIL .task-board/.activity/TASK-260715-2rcvr0: missing progress.md
+FAIL .task-board/.activity/TASK-260830-1x524u: missing README.md
+FAIL .task-board/.activity/TASK-260830-1x524u: missing progress.md
+FAIL .task-board/.activity/EPIC-260715-3810we: missing README.md
+FAIL .task-board/.activity/EPIC-260715-3810we: missing progress.md
+FAIL .task-board/.activity/STORY-260715-1y04r0: missing README.md
+FAIL .task-board/.activity/STORY-260715-1y04r0: missing progress.md
+FAIL .task-board/.activity/TASK-260715-3ejhyy: missing README.md
+FAIL .task-board/.activity/TASK-260715-3ejhyy: missing progress.md
+FAIL .task-board/.activity/TASK-260715-3qqbbm: missing README.md
+FAIL .task-board/.activity/TASK-260715-3qqbbm: missing progress.md
+checked 420 board elements
+
+exit=1

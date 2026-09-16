@@ -1,0 +1,6 @@
+COMMAND: git diff --check
+EXIT=0
+COMMAND: python3 -m py_compile scripts/check_board_structure.py scripts/relay_supply_chain.py scripts/tests/test_check_board_structure.py scripts/tests/test_pr6_boundary_mutants.py scripts/tests/test_relay_supply_chain.py
+EXIT=0
+COMMAND: xcrun swift-format lint --strict Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+EXIT=0

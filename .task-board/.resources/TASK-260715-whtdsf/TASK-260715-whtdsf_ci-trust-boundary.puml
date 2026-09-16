@@ -4,40 +4,63 @@ title TASK-260715-whtdsf — CI trust boundary
 
 actor "Fork / untrusted PR" as Fork
 actor "Trusted maintainer" as Maintainer
-queue "Protected tag or approved dispatch" as Trigger
+actor "Release requester\n(short-lived Issues-only GitHub App)" as Requester
+queue "issues: opened\n(untrusted typed request issue)" as Request
 
 rectangle "Credential-free CI" as PRCI {
-  component "Board/spec + generator drift" as Docs
-  component "Core/protocol + Apple compile + relay smoke" as Tests
+  component "Board/spec + workflow policy" as Policy
+  component "Core/protocol + macOS compile + relay matrix" as Tests
   component "Secret/license/SBOM policy" as Scans
 }
 
-rectangle "Protected release orchestration" as Release {
+rectangle "Protected release preparation" as Prepare {
+  component "Default-branch release-prepare\n+ trusted workflow/policy digest" as TrustedEntry
   component "Immutable candidate manifest" as Manifest
-  component "Serialized promotion" as Promote
+  component "Fresh required-check evidence" as Revalidate
 }
 
-node "macOS GitHub Environment" as MacEnv
-node "iOS App Store Environment" as IOSEnv
-node "Relay staging / provenance" as RelayEnv
-artifact "Redacted evidence bundle" as Evidence
+rectangle "Serialized promotion" as Promote
+node "macOS signing/notary environment" as MacEnv
+node "Sparkle signing environment" as SparkleEnv
+node "Relay staging environment" as RelayEnv
+artifact "Digest-bound redacted evidence" as Evidence
 
-Fork --> PRCI : read-only token\nno production secrets
-Maintainer --> PRCI : same required gates
-PRCI --> Evidence : results + digests
-Trigger --> Manifest : approved immutable commit
-Evidence --> Manifest : all blocking checks pass
-Manifest --> Promote
-Promote --> MacEnv : scoped Developer ID/notary/GitHub credentials
-Promote --> IOSEnv : scoped Apple Distribution/App Store credentials
-Promote --> RelayEnv : verified staged bytes only
-MacEnv --> Evidence
-IOSEnv --> Evidence
+Fork --> PRCI : read-only token\nno production environment or secrets
+Maintainer --> PRCI : identical required checks
+PRCI --> Evidence : results + manifests + digests
+Requester --> Request : Issues: write\nno Contents, refs, Releases/assets, or Actions
+Request --> TrustedEntry : issue/request ID + intended version + candidate SHA\nall fields untrusted
+TrustedEntry --> Manifest : bind event digest; resolve App sender + commit ancestry\nabsent intended tag + exact workflow/policy digests
+Manifest --> Revalidate : exact protected-branch commit
+Evidence --> Revalidate : exact-head checks
+Revalidate --> Promote : accepted candidate only
+Promote --> RelayEnv : scoped staging credential
+Promote --> MacEnv : scoped Developer ID/notary material
+MacEnv --> SparkleEnv : final notarized DMG digest only
 RelayEnv --> Evidence
+MacEnv --> Evidence
+SparkleEnv --> Evidence
 
 note bottom of PRCI
 No protected environment, signing material,
-publication token, or privileged runner is
-reachable from pull-request code.
+publication token, privileged runner, or trusted
+release cache/artifact is reachable from PR code.
+Public Internet egress exists but carries no release authority.
+All macOS-path blocking checks run on GitHub-hosted
+macOS; optional relay-native Linux evidence is separate.
+end note
+
+note bottom of Promote
+One production concurrency group.
+Assets first; signed feed last.
+Cancellation or unknown evidence is non-promotable.
+end note
+
+note bottom of Request
+No tag/push, repository_dispatch, or selectable-ref workflow starts
+release preparation. Refetched/edited issue text is not authority.
+Unknown sender, replay, unprotected commit, existing/moved tag,
+relative workflow call, or workflow/policy digest mismatch fails
+before candidate acceptance or environment access.
 end note
 @enduml

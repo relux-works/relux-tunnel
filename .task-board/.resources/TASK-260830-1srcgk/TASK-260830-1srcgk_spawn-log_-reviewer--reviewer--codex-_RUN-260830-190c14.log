@@ -1,0 +1,3005 @@
+OpenAI Codex v0.151.0
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: high
+reasoning summaries: none
+session id: 01a050d2-dcc8-7981-ae8c-e64d76f8ef87
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260830-1srcgk, status=reviewing)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `reviewer` (`reviewer`) — Reviews implementation quality and project fit
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Set Codex gpt-5.6-sol high and max_parallel 1 in task-board.config.json
+- [ ] Update docs/spawn-policy.md so every producer reviewer and example uses high
+- [ ] Confirm .spec/goal-macos-v1.md and primary goal revision 8 agree with the policy
+- [ ] Run effective developer and reviewer spawn preflights and retain sanitized evidence
+- [ ] Run task-board validation focused policy drift scans and git diff checks
+- [ ] Record the cancelled medium reviewer and replacement routing without accepting its verdict
+- [ ] Attach task-scoped outcome evidence and hand off to a fresh Codex Sol high reviewer
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [ ] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+
+## Task
+
+- **ID:** TASK-260830-1srcgk
+- **Title:** TASK-260830-1srcgk: realign-autonomous-serial-agent-policy-to-sol-high
+- **Parent:** STORY-260715-anxje6
+
+### Description
+
+Realign the project orchestration policy to the active primary goal: Codex gpt-5.6-sol high only, one tracked child at a time, lite context, fresh serial reviewer, and existing signed commit/push synchronization rules.
+
+### Scope
+
+task-board.config.json, docs/spawn-policy.md, .spec/goal-macos-v1.md consistency checks, effective producer/reviewer preflights, and board evidence. No product runtime code or VPN activation.
+
+### Acceptance Criteria
+
+The effective developer and reviewer preflights both resolve Codex gpt-5.6-sol high with max_parallel 1 and lite context; canonical policy documents agree; config validation and focused drift scans pass; task-scoped evidence records the superseded medium/parallel policy and the accepted replacement.
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `TASK-260830-1srcgk_*` before handoff:
+  `task-board m 'add_resource(TASK-260830-1srcgk, name=TASK-260830-1srcgk_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- You are licensed to attempt to DEFEAT any gate, refusal, validation, authorization, or attestation under review, and to reject a change whose only evidence is positive-path. Grep for callers before believing a guard is in force; a delete-only mutant proves existence, not coverage.
+- Review read-only and record exactly one evidence-backed verdict: accepted → `done`; changes requested → `to-dev` or `analysis`; genuine Stop-The-Line → `blocked`. Never leave the task in `reviewing`.
+- With a `Change Request Under Review` section, accept via `task-board m 'accept_cr(ID, revision=N, evidence=ID_review-verdict.md)'`. It parks the element at `to-review` as the accepted handoff — accepted work never stays in `reviewing` — and the orchestrator closes the leaf from there. `accept_cr` takes no acknowledgement argument, and only the reviewer run that was handed the revision may call it.
+- Reviewer-archetype runs must not supply `commit_ack`; record acceptance evidence for the commit-owning mover, which commits then makes the final `done` transition with `commit_ack=scope_committed`.
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260715-anxje6.
+
+- Workspace path: `.temp/STORY-260715-anxje6/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260715-anxje6`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+## Change Request Under Review
+
+- Change Request: `CR-TASK-260830-1srcgk-2` revision `2` (state `ready`)
+- Element: `TASK-260830-1srcgk`, integration scope: `STORY-260715-anxje6`
+- Branch: `task-board/story/STORY-260715-anxje6`
+- Base OID: `3852fae014a325b8c1bca89c7619233210688451`
+- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`
+- Repository delta: `present`
+- Patch resource: `TASK-260830-1srcgk_change-request_rev2.patch` (sha256 `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`)
+
+```bash
+git -C . diff 3852fae014a325b8c1bca89c7619233210688451 377d0b40034bf46031ad032c4dbb04ab45923502          # the exact reviewable delta
+git -C . diff --stat 3852fae014a325b8c1bca89c7619233210688451 377d0b40034bf46031ad032c4dbb04ab45923502   # its shape
+```
+
+Changed paths (3):
+
+- `.spec/goal-macos-v1.md`
+- `docs/spawn-policy.md`
+- `task-board.config.json`
+
+### Recording the verdict
+
+Acceptance is a named mutation, not a status change:
+
+```bash
+task-board m 'accept_cr(TASK-260830-1srcgk, revision=2, evidence=TASK-260830-1srcgk_review-verdict.md)'
+```
+
+`accept_cr` sets the Change Request to `accepted`, stamps this run as the reviewer, and parks the element at `to-review` (TASK-260830-1srcgk) — which is the accepted handoff, not `done`. The orchestrator checkpoints or integrates the accepted revision and makes the `done` transition with `commit_ack`. Never supply `commit_ack` yourself.
+
+Changes requested and Stop-The-Line are unchanged: route to `to-dev`/`analysis` or evidence-backed `blocked`. Leaving the element in `reviewing` is still not a verdict and still gets this run cancelled and respawned.
+
+codex
+Ставлю задачу в `reviewing`, затем загружу reviewer-процесс и проверю ровно candidate delta revision 2.
+exec
+/bin/zsh -lc "task-board m 'set_status(TASK-260830-1srcgk, status=reviewing)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 354ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"TASK-260830-1srcgk","field":"status","new_value":"reviewing","old_value":"to-review"}}}
+
+codex
+Использую `project-management` для точного reviewer/verdict lifecycle и `architecture-diagrams` только для проверки документированных policy-контрактов; диаграммы менять не буду, если skill не требует. Сначала проверяю доступность CLI и полностью читаю обе инструкции.
+exec
+/bin/zsh -lc 'command -v task-board
+command -v git
+command -v rg
+wc -l /Users/iv/.claude/skills/project-management/SKILL.md /Users/iv/.claude/skills/architecture-diagrams/SKILL.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+/Users/iv/.local/bin/task-board
+/usr/bin/git
+/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
+     131 /Users/iv/.claude/skills/project-management/SKILL.md
+     402 /Users/iv/.claude/skills/architecture-diagrams/SKILL.md
+     533 total
+
+apply patch
+patch: completed
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc "sed -n '1,220p' /Users/iv/.claude/skills/project-management/SKILL.md
+sed -n '1,460p' /Users/iv/.claude/skills/architecture-diagrams/SKILL.md" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=PROVIDER?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Every child has explicit role, background mode, model, and in-policy
+   Codex/Qwen reasoning effort. Providers: `claude`, `codex`, `gemini`, `muse`,
+   `qwen`; Gemini takes no `--reasoning-effort`.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID
+   --role ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child;
+   routine work is never handed to the human.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `task-board codex|claude` (`codexD`/`claudeD`) launches primary sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, reattach,
+   `codex resume THREAD_ID`, `claude --resume UUID`, and session operations.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown operation/mutation or field? -> schema(operation|mutation=NAME), retry
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Spawned goals, selection, runs, recovery | [tracked background spawn](references/tracked-background-spawn.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+## Command Resolution & Install Modes
+
+Managed commands are compiled shims. Curator-managed installs prefer bare
+`task-board`, `tb-sessiond`, and `task-board-tui`; otherwise resolve, in order:
+`.agents/bin/<command>` (or its Windows `.cmd`), Curator `global/bin`, a bare
+command verified with `command -v`/`Get-Command`, then the source-checkout
+`tools/` build root. Installed Curator skills exclude build roots, and shell
+profile activation is optional.
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Spawn providers: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`. Gemini CLI
+0.54.4 is deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped IDs:
+3.1 Pro high/low and 3.5/3.6 Flash high/medium/low. Minimum `agy` is 1.1.12;
+1.1.14 is validated. Version 1.1.11 exposed `--print`, `--model`, JSON output,
+print timeout, accept-edits mode, skip-permissions, disable-slash-commands, and
+add-dir, but is rejected. Prompt delivery has a 96 KiB argv budget; provider
+print timeout is 30m and `--timeout` is the external process-tree bound.
+`SUCCESS`/`ERROR` JSON overrides process exit; invalid envelopes fail and only
+sanitized metadata persists. Only the top-level worker is tracked; internal
+subagents and primary Session Manager support are out of scope.
+
+```json
+{"spawn":{"preferred_agentic_system":{"mixed":["agy","codex"]},"ceilings":{"agy":{"model":"gemini-3.6-flash-high","model_criterion":"equal"}},"schedule":{"windows":[{"start_utc":"17:00","end_utc":"03:00","preferred_agentic_system":{"exclusive":"agy"}}]}}}
+```
+
+`spawn.ceilings.agy` rejects `reasoning_effort`. See [README](README.md) for the
+full models, flags, JSON, safety, configuration, and Gemini compatibility contract.
+---
+name: architecture-diagrams
+version: 1.0.0
+description: Create and organize architecture diagrams as code using C4 model (Structurizr DSL) and PlantUML
+triggers:
+  - architecture diagram
+  - c4 diagram
+  - structurizr
+  - plantuml
+  - sequence diagram
+  - component diagram
+  - system context
+  - container diagram
+tools:
+  - Bash
+  - Read
+  - Write
+  - Glob
+  - Grep
+---
+
+# Architecture Diagrams Skill
+
+Create maintainable, well-organized architecture diagrams using diagrams-as-code approach.
+
+## Supported Tools
+
+- **Structurizr DSL** — C4 model diagrams (System Context, Container, Component, Deployment)
+- **PlantUML** — All UML diagram types:
+  - Sequence — Runtime interaction flows
+  - Component — Architecture and module structure
+  - Activity — Workflows and processes
+  - Class — Domain models and OOP design
+  - State — State machines and lifecycles
+  - Use Case — Actor-system interactions
+  - Deployment — Infrastructure and deployment
+  - Object — Runtime object snapshots
+- **Graphviz** — Dependency graphs, DOT notation
+
+## Core Principles
+
+### 1. Diagrams as Code
+- All diagrams are text files in version control
+- Diffs are readable and reviewable
+- CI can validate and render automatically
+
+### 2. One Purpose Per Diagram
+- Each file has a single, clear purpose
+- Split large diagrams into focused views
+- Name files descriptively: `<domain>-<scenario>.<ext>`
+
+### 3. Separation of Concerns
+- **Model** defines elements (what exists)
+- **Views** define presentation (what to show)
+- **Styles** define appearance (how it looks)
+
+### 4. Progressive Disclosure (C4)
+- Level 1: System Context — big picture, external actors
+- Level 2: Container — deployable units, tech choices
+- Level 3: Component — internal structure
+- Level 4: Code — class/interface level (rarely needed)
+
+---
+
+## C4 Model Ideology
+
+The C4 model answers different questions at each level:
+
+| Level | Diagram | Audience | Question Answered |
+|-------|---------|----------|-------------------|
+| 1 | System Context | Everyone | What is the system? Who uses it? What does it integrate with? |
+| 2 | Container | Technical | What are the major building blocks? What technologies? |
+| 3 | Component | Developers | How is a container structured internally? |
+| 4 | Code | Developers | What are the classes/interfaces? (Usually auto-generated) |
+
+**Key insight**: You don't need all 4 levels. Most teams use only Context + Container.
+
+### C4 Abstractions
+
+- **Person** — User, actor, role, persona (human or external system acting as user)
+- **Software System** — Highest abstraction; the thing being built or interacting with
+- **Container** — Deployable unit: app, service, database, file system, queue
+- **Component** — Logical grouping inside a container (module, package, class cluster)
+
+---
+
+## Folder Structure
+
+```
+diagrams/
+├── README.md                    # Tool setup & usage docs
+├── c4/                          # Structurizr DSL
+│   ├── workspace.dsl            # Minimal entrypoint
+│   ├── model/
+│   │   ├── 01-people.dsl        # Actors, users
+│   │   ├── 02-systems.dsl       # Systems, containers, components
+│   │   └── 99-relationships.dsl # All relationships (loaded last)
+│   ├── views/
+│   │   ├── context.dsl          # System context view
+│   │   ├── containers.dsl       # Container view
+│   │   └── components.dsl       # Component views
+│   └── styles/
+│       └── styles.dsl           # Visual theme
+├── plantuml/
+│   ├── _includes/               # Shared styling (optional)
+│   │   ├── theme.puml
+│   │   └── common.puml
+│   ├── sequence/
+│   │   └── auth-flow.puml
+│   └── component/
+│       └── api-structure.puml
+└── artefacts/                   # Generated outputs (PNG/SVG)
+    ├── c4/
+    └── plantuml/
+```
+
+---
+
+## Structurizr DSL Patterns
+
+### Workspace Entrypoint (workspace.dsl)
+
+Keep minimal — delegate via `!include`:
+
+```dsl
+workspace "Project Name" "Brief description" {
+  !identifiers hierarchical
+
+  model {
+    !include model
+  }
+
+  views {
+    !include views
+    !include styles
+  }
+}
+```
+
+### Model Definition (model/02-systems.dsl)
+
+Use hierarchical nesting:
+
+```dsl
+mySystem = softwareSystem "My System" "Description" {
+  webapp = container "Web Application" "Serves UI" "React" {
+    authModule = component "Auth Module" "Handles authentication" "TypeScript"
+    apiClient = component "API Client" "Backend communication" "TypeScript"
+  }
+
+  api = container "API Server" "REST API" "Node.js" {
+    authService = component "Auth Service" "JWT validation" "TypeScript"
+    userService = component "User Service" "User CRUD" "TypeScript"
+  }
+
+  database = container "Database" "Stores data" "PostgreSQL" {
+    tags "Database"
+  }
+}
+```
+
+### Relationships (model/99-relationships.dsl)
+
+Centralize all relationships:
+
+```dsl
+# External relationships
+user -> mySystem.webapp "Uses" "HTTPS"
+
+# Internal relationships
+mySystem.webapp -> mySystem.api "Calls" "REST/JSON"
+mySystem.api -> mySystem.database "Reads/Writes" "SQL"
+
+# Component-level
+mySystem.webapp.authModule -> mySystem.api.authService "Authenticates" "JWT"
+mySystem.webapp.apiClient -> mySystem.api.userService "CRUD operations" "REST"
+```
+
+### Views (views/context.dsl)
+
+Keep views focused:
+
+```dsl
+systemContext mySystem "SystemContext" "System Context diagram" {
+  include *
+  autolayout lr
+}
+```
+
+### Styles (styles/styles.dsl)
+
+```dsl
+styles {
+  element "Person" {
+    shape person
+    background #08427b
+    color #ffffff
+  }
+  element "Software System" {
+    background #1168bd
+    color #ffffff
+  }
+  element "Container" {
+    background #438dd5
+    color #ffffff
+  }
+  element "Component" {
+    background #85bbf0
+    color #000000
+  }
+  element "Database" {
+    shape cylinder
+  }
+}
+```
+
+---
+
+## PlantUML Patterns
+
+### Sequence Diagram
+
+```plantuml
+@startuml
+!theme plain
+
+actor User
+participant "Web App" as Web
+participant "API Server" as API
+database "Database" as DB
+
+title User Authentication Flow
+
+== Login ==
+User -> Web: Enter credentials
+Web -> API: POST /auth/login
+API -> DB: Query user
+DB --> API: User record
+
+alt Valid credentials
+  API --> Web: JWT token
+  Web --> User: Redirect to dashboard
+else Invalid
+  API --> Web: 401 Unauthorized
+  Web --> User: Show error
+end
+
+@enduml
+```
+
+### Component Diagram
+
+```plantuml
+@startuml
+!theme plain
+
+package "API Server" {
+  [Auth Controller] as AuthCtrl
+  [User Controller] as UserCtrl
+  [Auth Service] as AuthSvc
+  [User Service] as UserSvc
+  [User Repository] as UserRepo
+}
+
+database "PostgreSQL" as DB
+
+AuthCtrl --> AuthSvc
+UserCtrl --> UserSvc
+AuthSvc --> UserRepo
+UserSvc --> UserRepo
+UserRepo --> DB
+
+@enduml
+```
+
+### Key PlantUML Syntax
+
+**Participants**: `actor`, `participant`, `boundary`, `control`, `entity`, `database`, `queue`
+
+**Arrows**:
+- `->` solid
+- `-->` dotted
+- `->>` thin
+- `<->` bidirectional
+
+**Control flow**:
+- `alt/else/end` — conditional
+- `opt/end` — optional
+- `loop/end` — repetition
+- `par/end` — parallel
+- `break/end` — exit early
+
+**Sections**: `== Section Name ==`
+
+**Notes**: `note left of X: text`, `note over X,Y: text`
+
+---
+
+## Commands
+
+### Structurizr CLI
+
+```bash
+# Validate DSL
+structurizr validate -workspace diagrams/c4/workspace.dsl
+
+# Export to PNG
+structurizr export -workspace diagrams/c4/workspace.dsl -format png -output diagrams/artefacts/c4
+
+# Export to SVG
+structurizr export -workspace diagrams/c4/workspace.dsl -format svg -output diagrams/artefacts/c4
+
+# Export to PlantUML (for further processing)
+structurizr export -workspace diagrams/c4/workspace.dsl -format plantuml -output diagrams/artefacts/c4
+```
+
+### PlantUML
+
+```bash
+# Render single diagram
+java -jar plantuml.jar diagram.puml
+
+# Render all in directory
+java -jar plantuml.jar -o ../artefacts/plantuml diagrams/plantuml/**/*.puml
+
+# Generate SVG
+java -jar plantuml.jar -tsvg diagram.puml
+```
+
+### Tool Installation
+
+```bash
+# Structurizr CLI (macOS)
+brew install structurizr-cli
+
+# PlantUML JAR
+curl -L -o .temp/plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+
+# Graphviz (required for some PlantUML diagrams)
+brew install graphviz
+```
+
+---
+
+## Best Practices
+
+### DO
+
+- Use `!include` to split large DSL files
+- Number model files for load order (01-, 02-, 99-)
+- Use `autolayout` unless manual positioning is needed
+- Keep views focused on one story
+- Use hierarchical identifiers (`system.container.component`)
+- Name files descriptively
+- Commit generated artifacts for easy review
+
+### DON'T
+
+- Create monolithic workspace.dsl with everything
+- Mix model and views in same file
+- Include everything in one view
+- Use Code diagrams unless auto-generated
+- Create deep nesting in PlantUML (flatten with aliases)
+
+---
+
+## References
+
+### Structurizr DSL
+- @references/structurizr-dsl.md — DSL syntax reference
+
+### PlantUML (All UML Types)
+- @references/plantuml-sequence.md — Sequence diagrams (interactions, flows)
+- @references/plantuml-component.md — Component diagrams (architecture)
+- @references/plantuml-activity.md — Activity diagrams (workflows, processes)
+- @references/plantuml-class.md — Class diagrams (domain model, OOP)
+- @references/plantuml-state.md — State diagrams (state machines, lifecycle)
+- @references/plantuml-usecase.md — Use Case diagrams (actors, requirements)
+- @references/plantuml-deployment.md — Deployment diagrams (infrastructure)
+- @references/plantuml-object.md — Object diagrams (runtime snapshots)
+
+### Templates
+- @templates/ — Starter templates
+
+---
+
+## When to Use Each Tool
+
+| Need | Tool |
+|------|------|
+| System architecture overview | Structurizr (C4 Context) |
+| Technology landscape | Structurizr (C4 Container) |
+| Internal module structure | Structurizr (C4 Component) |
+| Runtime interaction flow | PlantUML Sequence |
+| API/module structure | PlantUML Component |
+| Process/workflow/algorithm | PlantUML Activity |
+| Domain model/OOP design | PlantUML Class |
+| State machine/lifecycle | PlantUML State |
+| Requirements/actors | PlantUML Use Case |
+| Infrastructure/deployment | PlantUML Deployment |
+| Runtime object snapshot | PlantUML Object |
+| Quick dependency graph | Graphviz DOT |
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc "sed -n '1,260p' /Users/iv/.claude/skills/project-management/references/statuses.md
+sed -n '1,260p' /Users/iv/.claude/skills/project-management/references/resources-and-bugs.md
+sed -n '1,260p' /Users/iv/.claude/skills/project-management/references/negative-evidence.md" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ exited 1 in 0ms:
+# Statuses
+
+9 statuses organized in a workflow:
+
+| Status | Meaning | Who sets |
+|--------|---------|----------|
+| **backlog** | Captured, no work yet | anyone |
+| **analysis** | Researching, decomposing | anyone |
+| **to-dev** | Ready for development | orchestrator |
+| **development** | Writing code | sub-agent |
+| **to-review** | Code ready for review | sub-agent |
+| **reviewing** | Reviewer child is checking the work | reviewer |
+| **done** | Reviewed and accepted leaf work, or computed container completion | reviewer / orchestrator after reviewer verdict; parent aggregation |
+| **closed** | Explicit administrative disposition: cancelled, obsolete, or won't do (reason in notes) | anyone |
+| **blocked** | Concrete external blocker or unresolved human-only stop-the-line decision (full evidence packet in notes/resource) | anyone |
+
+## Status Flow
+
+**Happy path:**
+```
+backlog → analysis → to-dev → development → to-review → reviewing → done
+```
+
+**Returns from reviewing:**
+- `reviewing → analysis` — need more research
+- `reviewing → to-dev` — code issues, needs rework
+
+**Terminal from any status:**
+- `any → closed` — won't do / cancelled
+- `any → blocked` — concrete external blocker or unresolved human-only platform/product/architecture/tradeoff/approval decision
+
+**Note on closed:** Use `closed` for cancelled, obsolete, or won't-do items. Don't delete — close with a note explaining why. History is preserved, and the item can be reopened if needed.
+
+For a leaf task or bug, `done` means its delivery was accepted and `closed`
+means it was explicitly disposed without accepted delivery. A leaf may be
+closed from any lifecycle state.
+
+For a story or epic, `done` is computed completion: every direct child is
+`done` or `closed`. `closed` is an explicit administrative disposition of the
+container itself. A container may be closed only when every direct and
+transitive descendant is already `done` or `closed`; an empty container also
+satisfies this rule. Close or complete descendant work first, then close
+containers from the inside out. `task-board validate` reports
+`PARENT_STATUS_MISMATCH` for stored closed containers that still contain active
+descendants.
+
+Validation is strict by default for empty containers too: an empty Story/Epic
+stored as `done` aggregates to `backlog` and is reported. A migrated local
+board may explicitly set
+`task-board.config.json -> validation.allow_legacy_empty_done_containers` to
+`true` to suppress only that historical empty-`done` mismatch. Empty active
+containers and every container with one or more children remain strict.
+
+**Don't delete elements.** Use `closed` instead of `delete`. Deletion loses history and context. The only exception is removing test/junk data during board setup.
+
+**Orchestrator review routing flow:** When a producer child sets `to-review`:
+1. Orchestrator confirms the producer attached task-scoped outcome evidence.
+2. Orchestrator spawns a reviewer child with explicit selection, for example `task-board spawn TASK-... --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort max`.
+3. Reviewer child sets/keeps `reviewing`, reads artifacts/code, and writes the verdict.
+4. If accepted → `done`. If changes are requested → `to-dev` (code rework) or `analysis` (needs more research), with notes/outcome evidence.
+5. On changes requested, the Orchestrator preserves the verdict, spawns the appropriate producer, and sends the next `to-review` handoff through a new reviewer. Repeat producer -> reviewer -> rework -> reviewer until accepted `done`.
+6. If a child exits early or leaves the item parked in `analysis`, `development`, `testing`, or `reviewing`, the Orchestrator inspects the run/outcomes and retries or reroutes through a focused child. Recoverable work is never handed to the human.
+7. A `blocked` verdict stops routing only when it identifies a concrete external blocker or unresolved human-only stop-the-line decision and records the full evidence packet; otherwise retry or reroute.
+
+`reviewing` is a real state, not a pass-through. A reviewer child must do actual review work between the producer handoff and `done`; the orchestrator routes and monitors that review instead of performing the verdict inline.
+
+`to-review` is an internal routing trigger, never a handoff of routine review to the human. Human input is reserved for a concrete external blocker or unresolved human-only platform/product/architecture/tradeoff/approval decision.
+
+Human-facing wording follows the board state. `to-review` means "ready for review" or "handed off to review"; it is not "done", "complete", "finished", "final", or "готово". Say a task is done only after the board item is actually `done`.
+
+## Per-Element Review Policy
+
+Every board element has a `review` policy. Set it at creation with
+`create(..., review=required|light|none)`, change it with
+`set_details(ID, review=...)`, and inspect it through the `review` query
+projection. New elements and legacy elements without the field default to
+`required`.
+
+- `required` keeps the producer -> reviewer -> rework/reviewer loop. Only an
+  accepted reviewer verdict reaches `done`.
+- `light` still requires a reviewer child, but selection should favor a cheaper suitable effort tier that can satisfy the same evidence and quality gates.
+- `none` lets the Orchestrator accept a producer handoff from `to-review`
+  directly to `done` only after checking acceptance criteria, checklist,
+  validation results, and outcome evidence. Missing evidence returns to the
+  producer; `none` never means accepting an unevidenced handoff.
+
+This policy changes reviewer routing, not the need for board-owned evidence, and
+never introduces routine human review.
+
+## blocked vs is_blocked
+
+Two different concepts:
+
+- **blocked** (status) — explicit stop-the-line status for an evidence-backed external blocker or unresolved human-only platform/product/architecture/tradeoff/approval decision. Notes or an outcome resource must record the constraint, evidence, failed assumptions/attempts, viable alternatives and tradeoffs, recommendation, and exact human decision or external input needed to resume. Recoverable failures and ordinary rework are not `blocked`.
+- **is_blocked** (computed) — from `blocked-by` dependencies; if dependency is not `done`/`closed`, element is blocked
+
+CLI display:
+```
+TASK-05: to-dev [BLOCKED by TASK-02]     ← computed from dependency
+TASK-07: blocked                          ← explicit status
+```
+
+## Automatic Parent Status Aggregation
+
+After a child status mutation, the CLI recomputes every ancestor from its direct
+children. It is derived state: an unassigned story or epic may follow an
+assigned child without implying ownership of the container.
+
+- If every child is `done` or `closed`, a non-closed parent becomes `done`.
+  An already explicit `closed` parent stays `closed`; terminal child updates do
+  not silently normalize it to `done`.
+- Otherwise the parent adopts the highest-priority active child status:
+  `development`, `to-review`, `reviewing`, `to-dev`, `analysis`, then `backlog`.
+  `blocked` children do not select a parent status; a parent with only blocked
+  children keeps its current manual status.
+- The recomputation can promote, escalate, reopen, or demote a parent, then
+  continues through all ancestors. A parent that is `blocked` explicitly is not
+  recomputed.
+
+```bash
+task-board m 'set_status(TASK-260205-abc123, status=development)'
+# TASK-260205-abc123 → development
+# STORY-260205-def456 → development (auto-escalated)
+# EPIC-260205-ghi789 → development (auto-escalated)
+```
+
+For Task/Bug records created with the current format, the first transition into
+`development` also requires an explicit estimated value. Set it first with
+`set_estimate(ID, estimate=estimated, scale=fibonacci, number=N)`. The refusal
+is a typed estimate-required error, parallel to the unfinished-dependency start
+refusal. Records whose legacy `progress.md` has no Estimate section are
+grandfathered and are not retroactively blocked; an idempotent status write for
+an element already in `development` is not treated as a new start.
+
+### Commit confirmation for accepted work
+
+Top-level `task-board.config.json -> version_control.confirm` defaults to
+`false`. When it is `true`, `desired_commit_time` is required. Any mutation
+that would move a Bug or Story to `done` must then include the exact mover-local
+acknowledgement `commit_ack=scope_committed`. This covers a direct Bug/Story
+transition and a Task/Bug terminal transition that automatically promotes its
+parent Story.
+
+```json
+{
+  "version_control": {
+    "confirm": true,
+    "desired_commit_time": "evening MSK"
+  }
+}
+```
+
+```bash
+task-board m 'set_status(STORY-260205-def456, status=done, commit_ack=scope_committed)'
+```
+
+The error reports the transition-causing element, every enforced Bug/Story
+transition, the owner message, and the configured desired time. The
+acknowledgement covers only the mover's scope; foreign uncommitted work is
+allowed and task-board performs no git clean-tree check. Local evaluation and
+status writes share one mutation lock. In remote mode an enforcing CLI first
+requires the server's `version_control_confirmation=atomic-v1` capability, then
+the server evaluates the acknowledgement and writes the child/ancestor statuses
+under one serialized mutation.
+
+A reviewer-archetype spawned run must not supply `commit_ack`. It records
+acceptance evidence and hands it to the mover that owns the scoped commit; that
+mover commits first, then makes the final `done` transition with
+`commit_ack=scope_committed`.
+
+Reactivation follows one deterministic rule: adding a descendant creates it in
+`backlog`, and adding or changing any descendant to an aggregating active status
+runs ordinary aggregation through every ancestor. Any `done` or `closed`
+container on that path reopens to the highest-priority active aggregate status;
+explicit closure is not sticky once descendant work becomes active. The target
+is the aggregate child status, not a fixed `development` state:
+
+```bash
+task-board m 'set_status(TASK-260205-abc123, status=to-dev)'
+# TASK-260205-abc123 → to-dev
+# STORY-260205-def456 → to-dev (auto-reopened)
+# EPIC-260205-ghi789 → to-dev (auto-reopened)
+```
+
+Automatic container transitions do not require an assignee. Hard dependencies
+still gate automatic changes to `development`, `to-review`, `reviewing`, and
+`done`: if a container has an unfinished blocker, its derived status is left
+unchanged and the child mutation succeeds. Direct manual transitions use the
+same dependency gate; they additionally require an assignee for `to-dev`,
+`development`, and `to-review`.
+
+`blocked` remains the existing non-aggregating exception: blocked children do
+not select a parent status. Closed ancestors remain closed rather than being
+silently normalized to `done`, so validation reports every affected container
+that still has a blocked descendant. The operator must reopen the container or
+resolve/close that descendant work.
+# Resources
+
+Resources are linked to board elements via explicit CRUD operations. They are stored centrally in `.task-board/.resources/` (local) or in MinIO / filesystem storage (remote board-server).
+
+## Resource Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **precondition** | Inputs needed before work starts | Design docs, specs, instructions, API schemas |
+| **outcome** | Results produced by work | Research findings, implementation notes, analysis |
+
+## Commands
+
+```bash
+# Create a resource
+task-board m 'add_resource(TASK-260218-abc, name=TASK-260218-abc_design.md, type=precondition, content="...", description="Architecture design")'
+task-board m 'add_resource(TASK-260218-abc, name=TASK-260218-abc_results.md, type=outcome, content="...", description="Research findings")'
+
+# Replace an existing resource
+task-board m 'update_resource(TASK-260218-abc, name=TASK-260218-abc_results.md, type=outcome, content="revised findings", description="Research findings v2")'
+task-board resource update TASK-260218-abc ./TASK-260218-abc_results.md --type outcome
+
+# Adopt an existing orphaned local payload without rewriting it
+task-board resource adopt TASK-260218-abc TASK-260218-abc_results.md --type outcome --description "Recovered result"
+
+# Delete a resource (destructive — requires --confirm)
+task-board m --confirm 'delete_resource(TASK-260218-abc, name=TASK-260218-abc_design.md)'
+task-board resource delete TASK-260218-abc TASK-260218-abc_design.md --confirm
+
+# View resources on an element
+task-board q --format compact 'get(TASK-260218-abc) { preconditionResources outcomeResources }'
+```
+
+## Storage
+
+Resources are stored flat in `.task-board/.resources/<elementID>/<name>`:
+
+```
+.task-board/.resources/
+├── TASK-260203-g7h8i9/
+│   ├── design.md           # precondition
+│   └── results.md          # outcome
+└── STORY-260203-d4e5f6/
+    └── research.md         # outcome
+```
+
+Local and board-server filesystem element deletion is journaled and
+crash-recoverable. Direct resource CRUD first resolves any pending staged
+element delete under the board mutation lock. MinIO element/subtree deletion
+currently fails before mutation with the typed
+`ErrAtomicResourceDeleteUnsupported` capability error; ordinary resource CRUD
+remains available.
+
+References are tracked in `progress.md` as markdown links:
+```markdown
+## Precondition Resources
+- [design.md](board-resource://TASK-260203-g7h8i9/precondition/design.md) — Architecture design
+
+## Outcome Resources
+- [results.md](board-resource://TASK-260203-g7h8i9/outcome/results.md) — Research findings
+```
+
+## Spawn Integration
+
+Precondition resources are automatically injected into agent prompts by `task-board spawn`. Full prompts preserve normal text inlining. Lite prompts use the resolved `agent_context.prompt.preconditions` policy: by default, text below `inline_bytes` is rendered inline, while larger text and binary resources are written read-only under `.temp/resources/` and represented by their name, description, byte count, SHA-256 digest, and local path. This means:
+
+1. Attach instructions/specs as precondition resources to a task
+2. Run `task-board spawn TASK-XX --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort max` — agent gets everything automatically
+3. Agent saves results via `task-board m 'add_resource(..., type=outcome)'` on first write, then `update_resource(...)` for revisions
+
+## Best Practices
+
+- **Use preconditions for agent instructions** — attach design docs, specs, or step-by-step instructions before spawning
+- **Use outcomes for work products** — research findings, analysis, implementation notes
+- **Use explicit create/update/delete** — `add_resource` / `resource add` must not silently overwrite; use `update_resource` / `resource update` when replacing an existing payload
+- **Use adopt only for local repair** — `resource adopt` registers bytes already stored at `.resources/<elementID>/<name>` without rewriting them; a missing payload returns resource-not-found and an existing declaration returns resource-exists
+- **Use one safe filename component** — element IDs and resource names containing traversal segments, absolute paths, path separators, malformed URL escapes, or encoded/repeatedly encoded escapes are rejected in local and remote storage
+- **Always use board commands** — never create/edit resource files or progress.md resource sections manually
+- **Name descriptively with task scope** — `TASK-260218-abc_architecture-design.md` not `doc.md`
+- **Add descriptions** — the `description=` param adds a one-line description shown in spawn prompts
+
+---
+
+# Bugs
+
+Bugs are elements of the board, living inside stories alongside tasks.
+
+```bash
+# Create bug
+task-board m 'create(type=bug, parent=STORY-260218-abc, name=crash-on-start, description="App crashes when starting recording")'
+
+# Track like any element
+task-board m 'set_status(BUG-260218-abc, status=development)'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Reproduce the issue")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Find root cause")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Write fix")'
+task-board m 'add_checklist_item(BUG-260218-abc, text="Add regression test")'
+```
+sed: /Users/iv/.claude/skills/project-management/references/negative-evidence.md: No such file or directory
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+codex
+Reviewer lifecycle ясен: при acceptance вызываю только `accept_cr`, без `commit_ack`; при дефекте верну в `to-dev`/`analysis`. Файл negative-evidence отсутствует по skill-пути, поэтому сейчас нахожу канонический экземпляр и не подменяю отсутствие догадкой.
+exec
+/bin/zsh -lc "rg --files /Users/iv/.claude/skills /Users/iv/.codex/skills . | rg '("'^|/)negative-evidence'"\\.md"'$|task-board'"\\.config\\.json"'$|spawn-policy'"\\.md"'$|goal-macos-v1'"\\.md"'$'"'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+./docs/spawn-policy.md
+./task-board.config.json
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc "rg --files --hidden /Users/iv/.claude/skills /Users/iv/.codex/skills . | rg '("'^|/)negative-evidence'"\\.md"'$|task-board'"\\.config\\.json"'$|spawn-policy'"\\.md"'$|goal-macos-v1'"\\.md"'$'"'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+./docs/spawn-policy.md
+./task-board.config.json
+./.spec/goal-macos-v1.md
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc "rg -n --hidden --glob '*.md' 'negative evidence|delete-only mutant|production call site' /Users/iv/.claude/skills /Users/iv/.codex/skills /Users/iv/Developer/relux-tunnel 2>/dev/null | head -80" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+/Users/iv/Developer/relux-tunnel/docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md:93:   suites remain green, including negative tests at the production call site.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-135rr8/TASK-260715-135rr8_observer-allocation-results.md:11:## Observer fix and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-135rr8/TASK-260715-135rr8_rev4-results.md:34:## Rev4 gate and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-135rr8/TASK-260715-135rr8_review-verdict-rev4.md:27:Schema 2 preserves every per-cycle value and the production call site emits the exact-tree-bound report before returning a lifecycle verdict failure. The gate rejects 499 cycles, footprint overflow, and a missing release at cycle 499. A forged well-formed candidate OID independently exited 1 and emitted no raw artifact. A forged artifact hash is rejected by focused production-provenance coverage. No retry-until-green, arbitrary delay, threshold widening, synthetic ownership counter, or allocator page-return proxy was found.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-3kga9i/TASK-260715-3kga9i_degraded-safe-dns-contract.md:199:drive the named production call sites and fail if the gate is narrowed:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-3kga9i/TASK-260715-3kga9i_degraded-safe-dns-contract.md:201:| Gate / production call site | Required negative proof |
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260717-xempiv/TASK-260717-xempiv_review-verdict.md:56:3. `main.swift` is the production call site. It constructs a retained
+/Users/iv/Developer/relux-tunnel/.task-board/EPIC-260715-3810we_tcp-dns-system-vpn/STORY-260715-1y04r0_shared-tunnel-runtime/TASK-260720-1qhxqa_bind-accepted-m0-runtime-revisions/progress.md:347:- [TASK-260720-1qhxqa_review-verdict-rev10.md](file://TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev10.md) — CR revision 10 accepted reviewer verdict with exact binding and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2zmw58/TASK-260715-2zmw58_degraded-safe-dns-contract.md:199:drive the named production call sites and fail if the gate is narrowed:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2zmw58/TASK-260715-2zmw58_degraded-safe-dns-contract.md:201:| Gate / production call site | Required negative proof |
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_reviewer-verdict-rework5.md:93:- Negative obligations name the production call sites and rejection outcomes
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_review-verdict-rev4.md:14:4. Forked code, mutable actions, cache poisoning, artifact substitution, tag/workflow spoofing, reruns, cancellation/runner loss, concurrent releases, and compromised low-privilege credentials all have fail-closed behavior and named production call sites with rejecting fixtures.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_review-verdict.md:14:4. Forked code, mutable actions, cache poisoning, artifact substitution, tag/workflow spoofing, reruns, cancellation/runner loss, concurrent releases, and compromised low-privilege credentials all have fail-closed behavior and named production call sites with rejecting fixtures.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_results.md:132:   fixtures at named production call sites.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev2.md:42:mutant, not a delete-only mutant, and demonstrates that an incompatible M1
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-whtdsf/TASK-260715-whtdsf_ci-trust-and-quality-gate-contract.md:434:production call site:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev6.md:15:production call site.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev9.md:27:the production call site, and add a durable narrowing negative test requiring
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-3kimon/TASK-260715-3kimon_results.md:63:## Reviewer-requested negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260720-1qhxqa/TASK-260720-1qhxqa_review-verdict-rev3.md:30:The production call site exercised was
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-3kimon/TASK-260715-3kimon_review-verdict.md:7:### P1 — Required negative evidence is incomplete for adjustment and pressure gates
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-1vg1mb/TASK-260715-1vg1mb_degraded-safe-dns-contract.md:199:drive the named production call sites and fail if the gate is narrowed:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-1vg1mb/TASK-260715-1vg1mb_degraded-safe-dns-contract.md:201:| Gate / production call site | Required negative proof |
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-intsjz/TASK-260715-intsjz_review-verdict.md:21:This candidate introduces no gate, validator, authorization, or production call site, so code-level negative tests are not applicable to this decision-only CR. A bounded scan independently found no existing `String(localized:)`, `LocalizedStringKey`, `NSLocalizedString`, String Catalog, stringsdict, `developmentRegion`, or `knownRegions` entry point in the named product/project paths. The outcome correctly records the production localization call site as not yet implemented and requires `TASK-260715-1ets2m` to name real runtime and CI/release call sites and add reject-path tests for missing/unreadable keys, placeholder mismatch, stale versions, unapproved locales, parity mismatch, false approval, and visible literal bypass.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2y78ah/TASK-260715-2y78ah_degraded-safe-dns-contract.md:199:drive the named production call sites and fail if the gate is narrowed:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2y78ah/TASK-260715-2y78ah_degraded-safe-dns-contract.md:201:| Gate / production call site | Required negative proof |
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-3260rm/TASK-260715-3260rm_degraded-safe-dns-contract.md:199:drive the named production call sites and fail if the gate is narrowed:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-3260rm/TASK-260715-3260rm_degraded-safe-dns-contract.md:201:| Gate / production call site | Required negative proof |
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2jatnd/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md:93:   suites remain green, including negative tests at the production call site.
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260721-2raag7/TASK-260721-2raag7_degraded-safe-dns-contract.md:199:drive the named production call sites and fail if the gate is narrowed:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260721-2raag7/TASK-260721-2raag7_degraded-safe-dns-contract.md:201:| Gate / production call site | Required negative proof |
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2jatnd/TASK-260715-2jatnd_review-verdict-rev2.md:59:## Reviewer validation and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2jatnd/TASK-260715-2jatnd_review-verdict.md:59:## Reviewer validation and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/EPIC-260715-2mqgvm_viability-and-foundation/STORY-260715-jnpbyz_packet-bridge-hev-spike/TASK-260715-2jatnd_record-m0-packet-bridge-decision/progress.md:88:- [TASK-260715-2jatnd_review-verdict-rev2.md](file://TASK-260715-2jatnd/TASK-260715-2jatnd_review-verdict-rev2.md) — Revision 2 accepted review verdict with independent and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2a1cp7/TASK-260715-2a1cp7_degraded-safe-dns-contract.md:199:drive the named production call sites and fail if the gate is narrowed:
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-2a1cp7/TASK-260715-2a1cp7_degraded-safe-dns-contract.md:201:| Gate / production call site | Required negative proof |
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260830-1srcgk/TASK-260830-1srcgk_results.md:21:## Effective preflights and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260830-1srcgk/TASK-260830-1srcgk_results.md:43:The production call site exercised by the negative probes is `task-board
+/Users/iv/Developer/relux-tunnel/.task-board/.resources/TASK-260715-3kjhkw/TASK-260715-3kjhkw_results.md:11:## Reviewer rework and negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/EPIC-260716-3fyjn0_manual-validation-and-approvals/STORY-260716-2m2tl1_m0-viability-manual-gates/TASK-260715-135rr8_run-physical-memory-lifecycle-and-concurrency-matrix/progress.md:174:- [swift-negative-forged-tree-observer-fixed-01.log](file://TASK-260715-135rr8/swift-negative-forged-tree-observer-fixed-01.log) — Production-entry forged tree negative evidence; expected exit 1
+/Users/iv/Developer/relux-tunnel/.task-board/EPIC-260716-3fyjn0_manual-validation-and-approvals/STORY-260716-2m2tl1_m0-viability-manual-gates/TASK-260715-135rr8_run-physical-memory-lifecycle-and-concurrency-matrix/progress.md:189:- [TASK-260715-135rr8_reviewer-forged-oid-rev3.log](file://TASK-260715-135rr8/TASK-260715-135rr8_reviewer-forged-oid-rev3.log) — Production-entry forged candidate OID negative evidence
+/Users/iv/Developer/relux-tunnel/.task-board/EPIC-260716-3fyjn0_manual-validation-and-approvals/STORY-260716-2m2tl1_m0-viability-manual-gates/TASK-260715-135rr8_run-physical-memory-lifecycle-and-concurrency-matrix/progress.md:200:- [TASK-260715-135rr8_swift-negative-forged-tree-rev4.log](file://TASK-260715-135rr8/TASK-260715-135rr8_swift-negative-forged-tree-rev4.log) — Production-entry forged tree OID negative evidence; expected exit 1
+/Users/iv/Developer/relux-tunnel/.task-board/EPIC-260716-3fyjn0_manual-validation-and-approvals/STORY-260716-2m2tl1_m0-viability-manual-gates/TASK-260715-gyg51r_run-physical-mtu-and-socket-pressure-matrix/progress.md:148:- [rev3-negative-tests-red-03.log](file://TASK-260715-gyg51r/rev3-negative-tests-red-03.log) — Expected-red production-entry negative evidence, exit 1
+/Users/iv/Developer/relux-tunnel/.task-board/EPIC-260716-3fyjn0_manual-validation-and-approvals/STORY-260716-2m2tl1_m0-viability-manual-gates/TASK-260715-gyg51r_run-physical-mtu-and-socket-pressure-matrix/progress.md:149:- [rev3-negative-tests-green-02.log](file://TASK-260715-gyg51r/rev3-negative-tests-green-02.log) — Corrected production-entry negative evidence, exit 0
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+  → Inspect task/CR evidence and exact candidate delta
+  • Independently run config, policy-drift, negative, and Git checks
+  • Attach one evidence-backed reviewer verdict and route revision 2
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc "printenv TASK_BOARD_RUN_ID || true
+task-board q --format compact 'get(TASK-260830-1srcgk) { status description acceptanceCriteria checklist review changeRequests outcomeResources notes }'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ exited 1 in 0ms:
+RUN-260830-190c14
+query error: parse error at 1:48: unknown field "acceptanceCriteria" (got "acceptanceCriteria"); relevant operation signature: get(id:string)
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+codex
+Компактный запрос упёрся в неизвестное поле `acceptanceCriteria` (exit 1); по контракту запрашиваю scoped schema только для `get`, затем повторю узкую проекцию.
+exec
+/bin/zsh -lc "task-board q --format compact 'schema(operation=get)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+description:Get a single element by ID
+examples:["get(TASK-XX) { overview }"]
+kind:operation
+name:get
+parameters:[{"name":"id","type":"string","optional":false,"description":"Element ID"}]
+signature:get(id:string)
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(TASK-260830-1srcgk) { overview progress checklist review changeRequests outcomeResources notes }'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ exited 1 in 0ms:
+query error: parse error at 1:64: unknown field "changeRequests" (got "changeRequests"); relevant operation signature: get(id:string)
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(TASK-260830-1srcgk) { overview progress checklist review outcomeResources notes }'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 244ms:
+id:TASK-260830-1srcgk
+name:realign-autonomous-serial-agent-policy-to-sol-high
+status:reviewing
+assignee:[reviewer] reviewer (codex)
+parent:STORY-260715-anxje6
+review:required
+task_class:code
+estimate:{"kind":"estimated","scale":{"kind":"fibonacci","number":2}}
+checklist:[{"text":"Set Codex gpt-5.6-sol high and max_parallel 1 in task-board.config.json","done":true},{"text":"Update docs/spawn-policy.md so every producer reviewer and example uses high","done":true},{"text":"Confirm .spec/goal-macos-v1.md and primary goal revision 8 agree with the policy","done":true},{"text":"Run effective developer and reviewer spawn preflights and retain sanitized evidence","done":true},{"text":"Run task-board validation focused policy drift scans and git diff checks","done":true},{"text":"Record the cancelled medium reviewer and replacement routing without accepting its verdict","done":true},{"text":"Attach task-scoped outcome evidence and hand off to a fresh Codex Sol high reviewer","done":true},{"text":"Code written per task description and AC","done":true},{"text":"Relevant tests written for new or changed behavior and passing","done":true},{"text":"Lint clean","done":true},{"text":"Relevant build/validation commands run after changes and build not broken","done":true},{"text":"New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables","done":true},{"text":"Important findings, decisions, anomalies, or regressions recorded in logbook when relevant","done":true},{"text":"Implementation matches AC","done":true},{"text":"Solution fits project architecture","done":true},{"text":"Tests green","done":true},{"text":"If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches","done":true}]
+notes:spawn agent resolution: Agent selection: codex via explicit_override (preferred_agentic_system: exclusive[codex], config: spawn.preferred_agentic_system)\nspawn launch composition: empty; contract=agents-infra.child-launch-composition; provider=codex; schema=1; producer=v1.6.1; diagnostic=launch_composition_empty; no project MCP servers enabled\nspawn queued: [implementer] developer (codex) (run=RUN-260830-71b8f1, max_parallel=1)\nspawn run started: [implementer] developer (codex) (run=RUN-260830-71b8f1)\nPOLICY REALIGNMENT: repository policy now uses spawn-policy-v4 with exactly gpt-5.6-sol/high, lite context, and max_parallel 1. RUN-260830-d1a567 (TASK-260715-whtdsf reviewer, Sol/medium, max_parallel 3) was cancelled by operator directive with exit 130; no verdict from it is accepted, and replacement review must use a fresh Sol/high run. VALIDATION ANOMALY: task-board validate returned exit 0 with valid=false because STORY-260715-anxje6 is analysis while child aggregate is development; attempted Story alignment exited 1 because dependency STORY-260715-l2i2oo remains reviewing. Task-scoped config/preflight/negative/drift/diff gates pass; full-board mismatch remains recorded as unknown/unresolved board state, not inferred green.\nagent completed: [implementer] developer (codex) (exit=0)\nspawn run completed: codex (run=RUN-260830-71b8f1, pid=76252, exit=0)\nspawn agent resolution: Agent selection: codex via explicit_override (preferred_agentic_system: exclusive[codex], config: spawn.preferred_agentic_system)\nspawn launch composition: empty; contract=agents-infra.child-launch-composition; provider=codex; schema=1; producer=v1.6.1; diagnostic=launch_composition_empty; no project MCP servers enabled\nspawn queued: [reviewer] reviewer (codex) (run=RUN-260830-93471d, max_parallel=1)\nspawn run started: [reviewer] reviewer (codex) (run=RUN-260830-93471d)\nagent completed: [reviewer] reviewer (codex) (exit=0)\nspawn run completed: codex (run=RUN-260830-93471d, pid=90480, exit=0)\n2026-08-30 CR2 recovery: CR1 was independently accepted but cumulative over unaccepted TASK-260715-whtdsf content. TASK-260715-whtdsf CR4 is now checkpointed at 3852fae. Reapply only the three policy files (.spec/goal-macos-v1.md, docs/spawn-policy.md, task-board.config.json) on the new Story tip, preserve the accepted Sol-high/max_parallel-1 semantics and validation evidence, create a clean CR2, and do not modify the checkpointed CI contract files.\nspawn agent resolution: Agent selection: codex via explicit_override (preferred_agentic_system: exclusive[codex], config: spawn.preferred_agentic_system)\nspawn launch composition: empty; contract=agents-infra.child-launch-composition; provider=codex; schema=1; producer=v1.6.1; diagnostic=launch_composition_empty; no project MCP servers enabled\nspawn queued: [implementer] developer (codex) (run=RUN-260830-48cad0, max_parallel=1)\nspawn run started: [implementer] developer (codex) (run=RUN-260830-48cad0)\nCR2 exact reapply: only .spec/goal-macos-v1.md, docs/spawn-policy.md, and task-board.config.json changed. Worktree-effective developer/reviewer preflights resolve spawn-policy-v4 with only gpt-5.6-sol/high, lite, max_parallel 1; medium production admission probes fail typed before task lookup. RUN-260830-d1a567 remains cancelled exit 130 and contributes no verdict. Full-board validate process exit 0 still reports valid=false PARENT_STATUS_MISMATCH while dependency STORY-260715-l2i2oo remains reviewing; task-scoped policy/drift/goal/diff gates pass. Route this CR2 handoff to a fresh serial Codex Sol/high reviewer.\nagent completed: [implementer] developer (codex) (exit=0)\nspawn run completed: codex (run=RUN-260830-48cad0, pid=18947, exit=0)\nspawn agent resolution: Agent selection: codex via explicit_override (preferred_agentic_system: exclusive[codex], config: spawn.preferred_agentic_system)\nspawn launch composition: empty; contract=agents-infra.child-launch-composition; provider=codex; schema=1; producer=v1.6.1; diagnostic=launch_composition_empty; no project MCP servers enabled\nspawn queued: [reviewer] reviewer (codex) (run=RUN-260830-190c14, max_parallel=1)\nspawn run started: [reviewer] reviewer (codex) (run=RUN-260830-190c14)
+blockedBy:[]
+derivedBlockedBy:[]
+isBlocked:false
+isAdvisoryBlocked:false
+outcomeResources:[{"name":"TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-71b8f1.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-71b8f1.log","description":"System spawn log captured by task-board"},{"name":"TASK-260830-1srcgk_results.md","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_results.md","description":"CR2 handoff evidence for exact Sol/high serial policy reapply"},{"name":"TASK-260830-1srcgk_change-request_rev1.patch","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_change-request_rev1.patch","description":"Change Request CR-TASK-260830-1srcgk-1 revision 1 candidate patch (repository_delta=present, 8 changed paths)"},{"name":"TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-93471d.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-93471d.log","description":"System spawn log captured by task-board"},{"name":"TASK-260830-1srcgk_review-verdict.md","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict.md","description":"Accepted CR revision 1 reviewer verdict and independent evidence"},{"name":"TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-48cad0.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-48cad0.log","description":"System spawn log captured by task-board"},{"name":"TASK-260830-1srcgk_change-request_rev2.patch","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_change-request_rev2.patch","description":"Change Request CR-TASK-260830-1srcgk-2 revision 2 candidate patch (repository_delta=present, 3 changed paths)"},{"name":"TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-190c14.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-190c14.log","description":"System spawn log captured by task-board"}]
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc 'task-board resource --help' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+Manage attached resources such as screenshots, docs, logs, and other files.
+
+Use "task-board resource add" to create a new attached resource, "task-board
+resource adopt" to register an orphaned local payload, "task-board resource
+update" to replace an existing one, "task-board resource delete" to remove it,
+and "task-board resource get" to materialize a resource back to the local
+filesystem for inspection.
+
+Usage:
+  task-board resource [command]
+
+Available Commands:
+  add         Attach a new file resource to an element
+  adopt       Register an existing unreferenced local resource payload
+  delete      Delete a resource from an element (requires --confirm)
+  get         Download a resource to the local filesystem
+  update      Replace an existing file resource on an element
+
+Flags:
+  -h, --help   help for resource
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board resource [command] --help" for more information about a command.
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc 'task-board resource get --help' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+Download a board resource and save it locally.
+
+If --output is omitted, the file is materialized under:
+  .temp/resources/<ELEMENT-ID>/<NAME>
+
+Nested resource names preserve their directory hierarchy below the element.
+
+Use --output - to write the resource bytes to stdout.
+
+Usage:
+  task-board resource get <ELEMENT-ID> <NAME> [flags]
+
+Flags:
+  -h, --help            help for get
+  -o, --output string   Write resource to this path (default: .temp/resources/<ELEMENT-ID>/<NAME>, use - for stdout)
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc 'task-board resource get TASK-260830-1srcgk TASK-260830-1srcgk_results.md --output -
+task-board resource get TASK-260830-1srcgk TASK-260830-1srcgk_change-request_rev2.patch --output .temp/TASK-260830-1srcgk/TASK-260830-1srcgk_change-request_rev2.patch
+shasum -a 256 .temp/TASK-260830-1srcgk/TASK-260830-1srcgk_change-request_rev2.patch
+git status --short
+git rev-parse HEAD''^{tree}
+git diff --stat 3852fae014a325b8c1bca89c7619233210688451 377d0b40034bf46031ad032c4dbb04ab45923502
+git diff --check 3852fae014a325b8c1bca89c7619233210688451 377d0b40034bf46031ad032c4dbb04ab45923502
+git diff --name-only 3852fae014a325b8c1bca89c7619233210688451 377d0b40034bf46031ad032c4dbb04ab45923502' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 8ms:
+.spec/goal-macos-v1.md
+docs/spawn-policy.md
+task-board.config.json
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+codex
+CR2 patch hash совпал, exact object diff содержит только 3 заявленных файла, `git diff --check` чист. В checkout есть чужие изменения из соседней Story-задачи; я их не трогаю и все выводы привязываю к `base 3852… → candidate 377d…`, а не к общему `git status`.
+exec
+/bin/zsh -lc 'git diff --unified=100 3852fae014a325b8c1bca89c7619233210688451 377d0b40034bf46031ad032c4dbb04ab45923502 -- .spec/goal-macos-v1.md docs/spawn-policy.md task-board.config.json
+git diff --exit-code 377d0b40034bf46031ad032c4dbb04ab45923502 -- .spec/goal-macos-v1.md docs/spawn-policy.md task-board.config.json' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+diff --git a/.spec/goal-macos-v1.md b/.spec/goal-macos-v1.md
+index 3ecd395..7726391 100644
+--- a/.spec/goal-macos-v1.md
++++ b/.spec/goal-macos-v1.md
+@@ -1,165 +1,165 @@
+ # Goal — Relux Tunnel, macOS-first v1
+ 
+ Revised 2026-07-28 by `TASK-260728-3a2dnr` to encode the owner-approved macOS
+ prototype strategy (ADR-013 re-scope, ADR-014, ADR-023, ADR-024).
+ 
+ ## Objective
+ Deliver a production, notarized **macOS full-tunnel system VPN** whose external
+ transport is one or more authenticated SSH connections to a user-controlled
+ host. To the OS it is a system VPN (`NEPacketTunnelProvider`); on the wire it is
+ SSH to the user's own machine. Execute the relux-tunnel board's autonomous work
+ to completion and halt cleanly at the irreducible human gates. iOS is deferred.
+ 
+ ## Approved strategy (binding)
+ - **SSH contract: Option A.** M0 proves *viability*; the four deferred SSH
+   semantics are evidence-gated M3 obligations, not waivers (ADR-023).
+ - **libssh2 is the primary engine.** `ReluxNIOSSH` stays recorded comparative
+   evidence and gets no further fork work unless libssh2 is invalidated
+   (ADR-014).
+ - **Gate A0 is not a prototype gate.** Apple-policy/App-Review evidence moves to
+   the release and iOS branch (ADR-013). Do not run A0 research on the prototype
+   critical path.
+ - **iOS is deferred.** Physical P0 for this goal is macOS-only, on the current
+   Apple-silicon Mac. iOS identifiers stay defined so the work resumes without
+   renaming (ADR-024).
+ - **Linux CI/runner is not required** for the early working-client path. Native
+   Linux relay-asset execution evidence moves to the release path
+   (`TASK-260715-1c4l9v`).
+ - **Signing identities are available; notarization custody is not yet done.**
+   Relux Works Apple Development and Developer ID Application identities exist in
+   the local Keychain. The notarization credential exists only as a mode-0600
+   source file, which does **not** satisfy the Keychain-only invariant: a named
+   `notarytool` Keychain profile must be stored, verified, and the source file's
+   disposition recorded before the notarization path counts as ready
+   (ADR-025, `TASK-260728-dveo1o`). Existing profiles lack Network Extension
+   entitlements, so tunnel identifiers and profiles still have to be created.
+ 
+ ## Definition of done for this goal
+ The board's gate-free tasks — M0 spike core; M1 TCP/DNS runtime + macOS provider
+ adapter; M2 relay protocol/UDP/degraded mode; M3 resilience including the four
+ deferred SSH semantics; macOS self-update; threat model; CI quality gates — are
+ implemented, unit/integration-tested on the SPM `ReluxTunnelHarness`,
+ reviewer-accepted, and marked `done` on the board, up to the point where
+ progress requires Apple provisioning, a signed-provider approval on this Mac, or
+ a human product decision. At that boundary work stops with evidence attached —
+ never a workaround.
+ 
+ ## Scope
+ **IN** — everything buildable/testable on this Mac, plus everything unlocked by
+ the single up-front ceremony: `ReluxTunnelCore`; the public
+ `AF_UNIX/SOCK_DGRAM` PacketFlow bridge; HEV/lwIP integration; the libssh2
+ adapter against the Tier-1 viability contract with conformance/rekey tests
+ against a real SSH host; the wire protocol + codecs; rootless relay logic +
+ degraded mode; the generated macOS workspace, host, and packet-tunnel targets;
+ the macOS provider adapter; macOS UI; the self-update pipeline; the threat
+ model; CI; reproducible relay build.
+ 
+ **OUT** — iOS targets/UI/provider/TestFlight/App Store/App Review; Gate A0
+ research; a Linux CI runner; and the tuning **selections** that require physical
+ performance numbers not yet measured.
+ 
+ ## Execution model
+ Board-driven via `task-board` in `/Users/iv/Developer/relux-tunnel`. The
+ orchestrator plans from the critical path and delegates every task to tracked
+ background children per `docs/spawn-policy.md` — **Codex `gpt-5.6-sol` at `high`
+-as primary orchestrator and at `medium` for every producer, rework owner, and
+-fresh independent reviewer; `max_parallel` 1** (one tracked child at a time). Each task runs producer →
+-reviewer → rework → accepted `done`;
++for the primary orchestrator, every producer, every rework owner, and every fresh
++independent reviewer; `max_parallel` 1** (one tracked child at a time). Each task
++runs producer → reviewer → rework → accepted `done`;
+ never stop at `to-review`. Respect dependency links; sequence dependent work.
+ **After each accepted task: clean worktree, commit inside the policy window,
+ push to remote, verify local `HEAD` equals origin.**
+ 
+ The current serial wave plan and the Ceremony C1 script live in
+ `.task-board/.resources/TASK-260728-3a2dnr/`.
+ 
+ ## Invariants (do not violate)
+ - Honor the ADR log (`.spec/decisions.md`): local TCP termination +
+   `direct-tcpip` (no TCP-over-TCP); HEV/lwIP, no hand-rolled TCP stack; public
+   packetFlow bridge, no utun-FD discovery; rootless exec/stdio relay, no SFTP;
+   full + degraded modes.
+ - Security (`.spec/security-privacy.md`, `.spec/threat-model.md`): mandatory
+   host-key verification before user auth; secrets only in the Keychain — never in
+   `providerConfiguration`, logs, shell commands, or board resources;
+   bounded-memory parsers; fail-closed DNS; the internal SOCKS boundary is not a
+   user-reachable proxy.
+ - Scoping M0 to viability does **not** relax any of the above. A deferred SSH
+   semantic must be surfaced as an explicit not-reported/unsupported state with a
+   named M3 owner task; fabricating a value fails the adapter.
+ - Develop the core on the SPM harness **in parallel** with the manual gates
+   (ADR-011); do not re-couple core work to A0.
+ - Numeric/policy values stay evidence gates — do not hardcode a "final" MTU,
+   channel window, lane count, or rekey threshold; keep them injectable pending
+   physical selection. Verify non-trivial changes by exercising behavior, not
+   tests alone.
+ - Do not force-fit: if a task starts requiring compensating hacks around a
+   platform/product constraint, stop and escalate with evidence.
+ 
+ ## Stop-the-line — the irreducible human gates
+ When the critical path reaches one of these, mark the task `blocked` with the
+ evidence packet (constraint, options, exact human input needed) and surface it.
+ 
+ **Ceremony C1 — the up-front human *permission* node** (this Mac), owned by
+ exactly one board node, `TASK-260728-q5kjta`. It contains only grants whose
+ inputs exist before any agent build, so the human is never asked to remain
+ present through a producer or review cycle: effective prompt-free signing-key
+ access; authenticated Relux Works Apple Developer portal/team authority;
+ authorization to create and download the macOS packet-tunnel App IDs,
+ entitlements, and development profiles; `notarytool store-credentials` into a
+ **named** Keychain profile plus the source-file disposition decision (ADR-025);
+ Sparkle EdDSA generation into custody (ADR-026 — generation only). Per ADR-028,
+ the node may contain honestly recorded resumed owner interactions; this does not
+ permit an uninterrupted-session claim, invented timestamps, or retrospective
+ claims about an Always Allow click or a separately timestamped two-factor event.
+ Its only blocker is the approved identifier matrix `ypo7yo`, so it is reachable
+ inside the first autonomous segment.
+ 
+ The four evidence tasks it unblocks — `apc34w`, `3jloqy`, `dveo1o`, `ziprhs` —
+ are **agent** work that runs unattended with the granted access and keeps its
+ full evidence obligations. Owner decision D1 (`intsjz`) needs no Mac access and
+ is recorded under the same ceremony node. Never request, echo, or persist secret
+ values or secret paths.
+ 
+ **Approval A1 — the brief later approval prompt.** `3jloqy` unblocks `1r0fxv`,
+ which is ordinary agent work that must be produced and independently reviewed.
+ Only then can macOS show the system-VPN and system-extension approval dialogs
+ for the disposable probe. A1 is a separate short human interaction on `9yp8to`:
+ approve the probe, after which the rest of that task runs unattended. Folding
+ A1 into C1 would mean claiming a human can sit through a producer-reviewer cycle.
+ For the same reason **sign-off S1** (`2ayxqn` AC5 — the owner acknowledges the
+ Gate P0 verdict) cannot be pre-granted: the verdict does not exist yet.
+ 
+ **Later gates, in order:**
+ 1. **macOS physical M1 validation (Hold H2)** — approve the system VPN for the
+    real app, whose bundle identifier differs from the probe, then run
+    lifecycle/routing/DNS-leak evidence (`3f4rhy` → `12x6oq` → `2wqffe`).
+ 2. **Product decisions** — launch locales (`intsjz`, batched into C1), legacy
+    SOCKS disposition (`35nc5m`), HEV fork approval (`3mnqn8`), privacy/support
+    copy approval (`2gwfaw`). These are owner decisions with no approved default;
+    each is a named hold, not a task an agent may decide.
+ 3. **Manual ratification checkpoints** — M1 runtime/routing/trust contracts
+    (`1dsqnj`), M3 policy/resilience contracts (`l639qp`), M5 release-governance
+    contracts (`2d308k`). Each task's own text says human owners ratify; agent
+    drafting and independent agent review complete before the checkpoint.
+ 4. **macOS release ceremonies and sign-offs** — release identity/entitlement/
+    migration contract approval (`1tzaed` AC5), Developer ID/notary environment
+    completion (`3gkwn0`, which now consumes `dveo1o`), third-party notice legal
+    review (`151xf0` AC5), system-extension approval for the Developer ID-signed
+    candidate on a clean system (`1r48pc`), the rollback-rehearsal freeze approval
+    (`yynqbr`), and the final distribution acceptance run (`2aessv`). The M4
+    physical product/security/accessibility matrix (`zwtrhy`) runs unattended on
+    this Mac under the H2 approval.
+ 5. **Deferred branch** — Gate A0 evidence (`1i6bh7` → `1828xy`), then iOS
+    targets, TestFlight, and App Review. Per ADR-027 these carry `blocked`
+    status so no scheduler can pull them onto the prototype path.
+ 
+ The generated plan in `.task-board/.resources/TASK-260728-3a2dnr/` is the
+ authoritative count. A node that needs human action is never counted as
+ autonomous, even when agent work follows inside the same node.
+ 
+ ## Success signal
+ All autonomous tasks accepted `done`; the SPM harness and the signed macOS
+ provider demonstrate the packet bridge, HEV, the libssh2 engine, TCP + leak-free
+ DNS forwarding, and a relay round-trip end-to-end on this Mac; and the board's
+ only remaining open items are exactly the human gates above, each with a clear
+ ask. A human then runs those gates, and the signed, notarized macOS VPN ships
+ with working in-app self-update.
+diff --git a/docs/spawn-policy.md b/docs/spawn-policy.md
+index 4ce9407..436ee56 100644
+--- a/docs/spawn-policy.md
++++ b/docs/spawn-policy.md
+@@ -1,135 +1,142 @@
+ # Spawn policy — relux-tunnel
+ 
+ Serial single-provider execution: a **Codex/Sol primary orchestrator** delegates
+ implementation and independent review to tracked **Codex/Sol** children.
+ `max_parallel: 1` permits one tracked child at a time in this workdir. The model
+-and effort are pinned in `task-board.config.json` with `model_criterion: equal`.
++and effort are pinned as the single admitted pair in the
++`spawn-policy-v4` ceiling in `task-board.config.json`.
+ 
+ ## Roles → models
+ 
+ | Role | Agent | Model | Effort | Set by |
+ |---|---|---|---|---|
+ | Orchestrator (primary session) | codex | `gpt-5.6-sol` | `high` | primary-session launch |
+-| Producer / implementer | codex | `gpt-5.6-sol` | `medium` | `spawn.ceilings.codex` |
+-| Independent reviewer | codex | `gpt-5.6-sol` | `medium` | `spawn.ceilings.codex` |
++| Producer / implementer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
++| Independent reviewer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
+ 
+ Notes:
+ - The orchestrator is the primary session, **not** a spawned child. Its Sol
+   model is selected when launching or resuming the primary session; spawn
+   ceilings cannot enforce the primary model.
+-- Codex spawns require an effort; the ceiling pins every spawned role to `medium` for `gpt-5.6-sol`.
++- Codex spawns require an effort; the ceiling pins every spawned role to `high` for `gpt-5.6-sol`.
+ - Explicit provider policy permits only Codex; Claude, Gemini, Muse, and Qwen are out of policy.
+ - `agent_context.profile: lite` keeps task contracts and safety gates while
+   removing repeated generic context and materializing large preconditions.
+ 
+ ## Canonical spawn commands
+ 
+ ```bash
+-# producer (developer / tester / researcher) — Codex Sol medium
+-task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
++# producer (developer / tester / researcher) — Codex Sol high
++task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+ 
+-# reviewer — independent Codex Sol medium
+-task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
++# reviewer — fresh independent Codex Sol high
++task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+ 
+-# architecture producer — Codex Sol medium
+-task-board spawn TASK-… --role solution-architect --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
++# architecture producer — Codex Sol high
++task-board spawn TASK-… --role solution-architect --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+ ```
+ 
+ ## Config (`task-board.config.json`)
+ 
+ ```json
+ "agent_context": { "profile": "lite" },
+ "spawn": {
+   "enabled": true,
+   "max_parallel": 1,
+   "preferred_agentic_system": { "exclusive": "codex" },
+   "launch_composition": { "enabled": true },
+   "ceilings": {
+-    "codex":  { "model": "gpt-5.6-sol", "model_criterion": "equal", "reasoning_effort": "medium" }
++    "contract_version": "spawn-policy-v4",
++    "codex": {
++      "entries": [
++        { "criterion": "equal", "model": "gpt-5.6-sol", "reasoning_effort": "high" }
++      ],
++      "adjustment_confirmation": "none"
++    }
+   }
+ },
+ "session_manager": {
+   "providers": {
+     "codex": {
+       "auto_continue": { "enabled": true, "delay_seconds": 20, "max_nudges_per_turn": 2, "prompt": "…" }
+     }
+   }
+ },
+ "version_control": { "confirm": true, "desired_commit_time": "…" }
+ ```
+ 
+ Verify the effective policy — the config file is input, these views are truth:
+ 
+ ```bash
+ task-board q 'project_config(view=spawn-preflight, role=developer, agent=codex)'
+ task-board q 'project_config(view=spawn-preflight, role=reviewer, agent=codex)'
+ task-board q 'project_config()'
+ ```
+ 
+ `max_parallel: 1` means a single tracked background executor runs at a time
+ (orchestrator session + one executor); further spawns queue and start as the slot
+ frees. This limit is local to the workdir and does not coordinate a second
+-worktree or client. `model_criterion: equal` coerces an in-policy provider spawn
+-to its configured model.
++worktree or client. The equal v4 entry admits only
++`gpt-5.6-sol`/`high`; lower efforts and other models fail closed.
+ 
+ ## Review routing
+ 
+ - Security, networking, concurrency, DNS, parsers, signing, update, and release
+   tasks use `review=required`.
+ - Low-risk documentation, deterministic code generation, and board maintenance
+   may use `review=light`.
+ - `review=none` is reserved for deterministic evidence wiring where the
+   orchestrator can verify every acceptance criterion mechanically.
+ - Rework remains producer-owned; review uses a fresh independent Codex run.
+ 
+ ## Commit and synchronization policy
+ 
+ After every accepted task:
+ 
+ 1. Commit the accepted task scope.
+ 2. Use a commit timestamp inside **20:00-09:00 Europe/Moscow**, equivalent to
+    **21:00-10:00 Asia/Tbilisi**.
+ 3. Record timestamps using the Tbilisi `+04:00` offset. Synthetic future
+    timestamps are allowed.
+ 4. Preserve accepted-task order: every timestamp must be strictly later than
+    the previous commit, with at least a one-minute interval.
+ 5. Push and verify local `HEAD` equals the remote branch.
+ 
+ The repository's current Git identity and signing configuration remain in
+ force; task-board does not replace them. `version_control.confirm: true` keeps
+ the commit acknowledgement gate on, scoped to the agent's own work
+ (`commit_ack=scope_committed`); foreign uncommitted work does not block a
+ handoff.
+ 
+ Task-board writes local runtime state under `.task-board/` that is not board
+ content and must stay untracked:
+ 
+ ```gitignore
+ .task-board/.progress-pair-generation
+ .task-board/.progress-pair-journal.json
+ ```
+ 
+ ## Context and autonomy
+ 
+ `agent_context.profile: lite` is enabled. Codex primary-session
+ `auto_continue` is enabled with two bounded nudges per turn. It does not bypass
+ real ambiguity, approval, secret, platform, or external-input gates.
+ 
+ Persistent producer/reviewer continuity is not part of task-board `0.23.0`.
+ Do not add `spawn.execution_policy` until the continuity branch is independently
+ audited, rebased, released, and proven against real provider resume paths.
+ 
+ ## Build-host VPN prohibition
+ 
+ All agent roles treat this development Mac as build-only. Spawns may run local
+ builds, compilation, lint, unit/integration tests, harnesses, simulators, archive
+ inspection, and unsigned provider tests. They must not install or open a VPN
+ app/system extension, persist a NetworkExtension preference, start or activate
+ a tunnel/provider, or mutate routes or DNS on this host.
+ 
+ Any macOS physical VPN validation task must depend on the human provisioning
+ gate `TASK-260819-25e1ys`. It executes only on the configured dedicated Mac and
+ must first pass `scripts/physical-test-host-preflight.sh`; neither agent
+ autonomy nor a spawned role may bypass that guard. The authoritative operation
+ matrix and fail-closed identity contract are in
+ [`build-host-safety.md`](build-host-safety.md).
+diff --git a/task-board.config.json b/task-board.config.json
+index c258a2c..e2dfc2e 100644
+--- a/task-board.config.json
++++ b/task-board.config.json
+@@ -1,42 +1,48 @@
+ {
+   "local": {
+     "board_dir": ".task-board"
+   },
+   "mode": "local",
+   "agent_context": {
+     "profile": "lite"
+   },
+   "spawn": {
+     "enabled": true,
+-    "max_parallel": 3,
++    "max_parallel": 1,
+     "preferred_agentic_system": {
+       "exclusive": "codex"
+     },
+     "launch_composition": {
+       "enabled": true
+     },
+     "ceilings": {
++      "contract_version": "spawn-policy-v4",
+       "codex": {
+-        "model": "gpt-5.6-sol",
+-        "model_criterion": "equal",
+-        "reasoning_effort": "medium"
++        "entries": [
++          {
++            "criterion": "equal",
++            "model": "gpt-5.6-sol",
++            "reasoning_effort": "high"
++          }
++        ],
++        "adjustment_confirmation": "none"
+       }
+     }
+   },
+   "session_manager": {
+     "providers": {
+       "codex": {
+         "auto_continue": {
+           "enabled": true,
+           "delay_seconds": 20,
+           "max_nudges_per_turn": 2,
+           "prompt": "Continue autonomously unless blocked by a real ambiguity, approval boundary, or missing external input. Do not ask for confirmation merely to continue. If blocked, report the exact blocker and required input."
+         }
+       }
+     }
+   },
+   "version_control": {
+     "confirm": true,
+     "desired_commit_time": "After each accepted task, commit only during 20:00-09:00 Europe/Moscow (21:00-10:00 Asia/Tbilisi). Record commit timestamps with the Asia/Tbilisi UTC+04:00 offset. Synthetic future timestamps are allowed, but timestamps must remain strictly monotonic in accepted-task order with at least a one-minute interval between consecutive commits. Push after every accepted task and verify local HEAD equals origin."
+   }
+ }
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc 'TASK_BOARD_CONFIG="$PWD/task-board.config.json" task-board q --format compact '"'project_config(view=spawn-preflight, role=developer, agent=codex)'
+TASK_BOARD_CONFIG=\""'$PWD/task-board.config.json" task-board q --format compact '"'project_config(view=spawn-preflight, role=reviewer, agent=codex)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+active_schedule_window:
+agent_context:{"config_key":"agent_context","enabled":true,"profile":"lite","runtime_active":true,"source":"config"}
+contexts:{"allowed_secret_classes":["unrestricted"],"builder_scope":null,"config_key":"features.context_sharing","enabled":false,"inheritance_policy":{"pipeline_configured":true,"predecessors":["solution-architect"],"supplemental_sources":null},"materialization":"denied","mode":"none","payload_capability":"","payload_mode":"off","provider":"codex","reason_codes":["context_sharing_disabled"],"registry_capability":"board-v1","retention":{"building_ttl":"6h","materialization_idle_ttl":"1d","max_descendants_per_base":64,"max_ready_per_binding":3,"payload_ttl":"7d","ready_ttl":"30d","retired_ttl":"1d","stale_ttl":"7d","unpublished_materialization_ttl":"1d"}}
+enabled:true
+launch_composition:{"enabled":true,"status":"enabled"}
+max_parallel:1
+providers:{"allowed":["codex"],"target":"codex"}
+resolved_role_ceiling:{"adjustment_confirmation":"none","admitted_pairs":{"digest":"sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709","form":"entries","models":[{"efforts":["high"],"id":"gpt-5.6-sol"}],"provider":"codex"},"allowed_models":null,"allowed_models_source":"provider","authority":"explicit_allow_set","config_key":"spawn.ceilings.codex","configured":true,"contract_version":"spawn-policy-v4","entries_expanded":[{"config_key":"spawn.ceilings.codex.entries[0]","criterion":"equal","model":"gpt-5.6-sol","pairs":["gpt-5.6-sol:high"],"reasoning_effort":"high"}],"entries_expansion_pinned":"not_required","provenance":{"adjustment_confirmation":"spawn.ceilings.codex.adjustment_confirmation","admitted_pairs":"spawn.ceilings.codex.entries","allowed_models":"spawn.ceilings.codex.allowed_models","entries_expanded":"spawn.ceilings.codex.entries","entries_expansion_pinned":"spawn.ceilings.codex.entries","policy":"spawn.ceilings.codex","resolution_model":"spawn.ceilings.codex.resolution_model"},"resolution_model":null}
+resolved_role_default:{"configured":false,"spawns_without_manual_selection":false}
+role:developer
+selection_mode:explicit_override
+workload_class_recommendation:{"config_key":"spawn.workload_classes","configured":false}
+active_schedule_window:
+agent_context:{"config_key":"agent_context","enabled":true,"profile":"lite","runtime_active":true,"source":"config"}
+contexts:{"allowed_secret_classes":["unrestricted"],"builder_scope":null,"config_key":"features.context_sharing","enabled":false,"inheritance_policy":{"pipeline_configured":true,"predecessors":["solution-architect"],"supplemental_sources":null},"materialization":"denied","mode":"none","payload_capability":"","payload_mode":"off","provider":"codex","reason_codes":["context_sharing_disabled"],"registry_capability":"board-v1","retention":{"building_ttl":"6h","materialization_idle_ttl":"1d","max_descendants_per_base":64,"max_ready_per_binding":3,"payload_ttl":"7d","ready_ttl":"30d","retired_ttl":"1d","stale_ttl":"7d","unpublished_materialization_ttl":"1d"}}
+enabled:true
+launch_composition:{"enabled":true,"status":"enabled"}
+max_parallel:1
+providers:{"allowed":["codex"],"target":"codex"}
+resolved_role_ceiling:{"adjustment_confirmation":"none","admitted_pairs":{"digest":"sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709","form":"entries","models":[{"efforts":["high"],"id":"gpt-5.6-sol"}],"provider":"codex"},"allowed_models":null,"allowed_models_source":"provider","authority":"explicit_allow_set","config_key":"spawn.ceilings.codex","configured":true,"contract_version":"spawn-policy-v4","entries_expanded":[{"config_key":"spawn.ceilings.codex.entries[0]","criterion":"equal","model":"gpt-5.6-sol","pairs":["gpt-5.6-sol:high"],"reasoning_effort":"high"}],"entries_expansion_pinned":"not_required","provenance":{"adjustment_confirmation":"spawn.ceilings.codex.adjustment_confirmation","admitted_pairs":"spawn.ceilings.codex.entries","allowed_models":"spawn.ceilings.codex.allowed_models","entries_expanded":"spawn.ceilings.codex.entries","entries_expansion_pinned":"spawn.ceilings.codex.entries","policy":"spawn.ceilings.codex","resolution_model":"spawn.ceilings.codex.resolution_model"},"resolution_model":null}
+resolved_role_default:{"configured":false,"spawns_without_manual_selection":false}
+role:reviewer
+selection_mode:explicit_override
+workload_class_recommendation:{"config_key":"spawn.workload_classes","configured":false}
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+codex
+Positive preflights independently подтвердили один admitted pair `gpt-5.6-sol:high`, `lite`, `max_parallel:1` для обоих roles. Теперь атакую production admission call site безопасным несуществующим task ID: `medium` обязан отвалиться до task lookup и не создать run.
+exec
+/bin/zsh -lc 'set +e
+TASK_BOARD_CONFIG="$PWD/task-board.config.json" task-board spawn TASK-260830-zzzzzz --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
+producer_exit=$?
+TASK_BOARD_CONFIG="$PWD/task-board.config.json" task-board spawn TASK-260830-zzzzzz --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort medium
+reviewer_exit=$?
+printf '"'producer_medium_exit=%s\\nreviewer_medium_exit=%s\\n' \""'$producer_exit" "$reviewer_exit"
+test "$producer_exit" -eq 1 && test "$reviewer_exit" -eq 1' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+spawn_no_supported_effort_under_ceiling: /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree/task-board.config.json: spawn.ceilings.codex: model "gpt-5.6-sol" has no supported reasoning effort at or below "medium"
+spawn_no_supported_effort_under_ceiling: /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree/task-board.config.json: spawn.ceilings.codex: model "gpt-5.6-sol" has no supported reasoning effort at or below "medium"
+producer_medium_exit=1
+reviewer_medium_exit=1
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+exec
+/bin/zsh -lc 'command -v jq
+command -v plutil' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+/opt/homebrew/bin/jq
+/usr/bin/plutil
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..b586e49a69e6e164e03bda575ded13c1db685d58
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,4 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++exit_code=0
+
+apply patch
+patch: completed
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc "jq -e '
+  .agent_context.profile == \"lite\" and
+  .spawn.enabled == true and
+  .spawn.max_parallel == 1 and
+  .spawn.preferred_agentic_system == {\"exclusive\":\"codex\"} and
+  .spawn.ceilings.contract_version == \"spawn-policy-v4\" and
+  .spawn.ceilings.codex.adjustment_confirmation == \"none\" and
+  .spawn.ceilings.codex.entries == [{\"criterion\":\"equal\",\"model\":\"gpt-5.6-sol\",\"reasoning_effort\":\"high\"}] and
+  .version_control.confirm == true and
+  (.version_control.desired_commit_time | contains(\"Push after every accepted task\") and contains(\"verify local HEAD equals origin\"))
+' task-board.config.json
+"'! rg -n '"'reasoning-effort medium|at "'`medium`|max_parallel[`: ]+3|"max_parallel"[[:space:]]*:[[:space:]]*3'"' task-board.config.json docs/spawn-policy.md .spec/goal-macos-v1.md
+test \""'$(rg -c '"'"'^task-board spawn .*--reasoning-effort high$'"' docs/spawn-policy.md)\" -eq 3
+test \""'$(rg -c '"'"'^task-board spawn '"' docs/spawn-policy.md)\" -eq 3
+rg -n 'gpt-5\\.6-sol|reasoning-effort high|max_parallel|profile.*lite|fresh independent|fresh reviewer|Commit|Push|HEAD.*origin' task-board.config.json docs/spawn-policy.md .spec/goal-macos-v1.md" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+true
+.spec/goal-macos-v1.md:64:background children per `docs/spawn-policy.md` — **Codex `gpt-5.6-sol` at `high`
+.spec/goal-macos-v1.md:66:independent reviewer; `max_parallel` 1** (one tracked child at a time). Each task
+.spec/goal-macos-v1.md:70:push to remote, verify local `HEAD` equals origin.**
+task-board.config.json:7:    "profile": "lite"
+task-board.config.json:11:    "max_parallel": 1,
+task-board.config.json:24:            "model": "gpt-5.6-sol",
+task-board.config.json:46:    "desired_commit_time": "After each accepted task, commit only during 20:00-09:00 Europe/Moscow (21:00-10:00 Asia/Tbilisi). Record commit timestamps with the Asia/Tbilisi UTC+04:00 offset. Synthetic future timestamps are allowed, but timestamps must remain strictly monotonic in accepted-task order with at least a one-minute interval between consecutive commits. Push after every accepted task and verify local HEAD equals origin."
+docs/spawn-policy.md:5:`max_parallel: 1` permits one tracked child at a time in this workdir. The model
+docs/spawn-policy.md:13:| Orchestrator (primary session) | codex | `gpt-5.6-sol` | `high` | primary-session launch |
+docs/spawn-policy.md:14:| Producer / implementer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
+docs/spawn-policy.md:15:| Independent reviewer | codex | `gpt-5.6-sol` | `high` | `spawn.ceilings.codex` |
+docs/spawn-policy.md:21:- Codex spawns require an effort; the ceiling pins every spawned role to `high` for `gpt-5.6-sol`.
+docs/spawn-policy.md:23:- `agent_context.profile: lite` keeps task contracts and safety gates while
+docs/spawn-policy.md:30:task-board spawn TASK-… --role developer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+docs/spawn-policy.md:32:# reviewer — fresh independent Codex Sol high
+docs/spawn-policy.md:33:task-board spawn TASK-… --role reviewer --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+docs/spawn-policy.md:36:task-board spawn TASK-… --role solution-architect --background --agent codex --model gpt-5.6-sol --reasoning-effort high
+docs/spawn-policy.md:42:"agent_context": { "profile": "lite" },
+docs/spawn-policy.md:45:  "max_parallel": 1,
+docs/spawn-policy.md:52:        { "criterion": "equal", "model": "gpt-5.6-sol", "reasoning_effort": "high" }
+docs/spawn-policy.md:76:`max_parallel: 1` means a single tracked background executor runs at a time
+docs/spawn-policy.md:80:`gpt-5.6-sol`/`high`; lower efforts and other models fail closed.
+docs/spawn-policy.md:90:- Rework remains producer-owned; review uses a fresh independent Codex run.
+docs/spawn-policy.md:92:## Commit and synchronization policy
+docs/spawn-policy.md:96:1. Commit the accepted task scope.
+docs/spawn-policy.md:103:5. Push and verify local `HEAD` equals the remote branch.
+docs/spawn-policy.md:121:`agent_context.profile: lite` is enabled. Codex primary-session
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc 'task-board goal get' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 1ms:
+Primary Goal: PRIMARY-GOAL-260728-3lhfz3 revision 8
+State: active
+Objective: Deliver a working, signed and notarized macOS-first Relux Tunnel client that presents as a full-tunnel NEPacketTunnelProvider VPN and uses authenticated SSH with libssh2 as the primary external transport to a user-controlled host. Complete all gate-free SPM core, packet bridge and HEV, SSH viability, TCP and DNS runtime, rootless exec and stdio relay, UDP and degraded mode, macOS UI and provider, self-update, threat-model, CI, signing and release work through tracked producer-reviewer-rework-accepted cycles. iOS, App Store A0 policy research, and native Linux runner evidence are deferred and must not block the macOS prototype. Preserve host-key verification before auth, Keychain-only secret custody, bounded memory, fail-closed DNS, no user-exposed SOCKS, no SFTP, no utun-FD discovery, injectable physical tuning, and stop only at real Keychain, Apple provisioning, system-VPN, physical validation, notary, or product-decision gates with exact evidence. Use only one Codex gpt-5.6-sol high worker at a time with lite context and max_parallel 1; execute producer then fresh reviewer serially and continue through rework until accepted done. Continue autonomously through subsequent critical-path tasks until the human explicitly requests a pause. Do not install, enable, configure, or connect the real system VPN on this machine; reserve system-VPN validation for the dedicated test host. After every accepted task whose changes merit version control, automatically create signed commits as Ivan Oparin <oparin@me.com> using /Users/iv/.ssh/ivanopcode, push task branches, open pull requests, land them in main after applicable checks and review, synchronize local main with origin, and leave accepted scopes clean. Commit timestamps must remain sequential and fall within 20:00-09:00 MSK, represented consistently in Tbilisi time.
+Board Scope: local /Users/iv/Developer/relux-tunnel/.task-board
+Updated: 2026-08-30T02:24:07.512706Z
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+codex
+Focused drift/goal checks exit 0: revision 8 и оба docs согласованы, commit/push synchronization rules сохранены. Остался общий `task-board validate`; ожидаемый board-wide parent mismatch не буду маскировать как green, даже если CLI process вернёт 0.
+exec
+/bin/zsh -lc 'task-board validate --json' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 160ms:
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PARENT_STATUS_MISMATCH",
+      "message": "STORY-260715-anxje6: status to-dev does not match child aggregate reviewing; update the parent status or correct child statuses",
+      "elementId": "STORY-260715-anxje6"
+    }
+  ],
+  "warnings": []
+}
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc 'task-board spawn status RUN-260830-d1a567 --format compact' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ exited 1 in 0ms:
+unknown flag: --format
+Usage:
+  task-board [command]
+
+Available Commands:
+  admin            Server administration (users, tokens, access)
+  boards           List boards accessible to the current user (remote mode)
+  claude           Launch Claude through the Task-board Session Manager
+  codex            Attach Codex to the Task-board Session Manager
+  completion       Generate the autocompletion script for the specified shell
+  export           Export current board into a tar.gz archive
+  goal             Read and align the board-scoped parent primary goal
+  grep             Full-text search across board files
+  handoff          Verify role handoff evidence and move to the role end status
+  help             Help about any command
+  import           Import a tar.gz archive into the current board
+  limits           Inspect and control provider rate-limit state
+  login            Store a token for the current remote
+  logout           Remove active user's token for current remote
+  m                Execute a mutation (write operation)
+  migrate-keychain Import legacy remote credentials into macOS Keychain
+  plan             Show execution plan with phases and critical path
+  q                Query the board with a mini DSL
+  repair-links     List or remove unsupported container dependency links
+  resource         Upload, update, download, and delete board resources
+  self-update      Update task-board to the latest version
+  session          Inspect and stop Task-board Session Manager sessions
+  spawn            Queue an agent spawn run for a board task
+  switch-user      Switch active user for current remote
+  tree             Show board as hierarchical tree
+  tui              Launch interactive TUI
+  validate         Validate board structure
+  whoami           Show current remote and active user
+  worktree         Inspect and repair managed Story workspaces
+
+Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board [command] --help" for more information about a command.
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+codex
+Попытка `spawn status --format compact` дала exit 1: эта версия CLI не поддерживает flag. Повторяю известную форму без `--format`; failure фиксирую как read-shape error, не как отсутствие run.
+exec
+/bin/zsh -lc 'task-board spawn status RUN-260830-d1a567' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+Run: RUN-260830-d1a567
+Task: TASK-260715-whtdsf
+Status: cancelled
+Phase: finalizing
+Summary: Persisting terminal run state
+Started: 2026-08-30T02:22:12.787896Z
+Completed: 2026-08-30T02:24:37.139996Z
+Last Progress: 2026-08-30T02:24:37.617071Z
+Completion: cancelled
+Attempt 1: codex gpt-5.6-sol/medium (group codex-plan) exit=-1
+  Provider Output: /Users/iv/Developer/relux-tunnel/.temp/logwork/TASK-260715-whtdsf/-reviewer--reviewer--codex-_RUN-260830-d1a567.log
+Spread: round_robin via explicit_override [config: spawn.limits.spread]
+Element Routing: recorded at 2026-08-30T02:26:01.140982Z
+Last Event Seq: 85
+Last Directive Ack: RUN-260830-d1a567:cancel:332b82
+Launch Composition: empty (provider=codex, diagnostic=launch_composition_empty)
+Agent: [reviewer] reviewer (codex) (codex)
+Logwork: /Users/iv/Developer/relux-tunnel/.temp/logwork/TASK-260715-whtdsf/-reviewer--reviewer--codex-_RUN-260830-d1a567.log
+Error: cancelled by operator directive
+Exit Code: 130
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc 'task-board spawn status RUN-260830-190c14' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+Run: RUN-260830-190c14
+Task: TASK-260830-1srcgk
+Status: running
+Phase: executing
+Summary: child board mutation: set_status("TASK-260830-1srcgk", status="reviewing")
+Started: 2026-08-30T03:59:50.655138Z
+Last Progress: 2026-08-30T04:00:00.001937Z
+Spread: round_robin via explicit_override [config: spawn.limits.spread]
+Last Event Seq: 102
+Launch Composition: empty (provider=codex, diagnostic=launch_composition_empty)
+Agent: [reviewer] reviewer (codex) (codex)
+Logwork: /Users/iv/Developer/relux-tunnel/.temp/logwork/TASK-260830-1srcgk/-reviewer--reviewer--codex-_RUN-260830-190c14.log
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc "task-board q --format compact 'project_config(view=spawn-preflight, role=developer, agent=codex)' | rg '"'^(agent_context|max_parallel|providers|resolved_role_ceiling|role):'"'
+task-board q --format compact 'project_config(view=spawn-preflight, role=reviewer, agent=codex)' | rg '"'^(agent_context|max_parallel|providers|resolved_role_ceiling|role):'"'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+agent_context:{"config_key":"agent_context","enabled":true,"profile":"lite","runtime_active":true,"source":"config"}
+max_parallel:1
+providers:{"allowed":["codex"],"target":"codex"}
+resolved_role_ceiling:{"admitted_pairs":{"digest":"sha256:04b5fce79553c16e769f64e679cd8b9fb5dadfaa2d78bfbe3da71bfcb94a075e","form":"v2_snapshot","models":[{"efforts":["low","medium","high"],"id":"gpt-5.6-sol"}],"provider":"codex"},"authority":"v2_compatibility_snapshot","config_key":"spawn.ceilings.codex","configured":true,"contract_version":"spawn-policy-v2","migration":{"adjustment_confirmation":"none","allowed_models":["gpt-5.6-sol"],"reasoning_effort":"high","reasoning_effort_criterion":"less_or_equal","resolution_model":"gpt-5.6-sol"},"migration_required":true,"migration_warning":{"config_key":"spawn.ceilings.codex","next_step":"Copy the projected migration object into the same runtime or role under a reviewed spawn-policy-v4 ceilings config; no repository config is changed automatically.","reason":"spawn_policy_v2_explicit_migration_required"},"model":"gpt-5.6-sol","model_criterion":"equal","provenance":{"admitted_pairs":"spawn.ceilings.codex","model":"spawn.ceilings.codex.model","model_criterion":"spawn.ceilings.codex.model_criterion","policy":"spawn.ceilings.codex","reasoning_effort":"spawn.ceilings.codex.reasoning_effort"},"reasoning_effort":"high","snapshot_allowed_models":["gpt-5.6-sol"],"snapshot_version":"spawn-policy-v2-rollout-2026-07-28"}
+role:developer
+agent_context:{"config_key":"agent_context","enabled":true,"profile":"lite","runtime_active":true,"source":"config"}
+max_parallel:1
+providers:{"allowed":["codex"],"target":"codex"}
+resolved_role_ceiling:{"admitted_pairs":{"digest":"sha256:04b5fce79553c16e769f64e679cd8b9fb5dadfaa2d78bfbe3da71bfcb94a075e","form":"v2_snapshot","models":[{"efforts":["low","medium","high"],"id":"gpt-5.6-sol"}],"provider":"codex"},"authority":"v2_compatibility_snapshot","config_key":"spawn.ceilings.codex","configured":true,"contract_version":"spawn-policy-v2","migration":{"adjustment_confirmation":"none","allowed_models":["gpt-5.6-sol"],"reasoning_effort":"high","reasoning_effort_criterion":"less_or_equal","resolution_model":"gpt-5.6-sol"},"migration_required":true,"migration_warning":{"config_key":"spawn.ceilings.codex","next_step":"Copy the projected migration object into the same runtime or role under a reviewed spawn-policy-v4 ceilings config; no repository config is changed automatically.","reason":"spawn_policy_v2_explicit_migration_required"},"model":"gpt-5.6-sol","model_criterion":"equal","provenance":{"admitted_pairs":"spawn.ceilings.codex","model":"spawn.ceilings.codex.model","model_criterion":"spawn.ceilings.codex.model_criterion","policy":"spawn.ceilings.codex","reasoning_effort":"spawn.ceilings.codex.reasoning_effort"},"reasoning_effort":"high","snapshot_allowed_models":["gpt-5.6-sol"],"snapshot_version":"spawn-policy-v2-rollout-2026-07-28"}
+role:reviewer
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+codex
+Важная грань: без `TASK_BOARD_CONFIG` CLI читает ещё не обновлённый config интеграционного checkout (`spawn-policy-v2`, допускает low/medium/high). Это ожидаемо до landing CR2; candidate-effective проверки обязаны явно привязываться к worktree config — именно так сделаны producer evidence и мои проверки. Сейчас отдельно доказываю, что тот же строгий scan отвергает base policy.
+exec
+/bin/zsh -lc "set +e
+git show 3852fae014a325b8c1bca89c7619233210688451:task-board.config.json | jq -e '
+  .agent_context.profile == \"lite\" and
+  .spawn.max_parallel == 1 and
+  .spawn.ceilings.contract_version == \"spawn-policy-v4\" and
+  .spawn.ceilings.codex.entries == [{\"criterion\":\"equal\",\"model\":\"gpt-5.6-sol\",\"reasoning_effort\":\"high\"}]
+'
+base_policy_exit="'$?
+printf '"'base_policy_strict_scan_exit=%s\\n' \""'$base_policy_exit"
+test "$base_policy_exit" -eq 1' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 0ms:
+false
+base_policy_strict_scan_exit=1
+
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+Exact CR2 delta and independent positive/negative/config/goal/Git checks are complete. The only failing gate is the pre-existing board-wide parent-status mismatch, accurately scoped as unrelated to the three-file candidate.
+  ✓ Inspect task/CR evidence and exact candidate delta
+  ✓ Independently run config, policy-drift, negative, and Git checks
+  → Attach one evidence-backed reviewer verdict and route revision 2
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+codex
+Вердикт — accept. Scoped gates зелёные, negative probes реально режут `medium`; board-wide `valid:false` остаётся честно отмеченным как внешний parent-status mismatch, а не приписывается candidate. Сейчас прикладываю новый `TASK-…_review-verdict-rev2.md`, затем принимаю ровно CR revision 2 через `accept_cr` без `commit_ack`.
+apply patch
+patch: completed
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+diff --git a/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e46785b223b447dec771dc31c3bbdad30ab6cd9a
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+@@ -0,0 +1,89 @@
++# TASK-260830-1srcgk review verdict — CR revision 2
++
++## Verdict
++
++Accepted. The exact CR2 candidate implements the required Codex
++`gpt-5.6-sol`/`high`, lite-context, one-tracked-child policy and preserves the
++existing signed commit/push synchronization contract. No product runtime or VPN
++activation path is changed.
++
++## Exact reviewed scope
++
++- Base OID: `3852fae014a325b8c1bca89c7619233210688451`.
++- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`.
++- Attached patch SHA-256: `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`
++  (independently reproduced, exit 0).
++- Exact object diff: only `.spec/goal-macos-v1.md`,
++  `docs/spawn-policy.md`, and `task-board.config.json`; 33 insertions and 20
++  deletions. `git diff --check` exited 0.
++- The three scoped worktree files match the candidate tree (`git diff
++  --exit-code <candidate> -- <three paths>`, exit 0). Unrelated pre-existing
++  Story-worktree changes were observed and not touched or included in the
++  verdict.
++
++## Independent policy checks
++
++- Candidate-bound developer spawn preflight: exit 0.
++- Candidate-bound reviewer spawn preflight: exit 0.
++- Both resolve Codex only, `agent_context.profile=lite`, `max_parallel=1`,
++  `spawn-policy-v4`, and the sole admitted pair `gpt-5.6-sol:high` with digest
++  `sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709`.
++- Focused JSON/document drift scan: exit 0. It asserts the exact v4 entry,
++  provider, lite context, serial limit, retained version-control confirmation,
++  and all three canonical spawn examples at `high`; no `medium` or
++  `max_parallel 3` drift exists in the scoped files.
++- The same strict config predicate against the base OID exited 1 as expected,
++  proving the scan rejects the superseded medium/parallel configuration.
++- `task-board goal get` exited 0 and reports primary goal
++  `PRIMARY-GOAL-260728-3lhfz3` revision 8. Its Sol/high, lite,
++  `max_parallel 1`, producer-then-fresh-reviewer, signed-commit, push, and
++  synchronization requirements agree with both policy documents.
++
++Candidate preflights were intentionally bound with
++`TASK_BOARD_CONFIG=$PWD/task-board.config.json`: before CR2 is landed, an
++unqualified CLI invocation resolves the integration checkout's older v2
++configuration. That is pre-integration state, not candidate-effective state.
++
++## Negative evidence and production call site
++
++The production call site exercised is `task-board spawn` admission against
++`spawn.ceilings.codex`.
++
++- Developer `gpt-5.6-sol/medium` probe using a valid-shaped nonexistent task ID:
++  exit 1, typed `spawn_no_supported_effort_under_ceiling`.
++- Reviewer `gpt-5.6-sol/medium` probe using the same safe ID: exit 1, the same
++  typed refusal.
++
++Both fail before task lookup, so the probes cannot mutate a real board element.
++This narrows the admitted pair and is not delete-only evidence.
++
++## Routing and anomalies
++
++- `task-board spawn status RUN-260830-d1a567` exited 0 and confirms the
++  superseded `TASK-260715-whtdsf` reviewer used Sol/medium, was cancelled by
++  operator directive, and has terminal exit code 130. No verdict from it is
++  accepted or reused.
++- Replacement reviewer run `RUN-260830-190c14` is fresh and serial; its
++  candidate-effective reviewer preflight is the Sol/high route above.
++- An initial status read with unsupported `--format compact` exited 1; the
++  supported status form was rerun successfully. This was a read-shape failure,
++  not evidence of absence.
++- `task-board validate --json` process exit was 0, but its payload was
++  `valid:false` with `PARENT_STATUS_MISMATCH`: Story
++  `STORY-260715-anxje6` is stored as `to-dev` while the current child aggregate
++  is `reviewing`. This board-wide orchestration mismatch remains failing and is
++  not represented as green. It is outside the exact three-file CR2 delta and
++  does not invalidate the candidate-specific config, drift, goal, negative, or
++  Git checks.
++
++## Project fit
++
++The delta is limited to canonical orchestration config and policy/spec prose.
++No product build is relevant because runtime code is unchanged; effective
++preflights, reject-path probes, JSON assertions, goal consistency, and exact Git
++checks cover the changed behavior. No architecture diagram is needed for this
++single serial-routing policy change, and no diagram artifact was modified.
++
++The commit-owning orchestrator must checkpoint/integrate this accepted revision
++and perform the final `done` transition with `commit_ack=scope_committed`; this
++reviewer supplies no commit acknowledgement.
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+diff --git a/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e46785b223b447dec771dc31c3bbdad30ab6cd9a
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+@@ -0,0 +1,89 @@
++# TASK-260830-1srcgk review verdict — CR revision 2
++
++## Verdict
++
++Accepted. The exact CR2 candidate implements the required Codex
++`gpt-5.6-sol`/`high`, lite-context, one-tracked-child policy and preserves the
++existing signed commit/push synchronization contract. No product runtime or VPN
++activation path is changed.
++
++## Exact reviewed scope
++
++- Base OID: `3852fae014a325b8c1bca89c7619233210688451`.
++- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`.
++- Attached patch SHA-256: `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`
++  (independently reproduced, exit 0).
++- Exact object diff: only `.spec/goal-macos-v1.md`,
++  `docs/spawn-policy.md`, and `task-board.config.json`; 33 insertions and 20
++  deletions. `git diff --check` exited 0.
++- The three scoped worktree files match the candidate tree (`git diff
++  --exit-code <candidate> -- <three paths>`, exit 0). Unrelated pre-existing
++  Story-worktree changes were observed and not touched or included in the
++  verdict.
++
++## Independent policy checks
++
++- Candidate-bound developer spawn preflight: exit 0.
++- Candidate-bound reviewer spawn preflight: exit 0.
++- Both resolve Codex only, `agent_context.profile=lite`, `max_parallel=1`,
++  `spawn-policy-v4`, and the sole admitted pair `gpt-5.6-sol:high` with digest
++  `sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709`.
++- Focused JSON/document drift scan: exit 0. It asserts the exact v4 entry,
++  provider, lite context, serial limit, retained version-control confirmation,
++  and all three canonical spawn examples at `high`; no `medium` or
++  `max_parallel 3` drift exists in the scoped files.
++- The same strict config predicate against the base OID exited 1 as expected,
++  proving the scan rejects the superseded medium/parallel configuration.
++- `task-board goal get` exited 0 and reports primary goal
++  `PRIMARY-GOAL-260728-3lhfz3` revision 8. Its Sol/high, lite,
++  `max_parallel 1`, producer-then-fresh-reviewer, signed-commit, push, and
++  synchronization requirements agree with both policy documents.
++
++Candidate preflights were intentionally bound with
++`TASK_BOARD_CONFIG=$PWD/task-board.config.json`: before CR2 is landed, an
++unqualified CLI invocation resolves the integration checkout's older v2
++configuration. That is pre-integration state, not candidate-effective state.
++
++## Negative evidence and production call site
++
++The production call site exercised is `task-board spawn` admission against
++`spawn.ceilings.codex`.
++
++- Developer `gpt-5.6-sol/medium` probe using a valid-shaped nonexistent task ID:
++  exit 1, typed `spawn_no_supported_effort_under_ceiling`.
++- Reviewer `gpt-5.6-sol/medium` probe using the same safe ID: exit 1, the same
++  typed refusal.
++
++Both fail before task lookup, so the probes cannot mutate a real board element.
++This narrows the admitted pair and is not delete-only evidence.
++
++## Routing and anomalies
++
++- `task-board spawn status RUN-260830-d1a567` exited 0 and confirms the
++  superseded `TASK-260715-whtdsf` reviewer used Sol/medium, was cancelled by
++  operator directive, and has terminal exit code 130. No verdict from it is
++  accepted or reused.
++- Replacement reviewer run `RUN-260830-190c14` is fresh and serial; its
++  candidate-effective reviewer preflight is the Sol/high route above.
++- An initial status read with unsupported `--format compact` exited 1; the
++  supported status form was rerun successfully. This was a read-shape failure,
++  not evidence of absence.
++- `task-board validate --json` process exit was 0, but its payload was
++  `valid:false` with `PARENT_STATUS_MISMATCH`: Story
++  `STORY-260715-anxje6` is stored as `to-dev` while the current child aggregate
++  is `reviewing`. This board-wide orchestration mismatch remains failing and is
++  not represented as green. It is outside the exact three-file CR2 delta and
++  does not invalidate the candidate-specific config, drift, goal, negative, or
++  Git checks.
++
++## Project fit
++
++The delta is limited to canonical orchestration config and policy/spec prose.
++No product build is relevant because runtime code is unchanged; effective
++preflights, reject-path probes, JSON assertions, goal consistency, and exact Git
++checks cover the changed behavior. No architecture diagram is needed for this
++single serial-routing policy change, and no diagram artifact was modified.
++
++The commit-owning orchestrator must checkpoint/integrate this accepted revision
++and perform the final `done` transition with `commit_ack=scope_committed`; this
++reviewer supplies no commit acknowledgement.
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc "task-board resource add TASK-260830-1srcgk .temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md --type outcome --description 'Accepted CR revision 2 reviewer verdict with independent positive and negative evidence'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 378ms:
+Attached TASK-260830-1srcgk_review-verdict-rev2.md on TASK-260830-1srcgk as outcome
+
+diff --git a/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e46785b223b447dec771dc31c3bbdad30ab6cd9a
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+@@ -0,0 +1,89 @@
++# TASK-260830-1srcgk review verdict — CR revision 2
++
++## Verdict
++
++Accepted. The exact CR2 candidate implements the required Codex
++`gpt-5.6-sol`/`high`, lite-context, one-tracked-child policy and preserves the
++existing signed commit/push synchronization contract. No product runtime or VPN
++activation path is changed.
++
++## Exact reviewed scope
++
++- Base OID: `3852fae014a325b8c1bca89c7619233210688451`.
++- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`.
++- Attached patch SHA-256: `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`
++  (independently reproduced, exit 0).
++- Exact object diff: only `.spec/goal-macos-v1.md`,
++  `docs/spawn-policy.md`, and `task-board.config.json`; 33 insertions and 20
++  deletions. `git diff --check` exited 0.
++- The three scoped worktree files match the candidate tree (`git diff
++  --exit-code <candidate> -- <three paths>`, exit 0). Unrelated pre-existing
++  Story-worktree changes were observed and not touched or included in the
++  verdict.
++
++## Independent policy checks
++
++- Candidate-bound developer spawn preflight: exit 0.
++- Candidate-bound reviewer spawn preflight: exit 0.
++- Both resolve Codex only, `agent_context.profile=lite`, `max_parallel=1`,
++  `spawn-policy-v4`, and the sole admitted pair `gpt-5.6-sol:high` with digest
++  `sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709`.
++- Focused JSON/document drift scan: exit 0. It asserts the exact v4 entry,
++  provider, lite context, serial limit, retained version-control confirmation,
++  and all three canonical spawn examples at `high`; no `medium` or
++  `max_parallel 3` drift exists in the scoped files.
++- The same strict config predicate against the base OID exited 1 as expected,
++  proving the scan rejects the superseded medium/parallel configuration.
++- `task-board goal get` exited 0 and reports primary goal
++  `PRIMARY-GOAL-260728-3lhfz3` revision 8. Its Sol/high, lite,
++  `max_parallel 1`, producer-then-fresh-reviewer, signed-commit, push, and
++  synchronization requirements agree with both policy documents.
++
++Candidate preflights were intentionally bound with
++`TASK_BOARD_CONFIG=$PWD/task-board.config.json`: before CR2 is landed, an
++unqualified CLI invocation resolves the integration checkout's older v2
++configuration. That is pre-integration state, not candidate-effective state.
++
++## Negative evidence and production call site
++
++The production call site exercised is `task-board spawn` admission against
++`spawn.ceilings.codex`.
++
++- Developer `gpt-5.6-sol/medium` probe using a valid-shaped nonexistent task ID:
++  exit 1, typed `spawn_no_supported_effort_under_ceiling`.
++- Reviewer `gpt-5.6-sol/medium` probe using the same safe ID: exit 1, the same
++  typed refusal.
++
++Both fail before task lookup, so the probes cannot mutate a real board element.
++This narrows the admitted pair and is not delete-only evidence.
++
++## Routing and anomalies
++
++- `task-board spawn status RUN-260830-d1a567` exited 0 and confirms the
++  superseded `TASK-260715-whtdsf` reviewer used Sol/medium, was cancelled by
++  operator directive, and has terminal exit code 130. No verdict from it is
++  accepted or reused.
++- Replacement reviewer run `RUN-260830-190c14` is fresh and serial; its
++  candidate-effective reviewer preflight is the Sol/high route above.
++- An initial status read with unsupported `--format compact` exited 1; the
++  supported status form was rerun successfully. This was a read-shape failure,
++  not evidence of absence.
++- `task-board validate --json` process exit was 0, but its payload was
++  `valid:false` with `PARENT_STATUS_MISMATCH`: Story
++  `STORY-260715-anxje6` is stored as `to-dev` while the current child aggregate
++  is `reviewing`. This board-wide orchestration mismatch remains failing and is
++  not represented as green. It is outside the exact three-file CR2 delta and
++  does not invalidate the candidate-specific config, drift, goal, negative, or
++  Git checks.
++
++## Project fit
++
++The delta is limited to canonical orchestration config and policy/spec prose.
++No product build is relevant because runtime code is unchanged; effective
++preflights, reject-path probes, JSON assertions, goal consistency, and exact Git
++checks cover the changed behavior. No architecture diagram is needed for this
++single serial-routing policy change, and no diagram artifact was modified.
++
++The commit-owning orchestrator must checkpoint/integrate this accepted revision
++and perform the final `done` transition with `commit_ack=scope_committed`; this
++reviewer supplies no commit acknowledgement.
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc "task-board m 'accept_cr(TASK-260830-1srcgk, revision=2, evidence=TASK-260830-1srcgk_review-verdict-rev2.md)'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 2886ms:
+{"ok":true,"result":{"cr_id":"CR-TASK-260830-1srcgk-2","cr_state":"accepted","evidence":"TASK-260830-1srcgk_review-verdict-rev2.md","id":"TASK-260830-1srcgk","next":"the orchestrator checkpoints or integrates this accepted revision and then makes the done transition","primary":{"action":"status_changed","element_id":"TASK-260830-1srcgk","field":"status","new_value":"to-review","old_value":"reviewing"},"repository_delta":"present","reviewer_run_id":"RUN-260830-190c14","revision":2,"status":"to-review"}}
+
+diff --git a/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e46785b223b447dec771dc31c3bbdad30ab6cd9a
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+@@ -0,0 +1,89 @@
++# TASK-260830-1srcgk review verdict — CR revision 2
++
++## Verdict
++
++Accepted. The exact CR2 candidate implements the required Codex
++`gpt-5.6-sol`/`high`, lite-context, one-tracked-child policy and preserves the
++existing signed commit/push synchronization contract. No product runtime or VPN
++activation path is changed.
++
++## Exact reviewed scope
++
++- Base OID: `3852fae014a325b8c1bca89c7619233210688451`.
++- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`.
++- Attached patch SHA-256: `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`
++  (independently reproduced, exit 0).
++- Exact object diff: only `.spec/goal-macos-v1.md`,
++  `docs/spawn-policy.md`, and `task-board.config.json`; 33 insertions and 20
++  deletions. `git diff --check` exited 0.
++- The three scoped worktree files match the candidate tree (`git diff
++  --exit-code <candidate> -- <three paths>`, exit 0). Unrelated pre-existing
++  Story-worktree changes were observed and not touched or included in the
++  verdict.
++
++## Independent policy checks
++
++- Candidate-bound developer spawn preflight: exit 0.
++- Candidate-bound reviewer spawn preflight: exit 0.
++- Both resolve Codex only, `agent_context.profile=lite`, `max_parallel=1`,
++  `spawn-policy-v4`, and the sole admitted pair `gpt-5.6-sol:high` with digest
++  `sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709`.
++- Focused JSON/document drift scan: exit 0. It asserts the exact v4 entry,
++  provider, lite context, serial limit, retained version-control confirmation,
++  and all three canonical spawn examples at `high`; no `medium` or
++  `max_parallel 3` drift exists in the scoped files.
++- The same strict config predicate against the base OID exited 1 as expected,
++  proving the scan rejects the superseded medium/parallel configuration.
++- `task-board goal get` exited 0 and reports primary goal
++  `PRIMARY-GOAL-260728-3lhfz3` revision 8. Its Sol/high, lite,
++  `max_parallel 1`, producer-then-fresh-reviewer, signed-commit, push, and
++  synchronization requirements agree with both policy documents.
++
++Candidate preflights were intentionally bound with
++`TASK_BOARD_CONFIG=$PWD/task-board.config.json`: before CR2 is landed, an
++unqualified CLI invocation resolves the integration checkout's older v2
++configuration. That is pre-integration state, not candidate-effective state.
++
++## Negative evidence and production call site
++
++The production call site exercised is `task-board spawn` admission against
++`spawn.ceilings.codex`.
++
++- Developer `gpt-5.6-sol/medium` probe using a valid-shaped nonexistent task ID:
++  exit 1, typed `spawn_no_supported_effort_under_ceiling`.
++- Reviewer `gpt-5.6-sol/medium` probe using the same safe ID: exit 1, the same
++  typed refusal.
++
++Both fail before task lookup, so the probes cannot mutate a real board element.
++This narrows the admitted pair and is not delete-only evidence.
++
++## Routing and anomalies
++
++- `task-board spawn status RUN-260830-d1a567` exited 0 and confirms the
++  superseded `TASK-260715-whtdsf` reviewer used Sol/medium, was cancelled by
++  operator directive, and has terminal exit code 130. No verdict from it is
++  accepted or reused.
++- Replacement reviewer run `RUN-260830-190c14` is fresh and serial; its
++  candidate-effective reviewer preflight is the Sol/high route above.
++- An initial status read with unsupported `--format compact` exited 1; the
++  supported status form was rerun successfully. This was a read-shape failure,
++  not evidence of absence.
++- `task-board validate --json` process exit was 0, but its payload was
++  `valid:false` with `PARENT_STATUS_MISMATCH`: Story
++  `STORY-260715-anxje6` is stored as `to-dev` while the current child aggregate
++  is `reviewing`. This board-wide orchestration mismatch remains failing and is
++  not represented as green. It is outside the exact three-file CR2 delta and
++  does not invalidate the candidate-specific config, drift, goal, negative, or
++  Git checks.
++
++## Project fit
++
++The delta is limited to canonical orchestration config and policy/spec prose.
++No product build is relevant because runtime code is unchanged; effective
++preflights, reject-path probes, JSON assertions, goal consistency, and exact Git
++checks cover the changed behavior. No architecture diagram is needed for this
++single serial-routing policy change, and no diagram artifact was modified.
++
++The commit-owning orchestrator must checkpoint/integrate this accepted revision
++and perform the final `done` transition with `commit_ack=scope_committed`; this
++reviewer supplies no commit acknowledgement.
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+exec
+/bin/zsh -lc "task-board q --format compact 'get(TASK-260830-1srcgk) { overview outcomeResources }'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260715-anxje6/worktree
+ succeeded in 18ms:
+id:TASK-260830-1srcgk
+name:realign-autonomous-serial-agent-policy-to-sol-high
+status:to-review
+assignee:[reviewer] reviewer (codex)
+parent:STORY-260715-anxje6
+outcomeResources:[{"name":"TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-71b8f1.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-71b8f1.log","description":"System spawn log captured by task-board"},{"name":"TASK-260830-1srcgk_results.md","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_results.md","description":"CR2 handoff evidence for exact Sol/high serial policy reapply"},{"name":"TASK-260830-1srcgk_change-request_rev1.patch","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_change-request_rev1.patch","description":"Change Request CR-TASK-260830-1srcgk-1 revision 1 candidate patch (repository_delta=present, 8 changed paths)"},{"name":"TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-93471d.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-93471d.log","description":"System spawn log captured by task-board"},{"name":"TASK-260830-1srcgk_review-verdict.md","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict.md","description":"Accepted CR revision 1 reviewer verdict and independent evidence"},{"name":"TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-48cad0.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-implementer--developer--codex-_RUN-260830-48cad0.log","description":"System spawn log captured by task-board"},{"name":"TASK-260830-1srcgk_change-request_rev2.patch","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_change-request_rev2.patch","description":"Change Request CR-TASK-260830-1srcgk-2 revision 2 candidate patch (repository_delta=present, 3 changed paths)"},{"name":"TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-190c14.log","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_spawn-log_-reviewer--reviewer--codex-_RUN-260830-190c14.log","description":"System spawn log captured by task-board"},{"name":"TASK-260830-1srcgk_review-verdict-rev2.md","uri":"file://TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md","description":"Accepted CR revision 2 reviewer verdict with independent positive and negative evidence"}]
+
+diff --git a/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e46785b223b447dec771dc31c3bbdad30ab6cd9a
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+@@ -0,0 +1,89 @@
++# TASK-260830-1srcgk review verdict — CR revision 2
++
++## Verdict
++
++Accepted. The exact CR2 candidate implements the required Codex
++`gpt-5.6-sol`/`high`, lite-context, one-tracked-child policy and preserves the
++existing signed commit/push synchronization contract. No product runtime or VPN
++activation path is changed.
++
++## Exact reviewed scope
++
++- Base OID: `3852fae014a325b8c1bca89c7619233210688451`.
++- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`.
++- Attached patch SHA-256: `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`
++  (independently reproduced, exit 0).
++- Exact object diff: only `.spec/goal-macos-v1.md`,
++  `docs/spawn-policy.md`, and `task-board.config.json`; 33 insertions and 20
++  deletions. `git diff --check` exited 0.
++- The three scoped worktree files match the candidate tree (`git diff
++  --exit-code <candidate> -- <three paths>`, exit 0). Unrelated pre-existing
++  Story-worktree changes were observed and not touched or included in the
++  verdict.
++
++## Independent policy checks
++
++- Candidate-bound developer spawn preflight: exit 0.
++- Candidate-bound reviewer spawn preflight: exit 0.
++- Both resolve Codex only, `agent_context.profile=lite`, `max_parallel=1`,
++  `spawn-policy-v4`, and the sole admitted pair `gpt-5.6-sol:high` with digest
++  `sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709`.
++- Focused JSON/document drift scan: exit 0. It asserts the exact v4 entry,
++  provider, lite context, serial limit, retained version-control confirmation,
++  and all three canonical spawn examples at `high`; no `medium` or
++  `max_parallel 3` drift exists in the scoped files.
++- The same strict config predicate against the base OID exited 1 as expected,
++  proving the scan rejects the superseded medium/parallel configuration.
++- `task-board goal get` exited 0 and reports primary goal
++  `PRIMARY-GOAL-260728-3lhfz3` revision 8. Its Sol/high, lite,
++  `max_parallel 1`, producer-then-fresh-reviewer, signed-commit, push, and
++  synchronization requirements agree with both policy documents.
++
++Candidate preflights were intentionally bound with
++`TASK_BOARD_CONFIG=$PWD/task-board.config.json`: before CR2 is landed, an
++unqualified CLI invocation resolves the integration checkout's older v2
++configuration. That is pre-integration state, not candidate-effective state.
++
++## Negative evidence and production call site
++
++The production call site exercised is `task-board spawn` admission against
++`spawn.ceilings.codex`.
++
++- Developer `gpt-5.6-sol/medium` probe using a valid-shaped nonexistent task ID:
++  exit 1, typed `spawn_no_supported_effort_under_ceiling`.
++- Reviewer `gpt-5.6-sol/medium` probe using the same safe ID: exit 1, the same
++  typed refusal.
++
++Both fail before task lookup, so the probes cannot mutate a real board element.
++This narrows the admitted pair and is not delete-only evidence.
++
++## Routing and anomalies
++
++- `task-board spawn status RUN-260830-d1a567` exited 0 and confirms the
++  superseded `TASK-260715-whtdsf` reviewer used Sol/medium, was cancelled by
++  operator directive, and has terminal exit code 130. No verdict from it is
++  accepted or reused.
++- Replacement reviewer run `RUN-260830-190c14` is fresh and serial; its
++  candidate-effective reviewer preflight is the Sol/high route above.
++- An initial status read with unsupported `--format compact` exited 1; the
++  supported status form was rerun successfully. This was a read-shape failure,
++  not evidence of absence.
++- `task-board validate --json` process exit was 0, but its payload was
++  `valid:false` with `PARENT_STATUS_MISMATCH`: Story
++  `STORY-260715-anxje6` is stored as `to-dev` while the current child aggregate
++  is `reviewing`. This board-wide orchestration mismatch remains failing and is
++  not represented as green. It is outside the exact three-file CR2 delta and
++  does not invalidate the candidate-specific config, drift, goal, negative, or
++  Git checks.
++
++## Project fit
++
++The delta is limited to canonical orchestration config and policy/spec prose.
++No product build is relevant because runtime code is unchanged; effective
++preflights, reject-path probes, JSON assertions, goal consistency, and exact Git
++checks cover the changed behavior. No architecture diagram is needed for this
++single serial-routing policy change, and no diagram artifact was modified.
++
++The commit-owning orchestrator must checkpoint/integrate this accepted revision
++and perform the final `done` transition with `commit_ack=scope_committed`; this
++reviewer supplies no commit acknowledgement.
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+CR revision 2 is accepted with a new task-scoped verdict resource. accept_cr parked the task at to-review for orchestrator-owned checkpoint/integration and final commit acknowledgement.
+  ✓ Inspect task/CR evidence and exact candidate delta
+  ✓ Independently run config, policy-drift, negative, and Git checks
+  ✓ Attach one evidence-backed reviewer verdict and route revision 2
+diff --git a/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e46785b223b447dec771dc31c3bbdad30ab6cd9a
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+@@ -0,0 +1,89 @@
++# TASK-260830-1srcgk review verdict — CR revision 2
++
++## Verdict
++
++Accepted. The exact CR2 candidate implements the required Codex
++`gpt-5.6-sol`/`high`, lite-context, one-tracked-child policy and preserves the
++existing signed commit/push synchronization contract. No product runtime or VPN
++activation path is changed.
++
++## Exact reviewed scope
++
++- Base OID: `3852fae014a325b8c1bca89c7619233210688451`.
++- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`.
++- Attached patch SHA-256: `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`
++  (independently reproduced, exit 0).
++- Exact object diff: only `.spec/goal-macos-v1.md`,
++  `docs/spawn-policy.md`, and `task-board.config.json`; 33 insertions and 20
++  deletions. `git diff --check` exited 0.
++- The three scoped worktree files match the candidate tree (`git diff
++  --exit-code <candidate> -- <three paths>`, exit 0). Unrelated pre-existing
++  Story-worktree changes were observed and not touched or included in the
++  verdict.
++
++## Independent policy checks
++
++- Candidate-bound developer spawn preflight: exit 0.
++- Candidate-bound reviewer spawn preflight: exit 0.
++- Both resolve Codex only, `agent_context.profile=lite`, `max_parallel=1`,
++  `spawn-policy-v4`, and the sole admitted pair `gpt-5.6-sol:high` with digest
++  `sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709`.
++- Focused JSON/document drift scan: exit 0. It asserts the exact v4 entry,
++  provider, lite context, serial limit, retained version-control confirmation,
++  and all three canonical spawn examples at `high`; no `medium` or
++  `max_parallel 3` drift exists in the scoped files.
++- The same strict config predicate against the base OID exited 1 as expected,
++  proving the scan rejects the superseded medium/parallel configuration.
++- `task-board goal get` exited 0 and reports primary goal
++  `PRIMARY-GOAL-260728-3lhfz3` revision 8. Its Sol/high, lite,
++  `max_parallel 1`, producer-then-fresh-reviewer, signed-commit, push, and
++  synchronization requirements agree with both policy documents.
++
++Candidate preflights were intentionally bound with
++`TASK_BOARD_CONFIG=$PWD/task-board.config.json`: before CR2 is landed, an
++unqualified CLI invocation resolves the integration checkout's older v2
++configuration. That is pre-integration state, not candidate-effective state.
++
++## Negative evidence and production call site
++
++The production call site exercised is `task-board spawn` admission against
++`spawn.ceilings.codex`.
++
++- Developer `gpt-5.6-sol/medium` probe using a valid-shaped nonexistent task ID:
++  exit 1, typed `spawn_no_supported_effort_under_ceiling`.
++- Reviewer `gpt-5.6-sol/medium` probe using the same safe ID: exit 1, the same
++  typed refusal.
++
++Both fail before task lookup, so the probes cannot mutate a real board element.
++This narrows the admitted pair and is not delete-only evidence.
++
++## Routing and anomalies
++
++- `task-board spawn status RUN-260830-d1a567` exited 0 and confirms the
++  superseded `TASK-260715-whtdsf` reviewer used Sol/medium, was cancelled by
++  operator directive, and has terminal exit code 130. No verdict from it is
++  accepted or reused.
++- Replacement reviewer run `RUN-260830-190c14` is fresh and serial; its
++  candidate-effective reviewer preflight is the Sol/high route above.
++- An initial status read with unsupported `--format compact` exited 1; the
++  supported status form was rerun successfully. This was a read-shape failure,
++  not evidence of absence.
++- `task-board validate --json` process exit was 0, but its payload was
++  `valid:false` with `PARENT_STATUS_MISMATCH`: Story
++  `STORY-260715-anxje6` is stored as `to-dev` while the current child aggregate
++  is `reviewing`. This board-wide orchestration mismatch remains failing and is
++  not represented as green. It is outside the exact three-file CR2 delta and
++  does not invalidate the candidate-specific config, drift, goal, negative, or
++  Git checks.
++
++## Project fit
++
++The delta is limited to canonical orchestration config and policy/spec prose.
++No product build is relevant because runtime code is unchanged; effective
++preflights, reject-path probes, JSON assertions, goal consistency, and exact Git
++checks cover the changed behavior. No architecture diagram is needed for this
++single serial-routing policy change, and no diagram artifact was modified.
++
++The commit-owning orchestrator must checkpoint/integrate this accepted revision
++and perform the final `done` transition with `commit_ack=scope_committed`; this
++reviewer supplies no commit acknowledgement.
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+codex
+Ахпер джан, CR `CR-TASK-260830-1srcgk-2` revision 2 принят.
+
+- Candidate delta: ровно 3 заявленных файла; `git diff --check` — exit 0.
+- Developer/reviewer preflights: Sol/high, lite, `max_parallel: 1` — exit 0.
+- Оба negative probe для `medium` корректно отклонены — exit 1.
+- Primary goal revision 8 и policy docs согласованы.
+- Отменённый medium reviewer подтверждён: exit 130, его verdict не использован.
+- Board-wide validation: process exit 0, но честный `valid:false` из-за внешнего `PARENT_STATUS_MISMATCH`.
+- Verdict evidence: `TASK-260830-1srcgk_review-verdict-rev2.md`.
+- `accept_cr` успешно перевёл задачу в `to-review`. Финальный commit, integration и `done` с `commit_ack` остаются за orchestrator.
+diff --git a/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e46785b223b447dec771dc31c3bbdad30ab6cd9a
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/TASK-260830-1srcgk_review-verdict-rev2.md
+@@ -0,0 +1,89 @@
++# TASK-260830-1srcgk review verdict — CR revision 2
++
++## Verdict
++
++Accepted. The exact CR2 candidate implements the required Codex
++`gpt-5.6-sol`/`high`, lite-context, one-tracked-child policy and preserves the
++existing signed commit/push synchronization contract. No product runtime or VPN
++activation path is changed.
++
++## Exact reviewed scope
++
++- Base OID: `3852fae014a325b8c1bca89c7619233210688451`.
++- Candidate tree OID: `377d0b40034bf46031ad032c4dbb04ab45923502`.
++- Attached patch SHA-256: `0bdebfcf8faf7196fa2975c584ad093c0014b0e8ca62639bede9c775d9d39acc`
++  (independently reproduced, exit 0).
++- Exact object diff: only `.spec/goal-macos-v1.md`,
++  `docs/spawn-policy.md`, and `task-board.config.json`; 33 insertions and 20
++  deletions. `git diff --check` exited 0.
++- The three scoped worktree files match the candidate tree (`git diff
++  --exit-code <candidate> -- <three paths>`, exit 0). Unrelated pre-existing
++  Story-worktree changes were observed and not touched or included in the
++  verdict.
++
++## Independent policy checks
++
++- Candidate-bound developer spawn preflight: exit 0.
++- Candidate-bound reviewer spawn preflight: exit 0.
++- Both resolve Codex only, `agent_context.profile=lite`, `max_parallel=1`,
++  `spawn-policy-v4`, and the sole admitted pair `gpt-5.6-sol:high` with digest
++  `sha256:e2768012d97d2577f6b5536d3940547f56803113beb08e062d8f45a39d801709`.
++- Focused JSON/document drift scan: exit 0. It asserts the exact v4 entry,
++  provider, lite context, serial limit, retained version-control confirmation,
++  and all three canonical spawn examples at `high`; no `medium` or
++  `max_parallel 3` drift exists in the scoped files.
++- The same strict config predicate against the base OID exited 1 as expected,
++  proving the scan rejects the superseded medium/parallel configuration.
++- `task-board goal get` exited 0 and reports primary goal
++  `PRIMARY-GOAL-260728-3lhfz3` revision 8. Its Sol/high, lite,
++  `max_parallel 1`, producer-then-fresh-reviewer, signed-commit, push, and
++  synchronization requirements agree with both policy documents.
++
++Candidate preflights were intentionally bound with
++`TASK_BOARD_CONFIG=$PWD/task-board.config.json`: before CR2 is landed, an
++unqualified CLI invocation resolves the integration checkout's older v2
++configuration. That is pre-integration state, not candidate-effective state.
++
++## Negative evidence and production call site
++
++The production call site exercised is `task-board spawn` admission against
++`spawn.ceilings.codex`.
++
++- Developer `gpt-5.6-sol/medium` probe using a valid-shaped nonexistent task ID:
++  exit 1, typed `spawn_no_supported_effort_under_ceiling`.
++- Reviewer `gpt-5.6-sol/medium` probe using the same safe ID: exit 1, the same
++  typed refusal.
++
++Both fail before task lookup, so the probes cannot mutate a real board element.
++This narrows the admitted pair and is not delete-only evidence.
++
++## Routing and anomalies
++
++- `task-board spawn status RUN-260830-d1a567` exited 0 and confirms the
++  superseded `TASK-260715-whtdsf` reviewer used Sol/medium, was cancelled by
++  operator directive, and has terminal exit code 130. No verdict from it is
++  accepted or reused.
++- Replacement reviewer run `RUN-260830-190c14` is fresh and serial; its
++  candidate-effective reviewer preflight is the Sol/high route above.
++- An initial status read with unsupported `--format compact` exited 1; the
++  supported status form was rerun successfully. This was a read-shape failure,
++  not evidence of absence.
++- `task-board validate --json` process exit was 0, but its payload was
++  `valid:false` with `PARENT_STATUS_MISMATCH`: Story
++  `STORY-260715-anxje6` is stored as `to-dev` while the current child aggregate
++  is `reviewing`. This board-wide orchestration mismatch remains failing and is
++  not represented as green. It is outside the exact three-file CR2 delta and
++  does not invalidate the candidate-specific config, drift, goal, negative, or
++  Git checks.
++
++## Project fit
++
++The delta is limited to canonical orchestration config and policy/spec prose.
++No product build is relevant because runtime code is unchanged; effective
++preflights, reject-path probes, JSON assertions, goal consistency, and exact Git
++checks cover the changed behavior. No architecture diagram is needed for this
++single serial-routing policy change, and no diagram artifact was modified.
++
++The commit-owning orchestrator must checkpoint/integrate this accepted revision
++and perform the final `done` transition with `commit_ack=scope_committed`; this
++reviewer supplies no commit acknowledgement.
+diff --git a/.temp/TASK-260830-1srcgk/tool-readiness-01.log b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ba5bf39bae078425e2bb38d605ba5151e04a5de
+--- /dev/null
++++ b/.temp/TASK-260830-1srcgk/tool-readiness-01.log
+@@ -0,0 +1,6 @@
++task-board=/Users/iv/.local/bin/task-board
++git=/usr/bin/git
++rg=/Users/iv/.codex/packages/standalone/releases/0.151.0-aarch64-apple-darwin/codex-path/rg
++jq=/opt/homebrew/bin/jq
++plutil=/usr/bin/plutil
++exit_code=0
+
+Ахпер джан, CR `CR-TASK-260830-1srcgk-2` revision 2 принят.
+
+- Candidate delta: ровно 3 заявленных файла; `git diff --check` — exit 0.
+- Developer/reviewer preflights: Sol/high, lite, `max_parallel: 1` — exit 0.
+- Оба negative probe для `medium` корректно отклонены — exit 1.
+- Primary goal revision 8 и policy docs согласованы.
+- Отменённый medium reviewer подтверждён: exit 130, его verdict не использован.
+- Board-wide validation: process exit 0, но честный `valid:false` из-за внешнего `PARENT_STATUS_MISMATCH`.
+- Verdict evidence: `TASK-260830-1srcgk_review-verdict-rev2.md`.
+- `accept_cr` успешно перевёл задачу в `to-review`. Финальный commit, integration и `done` с `commit_ack` остаются за orchestrator.
+tokens used
+96,342

@@ -1,5 +1,5 @@
 ## Status
-blocked
+closed
 
 ## Assigned To
 [implementer] developer (codex)
@@ -8,7 +8,7 @@ blocked
 2026-07-15T01:03:15Z
 
 ## Last Update
-2026-07-28T01:18:28Z
+2026-08-30T08:44:55Z
 
 ## Blocked By
 - TASK-260715-nzdzv3
@@ -57,6 +57,7 @@ Evidence: three rounds of pinned-source analysis recorded on TASK-260715-1ozsb6 
 Why blocked and not backlog: with its blockers satisfied this task became schedulable and a previous plan placed it in Wave 1 of the autonomous run, i.e. prohibited work would have re-entered the critical path. blocked status is the only board mechanism that prevents that while preserving all evidence and the downstream 3ikonq -> 2xx2tk comparative chain.
 Alternatives considered: (a) leave in backlog and rely on the plan document to exclude it - rejected, the scheduler reads the board, not the document; (b) close it - rejected, deferral is reversible and the comparative evidence has value.
 Exact input needed to resume: an owner decision that new evidence invalidates libssh2 as primary engine, which would reopen ADR-014.
+OWNER DECISION APPLIED 2026-08-30: close the ReluxNIOSSH adapter alternative for macOS-first v1. The approved route is SSH option A with libssh2 as the primary candidate; accepted NIOSSH fork evidence remains preserved, but further adapter surgery is out of scope unless the owner reopens the alternative.
 
 ## Precondition Resources
 - [TASK-260715-1af33i_ssh-transport-conformance-contract.md](file://TASK-260715-1af33i/TASK-260715-1af33i_ssh-transport-conformance-contract.md) — Candidate-neutral SSH transport contract from TASK-260715-2ny6z4; consume after blocker review acceptance

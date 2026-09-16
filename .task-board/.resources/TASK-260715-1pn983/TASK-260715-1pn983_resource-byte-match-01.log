@@ -1,0 +1,15 @@
+TASK-260715-1pn983 board resource byte-match
+
+Attempt 1 exit code: 127.
+Cause: the zsh loop variable `path` is a special array tied to `PATH`; assigning
+the task file to it made `shasum` and `awk` unavailable inside that shell.
+No repository or board resource was changed.
+
+Attempt 2 exit code: 0.
+The loop used `task_file`; all attached key artifacts matched local SHA-256:
+- contract: f9b796fdbe5adaaca1292641318dc928abb2eb0992d694322bf8fd14bea6540c
+- pressure PUML: c468fdbf374d58d07dd85a715a466d1d38cd1fe3ec561ccf3171c1e49b7f0570
+- pressure SVG: decdb9de432827b87989149d57e0bd3516b4b2c98df288600aec5b0f90a64471
+- reconnect/rekey PUML: acaa0a514b2668f1ad6012fcae54626357040214ebdc2c9e123055e112df5350
+- reconnect/rekey SVG: 4a31e644cc13155ab162dd48fded9a4b042c6f9ebbd2bd6fb6de361010d67035
+- results: b7349b230d3464f6ade83148ad2956221ca8494e52b4c19994d1bc39db29036a

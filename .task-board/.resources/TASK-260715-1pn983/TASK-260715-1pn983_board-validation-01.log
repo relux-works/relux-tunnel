@@ -1,0 +1,12 @@
+TASK-260715-1pn983 authoritative board validation
+
+Command: task-board validate
+Exit code: 0
+
+Reported issues:
+- PARENT_STATUS_MISMATCH STORY-260715-2ungml: status analysis does not match child aggregate to-review.
+- PARENT_STATUS_MISMATCH STORY-260715-1y04r0: status backlog does not match child aggregate reviewing.
+
+Disposition: both are outside TASK-260715-1pn983 and its Story. They are
+preserved as unrelated board anomalies; no foreign status was mutated. The
+task-scoped query, checklist, dependency, and resource checks are run separately.

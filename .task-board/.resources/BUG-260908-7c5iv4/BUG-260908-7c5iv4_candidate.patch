@@ -1,0 +1,478 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index c286967..740e64f 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -39,6 +39,10 @@ jobs:
+           install: false
+           cache: false
+ 
++      - name: Exercise validation boundary narrowing mutants
++        working-directory: relux-tunnel
++        run: python3 scripts/tests/test_pr6_boundary_mutants.py
++
+       - name: Run the local credential-free gate
+         working-directory: relux-tunnel
+         run: make credential-free-validate LEGACY_ROOT="$GITHUB_WORKSPACE/relux-proxy"
+@@ -90,26 +94,8 @@ jobs:
+ 
+       - name: Check board structure
+         run: |
+-          python3 - <<'PY'
+-          import os, sys
+-          root = ".task-board"
+-          bad = False
+-          if not os.path.isdir(root):
+-              print("no .task-board directory"); sys.exit(1)
+-          n = 0
+-          for dirpath, dirnames, filenames in os.walk(root):
+-              # .resources/ holds resource payloads keyed by element id, not board elements
+-              if ".resources" in dirnames:
+-                  dirnames.remove(".resources")
+-              base = os.path.basename(dirpath)
+-              if base.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
+-                  n += 1
+-                  for req in ("README.md", "progress.md"):
+-                      if req not in filenames:
+-                          print(f"FAIL {dirpath}: missing {req}"); bad = True
+-          print(f"checked {n} board elements")
+-          sys.exit(1 if bad or n == 0 else 0)
+-          PY
++          python3 -m unittest scripts/tests/test_check_board_structure.py
++          python3 scripts/check_board_structure.py
+ 
+   relay-toolchain:
+     name: pinned offline relay toolchain
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index a1a3469..f86a812 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -1396,3 +1396,27 @@
+ - FINDING: The pre-existing macOS credential suite obtained a real system-domain Keychain handle for every fake-client test and created, wrote, queried, and deleted throwaway Keychains in one boundary test. That violated this task's binding fake-only execution boundary even though no production credential was used.
+ - FIX: `MacOSSystemKeychainHandle` now has an inert internal fixture identity accepted only by injected fake Security clients; the live client rejects fixture handles before its injectable matcher, and a spy proves zero `SecItemCopyMatching` reachability. The suite no longer calls any live Security API and asserts one exact scoped reference query, no enumeration/fallback, malformed-reference zero calls, cancellation cleanup, passphrase states, and 16 bounded secret-lifecycle repetitions.
+ - VERIFICATION: Six focused fake-only Swift suites passed 53 tests. The real coordinator boundary rejects every invalid profile class before injected Keychain/network fakes; all nine `SSHHostKeyDecision` cases traverse the candidate-neutral transport seam with `hostPolicy -> credentialLookup -> authentication` only on accepted paths. One independently owned lifecycle registry retains concrete task, connection, observer, and callback tokens across all 16 bounded iterations; gated cancellation observes all four non-zero, and balanced teardown restores the same registry baseline after success, every rejecting host decision, an injected thrown policy, and cancellation without assigning counters to zero. Three additional cleanup/redaction matrix repetitions passed; captured-log prohibited-data, test-source live-Security, public-fixture, live-network, and self-reset-counter scans returned no matches. Coverage reported 87.75% affected lines and 87.04% affected functions; strict Swift format, core boundaries, and diff checks exited 0. The first focused compile exited 1 on a missing explicit `return`; the corrected rerun and every subsequent gate exited 0. No real Keychain, SSH connection, NetworkExtension runtime, VPN configuration, route, DNS, interface, or packet-filter operation ran.
++
++## 2026-09-08 — BUG-260908-7c5iv4: PR 6 validation boundaries
++
++Reproduced board exit 1 and relay audit make exit 2 on exact PR head
++`87451b53960ceabe88a01c44c287fee7f9ebf386`; old main has no activity failure,
++but has the same SnapshotDiff loader failure. These are repository failures.
++The CI board entry point now excludes only root activity/resource stores.
++SnapshotDiff rejects non-file input/output URLs before I/O and explicitly
++constructs file URLs for image reads; the scanner recognizes Foundation's
++`URL(filePath:)` alongside `URL(fileURLWithPath:)`, without excluding test support.
++This small loader change is necessary because the previous public URL API could
++load network URLs; a scanner-only exemption would hide that behavior.
++Named negative tests and three narrowing mutants cover hidden elements, arbitrary
++URL loading, and token-preserving HTTP admission through the actual Swift API.
++The existing validation fixture correction is reused verbatim from accepted
++`6e8a1988`; generated schemes are unchanged. Exact-base and PR-composition evidence
++are attached to the bug separately. Delivery remains the parent's review/landing
++step; no signed objects are rewritten by this producer.
++
++The first simultaneous full-suite PR-composition run failed two unchanged
++HEV/SSH integration tests. The sequential full-suite retry passed with the same
++behavioral source (516 Swift tests, 25 pre-existing known issues); Story-base
++validation also passed (496 tests, 25 known issues). The initial failing attempt
++remains attached, and scheduling interference is not claimed as a proven cause.
+diff --git a/README.md b/README.md
+index 188bfa1..80d7355 100644
+--- a/README.md
++++ b/README.md
+@@ -219,6 +219,8 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Relay protocol schema/codegen, canonical vectors, conformance, and hostile-input diagnostics | Validate the canonical relay protocol v1 schema, deterministic Swift/Go bindings, production-code-independent vectors, shared hostile corpus, bounded decoder work/allocation/cleanup, and runtime diagnostics; the gates reject schema/vector/generated/semantic drift | `make relay-protocol-generate`; `make relay-protocol-vectors-generate`; `make relay-protocol-conformance-check`; `make relay-protocol-hostile-diagnostics`; `make relay-protocol-check`; `./scripts/tests/test-relay-protocol-go.sh -fuzz FuzzHostileInputDecoder -fuzztime 30s` | `Protocol/Relay/relay-v1.schema.json` (authority); `Protocol/Relay/Vectors/v1/corpus.json`; `Protocol/Relay/Fuzz/v1/regression-seeds.json`; generated bindings plus handwritten codecs/session tests; scratch under `.temp/relay-protocol-check/` and `.temp/TASK-*/` |
+ | Relay portable toolchain and target-shell builder | Verify `relay/toolchain-manifest-v1.json`; offline-provision and whole-tree-verify checksum-pinned Go 1.26.5 plus Syft 1.48.0; run credential-isolated clean or incremental builds with no-follow, resolved-containment checks for each Darwin/Linux amd64/arm64 target; verify the exact four-asset layout, compiler/internal-linker and CPU metadata, format, linkage, stripped debug disposition, minimum runtime, explicit total bundle budget, exact missing/tampered-input failures, reproducibility, native unprivileged Ubuntu 24.04 amd64/arm64 smoke, SBOM, and licenses | `make relay-toolchain-check`; `make relay-provision-go RELAY_GO_ARCHIVE=.temp/relay-tools/<official-go-archive>`; `make relay-build-linux-amd64 RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUILD_CLEAN_FLAG=--require-clean` (replace target suffix for the other three); `make relay-portable-assets RELAY_VERSION=0.1.0 SOURCE_COMMIT=<40-lowercase-hex> SOURCE_DATE_EPOCH=<epoch> RELAY_BUNDLE_BUDGET_BYTES=<approved-total-bytes> RELAY_BUILD_CLEAN_FLAG=--require-clean`; `make relay-toolchain-ci ...`; `make relay-toolchain-native-linux-smoke ...`; `make relay-shell-validate ...` | Manifest in `relay/toolchain-manifest-v1.json`; exact target outputs under `.build/relay/portable/`; inspection report at `.build/relay/portable-assets-v1.json`; isolated work under `.build/relay/work/`; extracted licenses under `.build/relay/toolchain-licenses/`; release bundle/test/reproducibility outputs under `.build/relay/` |
+ | Trusted relay asset manifest | Verify the accepted board archive digest, exact four executable members, platform headers, embedded build identity, canonical manifest schema/order, bundle byte sizes and SHA-256 values, immutable generated Swift lookup, and generated-workspace resource inclusion | `make relay-asset-bundle-generate`; `make relay-asset-bundle-check`; `make relay-asset-manifest-test` | Source/schema under `relay/`; typed lookup under `Sources/ReluxTunnelCore/RelayAssets/`; ignored application resource folder under `.build/relay/relay-assets-v1/` |
++| CI board structure checker | Require README/progress for elements, excluding only root `.activity` and `.resources` stores; unknown hidden directories remain checked | `python3 scripts/check_board_structure.py`; `python3 -m unittest scripts/tests/test_check_board_structure.py` | Diagnostics on stdout; task evidence under `.temp/` |
++| PR 6 boundary mutation proof | Exercise board/scanner narrowing mutants and compile the production SnapshotDiff loader with a token-preserving HTTP-admission mutant; all three must fail named behavioral tests | `python3 scripts/tests/test_pr6_boundary_mutants.py` (macOS, Python 3, Swift 6.1+) | Disposable fixtures under the system temporary directory; commands, exits, and test diagnostics on stdout |
+ | Relay supply-chain audit | Generate and fail-closed audit exact source/build provenance, commit/version-specific source URLs, approved license/notice mappings, scoped dependency inventory, asset-manifest linkage, M2/M5 ownership, and an immutable application/runtime scan for executable-download surfaces | `make relay-supply-chain-generate`; `make relay-supply-chain-test`; `make relay-supply-chain-audit` | Authoritative metadata and generated inventory/provenance/notices under `relay/`; temporary relay bundle under `.build/relay/relay-assets-v1/` |
+ | Native dependency validator | Rebuild and inspect pinned static XCFramework slices, checksums, notices, required HEV symbols, and extension-safe linkage | `make validate-native`; `./scripts/native-dependency-tool.py verify --dependency hev-lwip --source-dir /path/to/pinned/hev-socks5-tunnel` | `NativeDependencies/Artifacts/`; bundled notices; `.build/native-apple-matrix/` |
+ | ReluxLibSSH2 fork builder | Verify the six-file rekey/global-request observation patch, exact libssh2/OpenSSL source pins, static XCFramework lock, public headers, notices, and real client/server rekey plus reply/timeout behavior | `make validate-libssh2`; `make test-libssh2-source-gates`; `make build-libssh2 LIBSSH2_SOURCE_ARCHIVE=/path/to/libssh2.tar.gz OPENSSL_SOURCE_ARCHIVE=/path/to/openssl-3.5.7.tar.gz` | `Dependencies/ReluxLibSSH2/`; `NativeDependencies/Artifacts/ReluxLibSSH2.xcframework`; `NativeDependencies/Generated/LIBSSH2_OPENSSL_THIRD_PARTY_NOTICES.txt`; task logs under `.temp/` |
+diff --git a/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift b/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+index 7e8a7fc..963888b 100644
+--- a/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
++++ b/Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+@@ -2,6 +2,7 @@ import AppKit
+ import Foundation
+ 
+ public enum SnapshotDiffError: Error {
++  case nonFileURL(URL)
+   case unreadableImage(URL)
+   case incompatibleDimensions
+   case cannotCreateBitmap
+@@ -15,14 +16,18 @@ public enum SnapshotDiff {
+     failed failedURL: URL,
+     outputDirectory: URL
+   ) throws -> Bool {
++    // Snapshot artifacts are local test files; reject other schemes before any I/O.
++    for url in [referenceURL, failedURL, outputDirectory] {
++      guard url.isFileURL else { throw SnapshotDiffError.nonFileURL(url) }
++    }
+     guard
+-      let referenceData = try? Data(contentsOf: referenceURL),
++      let referenceData = try? Data(contentsOf: URL(filePath: referenceURL.path)),
+       let reference = NSBitmapImageRep(data: referenceData)
+     else {
+       throw SnapshotDiffError.unreadableImage(referenceURL)
+     }
+     guard
+-      let failedData = try? Data(contentsOf: failedURL),
++      let failedData = try? Data(contentsOf: URL(filePath: failedURL.path)),
+       let failed = NSBitmapImageRep(data: failedData)
+     else {
+       throw SnapshotDiffError.unreadableImage(failedURL)
+diff --git a/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift b/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+index 69e4119..3291cb4 100644
+--- a/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
++++ b/Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+@@ -24,6 +24,41 @@ struct SnapshotDiffSupportTests {
+     }
+   }
+ 
++  @Test("non-file URLs are refused before reading either image or writing output")
++  func nonFileURLs() throws {
++    let local = URL(filePath: "/nonexistent-snapshot.png")
++    for scheme in ["http", "https", "ftp", "data"] {
++      let remote = try #require(URL(string: "\(scheme)://example.invalid/image.png"))
++      for position in 0..<3 {
++        var urls = [local, local, local]
++        urls[position] = remote
++        do {
++          _ = try SnapshotDiff.compare(
++            reference: urls[0], failed: urls[1], outputDirectory: urls[2])
++          Issue.record("non-file URL was accepted")
++        } catch SnapshotDiffError.nonFileURL(let rejected) {
++          #expect(rejected == remote)
++        } catch {
++          Issue.record("expected nonFileURL before I/O, received \(error)")
++        }
++      }
++    }
++  }
++
++  @Test("identical local images match")
++  func matchingLocalImages() throws {
++    let root = FileManager.default.temporaryDirectory
++      .appendingPathComponent("relux-snapshot-match-\(UUID().uuidString)")
++    defer { try? FileManager.default.removeItem(at: root) }
++    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
++    let reference = root.appendingPathComponent("expected.png")
++    try png(color: .blue).write(to: reference)
++    #expect(
++      try SnapshotDiff.compare(
++        reference: reference, failed: reference,
++        outputDirectory: root.appendingPathComponent("artifacts")))
++  }
++
+   private func png(color: NSColor) throws -> Data {
+     let image = NSImage(size: NSSize(width: 2, height: 2))
+     image.lockFocus()
+diff --git a/scripts/relay_supply_chain.py b/scripts/relay_supply_chain.py
+index 41496dc..020aeb3 100644
+--- a/scripts/relay_supply_chain.py
++++ b/scripts/relay_supply_chain.py
+@@ -1217,12 +1217,17 @@ def swift_contents_of_surface(tokens: list[tuple[str, str]]) -> str | None:
+         if initializer_type not in loader_types | {"ambiguous"}:
+             continue
+ 
++        # Accept only an inline Foundation file-URL constructor. Do not infer
++        # localness from variable names, nearby guards, comments, or file paths.
+         explicit_local_url = False
+         if (
+             token_is(tokens, index + 1, ":")
+             and token_is(tokens, index + 2, "URL")
+             and token_is(tokens, index + 3, "(")
+-            and token_is(tokens, index + 4, "fileURLWithPath")
++            and (
++                token_is(tokens, index + 4, "fileURLWithPath")
++                or token_is(tokens, index + 4, "filePath")
++            )
+             and token_is(tokens, index + 5, ":")
+         ):
+             depth = 1
+diff --git a/scripts/tests/test-credential-free-validation.sh b/scripts/tests/test-credential-free-validation.sh
+index 91010e7..9c5543d 100755
+--- a/scripts/tests/test-credential-free-validation.sh
++++ b/scripts/tests/test-credential-free-validation.sh
+@@ -30,16 +30,18 @@ adversarial="$work_root/adversarial.log"
+ 
+ write_list "$valid" \
+   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+ write_list "$missing" \
+   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests
+ write_list "$unexpected" \
+   relux-relay relux-relay-protocol-test ReluxProxyMac ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
++  UnexpectedScheme
+ write_list "$adversarial" \
+   relux-relay relux-relay-protocol-test ReluxProxyMacTunnel \
+-  ReluxTunnelCore ReluxTunnelHarness UnexpectedScheme
++  ReluxTunnelCore ReluxTunnelHarness ReluxProxyIOSUITests ReluxProxyMacUITests \
++  UnexpectedScheme
+ 
+ "$repo_root/scripts/check-workspace-schemes.sh" "$valid" >/dev/null
+ for invalid in "$missing" "$unexpected" "$adversarial"; do
+diff --git a/scripts/tests/test_relay_supply_chain.py b/scripts/tests/test_relay_supply_chain.py
+index 2062edb..a4de3ef 100644
+--- a/scripts/tests/test_relay_supply_chain.py
++++ b/scripts/tests/test_relay_supply_chain.py
+@@ -741,6 +741,46 @@ class RelaySupplyChainTests(unittest.TestCase):
+             )
+             supply_chain.scan_runtime(self.config, root)
+ 
++    def test_snapshot_support_local_loads_pass_actual_runtime_scan(self) -> None:
++        supply_chain.scan_runtime(self.config)
++
++    def test_snapshot_support_network_mutants_preserve_file_tokens_and_fail(self) -> None:
++        relative = "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"
++        original = (supply_chain.ROOT / relative).read_text()
++        local = "Data(contentsOf: URL(filePath: referenceURL.path))"
++        self.assertIn(local, original)
++        mutations = (
++            "Data(contentsOf: referenceURL) /* URL(filePath: referenceURL.path) */",
++            "Data(contentsOf: URL(string: referenceURL.absoluteString)!) /* filePath */",
++            "Data(contentsOf: URL(filePath: referenceURL.path).appendingPathComponent(\"x\"))",
++        )
++        for mutation in mutations:
++            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
++                root = Path(temporary)
++                self.make_runtime_root(root)
++                path = root / relative
++                path.parent.mkdir(parents=True)
++                # Retain both searched-for tokens while making HTTPS reachable.
++                changed = original.replace(local, mutation).replace(
++                    "guard url.isFileURL else",
++                    'guard url.isFileURL || url.scheme == "https" else',
++                )
++                path.write_text(changed)
++                with self.assertRaisesRegex(
++                    supply_chain.SupplyChainError, "Foundation Data URL loader"
++                ):
++                    supply_chain.scan_runtime(self.config, root)
++
++    def test_runtime_scan_rejects_string_constructor_even_with_file_path_token(self) -> None:
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            self.make_runtime_root(root)
++            (root / "Sources" / "Download.swift").write_text(
++                "let bytes = try Data(contentsOf: URL(string: address)!) // filePath\n"
++            )
++            with self.assertRaisesRegex(supply_chain.SupplyChainError, "Foundation Data URL loader"):
++                supply_chain.scan_runtime(self.config, root)
++
+     def test_asset_linkage_drift_fails_clean_audit(self) -> None:
+         contract = supply_chain.load_json(supply_chain.ASSET_SOURCE_PATH)
+         contract["supplyChain"]["manifestLinkageSHA256"] = "0" * 64
+diff --git a/scripts/check_board_structure.py b/scripts/check_board_structure.py
+new file mode 100644
+index 0000000..ff742bb
+--- /dev/null
++++ b/scripts/check_board_structure.py
+@@ -0,0 +1,36 @@
++#!/usr/bin/env python3
++"""Validate element files, excluding only board-root resource/activity stores."""
++
++import argparse
++import os
++from pathlib import Path
++
++
++def check(root: Path) -> int:
++    if not root.is_dir():
++        print(f"no {root} directory")
++        return 1
++    bad = False
++    count = 0
++    for dirpath, dirnames, filenames in os.walk(root):
++        # These exact root stores contain ID-keyed payloads, not elements.
++        if Path(dirpath) == root:
++            dirnames[:] = [name for name in dirnames if name not in (".resources", ".activity")]
++        if Path(dirpath).name.split("-")[0] in ("EPIC", "STORY", "TASK", "BUG"):
++            count += 1
++            for required in ("README.md", "progress.md"):
++                if required not in filenames:
++                    print(f"FAIL {dirpath}: missing {required}")
++                    bad = True
++    print(f"checked {count} board elements")
++    return 1 if bad or count == 0 else 0
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("root", nargs="?", type=Path, default=Path(".task-board"))
++    return check(parser.parse_args().root)
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/tests/test_check_board_structure.py b/scripts/tests/test_check_board_structure.py
+new file mode 100644
+index 0000000..885c0d4
+--- /dev/null
++++ b/scripts/tests/test_check_board_structure.py
+@@ -0,0 +1,75 @@
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import unittest
++
++
++CHECKER = Path(__file__).resolve().parents[1] / "check_board_structure.py"
++
++
++class BoardStructureTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name) / ".task-board"
++        self.element("STORY-example/TASK-valid")
++
++    def element(self, relative, complete=True):
++        path = self.root / relative
++        path.mkdir(parents=True, exist_ok=True)
++        (path / "README.md").touch()
++        if complete:
++            (path / "progress.md").touch()
++        # The container is itself an element too.
++        for parent in path.parents:
++            if parent == self.root:
++                break
++            if parent.name.startswith("STORY-"):
++                (parent / "README.md").touch()
++                (parent / "progress.md").touch()
++        return path
++
++    def run_checker(self):
++        return subprocess.run([sys.executable, str(CHECKER), str(self.root)],
++                              capture_output=True, text=True)
++
++    def test_activity_and_resource_payloads_are_not_elements(self):
++        for store in (".activity", ".resources"):
++            path = self.root / store / "TASK-payload"
++            path.mkdir(parents=True)
++            (path / "events.ndjson").write_text('{}\n')
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 0, result.stdout)
++        self.assertIn("checked 2 board elements", result.stdout)
++
++    def test_incomplete_element_fails(self):
++        self.element("BUG-incomplete", complete=False)
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 1)
++        self.assertIn("BUG-incomplete: missing progress.md", result.stdout)
++
++    def test_unknown_hidden_directory_is_not_exempt(self):
++        self.element(".hidden/BUG-incomplete", complete=False)
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 1)
++        self.assertIn(".hidden/BUG-incomplete: missing progress.md", result.stdout)
++
++    def test_nested_activity_name_is_not_exempt(self):
++        self.element("STORY-example/.activity/BUG-incomplete", complete=False)
++        result = self.run_checker()
++        self.assertEqual(result.returncode, 1)
++        self.assertIn(".activity/BUG-incomplete: missing progress.md", result.stdout)
++
++    def test_empty_or_missing_board_fails(self):
++        for suffix in ("empty", "missing"):
++            root = Path(self.temp.name) / suffix
++            if suffix == "empty":
++                root.mkdir()
++            result = subprocess.run([sys.executable, str(CHECKER), str(root)],
++                                    capture_output=True, text=True)
++            self.assertEqual(result.returncode, 1)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/tests/test_pr6_boundary_mutants.py b/scripts/tests/test_pr6_boundary_mutants.py
+new file mode 100644
+index 0000000..8557d72
+--- /dev/null
++++ b/scripts/tests/test_pr6_boundary_mutants.py
+@@ -0,0 +1,80 @@
++"""Behavioral narrowing mutants for BUG-260908-7c5iv4; no network or VPN use.
++
++Run: python3 scripts/tests/test_pr6_boundary_mutants.py
++Each mutant runs in a disposable fixture, never edits the active checkout, and
++must fail its named regression test. Swift tests exercise the production source.
++"""
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import tempfile
++
++ROOT = Path(__file__).resolve().parents[2]
++
++
++def run(command, root, expected, diagnostic):
++    result = subprocess.run(command, cwd=root, text=True, stdout=subprocess.PIPE,
++                            stderr=subprocess.STDOUT, timeout=240)
++    print("COMMAND:", " ".join(command), "EXIT:", result.returncode)
++    print(result.stdout)
++    if (result.returncode == 0) != (expected == 0) or diagnostic not in result.stdout:
++        raise SystemExit("mutant proof failed: unexpected exit or missing named diagnostic")
++
++
++def main():
++    with tempfile.TemporaryDirectory(prefix="pr6-boundary-mutants-") as temporary:
++        root = Path(temporary)
++        for relative in (
++            "scripts/check_board_structure.py", "scripts/relay_supply_chain.py",
++            "scripts/tests/test_check_board_structure.py",
++            "scripts/tests/test_relay_supply_chain.py", "relay/supply-chain-source-v1.json",
++            "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift",
++        ):
++            target = root / relative
++            target.parent.mkdir(parents=True, exist_ok=True)
++            shutil.copy2(ROOT / relative, target)
++        board = root / "scripts/check_board_structure.py"
++        original = board.read_text()
++        command = [sys.executable, "-m", "unittest", "-v",
++                   "scripts.tests.test_check_board_structure.BoardStructureTests.test_unknown_hidden_directory_is_not_exempt"]
++        run(command, root, 0, "OK")
++        board.write_text(original.replace('(".resources", ".activity")',
++                                          '(".resources", ".activity", ".hidden")'))
++        run(command, root, 1, "FAIL: test_unknown_hidden_directory_is_not_exempt")
++        board.write_text(original)
++        scanner = root / "scripts/relay_supply_chain.py"
++        original = scanner.read_text()
++        command = [sys.executable, "-m", "unittest", "-v",
++                   "scripts.tests.test_relay_supply_chain.RelaySupplyChainTests.test_snapshot_support_network_mutants_preserve_file_tokens_and_fail"]
++        run(command, root, 0, "OK")
++        scanner.write_text(original.replace("if explicit_local_url:",
++                                            'if explicit_local_url or token_is(tokens, index + 2, "referenceURL"):'))
++        run(command, root, 1, "FAIL: test_snapshot_support_network_mutants_preserve_file_tokens_and_fail")
++        scanner.write_text(original)
++
++        package = root / "snapshot"
++        source = package / "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"
++        test = package / "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift"
++        for target, relative in ((source, "Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift"),
++                                 (test, "Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift")):
++            target.parent.mkdir(parents=True, exist_ok=True)
++            shutil.copy2(ROOT / relative, target)
++        (package / "Package.swift").write_text('''// swift-tools-version: 6.1
++import PackageDescription
++let package = Package(name: "SnapshotBoundaryProof", platforms: [.macOS(.v15)], targets: [
++  .target(name: "ReluxSnapshotDiffSupport"),
++  .testTarget(name: "ReluxSnapshotDiffSupportTests", dependencies: ["ReluxSnapshotDiffSupport"]),
++])
++''')
++        command = ["swift", "test", "--package-path", str(package)]
++        run(command, root, 0, "Test run with 3 tests")
++        # Keep isFileURL and the refusal; admit only HTTP from the forbidden schemes.
++        source.write_text(source.read_text().replace("guard url.isFileURL else",
++                                                     'guard url.isFileURL || url.scheme == "http" else'))
++        run(command, root, 1, "expected nonFileURL before I/O")
++    print("All three narrowing mutants killed by named behavioral regressions.")
++
++
++if __name__ == "__main__":
++    main()

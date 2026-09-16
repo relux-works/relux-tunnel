@@ -1,0 +1,21 @@
+{
+  "contract": "primary-goal-v1",
+  "id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 13,
+  "previous_revision": 12,
+  "state": "active",
+  "scope": {
+    "kind": "board"
+  },
+  "objective": "PAUSED by explicit user request on 2026-09-16. Do not launch workers, implement, publish, land or automatically resume until the user explicitly resumes. Preserve all worktrees, unlanded changes and evidence. Unresolved objective remains: deliver the working signed and notarized macOS-first Relux Tunnel NEPacketTunnelProvider client over authenticated SSH, libssh2 primary. Complete SPM core, public packet bridge and HEV, SSH, TCP and fail-closed DNS, rootless exec/stdio relay, UDP and degraded mode, macOS provider and UI, self-update, threat model, CI and release through tracked producer-reviewer-rework-accepted delivery. Defer iOS, App Store A0 research and native Linux runner evidence. Preserve pre-auth host verification, Keychain-only secrets, bounded memory, internal-only SOCKS, no SFTP or utun-FD discovery and injectable physical tuning. Never install, configure, enable or connect a real VPN on this development Mac; use a dedicated test host. After explicit resume: one worker serially with lite context, code and implementation by Muse Spark max, review by Astra low or Fable low with Astra default. Manage task-board through curator from skill-project-management main. Use operational config .temp/resume-20260916/task-board.config.json until separately reviewed permanent config synchronization. Preserve signed Ivan Oparin \u003coparin@me.com\u003e commits with /Users/iv/.ssh/ivanopcode and normal current timestamps. Deliver feature branch through real PR review and green checks to exact signed-head landing without erasing unrelated work. PR6 landed db89c1a555fd4cf57a1cba7fe7bf998f6951b1f2; post-landing CI failure is tracked in BUG-260916-3t6wfs. Bootstrap TASK-260715-3t2v9w is parked unreviewed in its managed worktree. Resolve accepted obligations with supported evidence-based reconciliation. Stop at genuine human-only gates with evidence. Periodically reclaim only inventoried safely disposable caches between stages; preserve active caches, pending worktrees, signing material and review/recovery evidence, and record targets and reclaimed space.",
+  "mutation": {
+    "kind": "objective_realigned",
+    "reason": "User explicitly requested parking all work; active Muse run cancelled and unfinished changes preserved.",
+    "actor": {
+      "kind": "primary_parent",
+      "actor_id": "iv"
+    }
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-09-16T14:24:36.833028Z"
+}

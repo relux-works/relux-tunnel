@@ -1,0 +1,577 @@
+OpenAI Codex v0.153.4
+--------
+workdir: /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: low
+reasoning summaries: none
+session id: 01a07e31-86df-75f2-b0cb-79d8b5249884
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(BUG-260908-7c5iv4, status=integrating)'
+```
+
+## Operational Constraints (Headless Run)
+
+- Never background a long command and end your turn: a headless session ends with
+  the turn and the process dies with it, while the run is still recorded as
+  completed with no evidence attached.
+- A single shell call is time-bounded (~10 minutes). Split long checks into
+  bounded sequential calls (package subsets, `-run` masks) and state explicitly
+  what you reran yourself versus accepted from already-attached evidence.
+- Attach evidence before you end the lifecycle, not after: "I will attach it when
+  the run finishes" is unfulfillable by construction.
+
+## Role Contract
+
+- **Role:** `developer` (`implementer`) — Writes code, fixes bugs, writes tests
+- Obey task scope, acceptance criteria, and checklist.
+- Report real exit codes; failing gates stay failing.
+- Use compact task-specific board projections; skip routine `summary()`,
+  `plan()`, `schema()`, and `{ full }`. Request scoped schema only after an
+  unknown call.
+- Load only relevant and explicitly required skills.
+
+### Skills
+
+- `project-management`: `/Users/iv/.claude/skills/project-management/SKILL.md`
+- `swiftui`: `/Users/iv/.claude/skills/swiftui/SKILL.md`
+- `core-data`: `/Users/iv/.claude/skills/core-data/SKILL.md`
+- `go-testing-tools`: `/Users/iv/.claude/skills/go-testing-tools/SKILL.md`
+- `architecture-diagrams`: `/Users/iv/.claude/skills/architecture-diagrams/SKILL.md`
+
+### Definition of Done
+
+- [ ] Reproduce both exact-head CI failures, implement minimal boundary repairs with positive and adversarial negative tests, verify PR 6 composition and attach commands/exits/diff evidence before immutable CR handoff
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Code written per task description and AC
+- [ ] Relevant tests written for new or changed behavior and passing
+- [ ] Every command, message, state, or refusal named in the AC is driven through the production entry point by a named committed test, or is declared a stated bound. Report coverage as a ratio — `n of m AC rows driven` — and name the production call site for each. Prose in place of the ratio is not evidence.
+- [ ] Gating, refusing, validating, authorizing, or attesting behavior covered by negative tests that fail when the gate admits what it must reject, with the production call site named
+- [ ] Every gate ships at least one NARROWING mutant — the gate stays present and is weakened to admit exactly one member of the class it must reject, and a named test must fail. A delete-only mutant proves only that the gate exists and is not accepted as evidence.
+- [ ] A gate that inspects source text is additionally attacked by a mutant that PRESERVES the searched-for token and changes behavior, and the mutant harness executes the behavioral suite, not only the static checker.
+- [ ] Lint clean
+- [ ] Relevant build/validation commands run after changes and build not broken
+- [ ] New outcome artifact attached on the board with a task-scoped name when the work produces notes, logs, screenshots, or other deliverables
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+
+## Task
+
+- **ID:** BUG-260908-7c5iv4
+- **Title:** BUG-260908-7c5iv4: fix-pr6-activity-validation-and-snapshot-loader-scan
+- **Parent:** STORY-260908-h39ajh
+
+### Description
+
+PR 6 at signed head 87451b53960ceabe88a01c44c287fee7f9ebf386 fails hosted board/spec validation and pinned offline relay toolchain. The board checker treats .task-board/.activity ID directories as ordinary elements requiring README/progress. The supply-chain scanner rejects Foundation Data URL loads in SnapshotDiff test support unchanged from base. Both failures were independently reproduced from a clean exact-head archive by RUN-260907-765f2f. Fix the actual boundaries and add negative regression coverage; never waive the failures as external CI.
+
+### Scope
+
+.github/workflows/ci.yml board validation path and narrowly extracted checker if justified; scripts/relay_supply_chain.py with exact file-URL/test-support boundary and focused tests; narrowly necessary existing main validation-contract correction only if required to compose the accepted Shared Runtime dependency. No protocol, SSH engine, VPN lifecycle or unrelated supply-chain-policy change. Keep clean baseline and PR-head evidence separate.
+
+### Acceptance Criteria
+
+1. Actual CI board checker accepts activity streams but fails a genuine incomplete element, including a negative that detects overbroad hidden-directory skipping. 2. Actual relay supply-chain audit accepts legitimate local snapshot loading only under a justified boundary and rejects a malicious network/runtime-download variant. 3. Reproduce both failures before the fix and prove targeted positive and negative behavior after; verify on exact PR 6 composition, not only a base missing Shared Runtime. 4. Preserve signed existing objects and unrelated work; publish a minimal immutable CR for independent review before updating hosted delivery. 5. Stop and preserve work before 04:59 Asia/Tbilisi 2026-09-08; no real VPN, no successors, no tool source patches or installs.
+
+## Instructions
+
+### BUG-260908-7c5iv4_delivery-inputs.md
+> Exact failing head and preserved local integration
+
+Read scoped evidence from TASK-260830-1x524u: hosted-delivery-verdict.md, delivery-relay-audit-exact.log, delivery-board-check-exact.log and curator-main-delivery-results.md (each filename prefixed by TASK-260830-1x524u_). PR https://github.com/relux-works/relux-tunnel/pull/6 head 87451b53960ceabe88a01c44c287fee7f9ebf386; remote main b3422b05226253a17676b9b84c764071fe3dbe74 at last check. Local main is already at PR head by completed tool transaction; do NOT reset/rewind it. Preserve that published signed head and unrelated board changes. Work in isolated managed Story workspace from exact current remote main; verify the repair also composes with the PR head in a separate clean diagnostic checkout/archive if needed. Do not mistake green old-main tests for PR-head proof. The existing validation-contract scheme correction is in accepted runtime commit 6e8a1988 and may need composition for the mandatory suite; do not fabricate generated schemes. All tool operations through installed curator main only, no reusable-tool source modification/installation. Implement scoped code and publish CR; parent owns subsequent review/landing sequencing. No independent or parallel subagents, no successors. Hard stop 04:59 Tbilisi, no VPN install/config/connect. User revoked special commit timestamp rules; signatures remain required.
+
+
+### BUG-260908-7c5iv4_review-routing.md
+> Independent review and serial delivery boundary
+
+Review the immutable published CR once ready. Focus on actual board structure exclusions, negative incomplete-element coverage, SnapshotDiff file-only behavior, conservative network-loader scanner, and narrowing mutant proofs. Compare exact PR6 head composition evidence separately from old-main candidate evidence. First full composition failure and successful retry must both remain visible; do not call one retry proof of determinism or hosted green CI. Do not edit product files as reviewer. Use accept_cr only with your real checklist and evidence. No manual managed-branch commit, integration, PR landing, VPN actions, tool source edits, subagents, or successors. Parent will checkpoint this non-final leaf then route BUG-260908-33iyb1. All work must stop before 04:59 Asia/Tbilisi September 8 2026; latest curator-installed main tooling only. Normal current commit timestamps; configured Ivan Oparin SSH signatures mandatory.
+
+
+### BUG-260908-7c5iv4_checkpoint-only.md
+> Accepted CR non-final leaf checkpoint only
+
+CR revision 1 is accepted, exact candidate ff711bcf8335bd2394bd06e38e6bbb514fd58d63, reviewer RUN-260907-c971e1. You are the bound developer/implementer integration owner. First action after safe identity/state inspection: task-board worktree checkpoint BUG-260908-7c5iv4 using installed curator main tooling. This is a non-final leaf: sibling BUG-260908-33iyb1 is still open. Do not implement, mutate accepted bytes, run new broad validation, publish another CR, manually commit on Story branch, integrate Story, change root main, open/land PR, or start successors. Verify resulting commit signature and configured Ivan Oparin oparin@me.com identity with ivanopcode SSH key; normal current timestamps, prior time rules revoked. Preserve all old signed objects and unrelated changes. Attach a concise checkpoint outcome with SHA/signature and exit. If the tool refuses, attach exact evidence and stop rather than bypassing. Remain integrating until Story delivery; do not force done. No VPN, subagents, or reusable-tool edits. Stop before 04:59 Asia/Tbilisi September 8 2026. This instruction supersedes implementation/review routing for this narrow checkpoint run.
+
+
+
+
+## Evidence and Safety
+
+- Add/update a task-scoped outcome named `BUG-260908-7c5iv4_*` before handoff:
+  `task-board m 'add_resource(BUG-260908-7c5iv4, name=BUG-260908-7c5iv4_results.md, content="...", type=outcome, description="Handoff evidence")'`
+- Gating, refusing, validating, authorizing, or attesting behavior ships with negative tests that fail when the gate admits what it must reject; prove the bound by narrowing it, not only by deleting it, and name the production call site. Shapes and incidents: `references/negative-evidence.md`.
+- An absence and a failure to read are different facts; report unknown instead of inferring a property from a proxy signal.
+- Stop-The-Line only for an evidence-backed external blocker or unresolved human-only product/platform/architecture/approval decision. Persist evidence, failed attempts, options/tradeoffs, recommendation, and exact input needed; otherwise rework autonomously.
+- `integrating` is the role handoff status; use it only after the evidence contract is satisfied.
+
+## LAST — Run For Role Handoff
+
+After AC, checklist, validation, and outcome evidence:
+
+```bash
+task-board handoff BUG-260908-7c5iv4 --role developer
+```
+
+## Working Directory
+Board directory: `/Users/iv/Developer/relux-tunnel/.task-board`
+
+Work in the project root. Never edit board files directly.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260908-h39ajh.
+
+- Workspace path: `.temp/STORY-260908-h39ajh/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260908-h39ajh`, forked from `main`
+- Authoritative board: `/Users/iv/Developer/relux-tunnel/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+## Integration Assignment
+
+This is the integration run for accepted Change Request `CR-BUG-260908-7c5iv4-1` revision 1. The immutable producer binding is role `developer` (archetype `implementer`). Keep the board at `integrating`; only the integration transaction may write `done`. This assignment supersedes generic producer FIRST/LAST status and handoff instructions: run the bound checkpoint or integration command, attach fresh task-scoped outcome evidence, then end without calling the generic `handoff` command or setting status yourself.
+
+codex
+Применю skill `project-management`: проверю состояние и подпись принятого CR, затем выполню только checkpoint и прикреплю результат.
+
+exec
+/bin/zsh -lc "pwd; date '+%Y-%m-%d %H:%M:%S %Z'; cat /Users/iv/.claude/skills/project-management/SKILL.md" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 0ms:
+/Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+2026-09-08 03:26:19 +04
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false and forces direct/managed
+   `service_tier` default/priority; preflight records root/remote provenance.
+   Remote-v4 parity is owned by the client projection and its checked fixtures;
+   authority schema v1 intentionally authorizes an empty per-board backend
+   policy set, so do not infer or add a server policy route.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+3. Default to `task-board spawn observe RUN --until terminal --format compact`,
+   then route its handoff. Other reads are for barriers, replay/follow,
+   diagnosis.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or unresolved
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions/attempts, viable alternatives,
+   tradeoffs, recommendation, and the exact decision or external input needed.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs, evidence | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research and synthesis | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, unknown vs absence | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| Change Request order, checkpoint, republish | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Built-in spawn runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+(plus any runtime declared under `spawn.runtimes`). Gemini CLI 0.54.4 is
+deprecated in favour of Antigravity, but both remain supported.
+
+```bash
+task-board spawn TASK-ID --role developer --background --agent agy --model gemini-3.6-flash-high --timeout 35m
+```
+
+`agy` takes no `--reasoning-effort`; effort is encoded in its eight scoped
+model IDs. Minimum `agy` is 1.1.12; 1.1.14 is validated. Prompt delivery has
+a 96 KiB argv budget; `SUCCESS`/`ERROR` JSON overrides process exit. Only the
+top-level worker is tracked. See [README](README.md) for the full models,
+flags, JSON, safety, configuration, and Gemini compatibility contract.
+
+exec
+/bin/zsh -lc 'mkdir -p .temp/BUG-260908-7c5iv4
+ task-board --version > .temp/BUG-260908-7c5iv4/tool-readiness.log 2>&1
+ git --version >> .temp/BUG-260908-7c5iv4/tool-readiness.log 2>&1
+ cat .temp/BUG-260908-7c5iv4/tool-readiness.log
+ git status --short
+ git config user.name
+ git config user.email
+ git config gpg.format
+ git config user.signingkey
+ printenv TASK_BOARD_DIR
+ cat /Users/iv/.claude/skills/project-management/references/change-request-lifecycle.md' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 326ms:
+ M .github/workflows/ci.yml
+ M LOGBOOK.md
+ M README.md
+ M Sources/ReluxSnapshotDiffSupport/SnapshotDiff.swift
+ M Tests/ReluxSnapshotDiffSupportTests/SnapshotDiffSupportTests.swift
+ M scripts/relay_supply_chain.py
+ M scripts/tests/test-credential-free-validation.sh
+ M scripts/tests/test_relay_supply_chain.py
+?? scripts/check_board_structure.py
+?? scripts/tests/test_check_board_structure.py
+?? scripts/tests/test_pr6_boundary_mutants.py
+Ivan Oparin
+oparin@me.com
+ssh
+/Users/iv/.ssh/ivanopcode
+/Users/iv/Developer/relux-tunnel/.task-board
+# Change Request Lifecycle Runbook
+
+Orchestrator-owned. An accepted Change Request is accepted work, not delivered
+work. This page states the order, the recovery paths, and the republish
+semantics that used to live only in an operator's head.
+
+The full typed contract — how a candidate is snapshotted, what
+`repository_delta` means, what a `stale` revision is, and every refusal you can
+hit — stays in
+[tracked background spawn](tracked-background-spawn.md), section
+`Change Requests, review, rework, and checkpoint`. This page is the order of
+operations on top of it.
+
+---
+
+## The Change Request lifecycle, in order
+
+1. **Accept.** The reviewer runs
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N>, evidence=<ELEMENT-ID>_review-verdict.md)'`.
+   The element moves to `integrating`. It is accepted, not delivered. Only the
+   reviewer run that was handed the revision may accept it.
+2. **Checkpoint immediately.** For every non-final leaf, run
+   `task-board worktree checkpoint <ELEMENT-ID>` as the next action after
+   acceptance. The accepted tree lands on the Story branch only, and the leaf
+   stays `integrating` until Story integration lands it on trunk. Delay here is
+   what makes the next producer's Change Request go `stale`.
+3. **Checkpoint refreshes the real index automatically.** Candidate capture
+   records (but never mutates) the real-index tree. Under the bound run's Story
+   lease and the candidate-captured index CAS, checkpoint replaces only that
+   captured state and independently verifies branch/HEAD/index/worktree
+   identity. A typed
+   `change_request_checkpoint_index_unsynced` refusal is retried after its named
+   lock, I/O, or ownership condition is resolved; do not use a broad manual
+   reset that can erase unreviewed staged state.
+4. **Final leaf: integrate, do not checkpoint.** `checkpoint` refuses the
+   Story's last open leaf with `change_request_final_leaf_checkpoint`, because
+   closing it would promote a Story whose branch has never reached trunk. Land
+   the Story with
+   `task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N>`.
+5. **When `integrate` refuses, report the refusal.** `validation_not_configured`
+   (`BUG-260807-1o5092`, the as-shipped behavior) and
+   `integration_indeterminate` for a board that lives outside the control root
+   are blockers, not detours. Report the refusal as the blocker it is and land
+   only by the documented manual signed substitute — an isolated clone, signed
+   cherry-pick of the exact reviewed head, a platform review record, and a
+   fail-closed plain push. Never route around a typed refusal by moving board
+   files or the branch by hand.
+6. **A lost run is recovered by republish, never by re-running the producer.** A
+   run that died after producing content but before the board recorded it still
+   has its content on disk. Republish it with provenance. Re-running the
+   producer discards work that already exists and costs the run again.
+7. **A republish of an unchanged accepted tree is an annotation, not a new
+   revision.** A candidate whose `repository_delta` is byte-identical to the
+   accepted one, and whose acceptance still stands, is not a new candidate.
+   Recording it as a revision turns the revision count — the only rework
+   measure the board has — into process noise.
+8. **Never commit manually on the Story branch.** The managed worktree's tree is
+   published by the producer's handoff and landed by `checkpoint` or
+   `integrate`. A hand commit on that branch makes the accepted snapshot and the
+   branch head disagree, and the disagreement surfaces later as an unexplained
+   `stale` or an integration that lands the wrong tree. A `task_delta` handoff
+   now fails closed on it: the tip is compared to the workspace record's
+   `checkpoint_oid` before the validation suite runs and before anything is
+   written, and a disagreement is refused with
+   `change_request_candidate_committed_past_checkpoint`. The producer repairs it
+   inside its own run with `git reset --soft <checkpoint_oid>` — the work stays
+   in the worktree — and completes the handoff again.
+
+## A revision that will never be integrated
+
+Two shapes end a Change Request revision without a reviewer verdict, and they
+are different facts.
+
+### An empty delta does not block the Story
+
+A revision whose `repository_delta` is `empty` — an analyst or research run that
+changed no repository file — is created `ready` like any other, because
+emptiness is an attribute of the candidate and never a state. What changed with
+`BUG-260906-37s3ps` is what that revision does to everybody else: while it sits
+`ready` or `reviewing`, it no longer refuses a sibling producer with
+`change_request_sibling_producer_blocked`.
+
+The gate's argument is contamination — the new producer writes into the same
+Story worktree the pending candidate was snapshotted from — and an empty
+candidate has no repository work product for those writes to reach. Its
+checkpoint writes no commit, and its integration is a no-op. Before the fix a
+research-only run deadlocked its whole Story: nothing was routed at a candidate
+with nothing to review, and every later producer was refused with a blocker
+nobody could clear.
+
+The exemption is scoped, and the scope is deliberate:
+
+| Blocking state | `repository_delta=present` | `repository_delta=empty` |
+| --- | --- | --- |
+| `ready`, `reviewing` | refuses siblings | **admits siblings** |
+| `draft`, `changes_requested`, `stale`, `conflicted` | refuses siblings | refuses siblings |
+
+The bottom row expects a REPUBLISH, and the next snapshot of the shared worktree
+would pick up the sibling's writes. Emptiness today says nothing about the
+revision that replaces it. A revision with no readable `repository_delta` —
+legacy, or from a newer build — refuses: a value this build cannot read is not
+evidence that the candidate is empty.
+
+The revision is still fully auditable. It is not deleted, not hidden, and not
+given a special state; it simply stops being a blocker.
+
+### Retiring a revision: `withdraw_cr`
+
+An empty delta is not the only revision that never reaches integration. A
+candidate can be superseded, abandoned, or published by a run whose deliverable
+turned out to belong somewhere else. Before `BUG-260906-37s3ps` there was no
+route for that at all: `accept_cr` needs a reviewer verdict and a merged
+checklist, `worktree abort` discards the entire workspace, and republishing only
+produces another revision in the same unresolved state.
+
+```bash
+task-board m 'withdraw_cr(<ELEMENT-ID>, revision=<N>, reason="why this revision will never be integrated")'
+```
+
+It moves the revision to `aborted`, which is terminal on both predicates that
+read the state: it stops refusing sibling producers, and it stops withholding
+the Story workspace's base convergence. The revision file and its ledger row
+stay readable.
+
+Four things it refuses, and why:
+
+- **A revision that is `accepted`, `checkpointing`, `checkpointed`,
+  `integrating` or `integrated`** — `change_request_state_conflict`. Those
+  carry a reviewer's attestation, or commits that are already on the Story
+  branch or in trunk. Recording one as never integrated would make the board
+  disagree with git history.
+- **A missing or whitespace-only `reason`** —
+  `change_request_withdraw_reason_missing`. The ledger row is the only surviving
+  explanation of why the revision exists and was never integrated.
+- **A call from inside a tracked spawn run** —
+  `change_request_withdraw_unauthorized`. Withdrawal is an ORCHESTRATOR route.
+  A producer refused by `change_request_sibling_producer_blocked` must not clear
+  its own blocker, and a producer handed `changes_requested` must not retire the
+  rework signal instead of answering it.
+- **A revision number that is not the current one** —
+  `change_request_revision_conflict`, the same CAS every other transition takes.
+
+`withdraw_cr` deliberately does NOT move the board element. Where the element
+goes next — back to development, `blocked`, or closed as a duplicate — is a
+routing decision the orchestrator makes with information the mutation does not
+have; make it explicitly, in a separate call.
+
+## Two same-class findings mean a missing gate
+
+When two consecutive reviews of one leaf raise the same finding class, stop
+routing another rework revision. Spawn one task to add a gate for the class — a
+conformance vector set, a checker, a mutant harness — and let the next revision
+be reviewed against the gate rather than against a reviewer's memory. The
+reviewer's `repeat-of:` verdict field is the signal to route on.
+
+## Recovery surfaces
+
+- Stopped or refused integration: `task-board worktree transaction show <STORY-ID>`,
+  then the disposition surface it names.
+- A leaf whose handoff guard refused for artifact naming: attach the correctly
+  named `<ELEMENT-ID>_<slug>.<ext>` outcome resource and re-run the handoff. Do
+  not respawn the producer to satisfy a naming rule.
+
+exec
+/bin/zsh -lc 'task-board worktree checkpoint BUG-260908-7c5iv4 > .temp/BUG-260908-7c5iv4/checkpoint-01.log 2>&1
+checkpoint_exit=$?
+cat .temp/BUG-260908-7c5iv4/checkpoint-01.log
+printf '"'\\ncheckpoint_exit=%s\\n' \""'$checkpoint_exit"' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 8136ms:
+BUG-260908-7c5iv4: checkpointed as dc68c1584f7cc4ddcdf770acd8ace79790f0b404 on task-board/story/STORY-260908-h39ajh
+BUG-260908-7c5iv4: status integrating
+
+checkpoint_exit=0
+
+exec
+/bin/zsh -lc 'git verify-commit dc68c1584f7cc4ddcdf770acd8ace79790f0b404 > .temp/BUG-260908-7c5iv4/signature-01.log 2>&1
+verify_exit=$?
+cat .temp/BUG-260908-7c5iv4/signature-01.log
+printf '"'\\nverify_exit=%s\\n' \""'$verify_exit"
+git show -s --format='"'commit=%H%nauthor=%an <%ae>%ncommitter=%cn <%ce>%nauthor_date=%aI%ncommit_date=%cI%ntree=%T' HEAD
+git diff --exit-code ff711bcf8335bd2394bd06e38e6bbb514fd58d63 HEAD -- . ':"'!.task-board'"'
+printf 'candidate_product_diff_exit=%s\\n' \""'$?"
+git status --short' in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 2308ms:
+candidate_product_diff_exit=0
+
+exec
+/bin/zsh -lc "ssh-keygen -lf /Users/iv/.ssh/ivanopcode.pub
+ task-board m 'add_resource(BUG-260908-7c5iv4, name=BUG-260908-7c5iv4_checkpoint-outcome.md, content=\"# Accepted CR checkpoint outcome\\n\\nCheckpoint-only integration run for accepted CR-BUG-260908-7c5iv4-1 revision 1.\\n\\n- task-board worktree checkpoint BUG-260908-7c5iv4: exit 0. Commit dc68c1584f7cc4ddcdf770acd8ace79790f0b404 on task-board/story/STORY-260908-h39ajh; status remains integrating.\\n- git verify-commit dc68c1584f7cc4ddcdf770acd8ace79790f0b404: exit 0; good git signature for oparin@me.com, ECDSA fingerprint SHA256:V6JiKG7J29mjsvikcLoSVp0bLa77VTsFy12gnLO81cM. Configured signing format ssh, key /Users/iv/.ssh/ivanopcode.\\n- Author and committer: Ivan Oparin <oparin@me.com>; normal timestamp 2026-09-08T03:26:39+04:00.\\n- Commit tree equals accepted candidate ff711bcf8335bd2394bd06e38e6bbb514fd58d63 exactly. Candidate product diff exit 0; git status --short empty.\\n- No implementation, new broad validation, new CR, manual commit, trunk integration, hosted delivery, VPN action, successor, or tool installation performed. Existing validation evidence remains with accepted CR; this run verifies checkpoint only.\\n- Local logs: .temp/BUG-260908-7c5iv4/checkpoint-01.log and signature-01.log in Story workspace. Completed before 04:59 Asia/Tbilisi deadline. Parent owns remaining sibling and Story delivery.\\n\", type=outcome, description=\"Accepted CR checkpoint SHA, signature, identity, exact-tree and command exit evidence\")'" in /Users/iv/Developer/relux-tunnel/.temp/STORY-260908-h39ajh/worktree
+ succeeded in 960ms:
+{"ok":true,"result":{"id":"BUG-260908-7c5iv4","name":"BUG-260908-7c5iv4_checkpoint-outcome.md","type":"outcome","uri":"file://BUG-260908-7c5iv4/BUG-260908-7c5iv4_checkpoint-outcome.md"}}
+
+codex
+Checkpoint выполнен: `dc68c1584f7cc4ddcdf770acd8ace79790f0b404`, exit 0.
+
+Подпись Ivan Oparin проверена; дерево точно совпадает с принятым CR. Evidence прикреплено: `BUG-260908-7c5iv4_checkpoint-outcome.md`.
+
+Статус остаётся `integrating`. Trunk и hosted delivery не изменялись.
+Checkpoint выполнен: `dc68c1584f7cc4ddcdf770acd8ace79790f0b404`, exit 0.
+
+Подпись Ivan Oparin проверена; дерево точно совпадает с принятым CR. Evidence прикреплено: `BUG-260908-7c5iv4_checkpoint-outcome.md`.
+
+Статус остаётся `integrating`. Trunk и hosted delivery не изменялись.
+tokens used
+31,566

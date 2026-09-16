@@ -1,0 +1,46 @@
+{
+  "contract_version": "board-goal-v2",
+  "goal_id": "PRIMARY-GOAL-260728-3lhfz3",
+  "revision": 15,
+  "expected_previous_revision": 14,
+  "previous_ref": {
+    "id": "PRIMARY-GOAL-260728-3lhfz3",
+    "revision": 14
+  },
+  "owner": {
+    "kind": "parent",
+    "id": "primary"
+  },
+  "kind": "alignment",
+  "objective": "Finish the already active bounded delivery work, then park the project and provide a detailed session-transfer prompt covering completed work, exact refs and runs, remaining work, exclusions, evidence and operational nuances. Report the model-alias admission defect upstream in skill-project-management GitHub Issues (now issue #297); keep alias hardening implementation backlog. Complete active prerequisite tooling config-propagation fix through independent review and signed delivery, active SSH bootstrap TASK-260715-3t2v9w, CI BUG-260916-3t6wfs, separately reviewed operational config synchronization, accumulated board/LOGBOOK curation without loss, clean synchronized main, and signed WORK IN PROGRESS tag/GitHub prerelease. Do not start unrelated backlog. Assess macOS VPN epic progress by evidenced milestones, not invented percentages. Long-term objective remains signed/notarized macOS NEPacketTunnelProvider VPN over authenticated SSH with libssh2 primary; iOS deferred. Never install, configure, activate or connect a real VPN or alter routing on this Mac. One worker at a time through curator task-board: Muse Spark1.3 max implementation, Astra low or Fable low independent review, lite context. Use product operational .temp/resume-20260916/task-board.config.json until reviewed synchronization. Ivan Oparin \u003coparin@me.com\u003e signed commits/tags with /Users/iv/.ssh/ivanopcode and current timestamps, branch to PR to real exact-head review to green hosted checks to signed exact-head landing. Preserve all worktrees, foreign changes, stashes and evidence; no destructive reset/clean or fake clean through hidden storage. Reclaim only proven disposable inactive caches with exact target/size reporting. Persist genuine blockers and precise external input rather than weaken gates.",
+  "scope": {
+    "requested_ids": null,
+    "resolved_leaf_items": null
+  },
+  "mutation_authority": "agent_discretion",
+  "success_predicate": "routing_duty_clear",
+  "provider_condition": "Every terminal task-board run notice for this board has been routed (reviewer, checkpoint, integrate, rework, or a persisted blocked packet), and no unblocked, unassigned leaf of the primary goal remains undispatched, or the session is explicitly waiting on a human decision.",
+  "native_reflection": "required",
+  "state": "active",
+  "legacy_refs": [
+    {
+      "contract": "primary-goal-v1",
+      "id": "PRIMARY-GOAL-260728-3lhfz3",
+      "revision": 15
+    }
+  ],
+  "role_policy": {},
+  "mutation": {
+    "kind": "alignment_realigned",
+    "reason": "User requests upstream issue, finish active tasks then park with detailed transfer prompt.",
+    "actor_context": {
+      "kind": "agent",
+      "actor_id": "iv"
+    },
+    "authority": "agent_discretion"
+  },
+  "created_at": "2026-07-28T01:09:19.195521Z",
+  "updated_at": "2026-09-16T19:54:06.276645Z",
+  "created_by": "iv",
+  "reason": "User requests upstream issue, finish active tasks then park with detailed transfer prompt."
+}

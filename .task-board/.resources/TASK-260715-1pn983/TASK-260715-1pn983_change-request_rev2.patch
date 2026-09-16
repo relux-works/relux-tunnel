@@ -1,0 +1,755 @@
+diff --git a/.spec/decisions.md b/.spec/decisions.md
+index fb565e2..937c67b 100644
+--- a/.spec/decisions.md
++++ b/.spec/decisions.md
+@@ -10,7 +10,7 @@
+ | ADR-006 | Accepted | Upload the relay through exec stdin; do not add SFTP to `SSHTransport` |
+ | ADR-007 | Accepted | Support full and degraded TCP + safe-DNS modes instead of failing solely because UDP relay is unavailable |
+ | ADR-008 | Accepted | Use 2–4 SSH lanes, pin live flows, and assign only new flows using congestion-aware policy |
+-| ADR-009 | Accepted | Treat channel windows, lane count, HEV limits, and reconnect overlap as one memory budget |
++| ADR-009 | Accepted | Treat channel windows, lane count, HEV limits, DNS, relay, rekey, metrics, and reconnect overlap as one memory budget. The binding ownership, reservation, pressure, failure, and provisional DNS-residual contract is [`TASK-260715-1pn983`](../docs/TASK-260715-1pn983_memory-window-rekey-contract.md); it does not select final M3 watermarks or claim an Apple guarantee. |
+ | ADR-010 | Accepted | Expose configurable QUIC behavior; default `Auto` may force a fast TCP fallback |
+ | ADR-011 | Accepted | Develop packet/SSH/relay core through an SPM macOS harness while proving packetFlow, lifecycle, and memory on the **physical Apple-silicon Mac**. Re-scoped 2026-07-28 by ADR-024: the physical-iPhone row is deferred with iOS and is recorded as a named deferred gap, never as a pass or a waiver. It is re-armed unchanged when iOS resumes. |
+ | ADR-012 | Accepted | Make compatible and platform-scoped fail-closed route modes explicit user choices |
+diff --git a/.spec/packet-plane.md b/.spec/packet-plane.md
+index 3573d31..3bd8cd8 100644
+--- a/.spec/packet-plane.md
++++ b/.spec/packet-plane.md
+@@ -96,9 +96,11 @@ datagram size.
+ ## Memory budget
+ 
+ The provisional steady-state target for the full extension is 25–30 MiB on the
+-baseline physical iPhone. This is an engineering target, not an Apple contract.
+-The provider samples `os_proc_available_memory()` as advisory data and does not
+-cache it.
++named baseline physical Apple-silicon Mac. This is an engineering target, not
++an Apple contract. Physical-iPhone rows are deferred by ADR-024 and remain
++explicitly unavailable until run on an authorized named iPhone; Mac evidence is
++never substituted for them. The provider samples `os_proc_available_memory()`
++as advisory data and does not cache it.
+ 
+ Pressure behavior is ordered:
+ 
+@@ -114,3 +116,9 @@ SSH advertised window credit is not assumed to be eagerly allocated memory, but
+ buffering permitted by windows is included in the worst-case budget. Channel
+ counts, HEV sessions, socket buffers, DNS cache, relay buffers, and reconnect
+ overlap MUST appear in memory tests.
++
++The binding cross-layer ownership, unit, reservation, release, pressure,
++rekey, reconnect, metric, and failure contract is
++[`TASK-260715-1pn983`](../docs/TASK-260715-1pn983_memory-window-rekey-contract.md).
++Its numeric candidates remain evidence-gated; this reference does not turn the
++25–30 MiB engineering target into a platform guarantee.
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index a1a3469..e3daca1 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -5,6 +5,14 @@
+ 
+ ## 2026-08-30
+ 
++### Cross-layer memory authority separates reservation from physical evidence (TASK-260715-1pn983)
++
++- DECISION: One checked-byte ledger owns packet, HEV, SSH, DNS, client relay, rekey, metrics, and reconnect admissions. SSH credit is separate from resident bytes but reserves permitted local storage; failed reads are unknown, never zero or absence.
++- REVIEW REWORK: Revision-1 review found that the untracked reserve could be spent, total and incremental reservations were conflated, lane admission had no closed predicate, the reconnect/KEX view appeared to drop a permanent reserve, and the packet-plane target still named the deferred iPhone. Revision 2 makes `B_untracked` a permanent charged row, uses total-capacity rows plus candidate deltas, defines atomic lane admission and exact failed-construction release, separates reconnect from permanent KEX state, and aligns the active target to the named physical Apple-silicon Mac.
++- DNS RESIDUAL: The hard candidate ledger is 7,635,554 bytes inside an 8,388,608-byte component budget. Combined with the accepted 9,715,712-byte incremental HEV/bridge peak, it leaves 8,110,080 bytes in the lower 25 MiB engineering envelope. This proves arithmetic fit only; production remains false pending complete physical composition.
++- PRESSURE: Deterministic Soft/Pressure/Critical entry, hysteretic one-level recovery, one ordered action table, KEX emergency reservation, atomic replacement reservation, old-transport-first Critical release, and explicit stop replace jetsam-driven or side-queue behavior.
++- GAPS: Final watermarks, BDP/window winners, component ceilings, untracked reserve, overlap, and iPhone rows remain evidence-gated. No Apple guarantee, payload capture, flow migration, or weakened gate is asserted.
++
+ ### M0 packet bridge and HEV baseline accepted (TASK-260715-2jatnd)
+ 
+ - DECISION: The macOS-first M0 Bridge gate passes under ADR-024 with MTU 1500, requested/effective 32768-byte socket buffers, 64-packet/5-ms pump budgets, HEV task-stack/TCP/UDP-copy values 24576/4096/2, and an initial measured 500-session ceiling. MTU 4096 remains injectable behind end-to-end proof; MTU 8500 is a named failed default candidate because constrained-buffer rows produced 768 `EMSGSIZE` refusals.
+diff --git a/README.md b/README.md
+index 188bfa1..fbbde39 100644
+--- a/README.md
++++ b/README.md
+@@ -43,6 +43,9 @@ remote sshd  →  relux-relay (rootless, exec/stdio)  →  Internet
+ - **M0 bridge baseline**: MTU, socket buffers, batching, HEV settings, session
+   ceiling, memory evidence, and the no-fork disposition are bound by the
+   [`TASK-260715-2jatnd decision`](docs/TASK-260715-2jatnd_m0-bridge-hev-decision-adr.md).
++- **Cross-layer memory contract**: packet, HEV, SSH, DNS, client relay, rekey,
++  pressure, and reconnect reservations are bound by the
++  [`TASK-260715-1pn983 contract`](docs/TASK-260715-1pn983_memory-window-rekey-contract.md).
+ 
+ ## macOS experiment harness
+ 
+@@ -209,6 +212,7 @@ make credential-free-validate LEGACY_ROOT="$PWD/../relux-proxy"
+ | Tool | Purpose | Command | Output |
+ | --- | --- | --- | --- |
+ | `task-board` | Query and mutate the project board | `task-board q --format compact 'summary()'` | `.task-board/` |
++| PlantUML | Validate and render task-scoped architecture diagrams | `plantuml -checkonly diagrams/TASK-260715-1pn983_memory-pressure-state.puml diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml`; `plantuml -tsvg -o artefacts diagrams/TASK-260715-1pn983_memory-pressure-state.puml diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml` | Sources under `diagrams/`; SVG under `diagrams/artefacts/`; validation logs under `.temp/TASK-260715-1pn983/` |
+ | Tuist 4.202.5 via Mise | Generate the credential-free Apple workspace; validate deterministic foundation state; build/test the macOS host and embedded packet-tunnel system extension in unsigned Debug and Release | `make credential-free-validate LEGACY_ROOT=/path/to/relux-proxy`; or `make workspace-generate`, `make workspace-validate`, and `make macos-targets-validate`; see [`docs/generated-workspace-foundation.md`](docs/generated-workspace-foundation.md) | Ignored `ReluxTunnel.xcworkspace` and `ReluxTunnelApp.xcodeproj`; full logs under `.temp/TASK-260715-sbrrp7/credential-free-validation/`; foundation evidence under `.temp/TASK-260715-2btjwm/`; target evidence under `.temp/TASK-260715-uyju7n/` |
+ | Apple UI-test and screenshot gate | Compile the shared identifier/launch/Page Object contracts, build native macOS UI tests unsigned without launching them, run the isolated iOS Simulator smoke, extract step-named screenshots from xcresult, and produce controlled snapshot-diff artifacts | `make apple-ui-test-contract`; `make apple-ui-test-smoke`; see [`docs/apple-ui-test-validation.md`](docs/apple-ui-test-validation.md) | Unique runs under `.temp/TASK-260715-1idq8c/apple-ui-test/`, including Xcode logs, native macOS `.xctestrun` inventory, iOS `.xcresult`, extracted PNGs/manifest, `reference.png`, `failed.png`, `diff.png`, and `summary.txt` |
+ | SSH M0 matrix fixtures | Provision, validate, and orchestrate the privacy-safe Linux/macOS/compatibility/real-host fixture contract, real direct-tcpip failure listeners, long-lived stdio echo/sink, latency/loss proxies, external secret references, exact rotation policy, durable partial-prepare ownership journaling, fail-closed teardown, and a streaming 5 GiB source/sink with exact count and SHA-256 but no retained payload | `make ssh-fixtures-test`; `make ssh-fixtures-lifecycle`; `python3 scripts/ssh_matrix_fixture.py orchestration-preflight`; with the two candidate drivers configured, `python3 scripts/ssh_matrix_fixture.py orchestrate --output .temp/TASK-260715-39xz9g/matrix-report.json`; see `.research/fixtures/TASK-260715-39xz9g_ssh-matrix-orchestration-v1.md` | Public fixture manifest/contract under `.research/fixtures/`; privacy-safe reports and task-scoped logs under `.temp/TASK-260715-39xz9g/`; transient keys/routes only under the gitignored task state directory and removed by teardown |
+diff --git a/diagrams/TASK-260715-1pn983_memory-pressure-state.puml b/diagrams/TASK-260715-1pn983_memory-pressure-state.puml
+new file mode 100644
+index 0000000..b0d0bf8
+--- /dev/null
++++ b/diagrams/TASK-260715-1pn983_memory-pressure-state.puml
+@@ -0,0 +1,34 @@
++@startuml
++!theme plain
++title TASK-260715-1pn983 — memory pressure and recovery
++hide empty description
++state Normal #lightgreen
++state Soft #lightyellow
++state Pressure #orange
++state Critical #pink
++state Stopping #lightgray
++[*] --> Normal
++Normal --> Soft : [any fresh signal <= softEnter]
++Normal --> Pressure : [warning || signal <= pressureEnter]
++Normal --> Critical : [signal <= criticalEnter]
++Soft --> Pressure : [warning || signal <= pressureEnter]
++Soft --> Critical : [signal <= criticalEnter]
++Pressure --> Critical : [signal <= criticalEnter]
++Critical --> Pressure : [all > criticalExit\nactions ack + dwell]
++Pressure --> Soft : [all > pressureExit\nactions ack + dwell]
++Soft --> Normal : [all > softExit\nactions ack + dwell]
++Critical --> Stopping : release/replace cannot fit or finish
++Stopping --> [*] : owned cleanup reaches baseline
++note right of Normal
++Each observation calls advisory memory anew.
++Ledger fit remains admission authority.
++end note
++note right of Pressure
++Stale/unavailable/malformed/failed reads
++cannot recover and are never cached or zeroed.
++end note
++note right of Critical
++Release old transport first; reserve replacement,
++or stop explicitly.
++end note
++@enduml
+diff --git a/diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml b/diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml
+new file mode 100644
+index 0000000..2008b69
+--- /dev/null
++++ b/diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml
+@@ -0,0 +1,52 @@
++@startuml
++!theme plain
++title TASK-260715-1pn983 — orthogonal reconnect and rekey reservations
++hide empty description
++
++state Reconnect {
++    Reconnect : Reconnect ownership state machine
++    state "Transport current" as Current #lightgreen
++    state "Replacement reserved" as ReplacementReserved #lightblue
++    state "Old released" as OldReleased #orange
++    state "Replacement connecting" as ReplacementConnecting #lightyellow
++    state "Replacement current" as ReplacementCurrent #lightgreen
++    state "Explicit stop" as ExplicitStop #lightgray
++    [*] --> Current
++    Current --> ReplacementReserved : overlap + global predicates pass
++    ReplacementReserved --> ReplacementConnecting : Normal/Soft/Pressure
++    ReplacementConnecting --> ReplacementCurrent : usable / ordered old release
++    ReplacementReserved --> OldReleased : Critical / cancel new and clean
++    ReplacementConnecting --> OldReleased : Critical / cancel new and clean
++    Current --> OldReleased : Critical / release old first
++    OldReleased --> ReplacementConnecting : critical bootstrap fits
++    ReplacementReserved --> ExplicitStop : refusal and no safe continuity
++    OldReleased --> ExplicitStop : cannot fit/finish by deadline
++    ReplacementCurrent --> Current : promote replacement generation
++    ExplicitStop --> [*] : generations invalidated; cleanup reconciled
++}
++
++state KEX {
++    KEX : Per-lane permanent KEX reservation state machine
++    state "KEX idle (reservation retained)" as KEXIdle #lightblue
++    state "KEX active (same reservation)" as KEXActive #lightyellow
++    state "Lane failed" as LaneFailed #pink
++    [*] --> KEXIdle : lane admission charges permanent reserve
++    KEXIdle --> KEXActive : trigger / pause new channels
++    KEXActive --> KEXIdle : success / old keys and scratch released
++    KEXActive --> LaneFailed : failure / fail lane channels once
++    KEXIdle --> LaneFailed : transport stop / lane cleanup
++    LaneFailed --> [*] : lane cleanup releases permanent reserve
++}
++
++LaneFailed --> ReplacementReserved : lane recovery requests admitted replacement
++ExplicitStop --> LaneFailed : stop invalidates lane and joins cleanup
++
++note bottom of KEX
++KEX reservation exists in idle and active states.
++Existing flows stay pinned; triggers coalesce into a bounded bitset.
++end note
++note bottom of Reconnect
++Constructor is unreachable until reservation succeeds atomically.
++Critical construction is unreachable until old cleanup is observed.
++end note
++@enduml
+diff --git a/diagrams/artefacts/TASK-260715-1pn983_memory-pressure-state.svg b/diagrams/artefacts/TASK-260715-1pn983_memory-pressure-state.svg
+new file mode 100644
+index 0000000..403934d
+--- /dev/null
++++ b/diagrams/artefacts/TASK-260715-1pn983_memory-pressure-state.svg
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="STATE" height="781px" preserveAspectRatio="none" style="width:1301px;height:781px;background:#FFFFFF;" version="1.1" viewBox="0 0 1301 781" width="1301px" zoomAndPan="magnify"><?plantuml 1.2026.6?><defs/><g><g class="title" data-source-line="2"><text fill="#000000" font-family="Verdana" font-size="22" font-weight="700" lengthAdjust="spacing" textLength="696.126" x="301.5141" y="37.1182">TASK-260715-1pn983 &#8212; memory pressure and recovery</text></g><rect fill="#90EE90" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="60.8115" x="757.07" y="140.5373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="50.8115" x="762.07" y="166.1052">Normal</text><rect fill="#FFFFE0" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="50" x="628.47" y="392.9373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="28.5059" x="639.2171" y="418.5052">Soft</text><rect fill="#FFA500" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="70.5186" x="411.21" y="259.1373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="60.5186" x="416.21" y="284.7052">Pressure</text><rect fill="#FFC0CB" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="58.4941" x="277.23" y="510.7373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="48.4941" x="282.23" y="536.3052">Critical</text><rect fill="#D3D3D3" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="72.4531" x="270.25" y="628.5373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="62.4531" x="275.25" y="654.1052">Stopping</text><g class="start_entity" data-qualified-name=".start." data-source-line="9" id="ent0006"><ellipse cx="787.47" cy="68.7373" fill="#FFFFFF" rx="10" ry="10" style="stroke:#000000;stroke-width:1;"/></g><g class="end_entity" data-qualified-name=".end." data-source-line="20" id="ent0018"><ellipse cx="306.47" cy="756.5373" fill="none" rx="11" ry="11" style="stroke:#000000;stroke-width:1;"/><ellipse cx="306.47" cy="756.5373" fill="#FFFFFF" rx="6" ry="6" style="stroke:#000000;stroke-width:1;"/></g><g class="entity" data-qualified-name="GMN20" data-source-line="22" id="ent0021"><path d="M852.42,139.7373 L852.42,156.5373 L818.33,160.5373 L852.42,164.5373 L852.42,181.3359 A0,0 0 0 0 852.42,181.3359 L1180.5323,181.3359 A0,0 0 0 0 1180.5323,181.3359 L1180.5323,149.7373 L1170.5323,139.7373 L852.42,139.7373 A0,0 0 0 0 852.42,139.7373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M1170.5323,139.7373 L1170.5323,149.7373 L1180.5323,149.7373 L1170.5323,139.7373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="307.1123" x="858.42" y="157.8071">Each observation calls advisory memory anew.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="257.6069" x="858.42" y="173.6064">Ledger fit remains admission authority.</text></g><g class="entity" data-qualified-name="GMN23" data-source-line="26" id="ent0024"><path d="M516.67,258.3373 L516.67,275.1373 L481.8,279.1373 L516.67,283.1373 L516.67,299.9359 A0,0 0 0 0 516.67,299.9359 L852.2852,299.9359 A0,0 0 0 0 852.2852,299.9359 L852.2852,268.3373 L842.2852,258.3373 L516.67,258.3373 A0,0 0 0 0 516.67,258.3373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M842.2852,258.3373 L842.2852,268.3373 L852.2852,268.3373 L842.2852,258.3373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="271.3687" x="522.67" y="276.4071">Stale/unavailable/malformed/failed reads</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="314.6152" x="522.67" y="292.2064">cannot recover and are never cached or zeroed.</text></g><g class="entity" data-qualified-name="GMN26" data-source-line="30" id="ent0027"><path d="M370.48,509.9373 L370.48,526.7373 L336.18,530.7373 L370.48,534.7373 L370.48,551.5359 A0,0 0 0 0 370.48,551.5359 L710.4751,551.5359 A0,0 0 0 0 710.4751,551.5359 L710.4751,519.9373 L700.4751,509.9373 L370.48,509.9373 A0,0 0 0 0 370.48,509.9373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M700.4751,509.9373 L700.4751,519.9373 L710.4751,519.9373 L700.4751,509.9373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="318.9951" x="376.48" y="528.0071">Release old transport first; reserve replacement,</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="112.5884" x="376.48" y="543.8064">or stop explicitly.</text></g><!--link *start* to Normal--><g class="link" data-entity-1="ent0006" data-entity-2="ent0001" data-link-type="dependency" data-source-line="9" id="lnk7"><path d="M787.47,79.0173 C787.47,93.3573 787.47,116.2273 787.47,135.1073" fill="none" id="*start*-to-Normal" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="787.47,140.1073,791.47,131.1073,787.47,135.1073,783.47,131.1073,787.47,140.1073" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link Normal to Soft--><g class="link" data-entity-1="ent0001" data-entity-2="ent0002" data-link-type="dependency" data-source-line="10" id="lnk8"><path d="M818.13,174.8973 C845.97,187.3273 883.32,204.8773 887.47,211.3373 C923.91,268.0373 934.06,310.6973 891.47,362.9373 C864.82,395.6373 739.5403,406.8356 683.8203,410.3156" fill="none" id="Normal-to-Soft" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="678.83,410.6273,688.0618,414.0585,683.8203,410.3156,687.5632,406.0741,678.83,410.6273" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="205.2134" x="920.34" y="284.7071">[any fresh signal &lt;= softEnter]</text></g><!--link Soft to Normal--><g class="link" data-entity-1="ent0002" data-entity-2="ent0001" data-link-type="dependency" data-source-line="18" id="lnk16"><path d="M678.76,410.2073 C769.86,403.3873 1078.9,374.9473 1134.47,299.9373 C1219.83,184.7373 970.34,227.1173 834.47,181.3373 C829.19,179.5573 828.2952,179.3322 822.9552,177.1722" fill="none" id="Soft-to-Normal" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="818.32,175.2973,825.1634,182.3803,822.9552,177.1722,828.1632,174.964,818.32,175.2973" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="89.5845" x="1174.2099" y="276.7071">[all &gt; softExit</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="132.3042" x="1152.85" y="292.5064">actions ack + dwell]</text></g><!--link Normal to Pressure--><g class="link" data-entity-1="ent0001" data-entity-2="ent0003" data-link-type="dependency" data-source-line="11" id="lnk9"><path d="M756.67,171.5173 C703.85,188.7173 592.69,225.2773 499.47,258.3373 C493.83,260.3473 492.5492,260.782 486.7392,262.932" fill="none" id="Normal-to-Pressure" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="482.05,264.6673,491.8788,265.2952,486.7392,262.932,489.1024,257.7925,482.05,264.6673" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="244.645" x="634.26" y="225.4071">[warning || signal &lt;= pressureEnter]</text></g><!--link Normal to Critical--><g class="link" data-entity-1="ent0001" data-entity-2="ent0004" data-link-type="dependency" data-source-line="12" id="lnk10"><path d="M756.62,163.9373 C631.61,174.3473 165.25,220.1373 78.47,329.9373 C11,415.3073 196.5061,491.4401 272.1961,518.2101" fill="none" id="Normal-to-Critical" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="276.91,519.8773,269.7588,513.1053,272.1961,518.2101,267.0913,520.6474,276.91,519.8773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="157.8535" x="79.47" y="352.0071">[signal &lt;= criticalEnter]</text></g><!--link Soft to Pressure--><g class="link" data-entity-1="ent0002" data-entity-2="ent0003" data-link-type="dependency" data-source-line="13" id="lnk11"><path d="M649.33,392.7773 C644.28,374.0273 633.91,346.0173 614.47,329.9373 C573.77,296.2773 549.84,315.8673 499.47,299.9373 C493.85,298.1573 492.6635,297.8235 486.9235,295.7535" fill="none" id="Soft-to-Pressure" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="482.22,294.0573,489.3293,300.8733,486.9235,295.7535,492.0433,293.3477,482.22,294.0573" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="244.645" x="638.7" y="352.0071">[warning || signal &lt;= pressureEnter]</text></g><!--link Pressure to Soft--><g class="link" data-entity-1="ent0003" data-entity-2="ent0002" data-link-type="dependency" data-source-line="17" id="lnk15"><path d="M447.37,299.2873 C449.28,318.0673 455.09,346.2373 472.47,362.9373 C483.8,373.8173 576.036,395.0766 623.156,405.4066" fill="none" id="Pressure-to-Soft" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="628.04,406.4773,620.1053,400.6428,623.156,405.4066,618.3922,408.4572,628.04,406.4773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="121.6846" x="478.7798" y="344.0071">[all &gt; pressureExit</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="132.3042" x="473.47" y="359.8064">actions ack + dwell]</text></g><!--link Soft to Critical--><g class="link" data-entity-1="ent0002" data-entity-2="ent0004" data-link-type="dependency" data-source-line="14" id="lnk12"><path d="M628.11,422.0773 C589.23,434.5473 512.58,459.1173 447.47,479.9373 C405.7,493.2973 394.61,494.7473 353.47,509.9373 C347.83,512.0273 346.478,512.4805 340.768,514.8505" fill="none" id="Soft-to-Critical" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="336.15,516.7673,345.9958,517.0115,340.768,514.8505,342.929,509.6227,336.15,516.7673" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="157.8535" x="499.34" y="477.0071">[signal &lt;= criticalEnter]</text></g><!--link Pressure to Critical--><g class="link" data-entity-1="ent0003" data-entity-2="ent0004" data-link-type="dependency" data-source-line="15" id="lnk13"><path d="M411.11,285.8973 C358.6,296.5673 261.66,324.8573 219.47,392.9373 C193.38,435.0473 240.3164,480.8694 274.6864,507.2994" fill="none" id="Pressure-to-Critical" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="278.65,510.3473,273.9539,501.6901,274.6864,507.2994,269.0772,508.0319,278.65,510.3473" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="157.8535" x="220.47" y="418.5071">[signal &lt;= criticalEnter]</text></g><!--link Critical to Pressure--><g class="link" data-entity-1="ent0004" data-entity-2="ent0003" data-link-type="dependency" data-source-line="16" id="lnk14"><path d="M324.16,510.4773 C340.75,491.7173 365.48,461.8573 382.47,432.9373 C409.13,387.5573 428.7926,333.7186 438.7426,303.9986" fill="none" id="Critical-to-Pressure" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="440.33,299.2573,433.6797,306.5218,438.7426,303.9986,441.2658,309.0616,440.33,299.2573" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="107.9546" x="415.5348" y="410.5071">[all &gt; criticalExit</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="132.3042" x="403.36" y="426.3064">actions ack + dwell]</text></g><!--link Critical to Stopping--><g class="link" data-entity-1="ent0004" data-entity-2="ent0005" data-link-type="dependency" data-source-line="19" id="lnk17"><path d="M306.47,551.1173 C306.47,572.4973 306.47,601.6873 306.47,623.0873" fill="none" id="Critical-to-Stopping" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="306.47,628.0873,310.47,619.0873,306.47,623.0873,302.47,619.0873,306.47,628.0873" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="224.0723" x="307.47" y="595.6071">release/replace cannot fit or finish</text></g><!--link Stopping to *end*--><g class="link" data-entity-1="ent0005" data-entity-2="ent0018" data-link-type="dependency" data-source-line="20" id="lnk19"><path d="M306.47,668.9773 C306.47,691.4473 306.47,722.5973 306.47,740.2173" fill="none" id="Stopping-to-*end*" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="306.47,745.2173,310.47,736.2173,306.47,740.2173,302.47,736.2173,306.47,745.2173" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="210.9009" x="307.47" y="712.6071">owned cleanup reaches baseline</text></g><?plantuml-src dLHDRzGm4BtxLmpg3TWk1V6rG2M4UW8XHBcL7cRjIMBLiItRksbG3_m8VY6_X77gkCkYbIfEISRpvhrvdic3r55Fu0rgAv9EXk3R-_EFYwSldhmyURuuyVRrgsVm--SlwAbtOGGVACPD842h891qMmgZwBGYeDwd4HH56RHFsbaH4oQ2poxqQE38wBPBRI2Q3yvTaqfu96FSKE9VPeuZ5z2sLC8VWavQvafUswkvHdAUFzjQ7aTnyV0I5elJGYmAVuvCZ2kuG3j2momTHDrQFdpx3YAVdTb4uN8NKRKmQi1WCzNDpGviDkHVQDNBqBjyMQ8bVrBqFqGLU2-QMltUY9gqBmwDWTExx6kTlbkK-RuZeBo2Hw06liqzpkhyXAwz74RN_egZ5JlTqs7SNxhhTAnuLWrXf6KW7dP98D5Qbw3H2LpWXzMn4pK_W_COhS0DbXH81jkDvoeeEugmvb96Mn9SWo3aqGFNp1DtnadWrf725hD49ZE6TQgjZdc9oYwXfU5OV2BLKfY41Efv3tDYhsFCGDoapd57ux4WNhZCjaSvkypQqT1oOt6Bsk2QtrbAmu98BHiEKTvNL56KpiloJekCV4kMyfVC_QbioGyAZjH1tjbdyVNMM716GU9zZTw5x6k8wGsJP1COTkjwJpOz5bmyij50rzveoJ-TdUx-0000?></g></svg>
+\ No newline at end of file
+diff --git a/diagrams/artefacts/TASK-260715-1pn983_reconnect-rekey-state.svg b/diagrams/artefacts/TASK-260715-1pn983_reconnect-rekey-state.svg
+new file mode 100644
+index 0000000..362e0ea
+--- /dev/null
++++ b/diagrams/artefacts/TASK-260715-1pn983_reconnect-rekey-state.svg
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="STATE" height="923px" preserveAspectRatio="none" style="width:2531px;height:923px;background:#FFFFFF;" version="1.1" viewBox="0 0 2531 923" width="2531px" zoomAndPan="magnify"><?plantuml 1.2026.6?><defs/><g><g class="title" data-source-line="2"><text fill="#000000" font-family="Verdana" font-size="22" font-weight="700" lengthAdjust="spacing" textLength="867.582" x="830.9648" y="37.1182">TASK-260715-1pn983 &#8212; orthogonal reconnect and rekey reservations</text></g><!--cluster Reconnect--><g class="cluster" data-qualified-name="Reconnect" data-source-line="5" id="ent0001"><path d="M1137.42,59.7373 L2032.42,59.7373 A12.5,12.5 0 0 1 2044.92,72.2373 L2044.92,81.752 L1124.92,81.752 L1124.92,72.2373 A12.5,12.5 0 0 1 1137.42,59.7373" fill="#FFFFFF"/><rect fill="#FFFFFF" height="22.0146" style="stroke:#FFFFFF;stroke-width:1;" width="920" x="1124.92" y="81.752"/><path d="M1124.92,103.7666 L2044.92,103.7666 L2044.92,779.4373 A12.5,12.5 0 0 1 2032.42,791.9373 L1137.42,791.9373 A12.5,12.5 0 0 1 1124.92,779.4373 L1124.92,103.7666" fill="#FFFFFF"/><rect fill="none" height="732.2" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="920" x="1124.92" y="59.7373"/><line style="stroke:#000000;stroke-width:1;" x1="1124.92" x2="2044.92" y1="81.752" y2="81.752"/><line style="stroke:#000000;stroke-width:1;" x1="1124.92" x2="2044.92" y1="103.7666" y2="103.7666"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="72.7344" x="1548.5528" y="77.8125">Reconnect</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="253.6406" x="1129.92" y="98.3271">Reconnect ownership state machine</text></g><!--cluster KEX--><g class="cluster" data-qualified-name="KEX" data-source-line="27" id="ent0008"><path d="M507.42,319.3373 L1072.42,319.3373 A12.5,12.5 0 0 1 1084.92,331.8373 L1084.92,341.352 L494.92,341.352 L494.92,331.8373 A12.5,12.5 0 0 1 507.42,319.3373" fill="#FFFFFF"/><rect fill="#FFFFFF" height="22.0146" style="stroke:#FFFFFF;stroke-width:1;" width="590" x="494.92" y="341.352"/><path d="M494.92,363.3666 L1084.92,363.3666 L1084.92,896.4373 A12.5,12.5 0 0 1 1072.42,908.9373 L507.42,908.9373 A12.5,12.5 0 0 1 494.92,896.4373 L494.92,363.3666" fill="#FFFFFF"/><rect fill="none" height="589.6" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="590" x="494.92" y="319.3373"/><line style="stroke:#000000;stroke-width:1;" x1="494.92" x2="1084.92" y1="341.352" y2="341.352"/><line style="stroke:#000000;stroke-width:1;" x1="494.92" x2="1084.92" y1="363.3666" y2="363.3666"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="28.1436" x="775.8482" y="337.4125">KEX</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="361.5801" x="499.92" y="357.9271">Per-lane permanent KEX reservation state machine</text></g><rect fill="#90EE90" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="133.6143" x="1453.11" y="207.5373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="123.6143" x="1458.11" y="233.1052">Transport current</text><rect fill="#ADD8E6" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="167.2061" x="1436.32" y="375.3373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="157.2061" x="1441.32" y="400.9052">Replacement reserved</text><rect fill="#FFA500" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="97.7666" x="1415.04" y="493.1373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="87.7666" x="1420.04" y="518.7052">Old released</text><rect fill="#FFFFE0" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="182.0195" x="1510.91" y="610.9373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="172.0195" x="1515.91" y="636.5052">Replacement connecting</text><rect fill="#90EE90" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="156.7539" x="1636.54" y="727.9373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="146.7539" x="1641.54" y="753.5052">Replacement current</text><rect fill="#D3D3D3" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="95.1484" x="1149.35" y="610.9373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="85.1484" x="1154.35" y="636.5052">Explicit stop</text><g class="start_entity" data-qualified-name="Reconnect..start.Reconnect" data-source-line="13" id="ent0012"><ellipse cx="1519.92" cy="135.7373" fill="#FFFFFF" rx="10" ry="10" style="stroke:#000000;stroke-width:1;"/></g><g class="end_entity" data-qualified-name="Reconnect..end.Reconnect" data-source-line="24" id="ent0024"><ellipse cx="1205.92" cy="747.9373" fill="none" rx="11" ry="11" style="stroke:#000000;stroke-width:1;"/><ellipse cx="1205.92" cy="747.9373" fill="#FFFFFF" rx="6" ry="6" style="stroke:#000000;stroke-width:1;"/></g><rect fill="#ADD8E6" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="227.7041" x="672.07" y="493.1373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="217.7041" x="677.07" y="518.7052">KEX idle (reservation retained)</text><rect fill="#FFFFE0" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="224.2998" x="545.77" y="610.9373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="214.2998" x="550.77" y="636.5052">KEX active (same reservation)</text><rect fill="#FFC0CB" height="40" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1;" width="86.3984" x="826.72" y="727.9373"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="76.3984" x="831.72" y="753.5052">Lane failed</text><g class="start_entity" data-qualified-name="KEX..start.KEX" data-source-line="32" id="ent0026"><ellipse cx="777.92" cy="395.3373" fill="#FFFFFF" rx="10" ry="10" style="stroke:#000000;stroke-width:1;"/></g><g class="end_entity" data-qualified-name="KEX..end.KEX" data-source-line="37" id="ent0032"><ellipse cx="789.92" cy="873.9373" fill="none" rx="11" ry="11" style="stroke:#000000;stroke-width:1;"/><ellipse cx="789.92" cy="873.9373" fill="#FFFFFF" rx="6" ry="6" style="stroke:#000000;stroke-width:1;"/></g><g class="entity" data-qualified-name="GMN36" data-source-line="44" id="ent0037"><path d="M11,492.3373 L11,533.9359 L470.8389,533.9359 L470.8389,502.3373 L460.8389,492.3373 L11,492.3373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M460.8389,492.3373 L460.8389,502.3373 L470.8389,502.3373 L460.8389,492.3373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="311.1494" x="17" y="510.4071">KEX reservation exists in idle and active states.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="438.8389" x="17" y="526.2064">Existing flows stay pinned; triggers coalesce into a bounded bitset.</text></g><g class="entity" data-qualified-name="GMN39" data-source-line="48" id="ent0040"><path d="M2069.33,206.7373 L2069.33,248.3359 L2516.5116,248.3359 L2516.5116,216.7373 L2506.5116,206.7373 L2069.33,206.7373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><path d="M2506.5116,206.7373 L2506.5116,216.7373 L2516.5116,216.7373 L2506.5116,206.7373" fill="#FFFFFF" style="stroke:#000000;stroke-width:1;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="426.1816" x="2075.33" y="224.8071">Constructor is unreachable until reservation succeeds atomically.</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="425.2168" x="2075.33" y="240.6064">Critical construction is unreachable until old cleanup is observed.</text></g><!--link *start*Reconnect to Current--><g class="link" data-entity-1="ent0012" data-entity-2="ent0002" data-link-type="dependency" data-source-line="13" id="lnk13"><path d="M1519.92,146.0073 C1519.92,160.3473 1519.92,183.2273 1519.92,202.1073" fill="none" id="*start*Reconnect-to-Current" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1519.92,207.1073,1523.92,198.1073,1519.92,202.1073,1515.92,198.1073,1519.92,207.1073" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link Current to ReplacementReserved--><g class="link" data-entity-1="ent0002" data-entity-2="ent0003" data-link-type="dependency" data-source-line="14" id="lnk14"><path d="M1519.92,247.8873 C1519.92,279.7473 1519.92,337.9173 1519.92,369.8573" fill="none" id="Current-to-ReplacementReserved" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1519.92,374.8573,1523.92,365.8573,1519.92,369.8573,1515.92,365.8573,1519.92,374.8573" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="213.0337" x="1520.92" y="292.4071">overlap + global predicates pass</text></g><!--link ReplacementReserved to ReplacementConnecting--><g class="link" data-entity-1="ent0003" data-entity-2="ent0005" data-link-type="dependency" data-source-line="15" id="lnk15"><path d="M1548.7,415.7473 C1559.05,423.8873 1570.09,434.0873 1577.92,445.3373 C1601.83,479.7073 1577.92,506.9373 1609.92,533.9373 C1667.55,582.5773 1728.54,506.0873 1776.92,563.9373 C1806.4,599.1773 1754.7747,614.9556 1698.2747,622.6156" fill="none" id="ReplacementReserved-to-ReplacementConnecting" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1693.32,623.2873,1702.7758,626.0419,1698.2747,622.6156,1701.701,618.1145,1693.32,623.2873" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="141.6543" x="1610.92" y="518.7071">Normal/Soft/Pressure</text></g><!--link ReplacementConnecting to ReplacementCurrent--><g class="link" data-entity-1="ent0005" data-entity-2="ent0006" data-link-type="dependency" data-source-line="16" id="lnk16"><path d="M1599.91,651.3673 C1599.47,665.5773 1601.14,684.6073 1610.92,697.9373 C1620.37,710.8073 1629.581,718.205 1643.951,725.335" fill="none" id="ReplacementConnecting-to-ReplacementCurrent" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1648.43,727.5573,1642.1457,719.9739,1643.951,725.335,1638.59,727.1403,1648.43,727.5573" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="183.5615" x="1611.92" y="695.0071">usable / ordered old release</text></g><!--link ReplacementReserved to OldReleased--><g class="link" data-entity-1="ent0003" data-entity-2="ent0004" data-link-type="dependency" data-source-line="17" id="lnk17"><path d="M1435.97,405.6173 C1411.7,412.6373 1387.78,424.7173 1372.92,445.3373 C1356.93,467.5173 1380.7458,483.505 1409.9558,495.155" fill="none" id="ReplacementReserved-to-OldReleased" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1414.6,497.0073,1407.7222,489.9578,1409.9558,495.155,1404.7585,497.3886,1414.6,497.0073" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="199.5386" x="1373.92" y="459.4071">Critical / cancel new and clean</text></g><!--link ReplacementConnecting to OldReleased--><g class="link" data-entity-1="ent0005" data-entity-2="ent0004" data-link-type="dependency" data-source-line="18" id="lnk18"><path d="M1590.34,610.6273 C1581.18,596.4773 1567.39,577.4673 1551.92,563.9373 C1538.31,552.0273 1525.8249,543.9943 1510.4749,535.8343" fill="none" id="ReplacementConnecting-to-OldReleased" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1506.06,533.4873,1512.1293,541.2438,1510.4749,535.8343,1515.8845,534.1799,1506.06,533.4873" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="199.5386" x="1568.76" y="578.0071">Critical / cancel new and clean</text></g><!--link OldReleased to ReplacementConnecting--><g class="link" data-entity-1="ent0004" data-entity-2="ent0005" data-link-type="dependency" data-source-line="20" id="lnk20"><path d="M1430.61,533.4173 C1412.11,546.5973 1395.18,564.5773 1407.92,580.9373 C1421.13,597.8973 1461.9793,609.0201 1505.7393,616.9101" fill="none" id="OldReleased-to-ReplacementConnecting" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1510.66,617.7973,1502.5126,612.2638,1505.7393,616.9101,1501.0931,620.1369,1510.66,617.7973" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="134.2529" x="1408.92" y="578.0071">critical bootstrap fits</text></g><!--link Current to OldReleased--><g class="link" data-entity-1="ent0002" data-entity-2="ent0004" data-link-type="dependency" data-source-line="19" id="lnk19"><path d="M1452.86,238.2373 C1382.75,249.9073 1279.66,271.9373 1255.92,303.3373 C1225.9,343.0473 1229.16,373.3673 1255.92,415.3373 C1274.07,443.7973 1354.6439,475.3752 1410.2139,494.5652" fill="none" id="Current-to-OldReleased" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1414.94,496.1973,1407.7386,489.4787,1410.2139,494.5652,1405.1273,497.0405,1414.94,496.1973" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="161.2813" x="1256.92" y="400.9071">Critical / release old first</text></g><!--link ReplacementReserved to ExplicitStop--><g class="link" data-entity-1="ent0003" data-entity-2="ent0007" data-link-type="dependency" data-source-line="21" id="lnk21"><path d="M1439.36,415.8173 C1350.4,438.0573 1217.59,473.7773 1201.92,492.3373 C1173.69,525.7573 1181.9874,576.8746 1189.7374,606.0746" fill="none" id="ReplacementReserved-to-ExplicitStop" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1191.02,610.9073,1192.5774,601.1824,1189.7374,606.0746,1184.8451,603.2346,1191.02,610.9073" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="194.0796" x="1202.92" y="518.7071">refusal and no safe continuity</text></g><!--link OldReleased to ExplicitStop--><g class="link" data-entity-1="ent0004" data-entity-2="ent0007" data-link-type="dependency" data-source-line="22" id="lnk22"><path d="M1414.6,527.6473 C1405.75,529.8773 1396.58,532.0773 1387.92,533.9373 C1310.34,550.6173 1269.54,509.3773 1211.92,563.9373 C1199.38,575.8173 1196.4076,590.8087 1196.0576,605.6887" fill="none" id="OldReleased-to-ExplicitStop" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1195.94,610.6873,1200.1505,601.7839,1196.0576,605.6887,1192.1527,601.5957,1195.94,610.6873" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="182.5015" x="1212.92" y="578.0071">cannot fit/finish by deadline</text></g><!--link ReplacementCurrent to Current--><g class="link" data-entity-1="ent0006" data-entity-2="ent0002" data-link-type="dependency" data-source-line="23" id="lnk23"><path d="M1767.89,727.5873 C1780.59,720.3173 1792.59,710.6173 1799.92,697.9373 C1894.07,534.9773 1872.18,415.1273 1742.92,278.3373 C1721.84,256.0273 1649.7213,243.1183 1592.0413,235.8983" fill="none" id="ReplacementCurrent-to-Current" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1587.08,235.2773,1595.5135,240.3642,1592.0413,235.8983,1596.5071,232.4261,1587.08,235.2773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="215.0776" x="1858.81" y="518.7071">promote replacement generation</text></g><!--link ExplicitStop to *end*Reconnect--><g class="link" data-entity-1="ent0007" data-entity-2="ent0024" data-link-type="dependency" data-source-line="24" id="lnk25"><path d="M1198.43,651.1873 C1200.35,675.7373 1203.209,712.3426 1204.719,731.5926" fill="none" id="ExplicitStop-to-*end*Reconnect" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1205.11,736.5773,1208.3939,727.2921,1204.719,731.5926,1200.4184,727.9177,1205.11,736.5773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="284.0449" x="1202.96" y="695.0071">generations invalidated; cleanup reconciled</text></g><!--link *start*KEX to KEXIdle--><g class="link" data-entity-1="ent0026" data-entity-2="ent0009" data-link-type="dependency" data-source-line="32" id="lnk27"><path d="M778.57,405.8173 C779.89,424.8273 782.5261,462.9691 784.2561,488.0591" fill="none" id="*start*KEX-to-KEXIdle" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="784.6,493.0473,787.9714,483.7935,784.2561,488.0591,779.9904,484.3438,784.6,493.0473" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="281.9058" x="783.4" y="459.4071">lane admission charges permanent reserve</text></g><!--link KEXIdle to KEXActive--><g class="link" data-entity-1="ent0009" data-entity-2="ent0010" data-link-type="dependency" data-source-line="33" id="lnk28"><path d="M671.84,525.8273 C623.03,533.4073 573.81,545.4273 558.92,563.9373 C543.25,583.4173 559.9002,597.2908 586.6802,608.5408" fill="none" id="KEXIdle-to-KEXActive" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="591.29,610.4773,584.5416,603.3038,586.6802,608.5408,581.4432,610.6794,591.29,610.4773" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="190.5186" x="559.92" y="578.0071">trigger / pause new channels</text></g><!--link KEXActive to KEXIdle--><g class="link" data-entity-1="ent0010" data-entity-2="ent0009" data-link-type="dependency" data-source-line="34" id="lnk29"><path d="M711.99,610.4873 C727.28,603.0373 742.98,593.2773 754.92,580.9373 C767.81,567.6173 774.4962,552.703 779.2162,538.163" fill="none" id="KEXActive-to-KEXIdle" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="780.76,533.4073,774.1766,540.7325,779.2162,538.163,781.7857,543.2026,780.76,533.4073" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="258.8066" x="767.88" y="578.0071">success / old keys and scratch released</text></g><!--link KEXActive to LaneFailed--><g class="link" data-entity-1="ent0010" data-entity-2="ent0011" data-link-type="dependency" data-source-line="35" id="lnk30"><path d="M650.78,651.3673 C646.86,665.7573 644.62,685.0273 654.92,697.9373 C675.99,724.3473 765.2253,737.1353 821.7153,742.8353" fill="none" id="KEXActive-to-LaneFailed" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="826.69,743.3373,818.137,738.454,821.7153,742.8353,817.3339,746.4136,826.69,743.3373" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="204.623" x="655.92" y="695.0071">failure / fail lane channels once</text></g><!--link KEXIdle to LaneFailed--><g class="link" data-entity-1="ent0009" data-entity-2="ent0011" data-link-type="dependency" data-source-line="36" id="lnk31"><path d="M900.05,523.0473 C956.96,530.1073 1017.35,542.4973 1034.92,563.9373 C1039.71,569.7773 1039.37,574.8273 1034.92,580.9373 C1009.35,616.0473 975.19,583.0273 941.92,610.9373 C904.46,642.3573 885.1987,693.5658 876.4387,722.9458" fill="none" id="KEXIdle-to-LaneFailed" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="875.01,727.7373,881.4148,720.2554,876.4387,722.9458,873.7483,717.9696,875.01,727.7373" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="189.998" x="942.92" y="636.5071">transport stop / lane cleanup</text></g><!--link LaneFailed to *end*KEX--><g class="link" data-entity-1="ent0011" data-entity-2="ent0032" data-link-type="dependency" data-source-line="37" id="lnk33"><path d="M857.42,768.3073 C839.84,795.5573 811.2409,839.886 798.3809,859.816" fill="none" id="LaneFailed-to-*end*KEX" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="795.67,864.0173,803.9107,858.6237,798.3809,859.816,797.1886,854.2862,795.67,864.0173" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="269.731" x="826.13" y="830.0071">lane cleanup releases permanent reserve</text></g><!--link LaneFailed to ReplacementReserved--><g class="link" data-entity-1="ent0011" data-entity-2="ent0003" data-link-type="dependency" data-source-line="40" id="lnk34"><path d="M913.18,743.4473 C965.28,739.3273 1055.46,732.4673 1132.92,727.9373 C1207.42,723.5773 1733.71,723.2373 1803.92,697.9373 C1917.65,656.9473 1967.05,642.1673 2020.92,533.9373 C2029.16,517.3873 2032.7,506.5873 2020.92,492.3373 C1968.97,429.4973 1737.5716,407.6768 1608.9316,400.2168" fill="none" id="LaneFailed-to-ReplacementReserved" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="1603.94,399.9273,1612.6933,404.4416,1608.9316,400.2168,1613.1565,396.4551,1603.94,399.9273" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="297.521" x="2004.59" y="578.0071">lane recovery requests admitted replacement</text></g><!--link ExplicitStop to LaneFailed--><g class="link" data-entity-1="ent0007" data-entity-2="ent0011" data-link-type="dependency" data-source-line="41" id="lnk35"><path d="M1148.85,639.4973 C1079.17,650.6873 956.38,671.3573 937.92,680.9373 C916.31,692.1573 900.1403,708.5991 887.6603,723.7391" fill="none" id="ExplicitStop-to-LaneFailed" style="stroke:#000000;stroke-width:1;"/><polygon fill="#000000" points="884.48,727.5973,893.2911,723.1968,887.6603,723.7391,887.118,718.1083,884.48,727.5973" style="stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="253.5698" x="938.92" y="695.0071">stop invalidates lane and joins cleanup</text></g><!--link KEX to GMN36--><g class="link" data-entity-1="ent0008" data-entity-2="ent0037" data-link-type="association" data-source-line="44" id="lnk38"><path d="M494.5551,400.0342 C494.4131,400.0969 494.2694,400.1604 494.1242,400.2246 C493.543,400.4815 492.9356,400.75 492.3027,401.0298 C491.0369,401.5894 489.6689,402.194 488.205,402.8411 C485.2772,404.1353 481.9655,405.5991 478.3187,407.2109 C463.7319,413.6582 443.785,422.4742 421.6075,432.2761 C377.2525,451.8798 323.975,475.4273 286.81,491.8573" fill="none" id="KEX-GMN36" style="stroke:#000000;stroke-width:1;stroke-dasharray:7,7;"/></g><!--link Reconnect to GMN39--><g class="link" data-entity-1="ent0001" data-entity-2="ent0040" data-link-type="association" data-source-line="48" id="lnk41"><path d="M2045.0598,139.595 C2045.1905,139.6408 2045.3226,139.6872 2045.4562,139.734 C2045.7233,139.8277 2045.9962,139.9234 2046.2747,140.0211 C2047.3888,140.4119 2048.5933,140.8344 2049.8831,141.2869 C2052.4627,142.1918 2055.3838,143.2165 2058.6061,144.3468 C2071.4953,148.8682 2089.2044,155.0804 2109.1613,162.0811 C2149.075,176.0823 2197.98,193.2373 2235.3,206.3273" fill="none" id="Reconnect-GMN39" style="stroke:#000000;stroke-width:1;stroke-dasharray:7,7;"/></g><?plantuml-src bLRRRjms47tNLqpZbxR1sas3tbIWG62aG94Y2Umy52ZomAL64XikgPAKdKLHe1_HB-oNz0mbxNBNkoxg1qEaPixSpXpj9wdd3TDWbN5LCiaolNjn-shrvTTVVFFigzMpmNttxNFwvw-_oOVK-yuxPIcmziwnJgHSWzC7tk9_v72dal4kLhrfc7Wpf2qr77KmWznNLKmgCTtitF-e27_xSrqy-tl78VPceCbhetHl76UFwUR9kw1S790OwJ44Tka9gKZNqpDTMDFrgGlChdIwOHIhKJHCfgIvoNx5YvlvViPOs_4WxXihLLjMSNR5nSryfWkFh3e-5t8kpxZkEEZrxiqSTilM-lkpG4N99ShZrR_yE5YZJSBP3zbtkRd5nSvBRRFJhv-_fzNgXwMb-Mu98FUdMbQJl-DWrK1FgRD-3RuCWHkZ4J_Ie6ASX_xGzGYoQ4XDhttOA7jrwzjqzHPpYsFWOw32uHXgJhgcCQerI7u5FZUClCZlX_beOkMCQxeE9g4a2o2jd6PBZk_pEcZOkF_8xFzZbLq_wpsNaKjgJOZJm4hpnpgi5w2rzoccW0cs9Zq-hGFor4YWHNzjpjrvYgfb8Jm2Z2PjJsPpX806E9yay5Lhd8azhKL3L6ENtJynrOAYW1Y2ttXmFHJBqZ7498jJnZW8Ajv2zBgmYcJSdRAc0McRxwSvZCCaVDfORge_5pLxzVANMSVagQQt75PMEMWgWx5EeikBGX_F2veOcWRq_BGq3voWpjnyblSLDZ-9oMbf4WI5YTu18weDbt5t_YycWtCgyxDatoefCtl8-STyf8l1k0y7qh2aKrCkMZKR4wDahNiLEjduNHjcjLrwbTrcY3cZcb8mNSS1P1xK22hB9W09DBLnSPoD3wF7KMkeWYmss8ylKiminCT79TtlvFe4Hb5UdSk6iW16dgQQblY4sJ_C_i0zxRv8egz0cG0c-cJNmdnFlD9gIVLKvq2w8__J2fpnXAnGOlaq_pvoJ34F9u7GvMfK3tRXeA1SnduNuZnbTFOtRx0cIscLavLR-vJyXdmh7QgEQSyVZMHXtCHn0PcfceaNBv4BB4IDMb0oolMMm3WdEpWp0o6zilXHmG1AdXI2Zgv1ick85QVBYhFu93vEQVVJeeBiGTz6dNmW4sbqWR6B-RimGgpiuR8AiRX1zu0Z-cYtbzLETFK29QOdiOIEosXXuDVJbFPv_Wi0?></g></svg>
+\ No newline at end of file
+diff --git a/docs/TASK-260715-1pn983_memory-window-rekey-contract.md b/docs/TASK-260715-1pn983_memory-window-rekey-contract.md
+new file mode 100644
+index 0000000..3f4cdc9
+--- /dev/null
++++ b/docs/TASK-260715-1pn983_memory-window-rekey-contract.md
+@@ -0,0 +1,453 @@
++# TASK-260715-1pn983 — cross-layer memory, window, and rekey contract
++
++- Status: binding architecture contract, pending independent review
++- Authority: ADR-009, ADR-014, ADR-020, ADR-021, ADR-023, ADR-024
++- Active physical target: macOS-first on a named Apple-silicon Mac
++- Deferred target: iPhone/iOS under ADR-024; Mac evidence is never substituted
++- Numeric rule: accepted inputs are named below; every other ceiling and
++  watermark is injected and fail-closed until M3 evidence selects it
++
++## Binding decisions and non-claims
++
++The extension has one byte ledger. Packet, HEV, SSH, DNS, relay, rekey, and
++reconnect owners cannot admit work from private budgets that ignore each other.
++Every admission reserves its worst permitted bounded storage before work starts.
++Release occurs exactly once only after the owning operation, queue, channel,
++session, lane, or transport is no longer reachable.
++
++The 25–30 MiB range is an engineering target, not an Apple memory guarantee.
++`os_proc_available_memory()` is current advisory evidence only: call it for
++each observation, never cache its value as future availability, and never turn
++unavailable or failed reads into zero. Jetsam is a failure, never control flow.
++
++An SSH advertised receive window is credit, not proof of eager allocation. The
++ledger still reserves the maximum local storage that the credit permits because
++the peer may consume it. Wire credit, resident bytes, and ledger reservation
++are separate metrics. Final watermarks, BDP caps, lane counts, rekey thresholds,
++relay caps, and reconnect overlap remain M3 tuning outputs.
++
++## Ledger model and units
++
++All quantities are unsigned bytes unless named otherwise. Counts/products use
++checked arithmetic. Overflow, a missing required ceiling, an unavailable owner
++count needed for exact charging, or a sum over its parent ceiling is a typed
++configuration/admission refusal; operands are not saturated into plausible
++values.
++
++```text
++current_i             = exactly observed bytes currently owned, when observable
++capacityReservation_i = worst total bytes promised to admitted owner i
++peak_i                = maximum current_i in the process generation
++charge_i              = max(current_i, capacityReservation_i)
++
++ledgerCurrentBytes   = sum(current_i)
++ledgerReservedBytes  = sum(capacityReservation_i)
++ledgerCommittedBytes = sum(charge_i)
++ledgerHeadroomBytes  = globalLedgerCeilingBytes - ledgerCommittedBytes
++```
++
++`capacityReservation_i` always means a total owner envelope, never bytes to add
++to `current_i`. A proposed new owner or envelope increase is evaluated without
++mutating the ledger:
++
++```text
++candidateCharge_i = max(candidateCurrent_i, candidateCapacityReservation_i)
++candidateChargeDelta_i = candidateCharge_i - existingCharge_i
++candidateLedgerCommittedBytes =
++  ledgerCommittedBytes + candidateChargeDelta_i
++```
++
++For a new owner, `existingCharge_i=0`. For an increase, subtraction uses
++checked arithmetic and the existing row remains charged until the atomic
++replacement succeeds. A decrease is applied only after the owner proves the
++old capacity unreachable; admission never spends an anticipated release.
++
++If exact current bytes are unavailable, the metric is
++`unavailable(reason, owner)` and charging uses the conservative live
++reservation, never zero. `physicalFootprintBytes` and its peak are independent
++process cross-checks, not added to the logical ledger; this avoids double
++counting and still catches native/allocator memory outside declared consumers.
++
++Every reservation records `reservationID`, consumer, owner, bytes, generation,
++admission monotonic time, lifetime, release event, and eventual release time and
++reason. IDs are opaque and bounded-cardinality. Missing is distinct from failed
++read; a failed reservation read is `unknown` and refuses admission.
++
++```text
++B_global = configured globalLedgerCeilingBytes
++B_base   = sum(non-overlap consumer charges)
++B_rekey  = sum(per-lane KEX emergency reservations)
++B_rc     = reconnect overlap reservation
++
++B_base + B_rekey + B_rc <= B_global
++```
++
++`B_untracked` is a permanent ledger consumer row inside `B_base`, charged at
++its configured `capacityReservation` from provider bootstrap through final
++process teardown. It explicitly covers code, allocator fragmentation, and
++native allocations not yet attributable; it is neither an implicit remainder
++nor separately added after admission. Thus every headroom, channel, lane,
++reconnect, and pressure calculation already subtracts it exactly once.
++Production authorization requires physical rows selecting this reservation and
++proving the complete process footprint.
++
++### Current evidence and residual DNS assignment
++
++Accepted M0 evidence measured an incremental HEV/bridge peak of `9,715,712 B`
++at 500 sessions. Against the lower 25 MiB engineering envelope:
++
++```text
++25 MiB                    = 26,214,400 B
++HEV/bridge observed peak  =  9,715,712 B
++residual after HEV/bridge = 16,498,688 B
++DNS hard candidate        =  8,388,608 B
++residual after DNS        =  8,110,080 B
++```
++
++This assigns the complete DNS hard candidate within the lower envelope without
++overlap with the accepted HEV/bridge observation. It does not prove that SSH,
++client relay, metrics, rekey, reconnect, and untracked overhead fit the remaining
++`8,110,080 B`; DNS values therefore remain candidate and whole-extension
++production authorization remains false pending physical composition.
++
++## Consumer ledger
++
++“Configured” below is a required hard field, not a numeric default. Inputs are
++sampled at 1 Hz and at admission, release, pressure, rekey, reconnect, and stop.
++
++| Consumer / owner | Unit and hard ceiling | Current and peak input | Reservation lifetime / release | Safe observability | Delivery owner |
++| --- | --- | --- | --- | --- | --- |
++| Packet socket buffers / packet bridge | bytes; configured total effective ceiling; read back all four Darwin send/receive values, refuse start if their sum is over | four effective values; immutable peak per bridge generation | bridge start through both descriptor closes | requested/effective, clamp, descriptors; no packet bytes | pressure integration; fault task |
++| Packet batches/frames / pump | bytes/count; queue byte/count and max-datagram ceilings | exact queued bytes plus fixed entry charge; high-water | reserve-before-enqueue through write/drop/fatal teardown | queue count/bytes/high-water and typed drops | packet owner; `TASK-260715-200jez` |
++| HEV task stacks / HEV lease | bytes/count; effective stack × max tasks; accepted stack `24,576 B` | live tasks × stack; otherwise full reservation with unavailable metric | task create through joined exit | live/peak tasks, configured/effective stack | `TASK-260715-318m1v`, tuning task |
++| HEV sessions / HEV integration | count plus component reservation; accepted initial ceiling 500 | admitted/live/peak sessions | admission through terminal cleanup | admitted/live/peak/refused | same |
++| HEV TCP buffers / session | bytes; effective buffer × max owners; accepted size `4,096 B` | exact owners or conservative session reservation | allocation through session teardown | size, owners/report state | same |
++| HEV UDP copy buffers / session | bytes; `1,500 × effectiveCopyCount × maxOwners`; accepted count 2 | exact owners or conservative reservation | owner open through teardown | copy count, owners/report state | same |
++| HEV caches/internal queues/manager | bytes/count; mandatory cache and queue ceilings | exact public gauges; otherwise full reservation plus unavailable current | HEV generation through shrink acknowledgement/finalization | caps, current/report state, high-water, shrink ack | same |
++| SSH lane socket/session/crypto/timers/callbacks / serialized lane owner | bytes/count; configured per-lane base and max lane count (2…4 only after evidence); lane A mandatory | owned allocations/buffered bytes plus typed native/untracked state | before connect through socket/session/timer/callback cleanup | lane role/generation/state, owned bytes, tasks/descriptors | lane and pressure owners |
++| SSH receive-window reservation / channel | bytes; immutable channel cap plus per-channel/lane/global window ceilings | reservation; advertised/outstanding credit separately reported/notReported/unsupported | before open through open failure, close/reset/cancel/lane teardown | class, cap, reserved, credit/report state, adjustments | `TASK-260715-3kimon`, M3 `TASK-260728-3cveay` |
++| SSH intake/read buffers / channel | bytes; callback intake and read-buffer ceilings | exact buffered bytes or conservative reservation | open through callback retirement and close | aggregate current/peak/report state | window/adapter owners |
++| SSH pending writes/operations / lane+channel | bytes/count; per-channel/lane queue, write-call, pending-operation caps; M0 evidence used 32 KiB, 8 KiB, 64 | exact queue bytes/ops and peaks | reserve-before-enqueue through completion/cancel/failure | bytes/ops/high-water/refusal | selected adapter; fault task |
++| Rekey overlap / lane coordinator | bytes/count; per-lane emergency reservation and global concurrent-KEX cap; one in flight/lane | old/new keys, scratch, control queue; exact or conservative | pre-reserved with lane; active until new install and old/scratch release | trigger, generation, reservation/current/report state, duration/result | rekey tasks, M3 deep semantics |
++| DNS runtime aggregate / manager generation | bytes; hard candidate `8,388,608 B`, not production-authorized | owners, wire queue, buffers, manager/diagnostics, cache; current/peak when available | reserve complete envelope before capability through full retirement | endpoints/owners/queue/cache/attempts/report states; no names | DNS and pressure owners |
++| DNS cache / manager generation | bytes/count/TTL; inside DNS aggregate and separately capped | exact encoded bytes or conservative cap | insert through TTL/generation/pressure/stop | aggregate entries/bytes/evictions | DNS owner |
++| Client relay framing/byte pumps / lane-A relay session | bytes/count; negotiated `maxFrame <= 65,536`, bounded stdin/stdout/read/write, relay window | decoder, remainder, queues, pending writes | handshake/session through channel/callback cleanup | effective frame, buffered/queued/high-water/report state | relay and pressure owners |
++| Client relay associations/queues / relay client | bytes/count; `maxUDPPayload=1,472`; local hard ceilings 1,024 associations, 256 KiB/association/direction, 4 MiB aggregate/direction, 256 KiB control | charge `max(4 + frameLength, 64)`; current/peak associations/queues | reserve-before-enqueue through send/drop/close/idle/session teardown | aggregates/high-water/reason counters; no destination/payload | relay owners; pressure owner |
++| Remote relay process buffers / remote session | bytes/count; remote ceilings 1,024 associations, 256 KiB/association/direction, 16 MiB aggregate/direction, 256 KiB control | remote effective-limit/aggregate diagnostics | remote process generation through exit | aggregate remote snapshot | relay owners; **not** extension charge |
++| Reconnect old transport / reconnect generation | bytes; ordinary old lane/channel/DNS/relay charges inside overlap ceiling | exact old-generation charge | failure observation through actual cleanup, not cancel request | generation/state/bytes/cleanup ack | `TASK-260715-318m1v` plus reconnect owners |
++| Reconnect replacement / reconnect generation | bytes; configured bootstrap includes lane A, SSH base, KEX, DNS/relay, lifecycle | exact reservation before construction, then current charge | reserve before connect through promotion or failed cleanup | requested/granted/refused/released, current/peak | same |
++| Metric event/history store / instrumentation | bytes/count/labels; mandatory history, ring, cardinality ceilings | exact retained bytes/records plus overflow/coalescing | insertion through bounded eviction/generation close | fixed-cardinality aggregate labels | instrumentation and fault owners |
++| Untracked process reserve / provider generation | bytes; configured `B_untracked` total-capacity row | current is `unavailable(not-attributable)` by definition; fixed reservation and footprint cross-check | provider bootstrap through final process teardown | reservation, generation, physical footprint/current peak; no fabricated attribution | ledger/controller, tuning, physical owners |
++
++Remote relay memory is evidence but is not summed into Apple extension memory.
++Client relay queues and channel buffers are. The owner registry prevents double
++charge by declaring when a child is already included in a parent ceiling.
++
++## Window-credit and DNS formulas
++
++Let `KiB=1024 B`, bandwidth be integer bits/s, RTT integer ns:
++
++```text
++W32 = 32 × KiB
++W64 = 64 × KiB
++rawBDPBytes = ceil(bandwidthBitsPerSecond × rttNanoseconds /
++                   (8 × 1_000_000_000))
++cappedBDP = clamp(rawBDPBytes, bulkWindowMinimumBytes,
++                  bulkWindowMaximumBytes)
++relayBurstBytes = relayBurstDatagramCount ×
++                  max(4 + relayMaximumFrameBodyBytes, 64)
++relayCandidate = min(relayWindowMaximumBytes,
++                     relayControlWindowBytes + relayBurstBytes)
++```
++
++For requested `W`:
++
++```text
++channelCapacity = W + readBufferCapacity + writeCapacity + metadataCapacity
++channelChargeDelta = candidateCharge(channelCapacity) - existingChannelCharge
++
++admit iff W <= perChannelWindowCeiling
++  and laneWindowReserved + W <= perLaneWindowCeiling
++  and globalWindowReserved + W <= globalWindowCeiling
++  and ledgerCommittedBytes + channelChargeDelta <= globalLedgerCeilingBytes
++  and lane is current, healthy, not closing, and not in KEX
++  and pressure policy permits the class
++```
++
++The pre-admission `ledgerCommittedBytes` includes the permanent `B_untracked`
++row and every existing owner, including every admitted lane's permanent KEX
++reservation; it excludes only this proposed `channelChargeDelta`. Successful
++admission atomically installs the channel capacity row and window aggregates
++before open construction. Failed construction releases that row exactly once
++after callbacks/tasks cannot reach it. Refusal is typed and creates no queue.
++
++Initial credit is at most the reserved immutable cap. `WINDOW_ADJUST(delta)`
++requires an atomic reservation while the generation is current and state is
++Normal or Soft. Pressure, Critical, KEX, closing, failed, stale, or insufficient
++budget withholds it. Previously advertised credit is never revoked/reclaimed.
++No failed adjustment is queued on the side.
++
++```text
++delta = min(channelCap - outstandingAdvertisedCredit,
++            laneWindowHeadroom, globalWindowHeadroom,
++            ledgerHeadroomAfterOtherReservations)
++```
++
++`delta=0` is withholding. Until M3 delivers consumer-earned immutable credit,
++libssh2 wire metrics stay `unsupported/notReported`; bounded adapter intake and
++the conservative reservation remain mandatory.
++
++### Lane admission
++
++Lane admission is one serialized transaction. Lane base excludes channel,
++DNS, relay, and KEX child rows so the following bootstrap charge owns each byte
++once:
++
++```text
++laneBootstrapCapacity =
++  laneBaseCapacity + perLaneKEXEmergencyBytes + mandatoryControlCapacity +
++  (isLaneA ? mandatoryLaneAWindowCapacity + mandatoryDNSBootstrap +
++             mandatoryRelayBootstrap : 0)
++
++laneChargeDelta = laneBootstrapCapacity  // new lane; existing charge is zero
++
++admit iff liveLaneCount + 1 <= configuredLaneCountCeiling
++  and configuredLaneCountCeiling <= evidencedLaneCountHardMaximum
++  and laneBaseCapacity <= configuredPerLaneBaseCeiling
++  and perLaneKEXEmergencyBytes >= configuredMinimumKEXEmergencyBytes
++  and mandatoryControlCapacity >= configuredMinimumControlCapacity
++  and (lane A already remains current, or isLaneA)
++  and all mandatory lane-A slices are configured and fit their component caps
++  and ledgerCommittedBytes + laneChargeDelta <= globalLedgerCeilingBytes
++  and provider generation is current and not stopping
++  and lane pool is healthy, not closing, and has no construction in flight
++  and pressure state permits the requested role
++```
++
++Because `ledgerCommittedBytes` already charges `B_untracked`, the final global
++predicate is also the untracked-headroom predicate. Normal permits lane A and
++evidence-authorized optional roles; Soft/Pressure fast-refuse optional lanes;
++Critical admits no lane until the old generation is actually released and the
++critical bootstrap path below succeeds. Any failed predicate returns
++`laneAdmissionRefused(reason)` synchronously. Admission installs one bootstrap
++row before construction; construction may atomically transfer its DNS, relay,
++window, and KEX slices to child rows without changing total committed bytes.
++Failed construction cancels reachability and releases all transferred or
++untransferred slices exactly once. There is no waiting or retry side queue.
++
++For endpoints `E`, owners `O`, maximum DNS message `M`, queued wire `Q`:
++
++```text
++framedMessage = M + 2
++perOwner = 3 × framedMessage + 1,024
++fixed = 2 × framedMessage + 65,536 manager + 65,536 diagnostics + 64 × E + Q
++dnsLocalLedger = O × perOwner + fixed
++dnsSlack = dnsAggregateBytes - dnsLocalLedger
++```
++
++```text
++default: E=4, O=16, M=65,535, Q=262,144
++         3,686,706 <= 4,194,304; slack 507,598
++hard:    E=8, O=32, M=65,535, Q=1,048,576
++         7,635,554 <= 8,388,608; slack 753,054
++```
++
++Equality is accepted; one byte over any component/aggregate is typed refusal.
++The manager reserves the complete component before capability publication.
++Unused DNS slack stays DNS-owned until an atomic transfer, preventing two owners
++from spending the same residual byte.
++
++## Pressure states and hysteresis
++
++Configuration supplies three entry headroom floors and three higher exit floors
++for ledger, physical-footprint, and advisory signals:
++
++```text
++criticalEnter < pressureEnter < softEnter
++criticalExit > criticalEnter
++pressureExit > pressureEnter
++softExit > softEnter
++```
++
++Each observation records generation/time, footprint/peak, ledger
++current/reserved/committed/peak, one new advisory-call result, warning input,
++and owner report states. Severity is the maximum entry predicate across ledger
++headroom, configured footprint headroom, fresh advisory bytes, and explicit
++memory warning (at least Pressure). Entry may jump severity.
++
++Exit moves at most one state/evaluation and requires every available signal
++above the exit floor, required actions acknowledged, no unresolved owner-read
++failure, and a configured recovery dwell. This is hysteresis, not averaging.
++An advisory value is fresh only in the observation that called the API.
++Unavailable, failed, malformed, or late results are typed; they cannot cause
++recovery, become zero, or conceal escalation from other evidence. In Normal
++they do not alone stop the provider; hard ledger fit still governs admission.
++
++## One ordered action table
++
++The serialized executor applies rows cumulatively and keys each action by
++`(policyGeneration, ordinal, owner)`.
++
++| # | State | Action | Completion/failure semantics |
++| ---: | --- | --- | --- |
++| 1 | Soft | Suppress optional-lane admission | Lane A remains; optional request fast-refuses `memoryPressure` |
++| 2 | Soft | Close contract-defined idle channels/associations | No live-stream migration or arbitrary kill; timeout blocks recovery |
++| 3 | Soft | Cap new channel windows at configured soft value | Existing advertised credit unchanged |
++| 4 | Soft | Shrink semantics-safe DNS/relay/packet/other caches and queues | Ack released bytes; no unsafe eviction |
++| 5 | Pressure | Withhold all new `WINDOW_ADJUST` | No pending-adjust side queue |
++| 6 | Pressure | Reduce HEV session admission and reversible HEV/cache limits | Existing sessions remain accounted; refusal is bounded/typed |
++| 7 | Pressure | Fast-refuse new nonessential TCP/UDP/bulk/optional control work | Mandatory safe DNS/control uses its reserved slice; no physical fallback |
++| 8 | Critical | Freeze/cancel a replacement not yet started | Bytes stay reserved until actual cleanup ack |
++| 9 | Critical | Release old transport, channels, DNS/relay generation, timers, callbacks | Must observe release before replacement construction; no replay/migration |
++| 10 | Critical | If continuity is requested, reserve critical bootstrap then start replacement | New lane A includes KEX/DNS/relay mandatory slices |
++| 11 | Critical | If release/replacement cannot fit or finish by deadline, stop explicitly | `memoryRecoveryImpossible`; cancel retries, withdraw capability/settings, await bounded cleanup; never jetsam |
++
++Acknowledgements record requested/released/remaining bytes, owner generation,
++deadline outcome, and failure. Duplicate/stale acknowledgements are counted and
++ignored. Soft/Pressure failure holds state and refuses dependent admission.
++Critical failure proceeds to explicit stop. Recovery reverses only admission
++and cache targets; it never recreates closed owners or returns prior credit.
++
++## Rekey, reconnect, cancellation, and stop
++
++Each lane permanently reserves `perLaneKEXEmergencyBytes`, allowing inbound
++server KEX or a due client security threshold under pressure. Before KEX, the
++lane becomes unavailable for new channels. Existing channels remain pinned and
++inside existing reservations. One KEX runs/lane; simultaneous triggers coalesce
++into it with at most one bounded later-due reason bitset.
++
++Pressure uses the emergency slice for protocol-required server or due client
++KEX while withholding new channels/credit; manual/test triggers defer in the
++bounded bitset. Critical lets an active KEX finish only for the retained lane
++inside reservation, otherwise closes it during old release/stop. Success
++releases old keys/scratch and resumes admission only when current state permits.
++Failure is lane-fatal first, closes its channels once, updates lane-A relay/DNS
++capability before publication, and requests only an admitted replacement. No
++bytes are replayed or migrated.
++
++```text
++replacementBootstrapReservation =
++  newTransportBase + mandatoryLaneA + laneAKEXEmergency +
++  mandatoryDNSBootstrap + mandatoryRelayBootstrap + lifecycleOverhead
++
++admit iff oldTransportCharge + replacementBootstrapReservation
++           <= reconnectOverlapBytesCeiling
++       and ledgerCommittedBytes + replacementBootstrapReservation
++           <= globalLedgerCeilingBytes
++```
++
++Before this predicate, `ledgerCommittedBytes` already includes `B_untracked`,
++the complete old transport charge, and every admitted old lane's permanent KEX
++row; it excludes the proposed replacement. The overlap predicate's
++`oldTransportCharge` is a scoped subset check, not another addition to the
++global ledger. Successful admission installs the replacement total-capacity
++row once, then transfers slices to its constructed children without changing
++the total. At Critical, actual old cleanup first removes its rows from both the
++ledger and overlap account; only then is the same replacement predicate run
++with `oldTransportCharge=0`.
++
++At Critical the old charge must reach zero before the replacement constructor.
++Stop/cancel invalidates generations, cancels admissions/retries, and waits for
++actual cleanup before release. Late callbacks cannot allocate, publish
++capability, adjust credit, restart timers, or release current-generation bytes.
++
++Normative views:
++[`memory pressure`](../diagrams/TASK-260715-1pn983_memory-pressure-state.puml)
++and [`reconnect/rekey`](../diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml).
++
++## Metrics, evidence, and privacy
++
++Every metric has a fixed unit, bounded labels, owner, availability state,
++monotonic time, generation, and current/peak meaning. Required families cover:
++
++- footprint/peak and fresh advisory bytes;
++- ledger current/reserved/committed/headroom/peak by fixed consumer;
++- packet buffers/queues/drops and HEV tasks/sessions/buffers/caches/queues;
++- lanes/channels/window cap/reservation/wire-credit report, adjustments,
++  read buffers, pending writes/operations;
++- DNS owners/buffers/cache/queue/aggregate/slack/refusals;
++- client relay associations/frame/queue/control reservations and drops;
++- KEX reservation/triggers/active generation/duration/result;
++- reconnect old/new reservation, overlap peak, release order, denial/stop;
++- action request/ack/timeout/failure/released bytes and transitions;
++- tasks/timers/sockets/descriptors and cleanup reconciliation.
++
++Labels are fixed enums: consumer, lane role, channel class, pressure state,
++action ordinal, availability, typed reason. Never capture payload, DNS name,
++destination, full address, username, host, fingerprint, credential reference,
++command/stdin, path, or stable device ID. Restricted packet/Instruments evidence
++follows the M3 custody protocol and is never a board attachment. Unavailable is
++never pass.
++
++## Required invariant and negative tests
++
++Tests drive production entry points, not helpers preloaded with valid inputs.
++Each gate is proved by narrowing a bound or bypassing one lifecycle branch.
++
++| Invariant | Negative proof | Production boundary / owner |
++| --- | --- | --- |
++| Global reservation | One-byte-smaller global/component ceiling under concurrent admission refuses exactly one owner | ledger entry used by channel/DNS/relay/lane/reconnect; pressure/fault tasks |
++| Untracked reservation cannot be spent | With existing owner charges plus `B_untracked` at the ceiling, narrow remaining headroom by one; channel, lane, reconnect, and pressure paths all refuse/escalate through their production entry points | ledger bootstrap and each real admission/controller entry; pressure/fault tasks |
++| Total-capacity vs incremental reservation | Hold nonzero current bytes, then propose a larger total envelope and separately an incremental owner; candidate delta charges the former once and the latter in full, with one-byte narrowing refusal | atomic ledger replace/new-owner entries; pressure/fault tasks |
++| DNS equality/one-over | `7,635,554` fits `8,388,608`; add one to any term or shrink aggregate by one and publication fails | DNS composition; DNS/fault owners |
++| Credit not allocation/reclaim | Stall consumer and spend prior credit; no eager-allocation claim, false reclaim, or Pressure adjustment passes | real adapter open/read path; window/M3 owners |
++| No side queue | Narrow queue bytes/count under flood; bounded refusal/drop and no second queue | actual channel/packet/relay enqueue; fault owner |
++| State/hysteresis | Equality and one-under/over for every edge; stale/unavailable cannot recover | provider observation; sampler owner |
++| Fresh advisory call | Second read fails after high first value; production observation reports failure, not reuse | platform sampler; sampler owner |
++| Ordered actions | Fail/timeout each ordinal; later success cannot launder missing release | pressure executor; pressure owner |
++| Reconnect overlap | Narrow replacement by one on normal/retry/resume/recovery/critical paths; all refuse or release old first | replacement constructor; pressure owner |
++| Lane admission | Independently narrow lane count, base, KEX, mandatory lane-A slice, and global headroom by one; stale/closing/Soft optional construction also fast-refuses and failed construction returns the ledger to baseline | serialized lane-pool admission entry; lane/pressure/fault owners |
++| KEX serialization | Race all triggers/channel open/Pressure/close/stop; one current KEX, no new channel | per-lane trigger/event entry; coordinator |
++| Rekey isolation | Inject each adapter failure; affected lane first, close once, no replay/migration | lane KEX completion; isolation owner |
++| Forged/stale evidence | Correctly shaped stale reservation/action/KEX/reconnect ack cannot release/publish current state | serialized owners; fault task |
++| Cancel/stop cleanup | Cancel every seam and deliver late callbacks; all ownership returns baseline | provider stop/component teardown; fault task |
++| Privacy | Prohibited sentinels at every source appear nowhere in composed export | diagnostics export, not formatter helper; instrumentation |
++
++## M0–M3 ownership and interface map
++
++| Surface | Required contract | Owner |
++| --- | --- | --- |
++| M0 packet/HEV | effective socket read-back, accepted 500/24,576/4,096/2 baseline, bounded queues, unavailable internal gauges, cleanup | accepted `TASK-260715-2jatnd`; pressure integration |
++| M0 SSH | 32/64 KiB injectable windows, bounded M0 read/write/call/pending operations, client rekey, deferred reports | accepted `TASK-260715-1gjxer`; window/rekey tasks |
++| M1 DNS/TCP | complete component reservation, exact formulas, one manager generation, bounded retire, no physical fallback | DNS owner; candidate pending physical composition |
++| M2 relay/UDP | client queues in extension ledger; remote observed separately; 1,472-byte bound and typed drops | relay/pressure owners |
++| M3 exact SSH | consumer-earned immutable credit and deep KEX/window reports or evidenced red | `TASK-260728-3cveay` |
++| M3 controller/faults | fresh sampling, hysteresis, actions, overlap, invariant/negative/allocation tests | `TASK-260715-3kjhkw`, `TASK-260715-318m1v`, `TASK-260715-200jez` |
++| M3 tuning/physical | select final numeric values only from valid paired/physical rows; retain rejected candidates/cleanup | tuning, physical soak, final-matrix owners |
++
++## Decomposition, traceability, and gap record
++
++The existing eight-task Story is the smallest complete decomposition. No new
++research task is justified: numeric winners already belong to tuning/physical
++tasks, while ownership/formulas are settled from accepted evidence.
++
++| Story child | Atomic deliverable | Spec trace / dependency reason |
++| --- | --- | --- |
++| `TASK-260715-1pn983` | this ledger/policy contract | ADR-009; packet memory; SSH windows/rekey; routing reconnect; validation memory |
++| `TASK-260715-3kimon` | pure window/reservation policy | SSH Channel windows; blocked by this contract |
++| `TASK-260715-3kjhkw` | fresh sampler/state machine | packet uncached advisory and pressure order; blocked by contract |
++| `TASK-260715-s3at1l` | per-lane automatic KEX | SSH Rekey; selected SSH/lane prerequisites |
++| `TASK-260715-3j3luy` | lane-local KEX failure/recovery | SSH failure semantics; blocked by coordinator/lane recovery |
++| `TASK-260715-318m1v` | actions/reconnect reservation executor | packet Critical plus routing overlap; consumer prerequisites |
++| `TASK-260715-200jez` | invariant/negative/race/allocation suite | validation packet/SSH/memory and M3 resource gates; integration prerequisites |
++| `TASK-260728-3cveay` | four deferred exact SSH semantics | ADR-023/conformance registry; selected engine/window prerequisite |
++
++Beyond-literal-spec gap record:
++
++| Gap | Added binding | Spec/out-of-scope checks |
++| --- | --- | --- |
++| No stale/unavailable recovery rule | typed failed/stale advisory, never cache/zero, cannot recover | packet/validation/M3 checked; no Apple guarantee/private API/final threshold |
++| Rekey overlap unassigned | per-lane emergency reserve, one KEX, bounded reason bitset | SSH/conformance/engine checked; no algorithm/threshold winner or fork |
++| Reconnect budget lacks atomic order | reserve before construction; Critical old-to-zero first; else stop | routing/pressure checked; no migration/replay/route/retry widening |
++| Relay attribution implicit | client memory charged locally, remote observed separately | ADR-021 checked; no framing/wire/cap change |
++| DNS lacks ADR-009 residual assignment | assign 8 MiB hard candidate but retain provisional authority | equations, SSH evidence, HEV peak, physical gates checked; no production promotion |
++
++## Release and revalidation gates
++
++Production remains refused until complete physical composition, exact or
++conservative owner evidence, pressure/one-over/order/cleanup/privacy negative
++tests, M3 numeric selection including `B_untracked`, and independent review all
++pass. Re-run after any device/OS/toolchain/native pin, allocator, limit, queue,
++window, lane, KEX, DNS/relay, reconnect, metrics, or provider lifecycle change.
++A red row reopens its owner; it is never averaged away or repaired by weakening
++a safety gate.
+diff --git a/docs/TASK-260715-1pn983_results.md b/docs/TASK-260715-1pn983_results.md
+new file mode 100644
+index 0000000..8cb0281
+--- /dev/null
++++ b/docs/TASK-260715-1pn983_results.md
+@@ -0,0 +1,93 @@
++# TASK-260715-1pn983 — solution-architect handoff evidence
++
++## Outcome
++
++The binding cross-layer extension contract is recorded in
++`docs/TASK-260715-1pn983_memory-window-rekey-contract.md`. It defines one
++checked-byte ledger for packet, HEV, SSH, DNS, client relay, rekey, metrics, and
++reconnect owners; exact reservation/release semantics; channel-window and DNS
++formulas; deterministic Soft/Pressure/Critical hysteresis; one eleven-step
++action order; rekey/reconnect/cancellation interactions; privacy-safe metrics;
++negative tests; M0–M3 interfaces; and the complete eight-child Story trace.
++
++The exact DNS ledgers independently recompute to `3,686,706 B` (candidate
++default) and `7,635,554 B` (candidate hard). The hard component fits its
++`8,388,608 B` budget. Combined with the accepted `9,715,712 B` incremental
++HEV/bridge peak, it leaves `8,110,080 B` inside the lower 25 MiB engineering
++envelope. This is arithmetic assignment, not whole-extension or Apple memory
++proof; production authorization remains false pending physical composition and
++M3 numeric selection.
++
++Two focused state diagrams cover memory-pressure recovery and reconnect/rekey
++reservation. Sources and rendered SVGs are task-scoped.
++
++Revision 2 closes every revision-1 reviewer counterexample:
++
++- `B_untracked` is a permanent charged ledger row and therefore cannot be spent
++  by channel, lane, reconnect, or pressure headroom calculations;
++- total-capacity reservations and proposal deltas have distinct, closed
++  meanings, including explicit pre-admission KEX/reconnect inclusion rules;
++- atomic lane admission covers every count/base/KEX/lane-A/global/state/pressure
++  predicate with typed fast refusal, transfer-without-double-charge, and exact
++  failed-construction release;
++- reconnect ownership and permanent per-lane KEX reservation are orthogonal in
++  the normative state model; and
++- the packet-plane memory target now says named physical Apple-silicon Mac,
++  while iPhone evidence stays explicitly deferred and non-substitutable.
++
++## Repository artifacts
++
++- `docs/TASK-260715-1pn983_memory-window-rekey-contract.md`
++- `diagrams/TASK-260715-1pn983_memory-pressure-state.puml`
++- `diagrams/TASK-260715-1pn983_reconnect-rekey-state.puml`
++- `diagrams/artefacts/TASK-260715-1pn983_memory-pressure-state.svg`
++- `diagrams/artefacts/TASK-260715-1pn983_reconnect-rekey-state.svg`
++- `.spec/decisions.md`, `.spec/packet-plane.md`, `README.md`, and `LOGBOOK.md`
++  link or record the binding contract without promoting provisional numbers.
++
++## Validation
++
++| Gate | Exit | Result |
++| --- | ---: | --- |
++| Input SHA-256 verification | 0 | Both supplied digests match exactly |
++| PlantUML syntax and SVG render | 0 | Two sources valid; two SVGs rendered and visually inspected |
++| Contract assertions revision 1 | 1 | Formula passed; a phrase assertion failed because Markdown wrapped the words across lines; retained as red evidence |
++| Corrected contract assertions | 0 | DNS/residual arithmetic, all consumer families, 11 actions, 13 negative/invariant rows, eight child traces, non-claims, and `git diff --check` pass |
++| `task-board validate` | 0 | Command reported two unrelated parent-status mismatches; neither belongs to this task/Story and no foreign status was changed |
++| Checklist batch attempt | 1 | Board refused one activity event for 12 changes; no side effects |
++| Twelve atomic checklist mutations | 0 | All task checklist items checked |
++| Resource byte-match attempt 1 | 127 | zsh special variable `path` hid `PATH`; no artifact changed |
++| Corrected resource byte-match | 0 | Contract, two PUML, two SVG, and results board bytes match local SHA-256 |
++| Independent review revision 1 | changes requested | Five blockers reproduced: untracked-reserve spend, reservation ambiguity, missing lane predicate, KEX diagram contradiction, and stale iPhone target |
++| Revision-2 first harness run | 0 shell / failing inner gates | Retained red evidence: Markdown-wrap assertion failed and PlantUML rejected the first composite-state shape; the wrapper also exposed that missing `set -e` could return a false shell success |
++| Revision-2 strict harness run | 200 | After enabling fail-fast, the same PlantUML syntax failure propagated as a real nonzero exit |
++| Revision-2 corrected contract/mutant/render gate | 0 | Reviewer accounting examples, one-byte untracked bound, total-capacity delta, ten independently narrowed lane predicates, PlantUML syntax/SVG render, and `git diff --check` pass |
++| Revision-2 PNG visual QA | 0 | Both diagrams rendered from the normative sources and were inspected; pressure transitions and the separate reconnect/permanent-KEX state machines are legible |
++| Revision-2 `task-board validate` | 0 | Command reports two unrelated pre-existing parent-status mismatches; this task/Story is not named and no foreign status was changed |
++
++Revision-2 evidence logs are
++`.temp/TASK-260715-1pn983/{diagram-tool-readiness-02,rev2-validation-01,rev2-validation-02,rev2-validation-03,png-render-01,diagram-visual-qa-rev2-01,board-validation-rev2-01}.log`.
++The first two rev2 validation logs are intentionally retained as negative
++evidence; only `rev2-validation-03.log` is the corrected green gate.
++
++No build or runtime test was run because this is a documentation/architecture
++delta with no production code change. Validation is scoped to formulas,
++traceability, syntax/rendering, repository diff, and board lifecycle.
++
++## Completeness and remaining gates
++
++- Every packet, HEV, SSH, DNS, client relay, lane, rekey, reconnect, metrics,
++  and cleanup owner has a unit, hard ceiling field, current/peak input,
++  reservation lifetime, release event, observability source, and downstream
++  owner.
++- Advertised credit is not treated as eager allocation or revocable credit.
++- Failed reads remain unknown; absence is not inferred.
++- No unbounded write/adjustment/drop/rekey side queue is allowed.
++- Final watermarks, BDP/window winners, component limits, `B_untracked`, overlap,
++  complete physical footprint, and iPhone rows remain evidence-gated.
++- No new research task was created because no new exact question remained after
++  the accepted inputs; existing tuning and physical tasks already own numeric
++  uncertainty. The eight existing Story children are atomic and sufficient.
++
++Revision 2 is ready for independent architecture re-review; this is a
++`to-review` handoff, not accepted completion.
