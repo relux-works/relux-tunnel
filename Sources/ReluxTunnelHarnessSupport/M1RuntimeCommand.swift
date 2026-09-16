@@ -135,7 +135,7 @@ public struct M1RuntimeHarnessCommand: HarnessCommand {
         dependencies: context.dependencies,
         sessionFactory: sessionFactory
       )
-      weak let weakHostOwner = hostOwner
+      weak var weakHostOwner = hostOwner
 
       let runtime = try await hostOwner!.makeRuntime(
         configuration: try context.configuration.tunnelConfiguration(),
