@@ -678,7 +678,7 @@ public actor TunnelRuntimeCoordinator: TunnelRuntime, TunnelRuntimeHealthEventSi
     cleanupRegistry.register(controllable)
   }
 
-  private func mapped<T>(
+  private func mapped<T: Sendable>(
     fallback: RedactedRuntimeError,
     operation: () async throws -> T
   ) async throws -> T {

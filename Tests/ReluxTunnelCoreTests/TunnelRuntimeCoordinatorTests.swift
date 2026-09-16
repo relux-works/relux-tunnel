@@ -310,10 +310,16 @@ struct TunnelRuntimeCoordinatorTests {
     #expect(!fixture.recorder.events().contains("snapshot.connectedDegraded.1.1"))
   }
 
-  @Test("caller task cancellation is propagated and cleanup remains shielded")
-  func callerCancellation() async {
+  @Test(
+    "caller cancellation crosses every mapped acquisition and cleanup remains shielded",
+    arguments: [
+      StartupCancellationPoint.duringConfiguration, .beforeSSH, .beforeTCP,
+      .beforeDNS, .beforePacketPreparation,
+    ]
+  )
+  func callerCancellation(point: StartupCancellationPoint) async {
     let gate = SuspensionGate()
-    let fixture = CoordinatorFixture(cancellationPoint: .beforeDNS, gate: gate)
+    let fixture = CoordinatorFixture(cancellationPoint: point, gate: gate)
     let start = Task { try await fixture.coordinator.start() }
     await gate.waitUntilReached()
 
@@ -324,10 +330,7 @@ struct TunnelRuntimeCoordinatorTests {
       try await start.value
     }
     #expect(await fixture.coordinator.coordinatorState() == .disconnected)
-    #expect(
-      fixture.recorder.cleanupEvents()
-        == ["tcp.closeAdmission", "tcp.stop", "ssh.close"]
-    )
+    #expect(fixture.recorder.cleanupEvents() == point.expectedCleanup)
     #expect(fixture.recorder.activeResources() == 0)
     #expect(await fixture.coordinator.resourceFootprint() == .baseline)
   }
